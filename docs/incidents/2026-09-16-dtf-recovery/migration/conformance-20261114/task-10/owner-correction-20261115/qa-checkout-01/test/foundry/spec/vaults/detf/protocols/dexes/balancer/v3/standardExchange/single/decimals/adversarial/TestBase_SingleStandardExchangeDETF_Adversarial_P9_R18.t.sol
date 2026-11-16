@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {TestBase_SingleStandardExchangeDETF_Adversarial_Decimals} from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial_Decimals.sol";
+
+/// @notice Combo `P9_R18`. pairToken 9-dec; rateAsset 18-dec.
+/// @dev After Aerodrome pool address sort, token0/token1 may swap; roles stay pairToken vs rateAsset.
+///      vaultShare / detfToken / rebasingClaimToken / Bond NFT stay 18.
+contract TestBase_SingleStandardExchangeDETF_Adversarial_P9_R18 is TestBase_SingleStandardExchangeDETF_Adversarial_Decimals {
+    function _pairDecimals() internal pure override returns (uint8) {
+        return 9;
+    }
+
+    function _rateDecimals() internal pure override returns (uint8) {
+        return 18;
+    }
+}

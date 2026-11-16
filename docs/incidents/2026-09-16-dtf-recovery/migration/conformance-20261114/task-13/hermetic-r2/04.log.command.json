@@ -1,0 +1,1 @@
+{"command":["forge","test","--use","solar","-vv","--no-match-path","**/fork/**","--no-match-contract","Fork"],"code":0,"signal":null}

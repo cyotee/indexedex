@@ -1,0 +1,51 @@
+{
+  "AdversarialVerify": {
+    "verdict": "confirmed",
+    "failure_class": "none",
+    "confidence": 0.96,
+    "scope": {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "task": "renewed task 7, completed pin-removal lane only",
+      "files": [
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts"
+      ],
+      "approves_lane_only": true,
+      "closes_plan_task": false,
+      "certifies_sibling_lanes": false
+    },
+    "claim": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/pin-done.json",
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/independent/report.md",
+    "audit": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/independent/verification.json",
+    "evidence": [
+      ".omo/plans/dtf-migration-conformance-remediation-20261114.md:23-29 authoritatively removes claimWitnessCodeHash and forbids a replacement pin.",
+      "Independent scoped diff and complete source inspection confirm only approved pin removals and unused imports in this lane. Earlier pricingSet changes reproduce all four recorded baseline hashes when applied to HEAD in memory.",
+      "All five claimed final source SHA-256 values match independently hashed actual bytes, as recorded in the audit.",
+      "Transaction, canonical receipt/block, trace, fixed-source routing/runtime, delegate, observation-router shape and conservation checks remain.",
+      "Producer pin/verification.md and pin-done.json bind bun test --timeout 15000 ./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts to the target CWD, recorded exit 0, 3 pass, 0 fail and matching final sources.",
+      "Producer pin/verification.md binds bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts to the target CWD and recorded exit 0. Source assertions validate books [17,100,300,400,5,80,90] -> [7,90,270,370,8,77,90], reject invalid first STATICCALL shape with WITNESS_SHAPE and reject nested caught failure with TRACE_FAILED before printing success.",
+      "Independent scoped git diff --check exited 0 with empty stdout/stderr; dirty shared worktree was inspected and preserved.",
+      "All nine adversarial classes are dispositioned with probes or explicit inapplicability reasons in the report and audit."
+    ],
+    "repro": {
+      "mode": "Independent source/diff/byte inspection plus retained settled passing runs; no test rerun.",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "recorded_commands": [
+        "bun test --timeout 15000 ./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts"
+      ],
+      "recorded_exits": [0, 0]
+    },
+    "limitations": [
+      "Manual trace proof is an offline fixture, not real EVM execution.",
+      "Producer LSP diagnostics unavailable/timed out; verifier JSON LSP reports missing Biome. No install attempted.",
+      "Full strict TypeScript verification explicitly deferred to task-7 integration after sibling lanes finish; not run here.",
+      "No shared integration checks or Forge were run. Census and unrelated original-field tests are not certified.",
+      "Retained argv/CWD/output/exit/source bindings were inspected as a whole; commands were not rerun merely for another signature."
+    ],
+    "concrete_fix": null,
+    "cleanup": "Producer evidence preserved. No product/tests edited, delegation, installs, commits, transactions, artifact/cache deletion or temporary runtime resources. This verdict was the last file written."
+  }
+}

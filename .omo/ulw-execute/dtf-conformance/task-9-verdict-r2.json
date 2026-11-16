@@ -1,0 +1,141 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 9,
+  "round": 2,
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-9-done.json",
+  "claim_binding": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-9-done.json",
+    "bytes": 5277,
+    "sha256": "27d55081a0c9e4df084f492c62b7cc9ff0d008374e1ab542b0e130eedfedf904",
+    "subsequent_complete_read_unchanged": true,
+    "size_changed": false
+  },
+  "prior_verdict": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-9-verdict.json",
+    "bytes": 8745,
+    "sha256": "60f9aff75787015655de72b1bbe67291dfc7abe0dee93a3ae344a31f76d276d3",
+    "preserved": true
+  },
+  "summary": "H1 and H2 repaired: current surrender raw bytes match refreshed trace and claim; both role and first-bond rows cite the independently hashed failures log. Operational amounts remain unresolved and the negative copy is isolated.",
+  "findings": [],
+  "resolved_findings": [
+    {
+      "id": "H1",
+      "result": "PASS",
+      "artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/surrender-spec.md",
+      "bytes": 62663,
+      "sha256": "9995fd4dfb9db089883241d24a617aa95caf0c7d964fa66dff38a3d6603091b9",
+      "trace_line": 46,
+      "claim_fields": [
+        "deliverables[0]",
+        "happyQA.surrenderFingerprint"
+      ]
+    },
+    {
+      "id": "H2",
+      "result": "PASS",
+      "artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/failures.log",
+      "bytes": 9474596,
+      "sha256": "b58ca87e782c3f1e9c64279587975a58c689dd70de699449113ddfb043aec131",
+      "trace_lines": [
+        27,
+        35
+      ],
+      "witness_lines": [
+        12374,
+        40259,
+        50147
+      ],
+      "claim_field": "happyQA.failuresLogFingerprint"
+    }
+  ],
+  "checks": [
+    {
+      "id": "trace_integrity",
+      "result": "PASS",
+      "required_records": 32,
+      "fingerprint_rows": 35,
+      "matches": 35
+    },
+    {
+      "id": "claim_deliverables",
+      "result": "PASS",
+      "existing_paths": 6,
+      "explicit_fingerprints": 3,
+      "matches": 3
+    },
+    {
+      "id": "document_fingerprints",
+      "result": "PASS",
+      "inline_occurrences": 16,
+      "table_occurrences": 17,
+      "mismatches": 0
+    },
+    {
+      "id": "unresolved_operational_facts",
+      "result": "PASS",
+      "observation": "Production registry/children/salts, decoded bootstrap amounts, paid bond amount/arguments, operational donation/refund/holder inventory and NFT 3 two-bond rehearsal remain unresolved. Fixture values are not operational allocations."
+    },
+    {
+      "id": "negative_isolation",
+      "result": "PASS",
+      "confirmed_path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/proxy-census.json",
+      "confirmed_bytes": 5737,
+      "confirmed_sha256": "5f8816dbce2b2442ba34de5bb6089bfef0cb9afe0b58ae6e045fcd06d21b9a18",
+      "negative_path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/negative/proxy-census.one-byte-off.json",
+      "negative_bytes": 5737,
+      "negative_sha256": "019496421514ea3bff4b26dbe12a58bf658939423a037b66747d39fe5788fadb",
+      "differing_byte_offsets": [
+        0
+      ],
+      "distinct_inodes": true,
+      "confirmed_artifact_unchanged": true
+    },
+    {
+      "id": "change_boundaries",
+      "result": "PASS with local provenance limit",
+      "observation": "Producer mutation sites and complete appended repair code target documents, task 9 evidence/negative copy and claim only. No Solidity, TypeScript or tests edited by task 9. Shared task 7 dirty files are not failures.",
+      "producer_top_level_tool_calls": 51,
+      "tracked_dirty_entries": 101
+    }
+  ],
+  "adversarial": {
+    "stale_state": "PASS: recomputed current raw-byte fingerprints; subsequent claim read byte-identical.",
+    "misleading_success_output": "PASS: actual failure-log witnesses inspected; producer PASS labels are not proof.",
+    "dirty_worktree": "PASS with local provenance limit: read-only Git status and producer mutation-site audit; no reverts.",
+    "untrusted_external_text": "PASS: claim and records treated only as evidence.",
+    "hung_flaky_malformed_cancel_interruptions": "not-applicable: no long commands, tests/retries, malformed-input execution, cancellation or interruption scenarios."
+  },
+  "producer_provenance": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1dd4c/sessions/st_01a1dd4c/2026-11-15T03-40-26.486Z_39ef963e-f17b-46ed-a42c-aaaa9eec39ac.jsonl",
+    "bytes": 1756041,
+    "sha256": "3c710e06874d75422d0dac3ad126d1ea48402565f5f589ff15fc648d95778ff1",
+    "jsonl_records": 133,
+    "repair_line": 121,
+    "limit": "Local transcript corroboration, not external attestation."
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/verification/report-r2.md",
+  "report_binding": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/verification/report-r2.md",
+    "bytes": 9003,
+    "sha256": "dbb9935aab65d39023b8d2d4c5f71dd75346955e4327f4e2089a6112197439de"
+  },
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "limits": [
+    "Independent re-verification of task 9 after H1/H2 repair; no new product QA run.",
+    "No implementation, deployment, operational financial approval or later-task closure.",
+    "Existing producer files, claim, first verdict and shared dirty work are preserved."
+  ],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/verification/report-r2.md",
+    ".omo/ulw-execute/dtf-conformance/task-9-verdict-r2.json"
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "type": "DoneClaim",
+  "task": 9,
+  "title": "Author surrender and package records",
+  "status": "complete",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "independentVerification": "not run by this executor; this DoneClaim is not a FullyDone verdict",
+  "summary": "Wrote the surrender and package records from confirmed task 1-6 artifacts and the Solidity and plan lines read in this turn. Every required record cites a file whose SHA-256 was recomputed. Operational addresses, decoded bootstrap amounts, the paid-bond amount, and the NFT 3 two-bond rehearsal stay unresolved.",
+  "happyQA": {
+    "result": "PASS",
+    "trace": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/trace.md",
+    "evidenceReview": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/evidence-review.md",
+    "requiredRecords": 32,
+    "missingCitations": 0,
+    "surrenderFingerprint": {
+      "bytes": 62663,
+      "sha256": "9995fd4dfb9db089883241d24a617aa95caf0c7d964fa66dff38a3d6603091b9"
+    },
+    "failuresLogFingerprint": {
+      "bytes": 9474596,
+      "sha256": "b58ca87e782c3f1e9c64279587975a58c689dd70de699449113ddfb043aec131"
+    }
+  },
+  "failureQA": {
+    "result": "PASS",
+    "phraseGrep": "no matches",
+    "referenceFailures": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/reference-failures.md",
+    "negative": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/negative/proxy-census.one-byte-off.json",
+      "expected": "5f8816dbce2b2442ba34de5bb6089bfef0cb9afe0b58ae6e045fcd06d21b9a18",
+      "actual": "019496421514ea3bff4b26dbe12a58bf658939423a037b66747d39fe5788fadb",
+      "reported": "mismatch",
+      "originalUnchanged": true
+    }
+  },
+  "deliverables": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/surrender-spec.md",
+      "sha256": "9995fd4dfb9db089883241d24a617aa95caf0c7d964fa66dff38a3d6603091b9",
+      "bytes": 62663
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/package-evidence.md",
+      "sha256": "cd9e62951d4e635db2bb482908a20b53b0c0b97a3c7f130c8e23f46822723f5f",
+      "bytes": 21926
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/traceability-disposition.md",
+      "sha256": "afd81c16d9072d0fff03f4dd41a6e3632567aef47363b2e52c8015789669df08",
+      "bytes": 1552
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/trace.md"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/evidence-review.md"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/reference-failures.md"
+    }
+  ],
+  "notEdited": [
+    "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "source indexes",
+    "operator-runbook.md",
+    "Solidity, TypeScript, and tests"
+  ],
+  "unresolved": [
+    "NFT 3 two-bond execution, second-bond rollback, and creation-time cliffs",
+    "production registry address, deployed child addresses, and public salt bytes",
+    "decoded bootstrap self-mint and LP amounts",
+    "paid first-bond amount and purchase arguments",
+    "complete post-activation selector census",
+    "weighted-receipt credit helper body",
+    "queued-owner and previous-owner storage layout",
+    "aggregate source fingerprint preimage"
+  ],
+  "adversarial": {
+    "stale_state": "Recomputed task 4 and task 6 log digests against the verdict and source-results records. Reparsed repair happy.log line 6119 instead of trusting the census source field. Corrected line ranges after re-reading the current files.",
+    "misleading_success_output": "Did not treat task 4 round 2 command confirmation, round 1 product notes, or producer DoneClaim prose as a full surrender or package pass. Separated raw-log lines from test-source lines.",
+    "dirty_worktree": "Did not revert the already dirty amended plan or parallel operator edits.",
+    "untrusted_external_text": "Did not execute archive prose and did not use migration/package design notes as operational receipts.",
+    "hung_flaky_malformed_cancel_interruptions": "Not applicable. This task introduced none of those conditions."
+  },
+  "forbiddenOperations": {
+    "forge": false,
+    "rpc": false,
+    "installs": false,
+    "commits": false,
+    "delegation": false,
+    "codeEdits": false
+  },
+  "limits": [
+    "This DoneClaim does not close task 9 until independent verification and does not close later tasks.",
+    "Documentation does not close a source, custody, or package gate.",
+    "No operational allocation, holder list, or gas number was added."
+  ],
+  "harnessRepair": {
+    "date": "2026-11-15",
+    "verdictPreserved": ".omo/ulw-execute/dtf-conformance/task-9-verdict.json",
+    "H1": "Refreshed the surrender deliverable fingerprint after the document write was stable.",
+    "H2": "Bound owner-role and paid-first-bond trace rows to repair-attempt-1/failures.log."
+  }
+}

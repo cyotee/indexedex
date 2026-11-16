@@ -1,0 +1,209 @@
+[
+  {
+    "locator": "evidence/weighted-bonds.csv#row=3",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "4",
+    "occurrence": 1,
+    "tx": "0x98c198c8c25946098971110ac701ac1891036d573232db84788f7c3f665d19cf",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=5",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "6",
+    "occurrence": 1,
+    "tx": "0x25bcdec5ebd3f1a1b5223f30c7a4a5be7b1c7b732fa7fb36a8a2cbdc45e803bc",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=6",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "7",
+    "occurrence": 1,
+    "tx": "0x8af05d894ccb05f0a57eb5bea4838f3267726b41033609a1007ea744a5f406ff",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=7",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "8",
+    "occurrence": 1,
+    "tx": "0x1db62f8a403bb8e6c1e2ff44853a105cfd033d8fc70902e51795bb483b9bf3ed",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=8",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "9",
+    "occurrence": 1,
+    "tx": "0xeea4d604f7178e4caa89c36898574e34ebb484404985ab12662670c96e9b51f5",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=9",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "10",
+    "occurrence": 1,
+    "tx": "0x5e92e5978d3c22ec6e00fb9bc2feeb6a251fd9ccc2e3274f7be7c96ab6470d19",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=13",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "14",
+    "occurrence": 1,
+    "tx": "0x6168c6e2a65335b24d93f294064207d50b41931cd738aaab9c1b868a27f1a8c1",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=13",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "14",
+    "occurrence": 2,
+    "tx": "0x1878ba4049d26b08a81843edbeb2a936edbd8e8d8be9dfb2ec26531ef0b580d4",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=20",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "21",
+    "occurrence": 1,
+    "tx": "0xb973e4523b957f950800308b0327eab13782f54309bec9ffb5a5ed3d8c0fe076",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=20",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "21",
+    "occurrence": 2,
+    "tx": "0x0db6934c05928ca3f3a88b0c6be21071dcae4f873dda3f6992dea75b4b670954",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=20",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "21",
+    "occurrence": 3,
+    "tx": "0x08c32381c229242054fbb3b1f5e66cbae181e678b9c5b4b0cb37a42854f8e029",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=21",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "22",
+    "occurrence": 1,
+    "tx": "0xb76c35b8cbcf976712dac07d1816b2df06fb5258b6bd844ae9352d02c0d37077",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=21",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "22",
+    "occurrence": 2,
+    "tx": "0x2a94d0afa94e43d4d261baf0bb4c37e0d98d32051aa924a2ddfa3320867fb572",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=21",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "22",
+    "occurrence": 3,
+    "tx": "0x6997764082b1c00f01956a7c576c9aeb1f9c47e4f0356327e22b0f520f0c1578",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=23",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "24",
+    "occurrence": 1,
+    "tx": "0x9f1ed965eeaa9c52248ce937443ba29ff34f5a350c8b1915d1132e6459719d0f",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=24",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "25",
+    "occurrence": 1,
+    "tx": "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83",
+    "capture": "reused-phase30",
+    "priorIndex": 105
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=31",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "32",
+    "occurrence": 1,
+    "tx": "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b",
+    "capture": "reused-phase30",
+    "priorIndex": 160
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=33",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "34",
+    "occurrence": 1,
+    "tx": "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f",
+    "capture": "reused-phase30",
+    "priorIndex": 138
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=35",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "36",
+    "occurrence": 1,
+    "tx": "0xf7325a1194157d76db83360914d405799cb041165bd63522a5f8f6be0ebd7f0a",
+    "capture": "new",
+    "priorIndex": -1
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=41",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "42",
+    "occurrence": 1,
+    "tx": "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04",
+    "capture": "reused-phase30",
+    "priorIndex": 254
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=43",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "44",
+    "occurrence": 1,
+    "tx": "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd",
+    "capture": "reused-phase30",
+    "priorIndex": 283
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=44",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "45",
+    "occurrence": 1,
+    "tx": "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52",
+    "capture": "reused-phase30",
+    "priorIndex": 216
+  },
+  {
+    "locator": "evidence/weighted-bonds.csv#row=44",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "45",
+    "occurrence": 2,
+    "tx": "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289",
+    "capture": "reused-phase30",
+    "priorIndex": 306
+  }
+]

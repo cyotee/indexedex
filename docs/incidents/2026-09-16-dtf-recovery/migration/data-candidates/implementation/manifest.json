@@ -1,0 +1,36 @@
+{
+  "version": "dtf-phase27-blocker-handoff-v1",
+  "status": "blocked-not-implemented",
+  "files": [
+    {
+      "path": "binding-audit.json",
+      "bytes": 13354,
+      "sha256": "47828b37707de3e9f55c3d3d9d421d58d205d445d8299a769924d806974bd3e1"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 3179,
+      "sha256": "ef45e54769c7eb4bdf409e2263cb1926a236023e9f7503ed817bcfe9ecbeace6"
+    },
+    {
+      "path": "report.md",
+      "bytes": 5795,
+      "sha256": "61da0dfcfc164c81bc1ab45baec3b7df3e3b2c6f8ff2a85155e46d67f833fb59"
+    }
+  ],
+  "cleanup": {
+    "temporaryFilesCreated": 0,
+    "temporaryFilesRemaining": 0,
+    "pendingOperations": 0
+  },
+  "checks": {
+    "rawBindingsDeclared": 36,
+    "rawBindingsMatched": 34,
+    "rawBindingsMismatched": 2,
+    "types": "not-run",
+    "tests": "not-run",
+    "realDerivation": "not-run",
+    "relocation": "not-run"
+  },
+  "seal": "seal.json"
+}

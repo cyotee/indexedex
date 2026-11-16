@@ -1,0 +1,1 @@
+{"command":["/Users/cyotee/.foundry/bin/anvil","--host","127.0.0.1","--port","18560","--chain-id","4663","--fork-url","<resolved archive alias>","--fork-block-number","108944663","--gas-limit","100000000","--disable-min-priority-fee","--balance","1000000"]}

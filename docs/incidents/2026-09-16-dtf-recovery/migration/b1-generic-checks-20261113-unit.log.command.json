@@ -1,0 +1,1 @@
+{"command":["/opt/homebrew/Cellar/bun/1.4.2/bin/bun","test","--timeout","60000","./scripts/recovery/dtf-migration/claimed-sy-state.test.ts","./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts","./scripts/recovery/dtf-migration/weighted-sy.test.ts","./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"],"code":0,"signal":null}

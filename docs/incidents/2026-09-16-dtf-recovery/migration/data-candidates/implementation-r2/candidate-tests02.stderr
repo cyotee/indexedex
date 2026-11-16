@@ -1,0 +1,27 @@
+
+scripts/recovery/dtf-migration/candidates.test.ts:
+(pass) joins exact multiple asset inputs to one collection ID and preserves observations [1.30ms]
+(pass) shared purchase transactions never attribute their entire input to each NFT [0.25ms]
+(pass) payer conflicts remain unresolved instead of being assigned to the recipient [0.20ms]
+(pass) earlier LP accounting shares keep direct WETH distinct from routed DTF and missing receipts [0.13ms]
+(pass) unknown integer is distinct from observed zero and rejects decimal or malformed encodings [0.23ms]
+(pass) CSV parser preserves quoted delimiters and rejects truncation, bad widths and duplicate keys [0.10ms]
+(pass) source units distinguish native19 vault shares, native28 SE, raw weights, gons and accounting LP [0.10ms]
+(pass) candidate documents are unsupported by every live input schema and preparation CLI [1.98ms]
+(pass) all declared bytes authenticate before malformed raw CSV parsing and fail closed on missing files [4.33ms]
+(pass) offline candidate command rejects signing, broadcast and duplicate input flags [0.17ms]
+
+scripts/recovery/dtf-migration/candidate-inventory.test.ts:
+(pass) inventory links each account, exclusion, source, holding and observed recovery without granting basis [0.44ms]
+(pass) inventory rejects broken account-ledger.csv position_ids relation [0.66ms]
+(pass) inventory rejects broken account-ledger.csv current_holding_ids relation [0.21ms]
+(pass) inventory rejects broken held-exclusions.csv unresolved_snapshot_remainder_detf_raw relation [0.21ms]
+(pass) inventory rejects broken positions.csv source_id relation [0.09ms]
+(pass) inventory rejects broken evidence/all-index-events.csv gons_per_unit relation [0.17ms]
+(pass) inventory rejects broken observed-recoveries.csv observed_amount_raw relation [0.18ms]
+(pass) blank recovery count remains unknown rather than an inferred zero [0.31ms]
+(pass) historical proofs check event-time divisor and signed claim conservation [0.47ms]
+
+ 19 pass
+ 0 fail
+Ran 19 tests across 2 files. [77.00ms]

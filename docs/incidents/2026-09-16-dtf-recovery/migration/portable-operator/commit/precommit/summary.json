@@ -1,0 +1,113 @@
+{
+  "schema": "phase26-portable-operator-precommit-summary-v1",
+  "parent": "137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+  "branch": "work/dtf-migration-phase-26-portable-operator",
+  "held09WorktreeOpened": false,
+  "commitDirExisted": false,
+  "totals": {
+    "docs-incidents": {
+      "content": 18134,
+      "permission": 18405,
+      "directories": 271,
+      "files": 18130,
+      "symlinks": 4,
+      "other": 0
+    },
+    "out": {
+      "content": 7376,
+      "permission": 13856,
+      "directories": 6480,
+      "files": 7376,
+      "symlinks": 0,
+      "other": 0
+    },
+    "cache_forge": {
+      "content": 6502,
+      "permission": 12368,
+      "directories": 5866,
+      "files": 6502,
+      "symlinks": 0,
+      "other": 0
+    }
+  },
+  "modeDistinctions": {
+    "('dir', '000000', '0o755', 16877)": 12617,
+    "('file', '100644', '0o644', 33188)": 31313,
+    "('file', '100644', '0o600', 33152)": 695,
+    "('symlink', '120000', '0o755', 41453)": 4
+  },
+  "indexes": {
+    "bytes": 8268,
+    "sha256": "6d01ddbe42fbf16ef9156e8ec177d6cde10f492c9d303acfd16c0015f9ce55c0",
+    "count": 28,
+    "foreignCount": 27
+  },
+  "files": {
+    "docs-incidents.jsonl": {
+      "bytes": 6157123,
+      "sha256": "8e5cb757310062d9318f7d752b324f12992f2087359ffa542f3d6d47e0741b0b",
+      "lines": 18134
+    },
+    "docs-incidents-perms.jsonl": {
+      "bytes": 5875795,
+      "sha256": "49a29b8c40182327f1a14c5dc0cf5ba94ff4c6b6fd7ce80ba5cd0ae8e3156e72",
+      "lines": 18405
+    },
+    "docs-incidents-dirs.jsonl": {
+      "bytes": 85443,
+      "sha256": "1f923f3e8c14aec62f54d41ac373f08389f7691bca6df53bcf253e63776e41b6",
+      "lines": 271
+    },
+    "out.jsonl": {
+      "bytes": 1960530,
+      "sha256": "6673598e3a68c4b3dd7d747ffea0027f9c55f566c259faff4453b299a9db1771",
+      "lines": 7376
+    },
+    "out-perms.jsonl": {
+      "bytes": 2721030,
+      "sha256": "6c69936bfe945823dca2d1b60a81897870c422a976d4b8a9d638e4c2c9dfb72a",
+      "lines": 13856
+    },
+    "out-dirs.jsonl": {
+      "bytes": 1425573,
+      "sha256": "6d3cb6c807e097df44c60d87327a2c24d2dcda0544f89c64b54111f2ef5b6e9a",
+      "lines": 6480
+    },
+    "cache_forge.jsonl": {
+      "bytes": 2297269,
+      "sha256": "167a70ddc88be51f57510a8ed99510b778850e635a26f64009b0c64c73750744",
+      "lines": 6502
+    },
+    "cache_forge-perms.jsonl": {
+      "bytes": 3518453,
+      "sha256": "ad05142c9779921a1abba60f51f25985a4caf985568a18a64702422e24237e4c",
+      "lines": 12368
+    },
+    "cache_forge-dirs.jsonl": {
+      "bytes": 1819894,
+      "sha256": "446bc614ef6c7e6007e7ecbcc99ba3dbc94ffb9c2a9f429347cfa0da974b0a21",
+      "lines": 5866
+    },
+    "indexes.json": {
+      "bytes": 8268,
+      "sha256": "6d01ddbe42fbf16ef9156e8ec177d6cde10f492c9d303acfd16c0015f9ce55c0",
+      "count": 28,
+      "foreignCount": 27
+    },
+    "refs.jsonl": {
+      "bytes": 12649,
+      "sha256": "1eac53d11d1d9213bf3c80eb28c801c06978389468969dd7048b7773c4ea19c2",
+      "lines": 52
+    },
+    "show-ref.txt": {
+      "bytes": 6386,
+      "sha256": "b2f616e678112a9d184dacc323f9422e4b2e6d0ca596ba89613b9e5c502e8a5a",
+      "lines": 66
+    },
+    "tracked-diff.txt": {
+      "bytes": 60829,
+      "sha256": "193352dc21b6dec54a33d578e75cedc1ab8a9366a2131d7f7c3e65c76e795c40"
+    }
+  },
+  "selfDigest": "This summary does not claim its own raw SHA-256."
+}

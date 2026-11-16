@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-11-15T08:15:22.419Z",
+  "manifest": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-signed-final/commands.json",
+  "manifestSha256": "630cb08e5c31b5e1f36c339b50dfedd46308963d58c088cc55395dc28954857a",
+  "sourceEntries": 221,
+  "changedEntries": [
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "expected": "6a3e899762ad66dbfe19aa7108dc2745a11cc17c5d3b020849060c79e0813d5a",
+      "actual": "3fa56907627a4a1bf737b699bdd999745ec806e17006dcd33021f9e7b75d9268"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "expected": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+      "actual": "b96d81ec174e1cf0830d44e42c057ab397501e54f567762520817af3ff8d0f94"
+    }
+  ],
+  "reachableLocalModules": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+    "scripts/recovery/dtf-migration/bundle-files.ts",
+    "scripts/recovery/dtf-migration/bundle.ts",
+    "scripts/recovery/dtf-migration/candidate-input.ts",
+    "scripts/recovery/dtf-migration/candidate-nfts.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+    "scripts/recovery/dtf-migration/claimed-sy.ts",
+    "scripts/recovery/dtf-migration/execution-deployment.ts",
+    "scripts/recovery/dtf-migration/execution-domain.ts",
+    "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+    "scripts/recovery/dtf-migration/execution-plan.ts",
+    "scripts/recovery/dtf-migration/execution-rpc.ts",
+    "scripts/recovery/dtf-migration/execution-schema.ts",
+    "scripts/recovery/dtf-migration/execution-state.ts",
+    "scripts/recovery/dtf-migration/execution.ts",
+    "scripts/recovery/dtf-migration/journal.ts",
+    "scripts/recovery/dtf-migration/payloads.ts",
+    "scripts/recovery/dtf-migration/preparation.ts",
+    "scripts/recovery/dtf-migration/provenance.ts",
+    "scripts/recovery/dtf-migration/quotes.ts",
+    "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+    "scripts/recovery/dtf-migration/rehearsal-data.ts",
+    "scripts/recovery/dtf-migration/rehearsal-process.ts",
+    "scripts/recovery/dtf-migration/schema.ts"
+  ],
+  "unresolved": [],
+  "changedReachable": [],
+  "qualification": "The only two changed entries are bundle.test.ts and rehearsal-portable.ts, neither reachable from signed gas helper. Product and gas generator entries in the accepting source map match. Reuse is bounded to task 11 signed gas evidence; no task 10 lifecycle is inferred."
+}

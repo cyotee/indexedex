@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/bin/zsh",
+    "-c",
+    "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager status --short --ignore-submodules; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager rev-parse HEAD; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager diff --ignore-submodules --check; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager diff --staged --stat; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager diff --ignore-submodules --binary"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+  "started": "2026-11-13T08:26:18.624Z",
+  "stopped": "2026-11-13T08:26:19.835Z",
+  "code": 0,
+  "signal": null,
+  "stdout": {
+    "bytes": 29288,
+    "sha256": "8d39259f16511b8e655c6d716a87ae948bb83e1a0f936739fbde999a661f10ac"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

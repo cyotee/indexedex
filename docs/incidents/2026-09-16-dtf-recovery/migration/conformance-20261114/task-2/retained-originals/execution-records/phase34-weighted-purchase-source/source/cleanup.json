@@ -1,0 +1,160 @@
+{
+  "version": "phase34-stopped-producer-cleanup-v1",
+  "stopped": true,
+  "pendingOwnedOperations": 0,
+  "newNetworkRequests": 0,
+  "ownedChildPids": [
+    1876,
+    3389,
+    3390,
+    3391,
+    3392,
+    3394
+  ],
+  "remainingOwnedChildPids": [],
+  "commands": [
+    {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "argv": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/prove.mjs"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+      "pid": 1876,
+      "startedAt": "2026-11-13T12:05:08.267Z",
+      "finishedAt": "2026-11-13T12:05:08.961Z",
+      "exit": 0,
+      "stdoutBytes": 6336233,
+      "stdoutSha256": "e5a0aafdc3a509e40708c5d4ae6ff565ad40178c059b43972b1bd7705426ea98",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrInline": ""
+    },
+    {
+      "executable": "/opt/homebrew/bin/node",
+      "argv": [
+        "--check",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/evidence.mjs"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+      "pid": 3389,
+      "startedAt": "2026-11-13T12:07:37.149Z",
+      "finishedAt": "2026-11-13T12:07:37.343Z",
+      "exit": 0,
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrInline": ""
+    },
+    {
+      "executable": "/opt/homebrew/bin/node",
+      "argv": [
+        "--check",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/rows.mjs"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+      "pid": 3390,
+      "startedAt": "2026-11-13T12:07:37.150Z",
+      "finishedAt": "2026-11-13T12:07:37.343Z",
+      "exit": 0,
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrInline": ""
+    },
+    {
+      "executable": "/opt/homebrew/bin/node",
+      "argv": [
+        "--check",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/prove.mjs"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+      "pid": 3391,
+      "startedAt": "2026-11-13T12:07:37.151Z",
+      "finishedAt": "2026-11-13T12:07:37.343Z",
+      "exit": 0,
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrInline": ""
+    },
+    {
+      "executable": "/opt/homebrew/bin/node",
+      "argv": [
+        "--check",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/verify.mjs"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+      "pid": 3392,
+      "startedAt": "2026-11-13T12:07:37.151Z",
+      "finishedAt": "2026-11-13T12:07:37.343Z",
+      "exit": 0,
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrInline": ""
+    },
+    {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "argv": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/verify.mjs"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+      "pid": 3394,
+      "startedAt": "2026-11-13T12:07:37.343Z",
+      "finishedAt": "2026-11-13T12:07:37.933Z",
+      "exit": 0,
+      "stdoutBytes": 656,
+      "stdoutSha256": "32051f66730c20a659d27c0a80fcda5a3b79b8c0d5c5ed84cfab30cab81da743",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrInline": ""
+    },
+    {
+      "executable": "/bin/ps",
+      "argv": [
+        "-axo",
+        "pid=,ppid=,comm="
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+      "pid": 5753,
+      "startedAt": "2026-11-13T12:11:51.598Z",
+      "finishedAt": "2026-11-13T12:11:51.627Z",
+      "exit": 0,
+      "stdoutBytes": 89455,
+      "stdoutSha256": "98570a3636dfaa8122c4d9a9d7475b2df7281a3fc95a17809adb1f754c707fee",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrInline": ""
+    }
+  ],
+  "processInspection": {
+    "command": "/bin/ps -axo pid=,ppid=,comm=",
+    "exit": 0,
+    "stdout": "process-check.stdout",
+    "recordedChildrenAbsent": true,
+    "inspectionChildAlsoExited": true
+  },
+  "preservation": {
+    "uniqueIdentityChecks": 6446,
+    "changed": 0,
+    "detail": "preservation.json"
+  },
+  "credentials": {
+    "selected": false,
+    "accessed": false,
+    "newCredentialScan": "not applicable: no new provider/credential access"
+  },
+  "temporaryRuntimeCreated": false,
+  "deletionRequired": false,
+  "sharedServicesModified": false,
+  "sourceAndVerificationDirectoriesOutsideOwnedPathModified": false,
+  "installOrCompilerOrOldGateRun": false,
+  "signerOrServerOrChainOrMonitorOrSubagentStarted": false,
+  "retainedFailure": "phase32 first 243 response entities/outcomes unavailable; not reconstructed or repaired",
+  "lsp": "Biome not installed; fresh diagnostics also timed out. No clean LSP/strict checked-JS claim.",
+  "boundary": "Only phase34-weighted-purchase-source/source artifact writes; no financial approval or executable allocation."
+}

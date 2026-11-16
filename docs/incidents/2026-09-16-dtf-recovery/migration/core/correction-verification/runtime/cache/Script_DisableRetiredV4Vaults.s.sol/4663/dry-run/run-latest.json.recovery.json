@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "generation": "0x2d66a80f17e79695820f8589fa05e4aa5734fa25b1921eaf54ed6fa3f006821c",
+  "multi": false,
+  "batch": false,
+  "deployments": [
+    {
+      "chain": 4663,
+      "batch_id": null,
+      "operations": [
+        {
+          "id": {
+            "sequence": 0,
+            "index": 0
+          },
+          "fingerprint": "0xcf4c031c89780decbff6d8f1c71214afad0c289e30b5f7bd50a4aef34afb1fa0",
+          "rpc": "https://rpc.mainnet.chain.robinhood.com"
+        },
+        {
+          "id": {
+            "sequence": 0,
+            "index": 1
+          },
+          "fingerprint": "0xf4c30bf132af3ca0a3895e72483c72a6c9ea4b1cf29b730250a9f7dc34db3e4b",
+          "rpc": "https://rpc.mainnet.chain.robinhood.com"
+        }
+      ]
+    }
+  ],
+  "data": {
+    "kind": "single",
+    "sequence": {
+      "transactions": [
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+          "function": "setPackageDisabled(address,bool)",
+          "functionAbi": "function setPackageDisabled(address pkg, bool disabled) returns (bool success)",
+          "arguments": [
+            "0x72b0243E3806eab5E30412cc93682f98f0d20eaE",
+            "true"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+            "gas": "0x1ffac",
+            "value": "0x0",
+            "input": "0xa64b762500000000000000000000000072b0243e3806eab5e30412cc93682f98f0d20eae0000000000000000000000000000000000000000000000000000000000000001",
+            "nonce": "0x1f9",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        },
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+          "function": "setVaultAddressDisabled(address,bool)",
+          "functionAbi": "function setVaultAddressDisabled(address vault, bool disabled) returns (bool success)",
+          "arguments": [
+            "0x64e0f5A5Cf0F579EFF0981A4fEDEA77964B74531",
+            "true"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+            "gas": "0x1a395",
+            "value": "0x0",
+            "input": "0xa64bc06300000000000000000000000064e0f5a5cf0f579eff0981a4fedea77964b745310000000000000000000000000000000000000000000000000000000000000001",
+            "nonce": "0x1fa",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        }
+      ],
+      "receipts": [],
+      "libraries": [],
+      "pending": [],
+      "returns": {},
+      "timestamp": 1792676302919,
+      "chain": 4663,
+      "commit": "2ba07631",
+      "recovery_generation": "0x2d66a80f17e79695820f8589fa05e4aa5734fa25b1921eaf54ed6fa3f006821c"
+    }
+  }
+}

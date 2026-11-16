@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "bun",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--target",
+    "ES2022",
+    "--module",
+    "ESNext",
+    "--moduleResolution",
+    "Bundler",
+    "--strict",
+    "--noUncheckedIndexedAccess",
+    "--exactOptionalPropertyTypes",
+    "--verbatimModuleSyntax",
+    "--skipLibCheck",
+    "--types",
+    "node",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/audit.ts"
+  ],
+  "exit": 0,
+  "signal": null,
+  "logSha256": "fbb98f0143a30c80e9baeabd8b9e6ab6209c6cd22727356c02657c3fd66954ec",
+  "recorderSha256": "cc8f59ad0803b7caf4df3373c0d8ea3d756494501f6d93cc57765c917ab22f48",
+  "sourcesUnchanged": true
+}

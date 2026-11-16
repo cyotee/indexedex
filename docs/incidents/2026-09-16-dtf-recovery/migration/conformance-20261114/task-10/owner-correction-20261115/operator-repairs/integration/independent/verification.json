@@ -1,0 +1,1301 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "scope": "Combined setter receipt binding and configure interruption unit/CLI gate only; excludes fresh Anvil and task-10 lifecycle acceptance",
+  "confidence": "high",
+  "sources": {
+    "claim": {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/operator-repairs-integration-done.json",
+      "sha256": "34b549b9fc82cbf70dacab65ec3d125dcc4219f3991fb18613c3bb9b68be5fda"
+    },
+    "admittedVerdicts": [
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/setter-repair-verdict.json",
+        "sha256": "1ea2a81393fe150fe167d183b22f6d0319a835e8eb4b6f93ebcfc397b56660dd",
+        "verdict": "confirmed",
+        "scope": "Generated source-bound pricing ABI and setter receipt repair only; excludes task 10, configure interruption, integration and readiness",
+        "sources": [
+          {
+            "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+            "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+            "bytes": 14667,
+            "pureLines": 219
+          },
+          {
+            "path": "scripts/recovery/dtf-migration/execution-state.ts",
+            "sha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67",
+            "bytes": 29608,
+            "pureLines": 416
+          },
+          {
+            "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+            "sha256": "130932ca3a517b4753b3f3e34bdc2df11eca8f11c64429b629abc8eb66881acd",
+            "bytes": 14055,
+            "pureLines": 222
+          },
+          {
+            "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+            "sha256": "d8834a16ed91152100a700b529bc0a52f9a04e7ef3a06017171031b6bc8ac6fe",
+            "bytes": 19308,
+            "pureLines": 290
+          },
+          {
+            "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+            "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+            "bytes": 31166,
+            "pureLines": 424
+          }
+        ],
+        "sourceHashesMatch": true
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/configure-fault-verdict.json",
+        "sha256": "94b162f56eac019a8fb83eccd138a07d0614e4b42370cea2b54afdd02416c62d",
+        "verdict": "confirmed",
+        "scope": "Configure fault-after-mined CLI interruption repair in execution.ts and execution.test.ts only; excludes task 10, shared gate and fresh real lifecycle",
+        "sources": [
+          {
+            "path": "scripts/recovery/dtf-migration/execution.ts",
+            "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+            "bytes": 19008
+          },
+          {
+            "path": "scripts/recovery/dtf-migration/execution.test.ts",
+            "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+            "bytes": 20619
+          }
+        ],
+        "sourceHashesMatch": true
+      }
+    ],
+    "sourceInventory": [
+      {
+        "group": "source",
+        "path": "bun.lock",
+        "sha256": "25c47a2ce63eef951a283eea0132611e3d6d78f40f4737fbad5f5eab7c931740",
+        "bytes": 247642,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-fault.ts",
+        "sha256": "3bca8de7bdacd6e90f650dc15f42ef07229936dca694ae8b670d343f4b873c0c",
+        "bytes": 6884,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/transport.fixture.ts",
+        "sha256": "8e01a4513b0e46b5a57dcbe406f1b51073a1c36d765c19c0a64c9944d5b33994",
+        "bytes": 13916,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/run-checks.sh",
+        "sha256": "69dab868f3c53813d41bf6ef498d2ff59f53a544742c899305dc7432b614f9ba",
+        "bytes": 3328,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt-before-producer-authorization.ts",
+        "sha256": "48465ccfe49e7de3f6b8d87d02fc45e0e0e84c3dfe331320f37b6b22c8de7733",
+        "bytes": 4976,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt.ts",
+        "sha256": "b2a32aede765def72b5b79a514acac61b3630fd32a681a38c928c7063ab3d0ea",
+        "bytes": 6512,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-context.ts",
+        "sha256": "a3d16b53de2a326f524d8ffac7944a60beff664c0e2667cb5997868dd9ea6f80",
+        "bytes": 5534,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts",
+        "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+        "bytes": 6147,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "bytes": 20293,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+        "bytes": 18846,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "node_modules/@types/node/package.json",
+        "sha256": "e9bf302124358d90ec233c509c4f9fb2223129b988da8147b5c1bf835f652e86",
+        "bytes": 4057,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "node_modules/ethers/package.json",
+        "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f",
+        "bytes": 4945,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "node_modules/typescript/bin/tsc",
+        "sha256": "8d5fa5bd883fec0979fc2004f1fe1d99aef40570155d550eadc0b03b55513bf0",
+        "bytes": 45,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "node_modules/typescript/lib/_tsc.js",
+        "sha256": "a040f97c9d0223f64c8ebc380c5e48eb7945f1142f7c1dc9c3ec4acdb6c1c613",
+        "bytes": 6211917,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "node_modules/typescript/package.json",
+        "sha256": "5a0bb7f286c4b3f1413a42c05f902311b161f70e5f52d9da10490443bfd595a3",
+        "bytes": 3620,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "node_modules/zod/package.json",
+        "sha256": "f2d8e294bb39f78a945cd602ee5635781f66081f032d991f61548f7e550ae74d",
+        "bytes": 3284,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "out/IUniswapV4DetfMigrationWeightedPricing.sol/IUniswapV4DetfMigrationWeightedPricing.json",
+        "sha256": "bc27f132877882a81b5d89f7ecb2637eb4b04fa685ad42430930e595cd181bbd",
+        "bytes": 40196,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+        "sha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+        "bytes": 365399,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "package.json",
+        "sha256": "a3d0d97074012a183156abf0134370f1f8bc69b2e69aeaa7babebbd0644a651d",
+        "bytes": 3138,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+        "sha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+        "bytes": 8321,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "sha256": "01505bf4ca5fbb81d7466ec6cfe7e8b9382a949c8a6cd9a072973dba1ad62282",
+        "bytes": 1793,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+        "sha256": "6fdc999ed41fa75b694f0efdb43c3f59a0e46c01d2338d10709ca5ecffb4911e",
+        "bytes": 34081,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/bundle.ts",
+        "sha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+        "bytes": 9123,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+        "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+        "bytes": 6757,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+        "bytes": 6421,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+        "bytes": 11872,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+        "bytes": 7120,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+        "bytes": 5443,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+        "bytes": 8096,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+        "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+        "bytes": 9086,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/candidates.ts",
+        "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+        "bytes": 3399,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "sha256": "75aeece9077d5e4030344fc06d24ec11054f66a861574908cba0d5c306da4bc8",
+        "bytes": 5412,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "sha256": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+        "bytes": 10369,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+        "sha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+        "bytes": 2346,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "sha256": "3b262fb7ab7b7b29457b60ebda0bcf8c9c8b33802e8621186b0262cb8f6f0595",
+        "bytes": 3806,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "sha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+        "bytes": 2929,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "sha256": "5d89132aaa379ecd04f5bd1b7ada7fa4db9ec24957935ebd0f09187da19a61df",
+        "bytes": 5140,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "sha256": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+        "bytes": 5522,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+        "bytes": 8114,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/cli.ts",
+        "sha256": "0804827556835e51d00fa553d3f99cd027263ed7042d501cdff088d46f02d011",
+        "bytes": 13446,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "sha256": "6e5aebb5c965959823441f8dd8d346e86166ed2901b8eedd70c0ba9f4c7e979c",
+        "bytes": 5404,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "sha256": "7c652f7d60f1f4109bfb8988fa19f959192a302aeac4682d5d9f732e3833ec4a",
+        "bytes": 9330,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "sha256": "daab8beeb5428aefd8e97f134638f02dab2d0d3044c2363ef3179c97eb2d8f97",
+        "bytes": 6682,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "sha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+        "bytes": 4485,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "sha256": "130932ca3a517b4753b3f3e34bdc2df11eca8f11c64429b629abc8eb66881acd",
+        "bytes": 14055,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+        "bytes": 14667,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "sha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61",
+        "bytes": 11414,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "sha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+        "bytes": 6855,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "sha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+        "bytes": 12513,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+        "sha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912",
+        "bytes": 5380,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "sha256": "d8834a16ed91152100a700b529bc0a52f9a04e7ef3a06017171031b6bc8ac6fe",
+        "bytes": 19308,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "sha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67",
+        "bytes": 29608,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution.fixture.ts",
+        "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+        "bytes": 13686,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution.test.ts",
+        "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+        "bytes": 20619,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/execution.ts",
+        "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+        "bytes": 19008,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "sha256": "5016194f2904a251077dbd265e21c7a253d4f2aa59ee7c2364e363e0b3af09f2",
+        "bytes": 6823,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/journal.ts",
+        "sha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+        "bytes": 8522,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "sha256": "caabc9a7604339920c25487c4af6dd7577cb12df4d4edb9abc6cdbf863f2bda4",
+        "bytes": 10063,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/payloads.ts",
+        "sha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3",
+        "bytes": 17608,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+        "bytes": 16042,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+        "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+        "bytes": 15126,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/preparation.ts",
+        "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+        "bytes": 21123,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/provenance.ts",
+        "sha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2",
+        "bytes": 7181,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/quotes.ts",
+        "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+        "bytes": 19500,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+        "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+        "bytes": 3491,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "sha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+        "bytes": 8738,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+        "sha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+        "bytes": 5724,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "sha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+        "bytes": 9271,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "sha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+        "bytes": 10148,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+        "bytes": 6178,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "sha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+        "bytes": 8477,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+        "sha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+        "bytes": 9645,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "sha256": "5ed49f319e62a3335189d801261d01aec465d9579d41181c9f4c54330b0e0dd2",
+        "bytes": 10934,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+        "bytes": 4636,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+        "bytes": 6745,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+        "bytes": 20029,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+        "sha256": "f6b85235915eb23d2f22a736f6af5616e58d68f1ea4b64c68c80d183495c6958",
+        "bytes": 7861,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+        "sha256": "8f9717e4478bc9a1333991c34782060d2bb4dee1d9d1c65931faecf798be3668",
+        "bytes": 7903,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+        "sha256": "6d0c7195f8603df8c2b4d8111c479fc87aa99a5a05cff51c4827c0c57060e09b",
+        "bytes": 8392,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "sha256": "134a65e6ec14bb01eb9dd620f83e7a2f38df8a98689879eb9b7e08d6e266abe9",
+        "bytes": 13869,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+        "sha256": "1c277d81758444791a2fcf2d0b9e871b86a4113bd5290f28d313eabc0af2f8e3",
+        "bytes": 3925,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+        "sha256": "7971fe65ec2a25d8b5bebe1b1203a6955ef89f3bf73e046e0652c81e3cf78a25",
+        "bytes": 10185,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "sha256": "14607d15bf59bf8a660a9339d28f710e309c3d6c53969fe3b6733bfb08971615",
+        "bytes": 14491,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+        "bytes": 31166,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+        "bytes": 19046,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "sha256": "031179dad9816047f5972006f3720eed9517840b24674fb6ca45ef0afb562c67",
+        "bytes": 13370,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "sha256": "ad822ba0cd573e615ec09433e30047ac0f426ac0d5fe4e40fd80cdc2c290fcfe",
+        "bytes": 12829,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "sha256": "c625d384632c459a4d40a1fe434096635b86b172ad867ceb5b3d35cbd228d9b5",
+        "bytes": 13875,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "sha256": "50960d918b03d2c0a517ef498dba4ea601aefdc439fe39e425c2c6e156b04b30",
+        "bytes": 9538,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "sha256": "4adf63cf79fcf192aa31ec8b5e194e71b3729992d6484bf5661c9f2120da0048",
+        "bytes": 11915,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+        "sha256": "3534ab723a68cb8f5d9c1d175951cd47cb546f1ba912e889e062be927ec15b25",
+        "bytes": 8292,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "sha256": "e77b66b1d2f2fbbd5bd47fbf7186941acaf1f2ad71a9ccfe27fc13fd51ebd80b",
+        "bytes": 8563,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "sha256": "b96d81ec174e1cf0830d44e42c057ab397501e54f567762520817af3ff8d0f94",
+        "bytes": 7556,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+        "bytes": 2869,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "sha256": "506aa9abfee705b3c895ebfb11cbc70ce6e35bedd85793016100ad9ae279ebd3",
+        "bytes": 16514,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "sha256": "fb0c0792ad24458d32745a16758c89527c0bbea0ac4a80174a2cc27c097d14ff",
+        "bytes": 11168,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "sha256": "33865e649a1ef7774230f8729438cfc684920f5195efb56a23255255a5dd597d",
+        "bytes": 18499,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+        "bytes": 6048,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+        "bytes": 15737,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "sha256": "a0f9a4b18e12baaf714a9ce9f1e66e7ee80dec0b810bf5f473b2a69a7d80c26f",
+        "bytes": 22057,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/rehearse.ts",
+        "sha256": "0753e8c5914cd5a333b1e3cdce15469b83c46a6422c96e8c22579a552fd521e7",
+        "bytes": 47087,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+        "bytes": 4079,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/schema.ts",
+        "sha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+        "bytes": 13749,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "sha256": "c2af2343c48f106e1fe77d2892896c98a42ffddf80333d0dbceea805dfc604e1",
+        "bytes": 5435,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "sha256": "83a04df23bd0ea7b9e99cfabe8e0a5dfa49873a2e94ec21f400c6640bfd40e16",
+        "bytes": 6799,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+        "sha256": "7ab5b5e1218c7ae89de49169930ca0394cd99221f95b44f65e2db655aeadbba8",
+        "bytes": 13080,
+        "matches": true
+      },
+      {
+        "group": "source",
+        "path": "tsconfig.json",
+        "sha256": "dfff66a313dd59454dfe0addce15fa68ce9c148c371c2b34ed349c373569302b",
+        "bytes": 230,
+        "matches": true
+      }
+    ],
+    "evidenceInventories": [
+      {
+        "group": "delivery",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/cleanup.json",
+        "sha256": "6682ee32cf1acfa9c4ea01f768fc1743e6e8f6b5d3a9ea02811057ec15e5a530",
+        "bytes": 894,
+        "matches": true
+      },
+      {
+        "group": "delivery",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/manual-bindings.json",
+        "sha256": "881576c63f246a4021a7e956452efcb71ba1a20a52a8459e4bdb3c6b49a85a2b",
+        "bytes": 115368,
+        "matches": true
+      },
+      {
+        "group": "delivery",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/results.json",
+        "sha256": "514735627f01aa4085e1b69216ad8e72d938e775545e032d38010f4e7be8e1c3",
+        "bytes": 67598,
+        "matches": true
+      },
+      {
+        "group": "delivery",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/run-checks.sh",
+        "sha256": "69dab868f3c53813d41bf6ef498d2ff59f53a544742c899305dc7432b614f9ba",
+        "bytes": 3328,
+        "matches": true
+      },
+      {
+        "group": "delivery",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/source-after.json",
+        "sha256": "917253da576cbe0314a8f32ccdf458fe01ea38668a83289dd7e09b19aa9b1124",
+        "bytes": 40620,
+        "matches": true
+      },
+      {
+        "group": "delivery",
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/source-before.json",
+        "sha256": "7a8ea450b23ecedeaf3cee04a9dd0ee4c83afde914d9b29676fef80ab873d9b9",
+        "bytes": 117092,
+        "matches": true
+      }
+    ]
+  },
+  "evidence": {
+    "requiredRuns": [
+      {
+        "name": "01-tests",
+        "argv": [
+          "bun",
+          "test",
+          "--timeout",
+          "15000",
+          "./scripts/recovery/dtf-migration/bundle.test.ts",
+          "./scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "./scripts/recovery/dtf-migration/candidates.test.ts",
+          "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "./scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+          "./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+          "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "./scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "./scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+          "./scripts/recovery/dtf-migration/execution-state.test.ts",
+          "./scripts/recovery/dtf-migration/execution.test.ts",
+          "./scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "./scripts/recovery/dtf-migration/nft-contributions.test.ts",
+          "./scripts/recovery/dtf-migration/preparation.test.ts",
+          "./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "./scripts/recovery/dtf-migration/receipt.test.ts",
+          "./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+          "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "./scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+        ],
+        "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "exitCode": 0,
+        "started": "2026-11-15T15:54:24Z",
+        "finished": "2026-11-15T15:55:57Z",
+        "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.stdout.log",
+        "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.stderr.log",
+        "operatorCommand": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts",
+        "nulArgvMatches": true,
+        "cwdMatches": true,
+        "exitMatches": true,
+        "stdoutBytes": 3492,
+        "stderrBytes": 28879,
+        "testSummary": [
+          "",
+          " 280 pass",
+          " 0 fail",
+          "Ran 280 tests across 21 files. [92.23s]",
+          ""
+        ],
+        "outputFailureMarkers": []
+      },
+      {
+        "name": "02-operator-types",
+        "argv": [
+          "bun",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "--target",
+          "ES2022",
+          "--module",
+          "ESNext",
+          "--moduleResolution",
+          "Bundler",
+          "--strict",
+          "--noUncheckedIndexedAccess",
+          "--exactOptionalPropertyTypes",
+          "--verbatimModuleSyntax",
+          "--skipLibCheck",
+          "--types",
+          "node",
+          "scripts/recovery/dtf-migration/bundle-files.ts",
+          "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "scripts/recovery/dtf-migration/bundle.test.ts",
+          "scripts/recovery/dtf-migration/bundle.ts",
+          "scripts/recovery/dtf-migration/candidate-input.ts",
+          "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "scripts/recovery/dtf-migration/candidates.test.ts",
+          "scripts/recovery/dtf-migration/candidates.ts",
+          "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+          "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+          "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+          "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+          "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+          "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+          "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "scripts/recovery/dtf-migration/execution-deployment.ts",
+          "scripts/recovery/dtf-migration/execution-domain.test.ts",
+          "scripts/recovery/dtf-migration/execution-domain.ts",
+          "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "scripts/recovery/dtf-migration/execution-plan.ts",
+          "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "scripts/recovery/dtf-migration/execution-schema.ts",
+          "scripts/recovery/dtf-migration/execution-state.test.ts",
+          "scripts/recovery/dtf-migration/execution-state.ts",
+          "scripts/recovery/dtf-migration/execution.fixture.ts",
+          "scripts/recovery/dtf-migration/execution.test.ts",
+          "scripts/recovery/dtf-migration/execution.ts",
+          "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "scripts/recovery/dtf-migration/journal.ts",
+          "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+          "scripts/recovery/dtf-migration/payloads.ts",
+          "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "scripts/recovery/dtf-migration/preparation.test.ts",
+          "scripts/recovery/dtf-migration/preparation.ts",
+          "scripts/recovery/dtf-migration/provenance.ts",
+          "scripts/recovery/dtf-migration/quotes.ts",
+          "scripts/recovery/dtf-migration/receipt-association.ts",
+          "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "scripts/recovery/dtf-migration/receipt-input.ts",
+          "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "scripts/recovery/dtf-migration/receipt.test.ts",
+          "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+          "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+          "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "scripts/recovery/dtf-migration/rehearse.ts",
+          "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+          "scripts/recovery/dtf-migration/schema.ts",
+          "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+        ],
+        "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "exitCode": 0,
+        "started": "2026-11-15T15:55:57Z",
+        "finished": "2026-11-15T15:55:58Z",
+        "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.stdout.log",
+        "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.stderr.log",
+        "operatorCommand": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts",
+        "nulArgvMatches": true,
+        "cwdMatches": true,
+        "exitMatches": true,
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "testSummary": null,
+        "outputFailureMarkers": []
+      },
+      {
+        "name": "03-helper-types",
+        "argv": [
+          "bun",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "--target",
+          "ES2022",
+          "--module",
+          "ESNext",
+          "--moduleResolution",
+          "Bundler",
+          "--strict",
+          "--noUncheckedIndexedAccess",
+          "--exactOptionalPropertyTypes",
+          "--verbatimModuleSyntax",
+          "--skipLibCheck",
+          "--types",
+          "node",
+          "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+          "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+        ],
+        "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "exitCode": 0,
+        "started": "2026-11-15T15:55:58Z",
+        "finished": "2026-11-15T15:55:59Z",
+        "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.stdout.log",
+        "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.stderr.log",
+        "operatorCommand": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "nulArgvMatches": true,
+        "cwdMatches": true,
+        "exitMatches": true,
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "testSummary": null,
+        "outputFailureMarkers": []
+      }
+    ],
+    "selectionAndExitChecks": {
+      "all21SelectedObserved": true,
+      "observedPasses": 280,
+      "all87TypeFiles": true,
+      "allRequiredSidecars": true,
+      "allRequiredZero": true,
+      "compilerOutputEmpty": true,
+      "overallExit": 0
+    },
+    "sourceBeforeAfter": {
+      "count": 107,
+      "unchanged": true,
+      "added": [],
+      "removed": []
+    },
+    "integritySummary": {
+      "checked": 546,
+      "deliveryFiles": 152,
+      "sourceFiles": 107,
+      "protectedEvidenceFiles": 252,
+      "originalManifestSources": 35,
+      "allHashesAndSizesMatch": true,
+      "failures": []
+    },
+    "protectedInventoryReference": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/source-before.json",
+    "originalRecords": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/journal-set-pricing/b596ce099567412a62c0e767258f360d97f8d3562b37cbb422e14becf2a2ced2.canonical-chain.json",
+        "expectedSha256": "c6b1e9c210ccce97c27d1fb051f2b70198af57302b367cc6952416aee8645666",
+        "sha256": "c6b1e9c210ccce97c27d1fb051f2b70198af57302b367cc6952416aee8645666",
+        "bytes": 20908,
+        "matches": true
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/pricing-execution.json",
+        "expectedSha256": "399d926f7d61aff65d74e79f11d7ead47e06369eb483c3065aef6ae866c5aa44",
+        "sha256": "399d926f7d61aff65d74e79f11d7ead47e06369eb483c3065aef6ae866c5aa44",
+        "bytes": 25890,
+        "matches": true
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/journal-set-pricing/domain.json",
+        "expectedSha256": "d6afa20561144bdd2057e8846b5e76009fdba03bd86083eeb047386aae60db36",
+        "sha256": "d6afa20561144bdd2057e8846b5e76009fdba03bd86083eeb047386aae60db36",
+        "bytes": 25942,
+        "matches": true
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/journal-set-pricing/b596ce099567412a62c0e767258f360d97f8d3562b37cbb422e14becf2a2ced2.intent.json",
+        "expectedSha256": "9117eb335e45c0d323c5dd5cf35ff38706f39717e328d776ef5d74e2b9e0cdca",
+        "sha256": "9117eb335e45c0d323c5dd5cf35ff38706f39717e328d776ef5d74e2b9e0cdca",
+        "bytes": 9894,
+        "matches": true
+      }
+    ],
+    "manualBindings": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/manual-bindings.json",
+      "checks": {
+        "setterSummaryMatchesAdmitted": true,
+        "setterHistoricalRejected": true,
+        "configureSummariesMatchAdmitted": true,
+        "all28CoreProofHashes": true,
+        "historical4Match": true,
+        "all35HistoricalSourcesMatch": true,
+        "removedWitnessPinPolicy": "Admitted policy unchanged: schema and claimed-SY sources match reviewed baseline; no pin restored or new policy decision",
+        "noReplayRerun": true
+      },
+      "comparisonSummaries": [
+        {
+          "entry": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt.ts",
+          "files": 28,
+          "counts": {
+            "matches": 28
+          },
+          "exceptions": []
+        },
+        {
+          "entry": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-fault.ts",
+          "files": 28,
+          "counts": {
+            "matches": 28
+          },
+          "exceptions": []
+        },
+        {
+          "entry": "scripts/recovery/dtf-migration/cli.ts",
+          "files": 62,
+          "counts": {
+            "matches": 57,
+            "changed": 4,
+            "historical-digest-not-recorded": 1
+          },
+          "exceptions": [
+            {
+              "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+              "sha256": "5ed49f319e62a3335189d801261d01aec465d9579d41181c9f4c54330b0e0dd2",
+              "bytes": 10934,
+              "mtime": "2026-11-15T15:11:30.745Z",
+              "expectedSha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+              "basis": "task-7 integration/source-after.json",
+              "result": "changed"
+            },
+            {
+              "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+              "sha256": "031179dad9816047f5972006f3720eed9517840b24674fb6ca45ef0afb562c67",
+              "bytes": 13370,
+              "mtime": "2026-11-15T15:18:05.325Z",
+              "expectedSha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+              "basis": "task-7 integration/source-after.json",
+              "result": "changed"
+            },
+            {
+              "path": "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+              "sha256": "3534ab723a68cb8f5d9c1d175951cd47cb546f1ba912e889e062be927ec15b25",
+              "bytes": 8292,
+              "mtime": "2026-11-15T15:12:52.345Z",
+              "expectedSha256": null,
+              "basis": null,
+              "result": "historical-digest-not-recorded"
+            },
+            {
+              "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+              "sha256": "506aa9abfee705b3c895ebfb11cbc70ce6e35bedd85793016100ad9ae279ebd3",
+              "bytes": 16514,
+              "mtime": "2026-11-15T15:18:05.324Z",
+              "expectedSha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+              "basis": "task-7 integration/source-after.json",
+              "result": "changed"
+            },
+            {
+              "path": "scripts/recovery/dtf-migration/rehearse.ts",
+              "sha256": "0753e8c5914cd5a333b1e3cdce15469b83c46a6422c96e8c22579a552fd521e7",
+              "bytes": 47087,
+              "mtime": "2026-11-15T15:26:01.652Z",
+              "expectedSha256": "e75f026c7f3c44b67c23e1468a6f596a6c0d5e23eace61c00208b0f8875cdc37",
+              "basis": "task-7 integration/source-after.json",
+              "result": "changed"
+            }
+          ]
+        }
+      ],
+      "restoredAfterProof": {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "mtime": "2026-11-15T15:45:45.566Z",
+        "expectedSha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67",
+        "matchesBothProofRecords": true,
+        "meaning": "Temporary lane mutation was restored byte-for-byte; mtime alone is not a source change."
+      },
+      "rerun": {
+        "performed": false,
+        "reason": "Both manual programs have 28 reachable local imports matching their repair/source records and unchanged baseline bindings. No affecting byte change was found. The existing CLI configure path is not the separate rehearsal path.",
+        "cliHistoryQualification": "Four rehearsal modules differ from task-7 baseline and one is new there; their mtimes predate both lane proofs. Those modules have no full lane-era digest in the admitted proof census. They are outside the executed configure/resume path; this limitation is not called changed-since-proof or EVM evidence."
+      }
+    },
+    "processProvenance": {
+      "transcript": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1df7f/sessions/st_01a1df7f/2026-11-15T13-56-27.259Z_d2b1deb1-116a-4980-bb65-794d9db80bb6.jsonl",
+      "launch": [
+        {
+          "i": 174,
+          "id": "72f529de",
+          "code": "const repairMonitor=await tool.monitor({description:'Task 10 repair integration: full operator tests and both strict TypeScript commands',command:'/bin/bash '+root+'/'+integrationRel+'/run-checks.sh',filter:'^REPAIR_QA_(RESULT|COMPLETE)',timeout_ms:3600000});print(repairMonitor);"
+        }
+      ],
+      "completion": [
+        {
+          "id": "2e9a2164",
+          "timestamp": "2026-11-15T15:54:28.035Z",
+          "text": "<system-reminder>Monitor event(Task 10 repair integration: full operator tests and both strict TypeScript commands): REPAIR_QA_RESULT environment-bun-path exit=0\nREPAIR_QA_RESULT environment-bun-version exit=0\nREPAIR_QA_RESULT environment-bun-revision exit=0\nREPAIR_QA_RESULT environment-ts-version exit=0\nREPAIR_QA_RESULT environment-platform exit=0\nREPAIR_QA_RESULT git-branch exit=0\nREPAIR_QA_RESULT git-head exit=0\nREPAIR_QA_RESULT git-owned-status-before exit=0\nREPAIR_QA_RESULT git-owned-diff-before exit=0\nREPAIR_QA_RESULT git-owned-staged-before exit=0\nREPAIR_QA_RESULT git-owned-check-before exit=0</system-reminder>"
+        },
+        {
+          "id": "20c54658",
+          "timestamp": "2026-11-15T15:56:07.146Z",
+          "text": "<system-reminder>Monitor event(Task 10 repair integration: full operator tests and both strict TypeScript commands): REPAIR_QA_RESULT 01-tests exit=0\nREPAIR_QA_RESULT 02-operator-types exit=0</system-reminder>"
+        },
+        {
+          "id": "28013373",
+          "timestamp": "2026-11-15T15:56:07.146Z",
+          "text": "<system-reminder>Monitor event(Task 10 repair integration: full operator tests and both strict TypeScript commands): REPAIR_QA_RESULT 03-helper-types exit=0\nREPAIR_QA_RESULT git-owned-status-after exit=0\nREPAIR_QA_RESULT git-owned-diff-after exit=0\nREPAIR_QA_RESULT git-owned-staged-after exit=0\nREPAIR_QA_RESULT git-owned-check-after exit=0\nREPAIR_QA_COMPLETE exit=0\nwatcher completed (exit code 0)</system-reminder>"
+        }
+      ]
+    },
+    "cleanup": {
+      "monitorId": "mon_1S046DDKK7RF0R8F",
+      "session": "bash_1",
+      "completion": "REPAIR_QA_COMPLETE exit=0; watcher completed (exit code 0)",
+      "pendingProcesses": [],
+      "qaCreatedProcesses": "Finite recorder, test runner, two compiler runs and version/narrow git probes; all exited naturally.",
+      "priorTempDirectories": [
+        "dtf-prepare-test-6ABTvq",
+        "dtf-prepare-test-sSyY0e"
+      ],
+      "afterTempDirectories": [
+        "dtf-prepare-test-6ABTvq",
+        "dtf-prepare-test-sSyY0e"
+      ],
+      "addedTempDirectories": [],
+      "removedPriorDirectories": [],
+      "cleanupAction": "No additional resource removal was needed. Existing checkpoint directories and all retained lane and task-7 evidence were preserved.",
+      "anvilStartedOrRestarted": false,
+      "forgeInvoked": false,
+      "installs": false,
+      "productOrTestEdits": false,
+      "delegation": false,
+      "commits": false,
+      "parentReadinessWritten": false
+    },
+    "allSettledReviewsAdmitted": true,
+    "testsOrManualReplayRerunByVerifier": false
+  },
+  "limitations": [
+    "No fresh Anvil transaction, real proxy/custody or task-10 lifecycle acceptance.",
+    "No task-10 completion, whole-plan completion, or parent readiness marker.",
+    "Five dormant rehearsal imports lack complete lane-era digest identity; 57 of 62 CLI imports match available baselines. Current full types/tests cover current tree only.",
+    "Historical recursive third-party module bytes not exhaustively fingerprinted; current manifests/lockfile/compiler captured.",
+    "One integrated run, no flake-rate claim. Earlier custom audit/LSP limitations are historical and not recast as passing."
+  ],
+  "fixes": [],
+  "unitCliGate": true,
+  "freshAnvilAccepted": false,
+  "task10Accepted": false,
+  "parentWakeWritten": false
+}

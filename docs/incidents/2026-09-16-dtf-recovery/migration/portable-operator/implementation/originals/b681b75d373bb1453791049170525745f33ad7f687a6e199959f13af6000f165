@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"notify","inputs":[{"name":"token","type":"address","internalType":"address"},{"name":"amount","type":"uint256","internalType":"uint256"},{"name":"poolId","type":"bytes32","internalType":"bytes32"}],"outputs":[],"stateMutability":"payable"}],"id":780}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"withPrepaySession","inputs":[{"name":"principal","type":"address","internalType":"address"},{"name":"target","type":"address","internalType":"address"},{"name":"data","type":"bytes","internalType":"bytes"}],"outputs":[{"name":"result","type":"bytes","internalType":"bytes"}],"stateMutability":"nonpayable"}],"id":2713}

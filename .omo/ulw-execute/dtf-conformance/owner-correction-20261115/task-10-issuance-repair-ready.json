@@ -1,0 +1,32 @@
+{
+  "type": "ParentRuntimeQaReadiness",
+  "status": "confirmed-production-runtime-qa-ready",
+  "task": 10,
+  "session_id": "senpi:01a1dcee-c2ea-7593-9217-2b5ea930352f",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "productionVerdicts": [
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-verdict.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-verdict.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-verdict.json"
+  ],
+  "currentQaClaim": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-fixture-done.json",
+  "operatorTests": {
+    "passed": 336,
+    "failed": 0,
+    "timeoutMs": 15000
+  },
+  "operatorTypesExit": 0,
+  "retainedHelperTypesExit": 0,
+  "fixtureReview": {
+    "status": "pending",
+    "verifier": "st_01a1dfe6",
+    "expectedVerdict": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-repairs-verdict.json"
+  },
+  "runtimeCondition": "Confirm task-12/mixed-fixture.ts is not an actual runtime import, then run the requested real local-fork scenarios with current frozen production source.",
+  "sourceRule": "No product or fixture edits while runtime and final fixture review run. Preserve all earlier signed domains and canonical evidence.",
+  "acceptance": "Task 10 stays open until independent combined unit/CLI confirmation and independent real lifecycle confirmation. This file authorizes runtime QA only.",
+  "checkpoint_opened_at": "2026-11-15T14:55:25.715Z",
+  "checkpoint_limit_minutes": 240,
+  "task10Complete": false,
+  "publicTransactionsAuthorized": false
+}

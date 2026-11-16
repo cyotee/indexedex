@@ -1,0 +1,168 @@
+{
+  "head": "789fced820ed494d9651c598fb8f75c646d727a7",
+  "branch": "work/dtf-migration-phase-28-receipt-evidence",
+  "parents": "789fced820ed494d9651c598fb8f75c646d727a7 0856a5c56e5d09b81c669f59b613efef79133e19",
+  "upstreamExit": 128,
+  "upstreamStderr": "fatal: no upstream configured for branch 'work/dtf-migration-phase-28-receipt-evidence'",
+  "autocrlfExit": 1,
+  "hooksPath": ".husky/_",
+  "hooksPathExistsInWorktree": false,
+  "commitDirExisted": false,
+  "cacheExists": false,
+  "foundryCache": "cache_forge",
+  "stagedEmpty": true,
+  "whitespaceExit": 0,
+  "whitespaceBytes": 0,
+  "statusMatch": true,
+  "acceptedMatches": 10,
+  "frozenMatches": 70,
+  "frozenCount": 70,
+  "authorityMatches": 10,
+  "sealMatches": 17,
+  "indexCount": 30,
+  "foreignIndexCount": 29,
+  "refCount": 56,
+  "showRefBytes": 6579,
+  "showRefSha256": "04d7ac6af4a4ca0be07c8ef7427d3f497ff80d1931953ea36fd414024df1f82f",
+  "walks": [
+    {
+      "name": "docs-incidents",
+      "content": {
+        "file": "docs-incidents.jsonl",
+        "rows": 1482,
+        "bytes": 430767,
+        "sha256": "cb93f97f44428468317387be06cf720bee4b84a717c93b37830290be50cc8268"
+      }
+    },
+    {
+      "name": "docs-incidents",
+      "perms": {
+        "file": "docs-incidents-perms.jsonl",
+        "rows": 1493,
+        "bytes": 404379,
+        "sha256": "36c901dadbd694556a72fcdebc888aa811860de98cce44292dad97bc33b852d5"
+      }
+    },
+    {
+      "name": "docs-incidents",
+      "dirs": {
+        "file": "docs-incidents-dirs.jsonl",
+        "rows": 11,
+        "bytes": 2987,
+        "sha256": "462c6b87eecde3ce6d5916c31e237ea5882d73a00160bf23412fd02bca1e7074"
+      }
+    },
+    {
+      "name": "out",
+      "content": {
+        "file": "out.jsonl",
+        "rows": 7376,
+        "bytes": 1960530,
+        "sha256": "6673598e3a68c4b3dd7d747ffea0027f9c55f566c259faff4453b299a9db1771"
+      }
+    },
+    {
+      "name": "out",
+      "perms": {
+        "file": "out-perms.jsonl",
+        "rows": 13856,
+        "bytes": 2721030,
+        "sha256": "6c69936bfe945823dca2d1b60a81897870c422a976d4b8a9d638e4c2c9dfb72a"
+      }
+    },
+    {
+      "name": "out",
+      "dirs": {
+        "file": "out-dirs.jsonl",
+        "rows": 6480,
+        "bytes": 1607013,
+        "sha256": "d03b074d76065dcf7f1220e0768c576178d43e5e4a4e35d432482a12f3822b2b"
+      }
+    },
+    {
+      "name": "cache_forge",
+      "content": {
+        "file": "cache_forge.jsonl",
+        "rows": 6502,
+        "bytes": 2297269,
+        "sha256": "167a70ddc88be51f57510a8ed99510b778850e635a26f64009b0c64c73750744"
+      }
+    },
+    {
+      "name": "cache_forge",
+      "perms": {
+        "file": "cache_forge-perms.jsonl",
+        "rows": 12368,
+        "bytes": 3518453,
+        "sha256": "ad05142c9779921a1abba60f51f25985a4caf985568a18a64702422e24237e4c"
+      }
+    },
+    {
+      "name": "cache_forge",
+      "dirs": {
+        "file": "cache_forge-dirs.jsonl",
+        "rows": 5866,
+        "bytes": 1984142,
+        "sha256": "63191ac7ad8bbb9de239a5d82ea4fba393ab8d55564110f21ae5b159cd15a39f"
+      }
+    },
+    {
+      "name": "recovered-input",
+      "content": {
+        "file": "recovered-input.jsonl",
+        "rows": 30,
+        "bytes": 7898,
+        "sha256": "a28a29eb85372bf3c41c3f4d461475b7b0aaba7d9bfbdb8ead12b2f222c44800"
+      }
+    },
+    {
+      "name": "recovered-input",
+      "perms": {
+        "file": "recovered-input-perms.jsonl",
+        "rows": 35,
+        "bytes": 8076,
+        "sha256": "1caf7f698a7113d62eed6c92b73d4f70115c89439137a5a9e311b13291145e73"
+      }
+    },
+    {
+      "name": "recovered-input",
+      "dirs": {
+        "file": "recovered-input-dirs.jsonl",
+        "rows": 5,
+        "bytes": 1296,
+        "sha256": "6ae2df4d65fe91a66d30c747628271679dbab1ecf8a1d7f35fac89f5d49f91f9"
+      }
+    },
+    {
+      "name": "original-incident",
+      "content": {
+        "file": "original-incident.jsonl",
+        "rows": 25,
+        "bytes": 5668,
+        "sha256": "a29c461c60b788748e935c485444eec646d677becabf9f967752f8bceada12de"
+      }
+    },
+    {
+      "name": "original-incident",
+      "perms": {
+        "file": "original-incident-perms.jsonl",
+        "rows": 27,
+        "bytes": 5438,
+        "sha256": "ab1a9b57ce7c852fcbcd67ac75e24e6c8f14923e50922f8859f80e7486f6ac25"
+      }
+    },
+    {
+      "name": "original-incident",
+      "dirs": {
+        "file": "original-incident-dirs.jsonl",
+        "rows": 2,
+        "bytes": 466,
+        "sha256": "471d54102e8cda4ab760280b043be7fb9edb3f9a6538be93b839148e7a3a52cc"
+      }
+    }
+  ],
+  "blockers": [],
+  "phase09WorktreeOpened": false,
+  "held09WorktreeOpened": false,
+  "symlinkTargetsOpened": false
+}

@@ -2,7 +2,7 @@
 """Audit Solidity import fan-out and refresh runtime deployment artifacts.
 
 Uses current source imports, never Foundry's possibly stale dependency cache.
-Only `build` and `test` compile; `audit` and `plan` do not modify out/cache_forge.
+`build`, `test`, and `script` compile; `audit` and `plan` do not modify out/cache_forge.
 """
 
 import argparse
@@ -401,9 +401,46 @@ def execute_plan(root, plan, run_tests=False):
     return 0
 
 
+def script_action(argv: list[str]) -> int:
+    """Refresh a script's runtime artifacts, then forward its Forge arguments."""
+    parser = argparse.ArgumentParser(prog=f"{Path(sys.argv[0]).name} script")
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("target", help="Solidity script path, optionally qualified with :Contract")
+    parser.add_argument("forge_args", nargs=argparse.REMAINDER)
+    args = parser.parse_args(argv)
+    forwarded = args.forge_args[1:] if args.forge_args[:1] == ["--"] else args.forge_args
+    forwarded = without_compiler_override(forwarded)
+    try:
+        graph = SourceGraph(args.root)
+        source = graph.normalize(args.target.split(":", 1)[0])
+        plan = graph.plan([source], [source], allow_empty=True)
+        roots = sorted(set(plan["roots"]) | {source})
+        build_command = ["forge", "build", "--use", "solar", *roots]
+        target = args.target
+        explicit_contract = ":" in target or any(
+            arg.split("=", 1)[0] in {"--tc", "--target-contract"} for arg in forwarded)
+        if not explicit_contract:
+            name = Path(source).name.removesuffix(".sol").removesuffix(".s")
+            if any(kind == "contract" and declared == name and not abstract
+                   for kind, declared, abstract in graph.declarations[source]):
+                target = f"{target}:{name}"
+        script_command = ["forge", "script", "--use", "solar", target, *forwarded]
+        print(shlex.join(build_command), flush=True)
+        built = subprocess.run(build_command, cwd=graph.root, check=False)
+        if built.returncode:
+            return built.returncode
+        print(shlex.join(script_command), flush=True)
+        return subprocess.run(script_command, cwd=graph.root, check=False).returncode
+    except (OSError, ValueError) as error:
+        print(f"forge-artifacts: {error}", file=sys.stderr)
+        return 2
+
+
 def main():
+    if sys.argv[1:2] == ["script"]:
+        return script_action(sys.argv[2:])
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("audit", "plan", "build", "test"))
+    parser.add_argument("action", choices=("audit", "plan", "build", "test", "script"))
     parser.add_argument("sources", nargs="*", help="Edited Solidity source paths, including targets/interfaces/libraries")
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--consumer", action="append", default=[], help="Test/script path or quoted glob whose runtime artifacts must be refreshed")
@@ -415,6 +452,8 @@ def main():
     separator = argv.index("--") if "--" in argv else len(argv)
     args = parser.parse_intermixed_args(argv[:separator])
     forge_args = argv[separator + 1:]
+    if args.action == "script":
+        parser.error("script must be the first argument; use script [--root PATH] TARGET [Forge arguments]")
     if args.action == "test" and not args.test_root:
         parser.error("test requires --test-root with an exact test file or directory")
     if (args.test_root or args.no_consumer_artifacts or forge_args) and args.action not in {"plan", "test"}:

@@ -1,0 +1,2680 @@
+{
+  "pin": {
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "parentHash": "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+    "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+    "miner": "0xa4b000000000000000000073657175656e636572",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+    "transactionsRoot": "0x33c7e74b2b83169ffe7ccc0d196e7389b7edcf9da4b2aec25c442f450a5db7ab",
+    "receiptsRoot": "0xed4030c56b19861b12d407133d34d67e86eb659431133713cbdc126ba9f35a17",
+    "logsBloom": "0x00000000000000200000000000000000000000000004000000000000000000000000000000000000000080000000000000000000000020000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000",
+    "difficulty": "0x1",
+    "number": "0x67e5d17",
+    "gasLimit": "0x4000000000000",
+    "gasUsed": "0x7cbe",
+    "timestamp": "0x6aeff5b5",
+    "extraData": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+    "mixHash": "0x0000000000000ea500000000019256ab000000000000003d0000000000000000",
+    "nonce": "0x0000000000069efe",
+    "baseFeePerGas": "0x13134d0",
+    "size": "0x34d",
+    "uncles": [],
+    "transactions": [
+      "0x3b092c0a635bf7308445d38cd9e4057f66ac9673c4988feafbe6b59be795c5a7",
+      "0xa0827ff9299145bc2c8be17e3f803c4e1aa21cf6d0295104d4d06946a1ea815c"
+    ],
+    "l1BlockNumber": "0x19256ab",
+    "sendCount": "0xea5",
+    "sendRoot": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c"
+  },
+  "first": {
+    "arguments": [
+      [
+        "Migration DETF",
+        "DETF",
+        "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+        true,
+        [
+          "1000000000000000000",
+          "1000000000000000000"
+        ],
+        [],
+        "0",
+        "0",
+        "0",
+        "0x0000000000000000000000000000000000000000",
+        "",
+        "",
+        "",
+        "",
+        "0",
+        [],
+        "0",
+        [],
+        "0",
+        [],
+        "0",
+        []
+      ],
+      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "86400",
+      "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+      "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+    ],
+    "construction": [
+      "0xc73598dceb87f6491eb02a9f76d71f6b76d59ba9281e3bbfa53fa453c1b3e00a",
+      "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+      "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+      "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+      [
+        "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+        "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+        false,
+        "SY Migration DETF",
+        "SY-DETF",
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ],
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ]
+      ],
+      [
+        "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+        "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+        true,
+        "SY Staked Migration DETF",
+        "SY-sDETF",
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ],
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ]
+      ]
+    ],
+    "beforeFinal": {
+      "preparation": {
+        "parentPackage": "0x642fa76f2F7A6b97ec0822D67a785379A92DF347",
+        "constructionId": "0xc73598dceb87f6491eb02a9f76d71f6b76d59ba9281e3bbfa53fa453c1b3e00a",
+        "parent": "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+        "bond": "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+        "receipt": "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+        "rawSy": "0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0",
+        "stakingSy": "0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c",
+        "rawArgsHash": "0x79cc9e50eefe871c952f46c668720388fc7d2068ed03fa501581202c818d8be5",
+        "stakingArgsHash": "0x03b6f51cb5277d17d45ef39594d844269b50179d2a034405474e266df9c7fb8d",
+        "completed": true
+      },
+      "parentCode": "0x",
+      "parentRegistered": false,
+      "parentFactory": "0x0000000000000000000000000000000000000000",
+      "bondCode": "0x",
+      "receiptCode": "0x",
+      "children": [
+        {
+          "address": "0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Migration DETF"
+            ],
+            "symbol": [
+              "SY-DETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0"
+            ],
+            "getTokensIn": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0",
+            "0x000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "address": "0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d734445544600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Staked Migration DETF"
+            ],
+            "symbol": [
+              "SY-sDETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+            ],
+            "getTokensIn": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0",
+            "0x000000000000000000000001e4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    "afterFinal": {
+      "preparation": {
+        "parentPackage": "0x642fa76f2F7A6b97ec0822D67a785379A92DF347",
+        "constructionId": "0xc73598dceb87f6491eb02a9f76d71f6b76d59ba9281e3bbfa53fa453c1b3e00a",
+        "parent": "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+        "bond": "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+        "receipt": "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+        "rawSy": "0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0",
+        "stakingSy": "0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c",
+        "rawArgsHash": "0x79cc9e50eefe871c952f46c668720388fc7d2068ed03fa501581202c818d8be5",
+        "stakingArgsHash": "0x03b6f51cb5277d17d45ef39594d844269b50179d2a034405474e266df9c7fb8d",
+        "completed": true
+      },
+      "parentCode": "0x",
+      "parentRegistered": false,
+      "parentFactory": "0x0000000000000000000000000000000000000000",
+      "bondCode": "0x",
+      "receiptCode": "0x",
+      "children": [
+        {
+          "address": "0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Migration DETF"
+            ],
+            "symbol": [
+              "SY-DETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0"
+            ],
+            "getTokensIn": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0",
+            "0x000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "address": "0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d734445544600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Staked Migration DETF"
+            ],
+            "symbol": [
+              "SY-sDETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+            ],
+            "getTokensIn": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0",
+            "0x000000000000000000000001e4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    "final": {
+      "preparation": {
+        "parentPackage": "0x642fa76f2F7A6b97ec0822D67a785379A92DF347",
+        "constructionId": "0xc73598dceb87f6491eb02a9f76d71f6b76d59ba9281e3bbfa53fa453c1b3e00a",
+        "parent": "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+        "bond": "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+        "receipt": "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+        "rawSy": "0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0",
+        "stakingSy": "0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c",
+        "rawArgsHash": "0x79cc9e50eefe871c952f46c668720388fc7d2068ed03fa501581202c818d8be5",
+        "stakingArgsHash": "0x03b6f51cb5277d17d45ef39594d844269b50179d2a034405474e266df9c7fb8d",
+        "completed": true
+      },
+      "parentCode": "0x",
+      "parentRegistered": false,
+      "parentFactory": "0x0000000000000000000000000000000000000000",
+      "bondCode": "0x",
+      "receiptCode": "0x",
+      "children": [
+        {
+          "address": "0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Migration DETF"
+            ],
+            "symbol": [
+              "SY-DETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0"
+            ],
+            "getTokensIn": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0",
+            "0x000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "address": "0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0000000000000000000000000e4f9a217b8eef5413fe8d5b2524aa975e26554f1000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d734445544600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Staked Migration DETF"
+            ],
+            "symbol": [
+              "SY-sDETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+            ],
+            "getTokensIn": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+                "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x000000000000000000000000edf7d9f65b9e57d62a3c4278223170db1308f5f0",
+            "0x000000000000000000000001e4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        }
+      ]
+    }
+  },
+  "second": {
+    "arguments": [
+      [
+        "Migration DETF",
+        "DETF",
+        "0x789372B0F44F40fA217Ee186eE52661700C5eAa8",
+        true,
+        [
+          "1000000000000000000",
+          "1000000000000000000"
+        ],
+        [],
+        "0",
+        "0",
+        "0",
+        "0x0000000000000000000000000000000000000000",
+        "",
+        "",
+        "",
+        "",
+        "0",
+        [],
+        "0",
+        [],
+        "0",
+        [],
+        "0",
+        []
+      ],
+      "0x1111111111111111111111111111111111111111",
+      "86400",
+      "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+      "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+    ],
+    "construction": [
+      "0x3fa6f0e91d3f5b1f9de06c465cf12e4ce0f91ac3dc1b4dc0a0446061d87a7bb9",
+      "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+      "0xAf15F3a858a3DD9402f293Fe20d36576bEAA07e5",
+      "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+      [
+        "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+        "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+        false,
+        "SY Migration DETF",
+        "SY-DETF",
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ],
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ]
+      ],
+      [
+        "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+        "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+        true,
+        "SY Staked Migration DETF",
+        "SY-sDETF",
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ],
+        [
+          "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+          "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+          "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+        ]
+      ]
+    ],
+    "beforeFinal": {
+      "preparation": {
+        "parentPackage": "0x642fa76f2F7A6b97ec0822D67a785379A92DF347",
+        "constructionId": "0x3fa6f0e91d3f5b1f9de06c465cf12e4ce0f91ac3dc1b4dc0a0446061d87a7bb9",
+        "parent": "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+        "bond": "0xAf15F3a858a3DD9402f293Fe20d36576bEAA07e5",
+        "receipt": "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+        "rawSy": "0xc0226794811d36bD84d30b413F8071ADaA78071a",
+        "stakingSy": "0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8",
+        "rawArgsHash": "0x37961733f063678953be04098692c5d6e501e6e810f297333a2fc7ad5d201674",
+        "stakingArgsHash": "0xcc3e6928fbcb2eea993774018cc509ba5fb1ed73305a537cf505ef7d28f7e296",
+        "completed": true
+      },
+      "parentCode": "0x",
+      "parentRegistered": false,
+      "parentFactory": "0x0000000000000000000000000000000000000000",
+      "bondCode": "0x",
+      "receiptCode": "0x",
+      "children": [
+        {
+          "address": "0xc0226794811d36bD84d30b413F8071ADaA78071a",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Migration DETF"
+            ],
+            "symbol": [
+              "SY-DETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3"
+            ],
+            "getTokensIn": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x00000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3",
+            "0x000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "address": "0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d734445544600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Staked Migration DETF"
+            ],
+            "symbol": [
+              "SY-sDETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670"
+            ],
+            "getTokensIn": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x00000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3",
+            "0x000000000000000000000001eb925b4c2570170bf3947b26e98cc9466ceee670",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    "afterFinal": {
+      "preparation": {
+        "parentPackage": "0x642fa76f2F7A6b97ec0822D67a785379A92DF347",
+        "constructionId": "0x3fa6f0e91d3f5b1f9de06c465cf12e4ce0f91ac3dc1b4dc0a0446061d87a7bb9",
+        "parent": "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+        "bond": "0xAf15F3a858a3DD9402f293Fe20d36576bEAA07e5",
+        "receipt": "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+        "rawSy": "0xc0226794811d36bD84d30b413F8071ADaA78071a",
+        "stakingSy": "0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8",
+        "rawArgsHash": "0x37961733f063678953be04098692c5d6e501e6e810f297333a2fc7ad5d201674",
+        "stakingArgsHash": "0xcc3e6928fbcb2eea993774018cc509ba5fb1ed73305a537cf505ef7d28f7e296",
+        "completed": true
+      },
+      "parentCode": "0x",
+      "parentRegistered": false,
+      "parentFactory": "0x0000000000000000000000000000000000000000",
+      "bondCode": "0x",
+      "receiptCode": "0x",
+      "children": [
+        {
+          "address": "0xc0226794811d36bD84d30b413F8071ADaA78071a",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Migration DETF"
+            ],
+            "symbol": [
+              "SY-DETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3"
+            ],
+            "getTokensIn": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x00000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3",
+            "0x000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "address": "0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d734445544600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Staked Migration DETF"
+            ],
+            "symbol": [
+              "SY-sDETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670"
+            ],
+            "getTokensIn": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x00000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3",
+            "0x000000000000000000000001eb925b4c2570170bf3947b26e98cc9466ceee670",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    "final": {
+      "preparation": {
+        "parentPackage": "0x642fa76f2F7A6b97ec0822D67a785379A92DF347",
+        "constructionId": "0x3fa6f0e91d3f5b1f9de06c465cf12e4ce0f91ac3dc1b4dc0a0446061d87a7bb9",
+        "parent": "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+        "bond": "0xAf15F3a858a3DD9402f293Fe20d36576bEAA07e5",
+        "receipt": "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+        "rawSy": "0xc0226794811d36bD84d30b413F8071ADaA78071a",
+        "stakingSy": "0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8",
+        "rawArgsHash": "0x37961733f063678953be04098692c5d6e501e6e810f297333a2fc7ad5d201674",
+        "stakingArgsHash": "0xcc3e6928fbcb2eea993774018cc509ba5fb1ed73305a537cf505ef7d28f7e296",
+        "completed": true
+      },
+      "parentCode": "0x",
+      "parentRegistered": false,
+      "parentFactory": "0x0000000000000000000000000000000000000000",
+      "bondCode": "0x",
+      "receiptCode": "0x",
+      "children": [
+        {
+          "address": "0xc0226794811d36bD84d30b413F8071ADaA78071a",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Migration DETF"
+            ],
+            "symbol": [
+              "SY-DETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3"
+            ],
+            "getTokensIn": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x00000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3",
+            "0x000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "address": "0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8",
+          "code": "0x36600557005b60806040525f355f1960e01b16805f527f453157b7d5c0b9d33ac5afb7af88368b2c4ccc0b2d382c6be409a0be46754d2060205260405f205460601b60601c803b15606757365f5f375f5f365f845af43d5f5f3e80606257503d5ffd5b503d5ff35b506020526323dbef4b5f526024601cfdfea26469706673582212203fa50eb2f8467238a0e8ff7e6e3c1a29250425ec31840f4ea9abe86d35c585ca65736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+          "registered": true,
+          "factoryPackage": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+          "factoryArguments": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3000000000000000000000000eb925b4c2570170bf3947b26e98cc9466ceee670000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d734445544600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c72944000000000000000000000000000000000000000000000000000000000000000040000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a0000000000000000000000002fc94ee2eb73135933252cbb56edc19fbc9eed5d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000089dfde35af831de29ca2d1629ded21fc9c729440",
+          "facets": [
+            {
+              "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+              "functionSelectors": [
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+              "functionSelectors": [
+                "0x7a0ed627",
+                "0xadfca15e",
+                "0x52ef6b2c",
+                "0xcdffacc6"
+              ]
+            },
+            {
+              "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+              "functionSelectors": [
+                "0x60b5befb"
+              ]
+            },
+            {
+              "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+              "functionSelectors": [
+                "0x18160ddd",
+                "0x70a08231",
+                "0xa9059cbb",
+                "0xdd62ed3e",
+                "0x095ea7b3",
+                "0x23b872dd",
+                "0x06fdde03",
+                "0x95d89b41",
+                "0x313ce567",
+                "0x20e8c565",
+                "0x769f8e5d",
+                "0x3ba0b9a9",
+                "0x76d5de85",
+                "0xa40bee50",
+                "0x213cae63",
+                "0x071bc3c9",
+                "0xfa5a4f06",
+                "0x784367d6",
+                "0xb8f82b26",
+                "0xcbe52ae3",
+                "0xc4f59f9b",
+                "0x128fced1",
+                "0xf8b2f991",
+                "0xda88ecb4",
+                "0xef5cfb8c",
+                "0x6a4d3f12",
+                "0xf5ee7c5b",
+                "0x36abf3dc",
+                "0x7cc34bb4",
+                "0x852465fb",
+                "0x7a2cd6fb",
+                "0x07b101f9"
+              ]
+            },
+            {
+              "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+              "functionSelectors": [
+                "0x84b0196e"
+              ]
+            },
+            {
+              "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+              "functionSelectors": [
+                "0xd505accf",
+                "0x7ecebe00",
+                "0x3644e515"
+              ]
+            }
+          ],
+          "interfaces": [
+            {
+              "id": "0x36372b07",
+              "supported": true
+            },
+            {
+              "id": "0xa219a025",
+              "supported": true
+            },
+            {
+              "id": "0x9d8ff7da",
+              "supported": true
+            },
+            {
+              "id": "0x84b0196e",
+              "supported": true
+            },
+            {
+              "id": "0x73363918",
+              "supported": true
+            },
+            {
+              "id": "0xd5cbfb21",
+              "supported": true
+            },
+            {
+              "id": "0xff08b300",
+              "supported": true
+            },
+            {
+              "id": "0x07b101f9",
+              "supported": true
+            }
+          ],
+          "reads": {
+            "name": [
+              "SY Staked Migration DETF"
+            ],
+            "symbol": [
+              "SY-sDETF"
+            ],
+            "decimals": [
+              "9"
+            ],
+            "totalSupply": [
+              "0"
+            ],
+            "yieldToken": [
+              "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670"
+            ],
+            "getTokensIn": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "getTokensOut": [
+              [
+                "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+                "0xeB925B4c2570170Bf3947b26E98Cc9466ceEE670",
+                "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+                "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+                "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+                "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440"
+              ]
+            ],
+            "attributedSyGons": [
+              "0"
+            ],
+            "migrationAccountingPhase": [
+              "0"
+            ],
+            "assetInfo": [
+              "0",
+              "0x34fAAF4CcCd4f7D74c1A14ff074BBD48a706C9a3",
+              "9"
+            ]
+          },
+          "storage": [
+            "0x00000000000000000000000034faaf4cccd4f7d74c1a14ff074bbd48a706c9a3",
+            "0x000000000000000000000001eb925b4c2570170bf3947b26e98cc9466ceee670",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "temporaryHook": "0x0000000000000000000000000000000000000000"
+        }
+      ]
+    }
+  },
+  "failures": [
+    {
+      "label": "first-finalization",
+      "hash": "0x44dae0db2469210973bb479c2496d865f6cd0647cb49b305fc0d0e64dd0c855a",
+      "status": "0x0",
+      "gas": 31009212,
+      "frames": [
+        {
+          "path": "0",
+          "type": "CALL",
+          "to": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+          "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "gas": 31971624,
+          "gasUsed": 31009212,
+          "error": "execution reverted",
+          "selector": "0x70299b19"
+        },
+        {
+          "path": "0.0",
+          "type": "CALL",
+          "to": "0xaa66038ae217b246f5bf7537104342672e56fed8",
+          "from": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+          "gas": 31460141,
+          "gasUsed": 30968690,
+          "error": "execution reverted",
+          "selector": "0x968cbade"
+        },
+        {
+          "path": "0.0.0",
+          "type": "DELEGATECALL",
+          "to": "0x497b819bd10c7eeb3feacd74237c536cf2d7e0bf",
+          "from": "0xaa66038ae217b246f5bf7537104342672e56fed8",
+          "gas": 30963406,
+          "gasUsed": 30963406,
+          "error": "out of gas",
+          "selector": "0x968cbade"
+        }
+      ]
+    },
+    {
+      "label": "second-finalization",
+      "hash": "0xb2bed13a0708646f7bc699ad1ed3844d1851763ee8dd19ceeff40e5d00d1a70d",
+      "status": "0x0",
+      "gas": 31009212,
+      "frames": [
+        {
+          "path": "0",
+          "type": "CALL",
+          "to": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+          "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "gas": 31971624,
+          "gasUsed": 31009212,
+          "error": "execution reverted",
+          "selector": "0x70299b19"
+        },
+        {
+          "path": "0.0",
+          "type": "CALL",
+          "to": "0xaa66038ae217b246f5bf7537104342672e56fed8",
+          "from": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+          "gas": 31460141,
+          "gasUsed": 30968690,
+          "error": "execution reverted",
+          "selector": "0x968cbade"
+        },
+        {
+          "path": "0.0.0",
+          "type": "DELEGATECALL",
+          "to": "0x497b819bd10c7eeb3feacd74237c536cf2d7e0bf",
+          "from": "0xaa66038ae217b246f5bf7537104342672e56fed8",
+          "gas": 30963406,
+          "gasUsed": 30963406,
+          "error": "out of gas",
+          "selector": "0x968cbade"
+        }
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "label": "current-package-0",
+      "hash": "0xa128610fe28aea317052e9f2abf3db06d1d3de88bed531cc4e1309fd9b6412d9",
+      "gasLimit": 32000000,
+      "gasUsed": 4609510,
+      "status": "0x1"
+    },
+    {
+      "label": "current-package-1",
+      "hash": "0x2e08a57db70658213423a0f0e5735e7db5c560d1163ad9bf24b4781b5db9a248",
+      "gasLimit": 32000000,
+      "gasUsed": 6529977,
+      "status": "0x1"
+    },
+    {
+      "label": "first-preparation",
+      "hash": "0xb47e6afc3fd35a92e7c769b7f9f538a9cd52577b22b2b487ed67ceac77023a36",
+      "gasLimit": 32000000,
+      "gasUsed": 13505863,
+      "status": "0x1"
+    },
+    {
+      "label": "first-finalization",
+      "hash": "0x44dae0db2469210973bb479c2496d865f6cd0647cb49b305fc0d0e64dd0c855a",
+      "gasLimit": 32000000,
+      "gasUsed": 31009212,
+      "status": "0x0"
+    },
+    {
+      "label": "second-hook-0",
+      "hash": "0xfe7d3b515838652c23a1107f1832080c2d1db88c48134ed7727975797d690525",
+      "gasLimit": 32000000,
+      "gasUsed": 7876000,
+      "status": "0x1"
+    },
+    {
+      "label": "second-hook-1",
+      "hash": "0xc92225a2d1859ffba173cbac515666f3beae6960127e8a7f9eb29ed849f1459d",
+      "gasLimit": 32000000,
+      "gasUsed": 76582,
+      "status": "0x1"
+    },
+    {
+      "label": "second-hook-2",
+      "hash": "0x57d701b306383b61e4da5f4ce1c2f39e45f19c1f2645d4069add164b4499401c",
+      "gasLimit": 32000000,
+      "gasUsed": 79016,
+      "status": "0x1"
+    },
+    {
+      "label": "second-hook-3",
+      "hash": "0x771ecee59169b7f1681c6a3481efc455e55f159d85d3798ed84f39303f2060cf",
+      "gasLimit": 32000000,
+      "gasUsed": 79450,
+      "status": "0x1"
+    },
+    {
+      "label": "second-hook-4",
+      "hash": "0x8532f5447fec51dcf87a33e23f66604fcd6aa1ec510fd122f994e5e3b2241a0b",
+      "gasLimit": 32000000,
+      "gasUsed": 7061275,
+      "status": "0x1"
+    },
+    {
+      "label": "second-preparation",
+      "hash": "0xf9ad515679cbd0472f300f4967cd59bbeca56ef101bfea18b6fbb2a36ad0d4f9",
+      "gasLimit": 32000000,
+      "gasUsed": 13454737,
+      "status": "0x1"
+    },
+    {
+      "label": "second-finalization",
+      "hash": "0xb2bed13a0708646f7bc699ad1ed3844d1851763ee8dd19ceeff40e5d00d1a70d",
+      "gasLimit": 32000000,
+      "gasUsed": 31009212,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-transfer",
+      "hash": "0x692fb105108e977892447c90511f4ca188e6f012f4ce57b41d873cdf936578d3",
+      "gasLimit": 32000000,
+      "gasUsed": 54362,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-deposit",
+      "hash": "0xe206476d57627d50def34aab8d19232bb20e79232b64f5ca39c5f5f7dd05c945",
+      "gasLimit": 32000000,
+      "gasUsed": 54465,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-redeem",
+      "hash": "0x68b1ba6b438f975c122bbefe7a9b96bedf85a0a8a9e024aacda90163e41288ea",
+      "gasLimit": 32000000,
+      "gasUsed": 54861,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-claimRewards",
+      "hash": "0x7ba88f1b1ae6f0dabac36bc7180e62a14c261d95d123201ad365f592d4838e16",
+      "gasLimit": 32000000,
+      "gasUsed": 54385,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-transfer",
+      "hash": "0xe2b8ac4ab7ec09ff762ee1917d0e22dde67ec0090d5e8f75569ddd75b9186d47",
+      "gasLimit": 32000000,
+      "gasUsed": 54362,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-deposit",
+      "hash": "0x908d3993550360ccd44d6eb4938ebe38d832ef6f72711e25c2d088d4343abadd",
+      "gasLimit": 32000000,
+      "gasUsed": 54465,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-redeem",
+      "hash": "0x09cfb925856c5e85fb1bdf57d0befb484b34ab747048ababf815f5c66c133a26",
+      "gasLimit": 32000000,
+      "gasUsed": 54861,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-claimRewards",
+      "hash": "0x032087f4ffd52702b964178cbd675e140daf1f34d6e16e02410716167b7a6dc5",
+      "gasLimit": 32000000,
+      "gasUsed": 54385,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-transfer",
+      "hash": "0xb3da925483af6fedbfda365a5da56b4925e874e6f25d971fc2995829c1600519",
+      "gasLimit": 32000000,
+      "gasUsed": 54362,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-deposit",
+      "hash": "0xcbfd563863e42f7a7218ecc1a8ff8fee74c8d0daf29de4ab55678c4e1a77b212",
+      "gasLimit": 32000000,
+      "gasUsed": 54465,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-redeem",
+      "hash": "0x61d1ef167efa5c40c3ae6ee76ec2f1831dfea9b63b35e0e9f4cdfd00899f7d16",
+      "gasLimit": 32000000,
+      "gasUsed": 54861,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-claimRewards",
+      "hash": "0xfc2883f4e2a6ccbd1c2f475e8893d0b337763f553a6e29501f80041b3feec5d5",
+      "gasLimit": 32000000,
+      "gasUsed": 54385,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-transfer",
+      "hash": "0x883c80046bc128ea6bafdc076b5d0cf9b31773b5aca6b1ed1bc86e2f34b4cec5",
+      "gasLimit": 32000000,
+      "gasUsed": 54362,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-deposit",
+      "hash": "0x704806a87a7bafae6b0fa791ec817cc1d90bedf1b966c397be21d767baace06b",
+      "gasLimit": 32000000,
+      "gasUsed": 54465,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-redeem",
+      "hash": "0xbf750d81aa0b8d80c3296b23b34bfb4e1734032a02214e78ffddcbc33bf2ae06",
+      "gasLimit": 32000000,
+      "gasUsed": 54861,
+      "status": "0x0"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-claimRewards",
+      "hash": "0x9ae975f0e4fba4198b86cb3a5d639ba5efeab08c266ecb860b44d9edacf452ae",
+      "gasLimit": 32000000,
+      "gasUsed": 54385,
+      "status": "0x0"
+    },
+    {
+      "label": "parent-package-direct-init",
+      "hash": "0xb8a11ca268a776c0fbe16622cb4e5ee460cd8b8e32806948219de80074a83c4d",
+      "gasLimit": 32000000,
+      "gasUsed": 40170,
+      "status": "0x0"
+    },
+    {
+      "label": "sy-package-direct-init",
+      "hash": "0x3ddf37d2bc3d0de0c4c65cc957320d6b154a59d659b5dfb11a4d6ae7b8827072",
+      "gasLimit": 32000000,
+      "gasUsed": 35980,
+      "status": "0x0"
+    },
+    {
+      "label": "prepared-child-direct-init",
+      "hash": "0xb35cb335be0ea351075bfea8d484d37e26596ebffaf4414db24c477207f1d65d",
+      "gasLimit": 32000000,
+      "gasUsed": 35980,
+      "status": "0x0"
+    },
+    {
+      "label": "prepared-child-temporary-hook",
+      "hash": "0xe76af81b5ef5da190e3603dec1cb2f28050219c7c2391b070fb4fcc3688d9deb",
+      "gasLimit": 32000000,
+      "gasUsed": 23435,
+      "status": "0x0"
+    },
+    {
+      "label": "unprepared-cross-owner-registry",
+      "hash": "0x81628d50eb197e596a7c7fa214754dbc4125ce3d410c666a48893bf1897062c4",
+      "gasLimit": 32000000,
+      "gasUsed": 162570,
+      "status": "0x0"
+    },
+    {
+      "label": "identical-preparation-retry",
+      "hash": "0xa36125ccddf3f163900b88e8eb9eb6fc5eb6ff6f9e6d3b4cbdae8835b8c7a290",
+      "gasLimit": 32000000,
+      "gasUsed": 238737,
+      "status": "0x1"
+    },
+    {
+      "label": "bounded-finalization-retry",
+      "hash": "0xaea7b35078421c5c30dab3d065b05d4bf0672bf6f90c0b1dd57a9dd499e04e50",
+      "gasLimit": 32000000,
+      "gasUsed": 31009212,
+      "status": "0x0"
+    }
+  ],
+  "stateEquality": {
+    "firstFinalRollback": true,
+    "secondFinalRollback": true,
+    "afterEconomicAndAuthorityAttempts": [
+      true,
+      true
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+0	1	contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol
+0	1	contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol
+0	1	scripts/recovery/dtf-migration/claim-vault.test.ts
+0	1	scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+0	1	scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
+0	1	test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol
+0	1	test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol
+0	1	test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol
+0	1	test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol
+EOF_ONLY_DIFF_CLEAN

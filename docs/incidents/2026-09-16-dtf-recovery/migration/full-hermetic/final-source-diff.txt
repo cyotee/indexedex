@@ -1,0 +1,30 @@
+8db3f5ee6310e8a700dad2d6a33e21d0955e63ca
+work/dtf-migration-phase-25-full-hermetic
+test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol
+diff --git a/test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol b/test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol
+index 2a806b5a..075c1444 100644
+--- a/test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol
++++ b/test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol
+@@ -13,6 +13,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
+ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+ import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
++import {IStandardExchangeFrozenQuoteInputs} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
+ import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+ import {
+@@ -39,7 +40,8 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test is TestBase_U
+             UniswapV3FullSpreadStandardExchangeVaultDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
+ 
+         assertEq(name_, type(UniswapV3FullSpreadStandardExchangeVaultDFPkg).name, "package name");
+-        assertEq(interfaces.length, 15, "interface count");
++        assertEq(interfaces.length, 16, "interface count");
++        assertEq(interfaces[15], type(IStandardExchangeFrozenQuoteInputs).interfaceId, "frozen quote interface");
+         assertEq(facets.length, 15, "facet count");
+         assertEq(facets[0], address(erc20Facet), "erc20");
+         assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");
+Add verified bounded Migration stateful invariant tests
+Add verified bounded claimed SY intake and credit
+Add verified bounded held SE/LP custody and credit
+Add verified bounded earlier liquid custody and credit
+Add verified bounded earlier receipt custody and credit

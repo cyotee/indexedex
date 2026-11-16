@@ -1,0 +1,25 @@
+{
+  "label": "syntax-4",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "argv": [
+    "node",
+    "--check",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/workspace-audit.mjs"
+  ],
+  "literal": "'node' '--check' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/workspace-audit.mjs'",
+  "binaryPassObservable": "exit 0 from node --check; syntax only, not typecheck",
+  "started": "2026-11-10T13:04:42.009Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ",
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ",
+    "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ/cache"
+  },
+  "credentialPresent": true
+}

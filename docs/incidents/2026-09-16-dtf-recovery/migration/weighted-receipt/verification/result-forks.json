@@ -1,0 +1,9 @@
+{
+  "name": "forks",
+  "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv",
+  "bootstrap": "/bin/zsh -lc; approved existing login environment",
+  "code": 0,
+  "signal": null,
+  "bytes": 359344,
+  "sha256": "8f2f11f8525e88d2c9b7c0a3845e01d6bda38d9fc325a6f87ce63c72083bbda8"
+}

@@ -1,0 +1,17 @@
+{
+  "bondNftVault": "0x416baA141b36BC67f175538CC84A7c6BcFE6c9FF",
+  "bondNftVaultPkg": "0x3c327fe329AB4f456F862cb5F84E6B5c12bB840a",
+  "chainId": 4663,
+  "chir": "0x9E3245Df28714896759635AE7E1620406c66E404",
+  "chirDetfPkg": "0xa52e5056C8aB722FcEdC15A62492a51C7fa61360",
+  "creationPairPerDetfWad": 10000000000000000000,
+  "feeDetf": "0x9E3245Df28714896759635AE7E1620406c66E404",
+  "feeDetfTemplate": "launch-rich",
+  "isReserveLive": false,
+  "pairToken": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+  "rebasingClaim": "0xF7301c9bc5891E9244b1981609aBD257A705EC59",
+  "rebasingClaimTokenPkg": "0x4812C37A2641828130539ac23b55FC4a892471B9",
+  "reserveHook": "0x3D41bc6a5fb98185dB4219ceeC0C801cA820E888",
+  "symbol": "CHIR",
+  "uniV3Se_rich": "0xC79D214AF075EC5EBC01fE78a6A63206f3D6aC78"
+}

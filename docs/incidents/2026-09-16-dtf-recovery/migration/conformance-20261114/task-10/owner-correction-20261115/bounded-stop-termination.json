@@ -1,0 +1,72 @@
+{
+  "type": "ForcedTerminationReceipt",
+  "status": "STOPPED-AT-USER-BOUND",
+  "recordedAt": "2026-11-15T19:06:05.503Z",
+  "attempt": 52,
+  "runMonitor": "mon_TPWAF4P2SEBXEKAQ",
+  "actualCommandSession": "bash_37",
+  "commandTerminationToolResult": "Killed bash_37.",
+  "monitorEvent": "watcher killed (exit code 1)",
+  "normalProcessExitCode": null,
+  "normalResultPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/result.json",
+  "normalResultExists": false,
+  "terminationNotNormalCompletion": true,
+  "deadline": {
+    "monitor": "mon_VPQ7J4YQMP94C0TS",
+    "session": "bash_38",
+    "originalBound": "2026-11-15T18:55:25.715Z",
+    "fired": true,
+    "cancellationToolResult": "Killed bash_38."
+  },
+  "anvil": {
+    "separatePid": null,
+    "termination": "Killed owned command process tree; no listener or owned processes remain.",
+    "portProbe": {
+      "argv": [
+        "/usr/sbin/lsof",
+        "-nP",
+        "-iTCP:18575",
+        "-sTCP:LISTEN"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "ownedProcessRowsAfterTeardown": []
+  },
+  "checkpoint": {
+    "original": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/.omo-runtime/dtf-migration-portable/checkpoints",
+    "retained": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-runtime-01/checkpoints",
+    "files": 107,
+    "bytes": 677799,
+    "byteIdenticalCopyConfirmed": true,
+    "originalRemoved": true,
+    "inventory": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-checkpoint-inventory.json"
+  },
+  "rawOutputBindings": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/command.json",
+      "bytes": 26227,
+      "sha256": "bb3c68a8eec8e768281576724ddd2933c0bd631eb21982d2e2cca4131c7482bd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "pendingOwnedRuntimeProcesses": [],
+  "pendingOwnedMonitors": [],
+  "intendedRetentions": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-runtime-01"
+  ],
+  "unknownResourcesKilled": false,
+  "productSourceChangedDuringCloseout": false
+}

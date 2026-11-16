@@ -1,0 +1,1 @@
+GIT_MASTER=1 git status --short -- scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-domain.test.ts && GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-domain.test.ts

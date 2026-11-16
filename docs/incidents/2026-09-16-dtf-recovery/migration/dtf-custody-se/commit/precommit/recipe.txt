@@ -1,0 +1,14 @@
+Precommit inventory recipe v1
+Walk: os.walk(root, followlinks=False). Symlinked directories are recorded and not descended. Filenames and symlink directory entries are recorded; ordinary directories are not entries.
+Fields, fixed key order: path, kind, mode, size, sha256, target.
+path: POSIX relative to worktree root, sorted ascending.
+kind: file, symlink, or other from lstat.
+mode: 100644 regular non-executable, 100755 regular executable, 120000 symlink.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the raw symlink target string encoded UTF-8 for symlinks; null otherwise.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, json.dumps(separators=(',', ':'), ensure_ascii=False), one record per line, each line ending in 
+, no extra trailing blank line beyond the last record newline.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the JSONL.
+The walk of docs/incidents completed before any migration/dtf-custody-se/commit file existed. Inventory files written afterward are excluded evidence and are not members of the preservation set.
+No build, deletion, or cache write is part of this recipe.

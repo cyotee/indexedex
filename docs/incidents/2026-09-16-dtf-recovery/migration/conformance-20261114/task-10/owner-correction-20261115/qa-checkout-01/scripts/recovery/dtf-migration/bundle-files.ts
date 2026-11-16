@@ -1,0 +1,189 @@
+import { lstat, mkdir, readFile, readdir, realpath, writeFile } from "node:fs/promises";
+import { dirname, isAbsolute, join, resolve } from "node:path";
+import { z } from "zod";
+import { canonical, fingerprint } from "./provenance.js";
+import { bundleReference, PreparationError, sha256, source, uint } from "./schema.js";
+
+// Candidate-discovery bytes only: this reference cannot authorize an award or
+// replace a JSON historical FileRef. Absent on previously admitted v1 inputs.
+export const rehearsalFundingEvidence = source.unwrap().extend({
+  id: z.literal("rehearsal-funding-transfers"),
+  purpose: z.literal("synthetic-local"),
+  format: z.literal("transfer-csv"),
+}).strict().readonly();
+
+const file = z.object({
+  path: z.string().regex(/^data\/[0-9a-f]{64}$/), sha256, bytes: uint,
+}).strict();
+export const bundleManifest = z.object({
+  version: z.literal("dtf-operator-bundle-v1"),
+  originalBase: z.string().min(1),
+  template: file.readonly(),
+  files: z.array(file.extend({ originalPath: z.string().min(1) }).strict().readonly()).readonly(),
+}).strict().readonly();
+export type BundleReference = z.infer<typeof bundleReference>;
+export type BundleManifest = z.infer<typeof bundleManifest>;
+export type SourceFile = { readonly path: string; readonly sha256: string; readonly bytes: string };
+
+/** Walk immutable FileRefs without rewriting the paths in historical hash preimages. */
+export async function walkReferences(value: unknown, load: (ref: SourceFile) => Promise<Buffer>): Promise<void> {
+  const active = new Set<string>();
+  const complete = new Map<string, string>();
+  const walk = async (node: unknown): Promise<void> => {
+    if (Array.isArray(node)) { for (const item of node) await walk(item); return; }
+    if (node === null || typeof node !== "object") return;
+    const funding = rehearsalFundingEvidence.safeParse(node);
+    if (funding.success) {
+      verifyBytes(await load(funding.data), funding.data);
+      return;
+    }
+    const record = z.record(z.unknown()).parse(node);
+    const ref = bundleReference.safeParse(node);
+    if (ref.success) {
+      const key = resolve(ref.data.path);
+      const identity = canonical(ref.data);
+      if (active.has(key)) fail("cyclic historical file reference");
+      const previous = complete.get(key);
+      if (previous) {
+        if (previous !== identity) fail("conflicting historical file identity");
+        return;
+      }
+      active.add(key);
+      const raw = await load(ref.data);
+      verifyBytes(raw, ref.data);
+      const parsed: unknown = JSON.parse(raw.toString("utf8"));
+      await walk(parsed);
+      active.delete(key);
+      complete.set(key, identity);
+      return;
+    }
+    if (Array.isArray(record["sources"])) {
+      for (const raw of record["sources"]) {
+        const s = z.object({ path: z.string(), sha256, bytes: uint }).passthrough().parse(raw);
+        const ref = { path: s.path, sha256: s.sha256, bytes: s.bytes };
+        verifyBytes(await load(ref), ref);
+      }
+    }
+    for (const [key, child] of Object.entries(record)) {
+      if (key !== "sources" && key !== "bundle") await walk(child);
+    }
+  };
+  await walk(value);
+}
+
+function fail(message: string): never { throw new PreparationError("PROVENANCE", message); }
+export function verifyBytes(raw: Uint8Array, expected: SourceFile): void {
+  if (fingerprint(raw) !== expected.sha256 || String(raw.byteLength) !== expected.bytes) {
+    fail(`bundle raw bytes differ: ${expected.path}`);
+  }
+}
+async function regular(path: string): Promise<Buffer> {
+  const stat = await lstat(path);
+  if (!stat.isFile() || stat.isSymbolicLink()) fail(`bundle item is not a regular file: ${path}`);
+  return readFile(path);
+}
+
+// Every declared item is read and authenticated before a template is used.
+// Original locations below are lookup keys only, never filesystem fallbacks.
+export async function readBundle(path: string, expected?: BundleReference) {
+  const absolute = resolve(path);
+  const root = dirname(absolute);
+  if (await realpath(root) !== root) fail("bundle root or ancestor is a symlink");
+  const raw = await regular(absolute);
+  if (expected) verifyBytes(raw, expected);
+  const manifest = bundleManifest.parse(JSON.parse(raw.toString("utf8")));
+  if (!isAbsolute(manifest.originalBase) || resolve(manifest.originalBase) !== manifest.originalBase) {
+    fail("bundle original base must be canonical absolute metadata");
+  }
+  const data = join(root, "data");
+  if (!(await lstat(data)).isDirectory() || await realpath(data) !== data) fail("unsafe bundle data directory");
+  const originals = new Map<string, SourceFile>();
+  const contents = new Map<string, Buffer>();
+  const reads = [{ path: absolute, bytes: String(raw.length), sha256: fingerprint(raw) }];
+  for (const item of [manifest.template, ...manifest.files]) {
+    if (item.path !== `data/${item.sha256}`) fail("bundle content name differs from digest");
+    const physical = join(root, item.path);
+    const bytes = await regular(physical);
+    verifyBytes(bytes, item);
+    reads.push({ path: physical, bytes: String(bytes.length), sha256: fingerprint(bytes) });
+    const prior = contents.get(item.path);
+    if (prior && !prior.equals(bytes)) fail("conflicting bundle file identity");
+    contents.set(item.path, bytes);
+  }
+  for (const item of manifest.files) {
+    if (!isAbsolute(item.originalPath) || resolve(item.originalPath) !== item.originalPath
+      || originals.has(item.originalPath)) fail("duplicate or ambiguous bundle reference");
+    originals.set(item.originalPath, item);
+  }
+  const actual = (await readdir(data)).sort();
+  const declared = [...contents.keys()].map((p) => p.slice("data/".length)).sort();
+  if (canonical(actual) !== canonical(declared)) fail("bundle data membership differs");
+  const used = new Set<string>();
+  const locate = (originalPath: string, base = manifest.originalBase) => {
+    const key = resolve(base, originalPath);
+    const item = originals.get(key);
+    if (!item) fail(`missing declared bundle reference: ${key}`);
+    used.add(key);
+    return { ...item, path: join(root, item.path) };
+  };
+  const bytesOf = (originalPath: string, base = manifest.originalBase) => {
+    const item = locate(originalPath, base);
+    const raw = contents.get(`data/${item.sha256}`);
+    if (!raw) fail("missing bundle bytes");
+    return raw;
+  };
+  const template = contents.get(manifest.template.path);
+  if (!template) fail("missing bundle template");
+  return {
+    manifest, root, template, reads,
+    reference: { path: absolute, sha256: fingerprint(raw), bytes: String(raw.length) },
+    locate, bytesOf,
+    complete() {
+      if (used.size !== originals.size) fail("unreferenced bundle item");
+    },
+  };
+}
+
+export async function writeBundle(options: {
+  readonly templatePath: string;
+  readonly sources: readonly SourceFile[];
+  readonly output: string;
+}) {
+  const templatePath = resolve(options.templatePath);
+  const template = await readFile(templatePath);
+  const output = resolve(options.output);
+  // Exclusive root creation prevents merging with partial or unrelated data.
+  await mkdir(output, { recursive: false });
+  await mkdir(join(output, "data"));
+  const written = new Set<string>();
+  const store = async (raw: Buffer) => {
+    const sha256 = fingerprint(raw);
+    const path = `data/${sha256}`;
+    if (!written.has(path)) {
+      await writeFile(join(output, path), raw, { flag: "wx" });
+      written.add(path);
+    }
+    return { path, sha256, bytes: String(raw.length) };
+  };
+  const files = [];
+  const originals = new Map<string, SourceFile>();
+  for (const source of options.sources) {
+    const path = resolve(source.path);
+    const previous = originals.get(path);
+    if (previous) {
+      if (previous.sha256 !== source.sha256 || previous.bytes !== source.bytes) fail("conflicting source references");
+      continue;
+    }
+    originals.set(path, source);
+    const raw = await readFile(path);
+    verifyBytes(raw, source);
+    files.push({ ...await store(raw), originalPath: path });
+  }
+  const manifest = bundleManifest.parse({
+    version: "dtf-operator-bundle-v1", originalBase: dirname(templatePath),
+    template: await store(template), files,
+  });
+  const path = join(output, "bundle.json");
+  await writeFile(path, `${canonical(manifest)}\n`, { flag: "wx" });
+  return path;
+}

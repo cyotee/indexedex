@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {
+    IUniswapV4HookDiamondPackage
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+
+/**
+ * @title IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
+ * @notice DFPkg interface for Single SE Buffer CP Hook (Option B hook diamond).
+ * @dev PkgInit / PkgArgs on interface (Crane rule). Shared LP token facets match
+ *      ERC20PermitDFPkg (ERC20 + ERC5267 + ERC2612) plus MultiAsset vault facets —
+ *      not reimplemented on product Targets. See skill shared-facets.md.
+ */
+interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IUniswapV4HookDiamondPackage, IStandardVaultPkg {
+    error ZeroAddress();
+    error SameToken();
+    error RawIsSE();
+    error InvalidDecimals();
+    /// @notice D60: a buffered pair leg (`pairToken != standardExchange`) needs a rate provider.
+    error RateProviderRequired();
+    error TokenNotInVaultTokens();
+
+    struct PkgInit {
+        IVaultRegistryDeployment vaultRegistryDeployment;
+        IVaultFeeOracleQuery vaultFeeOracleQuery;
+        IFacet seFacet;
+        IFacet depositFacet;
+        IFacet depositSingleFacet;
+        IFacet depositPreviewFacet;
+        IFacet withdrawFacet;
+        /// @dev ERC20PermitDFPkg parity: LP share is the hook diamond.
+        IFacet erc20Facet;
+        IFacet erc5267Facet;
+        IFacet erc2612Facet;
+        IFacet multiAssetBasicVaultFacet;
+        IFacet multiAssetStandardVaultFacet;
+        IFacet multiStepOwnableFacet;
+    }
+
+    /// @notice Binding for one immortal hook instance (salt identity).
+    struct PkgArgs {
+        address poolManager;
+        address feeOracle;
+        address standardExchange;
+        address pairToken;
+        address rawToken;
+        uint8 pairTokenDecimals;
+        uint8 rawTokenDecimals;
+        /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
+        bool ownerOnlyLiquidity;
+        /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
+        address owner;
+        /// @notice D60: rate provider for the pair leg (WAD whole pair tokens per whole SE share).
+        ///         Required when `pairToken != standardExchange`; optional on an identity leg.
+        address rateProvider;
+    }
+
+    function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);
+    function SE_FACET() external view returns (IFacet);
+    function DEPOSIT_FACET() external view returns (IFacet);
+    function DEPOSIT_SINGLE_FACET() external view returns (IFacet);
+    function DEPOSIT_PREVIEW_FACET() external view returns (IFacet);
+    function WITHDRAW_FACET() external view returns (IFacet);
+    function PRODUCT_ID() external pure returns (bytes32);
+
+    /// @notice Production Add list applied by finalizeInitialization (F1). Not used at initAccount.
+    function productionFacetCuts() external view returns (IDiamond.FacetCut[] memory);
+
+    /// @notice Product path: package → Vault Registry.deployHookVault → hook factory.
+    function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);
+
+    /// @notice Gas-risky auto-mine convenience. Prefer deployVault with premined mineNonce.
+    function deployVaultAutoMine(PkgArgs memory args) external returns (address vault);
+}

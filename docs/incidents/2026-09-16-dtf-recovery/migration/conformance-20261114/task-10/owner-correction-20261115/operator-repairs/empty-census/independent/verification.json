@@ -1,0 +1,1277 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none-in-empty-census-repair",
+  "exact_scope": "verifyEmptyCensus compensation-event classification in execution-domain.ts and execution-domain.test.ts; separately requested adjacent verifyConfiguration assessment is advisory only",
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-done.json",
+    "sha256": "65fca422038e5c893799ba76ffbe8087d27c7bbdf3202ee7913229e6f1d98108"
+  },
+  "blocker": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-empty-census-blocker.json",
+    "sha256": "06d00236e66221e5e4fdaedaca0e7aa4560821543dd79e3c99965dc6a32a9621"
+  },
+  "sourceIntegrity": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+      "bytes": 15361,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "bytes": 15178,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts",
+      "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+      "bytes": 6624,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+      "bytes": 5375,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-empty-census-blocker.json",
+      "sha256": "06d00236e66221e5e4fdaedaca0e7aa4560821543dd79e3c99965dc6a32a9621",
+      "bytes": 2565,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/unset-owner-execution.json",
+      "sha256": "7017e049d6a7a51c77e78184c76fda1e965a187d01571a16f91520c4c65bf9ba",
+      "bytes": 24060,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/deployment-receipt.json",
+      "sha256": "d8ed0e7b7df06109ead1a2144f74c196fa932030f14f2de6b22e0394a5fecdf4",
+      "bytes": 131966,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/journal-deploy/17918fb30b629655bba3525c0d075970ad103105dd38d80270271398bdf9d238.canonical-chain.json",
+      "sha256": "20c6a7a7ad687762958a1d94593a5591f00c2d5349cc82fbc1acbf42746953f8",
+      "bytes": 738916,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/journal-owner-bond/domain.json",
+      "sha256": "f3d725d54e6f9583d837e7d32f06f5aae5347196e630e420f60081dfb620b16a",
+      "bytes": 24112,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/journal-deploy/domain.json",
+      "sha256": "0292f70aebeebbf370cebefe589898389dedfcbbadc09eab8a8a5dbdc72ca2c7",
+      "bytes": 25765,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+      "bytes": 302108,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+      "bytes": 123210,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationWeightedPricing.sol/IUniswapV4DetfMigrationWeightedPricing.json",
+      "sha256": "bc27f132877882a81b5d89f7ecb2637eb4b04fa685ad42430930e595cd181bbd",
+      "bytes": 40196,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+      "bytes": 60558,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+      "bytes": 128972,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+      "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+      "bytes": 124637,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/environment.json",
+      "sha256": "1a73169cc02ef695003cc66109db022c7c4eb3122ab6471476521e554597746b",
+      "bytes": 4139,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/claim-vault-acquisition.json",
+      "sha256": "f71443729452ba282631c3d45784563c38a52299149f153b765e7d2d595265e1",
+      "bytes": 31499,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/dtf-custody-se-acquisition.json",
+      "sha256": "476cb9150dac8b138d4a1cc5ee128652f385c443a3bac66b1b38f0e78d2caa7e",
+      "bytes": 48519,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/weighted-receipt-acquisition.json",
+      "sha256": "b6d1237e6fc1b01fe4c2aa5ac01c5c7f692750b8f9924481edb09723b5ef2ffa",
+      "bytes": 82747,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/earlier-liquid-acquisition.json",
+      "sha256": "db38f7b3f88cb8324ae7b25a05d06387199af40629f83631ff9ffc627aa0e5d1",
+      "bytes": 27979,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/held-se-lp-acquisition.json",
+      "sha256": "6c7be8dc451a2ade1922f95ef4c63544395423ceb204f90e1ba4018309fc991f",
+      "bytes": 173754,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/earlier-receipt-acquisition.json",
+      "sha256": "592b4f1ea3eb589b0415ff3d3e1b5b439d5ab91e3aa20edb1fb0d1bbb47c7c36",
+      "bytes": 166268,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+      "sha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+      "bytes": 7542,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+      "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+      "bytes": 1047506,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+      "sha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+      "bytes": 9896,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+      "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+      "bytes": 7330,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "bytes": 8528,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "bytes": 98213,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+      "sha256": "1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+      "bytes": 112028,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+      "sha256": "6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+      "bytes": 5693,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+      "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+      "bytes": 18779,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+      "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+      "bytes": 15387,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+      "sha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+      "bytes": 22508,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+      "sha256": "86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+      "bytes": 20560,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+      "sha256": "86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+      "bytes": 12969,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+      "sha256": "e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+      "bytes": 20874,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+      "sha256": "6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+      "bytes": 9176,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+      "sha256": "330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+      "bytes": 18766,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+      "sha256": "c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+      "bytes": 26504,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+      "sha256": "436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+      "bytes": 10950,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+      "sha256": "a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+      "bytes": 20357,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+      "sha256": "3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+      "bytes": 9905,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+      "sha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+      "bytes": 17571,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+      "sha256": "be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+      "bytes": 23223,
+      "matches": true
+    }
+  ],
+  "originalBindingsUnchanged": true,
+  "inMemoryBaselineReversal": {
+    "domain": {
+      "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+      "matches": true
+    },
+    "test": {
+      "sha256": "130932ca3a517b4753b3f3e34bdc2df11eca8f11c64429b629abc8eb66881acd",
+      "matches": true
+    }
+  },
+  "mutationReconstructions": [
+    {
+      "name": "singleton",
+      "sha256": "8ec7e66d39b09d021dd3cbd1c147a3d6a023f67f86ad38675619e1605fcdf6e9",
+      "expected": "8ec7e66d39b09d021dd3cbd1c147a3d6a023f67f86ad38675619e1605fcdf6e9",
+      "matches": true
+    },
+    {
+      "name": "cutoff",
+      "sha256": "29e55e03340c6a15bdde6d838471f36689c7b6242ae4ceaa645dcd677d862ece",
+      "expected": "29e55e03340c6a15bdde6d838471f36689c7b6242ae4ceaa645dcd677d862ece",
+      "matches": true
+    },
+    {
+      "name": "deployment",
+      "sha256": "0e8036e721f995b0e46a50f1ad76f19d25999ec5525aaae7f15d4293e42190bd",
+      "expected": "0e8036e721f995b0e46a50f1ad76f19d25999ec5525aaae7f15d4293e42190bd",
+      "matches": true
+    }
+  ],
+  "eventCoverage": [
+    {
+      "kind": "independent",
+      "event": "IndependentAllocationConfigured",
+      "topic": "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84"
+    },
+    {
+      "kind": "nfts",
+      "event": "NftEntitlementConfigured",
+      "topic": "0x286c5cc5454dd5423791286ff6d0889b2f1a236b36653c8362d3f45c7a83a3b6"
+    },
+    {
+      "kind": "weightedLiquid",
+      "event": "WeightedLiquidEntitlementConfigured",
+      "topic": "0xaa6b30bf9a69ad8b85c9d0d99f86b818a231717ca2a48ec168034aec8d1dc202"
+    },
+    {
+      "kind": "weightedSy",
+      "event": "WeightedSyEntitlementConfigured",
+      "topic": "0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2"
+    },
+    {
+      "kind": "dtfCustodySe",
+      "event": "DtfCustodySeEntitlementConfigured",
+      "topic": "0xd1c2bd2d7e34aef74f5c3777f0ab7d0f582179408134c8d7e6306695e026673a"
+    },
+    {
+      "kind": "claimVault",
+      "event": "ClaimVaultEntitlementConfigured",
+      "topic": "0x59306009aea8a6c83c64e203653e34d719cab2ea6cda18efa00ed8c25d8d400b"
+    },
+    {
+      "kind": "weightedReceipt",
+      "event": "WeightedReceiptEntitlementConfigured",
+      "topic": "0x33e0d7611cd01ac585b56590f0e06f294b7f66f0ee6604c70a99a2322721f7b5"
+    },
+    {
+      "kind": "earlierReceipt",
+      "event": "EarlierReceiptEntitlementConfigured",
+      "topic": "0x85d95872fb01c95b5c79ec368bf9ca44bec41bcd0cfe91e2cf2749ae0b79e232"
+    },
+    {
+      "kind": "earlierLiquid",
+      "event": "EarlierLiquidEntitlementConfigured",
+      "topic": "0xc50f03b2667f754f048eb2d07be8528842bb6b437806e66b53a8d2c3d09096f9"
+    },
+    {
+      "kind": "heldSeLp",
+      "event": "HeldSeLpEntitlementConfigured",
+      "topic": "0xefcccb4ed1d365a1bfebc8e2a0dbc11034fad586b6ee762949c5fd15fa5e1ac6"
+    },
+    {
+      "kind": "issuance",
+      "event": "IndependentAllocationIssued",
+      "topic": "0x6fdaa9b02304fa72aad48b485a0091e2a572b22da7df308c44e612f8264907f1"
+    }
+  ],
+  "savedDeploymentIdentity": {
+    "journalOwnerDomainHash": "be76538efae814c63f22d9c99fd6878734da1e3b76d135df3b3c7fdf02428289",
+    "journalManifestMatchesActualManifest": true,
+    "receiptMatchesCanonicalChain": true,
+    "headerHashMatches": true,
+    "headerNumberMatches": true,
+    "headerTransactionMembership": true,
+    "transactionHashMatches": true,
+    "transactionTarget": "0x6bfae98fa27609b8b6d5bf11275fec786516bd39",
+    "receiptLogCount": 152,
+    "thresholdMatchesBlocker": true
+  },
+  "retainedRunMetadata": [
+    {
+      "name": "attempt-01-baseline",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "130932ca3a517b4753b3f3e34bdc2df11eca8f11c64429b629abc8eb66881acd",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-02-reproduction",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-03-focused-green",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-04-mutant-singleton",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "8ec7e66d39b09d021dd3cbd1c147a3d6a023f67f86ad38675619e1605fcdf6e9",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-05-mutant-cutoff",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "29e55e03340c6a15bdde6d838471f36689c7b6242ae4ceaa645dcd677d862ece",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-06-manual",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-07-mutant-deployment",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "0e8036e721f995b0e46a50f1ad76f19d25999ec5525aaae7f15d4293e42190bd",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-08-final-focused",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-09-historical-census",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-10-final-manual",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    },
+    {
+      "name": "attempt-11-diff-check",
+      "commandMatches": true,
+      "cwdMatches": true,
+      "exitMatches": true,
+      "sourceStable": true,
+      "sources": [
+        {
+          "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+          "path": "scripts/recovery/dtf-migration/execution-domain.test.ts"
+        },
+        {
+          "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts"
+        },
+        {
+          "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts"
+        }
+      ]
+    }
+  ],
+  "rawOutputs": [
+    {
+      "name": "attempt-01-baseline",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-01-baseline/output.log",
+      "sha256": "5ddd3f41af566b164cfc685f81efa63db2e23e4d909cbc29b959b1081e9f586c",
+      "bytes": 1114,
+      "tail": "(pass) an unsigned blocked attempt closes without trapping the operator root or rewriting its journal [99.68ms]\n(pass) duplicate configure batch rejects while intentional identical donations keep distinct IDs [77.63ms]\n\n 10 pass\n 0 fail\nRan 10 tests across 1 file. [1323.00ms]\n",
+      "passLines": 10,
+      "failNames": []
+    },
+    {
+      "name": "attempt-02-reproduction",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-02-reproduction/output.log",
+      "sha256": "27c1c074420943a6b5ff13d9f64ad1db8316b539685b8076c7e753aa6b18f1bf",
+      "bytes": 4939,
+      "tail": "1 tests failed:\n(fail) empty compensation census admits the real package deployment ThresholdsConfigured logs [70.26ms]\n\n 32 pass\n 1 fail\nRan 33 tests across 1 file. [1.88s]\n",
+      "passLines": 32,
+      "failNames": [
+        "(fail) empty compensation census admits the real package deployment ThresholdsConfigured logs [70.26ms]",
+        "(fail) empty compensation census admits the real package deployment ThresholdsConfigured logs [70.26ms]"
+      ]
+    },
+    {
+      "name": "attempt-03-focused-green",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-03-focused-green/output.log",
+      "sha256": "1569bdd9eda1026438707ceddb1e3ece2bf763b228a2acaf7f70d434c972ddb6",
+      "bytes": 3731,
+      "tail": "(pass) an unsigned blocked attempt closes without trapping the operator root or rewriting its journal [81.92ms]\n(pass) duplicate configure batch rejects while intentional identical donations keep distinct IDs [74.22ms]\n\n 33 pass\n 0 fail\nRan 33 tests across 1 file. [2.02s]\n",
+      "passLines": 33,
+      "failNames": []
+    },
+    {
+      "name": "attempt-04-mutant-singleton",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-04-mutant-singleton/output.log",
+      "sha256": "c94e83576dfc0d0b39f2fbb37e00d8aeedba69ac2d325003355fcc3b0c5c94a5",
+      "bytes": 26370,
+      "tail": "(pass) an unsigned blocked attempt closes without trapping the operator root or rewriting its journal [75.35ms]\n(pass) duplicate configure batch rejects while intentional identical donations keep distinct IDs [76.62ms]\n\n 11 pass\n 22 fail\nRan 33 tests across 1 file. [2.00s]\n",
+      "passLines": 11,
+      "failNames": [
+        "(fail) empty compensation census rejects omitted IndependentAllocationConfigured at deployment offset 0 [55.66ms]",
+        "(fail) empty compensation census rejects omitted IndependentAllocationConfigured at deployment offset 7 [40.36ms]",
+        "(fail) empty compensation census rejects omitted IndependentAllocationIssued at deployment offset 0 [36.53ms]",
+        "(fail) empty compensation census rejects omitted IndependentAllocationIssued at deployment offset 7 [35.81ms]",
+        "(fail) empty compensation census rejects omitted NftEntitlementConfigured at deployment offset 0 [36.77ms]",
+        "(fail) empty compensation census rejects omitted NftEntitlementConfigured at deployment offset 7 [35.80ms]",
+        "(fail) empty compensation census rejects omitted WeightedLiquidEntitlementConfigured at deployment offset 0 [33.46ms]",
+        "(fail) empty compensation census rejects omitted WeightedLiquidEntitlementConfigured at deployment offset 7 [36.18ms]",
+        "(fail) empty compensation census rejects omitted WeightedSyEntitlementConfigured at deployment offset 0 [35.39ms]",
+        "(fail) empty compensation census rejects omitted WeightedSyEntitlementConfigured at deployment offset 7 [33.88ms]",
+        "(fail) empty compensation census rejects omitted DtfCustodySeEntitlementConfigured at deployment offset 0 [33.90ms]",
+        "(fail) empty compensation census rejects omitted DtfCustodySeEntitlementConfigured at deployment offset 7 [33.30ms]",
+        "(fail) empty compensation census rejects omitted ClaimVaultEntitlementConfigured at deployment offset 0 [34.03ms]",
+        "(fail) empty compensation census rejects omitted ClaimVaultEntitlementConfigured at deployment offset 7 [33.36ms]",
+        "(fail) empty compensation census rejects omitted WeightedReceiptEntitlementConfigured at deployment offset 0 [33.89ms]",
+        "(fail) empty compensation census rejects omitted WeightedReceiptEntitlementConfigured at deployment offset 7 [38.16ms]",
+        "(fail) empty compensation census rejects omitted EarlierReceiptEntitlementConfigured at deployment offset 0 [36.03ms]",
+        "(fail) empty compensation census rejects omitted EarlierReceiptEntitlementConfigured at deployment offset 7 [32.89ms]",
+        "(fail) empty compensation census rejects omitted EarlierLiquidEntitlementConfigured at deployment offset 0 [33.89ms]",
+        "(fail) empty compensation census rejects omitted EarlierLiquidEntitlementConfigured at deployment offset 7 [33.30ms]",
+        "(fail) empty compensation census rejects omitted HeldSeLpEntitlementConfigured at deployment offset 0 [30.20ms]",
+        "(fail) empty compensation census rejects omitted HeldSeLpEntitlementConfigured at deployment offset 7 [30.35ms]"
+      ]
+    },
+    {
+      "name": "attempt-05-mutant-cutoff",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-05-mutant-cutoff/output.log",
+      "sha256": "4e96f4e7efdf8bad747225af70429603a9a469fd526877441c73558177e1c675",
+      "bytes": 16328,
+      "tail": "(fail) empty compensation census rejects omitted EarlierLiquidEntitlementConfigured at deployment offset 0 [32.22ms]\n(fail) empty compensation census rejects omitted HeldSeLpEntitlementConfigured at deployment offset 0 [35.28ms]\n\n 22 pass\n 11 fail\nRan 33 tests across 1 file. [2.00s]\n",
+      "passLines": 22,
+      "failNames": [
+        "(fail) empty compensation census rejects omitted IndependentAllocationConfigured at deployment offset 0 [39.53ms]",
+        "(fail) empty compensation census rejects omitted IndependentAllocationIssued at deployment offset 0 [34.65ms]",
+        "(fail) empty compensation census rejects omitted NftEntitlementConfigured at deployment offset 0 [33.81ms]",
+        "(fail) empty compensation census rejects omitted WeightedLiquidEntitlementConfigured at deployment offset 0 [33.27ms]",
+        "(fail) empty compensation census rejects omitted WeightedSyEntitlementConfigured at deployment offset 0 [32.03ms]",
+        "(fail) empty compensation census rejects omitted DtfCustodySeEntitlementConfigured at deployment offset 0 [35.01ms]",
+        "(fail) empty compensation census rejects omitted ClaimVaultEntitlementConfigured at deployment offset 0 [33.20ms]",
+        "(fail) empty compensation census rejects omitted WeightedReceiptEntitlementConfigured at deployment offset 0 [32.31ms]",
+        "(fail) empty compensation census rejects omitted EarlierReceiptEntitlementConfigured at deployment offset 0 [38.73ms]",
+        "(fail) empty compensation census rejects omitted EarlierLiquidEntitlementConfigured at deployment offset 0 [32.22ms]",
+        "(fail) empty compensation census rejects omitted HeldSeLpEntitlementConfigured at deployment offset 0 [35.28ms]",
+        "(fail) empty compensation census rejects omitted IndependentAllocationConfigured at deployment offset 0 [39.53ms]",
+        "(fail) empty compensation census rejects omitted IndependentAllocationIssued at deployment offset 0 [34.65ms]",
+        "(fail) empty compensation census rejects omitted NftEntitlementConfigured at deployment offset 0 [33.81ms]",
+        "(fail) empty compensation census rejects omitted WeightedLiquidEntitlementConfigured at deployment offset 0 [33.27ms]",
+        "(fail) empty compensation census rejects omitted WeightedSyEntitlementConfigured at deployment offset 0 [32.03ms]",
+        "(fail) empty compensation census rejects omitted DtfCustodySeEntitlementConfigured at deployment offset 0 [35.01ms]",
+        "(fail) empty compensation census rejects omitted ClaimVaultEntitlementConfigured at deployment offset 0 [33.20ms]",
+        "(fail) empty compensation census rejects omitted WeightedReceiptEntitlementConfigured at deployment offset 0 [32.31ms]",
+        "(fail) empty compensation census rejects omitted EarlierReceiptEntitlementConfigured at deployment offset 0 [38.73ms]",
+        "(fail) empty compensation census rejects omitted EarlierLiquidEntitlementConfigured at deployment offset 0 [32.22ms]",
+        "(fail) empty compensation census rejects omitted HeldSeLpEntitlementConfigured at deployment offset 0 [35.28ms]"
+      ]
+    },
+    {
+      "name": "attempt-06-manual",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-06-manual/output.log",
+      "sha256": "bfdac6cc049280db4a2017ff12c96fc1ed4b41bab176ef7388df27c6e94c58d5",
+      "bytes": 261,
+      "tail": "{\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-Tm55Rd\",\"outcomes\":28,\"status\":\"PASS\"}\n",
+      "passLines": 0,
+      "failNames": []
+    },
+    {
+      "name": "attempt-07-mutant-deployment",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-07-mutant-deployment/output.log",
+      "sha256": "eb709e91a1f319b1e2c608be1c4c07e14e042d85bbd25f346c23ca436f978ad9",
+      "bytes": 806,
+      "tail": "       code: \"ERR_ASSERTION\"\n\n      at /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts:28:14\n      at processTicksAndRejections (native:7:39)\n\nBun v1.4.2 (macOS arm64)\n",
+      "passLines": 0,
+      "failNames": []
+    },
+    {
+      "name": "attempt-08-final-focused",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-08-final-focused/output.log",
+      "sha256": "7cefa82f8e41053f75c466fd4a5fed2b790626bf329c7feee6efbf29cd9897da",
+      "bytes": 3731,
+      "tail": "(pass) an unsigned blocked attempt closes without trapping the operator root or rewriting its journal [78.33ms]\n(pass) duplicate configure batch rejects while intentional identical donations keep distinct IDs [75.92ms]\n\n 33 pass\n 0 fail\nRan 33 tests across 1 file. [1.95s]\n",
+      "passLines": 33,
+      "failNames": []
+    },
+    {
+      "name": "attempt-09-historical-census",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-09-historical-census/output.log",
+      "sha256": "da61c92d600d2ee5c757117fb4c402caf95518d8671023242699475b933cc270",
+      "bytes": 7818,
+      "tail": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts:\n(pass) remaining claimed SY retains the full original and binds its eligible weight fraction [7.50ms]\n\n 81 pass\n 0 fail\nRan 81 tests across 3 files. [22.80s]\n",
+      "passLines": 81,
+      "failNames": []
+    },
+    {
+      "name": "attempt-10-final-manual",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-10-final-manual/output.log",
+      "sha256": "1aacf41bb1a9052e5a2145fd8d3be6cbd79d87e3bf307ae9c71f513acd83dfe6",
+      "bytes": 261,
+      "tail": "{\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA\",\"outcomes\":28,\"status\":\"PASS\"}\n",
+      "passLines": 0,
+      "failNames": []
+    },
+    {
+      "name": "attempt-11-diff-check",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-11-diff-check/output.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "tail": "",
+      "passLines": 0,
+      "failNames": []
+    }
+  ],
+  "producerTranscript": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1df60/sessions/st_01a1df60/2026-11-15T13-22-51.387Z_92629da0-d73c-43fe-a4f4-d1af12386029.jsonl",
+  "producerMonitorInvocations": [
+    {
+      "i": 430,
+      "id": "c97c0ab1",
+      "timestamp": "2026-11-15T16:44:09.484Z",
+      "code": "var evidenceRel='docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census'; var evidenceRoot=root+'/'+evidenceRel; var focused='bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts'; var hashFiles=['scripts/recovery/dtf-migration/execution-domain.ts','scripts/recovery/dtf-migration/execution-domain.test.ts']; var attemptCommand=(name,command)=>{const dir=evidenceRel+'/'+name; return `cd '${root}' && mkdir -p '${evidenceRel}' && mkdir '${dir}' && pwd > '${dir}/cwd.txt' && printf '%s\\n' '${command}' > '${dir}/command.txt' && shasum -a 256 ${hashFiles.join(' ')} > '${dir}/before.sha256' && { ${command} > '${dir}/output.log' 2>&1; result=$?; printf '%s\\n' \"$result\" > '${dir}/exit.txt'; shasum -a 256 ${hashFiles.join(' ')} > '${dir}/after.sha256'; printf 'EMPTY_CENSUS_RESULT ${name} exit=%s\\n' \"$result\"; exit \"$result\"; }`;}; print(await tool.monitor({description:'Empty census baseline domain tests',command:attemptCommand('attempt-01-baseline',focused),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 448,
+      "id": "d39247f3",
+      "timestamp": "2026-11-15T16:46:42.174Z",
+      "code": "hashFiles.push(evidenceRel+'/census-context.ts'); print(await tool.monitor({description:'Empty census deployment-log reproduction',command:attemptCommand('attempt-02-reproduction',focused),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 467,
+      "id": "855c22c9",
+      "timestamp": "2026-11-15T16:47:58.178Z",
+      "code": "print(await tool.monitor({description:'Empty census classification focused proof',command:attemptCommand('attempt-03-focused-green',focused),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 490,
+      "id": "7d6715ac",
+      "timestamp": "2026-11-15T16:50:48.311Z",
+      "code": "hashFiles.push(evidenceRel+'/manual-empty-census.ts'); print(await tool.monitor({description:'Empty census singleton mutation proof',command:attemptCommand('attempt-04-mutant-singleton',focused),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 506,
+      "id": "890b309e",
+      "timestamp": "2026-11-15T16:51:12.145Z",
+      "code": "print(await tool.monitor({description:'Empty census deployment-cutoff mutation proof',command:attemptCommand('attempt-05-mutant-cutoff',focused),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 514,
+      "id": "a99a05d2",
+      "timestamp": "2026-11-15T16:51:20.949Z",
+      "code": "print(await tool.monitor({description:'Empty census deployment-boundary mutation proof',command:attemptCommand('attempt-05-mutant-cutoff',focused),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 530,
+      "id": "96be33c2",
+      "timestamp": "2026-11-15T16:52:27.351Z",
+      "code": "var manualCommand='bun '+evidenceRel+'/manual-empty-census.ts'; print(await tool.monitor({description:'Empty census manual saved-facts proof',command:attemptCommand('attempt-06-manual',manualCommand),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 546,
+      "id": "290b6391",
+      "timestamp": "2026-11-15T16:53:19.624Z",
+      "code": "print(await tool.monitor({description:'Empty census deployment-authentication mutation proof',command:attemptCommand('attempt-07-mutant-deployment',manualCommand),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 562,
+      "id": "61695952",
+      "timestamp": "2026-11-15T16:54:16.401Z",
+      "code": "print(await tool.monitor({description:'Empty census final focused domain checks',command:attemptCommand('attempt-08-final-focused',focused),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 572,
+      "id": "b4482d66",
+      "timestamp": "2026-11-15T16:54:22.544Z",
+      "code": "var affected='bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts'; print(await tool.monitor({description:'Empty census affected historical/current checks',command:attemptCommand('attempt-09-historical-census',affected),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 578,
+      "id": "0402614d",
+      "timestamp": "2026-11-15T16:54:28.368Z",
+      "code": "print(await tool.monitor({description:'Empty census final manual proof',command:attemptCommand('attempt-10-final-manual',manualCommand),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    },
+    {
+      "i": 603,
+      "id": "3118f9ed",
+      "timestamp": "2026-11-15T16:56:13.378Z",
+      "code": "var manualDir=evidenceRoot+'/manual-qStpyA'; var manualResult=JSON.parse(await fs.readFile(manualDir+'/result.json','utf8')); print({status:manualResult.status,scope:manualResult.scope,transport:manualResult.transport,originalDomainHash:manualResult.originalDomainHash,deployment:manualResult.deployment,outcomes:manualResult.outcomes,preservedOriginalFiles:manualResult.preservedOriginalFiles,nonceRequests:manualResult.nonceRequests,sends:manualResult.sends,contractCalls:manualResult.contractCalls,limits:manualResult.limits}); print(await read(manualDir+'/cleanup.json')); print(await tool.monitor({description:'Empty census owned-path diff and dirty-state evidence',command:attemptCommand('attempt-11-diff-check','GIT_MASTER=1 git status --short -- scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-domain.test.ts && GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-domain.test.ts'),filter:'^EMPTY_CENSUS_RESULT',timeout_ms:180000}));"
+    }
+  ],
+  "producerMonitorCompletions": [
+    {
+      "id": "c233b381",
+      "timestamp": "2026-11-15T16:44:20.758Z",
+      "text": "<system-reminder>Monitor event(Empty census baseline domain tests): EMPTY_CENSUS_RESULT attempt-01-baseline exit=0\nwatcher completed (exit code 0)</system-reminder>"
+    },
+    {
+      "id": "f2c951b2",
+      "timestamp": "2026-11-15T16:47:21.600Z",
+      "text": "<system-reminder>Monitor event(Empty census deployment-log reproduction): EMPTY_CENSUS_RESULT attempt-02-reproduction exit=1\nwatcher exited_1 (exit code 1)</system-reminder>"
+    },
+    {
+      "id": "7a9ef473",
+      "timestamp": "2026-11-15T16:48:19.397Z",
+      "text": "<system-reminder>Monitor event(Empty census classification focused proof): EMPTY_CENSUS_RESULT attempt-03-focused-green exit=0\nwatcher completed (exit code 0)</system-reminder>"
+    },
+    {
+      "id": "0387b9d1",
+      "timestamp": "2026-11-15T16:50:56.884Z",
+      "text": "<system-reminder>Monitor event(Empty census singleton mutation proof): EMPTY_CENSUS_RESULT attempt-04-mutant-singleton exit=1\nwatcher exited_1 (exit code 1)</system-reminder>"
+    },
+    {
+      "id": "4ed7314d",
+      "timestamp": "2026-11-15T16:52:12.071Z",
+      "text": "<system-reminder>Monitor event(Empty census deployment-boundary mutation proof): EMPTY_CENSUS_RESULT attempt-05-mutant-cutoff exit=1\nwatcher exited_1 (exit code 1)</system-reminder>"
+    },
+    {
+      "id": "ae147916",
+      "timestamp": "2026-11-15T16:52:57.880Z",
+      "text": "<system-reminder>Monitor event(Empty census manual saved-facts proof): EMPTY_CENSUS_RESULT attempt-06-manual exit=0\nwatcher completed (exit code 0)</system-reminder>"
+    },
+    {
+      "id": "fdd0ec4f",
+      "timestamp": "2026-11-15T16:53:48.643Z",
+      "text": "<system-reminder>Monitor event(Empty census deployment-authentication mutation proof): EMPTY_CENSUS_RESULT attempt-07-mutant-deployment exit=1\nwatcher exited_1 (exit code 1)</system-reminder>"
+    },
+    {
+      "id": "96f96e46",
+      "timestamp": "2026-11-15T16:54:22.606Z",
+      "text": "<system-reminder>Monitor event(Empty census final focused domain checks): EMPTY_CENSUS_RESULT attempt-08-final-focused exit=0\nwatcher completed (exit code 0)</system-reminder>"
+    },
+    {
+      "id": "4bf1555c",
+      "timestamp": "2026-11-15T16:55:22.768Z",
+      "text": "<system-reminder>Monitor event(Empty census final manual proof): EMPTY_CENSUS_RESULT attempt-10-final-manual exit=0\nwatcher completed (exit code 0)</system-reminder>"
+    },
+    {
+      "id": "35e882f8",
+      "timestamp": "2026-11-15T16:55:22.769Z",
+      "text": "<system-reminder>Monitor event(Empty census affected historical/current checks): EMPTY_CENSUS_RESULT attempt-09-historical-census exit=0\nwatcher completed (exit code 0)</system-reminder>"
+    },
+    {
+      "id": "1b44f102",
+      "timestamp": "2026-11-15T16:57:26.657Z",
+      "text": "<system-reminder>Monitor event(Empty census owned-path diff and dirty-state evidence): EMPTY_CENSUS_RESULT attempt-11-diff-check exit=0\nwatcher completed (exit code 0)</system-reminder>"
+    }
+  ],
+  "manual": {
+    "result": {
+      "contractCalls": 0,
+      "deployment": {
+        "blockHash": "0x1c9527ca7946ab25b4f5204a486dc5fff948f953d854cc537877dc864240f1af",
+        "blockNumber": "0x67e5e5d",
+        "initialization": [
+          {
+            "address": "0xa10fb7436b216df934cfafaca5fddcc7bb9c2902",
+            "blockHash": "0x1c9527ca7946ab25b4f5204a486dc5fff948f953d854cc537877dc864240f1af",
+            "blockNumber": "0x67e5e5d",
+            "blockTimestamp": "0x6aeff6fb",
+            "data": "0x0000000000000000000000000000000000000000000000000e92596fd62900000000000000000000000000000000000000000000000000000d2f13f7789f0000",
+            "logIndex": "0x1",
+            "removed": false,
+            "topics": [
+              "0x9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe1622"
+            ],
+            "transactionHash": "0x4098d83a9911e1173fa3a091c227701fd2ff1488f35aa403b902fc3626e9c258",
+            "transactionIndex": "0x0"
+          }
+        ],
+        "logCount": 152,
+        "transactionHash": "0x4098d83a9911e1173fa3a091c227701fd2ff1488f35aa403b902fc3626e9c258"
+      },
+      "limits": [
+        "Anvil is stopped; no live current census or fresh chain attestation.",
+        "No owner-bond success, activation, readiness, shared gate or lifecycle completion claim."
+      ],
+      "nonceRequests": 0,
+      "originalDomainHash": "be76538efae814c63f22d9c99fd6878734da1e3b76d135df3b3c7fdf02428289",
+      "outcomes": [
+        {
+          "accepted": true,
+          "error": null,
+          "name": "actual saved mandatory initialization / owner-bond census preflight"
+        },
+        {
+          "accepted": true,
+          "error": null,
+          "name": "repeated unchanged empty initialization preflight"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted IndependentAllocationConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted IndependentAllocationConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted IndependentAllocationIssued at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted IndependentAllocationIssued at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted NftEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted NftEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted WeightedLiquidEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted WeightedLiquidEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted WeightedSyEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted WeightedSyEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted DtfCustodySeEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted DtfCustodySeEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted ClaimVaultEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted ClaimVaultEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted WeightedReceiptEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted WeightedReceiptEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted EarlierReceiptEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted EarlierReceiptEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted EarlierLiquidEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted EarlierLiquidEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted HeldSeLpEntitlementConfigured at deployment offset 0"
+        },
+        {
+          "accepted": false,
+          "error": "nonempty configuration/issuance census requires exact preparation evidence",
+          "name": "synthetic omitted HeldSeLpEntitlementConfigured at deployment offset 7"
+        },
+        {
+          "accepted": false,
+          "error": "ZodError",
+          "name": "malformed census RPC payload"
+        },
+        {
+          "accepted": false,
+          "error": "receipt is not canonical or transaction order differs",
+          "name": "stale deployment header"
+        },
+        {
+          "accepted": false,
+          "error": "DOMAIN",
+          "name": "missing required issuance event ABI"
+        },
+        {
+          "accepted": true,
+          "error": null,
+          "name": "restored empty initialization preflight"
+        }
+      ],
+      "preservedOriginalFiles": 41,
+      "scope": "real domain loading and owner-bond census preflight only; no bond execution",
+      "sends": 0,
+      "sourceBoundPricingEventRetained": true,
+      "status": "PASS",
+      "transport": "synthetic isolated loopback; exact archived deployment transaction/header/receipt; census range is the saved deployment logs plus separately injected synthetic omission events"
+    },
+    "transportRequestFacts": {
+      "total": 136,
+      "methodCounts": {
+        "eth_getTransactionReceipt": 28,
+        "eth_getBlockByNumber": 28,
+        "eth_getLogs": 53,
+        "eth_getTransactionByHash": 27
+      },
+      "rangeRequests": 26,
+      "allFullRange": true,
+      "allProxy": true,
+      "allExactElevenTopics": true,
+      "ethCall": 0,
+      "ethGetTransactionCount": 0,
+      "ethSendRawTransaction": 0
+    },
+    "sourceBindings": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/source-bindings.json",
+    "requests": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/rpc-requests.json",
+    "cleanup": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-vrnEgQ/cleanup.json",
+        "fixtureDirectoryRemoved": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-WFR2Et",
+        "fixtureEnvironmentRemoved": "DTF_TEST_RPC_52757",
+        "originalRpcAliasRestoredAfterProviderConstruction": true,
+        "serverClosed": true,
+        "temporaryRootAbsent": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/cleanup.json",
+        "fixtureDirectoryRemoved": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-bCTJSH",
+        "fixtureEnvironmentRemoved": "DTF_TEST_RPC_52934",
+        "originalRpcAliasRestoredAfterProviderConstruction": true,
+        "serverClosed": true,
+        "temporaryRootAbsent": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-Tm55Rd/cleanup.json",
+        "fixtureDirectoryRemoved": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-wwfZwg",
+        "fixtureEnvironmentRemoved": "DTF_TEST_RPC_52735",
+        "originalRpcAliasRestoredAfterProviderConstruction": true,
+        "serverClosed": true,
+        "temporaryRootAbsent": true
+      }
+    ]
+  },
+  "adjacentAdvisories": [
+    {
+      "id": "A1",
+      "severity": "P1",
+      "verdict": "needs-fix",
+      "failure_class": "prepared-range-census-initialization-misclassification",
+      "location": "scripts/recovery/dtf-migration/execution-state.ts:384-405",
+      "callers": [
+        "scripts/recovery/dtf-migration/execution.ts:127",
+        "scripts/recovery/dtf-migration/execution.ts:129"
+      ],
+      "scope": "Existing prepared verifyConfiguration range branch only; advisory, outside the verifyEmptyCensus repair",
+      "trigger": "A prepared verification/activation on the real initialized proxy, with its source-bound migration ABI and original deployment-to-latest range, selects the archived ThresholdsConfigured deployment log. After canonical receipt authentication, no admitted compensation row can represent it, so the verifier throws configured original omitted from complete deployment census.",
+      "evidenceBasis": "Read source plus offline decoding of authentic saved deployment receipt/artifact. No newly prepared real manifest, RPC, or live end-to-end reproduction is claimed.",
+      "facts": {
+        "proxy": "0xa10fb7436b216df934cfafaca5fddcc7bb9c2902",
+        "preparedManifest": null,
+        "pricing": null,
+        "compensationTopics": [
+          {
+            "kind": "independent",
+            "event": "IndependentAllocationConfigured",
+            "topic": "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84"
+          },
+          {
+            "kind": "nfts",
+            "event": "NftEntitlementConfigured",
+            "topic": "0x286c5cc5454dd5423791286ff6d0889b2f1a236b36653c8362d3f45c7a83a3b6"
+          },
+          {
+            "kind": "weightedLiquid",
+            "event": "WeightedLiquidEntitlementConfigured",
+            "topic": "0xaa6b30bf9a69ad8b85c9d0d99f86b818a231717ca2a48ec168034aec8d1dc202"
+          },
+          {
+            "kind": "weightedSy",
+            "event": "WeightedSyEntitlementConfigured",
+            "topic": "0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2"
+          },
+          {
+            "kind": "dtfCustodySe",
+            "event": "DtfCustodySeEntitlementConfigured",
+            "topic": "0xd1c2bd2d7e34aef74f5c3777f0ab7d0f582179408134c8d7e6306695e026673a"
+          },
+          {
+            "kind": "claimVault",
+            "event": "ClaimVaultEntitlementConfigured",
+            "topic": "0x59306009aea8a6c83c64e203653e34d719cab2ea6cda18efa00ed8c25d8d400b"
+          },
+          {
+            "kind": "weightedReceipt",
+            "event": "WeightedReceiptEntitlementConfigured",
+            "topic": "0x33e0d7611cd01ac585b56590f0e06f294b7f66f0ee6604c70a99a2322721f7b5"
+          },
+          {
+            "kind": "earlierReceipt",
+            "event": "EarlierReceiptEntitlementConfigured",
+            "topic": "0x85d95872fb01c95b5c79ec368bf9ca44bec41bcd0cfe91e2cf2749ae0b79e232"
+          },
+          {
+            "kind": "earlierLiquid",
+            "event": "EarlierLiquidEntitlementConfigured",
+            "topic": "0xc50f03b2667f754f048eb2d07be8528842bb6b437806e66b53a8d2c3d09096f9"
+          },
+          {
+            "kind": "heldSeLp",
+            "event": "HeldSeLpEntitlementConfigured",
+            "topic": "0xefcccb4ed1d365a1bfebc8e2a0dbc11034fad586b6ee762949c5fd15fa5e1ac6"
+          },
+          {
+            "kind": "issuance",
+            "event": "IndependentAllocationIssued",
+            "topic": "0x6fdaa9b02304fa72aad48b485a0091e2a572b22da7df308c44e612f8264907f1"
+          }
+        ],
+        "thresholdTopic": "0x9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe1622",
+        "thresholdSelectedByEmptyCensus": false,
+        "thresholdSelectedByPreparedVerifyConfiguration": true,
+        "thresholdLog": {
+          "address": "0xa10fb7436b216df934cfafaca5fddcc7bb9c2902",
+          "blockHash": "0x1c9527ca7946ab25b4f5204a486dc5fff948f953d854cc537877dc864240f1af",
+          "blockNumber": "0x67e5e5d",
+          "blockTimestamp": "0x6aeff6fb",
+          "data": "0x0000000000000000000000000000000000000000000000000e92596fd62900000000000000000000000000000000000000000000000000000d2f13f7789f0000",
+          "logIndex": "0x1",
+          "removed": false,
+          "topics": [
+            "0x9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe1622"
+          ],
+          "transactionHash": "0x4098d83a9911e1173fa3a091c227701fd2ff1488f35aa403b902fc3626e9c258",
+          "transactionIndex": "0x0"
+        },
+        "decodedThresholds": [
+          "1050000000000000000",
+          "950000000000000000"
+        ],
+        "decodedArgZeroType": "bigint",
+        "sourceInference": "Prepared verifyConfiguration range starts at original deployment inclusive and ends latest; actual ThresholdsConfigured is selected, canonical deployment receipt is available, and no valid configuration row can represent it. Independent/NFT rows require different names; all remaining originalId fields are bytes32 strings, strictly unequal to the uint256 bigint first argument.",
+        "transactionLocalBoundary": "captureAtReceipt configure branch reads only the exact canonical transaction receipt and selected configure method; mandatory deployVault initialization is a separate transaction. It is not evidence of a configure receipt failure."
+      },
+      "boundaryAssessment": "The transaction-local configure completion branch is different: exact signed configure calldata and its own canonical receipt exclude the separate package construction transaction. Matching suffix text at line 81 alone establishes no configure receipt defect. The prepared range branch has no such boundary.",
+      "fixDirection": "In separately authorized work, classify only actual admitted compensation configuration events in the prepared range branch, retaining complete origin coverage and deployment-to-latest authentication. Add an initialized-deployment prepared verification regression. Do not weaken the transaction-local configure receipt check or move the range past deployment.",
+      "doesNotInvalidateIssuanceVerdict": true,
+      "blocks": [
+        "prepared verify",
+        "prepared activate"
+      ],
+      "doesNotBlock": "The repaired no-preparation owner-bond census preflight"
+    }
+  ],
+  "advisoryRequiresSeparateAuthorization": true,
+  "fixesInReviewedRepair": [],
+  "limits": [
+    "No live RPC, new prepared real execution, or end-to-end runtime reproduction of A1; its trigger follows from actual archived deployment, source-bound ABI and exhaustive source branches.",
+    "No settled producer check rerun or new process/fixture started by verifier.",
+    "Native LSP freshness timeout and missing JSON Biome are not clean diagnostics.",
+    "Full current suite and strict typechecks remain a separate parent integration gate.",
+    "Saved fact regressions use retained absolute source-bound files; clean-checkout portability unverified.",
+    "No source edits, installs, Anvil, Forge, public RPC, delegation, readiness marker or task-10 closure."
+  ],
+  "issuanceVerdictUnchanged": true,
+  "sharedGateAccepted": false,
+  "task10Accepted": false
+}

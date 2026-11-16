@@ -1,0 +1,105 @@
+{
+  "version": "owner-first-bond-cleanup-v1",
+  "sourceModifications": "stopped",
+  "sourceStoppedAt": "2026-11-11T21:43:46.074Z",
+  "ownedAnvilPid": 52090,
+  "ownedAnvilExited": true,
+  "externalPidProbeExit": 1,
+  "port18563ListenerProbeExit": 1,
+  "checkpointAbsentExit": 0,
+  "emptyRuntimeParentRemovedExit": 0,
+  "diffCheckExit": 0,
+  "base": "2c2b3370ded30cae1662329025d4fb58f7197330",
+  "ownedRuntimeRemaining": false,
+  "ownedMonitorRemaining": false,
+  "impersonations": "ended by finally blocks before node shutdown",
+  "warmArtifacts": "retained locally; not copied to main",
+  "dependencies": "unchanged; preserved Crane symlink",
+  "scope": "Migration-specific production/tests/operator/runbook and new evidence only",
+  "publicActions": false,
+  "phase09InspectedImportedReplayed": false,
+  "providerRerouting": false,
+  "commitPushMerge": false,
+  "priorSealValidation": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/report.md",
+      "expected": "16e84b65ed405a1956be793da7b5e5b859f24b6c98cd81aaf151e38fd17c9334",
+      "actual": "16e84b65ed405a1956be793da7b5e5b859f24b6c98cd81aaf151e38fd17c9334",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/bindings.json",
+      "expected": "eb964802171dd822133be5b6480b9aa6a4f10fab1545bc3f578c855b5c37c661",
+      "actual": "eb964802171dd822133be5b6480b9aa6a4f10fab1545bc3f578c855b5c37c661",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/cleanup.json",
+      "expected": "039d96df2b853ba240df75e33108fe33b523f043c41a4a8a9281b0cb2a201f3f",
+      "actual": "039d96df2b853ba240df75e33108fe33b523f043c41a4a8a9281b0cb2a201f3f",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/report.md",
+      "expected": "deb62a122bb8949b03107ef04208f35f5c36dd1849e9ce79245d56091d369250",
+      "actual": "deb62a122bb8949b03107ef04208f35f5c36dd1849e9ce79245d56091d369250",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/bindings.json",
+      "expected": "dd81dd32c42d05153f9e186c6671f7b080ea179e4ee33f01ccff746bbdb0e057",
+      "actual": "dd81dd32c42d05153f9e186c6671f7b080ea179e4ee33f01ccff746bbdb0e057",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/cleanup.json",
+      "expected": "61902867ab7c6450a71604f27f21539b7cd534407dc0364abb9c4fbb1b870674",
+      "actual": "61902867ab7c6450a71604f27f21539b7cd534407dc0364abb9c4fbb1b870674",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/execution-index.json",
+      "expected": "2e5037ab42fd20f9c59b4ae9940fe173b57638cbdebfaf9f3663a3146072965c",
+      "actual": "2e5037ab42fd20f9c59b4ae9940fe173b57638cbdebfaf9f3663a3146072965c",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/source-artifact-parity.json",
+      "expected": "b1f01448c15fb0e0fec01fc9c6b9c55ca83ef8a506c737a254a38848f87931ef",
+      "actual": "b1f01448c15fb0e0fec01fc9c6b9c55ca83ef8a506c737a254a38848f87931ef",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/commands.json",
+      "expected": "585441f90030a0b88401ef56746b4cfdcbaf7d75e5a8f6df71c0f8e176b4b436",
+      "actual": "585441f90030a0b88401ef56746b4cfdcbaf7d75e5a8f6df71c0f8e176b4b436",
+      "match": true
+    }
+  ],
+  "priorVerifierBindings": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/report.md",
+      "sha256": "05cbb7ee9603fefc657590ec41b628119cd409b230ef8c2e285da9aa6707f911"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/d1-analysis.md",
+      "sha256": "a9cbbb7bd22fb4cfffa7729dc68adee5e0c75056dc3b1ca7ea61045b2a0e71cd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/artifact-reconciliation.json",
+      "sha256": "c97be9b90853c1cde03e69ff627e3400ca546cbdc2cc0d959ca1824982b54b09"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/binding-validation.json",
+      "sha256": "2bf7286b4417bcd2e163ea4ca8b9b75415abc186ec11141e9aadf1413d929cd2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/runtime-index.json",
+      "sha256": "3255f90151fdeaa1feec034378c3345cc04de40a8f7e910ac23ab80767861354"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/checks.json",
+      "sha256": "da007548fa023fde139d6db80a855cfa1c8c987a5a1bf89806ed4f337f3421b3"
+    }
+  ]
+}

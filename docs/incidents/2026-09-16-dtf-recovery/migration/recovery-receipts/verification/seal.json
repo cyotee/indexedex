@@ -1,0 +1,110 @@
+{
+  "version": "phase30-independent-verification-seal-v1",
+  "verdict": "confirmed",
+  "status": "CONFIRMED-STOPPED-BOUNDED",
+  "subject": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+  "parent": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+  "published": "2026-11-13T08:46:42.527Z",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 492300,
+    "sha256": "7c824332802d8b688644c5e02418323185d3798ba6aa7d91471b17983bf4f2ca"
+  },
+  "bindings": [
+    {
+      "path": "report.md",
+      "bytes": 13625,
+      "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 3230,
+      "sha256": "da6ade68fae6e36ab05ccfd4d7c1042353ac35104398bcee337096b7b7718c9d"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 237132,
+      "sha256": "ba8722456e632959c147e78266b1324962a5a80767af07030e2e5fc24544b99b"
+    },
+    {
+      "path": "intake-and-preservation.json",
+      "bytes": 992426,
+      "sha256": "45c7e70f880ef7e22b30c230bd6fce5bf59d6bbd84105ef01b446e766ecdd96f"
+    },
+    {
+      "path": "proof.json",
+      "bytes": 4434725,
+      "sha256": "a49921f03a27653a651d97fedbe6deac16683b98458d58ea700feceb03024032"
+    },
+    {
+      "path": "cross-checks.json",
+      "bytes": 995,
+      "sha256": "f4c8e5c9b22682814705b4e5a9d8c0617834206e75d0786edce9a9ea5e64af1b"
+    },
+    {
+      "path": "credential-scan.json",
+      "bytes": 161,
+      "sha256": "99220a294e437772d3b8f19cb5eed7dda38abd0f1809042d12ad6eae329b6748"
+    },
+    {
+      "path": "output-identities.json",
+      "bytes": 1178,
+      "sha256": "4038068f5a86114bcefded93cc6637dc14a21ec8a9e75404289ca1ee9ff3aad3"
+    },
+    {
+      "path": "actual/archive.json",
+      "bytes": 5917231,
+      "sha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0"
+    },
+    {
+      "path": "actual/reconciliation.json",
+      "bytes": 841408,
+      "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2"
+    },
+    {
+      "path": "actual/http-manifest.json",
+      "bytes": 638076,
+      "sha256": "dc93956548bb279085571472b19cc87d9e62e257ea90c76559ce8d7be46e8290"
+    }
+  ],
+  "evidenceFiles": 2916,
+  "results": {
+    "operatorStrictTypesExit": 0,
+    "supportStrictTypesExit": 0,
+    "operatorSuiteExit": 0,
+    "testsPassed": 172,
+    "testsFailed": 0,
+    "testFiles": 15,
+    "actualIndependentCollections": 1,
+    "canonicalAssociationsPerArchive": 319,
+    "originalConversions": 250,
+    "originalRecoveries": 69,
+    "rawResponsesPerArchive": 1278,
+    "receiptLogsPerArchive": 2228,
+    "savedTransferMatchesPerArchive": 319,
+    "outputConflicts": 0,
+    "actualRpcFailures": 0,
+    "unavailable": 0,
+    "redacted": 0,
+    "credentialMatches": 0,
+    "independentOracleExit": 0,
+    "normalizedTwoRunResultsEqual": true,
+    "rawByteIdenticalResponses": 1277,
+    "rawPropertyOrderOnlyDifferences": 1,
+    "producerManifestEntriesAuthenticated": 2922,
+    "originalDeclarationsAuthenticated": 36
+  },
+  "stopped": {
+    "ownedPendingOperations": 0,
+    "runtimeRemoved": true,
+    "producerSourceFixed": false,
+    "commits": false,
+    "operationalApproval": false
+  },
+  "limits": [
+    "Reviewed observations only; not net contributions, deductions, original eligibility or current control",
+    "No delegated/direct-EOA claim admission change; phase29 not resumed",
+    "No financial approval, fullTask9/fullplan acceptance, P1 reconstruction or gaswork"
+  ],
+  "lastVerifierArtifactWrite": true
+}

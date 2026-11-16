@@ -1,0 +1,82 @@
+{
+  "schema": "phase20-independent-se-lp-source-verification-seal-v1",
+  "date": "2026-11-12",
+  "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+  "branch": "work/dtf-migration-phase-20-se-lp-source",
+  "producerSealSha256": "c851eb90b1fb221c7ab2a6f2c1cc039b7cd04e09ffa9a0886773ee488509e110",
+  "ownedIndexSha256": "922910a886493195b17f66f34e0990ae1f15d3f559c017be88695a5b1316766f",
+  "rows": [
+    {
+      "row": "E-S",
+      "verdict": "not-ready"
+    },
+    {
+      "row": "W-SW",
+      "verdict": "admitted",
+      "limit": "bounded source-only approved exact native18 custody-and-hold"
+    },
+    {
+      "row": "E-P",
+      "verdict": "not-ready"
+    },
+    {
+      "row": "W-P",
+      "verdict": "not-ready"
+    }
+  ],
+  "files": [
+    {
+      "path": "evidence.json",
+      "bytes": 1283584,
+      "sha256": "9c24b30be716901d9e6318cc18577ac2d377a64c2982fb56560ee4ad1cb2e554"
+    },
+    {
+      "path": "probe/CustodyProbe.sol",
+      "bytes": 1718,
+      "sha256": "aab37b63ad94741fc8ffb56a8ad5da2446e08ca48c948840b63b7db27c87d3f4"
+    },
+    {
+      "path": "probe/build/CustodyProbe.sol/CustodyProbe.json",
+      "bytes": 11925,
+      "sha256": "07898effa82cee701375e9e8ce123bdf32f3479d7d3520fb10cafe29935e5417"
+    },
+    {
+      "path": "probe/build/CustodyProbe.sol/ISource.json",
+      "bytes": 3341,
+      "sha256": "abaf57573a9792246e42803fc06ad17b79fde0f662d6e98119d7acc85929a1b3"
+    },
+    {
+      "path": "probe/build/build-info/57f0ec45ffc4b658.json",
+      "bytes": 92,
+      "sha256": "933298c5795c731ece66fa958fbab90b9c3703c96951d35576ff661ce0f5e303"
+    },
+    {
+      "path": "probe/cache/solidity-files-cache.json",
+      "bytes": 1499,
+      "sha256": "186f0c4f7ad106ca3a6405caf76ab1baf068717c4290cd3199778b26d37c31fb"
+    },
+    {
+      "path": "report.md",
+      "bytes": 26504,
+      "sha256": "c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45"
+    }
+  ],
+  "cleanup": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git rev-parse HEAD && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git branch --show-current && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git status --short --ignore-submodules=all && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --exit-code && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --cached --ignore-submodules=all --exit-code; ps -p 47976,33577,37578 -o pid=,command=; lsof -nP -iTCP:18570 -sTCP:LISTEN; if test -e .omo-runtime/dtf-migration-se-lp-sources/checkpoints; then printf 'CHECKPOINT_PRESENT\n'; else printf 'CHECKPOINT_ABSENT\n'; fi",
+    "output": "1df9076c73b94a4f63172395763fa8cdd48fe060\nwork/dtf-migration-phase-20-se-lp-source\n?? docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/\nCHECKPOINT_ABSENT",
+    "ownedNode": {
+      "session": "bash_3",
+      "pid": 47976,
+      "stop": "kill_bash; completion exit0"
+    },
+    "listeners": [],
+    "checkpoints": "absent, none created",
+    "donorStopRpcRecorded": true,
+    "receiptSubscriptions": "closed in finally; donor socket closed",
+    "persistentProviders": "none constructed",
+    "pendingOwnedOperations": 0
+  },
+  "excluded": [
+    "seal.json"
+  ]
+}

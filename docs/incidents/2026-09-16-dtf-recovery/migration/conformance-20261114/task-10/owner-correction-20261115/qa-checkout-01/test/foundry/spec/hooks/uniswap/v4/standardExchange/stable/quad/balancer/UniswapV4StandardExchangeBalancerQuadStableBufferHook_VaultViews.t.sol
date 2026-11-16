@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {
+    TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+
+contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_VaultViews is TestBase {
+    function test_reserveOfToken_isLocalPlusRatedShares() public {
+        _firstMintEqual(100 ether);
+        assertEq(IBasicVault(hook).reserveOfToken(address(token0)), quad.ratedBalance(0));
+        assertEq(IBasicVault(hook).reserveOfToken(address(token1)), token1.balanceOf(hook));
+        assertEq(quad.nativeReserve(0), quad.seBalance(0));
+        assertGt(quad.ratedBalance(0), quad.nativeReserve(0), "local book included only in swap view");
+    }
+
+    function test_vaultTokens_four() public view {
+        address[] memory toks = IBasicVault(hook).vaultTokens();
+        assertEq(toks.length, 4);
+        assertEq(toks[0], address(token0));
+    }
+
+    function test_setUpLeavesSixDoorsAndFinalized() public view {
+        _assertAllDoorsLive();
+        assertEq(quad.pairDoorCount(), 6);
+    }
+}

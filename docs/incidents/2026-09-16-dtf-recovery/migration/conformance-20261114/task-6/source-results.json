@@ -1,0 +1,4537 @@
+{
+  "type": "Task6SourceResults",
+  "task": 6,
+  "status": "complete",
+  "manualQA": "PASS",
+  "requiredCategories": 14,
+  "coveredCategories": 14,
+  "sourceFacts": "../task-3/source-observations.json",
+  "pin": {
+    "number": 108944663,
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+    "l1BlockNumber": 26367659,
+    "qualification": "Orbit BLOCKNUMBER exposes L1 number; raw RPC header pins L2 block. These are source pins, not a price book or approved allocation."
+  },
+  "run": {
+    "exactCommand": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv",
+    "commandRawLine": 7,
+    "rawLog": "fork-qa-1.log",
+    "rawSha256": "ec59e2ca0e0f6c936b848ed226571e303cd9a37a7d9fc674b22c3eeca7cee238",
+    "exitCode": 0,
+    "exitRawLine": 7842,
+    "summaryRawLine": 7840,
+    "suites": 30,
+    "passed": 182,
+    "failed": 0,
+    "skipped": 0,
+    "compiled": [
+      {
+        "files": 892,
+        "compiler": "Solar 0.8.38",
+        "rawLines": [
+          23,
+          24,
+          25
+        ]
+      },
+      {
+        "files": 32,
+        "compiler": "Solar 0.8.38",
+        "rawLines": [
+          6380,
+          6381,
+          6382
+        ]
+      }
+    ],
+    "artifactDisposition": "Warm artifacts retained. The helper rebuilt concrete runtime dependencies before the fork tests; this was not artifact-only reuse.",
+    "reruns": 0
+  },
+  "measurementQualification": "Emitted numeric counters are copied from raw output. Other custody, credit, bond funding and recovery quantities are exact assertion-backed expressions with source and passing-case line bindings; -vv does not emit each local scalar. Separate fixtures and conditional external-authority steps are identified, never combined into one invented trace. Synthetic original contributions in behavior fixtures do not approve operational financial allocations.",
+  "rows": [
+    {
+      "category": "weighted-nft",
+      "source": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "task3Row": 0,
+      "task3Reference": "../task-3/source-observations.json#/sources/0",
+      "status": "PASS",
+      "units": "NFT identity and remaining fixed principal",
+      "conditions": "Retain principal in routine harvests; NFT3 has two separately quoted/funded contributions.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalPrincipal": "54436459",
+        "claimedPrincipal": "8071216",
+        "remainingPrincipal": "46365243",
+        "custody": "NFT 32 owner becomes Migration; full source tuple unchanged",
+        "bondFunding": "floor(C0 * 46365243 / 54436459); exact funded gons = credit * new receipt divisor",
+        "recovery": "Three reward-only cycles after maturity: principalClaimed=0, rewardsClaimed strictly increases; actual WD/DTF deltas positive; selected donation debits only recovered DTF; source principal and claimedPrincipal unchanged"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "suite": "MigrationLegacySourcesTest",
+        "headerLine": 7120,
+        "test": "test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote",
+        "line": 7130,
+        "raw": "[PASS] test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote() (gas: 4048080)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "function": "test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote",
+          "startLine": 31,
+          "endLine": 54,
+          "assertions": [
+            {
+              "line": 33,
+              "text": "assertEq(before_.principal, 54436459);"
+            },
+            {
+              "line": 34,
+              "text": "assertEq(before_.claimedPrincipal, 8071216);"
+            },
+            {
+              "line": 40,
+              "text": "assertEq(units_, 46365243); assertEq(preview_, expected_);"
+            },
+            {
+              "line": 41,
+              "text": "assertNotEq(expected_, migration.previewOriginalCredit(0,"
+            },
+            {
+              "line": 44,
+              "text": "assertEq(actual_, expected_);"
+            },
+            {
+              "line": 45,
+              "text": "assertEq(IERC20(detf).totalSupply() - supply_, expected_);"
+            },
+            {
+              "line": 46,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + expected_);"
+            },
+            {
+              "line": 47,
+              "text": "assertEq(receipt.stakingState().accountedBacking, initialBacking + expected_);"
+            },
+            {
+              "line": 48,
+              "text": "assertEq(bonds.positionOf(id_).stakingGons, expected_ * receipt.stakingState().gonsPerUnit);"
+            },
+            {
+              "line": 49,
+              "text": "assertEq(abi.encode(IMigrationWeightedNft(WEIGHTED).positionOf(32)), abi.encode(before_));"
+            },
+            {
+              "line": 51,
+              "text": "assertEq(s_.originalUnits, 54436459); assertEq(s_.remainingUnits, 46365243);"
+            },
+            {
+              "line": 52,
+              "text": "assertEq(s_.credit, expected_); assertTrue(s_.consumed);"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "suite": "MigrationLegacySourcesTest",
+        "headerLine": 7120,
+        "test": "test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement",
+        "line": 7131,
+        "raw": "[PASS] test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement() (gas: 1397977)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "function": "test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement",
+          "startLine": 16,
+          "endLine": 30,
+          "assertions": [
+            {
+              "line": 21,
+              "text": "assertNotEq(holder_, purchaser_);"
+            },
+            {
+              "line": 25,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"NotOriginalNftWallet(address,address)\", holder_, purchaser_));"
+            },
+            {
+              "line": 28,
+              "text": "_assertNotConsumed(WEIGHTED, 26, holder_, supply_);"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+        "suite": "MigrationRecoveryDonationTest",
+        "headerLine": 7176,
+        "test": "test_iterativeRewardHarvestDonatesDtfWithoutTakingUnlockedPrincipal",
+        "line": 7182,
+        "raw": "[PASS] test_iterativeRewardHarvestDonatesDtfWithoutTakingUnlockedPrincipal() (gas: 73200494)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "function": "test_iterativeRewardHarvestDonatesDtfWithoutTakingUnlockedPrincipal",
+          "startLine": 164,
+          "endLine": 197,
+          "assertions": [
+            {
+              "line": 167,
+              "text": "assertGt(original_.principal, original_.claimedPrincipal);"
+            },
+            {
+              "line": 176,
+              "text": "assertEq(harvested_.principalClaimed, 0);"
+            },
+            {
+              "line": 177,
+              "text": "assertGt(harvested_.rewardsClaimed, previousRewards_);"
+            },
+            {
+              "line": 180,
+              "text": "assertGt(rewards_, 0);"
+            },
+            {
+              "line": 185,
+              "text": "assertGt(received_, 0);"
+            },
+            {
+              "line": 188,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), dtfBefore_ + received_ - donation_);"
+            },
+            {
+              "line": 190,
+              "text": "assertEq(remaining_.principal, original_.principal);"
+            },
+            {
+              "line": 191,
+              "text": "assertEq(remaining_.claimedPrincipal, original_.claimedPrincipal);"
+            },
+            {
+              "line": 192,
+              "text": "assertGt(remaining_.stakingGons, 0);"
+            },
+            {
+              "line": 193,
+              "text": "assertEq(IERC721(WEIGHTED).ownerOf(4), detf);"
+            },
+            {
+              "line": 194,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [],
+      "emittedOriginalUnits": []
+    },
+    {
+      "category": "earlier-nft",
+      "source": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "task3Row": 1,
+      "task3Reference": "../task-3/source-observations.json#/sources/1",
+      "status": "PASS",
+      "units": "NFT identity and original LP accounting shares",
+      "conditions": "Retain principal/NFT; source SE enablement and actual new reward income may be needed. Sale is an explicit separate operation.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalShares": "47848240999749918187208884",
+        "physicalLpValue": "47848240999749918187208985",
+        "remainingUnits": "originalShares unchanged",
+        "custody": "NFT 12 owner becomes Migration",
+        "bondFunding": "C0; fresh bond principal equals complete original credit",
+        "recovery": "Three cycles after unlock with genuine incoming ED: rewardsClaimed increases; no NFT sale; exact donation inventory remainder = combined recovery minus donation; originalShares and custody unchanged; external enablement required"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "suite": "MigrationLegacySourcesTest",
+        "headerLine": 7120,
+        "test": "test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp",
+        "line": 7123,
+        "raw": "[PASS] test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp() (gas: 2390760)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "function": "test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp",
+          "startLine": 102,
+          "endLine": 113,
+          "assertions": [
+            {
+              "line": 104,
+              "text": "assertEq(p_.originalShares, 47848240999749918187208884);"
+            },
+            {
+              "line": 105,
+              "text": "assertEq(IEarlierClaims(EARLIER).convertToAssets(p_.originalShares), 47848240999749918187208985);"
+            },
+            {
+              "line": 109,
+              "text": "assertEq(credit_, c0_);"
+            },
+            {
+              "line": 110,
+              "text": "assertEq(migration.nftSurrender(EARLIER, 12).remainingUnits, p_.originalShares);"
+            },
+            {
+              "line": 111,
+              "text": "assertEq(IMigrationEarlierNft(EARLIER).getPosition(12).originalShares, p_.originalShares);"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "suite": "MigrationLegacySourcesTest",
+        "headerLine": 7120,
+        "test": "test_missingApprovalRollsBackPretransferAcceptanceForBothSources",
+        "line": 7126,
+        "raw": "[PASS] test_missingApprovalRollsBackPretransferAcceptanceForBothSources() (gas: 7832677)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "function": "test_missingApprovalRollsBackPretransferAcceptanceForBothSources",
+          "startLine": 210,
+          "endLine": 227,
+          "assertions": [
+            {
+              "line": 220,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InsufficientApproval.selector, detf, 3));"
+            },
+            {
+              "line": 222,
+              "text": "_assertNotConsumed(collection_, 3, holder_, supply_);"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+        "suite": "MigrationRecoveryDonationTest",
+        "headerLine": 7176,
+        "test": "test_iterativeEarlierRewardsReachDtfWithoutSellingUnlockedNft",
+        "line": 7181,
+        "raw": "[PASS] test_iterativeEarlierRewardsReachDtfWithoutSellingUnlockedNft() (gas: 109144004)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "function": "test_iterativeEarlierRewardsReachDtfWithoutSellingUnlockedNft",
+          "startLine": 110,
+          "endLine": 163,
+          "assertions": [
+            {
+              "line": 130,
+              "text": "// Actual external income, not an assertion that time alone creates rewards."
+            },
+            {
+              "line": 133,
+              "text": "assertGt(income_, 0);"
+            },
+            {
+              "line": 138,
+              "text": "assertGt(harvested_.rewardsClaimed, previousRewards_);"
+            },
+            {
+              "line": 140,
+              "text": "assertFalse(harvested_.sold);"
+            },
+            {
+              "line": 145,
+              "text": "assertGt(received_, 0);"
+            },
+            {
+              "line": 154,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), combined_ - donation_);"
+            },
+            {
+              "line": 155,
+              "text": "assertEq(IMigrationEarlierNft(EARLIER).getPosition(3).originalShares, original_.originalShares);"
+            },
+            {
+              "line": 156,
+              "text": "assertEq(IERC721(EARLIER).ownerOf(3), detf);"
+            },
+            {
+              "line": 157,
+              "text": "assertEq(IMigrationWeightedNft(WEIGHTED).positionOf(4).principal, weighted_.principal);"
+            },
+            {
+              "line": 158,
+              "text": "assertEq(IMigrationWeightedNft(WEIGHTED).positionOf(4).claimedPrincipal, weighted_.claimedPrincipal);"
+            },
+            {
+              "line": 159,
+              "text": "assertEq(IERC721(WEIGHTED).ownerOf(4), detf);"
+            },
+            {
+              "line": 160,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [],
+      "emittedOriginalUnits": []
+    },
+    {
+      "category": "weighted-liquid",
+      "source": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "task3Row": 2,
+      "task3Reference": "../task-3/source-observations.json#/sources/2",
+      "status": "PASS",
+      "units": "native9",
+      "conditions": "Original wallet, configured complete original and actual selected custody.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalUnits": "3 native9",
+        "custodyDelta": "3",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "c1=C0/3; c2=(C0-c1)/2; c3=remaining; sum=C0; exact receipt backing increase C0 plus separately accounted expansion",
+        "recovery": "Separate fixture 21225531 native9 converted in two selections; booked WD -> 0; seven unbooked WD preserved; booked DTF = actual output; donation debits 1e18"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+        "suite": "MigrationWeightedLiquidTest",
+        "headerLine": 7792,
+        "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+        "line": 7796,
+        "raw": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 5467017)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "function": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "startLine": 82,
+          "endLine": 134,
+          "assertions": [
+            {
+              "line": 89,
+              "text": "assertEq(c1_, c0_ / 3);"
+            },
+            {
+              "line": 91,
+              "text": "assertEq(s_.consumedUnits, 1);"
+            },
+            {
+              "line": 92,
+              "text": "assertEq(s_.deliveredCredit, c1_);"
+            },
+            {
+              "line": 93,
+              "text": "assertEq(s_.remainingUnits, 2);"
+            },
+            {
+              "line": 94,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 98,
+              "text": "assertFalse(replayed_);"
+            },
+            {
+              "line": 103,
+              "text": "assertFalse(corrected_);"
+            },
+            {
+              "line": 104,
+              "text": "assertEq(abi.encode(migration.weightedLiquidSurrender(ORIGIN)), abi.encode(s_));"
+            },
+            {
+              "line": 107,
+              "text": "assertEq(migration.synchronizeRewards(), expansion_);"
+            },
+            {
+              "line": 108,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c1_ + expansion_);"
+            },
+            {
+              "line": 109,
+              "text": "assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedLiquidEntitlements.selector), address(0));"
+            },
+            {
+              "line": 111,
+              "text": "assertEq(c2_, (c0_ - c1_) / 2);"
+            },
+            {
+              "line": 113,
+              "text": "assertEq(c1_ + c2_ + c3_, c0_);"
+            },
+            {
+              "line": 114,
+              "text": "assertNotEq(first_, second_);"
+            },
+            {
+              "line": 115,
+              "text": "assertNotEq(second_, third_);"
+            },
+            {
+              "line": 116,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, firstTime_);"
+            },
+            {
+              "line": 117,
+              "text": "assertEq(bonds.positionOf(third_).startTimestamp, firstTime_ + 30 days);"
+            },
+            {
+              "line": 118,
+              "text": "assertEq(migration.weightedLiquidEntitlement(ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 120,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 121,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 122,
+              "text": "assertEq(s_.consumedUnits, 3);"
+            },
+            {
+              "line": 123,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 124,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(HOLDER), sourceBefore_ - 3);"
+            },
+            {
+              "line": 125,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), 3);"
+            },
+            {
+              "line": 126,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 3);"
+            },
+            {
+              "line": 128,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c0_ + expansion_);"
+            },
+            {
+              "line": 129,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 131,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedLiquidQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+        "suite": "MigrationWeightedLiquidTest",
+        "headerLine": 7792,
+        "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+        "line": 7794,
+        "raw": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3262005)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "function": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "startLine": 209,
+          "endLine": 239,
+          "assertions": [
+            {
+              "line": 217,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 219,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(address(wallet_)), 3);"
+            },
+            {
+              "line": 220,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), 0);"
+            },
+            {
+              "line": 221,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).allowance(address(wallet_), detf), 0);"
+            },
+            {
+              "line": 222,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 0);"
+            },
+            {
+              "line": 223,
+              "text": "assertEq(migration.weightedLiquidSurrender(ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 224,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 225,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 226,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 227,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 233,
+              "text": "assertEq(delivered_, credit_);"
+            },
+            {
+              "line": 234,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 235,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 236,
+              "text": "assertFalse(wallet_.activationReentered());"
+            },
+            {
+              "line": 237,
+              "text": "assertTrue(migration.migrationActivated());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+        "suite": "MigrationWeightedLiquidTest",
+        "headerLine": 7792,
+        "test": "test_directInventoryStagedConversionDonationAndUnbookedFloors",
+        "line": 7795,
+        "raw": "[PASS] test_directInventoryStagedConversionDonationAndUnbookedFloors() (gas: 25880034)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "function": "test_directInventoryStagedConversionDonationAndUnbookedFloors",
+          "startLine": 240,
+          "endLine": 270,
+          "assertions": [
+            {
+              "line": 249,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector,"
+            },
+            {
+              "line": 254,
+              "text": "assertGt(output_, 0);"
+            },
+            {
+              "line": 255,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), QUANTITY - QUANTITY / 2 + 7);"
+            },
+            {
+              "line": 256,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).allowance(detf, Legacy.WEIGHTED_DETF), 0);"
+            },
+            {
+              "line": 259,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), 7);"
+            },
+            {
+              "line": 260,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 0);"
+            },
+            {
+              "line": 261,
+              "text": "assertEq(IERC20(Legacy.DTF).balanceOf(detf), output_ + beforeDtf_);"
+            },
+            {
+              "line": 263,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), output_ - 1 ether);"
+            },
+            {
+              "line": 264,
+              "text": "assertGe(IERC20(Legacy.DTF).balanceOf(detf), output_ + 7 ether);"
+            },
+            {
+              "line": 265,
+              "text": "assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);"
+            },
+            {
+              "line": 266,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 267,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector, Legacy.WEIGHTED_DETF, 1, 0));"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7460,
+          "endLine": 7465,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "5",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "5625",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7722,
+          "endLine": 7727,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "originalUnits": "10000",
+          "line": 7269
+        },
+        {
+          "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "originalUnits": "10000",
+          "line": 7531
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "10000",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7531,
+        "remainingLine": 7726
+      }
+    },
+    {
+      "category": "earlier-liquid",
+      "source": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "task3Row": 3,
+      "task3Reference": "../task-3/source-observations.json#/sources/3",
+      "status": "PASS",
+      "units": "native18",
+      "conditions": "Fixed public reserve swap, not the broken primary-burn path; legacy SE enablement prerequisite.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalUnits": "3 native18",
+        "custodyDelta": "3",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Three funded bonds sum C0 with separately accounted expansion",
+        "recovery": "Separate fixture q=1e24 ED; fixed E-P reserve swap consumes q, ED supply unchanged, inventory DTF=measured output; full selected output donation ->0; external enablement prerequisite"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+        "suite": "MigrationEarlierLiquidTest",
+        "headerLine": 6397,
+        "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+        "line": 6402,
+        "raw": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 5469953)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+          "function": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "startLine": 96,
+          "endLine": 148,
+          "assertions": [
+            {
+              "line": 103,
+              "text": "assertEq(c1_, c0_ / 3);"
+            },
+            {
+              "line": 105,
+              "text": "assertEq(s_.consumedUnits, 1);"
+            },
+            {
+              "line": 106,
+              "text": "assertEq(s_.deliveredCredit, c1_);"
+            },
+            {
+              "line": 107,
+              "text": "assertEq(s_.remainingUnits, 2);"
+            },
+            {
+              "line": 108,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 112,
+              "text": "assertFalse(replayed_);"
+            },
+            {
+              "line": 117,
+              "text": "assertFalse(corrected_);"
+            },
+            {
+              "line": 118,
+              "text": "assertEq(abi.encode(migration.earlierLiquidSurrender(ORIGIN)), abi.encode(s_));"
+            },
+            {
+              "line": 121,
+              "text": "assertEq(migration.synchronizeRewards(), expansion_);"
+            },
+            {
+              "line": 122,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c1_ + expansion_);"
+            },
+            {
+              "line": 123,
+              "text": "assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureEarlierLiquidEntitlements.selector), address(0));"
+            },
+            {
+              "line": 125,
+              "text": "assertEq(c2_, (c0_ - c1_) / 2);"
+            },
+            {
+              "line": 127,
+              "text": "assertEq(c1_ + c2_ + c3_, c0_);"
+            },
+            {
+              "line": 128,
+              "text": "assertNotEq(first_, second_);"
+            },
+            {
+              "line": 129,
+              "text": "assertNotEq(second_, third_);"
+            },
+            {
+              "line": 130,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, firstTime_);"
+            },
+            {
+              "line": 131,
+              "text": "assertEq(bonds.positionOf(third_).startTimestamp, firstTime_ + 30 days);"
+            },
+            {
+              "line": 132,
+              "text": "assertEq(migration.earlierLiquidEntitlement(ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 134,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 135,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 136,
+              "text": "assertEq(s_.consumedUnits, 3);"
+            },
+            {
+              "line": 137,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 138,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(HOLDER), sourceBefore_ - 3);"
+            },
+            {
+              "line": 139,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(detf), 3);"
+            },
+            {
+              "line": 140,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.EARLIER_DETF), 3);"
+            },
+            {
+              "line": 142,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c0_ + expansion_);"
+            },
+            {
+              "line": 143,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 145,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidEarlierLiquidQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+        "suite": "MigrationEarlierLiquidTest",
+        "headerLine": 6397,
+        "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+        "line": 6400,
+        "raw": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3305741)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+          "function": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "startLine": 223,
+          "endLine": 255,
+          "assertions": [
+            {
+              "line": 232,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 234,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(address(wallet_)), 3);"
+            },
+            {
+              "line": 235,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(detf), 0);"
+            },
+            {
+              "line": 237,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).allowance(address(wallet_), detf), 3);"
+            },
+            {
+              "line": 238,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.EARLIER_DETF), 0);"
+            },
+            {
+              "line": 239,
+              "text": "assertEq(migration.earlierLiquidSurrender(ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 240,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 241,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 242,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 243,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 249,
+              "text": "assertEq(delivered_, credit_);"
+            },
+            {
+              "line": 250,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 251,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 252,
+              "text": "assertFalse(wallet_.activationReentered());"
+            },
+            {
+              "line": 253,
+              "text": "assertTrue(migration.migrationActivated());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+        "suite": "MigrationEarlierLiquidTest",
+        "headerLine": 6397,
+        "test": "test_typedEarlierConversionAfterLocalLegacyEnablement",
+        "line": 6405,
+        "raw": "[PASS] test_typedEarlierConversionAfterLocalLegacyEnablement() (gas: 20099953)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+          "function": "test_typedEarlierConversionAfterLocalLegacyEnablement",
+          "startLine": 364,
+          "endLine": 400,
+          "assertions": [
+            {
+              "line": 373,
+              "text": "assertTrue(disabled_);"
+            },
+            {
+              "line": 375,
+              "text": "assertNotEq(administrator_, detf);"
+            },
+            {
+              "line": 382,
+              "text": "assertFalse(query_.isDisabled(Legacy.EARLIER_SE));"
+            },
+            {
+              "line": 387,
+              "text": "assertGt(out_, 0);"
+            },
+            {
+              "line": 388,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.EARLIER_DETF), 0);"
+            },
+            {
+              "line": 389,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(detf), 0);"
+            },
+            {
+              "line": 390,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).allowance(detf, Legacy.EARLIER_DETF), 0);"
+            },
+            {
+              "line": 391,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).allowance(detf, Legacy.EARLIER_LP), 0);"
+            },
+            {
+              "line": 392,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).totalSupply(), supply_);"
+            },
+            {
+              "line": 393,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);"
+            },
+            {
+              "line": 394,
+              "text": "assertEq(_protected(id_), protected_);"
+            },
+            {
+              "line": 396,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);"
+            },
+            {
+              "line": 397,
+              "text": "assertEq(_protected(id_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7466,
+          "endLine": 7471,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "5625",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7728,
+          "endLine": 7733,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+          "originalUnits": "10000",
+          "line": 7271
+        },
+        {
+          "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+          "originalUnits": "10000",
+          "line": 7533
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "10000",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7533,
+        "remainingLine": 7732
+      }
+    },
+    {
+      "category": "weighted-receipt",
+      "source": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "task3Row": 4,
+      "task3Reference": "../task-3/source-observations.json#/sources/4",
+      "status": "PASS",
+      "units": "eligible original gons; native9 transfer arguments",
+      "conditions": "Synchronize and preserve unsolicited/sub-native gons.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalUnits": "101 * synchronized source gonsPerUnit",
+        "custodyDelta": "Exact acquiredGons; transfers 1 and 100 native9",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "C1=C0/101; C1+C2=C0; each principal backed by exact receipt gons",
+        "recovery": "Mixed WY/WS/NFT recovery retains unbooked whole/fraction gons; after booked exits remaining booked gons < source divisor; WY seven shares and DTF seven ether unbooked floor preserved"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+        "suite": "MigrationWeightedReceiptTest",
+        "headerLine": 7802,
+        "test": "test_partialAndDivisibleTerminalConsumeExactGonsAndCreateFreshFundedCliffs",
+        "line": 7806,
+        "raw": "[PASS] test_partialAndDivisibleTerminalConsumeExactGonsAndCreateFreshFundedCliffs() (gas: 3413441)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+          "function": "test_partialAndDivisibleTerminalConsumeExactGonsAndCreateFreshFundedCliffs",
+          "startLine": 36,
+          "endLine": 50,
+          "assertions": [
+            {
+              "line": 40,
+              "text": "assertEq(c1_, c0_ / 101);"
+            },
+            {
+              "line": 42,
+              "text": "assertNotEq(first_, final_);"
+            },
+            {
+              "line": 43,
+              "text": "assertEq(c1_ + c2_, c0_);"
+            },
+            {
+              "line": 44,
+              "text": "assertEq(migration.weightedReceiptSurrender(WS_ORIGIN).remainingUnits, 0);"
+            },
+            {
+              "line": 45,
+              "text": "assertEq(migration.weightedReceiptSurrender(WS_ORIGIN).remainingCredit, 0);"
+            },
+            {
+              "line": 46,
+              "text": "assertEq(oldReceipt.gonsOf(wsWallet), 0);"
+            },
+            {
+              "line": 47,
+              "text": "assertEq(recovery.migrationRecoveryGons(), acquiredGons);"
+            },
+            {
+              "line": 48,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_RECEIPT), 101);"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+        "suite": "MigrationWeightedReceiptTest",
+        "headerLine": 7802,
+        "test": "test_lateBondCallbackRevertsSourceFundingCustodyAndCreditThenRejectsReentry",
+        "line": 7805,
+        "raw": "[PASS] test_lateBondCallbackRevertsSourceFundingCustodyAndCreditThenRejectsReentry() (gas: 7942397)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+          "function": "test_lateBondCallbackRevertsSourceFundingCustodyAndCreditThenRejectsReentry",
+          "startLine": 186,
+          "endLine": 204,
+          "assertions": [
+            {
+              "line": 194,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 196,
+              "text": "assertEq(_wsEconomicState(address(wallet_)), before_);"
+            },
+            {
+              "line": 199,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 200,
+              "text": "assertEq(bonds.positionOf(id_).principal, credit_);"
+            },
+            {
+              "line": 201,
+              "text": "assertFalse(wallet_.reentered());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+        "suite": "MigrationRecoveryWeightedReceiptTest",
+        "headerLine": 7218,
+        "test": "test_mixedNftWyWsAndUnbookedWholeFractionPreserveAllBudgets",
+        "line": 7220,
+        "raw": "[PASS] test_mixedNftWyWsAndUnbookedWholeFractionPreserveAllBudgets() (gas: 113730160)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+          "function": "test_mixedNftWyWsAndUnbookedWholeFractionPreserveAllBudgets",
+          "startLine": 47,
+          "endLine": 99,
+          "assertions": [
+            {
+              "line": 73,
+              "text": "assertGt(unbooked_ % k_, 0);"
+            },
+            {
+              "line": 74,
+              "text": "assertEq(oldReceipt.gonsOf(detf) - recovery.migrationRecoveryGons(), unbooked_);"
+            },
+            {
+              "line": 82,
+              "text": "assertFalse(full_);"
+            },
+            {
+              "line": 83,
+              "text": "assertEq(oldReceipt.gonsOf(detf) - recovery.migrationRecoveryGons(), unbooked_);"
+            },
+            {
+              "line": 86,
+              "text": "assertEq(oldReceipt.gonsOf(detf) - recovery.migrationRecoveryGons(), unbooked_);"
+            },
+            {
+              "line": 87,
+              "text": "assertLt(recovery.migrationRecoveryGons(), k_);"
+            },
+            {
+              "line": 92,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 7);"
+            },
+            {
+              "line": 93,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);"
+            },
+            {
+              "line": 94,
+              "text": "assertGe(IERC20(Legacy.DTF).balanceOf(detf), 7 ether);"
+            },
+            {
+              "line": 95,
+              "text": "assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);"
+            },
+            {
+              "line": 96,
+              "text": "assertEq(abi.encode(recovery.migrationNftRecovery(WEIGHTED, 4)), nft_);"
+            },
+            {
+              "line": 97,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7472,
+          "endLine": 7477,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "50635073830046997872009171561012763540",
+          "remainingCredit": "3689438"
+        },
+        {
+          "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7734,
+          "endLine": 7739,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "419661796441813012824673292252566920",
+          "remainingCredit": "30578"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "originalUnits": "88423667347055516852883910490677229028",
+          "line": 7273
+        },
+        {
+          "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "originalUnits": "88423667347055516852883910490677229028",
+          "line": 7535
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "88004005550613703840059237198424662108",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7535,
+        "remainingLine": 7738
+      }
+    },
+    {
+      "category": "earlier-receipt",
+      "source": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "task3Row": 5,
+      "task3Reference": "../task-3/source-observations.json#/sources/5",
+      "status": "PASS",
+      "units": "internal original shares; native18 transfer/redemption arguments",
+      "conditions": "NFT-sale E external shares plus R remainder stay separate from standalone B internal shares; reward-funded redemption needs actual source income.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalUnits": "2000000000000000000000000000 internal shares",
+        "sourceNativeAcquisition": "4394 at source rate 2197",
+        "custodyDelta": "Two 2197 native18 pulls each move 1e27 internal shares",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "C1+C2=C0; two fresh 90-day funded cliffs",
+        "recovery": "Each 1000 native18 redemption burns floor(1000*1e27/r); only selected E*1e9+R or standalone B bucket debited; unbooked internal fraction conserved; actual ED output converted to positive DTF under external enablement/income"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+        "suite": "MigrationEarlierReceiptTest",
+        "headerLine": 6410,
+        "test": "test_genuineDivisibleTerminalTakesAllFrozenCreditIntoFreshCliffs",
+        "line": 6414,
+        "raw": "[PASS] test_genuineDivisibleTerminalTakesAllFrozenCreditIntoFreshCliffs() (gas: 8351637)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+          "function": "test_genuineDivisibleTerminalTakesAllFrozenCreditIntoFreshCliffs",
+          "startLine": 148,
+          "endLine": 164,
+          "assertions": [
+            {
+              "line": 150,
+              "text": "assertEq(q0_, 2e27);"
+            },
+            {
+              "line": 157,
+              "text": "assertNotEq(first_, last_);"
+            },
+            {
+              "line": 158,
+              "text": "assertEq(c1_ + c2_, c0_);"
+            },
+            {
+              "line": 159,
+              "text": "assertEq(bonds.positionOf(last_).startTimestamp, bonds.positionOf(first_).startTimestamp + 1);"
+            },
+            {
+              "line": 160,
+              "text": "assertEq(migration.earlierReceiptSurrender(ORIGIN).remainingUnits, 0);"
+            },
+            {
+              "line": 161,
+              "text": "assertEq(migration.earlierReceiptSurrender(ORIGIN).remainingCredit, 0);"
+            },
+            {
+              "line": 162,
+              "text": "assertEq(_internal(detf) - recovery.migrationEarlierReceiptInternalShares(), unrelated_);"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+        "suite": "MigrationEarlierReceiptTest",
+        "headerLine": 6410,
+        "test": "test_lateReceiverRollbackReentryAndLaterDonationRemainSeparate",
+        "line": 6415,
+        "raw": "[PASS] test_lateReceiverRollbackReentryAndLaterDonationRemainSeparate() (gas: 8954386)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+          "function": "test_lateReceiverRollbackReentryAndLaterDonationRemainSeparate",
+          "startLine": 257,
+          "endLine": 277,
+          "assertions": [
+            {
+              "line": 264,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 266,
+              "text": "assertEq(_state(address(wallet_)), before_);"
+            },
+            {
+              "line": 269,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 270,
+              "text": "assertEq(bonds.positionOf(id_).principal, credit_);"
+            },
+            {
+              "line": 271,
+              "text": "assertFalse(wallet_.reentered());"
+            },
+            {
+              "line": 273,
+              "text": "assertEq(recovery.migrationEarlierReceiptInternalShares(), q_);"
+            },
+            {
+              "line": 274,
+              "text": "assertEq(_internal(detf) - q_, Math.mulDiv(1, 1e27, oldEr.redemptionRate()));"
+            },
+            {
+              "line": 275,
+              "text": "assertEq(migration.earlierReceiptSurrender(ORIGIN).consumedUnits, q_);"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+        "suite": "MigrationEarlierReceiptTest",
+        "headerLine": 6410,
+        "test": "test_rewardFundedRedemptionPreservesBothReceiptBucketsAndUnbookedFractions",
+        "line": 6419,
+        "raw": "[PASS] test_rewardFundedRedemptionPreservesBothReceiptBucketsAndUnbookedFractions() (gas: 49857155)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+          "function": "test_rewardFundedRedemptionPreservesBothReceiptBucketsAndUnbookedFractions",
+          "startLine": 339,
+          "endLine": 376,
+          "assertions": [
+            {
+              "line": 353,
+              "text": "vm.expectRevert(Recovery.InvalidRecoveryStep.selector);"
+            },
+            {
+              "line": 356,
+              "text": "assertEq(_state(erWallet), unchanged_);"
+            },
+            {
+              "line": 357,
+              "text": "assertEq(abi.encode(_recoveryBooks()), abi.encode(before_));"
+            },
+            {
+              "line": 360,
+              "text": "assertEq(before_.actualInternal - after_.actualInternal, burned_);"
+            },
+            {
+              "line": 361,
+              "text": "assertEq(after_.nftInternal, before_.nftInternal - (bucket_ == 0 ? burned_ : 0));"
+            },
+            {
+              "line": 362,
+              "text": "assertEq(after_.standaloneInternal, before_.standaloneInternal - (bucket_ == 1 ? burned_ : 0));"
+            },
+            {
+              "line": 363,
+              "text": "assertEq(after_.actualInternal - after_.nftInternal - after_.standaloneInternal,"
+            },
+            {
+              "line": 365,
+              "text": "if (bucket_ == 0) assertGt(after_.remainder, 0);"
+            },
+            {
+              "line": 366,
+              "text": "else assertEq(after_.remainder, before_.remainder);"
+            },
+            {
+              "line": 368,
+              "text": "assertGt(received_, 0);"
+            },
+            {
+              "line": 371,
+              "text": "assertGt(recovery.migrationRecoveryInventory(Legacy.DTF), dtfBefore_);"
+            },
+            {
+              "line": 372,
+              "text": "assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(detf), before_.earlierDetf);"
+            },
+            {
+              "line": 373,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7478,
+          "endLine": 7483,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "2560861833251447247559438618",
+          "remainingCredit": "3624880"
+        },
+        {
+          "address": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7740,
+          "endLine": 7745,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "392519172024864887958474",
+          "remainingCredit": "556"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+          "originalUnits": "4551661356395084205735093308",
+          "line": 7275
+        },
+        {
+          "address": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+          "originalUnits": "4551661356395084205735093308",
+          "line": 7537
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "4551268837223059340847134834",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7537,
+        "remainingLine": 7744
+      }
+    },
+    {
+      "category": "weighted-sy",
+      "source": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "task3Row": 6,
+      "task3Reference": "../task-3/source-observations.json#/sources/6",
+      "status": "PASS",
+      "units": "native9 static SY shares",
+      "conditions": "Also supports complete/full-remainder TokenStaking preparation certificates; no duplicate economic originals.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalUnits": "3 native9 static shares",
+        "custodyDelta": "3",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Three fresh funded bonds sum C0",
+        "recovery": "Separate fixture burns 8087 SY and retains seven unsolicited shares; out=floor(8087*floor(1e54/k)/1e18); received gons=out*k; WD delta=out; actual DTF delta booked; donation half leaves dtf-floor(dtf/2)"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+        "suite": "MigrationWeightedSyTest",
+        "headerLine": 7822,
+        "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+        "line": 7825,
+        "raw": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 6924647)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "function": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "startLine": 284,
+          "endLine": 336,
+          "assertions": [
+            {
+              "line": 291,
+              "text": "assertEq(c1_, c0_ / 3);"
+            },
+            {
+              "line": 293,
+              "text": "assertEq(s_.consumedUnits, 1);"
+            },
+            {
+              "line": 294,
+              "text": "assertEq(s_.deliveredCredit, c1_);"
+            },
+            {
+              "line": 295,
+              "text": "assertEq(s_.remainingUnits, 2);"
+            },
+            {
+              "line": 296,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 300,
+              "text": "assertFalse(replayed_);"
+            },
+            {
+              "line": 305,
+              "text": "assertFalse(corrected_);"
+            },
+            {
+              "line": 306,
+              "text": "assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), abi.encode(s_));"
+            },
+            {
+              "line": 309,
+              "text": "assertEq(migration.synchronizeRewards(), expansion_);"
+            },
+            {
+              "line": 310,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c1_ + expansion_);"
+            },
+            {
+              "line": 311,
+              "text": "assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedSyEntitlements.selector), address(0));"
+            },
+            {
+              "line": 313,
+              "text": "assertEq(c2_, (c0_ - c1_) / 2);"
+            },
+            {
+              "line": 315,
+              "text": "assertEq(c1_ + c2_ + c3_, c0_);"
+            },
+            {
+              "line": 316,
+              "text": "assertNotEq(first_, second_);"
+            },
+            {
+              "line": 317,
+              "text": "assertNotEq(second_, third_);"
+            },
+            {
+              "line": 318,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, firstTime_);"
+            },
+            {
+              "line": 319,
+              "text": "assertEq(bonds.positionOf(third_).startTimestamp, firstTime_ + 30 days);"
+            },
+            {
+              "line": 320,
+              "text": "assertEq(migration.weightedSyEntitlement(ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 322,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 323,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 324,
+              "text": "assertEq(s_.consumedUnits, 3);"
+            },
+            {
+              "line": 325,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 326,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(HOLDER), sourceBefore_ - 3);"
+            },
+            {
+              "line": 327,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 3);"
+            },
+            {
+              "line": 328,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 3);"
+            },
+            {
+              "line": 330,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c0_ + expansion_);"
+            },
+            {
+              "line": 331,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 333,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+        "suite": "MigrationWeightedSyTest",
+        "headerLine": 7822,
+        "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+        "line": 7824,
+        "raw": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3483847)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "function": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "startLine": 411,
+          "endLine": 441,
+          "assertions": [
+            {
+              "line": 419,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 421,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(address(wallet_)), 3);"
+            },
+            {
+              "line": 422,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 0);"
+            },
+            {
+              "line": 423,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).allowance(address(wallet_), detf), 0);"
+            },
+            {
+              "line": 424,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);"
+            },
+            {
+              "line": 425,
+              "text": "assertEq(migration.weightedSySurrender(ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 426,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 427,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 428,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 429,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 435,
+              "text": "assertEq(delivered_, credit_);"
+            },
+            {
+              "line": 436,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 437,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 438,
+              "text": "assertFalse(wallet_.activationReentered());"
+            },
+            {
+              "line": 439,
+              "text": "assertTrue(migration.migrationActivated());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+        "suite": "MigrationRecoveryWeightedSyTest",
+        "headerLine": 7224,
+        "test": "test_actualWyToWsToWdToDtfAndFixedDonationProtectBacking",
+        "line": 7225,
+        "raw": "[PASS] test_actualWyToWsToWdToDtfAndFixedDonationProtectBacking() (gas: 22446126)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+          "function": "test_actualWyToWsToWdToDtfAndFixedDonationProtectBacking",
+          "startLine": 91,
+          "endLine": 110,
+          "assertions": [
+            {
+              "line": 96,
+              "text": "assertEq(recovery.migrationRecoveryGons(), 0);"
+            },
+            {
+              "line": 97,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), out_);"
+            },
+            {
+              "line": 101,
+              "text": "assertGt(dtf_, 0);"
+            },
+            {
+              "line": 102,
+              "text": "assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_ + dtf_);"
+            },
+            {
+              "line": 103,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).allowance(detf, Legacy.WEIGHTED_DETF), 0);"
+            },
+            {
+              "line": 105,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), dtf_ - dtf_ / 2);"
+            },
+            {
+              "line": 106,
+              "text": "assertGe(IERC20(Legacy.DTF).balanceOf(detf), before_ + dtf_ - dtf_ / 2);"
+            },
+            {
+              "line": 107,
+              "text": "assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);"
+            },
+            {
+              "line": 108,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [],
+      "emittedOriginalUnits": []
+    },
+    {
+      "category": "claim-vault",
+      "source": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "task3Row": 7,
+      "task3Reference": "../task-3/source-observations.json#/sources/7",
+      "status": "PASS",
+      "units": "native19 vault shares",
+      "conditions": "Actual own-share redemption and measured SY output.",
+      "custodyRemainingFundingAndRecovery": {
+        "acquiredShares": "29999999967592 native19 for 3000 native9 SY",
+        "originalUnits": "29999999967585",
+        "custodyDelta": "29999999967585",
+        "walletRemainder": "7",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Two exact funded principals sum C0",
+        "recovery": "Burn selected q19 exactly; totalSupply delta=-q19; source SY debit=Migration SY credit=actual previewRedeem output; preserves seven unbooked shares, does not reprice compensation; entire typed chain and donation tested"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+        "suite": "MigrationClaimVaultTest",
+        "headerLine": 6452,
+        "test": "test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding",
+        "line": 6454,
+        "raw": "[PASS] test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding() (gas: 4084310)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+          "function": "test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding",
+          "startLine": 43,
+          "endLine": 76,
+          "assertions": [
+            {
+              "line": 51,
+              "text": "assertEq(c1_, c0_ * q1_ / q0_);"
+            },
+            {
+              "line": 53,
+              "text": "assertEq(s_.remainingUnits, q0_ - q1_);"
+            },
+            {
+              "line": 54,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 55,
+              "text": "assertEq(s_.consumedUnits, q1_);"
+            },
+            {
+              "line": 59,
+              "text": "assertEq(c1_ + c2_, c0_);"
+            },
+            {
+              "line": 60,
+              "text": "assertNotEq(first_, final_);"
+            },
+            {
+              "line": 61,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, start_);"
+            },
+            {
+              "line": 62,
+              "text": "assertEq(bonds.positionOf(final_).startTimestamp, start_ + 30 days);"
+            },
+            {
+              "line": 63,
+              "text": "assertEq(migration.claimVaultEntitlement(SE_ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 65,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 66,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 67,
+              "text": "assertEq(s_.consumedUnits, q0_);"
+            },
+            {
+              "line": 68,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 69,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_ + c0_ + expansion_);"
+            },
+            {
+              "line": 70,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 71,
+              "text": "assertEq(IERC20(Legacy.CLAIM_VAULT).balanceOf(seHolder), 7);"
+            },
+            {
+              "line": 73,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidClaimVaultQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+        "suite": "MigrationClaimVaultTest",
+        "headerLine": 6452,
+        "test": "test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback",
+        "line": 6453,
+        "raw": "[PASS] test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback() (gas: 3567448)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+          "function": "test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback",
+          "startLine": 169,
+          "endLine": 201,
+          "assertions": [
+            {
+              "line": 173,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(address(wallet_)), 0);"
+            },
+            {
+              "line": 174,
+              "text": "assertEq(IERC20(Legacy.CLAIM_VAULT).balanceOf(address(wallet_)), q_);"
+            },
+            {
+              "line": 179,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 181,
+              "text": "assertEq(IERC20(Legacy.CLAIM_VAULT).balanceOf(address(wallet_)), q_);"
+            },
+            {
+              "line": 182,
+              "text": "assertEq(IERC20(Legacy.CLAIM_VAULT).balanceOf(detf), 0);"
+            },
+            {
+              "line": 183,
+              "text": "assertEq(IERC20(Legacy.CLAIM_VAULT).allowance(address(wallet_), detf), 0);"
+            },
+            {
+              "line": 184,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.CLAIM_VAULT), 0);"
+            },
+            {
+              "line": 185,
+              "text": "assertEq(migration.claimVaultSurrender(SE_ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 186,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 187,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 188,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 189,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 195,
+              "text": "assertEq(delivered_, c0_);"
+            },
+            {
+              "line": 196,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 197,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 198,
+              "text": "assertFalse(wallet_.activationReentered());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+        "suite": "MigrationRecoveryClaimVaultTest",
+        "headerLine": 7169,
+        "test": "test_selectedNative19BurnUsesActualOutputAndNeverRepricesCredit",
+        "line": 7173,
+        "raw": "[PASS] test_selectedNative19BurnUsesActualOutputAndNeverRepricesCredit() (gas: 25146055)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+          "function": "test_selectedNative19BurnUsesActualOutputAndNeverRepricesCredit",
+          "startLine": 42,
+          "endLine": 76,
+          "assertions": [
+            {
+              "line": 50,
+              "text": "assertLt(IClaimVaultAcquisition(Legacy.CLAIM_VAULT).previewDeposit(3000), depositQuote_);"
+            },
+            {
+              "line": 52,
+              "text": "assertGe(first_, quote_);"
+            },
+            {
+              "line": 54,
+              "text": "assertEq(IERC20(Legacy.CLAIM_VAULT).balanceOf(detf), 7);"
+            },
+            {
+              "line": 55,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.CLAIM_VAULT), 0);"
+            },
+            {
+              "line": 56,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), first_ + second_);"
+            },
+            {
+              "line": 57,
+              "text": "assertEq(abi.encode(migration.claimVaultSurrender(SE_ORIGIN)), credit_);"
+            },
+            {
+              "line": 58,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 62,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), sy_ - first_ - second_);"
+            },
+            {
+              "line": 63,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);"
+            },
+            {
+              "line": 66,
+              "text": "assertEq(recovery.migrationRecoveryGons(), 0);"
+            },
+            {
+              "line": 71,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);"
+            },
+            {
+              "line": 72,
+              "text": "assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);"
+            },
+            {
+              "line": 73,
+              "text": "assertGt(IERC20(reserveHook).balanceOf(address(bonds)), lp_);"
+            },
+            {
+              "line": 74,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7484,
+          "endLine": 7489,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "5",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "16874999981762",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7746,
+          "endLine": 7751,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "originalUnits": "29999999967575",
+          "line": 7277
+        },
+        {
+          "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "originalUnits": "29999999967575",
+          "line": 7539
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "29999999967575",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7539,
+        "remainingLine": 7750
+      }
+    },
+    {
+      "category": "dtf-custody-se",
+      "source": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "task3Row": 8,
+      "task3Reference": "../task-3/source-observations.json#/sources/8",
+      "status": "PASS",
+      "units": "native28 shares",
+      "conditions": "Actual native18 DTF output.",
+      "custodyRemainingFundingAndRecovery": {
+        "originalUnits": "acquiredShares - 7 native28 from actual 1e18 DTF deposit; no invented fixed divisor",
+        "custodyDelta": "acquiredShares - 7",
+        "walletRemainder": "7",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Two fresh exact funded principals sum C0",
+        "recovery": "Two selected burns conserve source shares and totalSupply exactly; actual DTF source debit=Migration credit; recovery inventory=sum(outputs); donation of first output leaves second; seven unsolicited shares retained"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+        "suite": "MigrationDtfCustodySeTest",
+        "headerLine": 7831,
+        "test": "test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding",
+        "line": 7833,
+        "raw": "[PASS] test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding() (gas: 4085805)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+          "function": "test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding",
+          "startLine": 43,
+          "endLine": 76,
+          "assertions": [
+            {
+              "line": 51,
+              "text": "assertEq(c1_, c0_ * q1_ / q0_);"
+            },
+            {
+              "line": 53,
+              "text": "assertEq(s_.remainingUnits, q0_ - q1_);"
+            },
+            {
+              "line": 54,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 55,
+              "text": "assertEq(s_.consumedUnits, q1_);"
+            },
+            {
+              "line": 59,
+              "text": "assertEq(c1_ + c2_, c0_);"
+            },
+            {
+              "line": 60,
+              "text": "assertNotEq(first_, final_);"
+            },
+            {
+              "line": 61,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, start_);"
+            },
+            {
+              "line": 62,
+              "text": "assertEq(bonds.positionOf(final_).startTimestamp, start_ + 30 days);"
+            },
+            {
+              "line": 63,
+              "text": "assertEq(migration.dtfCustodySeEntitlement(SE_ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 65,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 66,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 67,
+              "text": "assertEq(s_.consumedUnits, q0_);"
+            },
+            {
+              "line": 68,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 69,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_ + c0_ + expansion_);"
+            },
+            {
+              "line": 70,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 71,
+              "text": "assertEq(IERC20(Legacy.DTF_CUSTODY_SE).balanceOf(seHolder), 7);"
+            },
+            {
+              "line": 73,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidDtfCustodySeQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+        "suite": "MigrationDtfCustodySeTest",
+        "headerLine": 7831,
+        "test": "test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback",
+        "line": 7832,
+        "raw": "[PASS] test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback() (gas: 3410864)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+          "function": "test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback",
+          "startLine": 169,
+          "endLine": 201,
+          "assertions": [
+            {
+              "line": 173,
+              "text": "assertEq(IERC20(Legacy.DTF).balanceOf(address(wallet_)), 0);"
+            },
+            {
+              "line": 174,
+              "text": "assertEq(IERC20(Legacy.DTF_CUSTODY_SE).balanceOf(address(wallet_)), q_);"
+            },
+            {
+              "line": 179,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 181,
+              "text": "assertEq(IERC20(Legacy.DTF_CUSTODY_SE).balanceOf(address(wallet_)), q_);"
+            },
+            {
+              "line": 182,
+              "text": "assertEq(IERC20(Legacy.DTF_CUSTODY_SE).balanceOf(detf), 0);"
+            },
+            {
+              "line": 183,
+              "text": "assertEq(IERC20(Legacy.DTF_CUSTODY_SE).allowance(address(wallet_), detf), 0);"
+            },
+            {
+              "line": 184,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF_CUSTODY_SE), 0);"
+            },
+            {
+              "line": 185,
+              "text": "assertEq(migration.dtfCustodySeSurrender(SE_ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 186,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 187,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 188,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 189,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 195,
+              "text": "assertEq(delivered_, c0_);"
+            },
+            {
+              "line": 196,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 197,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 198,
+              "text": "assertFalse(wallet_.activationReentered());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+        "suite": "MigrationRecoveryDtfCustodySeTest",
+        "headerLine": 7187,
+        "test": "test_selectedNative28BurnUsesActualOutputAndNeverRepricesCredit",
+        "line": 7191,
+        "raw": "[PASS] test_selectedNative28BurnUsesActualOutputAndNeverRepricesCredit() (gas: 22920654)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+          "function": "test_selectedNative28BurnUsesActualOutputAndNeverRepricesCredit",
+          "startLine": 42,
+          "endLine": 68,
+          "assertions": [
+            {
+              "line": 51,
+              "text": "assertGt(first_, originalQuote_);"
+            },
+            {
+              "line": 53,
+              "text": "assertEq(IERC20(Legacy.DTF_CUSTODY_SE).balanceOf(detf), 7);"
+            },
+            {
+              "line": 54,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF_CUSTODY_SE), 0);"
+            },
+            {
+              "line": 55,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), first_ + second_);"
+            },
+            {
+              "line": 56,
+              "text": "assertEq(abi.encode(migration.dtfCustodySeSurrender(SE_ORIGIN)), credit_);"
+            },
+            {
+              "line": 57,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 62,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), second_);"
+            },
+            {
+              "line": 63,
+              "text": "assertGe(IERC20(Legacy.DTF).balanceOf(detf), assets_ - first_);"
+            },
+            {
+              "line": 64,
+              "text": "assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);"
+            },
+            {
+              "line": 65,
+              "text": "assertGt(IERC20(reserveHook).balanceOf(address(bonds)), lp_);"
+            },
+            {
+              "line": 66,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7490,
+          "endLine": 7495,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "5624999943750000000000000000",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7752,
+          "endLine": 7757,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+          "originalUnits": "9999999900000000000000000000",
+          "line": 7279
+        },
+        {
+          "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+          "originalUnits": "9999999900000000000000000000",
+          "line": 7541
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "9999999900000000000000000000",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7541,
+        "remainingLine": 7756
+      }
+    },
+    {
+      "category": "weighted-weth-se",
+      "source": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "task3Row": 9,
+      "task3Reference": "../task-3/source-observations.json#/sources/9",
+      "status": "PASS",
+      "units": "native18 shares",
+      "conditions": "Conditional actual legacy enablement; preserve unbooked shares.",
+      "custodyRemainingFundingAndRecovery": {
+        "suite": "MigrationWeightedWethSeTest",
+        "originalUnits": "3 native18",
+        "custodyDelta": "3",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Three exact funded principals sum C0",
+        "recovery": "Selected q after external source enablement: inventory ->0; source custody retains 100 unbooked shares; DTF inventory=actual balance delta; donation all ->0; failed later step restores full q"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationWeightedWethSeTest",
+        "headerLine": 6475,
+        "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+        "line": 6482,
+        "raw": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 5470778)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "startLine": 155,
+          "endLine": 207,
+          "assertions": [
+            {
+              "line": 162,
+              "text": "assertEq(c1_, c0_ / 3);"
+            },
+            {
+              "line": 164,
+              "text": "assertEq(s_.consumedUnits, 1);"
+            },
+            {
+              "line": 165,
+              "text": "assertEq(s_.deliveredCredit, c1_);"
+            },
+            {
+              "line": 166,
+              "text": "assertEq(s_.remainingUnits, 2);"
+            },
+            {
+              "line": 167,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 171,
+              "text": "assertFalse(replayed_);"
+            },
+            {
+              "line": 176,
+              "text": "assertFalse(corrected_);"
+            },
+            {
+              "line": 177,
+              "text": "assertEq(abi.encode(migration.heldSeLpSurrender(ORIGIN)), abi.encode(s_));"
+            },
+            {
+              "line": 180,
+              "text": "assertEq(migration.synchronizeRewards(), expansion_);"
+            },
+            {
+              "line": 181,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c1_ + expansion_);"
+            },
+            {
+              "line": 182,
+              "text": "assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureHeldSeLpEntitlements.selector), address(0));"
+            },
+            {
+              "line": 184,
+              "text": "assertEq(c2_, (c0_ - c1_) / 2);"
+            },
+            {
+              "line": 186,
+              "text": "assertEq(c1_ + c2_ + c3_, c0_);"
+            },
+            {
+              "line": 187,
+              "text": "assertNotEq(first_, second_);"
+            },
+            {
+              "line": 188,
+              "text": "assertNotEq(second_, third_);"
+            },
+            {
+              "line": 189,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, firstTime_);"
+            },
+            {
+              "line": 190,
+              "text": "assertEq(bonds.positionOf(third_).startTimestamp, firstTime_ + 30 days);"
+            },
+            {
+              "line": 191,
+              "text": "assertEq(migration.heldSeLpEntitlement(ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 193,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 194,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 195,
+              "text": "assertEq(s_.consumedUnits, 3);"
+            },
+            {
+              "line": 196,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 197,
+              "text": "assertEq(IERC20(_source()).balanceOf(HOLDER), sourceBefore_ - 3);"
+            },
+            {
+              "line": 198,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 3);"
+            },
+            {
+              "line": 199,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 3);"
+            },
+            {
+              "line": 201,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c0_ + expansion_);"
+            },
+            {
+              "line": 202,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 204,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationWeightedWethSeTest",
+        "headerLine": 6475,
+        "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+        "line": 6479,
+        "raw": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3305705)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "startLine": 328,
+          "endLine": 360,
+          "assertions": [
+            {
+              "line": 337,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 339,
+              "text": "assertEq(IERC20(_source()).balanceOf(address(wallet_)), 3);"
+            },
+            {
+              "line": 340,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 0);"
+            },
+            {
+              "line": 342,
+              "text": "assertEq(IERC20(_source()).allowance(address(wallet_), detf), 3);"
+            },
+            {
+              "line": 343,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 0);"
+            },
+            {
+              "line": 344,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 345,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 346,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 347,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 348,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 354,
+              "text": "assertEq(delivered_, credit_);"
+            },
+            {
+              "line": 355,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 356,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 357,
+              "text": "assertFalse(wallet_.activationReentered());"
+            },
+            {
+              "line": 358,
+              "text": "assertTrue(migration.migrationActivated());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationWeightedWethSeTest",
+        "headerLine": 6475,
+        "test": "test_typedRecoveryAfterLocalLegacyEnablementPreservesUnbookedShares",
+        "line": 6485,
+        "raw": "[PASS] test_typedRecoveryAfterLocalLegacyEnablementPreservesUnbookedShares() (gas: 17784406)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_typedRecoveryAfterLocalLegacyEnablementPreservesUnbookedShares",
+          "startLine": 476,
+          "endLine": 530,
+          "assertions": [
+            {
+              "line": 487,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"VaultDisabled(address)\", _source()));"
+            },
+            {
+              "line": 489,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), q_);"
+            },
+            {
+              "line": 490,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);"
+            },
+            {
+              "line": 491,
+              "text": "assertEq(IERC20(_source()).allowance(detf, _source()), 0);"
+            },
+            {
+              "line": 502,
+              "text": "assertFalse(query_.isDisabled(_source()));"
+            },
+            {
+              "line": 508,
+              "text": "vm.expectRevert(Recovery.InvalidRecoveryStep.selector);"
+            },
+            {
+              "line": 511,
+              "text": "assertEq(IERC20(_source()).totalSupply(), sourceSupply_);"
+            },
+            {
+              "line": 512,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);"
+            },
+            {
+              "line": 513,
+              "text": "assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_);"
+            },
+            {
+              "line": 514,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), q_);"
+            },
+            {
+              "line": 515,
+              "text": "assertEq(IERC20(_source()).allowance(detf, _source()), 0);"
+            },
+            {
+              "line": 516,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 519,
+              "text": "assertGt(out_, 0);"
+            },
+            {
+              "line": 520,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 0);"
+            },
+            {
+              "line": 521,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 100);"
+            },
+            {
+              "line": 522,
+              "text": "assertEq(IERC20(_source()).allowance(detf, _source()), 0);"
+            },
+            {
+              "line": 523,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);"
+            },
+            {
+              "line": 524,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 526,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);"
+            },
+            {
+              "line": 527,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7496,
+          "endLine": 7501,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "5625",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7758,
+          "endLine": 7763,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+          "originalUnits": "10000",
+          "line": 7281
+        },
+        {
+          "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+          "originalUnits": "10000",
+          "line": 7543
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "10000",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7543,
+        "remainingLine": 7762
+      }
+    },
+    {
+      "category": "earlier-se",
+      "source": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "task3Row": 10,
+      "task3Reference": "../task-3/source-observations.json#/sources/10",
+      "status": "PASS",
+      "units": "native18 shares",
+      "conditions": "Conditional actual legacy enablement; insufficient native output rejects without confiscation.",
+      "custodyRemainingFundingAndRecovery": {
+        "suite": "MigrationEarlierSeTest",
+        "originalUnits": "2021090200239501983 - 10020 native18 in original-holder fixture",
+        "custodyDelta": "quantity_ (entire remaining holder quantity)",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Two funded principals sum C0; each gons=principal*divisor",
+        "recovery": "Separate paid acquisition 1e12 DTF, actual external enablement; selected q burned/converted, retains 100 unbooked shares; DTF=actual measured output; donation all ->0; dust-only source exit still rejects atomically"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationEarlierSeTest",
+        "headerLine": 6437,
+        "test": "test_genuineOriginalHolderSurrendersIntoFreshFundedBondsWithDisabledRecovery",
+        "line": 6444,
+        "raw": "[PASS] test_genuineOriginalHolderSurrendersIntoFreshFundedBondsWithDisabledRecovery() (gas: 3660154)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_genuineOriginalHolderSurrendersIntoFreshFundedBondsWithDisabledRecovery",
+          "startLine": 594,
+          "endLine": 649,
+          "assertions": [
+            {
+              "line": 597,
+              "text": "assertEq(migration.heldSeLpEntitlement(ORIGIN).original.originalWallet, EARLIER_SE_HOLDER);"
+            },
+            {
+              "line": 605,
+              "text": "assertEq(partial_, firstCredit_);"
+            },
+            {
+              "line": 606,
+              "text": "assertEq(IERC20(_source()).balanceOf(EARLIER_SE_HOLDER), quantity_ - 1 ether);"
+            },
+            {
+              "line": 607,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 1 ether);"
+            },
+            {
+              "line": 608,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).remainingCredit, credit_ - firstCredit_);"
+            },
+            {
+              "line": 612,
+              "text": "assertEq(delivered_, credit_ - firstCredit_);"
+            },
+            {
+              "line": 614,
+              "text": "assertNotEq(first_, last_);"
+            },
+            {
+              "line": 618,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(bond_), EARLIER_SE_HOLDER);"
+            },
+            {
+              "line": 619,
+              "text": "assertEq(bonds.positionOf(bond_).principal, principal_);"
+            },
+            {
+              "line": 620,
+              "text": "assertEq(bonds.positionOf(bond_).claimedPrincipal, 0);"
+            },
+            {
+              "line": 621,
+              "text": "assertEq(bonds.positionOf(bond_).startTimestamp, block.timestamp);"
+            },
+            {
+              "line": 622,
+              "text": "assertEq(bonds.positionOf(bond_).vestingDuration, 90 days);"
+            },
+            {
+              "line": 623,
+              "text": "assertEq(bonds.positionOf(bond_).stakingGons, principal_ * receipt.stakingState().gonsPerUnit);"
+            },
+            {
+              "line": 625,
+              "text": "assertEq(IERC20(_source()).balanceOf(EARLIER_SE_HOLDER), 0);"
+            },
+            {
+              "line": 626,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), quantity_);"
+            },
+            {
+              "line": 627,
+              "text": "assertEq(IERC20(_source()).allowance(EARLIER_SE_HOLDER, detf), 0);"
+            },
+            {
+              "line": 628,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), quantity_);"
+            },
+            {
+              "line": 629,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).remainingUnits, 0);"
+            },
+            {
+              "line": 630,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).remainingCredit, 0);"
+            },
+            {
+              "line": 631,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).consumedUnits, quantity_);"
+            },
+            {
+              "line": 632,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).deliveredCredit, credit_);"
+            },
+            {
+              "line": 633,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_ + credit_);"
+            },
+            {
+              "line": 634,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + credit_);"
+            },
+            {
+              "line": 637,
+              "text": "vm.expectRevert(Recovery.InvalidRecoveryStep.selector);"
+            },
+            {
+              "line": 639,
+              "text": "vm.expectRevert(abi.encodeWithSelector("
+            },
+            {
+              "line": 643,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"VaultDisabled(address)\", _source()));"
+            },
+            {
+              "line": 645,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), quantity_);"
+            },
+            {
+              "line": 646,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), quantity_);"
+            },
+            {
+              "line": 647,
+              "text": "assertEq(_protected(first_), protected_);"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationEarlierSeTest",
+        "headerLine": 6437,
+        "test": "test_actualChildFundingFailureRestoresSourceAllowanceAndEveryBudget",
+        "line": 6439,
+        "raw": "[PASS] test_actualChildFundingFailureRestoresSourceAllowanceAndEveryBudget() (gas: 3154799)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_actualChildFundingFailureRestoresSourceAllowanceAndEveryBudget",
+          "startLine": 305,
+          "endLine": 327,
+          "assertions": [
+            {
+              "line": 317,
+              "text": "assertFalse(ok_);"
+            },
+            {
+              "line": 318,
+              "text": "assertEq(_protected(migration.migrationOwnerFirstBondTokenId()), before_);"
+            },
+            {
+              "line": 319,
+              "text": "assertEq(IERC20(_source()).balanceOf(HOLDER), 10020);"
+            },
+            {
+              "line": 320,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 0);"
+            },
+            {
+              "line": 321,
+              "text": "assertEq(IERC20(_source()).allowance(HOLDER, detf), 3);"
+            },
+            {
+              "line": 322,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 0);"
+            },
+            {
+              "line": 323,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).consumedUnits, 0);"
+            },
+            {
+              "line": 324,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).remainingCredit, credit_);"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationEarlierSeTest",
+        "headerLine": 6437,
+        "test": "test_typedEarlierSeRecoveryAfterPaidAcquisitionAndLocalEnablement",
+        "line": 6448,
+        "raw": "[PASS] test_typedEarlierSeRecoveryAfterPaidAcquisitionAndLocalEnablement() (gas: 19619511)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_typedEarlierSeRecoveryAfterPaidAcquisitionAndLocalEnablement",
+          "startLine": 650,
+          "endLine": 704,
+          "assertions": [
+            {
+              "line": 660,
+              "text": "assertFalse(query_.isDisabled(_source()));"
+            },
+            {
+              "line": 683,
+              "text": "vm.expectRevert(Recovery.InvalidRecoveryStep.selector);"
+            },
+            {
+              "line": 686,
+              "text": "assertEq(IERC20(_source()).totalSupply(), supply_);"
+            },
+            {
+              "line": 687,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);"
+            },
+            {
+              "line": 688,
+              "text": "assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_);"
+            },
+            {
+              "line": 689,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), q_);"
+            },
+            {
+              "line": 690,
+              "text": "assertEq(IERC20(_source()).allowance(detf, _source()), 0);"
+            },
+            {
+              "line": 691,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 694,
+              "text": "assertGt(out_, 0);"
+            },
+            {
+              "line": 695,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 0);"
+            },
+            {
+              "line": 696,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 100);"
+            },
+            {
+              "line": 697,
+              "text": "assertEq(IERC20(_source()).allowance(detf, _source()), 0);"
+            },
+            {
+              "line": 698,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);"
+            },
+            {
+              "line": 700,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);"
+            },
+            {
+              "line": 701,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7514,
+          "endLine": 7519,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "5625",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7776,
+          "endLine": 7781,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+          "originalUnits": "10000",
+          "line": 7287
+        },
+        {
+          "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+          "originalUnits": "10000",
+          "line": 7549
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "10000",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7549,
+        "remainingLine": 7780
+      }
+    },
+    {
+      "category": "weighted-lp",
+      "source": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "task3Row": 11,
+      "task3Reference": "../task-3/source-observations.json#/sources/11",
+      "status": "PASS",
+      "units": "native18 physical LP",
+      "conditions": "Requires real source liquidity authority; current-fee-recipient authorization demonstrated locally, never self-granted by Migration. Fee-minted LP remains unbooked.",
+      "custodyRemainingFundingAndRecovery": {
+        "suite": "MigrationWeightedLpTest",
+        "originalUnits": "3 physical LP native18",
+        "custodyDelta": "3",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Three fresh funded principals sum C0",
+        "recovery": "Separate selected q requires actual external oracle feeTo authorization; supplyAfter=supplyBefore-q+feeMint; heldAfter=100+feeMint; booked LP ->0; DTF=actual delta; fee mints cannot be spent as booked inventory; donation all ->0"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationWeightedLpTest",
+        "headerLine": 6461,
+        "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+        "line": 6468,
+        "raw": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 5471290)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "startLine": 155,
+          "endLine": 207,
+          "assertions": [
+            {
+              "line": 162,
+              "text": "assertEq(c1_, c0_ / 3);"
+            },
+            {
+              "line": 164,
+              "text": "assertEq(s_.consumedUnits, 1);"
+            },
+            {
+              "line": 165,
+              "text": "assertEq(s_.deliveredCredit, c1_);"
+            },
+            {
+              "line": 166,
+              "text": "assertEq(s_.remainingUnits, 2);"
+            },
+            {
+              "line": 167,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 171,
+              "text": "assertFalse(replayed_);"
+            },
+            {
+              "line": 176,
+              "text": "assertFalse(corrected_);"
+            },
+            {
+              "line": 177,
+              "text": "assertEq(abi.encode(migration.heldSeLpSurrender(ORIGIN)), abi.encode(s_));"
+            },
+            {
+              "line": 180,
+              "text": "assertEq(migration.synchronizeRewards(), expansion_);"
+            },
+            {
+              "line": 181,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c1_ + expansion_);"
+            },
+            {
+              "line": 182,
+              "text": "assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureHeldSeLpEntitlements.selector), address(0));"
+            },
+            {
+              "line": 184,
+              "text": "assertEq(c2_, (c0_ - c1_) / 2);"
+            },
+            {
+              "line": 186,
+              "text": "assertEq(c1_ + c2_ + c3_, c0_);"
+            },
+            {
+              "line": 187,
+              "text": "assertNotEq(first_, second_);"
+            },
+            {
+              "line": 188,
+              "text": "assertNotEq(second_, third_);"
+            },
+            {
+              "line": 189,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, firstTime_);"
+            },
+            {
+              "line": 190,
+              "text": "assertEq(bonds.positionOf(third_).startTimestamp, firstTime_ + 30 days);"
+            },
+            {
+              "line": 191,
+              "text": "assertEq(migration.heldSeLpEntitlement(ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 193,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 194,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 195,
+              "text": "assertEq(s_.consumedUnits, 3);"
+            },
+            {
+              "line": 196,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 197,
+              "text": "assertEq(IERC20(_source()).balanceOf(HOLDER), sourceBefore_ - 3);"
+            },
+            {
+              "line": 198,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 3);"
+            },
+            {
+              "line": 199,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 3);"
+            },
+            {
+              "line": 201,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c0_ + expansion_);"
+            },
+            {
+              "line": 202,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 204,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationWeightedLpTest",
+        "headerLine": 6461,
+        "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+        "line": 6465,
+        "raw": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3305971)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "startLine": 328,
+          "endLine": 360,
+          "assertions": [
+            {
+              "line": 337,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 339,
+              "text": "assertEq(IERC20(_source()).balanceOf(address(wallet_)), 3);"
+            },
+            {
+              "line": 340,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 0);"
+            },
+            {
+              "line": 342,
+              "text": "assertEq(IERC20(_source()).allowance(address(wallet_), detf), 3);"
+            },
+            {
+              "line": 343,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 0);"
+            },
+            {
+              "line": 344,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 345,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 346,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 347,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 348,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 354,
+              "text": "assertEq(delivered_, credit_);"
+            },
+            {
+              "line": 355,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 356,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 357,
+              "text": "assertFalse(wallet_.activationReentered());"
+            },
+            {
+              "line": 358,
+              "text": "assertTrue(migration.migrationActivated());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationWeightedLpTest",
+        "headerLine": 6461,
+        "test": "test_typedLpRecoveryAfterActualOracleAuthorizationPreservesFeeMints",
+        "line": 6471,
+        "raw": "[PASS] test_typedLpRecoveryAfterActualOracleAuthorizationPreservesFeeMints() (gas: 99950088)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_typedLpRecoveryAfterActualOracleAuthorizationPreservesFeeMints",
+          "startLine": 536,
+          "endLine": 591,
+          "assertions": [
+            {
+              "line": 547,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"NotOwner(address)\", detf));"
+            },
+            {
+              "line": 549,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), q_);"
+            },
+            {
+              "line": 550,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);"
+            },
+            {
+              "line": 554,
+              "text": "assertEq(administrator_.code.length, 0);"
+            },
+            {
+              "line": 558,
+              "text": "assertEq(IHeldLpFeeOracle(_source()).feeTo(), detf);"
+            },
+            {
+              "line": 564,
+              "text": "vm.expectRevert(Recovery.InvalidRecoveryStep.selector);"
+            },
+            {
+              "line": 567,
+              "text": "assertEq(IERC20(_source()).totalSupply(), supply_);"
+            },
+            {
+              "line": 568,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);"
+            },
+            {
+              "line": 569,
+              "text": "assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_);"
+            },
+            {
+              "line": 570,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), q_);"
+            },
+            {
+              "line": 571,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 575,
+              "text": "assertGt(out_, 0);"
+            },
+            {
+              "line": 576,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 100 + minted_);"
+            },
+            {
+              "line": 577,
+              "text": "assertEq(IERC20(_source()).allowance(detf, _source()), 0);"
+            },
+            {
+              "line": 578,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 0);"
+            },
+            {
+              "line": 579,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);"
+            },
+            {
+              "line": 580,
+              "text": "vm.expectRevert(abi.encodeWithSelector("
+            },
+            {
+              "line": 585,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);"
+            },
+            {
+              "line": 586,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7508,
+          "endLine": 7513,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "5625",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7770,
+          "endLine": 7775,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "originalUnits": "10000",
+          "line": 7285
+        },
+        {
+          "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "originalUnits": "10000",
+          "line": 7547
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "10000",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7547,
+        "remainingLine": 7774
+      }
+    },
+    {
+      "category": "earlier-lp",
+      "source": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "task3Row": 12,
+      "task3Reference": "../task-3/source-observations.json#/sources/12",
+      "status": "PASS",
+      "units": "native18 physical LP",
+      "conditions": "Owner-only native exits and no admitted parent/collector intake; fee-role change and one-year advance do not grant authority. See recovery-route-disposition.md.",
+      "custodyRemainingFundingAndRecovery": {
+        "suite": "MigrationEarlierLpTest",
+        "originalUnits": "3 physical LP native18",
+        "custodyDelta": "3",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "Three exact funded principals sum C0",
+        "recovery": "Exact E-P permanent custody disposition; ordinary holder q=10013 unchanged with supply after NotOwner, fee-role reassignment, one-year advance and parent InvalidRoute. No Migration conversion admitted; no extrapolation to E-D/E-N/E-R/E-S/W-P"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationEarlierLpTest",
+        "headerLine": 6424,
+        "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+        "line": 6431,
+        "raw": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 5470932)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "startLine": 155,
+          "endLine": 207,
+          "assertions": [
+            {
+              "line": 162,
+              "text": "assertEq(c1_, c0_ / 3);"
+            },
+            {
+              "line": 164,
+              "text": "assertEq(s_.consumedUnits, 1);"
+            },
+            {
+              "line": 165,
+              "text": "assertEq(s_.deliveredCredit, c1_);"
+            },
+            {
+              "line": 166,
+              "text": "assertEq(s_.remainingUnits, 2);"
+            },
+            {
+              "line": 167,
+              "text": "assertEq(s_.remainingCredit, c0_ - c1_);"
+            },
+            {
+              "line": 171,
+              "text": "assertFalse(replayed_);"
+            },
+            {
+              "line": 176,
+              "text": "assertFalse(corrected_);"
+            },
+            {
+              "line": 177,
+              "text": "assertEq(abi.encode(migration.heldSeLpSurrender(ORIGIN)), abi.encode(s_));"
+            },
+            {
+              "line": 180,
+              "text": "assertEq(migration.synchronizeRewards(), expansion_);"
+            },
+            {
+              "line": 181,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c1_ + expansion_);"
+            },
+            {
+              "line": 182,
+              "text": "assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureHeldSeLpEntitlements.selector), address(0));"
+            },
+            {
+              "line": 184,
+              "text": "assertEq(c2_, (c0_ - c1_) / 2);"
+            },
+            {
+              "line": 186,
+              "text": "assertEq(c1_ + c2_ + c3_, c0_);"
+            },
+            {
+              "line": 187,
+              "text": "assertNotEq(first_, second_);"
+            },
+            {
+              "line": 188,
+              "text": "assertNotEq(second_, third_);"
+            },
+            {
+              "line": 189,
+              "text": "assertEq(bonds.positionOf(first_).startTimestamp, firstTime_);"
+            },
+            {
+              "line": 190,
+              "text": "assertEq(bonds.positionOf(third_).startTimestamp, firstTime_ + 30 days);"
+            },
+            {
+              "line": 191,
+              "text": "assertEq(migration.heldSeLpEntitlement(ORIGIN).credit, c0_);"
+            },
+            {
+              "line": 193,
+              "text": "assertEq(s_.remainingUnits, 0);"
+            },
+            {
+              "line": 194,
+              "text": "assertEq(s_.remainingCredit, 0);"
+            },
+            {
+              "line": 195,
+              "text": "assertEq(s_.consumedUnits, 3);"
+            },
+            {
+              "line": 196,
+              "text": "assertEq(s_.deliveredCredit, c0_);"
+            },
+            {
+              "line": 197,
+              "text": "assertEq(IERC20(_source()).balanceOf(HOLDER), sourceBefore_ - 3);"
+            },
+            {
+              "line": 198,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 3);"
+            },
+            {
+              "line": 199,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 3);"
+            },
+            {
+              "line": 201,
+              "text": "assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c0_ + expansion_);"
+            },
+            {
+              "line": 202,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);"
+            },
+            {
+              "line": 204,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpQuantity.selector, 1, 0));"
+            }
+          ]
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+        "suite": "MigrationEarlierLpTest",
+        "headerLine": 6424,
+        "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+        "line": 6428,
+        "raw": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3305714)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+          "function": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "startLine": 328,
+          "endLine": 360,
+          "assertions": [
+            {
+              "line": 337,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));"
+            },
+            {
+              "line": 339,
+              "text": "assertEq(IERC20(_source()).balanceOf(address(wallet_)), 3);"
+            },
+            {
+              "line": 340,
+              "text": "assertEq(IERC20(_source()).balanceOf(detf), 0);"
+            },
+            {
+              "line": 342,
+              "text": "assertEq(IERC20(_source()).allowance(address(wallet_), detf), 3);"
+            },
+            {
+              "line": 343,
+              "text": "assertEq(recovery.migrationRecoveryInventory(_source()), 0);"
+            },
+            {
+              "line": 344,
+              "text": "assertEq(migration.heldSeLpSurrender(ORIGIN).deliveredCredit, 0);"
+            },
+            {
+              "line": 345,
+              "text": "assertEq(IERC20(detf).totalSupply(), supply_);"
+            },
+            {
+              "line": 346,
+              "text": "assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);"
+            },
+            {
+              "line": 347,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 348,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            },
+            {
+              "line": 354,
+              "text": "assertEq(delivered_, credit_);"
+            },
+            {
+              "line": 355,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));"
+            },
+            {
+              "line": 356,
+              "text": "assertFalse(wallet_.surrenderReentered());"
+            },
+            {
+              "line": 357,
+              "text": "assertFalse(wallet_.activationReentered());"
+            },
+            {
+              "line": 358,
+              "text": "assertTrue(migration.migrationActivated());"
+            }
+          ]
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+        "suite": "MigrationLegacyLpExitTest",
+        "headerLine": 7101,
+        "test": "test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake",
+        "line": 7102,
+        "raw": "[PASS] test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake() (gas: 553301)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+          "function": "test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake",
+          "startLine": 38,
+          "endLine": 88,
+          "assertions": [
+            {
+              "line": 45,
+              "text": "assertEq(collectorOwner_.code.length, 0);"
+            },
+            {
+              "line": 46,
+              "text": "assertEq(administrator_.code.length, 0);"
+            },
+            {
+              "line": 47,
+              "text": "assertEq(IMultiStepOwnable(source_).owner(), Legacy.EARLIER_DETF);"
+            },
+            {
+              "line": 49,
+              "text": "assertEq(facet_, 0x81Fb72511016B42437FE1ac2d5Bdb0bA82f14A35);"
+            },
+            {
+              "line": 50,
+              "text": "assertEq(facet_.codehash, 0xca224a1792b0b9339c1c5c999c4d5e99bd33f25f8387da864d6eabb4d1d6b398);"
+            },
+            {
+              "line": 63,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"NotOwner(address)\", holder_));"
+            },
+            {
+              "line": 66,
+              "text": "assertEq(IERC20(source_).balanceOf(holder_), q_);"
+            },
+            {
+              "line": 67,
+              "text": "assertEq(IERC20(source_).totalSupply(), supply_);"
+            },
+            {
+              "line": 77,
+              "text": "assertFalse(query_.isDisabled(Legacy.EARLIER_DETF));"
+            },
+            {
+              "line": 80,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"InvalidRoute(address,address)\", source_, Legacy.DTF));"
+            },
+            {
+              "line": 85,
+              "text": "assertEq(IERC20(source_).balanceOf(holder_), q_);"
+            },
+            {
+              "line": 86,
+              "text": "assertEq(IERC20(source_).totalSupply(), supply_);"
+            }
+          ]
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [
+        {
+          "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7502,
+          "endLine": 7507,
+          "successfulSurrenders": "2",
+          "exactRejectedOperations": "4",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "5625",
+          "remainingCredit": "3624098"
+        },
+        {
+          "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+          "rawLog": "fork-qa-1.log",
+          "startLine": 7764,
+          "endLine": 7769,
+          "successfulSurrenders": "3",
+          "exactRejectedOperations": "6",
+          "lateFundingRollbacks": "1",
+          "remainingUnits": "0",
+          "remainingCredit": "0"
+        }
+      ],
+      "emittedOriginalUnits": [
+        {
+          "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+          "originalUnits": "10000",
+          "line": 7283
+        },
+        {
+          "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+          "originalUnits": "10000",
+          "line": 7545
+        }
+      ],
+      "derivedConsumedUnitsAtTerminal": {
+        "value": "10000",
+        "derivation": "emitted originalUnits minus emitted remainingUnits; not a claim that recovery inventory remains unspent",
+        "inputLine": 7545,
+        "remainingLine": 7768
+      }
+    },
+    {
+      "category": "token-staking-preparation",
+      "source": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "task3Row": 13,
+      "task3Reference": "../task-3/source-observations.json#/sources/13",
+      "status": "PASS",
+      "units": "raw source weight, not approved-pull ERC20 units",
+      "conditions": "Direct, delegated, wallet-relayed and generic indirect/nonisolated claim effects are authenticated. Historical unavailable trace remains unqueried; operational financial originals require review.",
+      "custodyRemainingFundingAndRecovery": {
+        "suite": "MigrationClaimedSyTest",
+        "originalWeight": "30039000000000000000051",
+        "eligibleWeight": "10013000000000000000017",
+        "unrelatedRawWeight": "7000000000000000000",
+        "seedRawWeight": "3000000000000000000 excluded from eligibility",
+        "originalUnits": "Q0=sum(actual eligible SY from two source claims); floor_=earlier seed output remains unrelated",
+        "custodyDelta": "Q0 after three SY surrenders; consumed raw source weight remains consumed on later funding rejection",
+        "remainingUnits": "0",
+        "remainingCredit": "0",
+        "bondFunding": "C0= floor(full-original credit*eligibleWeight/originalWeight) once; three delivered principals sum C0; no raw-weight approved pull",
+        "recovery": "Measured static SY uses the existing weighted-SY route; backing SY/V infrastructure excluded as competing economic originals"
+      },
+      "positive": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+        "suite": "MigrationClaimedSyTest",
+        "headerLine": 7813,
+        "test": "test_partialOriginalSplitPreparationConservesScaledCreditThroughThreeSurrenders",
+        "line": 7819,
+        "raw": "[PASS] test_partialOriginalSplitPreparationConservesScaledCreditThroughThreeSurrenders() (gas: 7819368)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "function": "test_partialOriginalSplitPreparationConservesScaledCreditThroughThreeSurrenders",
+          "startLine": 207,
+          "endLine": 210,
+          "assertions": []
+        }
+      },
+      "atomicRejection": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+        "suite": "MigrationClaimedSyTest",
+        "headerLine": 7813,
+        "test": "test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight",
+        "line": 7816,
+        "raw": "[PASS] test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight() (gas: 4342942)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "function": "test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight",
+          "startLine": 211,
+          "endLine": 215,
+          "assertions": []
+        }
+      },
+      "conservation": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+        "suite": "MigrationClaimedSyTest",
+        "headerLine": 7813,
+        "test": "test_completeSplitClaimsAggregateMeasuredOutputsIntoOneOriginal",
+        "line": 7815,
+        "raw": "[PASS] test_completeSplitClaimsAggregateMeasuredOutputsIntoOneOriginal() (gas: 7535035)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "function": "test_completeSplitClaimsAggregateMeasuredOutputsIntoOneOriginal",
+          "startLine": 197,
+          "endLine": 201,
+          "assertions": []
+        }
+      },
+      "blockers": [],
+      "emittedStatefulSnapshots": [],
+      "emittedOriginalUnits": []
+    }
+  ],
+  "reservedIds": {
+    "classification": "reserved/non-qualifying",
+    "source": "../task-3/source-observations.json#/earlierReservedIds",
+    "ids": [
+      "0",
+      "1",
+      "2"
+    ],
+    "roles": [
+      {
+        "tokenId": "0",
+        "role": "protocol",
+        "owner": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+        "position": {
+          "originalShares": "30553440974423605336759687659017983",
+          "effectiveShares": "30553440974423605336759687659017983",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147991718391587"
+        }
+      },
+      {
+        "tokenId": "1",
+        "role": "current-at-initialization fee recipient standing rewards",
+        "owner": "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "21514144891010951919251332737340123",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "134481857074021"
+        }
+      },
+      {
+        "tokenId": "2",
+        "role": "creator standing rewards",
+        "owner": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "50199671412358887811586443053793621",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147947160112360"
+        }
+      }
+    ],
+    "guard": "Existing Solidity and TS rules retained; no eligibility replacement",
+    "witness": {
+      "rawLog": "fork-qa-1.log",
+      "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "suite": "MigrationOriginalWalletTest",
+      "headerLine": 7147,
+      "test": "test_earlierInitializedReservedRolesRejectConfigurationAndSurrender",
+      "line": 7148,
+      "raw": "[PASS] test_earlierInitializedReservedRolesRejectConfigurationAndSurrender() (gas: 2565959)",
+      "source": {
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+        "function": "test_earlierInitializedReservedRolesRejectConfigurationAndSurrender",
+        "startLine": 17,
+        "endLine": 58,
+        "assertions": [
+          {
+            "line": 19,
+            "text": "assertTrue(ok_);"
+          },
+          {
+            "line": 20,
+            "text": "assertTrue(abi.decode(wired_, (bool)));"
+          },
+          {
+            "line": 34,
+            "text": "assertEq(IERC721(EARLIER).ownerOf(id_), owners_[id_]);"
+          },
+          {
+            "line": 35,
+            "text": "assertEq(abi.encode(IMigrationEarlierNft(EARLIER).getPosition(id_)), abi.encode(positions_[id_]));"
+          },
+          {
+            "line": 44,
+            "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, EARLIER, id_));"
+          },
+          {
+            "line": 46,
+            "text": "assertEq(migration.nftEntitlement(EARLIER, id_).configurationId, bytes32(0));"
+          },
+          {
+            "line": 47,
+            "text": "_assertNotConsumed(EARLIER, id_, owners_[id_], supply_);"
+          },
+          {
+            "line": 52,
+            "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, EARLIER, id_));"
+          },
+          {
+            "line": 54,
+            "text": "_assertNotConsumed(EARLIER, id_, owners_[id_], supply_);"
+          },
+          {
+            "line": 55,
+            "text": "assertEq(abi.encode(IMigrationEarlierNft(EARLIER).getPosition(id_)), abi.encode(positions_[id_]));"
+          }
+        ]
+      }
+    }
+  },
+  "failureQA": [
+    {
+      "category": "wrong-wallet",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+        "suite": "MigrationOriginalWalletTest",
+        "headerLine": 7147,
+        "test": "test_weightedStageOneRejectsThenOriginalWalletAdmission",
+        "line": 7152,
+        "raw": "[PASS] test_weightedStageOneRejectsThenOriginalWalletAdmission() (gas: 5748067)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "function": "test_weightedStageOneRejectsThenOriginalWalletAdmission",
+          "startLine": 59,
+          "endLine": 59,
+          "assertions": []
+        }
+      }
+    },
+    {
+      "category": "unconfigured",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+        "suite": "MigrationOriginalWalletTest",
+        "headerLine": 7147,
+        "test": "test_missingConfigurationRejectsActualApprovedOwnersBeforeAndAfterActivation",
+        "line": 7150,
+        "raw": "[PASS] test_missingConfigurationRejectsActualApprovedOwnersBeforeAndAfterActivation() (gas: 1654289)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "function": "test_missingConfigurationRejectsActualApprovedOwnersBeforeAndAfterActivation",
+          "startLine": 118,
+          "endLine": 142,
+          "assertions": [
+            {
+              "line": 127,
+              "text": "vm.expectRevert(phase_ == 0 ? abi.encodeWithSelector(Migration.MigrationSurrenderClosed.selector)"
+            },
+            {
+              "line": 131,
+              "text": "_assertNotConsumed(collection_, 3, holder_, supply_);"
+            },
+            {
+              "line": 132,
+              "text": "assertEq(migration.nftEntitlement(collection_, 3).configurationId, bytes32(0));"
+            },
+            {
+              "line": 133,
+              "text": "assertEq(IERC721(collection_).getApproved(3), detf);"
+            },
+            {
+              "line": 134,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "Stage-1",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+        "suite": "MigrationOriginalWalletTest",
+        "headerLine": 7147,
+        "test": "test_earlierStageOneRejectsThenOriginalWalletAdmission",
+        "line": 7149,
+        "raw": "[PASS] test_earlierStageOneRejectsThenOriginalWalletAdmission() (gas: 4223003)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "function": "test_earlierStageOneRejectsThenOriginalWalletAdmission",
+          "startLine": 60,
+          "endLine": 61,
+          "assertions": []
+        }
+      }
+    },
+    {
+      "category": "source-identity",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "suite": "MigrationLegacySourcesTest",
+        "headerLine": 7120,
+        "test": "test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions",
+        "line": 7125,
+        "raw": "[PASS] test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions() (gas: 2259272)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "function": "test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions",
+          "startLine": 228,
+          "endLine": 251,
+          "assertions": [
+            {
+              "line": 245,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, collection_, 3));"
+            },
+            {
+              "line": 247,
+              "text": "_assertNotConsumed(collection_, 3, holder_, supply_);"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "reserved-source-roles",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+        "suite": "MigrationOriginalWalletTest",
+        "headerLine": 7147,
+        "test": "test_earlierInitializedReservedRolesRejectConfigurationAndSurrender",
+        "line": 7148,
+        "raw": "[PASS] test_earlierInitializedReservedRolesRejectConfigurationAndSurrender() (gas: 2565959)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "function": "test_earlierInitializedReservedRolesRejectConfigurationAndSurrender",
+          "startLine": 17,
+          "endLine": 58,
+          "assertions": [
+            {
+              "line": 19,
+              "text": "assertTrue(ok_);"
+            },
+            {
+              "line": 20,
+              "text": "assertTrue(abi.decode(wired_, (bool)));"
+            },
+            {
+              "line": 34,
+              "text": "assertEq(IERC721(EARLIER).ownerOf(id_), owners_[id_]);"
+            },
+            {
+              "line": 35,
+              "text": "assertEq(abi.encode(IMigrationEarlierNft(EARLIER).getPosition(id_)), abi.encode(positions_[id_]));"
+            },
+            {
+              "line": 44,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, EARLIER, id_));"
+            },
+            {
+              "line": 46,
+              "text": "assertEq(migration.nftEntitlement(EARLIER, id_).configurationId, bytes32(0));"
+            },
+            {
+              "line": 47,
+              "text": "_assertNotConsumed(EARLIER, id_, owners_[id_], supply_);"
+            },
+            {
+              "line": 52,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, EARLIER, id_));"
+            },
+            {
+              "line": 54,
+              "text": "_assertNotConsumed(EARLIER, id_, owners_[id_], supply_);"
+            },
+            {
+              "line": 55,
+              "text": "assertEq(abi.encode(IMigrationEarlierNft(EARLIER).getPosition(id_)), abi.encode(positions_[id_]));"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "second-bond-failure",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+        "suite": "MigrationNftLifecycleTest",
+        "headerLine": 7134,
+        "test": "test_secondContributionReceiverFailureRollsBackBothBondsAndWholeNft",
+        "line": 7141,
+        "raw": "[PASS] test_secondContributionReceiverFailureRollsBackBothBondsAndWholeNft() (gas: 6786657)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "function": "test_secondContributionReceiverFailureRollsBackBothBondsAndWholeNft",
+          "startLine": 160,
+          "endLine": 207,
+          "assertions": [
+            {
+              "line": 182,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(holder_)));"
+            },
+            {
+              "line": 184,
+              "text": "_assertNotConsumed(WEIGHTED, 3, address(holder_), supply_);"
+            },
+            {
+              "line": 185,
+              "text": "assertEq(holder_.receivedBonds(), 0);"
+            },
+            {
+              "line": 186,
+              "text": "assertEq(migration.nftContributionSurrenders(WEIGHTED, 3).length, 0);"
+            },
+            {
+              "line": 187,
+              "text": "assertEq(abi.encode(migration.nftContributions(WEIGHTED, 3)), config_);"
+            },
+            {
+              "line": 188,
+              "text": "assertEq(bonds.attributedBondGons(), attributed_);"
+            },
+            {
+              "line": 189,
+              "text": "assertEq(receipt.gonsOf(address(bonds)), initialBondGons);"
+            },
+            {
+              "line": 190,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(first_), address(0));"
+            },
+            {
+              "line": 191,
+              "text": "assertEq(IERC721(address(bonds)).ownerOf(first_ + 1), address(0));"
+            },
+            {
+              "line": 192,
+              "text": "assertFalse(bonds.isMigrationPosition(first_));"
+            },
+            {
+              "line": 193,
+              "text": "assertFalse(bonds.isMigrationPosition(first_ + 1));"
+            },
+            {
+              "line": 194,
+              "text": "assertEq(IERC20(detf).balanceOf(address(bonds)), 0);"
+            },
+            {
+              "line": 195,
+              "text": "assertEq(IERC20(detf).allowance(address(bonds), address(receipt)), 0);"
+            },
+            {
+              "line": 196,
+              "text": "assertEq(IERC721(WEIGHTED).getApproved(3), address(0));"
+            },
+            {
+              "line": 199,
+              "text": "assertEq(retried_, first_);"
+            },
+            {
+              "line": 200,
+              "text": "assertEq(holder_.receivedBonds(), 2);"
+            },
+            {
+              "line": 201,
+              "text": "assertEq(IERC721(WEIGHTED).ownerOf(3), detf);"
+            },
+            {
+              "line": 202,
+              "text": "assertEq(bonds.positionOf(first_).principal + bonds.positionOf(first_ + 1).principal, credit_);"
+            },
+            {
+              "line": 203,
+              "text": "assertFalse(holder_.reentrySucceeded());"
+            },
+            {
+              "line": 204,
+              "text": "assertFalse(holder_.activationSucceeded());"
+            },
+            {
+              "line": 205,
+              "text": "assertFalse(holder_.replaySucceeded());"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "principal-race",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "suite": "MigrationLegacySourcesTest",
+        "headerLine": 7120,
+        "test": "test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum",
+        "line": 7122,
+        "raw": "[PASS] test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum() (gas: 4138715)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "function": "test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum",
+          "startLine": 130,
+          "endLine": 148,
+          "assertions": [
+            {
+              "line": 137,
+              "text": "assertGt(paid_, 0);"
+            },
+            {
+              "line": 139,
+              "text": "assertEq(remaining_, 46365243 - paid_);"
+            },
+            {
+              "line": 140,
+              "text": "assertLt(current_, previous_);"
+            },
+            {
+              "line": 142,
+              "text": "vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, previous_, current_));"
+            },
+            {
+              "line": 144,
+              "text": "assertFalse(migration.nftSurrender(WEIGHTED, 32).consumed);"
+            },
+            {
+              "line": 146,
+              "text": "assertEq(delivered_, current_);"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "wrapper-overlap",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+        "suite": "MigrationSourceUnitsInvariantTest",
+        "headerLine": 7230,
+        "test": "invariant_exactOriginalUnitsCustodyAndFreshEscrow",
+        "line": 7231,
+        "raw": "[PASS] invariant_exactOriginalUnitsCustodyAndFreshEscrow() (runs: 16, calls: 128, reverts: 0)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+          "function": "invariant_exactOriginalUnitsCustodyAndFreshEscrow",
+          "startLine": 12,
+          "endLine": 13,
+          "assertions": [
+            {
+              "line": 12,
+              "text": "function invariant_exactOriginalUnitsCustodyAndFreshEscrow() public view { handler.assertAll(); }"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "zero-credit",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+        "suite": "MigrationWeightedLiquidTest",
+        "headerLine": 7792,
+        "test": "test_zeroCreditDustRejectsWithoutConfiscation",
+        "line": 7799,
+        "raw": "[PASS] test_zeroCreditDustRejectsWithoutConfiscation() (gas: 1127856)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "function": "test_zeroCreditDustRejectsWithoutConfiscation",
+          "startLine": 199,
+          "endLine": 208,
+          "assertions": [
+            {
+              "line": 203,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedLiquidEntitlement.selector, ORIGIN));"
+            },
+            {
+              "line": 205,
+              "text": "assertEq(migration.weightedLiquidSurrender(ORIGIN).consumedUnits, 0);"
+            },
+            {
+              "line": 206,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), 0);"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "unauthorized-exit",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+        "suite": "MigrationLegacyLpExitTest",
+        "headerLine": 7101,
+        "test": "test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake",
+        "line": 7102,
+        "raw": "[PASS] test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake() (gas: 553301)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+          "function": "test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake",
+          "startLine": 38,
+          "endLine": 88,
+          "assertions": [
+            {
+              "line": 45,
+              "text": "assertEq(collectorOwner_.code.length, 0);"
+            },
+            {
+              "line": 46,
+              "text": "assertEq(administrator_.code.length, 0);"
+            },
+            {
+              "line": 47,
+              "text": "assertEq(IMultiStepOwnable(source_).owner(), Legacy.EARLIER_DETF);"
+            },
+            {
+              "line": 49,
+              "text": "assertEq(facet_, 0x81Fb72511016B42437FE1ac2d5Bdb0bA82f14A35);"
+            },
+            {
+              "line": 50,
+              "text": "assertEq(facet_.codehash, 0xca224a1792b0b9339c1c5c999c4d5e99bd33f25f8387da864d6eabb4d1d6b398);"
+            },
+            {
+              "line": 63,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"NotOwner(address)\", holder_));"
+            },
+            {
+              "line": 66,
+              "text": "assertEq(IERC20(source_).balanceOf(holder_), q_);"
+            },
+            {
+              "line": 67,
+              "text": "assertEq(IERC20(source_).totalSupply(), supply_);"
+            },
+            {
+              "line": 77,
+              "text": "assertFalse(query_.isDisabled(Legacy.EARLIER_DETF));"
+            },
+            {
+              "line": 80,
+              "text": "vm.expectRevert(abi.encodeWithSignature(\"InvalidRoute(address,address)\", source_, Legacy.DTF));"
+            },
+            {
+              "line": 85,
+              "text": "assertEq(IERC20(source_).balanceOf(holder_), q_);"
+            },
+            {
+              "line": 86,
+              "text": "assertEq(IERC20(source_).totalSupply(), supply_);"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "middle-batch-failure",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+        "suite": "MigrationRecoveryWeightedTest",
+        "headerLine": 7208,
+        "test": "test_failedMiddleBatchRollsBackClaimAndSmallerRetrySucceeds",
+        "line": 7212,
+        "raw": "[PASS] test_failedMiddleBatchRollsBackClaimAndSmallerRetrySucceeds() (gas: 5252726)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "function": "test_failedMiddleBatchRollsBackClaimAndSmallerRetrySucceeds",
+          "startLine": 77,
+          "endLine": 97,
+          "assertions": [
+            {
+              "line": 85,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Recovery.InvalidRecoveryCustody.selector, WEIGHTED, 26));"
+            },
+            {
+              "line": 88,
+              "text": "assertEq(IERC721(WEIGHTED).ownerOf(3), detf);"
+            },
+            {
+              "line": 89,
+              "text": "assertEq(keccak256(abi.encode(IMigrationWeightedNft(WEIGHTED).positionOf(3))), source_);"
+            },
+            {
+              "line": 90,
+              "text": "assertEq(_weightedAmount(), 0);"
+            },
+            {
+              "line": 91,
+              "text": "assertEq(recovery.migrationRecoveryGons(), 0);"
+            },
+            {
+              "line": 92,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_RECEIPT).balanceOf(detf), 0);"
+            },
+            {
+              "line": 93,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 95,
+              "text": "assertGt(_weightedAmount(), 0);"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "committed-earlier-stage",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol",
+        "suite": "MigrationRecoveryAccrualRollbackTest",
+        "headerLine": 7165,
+        "test": "test_laterSelectedFailureRevertsAccrualAndDonationButPreservesCommittedClaim",
+        "line": 7166,
+        "raw": "[PASS] test_laterSelectedFailureRevertsAccrualAndDonationButPreservesCommittedClaim() (gas: 50923701)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol",
+          "function": "test_laterSelectedFailureRevertsAccrualAndDonationButPreservesCommittedClaim",
+          "startLine": 16,
+          "endLine": 68,
+          "assertions": [
+            {
+              "line": 34,
+              "text": "vm.expectRevert(abi.encodeWithSelector(Recovery.InvalidRecoveryCustody.selector, WEIGHTED, 26));"
+            },
+            {
+              "line": 37,
+              "text": "assertEq(_weightedAmount(), original_);"
+            },
+            {
+              "line": 38,
+              "text": "assertEq(recovery.migrationRecoveryGons(), gons_);"
+            },
+            {
+              "line": 39,
+              "text": "assertEq(old_.gonsOf(detf), gons_);"
+            },
+            {
+              "line": 40,
+              "text": "assertEq(keccak256(abi.encode(old_.stakingState())), sourceState_);"
+            },
+            {
+              "line": 41,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 0);"
+            },
+            {
+              "line": 42,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), 0);"
+            },
+            {
+              "line": 43,
+              "text": "assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);"
+            },
+            {
+              "line": 44,
+              "text": "assertEq(IERC20(Legacy.DTF).balanceOf(detf), dtf_);"
+            },
+            {
+              "line": 45,
+              "text": "assertEq(IERC20(reserveHook).balanceOf(address(bonds)), lp_);"
+            },
+            {
+              "line": 46,
+              "text": "assertEq(IERC20(Legacy.WEIGHTED_DETF).allowance(detf, Legacy.WEIGHTED_DETF), 0);"
+            },
+            {
+              "line": 47,
+              "text": "assertEq(IERC20(Legacy.DTF).allowance(detf, reserveHook), 0);"
+            },
+            {
+              "line": 48,
+              "text": "assertEq(IERC20(Legacy.DTF).allowance(detf, se1), 0);"
+            },
+            {
+              "line": 49,
+              "text": "assertEq(keccak256(abi.encode(recovery.migrationNftRecovery(WEIGHTED, 4))), claimed_);"
+            },
+            {
+              "line": 50,
+              "text": "assertEq(_protected(bond_), protected_);"
+            },
+            {
+              "line": 51,
+              "text": "assertEq(IERC721(WEIGHTED).ownerOf(4), detf);"
+            },
+            {
+              "line": 58,
+              "text": "assertGt(gons_ / k_, original_);"
+            },
+            {
+              "line": 59,
+              "text": "assertEq(_weightedAmount(), gons_ / k_ - original_);"
+            },
+            {
+              "line": 60,
+              "text": "assertEq(recovery.migrationRecoveryGons(), gons_ - original_ * k_);"
+            },
+            {
+              "line": 61,
+              "text": "assertEq(old_.gonsOf(detf), recovery.migrationRecoveryGons());"
+            },
+            {
+              "line": 62,
+              "text": "assertGt(IERC20(reserveHook).balanceOf(address(bonds)), lp_);"
+            },
+            {
+              "line": 63,
+              "text": "assertGt(recovery.migrationRecoveryInventory(Legacy.DTF), 0);"
+            },
+            {
+              "line": 64,
+              "text": "assertEq(keccak256(abi.encode(recovery.migrationNftRecovery(WEIGHTED, 4))), claimed_);"
+            },
+            {
+              "line": 65,
+              "text": "assertEq(_protected(bond_), protected_);"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "category": "TokenStaking-preparation-rollback",
+      "witness": {
+        "rawLog": "fork-qa-1.log",
+        "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+        "suite": "MigrationClaimedSyTest",
+        "headerLine": 7813,
+        "test": "test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight",
+        "line": 7816,
+        "raw": "[PASS] test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight() (gas: 4342942)",
+        "source": {
+          "file": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "function": "test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight",
+          "startLine": 211,
+          "endLine": 215,
+          "assertions": []
+        }
+      }
+    }
+  ],
+  "manualComparison": {
+    "method": "Read each of fourteen task-3 category rows against source-native custody units, fresh funded principal, exact rejection, typed recovery and conservation assertions in the current K sources and the one completed bound log.",
+    "categoryOmissions": [],
+    "reservedRoleMisclassified": false,
+    "productionSourceMismatches": [],
+    "typedRecoveryMissing": [],
+    "sourceGovernanceGranted": false,
+    "conditionalAvailability": "External registry enablement, actual reward income and W-P feeTo authorization are disposable local-fork witnesses. E-P alone retains its exact immutable custody disposition.",
+    "operationalAllocation": "No financial original inferred from current balances, no approved dataset fabricated, no historical trace/log scan/provider switch."
+  },
+  "blockers": []
+}

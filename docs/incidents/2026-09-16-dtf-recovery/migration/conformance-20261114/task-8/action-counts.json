@@ -1,0 +1,1267 @@
+{
+  "task": 8,
+  "createdAt": "2026-11-15T06:14:06.000Z",
+  "config": {
+    "seed": "0x8",
+    "runs": 16,
+    "depth": 8,
+    "forkBlock": 108944663,
+    "chainId": 4663
+  },
+  "runs": [
+    {
+      "log": "happy-5.log",
+      "tests": [
+        {
+          "name": "test_adminDeclarationMatchesInterfaceAndCannotBeRestored",
+          "run": "(gas: 28779757)",
+          "counters": []
+        },
+        {
+          "name": "test_allPackageCutsReachRealProxyAndFitEip170",
+          "run": "(gas: 14125637)",
+          "counters": []
+        },
+        {
+          "name": "test_ordinaryRegistryPackageCannotAcquireMigrationAuthority",
+          "run": "(gas: 96563387)",
+          "counters": []
+        },
+        {
+          "name": "test_realTokenUriNumericCliffBoundaries",
+          "run": "(gas: 9745442)",
+          "counters": []
+        },
+        {
+          "name": "test_wrongCustodyCallerCannotUseStaleIndexOrCreateBacking",
+          "run": "(gas: 5290865)",
+          "counters": []
+        },
+        {
+          "name": "test_A0_K1_donationBeforeFirstIssuanceNeverCreditsNextWallet",
+          "run": "(gas: 6544407)",
+          "counters": []
+        },
+        {
+          "name": "test_L2_FoT_forbidden",
+          "run": "(gas: 1269193)",
+          "counters": []
+        },
+        {
+          "name": "test_N1_unauthorizedPricingCallbackCannotMutateBookOrCredit",
+          "run": "(gas: 28151554)",
+          "counters": []
+        },
+        {
+          "name": "test_failedSecondChildFundingRollsBackWholeBatch",
+          "run": "(gas: 9768231)",
+          "counters": []
+        },
+        {
+          "name": "test_sourceSpoofingPreservesEveryRollbackDomain",
+          "run": "(gas: 6345527)",
+          "counters": []
+        },
+        {
+          "name": "test_tokenCallbackCannotBorrowLockedParentChildSynchronization",
+          "run": "(gas: 27773325)",
+          "counters": []
+        },
+        {
+          "name": "test_I1_I2_I3_bookedAndUnbookedPretransferCannotPurchase",
+          "run": "(gas: 33401528)",
+          "counters": []
+        },
+        {
+          "name": "test_contractOwnerPaymentCallbacksCannotPublishOrBypassAndShortReceiptRollsBack",
+          "run": "(gas: 30190094)",
+          "counters": []
+        },
+        {
+          "name": "invariant_nativeLedgerAndPermanentLifecycle",
+          "run": "(runs: 16, calls: 128, reverts: 0)",
+          "counters": [
+            {
+              "name": "successful pricing replacements A/B",
+              "value": "2"
+            },
+            {
+              "name": "successful configurations",
+              "value": "1"
+            },
+            {
+              "name": "successful independent issuances",
+              "value": "1"
+            },
+            {
+              "name": "successful activations",
+              "value": "1"
+            },
+            {
+              "name": "exact stale-book rejections",
+              "value": "2"
+            },
+            {
+              "name": "successful positive reward claims",
+              "value": "1"
+            },
+            {
+              "name": "actual reward units delivered",
+              "value": "122238"
+            },
+            {
+              "name": "successful SUT actions",
+              "value": "20"
+            },
+            {
+              "name": "exact rejected SUT actions",
+              "value": "9"
+            },
+            {
+              "name": "zero-valued valid claims (not positive witnesses)",
+              "value": "0"
+            },
+            {
+              "name": "market action groups",
+              "value": "2"
+            },
+            {
+              "name": "successful owner transitions",
+              "value": "1"
+            },
+            {
+              "name": "actual later paid bonds",
+              "value": "1"
+            },
+            {
+              "name": "actual later funded native rewards",
+              "value": "10464"
+            }
+          ]
+        },
+        {
+          "name": "test_allPositionsFreshCliffsAndLaterPaidGrowth",
+          "run": "(gas: 106345382)",
+          "counters": [
+            {
+              "name": "successful pricing replacements A/B",
+              "value": "2"
+            },
+            {
+              "name": "successful configurations",
+              "value": "1"
+            },
+            {
+              "name": "successful independent issuances",
+              "value": "2"
+            },
+            {
+              "name": "successful activations",
+              "value": "1"
+            },
+            {
+              "name": "exact stale-book rejections",
+              "value": "2"
+            },
+            {
+              "name": "successful positive reward claims",
+              "value": "5"
+            },
+            {
+              "name": "actual reward units delivered",
+              "value": "61419829"
+            },
+            {
+              "name": "successful SUT actions",
+              "value": "35"
+            },
+            {
+              "name": "exact rejected SUT actions",
+              "value": "21"
+            },
+            {
+              "name": "zero-valued valid claims (not positive witnesses)",
+              "value": "5"
+            },
+            {
+              "name": "market action groups",
+              "value": "1"
+            },
+            {
+              "name": "successful owner transitions",
+              "value": "2"
+            },
+            {
+              "name": "actual later paid bonds",
+              "value": "2"
+            },
+            {
+              "name": "actual later funded native rewards",
+              "value": "20928"
+            }
+          ]
+        },
+        {
+          "name": "test_successfulWitnessCliffAndActivationSequence",
+          "run": "(gas: 21068813)",
+          "counters": [
+            {
+              "name": "successful pricing replacements A/B",
+              "value": "2"
+            },
+            {
+              "name": "successful configurations",
+              "value": "1"
+            },
+            {
+              "name": "successful independent issuances",
+              "value": "1"
+            },
+            {
+              "name": "successful activations",
+              "value": "1"
+            },
+            {
+              "name": "exact stale-book rejections",
+              "value": "2"
+            },
+            {
+              "name": "successful positive reward claims",
+              "value": "1"
+            },
+            {
+              "name": "actual reward units delivered",
+              "value": "122227"
+            },
+            {
+              "name": "successful SUT actions",
+              "value": "15"
+            },
+            {
+              "name": "exact rejected SUT actions",
+              "value": "10"
+            },
+            {
+              "name": "zero-valued valid claims (not positive witnesses)",
+              "value": "2"
+            },
+            {
+              "name": "market action groups",
+              "value": "1"
+            },
+            {
+              "name": "successful owner transitions",
+              "value": "2"
+            },
+            {
+              "name": "actual later paid bonds",
+              "value": "0"
+            },
+            {
+              "name": "actual later funded native rewards",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "name": "invariant_laterFundingAndAllPositionClaims",
+          "run": "(runs: 16, calls: 128, reverts: 0)",
+          "counters": [
+            {
+              "name": "successful pricing replacements A/B",
+              "value": "2"
+            },
+            {
+              "name": "successful configurations",
+              "value": "1"
+            },
+            {
+              "name": "successful independent issuances",
+              "value": "2"
+            },
+            {
+              "name": "successful activations",
+              "value": "1"
+            },
+            {
+              "name": "exact stale-book rejections",
+              "value": "2"
+            },
+            {
+              "name": "successful positive reward claims",
+              "value": "2"
+            },
+            {
+              "name": "actual reward units delivered",
+              "value": "366748"
+            },
+            {
+              "name": "successful active actions",
+              "value": "25"
+            },
+            {
+              "name": "exact active rejections",
+              "value": "7"
+            },
+            {
+              "name": "actual later paid bonds",
+              "value": "3"
+            },
+            {
+              "name": "actual later funded native rewards",
+              "value": "31392"
+            }
+          ]
+        }
+      ],
+      "summary": "Ran 5 test suites in 5.00s (6.04s CPU time): 17 tests passed, 0 failed, 0 skipped (17 total tests)",
+      "exit": "0"
+    },
+    {
+      "log": "hostile-rollback.log",
+      "tests": [
+        {
+          "name": "test_adminDeclarationMatchesInterfaceAndCannotBeRestored",
+          "run": "(gas: 28779757)",
+          "counters": []
+        },
+        {
+          "name": "test_allPackageCutsReachRealProxyAndFitEip170",
+          "run": "(gas: 14125637)",
+          "counters": []
+        },
+        {
+          "name": "test_ordinaryRegistryPackageCannotAcquireMigrationAuthority",
+          "run": "(gas: 96563387)",
+          "counters": []
+        },
+        {
+          "name": "test_realTokenUriNumericCliffBoundaries",
+          "run": "(gas: 9745442)",
+          "counters": []
+        },
+        {
+          "name": "test_wrongCustodyCallerCannotUseStaleIndexOrCreateBacking",
+          "run": "(gas: 5290865)",
+          "counters": []
+        },
+        {
+          "name": "test_A0_K1_donationBeforeFirstIssuanceNeverCreditsNextWallet",
+          "run": "(gas: 6544407)",
+          "counters": []
+        },
+        {
+          "name": "test_L2_FoT_forbidden",
+          "run": "(gas: 1269193)",
+          "counters": []
+        },
+        {
+          "name": "test_N1_unauthorizedPricingCallbackCannotMutateBookOrCredit",
+          "run": "(gas: 28151554)",
+          "counters": []
+        },
+        {
+          "name": "test_failedSecondChildFundingRollsBackWholeBatch",
+          "run": "(gas: 9768231)",
+          "counters": []
+        },
+        {
+          "name": "test_sourceSpoofingPreservesEveryRollbackDomain",
+          "run": "(gas: 6345527)",
+          "counters": []
+        },
+        {
+          "name": "test_tokenCallbackCannotBorrowLockedParentChildSynchronization",
+          "run": "(gas: 27773325)",
+          "counters": []
+        },
+        {
+          "name": "test_I1_I2_I3_bookedAndUnbookedPretransferCannotPurchase",
+          "run": "(gas: 33401528)",
+          "counters": []
+        },
+        {
+          "name": "test_contractOwnerPaymentCallbacksCannotPublishOrBypassAndShortReceiptRollsBack",
+          "run": "(gas: 30190094)",
+          "counters": []
+        }
+      ],
+      "summary": "Ran 3 test suites in 379.05ms (1.12s CPU time): 13 tests passed, 0 failed, 0 skipped (13 total tests)",
+      "exit": "0"
+    },
+    {
+      "log": "fork-4.log",
+      "tests": [
+        {
+          "name": "test_burnedNonexistentReservedAndZeroCreditRejectWithoutCustody",
+          "run": "(gas: 4109870)",
+          "counters": []
+        },
+        {
+          "name": "test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum",
+          "run": "(gas: 4138715)",
+          "counters": []
+        },
+        {
+          "name": "test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp",
+          "run": "(gas: 2390760)",
+          "counters": []
+        },
+        {
+          "name": "test_earlierRewardsAndHolderTransferPreserveOriginalSharesAndDisabledHarvest",
+          "run": "(gas: 3632653)",
+          "counters": []
+        },
+        {
+          "name": "test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions",
+          "run": "(gas: 2259272)",
+          "counters": []
+        },
+        {
+          "name": "test_missingApprovalRollsBackPretransferAcceptanceForBothSources",
+          "run": "(gas: 7832677)",
+          "counters": []
+        },
+        {
+          "name": "test_rewardOnlyWeightedAndBurnedEarlierEarnNoCredit",
+          "run": "(gas: 4540025)",
+          "counters": []
+        },
+        {
+          "name": "test_sameIdInTwoCollectionsIncludesStillLockedEarlierPrincipal",
+          "run": "(gas: 5692382)",
+          "counters": []
+        },
+        {
+          "name": "test_transferredWeightedHolderMustReturnToPurchaserBeforeSurrender",
+          "run": "(gas: 4213062)",
+          "counters": []
+        },
+        {
+          "name": "test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote",
+          "run": "(gas: 4048080)",
+          "counters": []
+        },
+        {
+          "name": "test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement",
+          "run": "(gas: 1397977)",
+          "counters": []
+        },
+        {
+          "name": "invariant_exactOriginalUnitsCustodyAndFreshEscrow",
+          "run": "(runs: 16, calls: 128, reverts: 0)",
+          "counters": [
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "88423667347055516852883910490677229028"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "4551661356395084205735093308"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "29999999967575"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "9999999900000000000000000000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "source address",
+              "value": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "5625"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "source address",
+              "value": "0xaf0E1967c8F755c747615c5427108Bc549CA1122"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "5625"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "source address",
+              "value": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "50635073830046997872009171561012763540"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3689438"
+            },
+            {
+              "name": "source address",
+              "value": "0x4AC89aD061A531FA62ddceED53520C2750113b01"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "2560861833251447247559438618"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624880"
+            },
+            {
+              "name": "source address",
+              "value": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "5"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "16874999981762"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "source address",
+              "value": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "5"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "2"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "5624999943750000000000000000"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "source address",
+              "value": "0x999DaE02D22E5FEe1c4508430D5196d31d631009"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "5625"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "source address",
+              "value": "0x923877336b14662cFb5B3A60b14e7d716d54A888"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "5625"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "source address",
+              "value": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "5625"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "source address",
+              "value": "0xb7D4Bb379D361AD442CddEE53eA71a33957826A7"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "2"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "4"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "5625"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "3624098"
+            },
+            {
+              "name": "canonical competing enrollment rejections",
+              "value": "120"
+            },
+            {
+              "name": "successful admitted recovery stages",
+              "value": "8"
+            },
+            {
+              "name": "late whole recovery batch rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "whole position principal paid",
+              "value": "0"
+            },
+            {
+              "name": "real source and bond transfers",
+              "value": "22"
+            },
+            {
+              "name": "actual ER source rate increases",
+              "value": "2"
+            },
+            {
+              "name": "separate NFT-sale external ER shares",
+              "value": "485044501927175493321"
+            }
+          ]
+        },
+        {
+          "name": "test_allUnitsTerminalOrRetainedResidueAndLaterOwnCliffs",
+          "run": "(gas: 394759936)",
+          "counters": [
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "88423667347055516852883910490677229028"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "4551661356395084205735093308"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "29999999967575"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "9999999900000000000000000000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "configured eligible original source units",
+              "value": "10000"
+            },
+            {
+              "name": "source address",
+              "value": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "source address",
+              "value": "0xaf0E1967c8F755c747615c5427108Bc549CA1122"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "source address",
+              "value": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "419661796441813012824673292252566920"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "30578"
+            },
+            {
+              "name": "source address",
+              "value": "0x4AC89aD061A531FA62ddceED53520C2750113b01"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "392519172024864887958474"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "556"
+            },
+            {
+              "name": "source address",
+              "value": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "source address",
+              "value": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "source address",
+              "value": "0x999DaE02D22E5FEe1c4508430D5196d31d631009"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "source address",
+              "value": "0x923877336b14662cFb5B3A60b14e7d716d54A888"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "source address",
+              "value": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "source address",
+              "value": "0xb7D4Bb379D361AD442CddEE53eA71a33957826A7"
+            },
+            {
+              "name": "source successful surrenders",
+              "value": "3"
+            },
+            {
+              "name": "source exact rejected operations",
+              "value": "6"
+            },
+            {
+              "name": "source late funded receipt rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "remaining eligible original units",
+              "value": "0"
+            },
+            {
+              "name": "remaining frozen credit",
+              "value": "0"
+            },
+            {
+              "name": "canonical competing enrollment rejections",
+              "value": "120"
+            },
+            {
+              "name": "successful admitted recovery stages",
+              "value": "6"
+            },
+            {
+              "name": "late whole recovery batch rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "whole position principal paid",
+              "value": "1337353013"
+            },
+            {
+              "name": "real source and bond transfers",
+              "value": "53"
+            },
+            {
+              "name": "actual ER source rate increases",
+              "value": "1"
+            },
+            {
+              "name": "separate NFT-sale external ER shares",
+              "value": "485044501927175493321"
+            }
+          ]
+        },
+        {
+          "name": "invariant_originalCreditCustodyFundingAndStagedRecovery",
+          "run": "(runs: 16, calls: 128, reverts: 0)",
+          "counters": [
+            {
+              "name": "initial protected DTF donation",
+              "value": "1000000000000000000"
+            },
+            {
+              "name": "initial spendable protocol DTF residual",
+              "value": "6382886"
+            },
+            {
+              "name": "successful NFT original repricing and reload witnesses",
+              "value": "2"
+            },
+            {
+              "name": "successful legacy actions",
+              "value": "21"
+            },
+            {
+              "name": "exact legacy rejections",
+              "value": "20"
+            },
+            {
+              "name": "real funded bond callbacks",
+              "value": "2"
+            },
+            {
+              "name": "late funding rollback witnesses",
+              "value": "1"
+            },
+            {
+              "name": "whole batch recovery rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "successful recovery stages",
+              "value": "5"
+            },
+            {
+              "name": "surrendered principal paid",
+              "value": "0"
+            },
+            {
+              "name": "surrendered position claim actions",
+              "value": "3"
+            },
+            {
+              "name": "surrendered bond transfers",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "test_laterSurrenderOwnCliffAndEveryPositionClaim",
+          "run": "(gas: 25836796)",
+          "counters": [
+            {
+              "name": "initial protected DTF donation",
+              "value": "1000000000000000000"
+            },
+            {
+              "name": "initial spendable protocol DTF residual",
+              "value": "6382886"
+            },
+            {
+              "name": "successful NFT original repricing and reload witnesses",
+              "value": "2"
+            },
+            {
+              "name": "successful legacy actions",
+              "value": "28"
+            },
+            {
+              "name": "exact legacy rejections",
+              "value": "22"
+            },
+            {
+              "name": "real funded bond callbacks",
+              "value": "3"
+            },
+            {
+              "name": "late funding rollback witnesses",
+              "value": "1"
+            },
+            {
+              "name": "whole batch recovery rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "successful recovery stages",
+              "value": "5"
+            },
+            {
+              "name": "surrendered principal paid",
+              "value": "1332584210"
+            },
+            {
+              "name": "surrendered position claim actions",
+              "value": "9"
+            },
+            {
+              "name": "surrendered bond transfers",
+              "value": "6"
+            }
+          ]
+        },
+        {
+          "name": "test_terminalCreditAndCompleteRecoveryWitness",
+          "run": "(gas: 67352228)",
+          "counters": [
+            {
+              "name": "initial protected DTF donation",
+              "value": "1000000000000000000"
+            },
+            {
+              "name": "initial spendable protocol DTF residual",
+              "value": "6382886"
+            },
+            {
+              "name": "successful NFT original repricing and reload witnesses",
+              "value": "2"
+            },
+            {
+              "name": "successful legacy actions",
+              "value": "22"
+            },
+            {
+              "name": "exact legacy rejections",
+              "value": "13"
+            },
+            {
+              "name": "real funded bond callbacks",
+              "value": "3"
+            },
+            {
+              "name": "late funding rollback witnesses",
+              "value": "1"
+            },
+            {
+              "name": "whole batch recovery rollbacks",
+              "value": "1"
+            },
+            {
+              "name": "successful recovery stages",
+              "value": "9"
+            },
+            {
+              "name": "surrendered principal paid",
+              "value": "0"
+            },
+            {
+              "name": "surrendered position claim actions",
+              "value": "1"
+            },
+            {
+              "name": "surrendered bond transfers",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "test_threeUnitsPay333Then334Then334OnActualProxy",
+          "run": "(gas: 113108796)",
+          "counters": [
+            {
+              "name": "initial protected DTF donation",
+              "value": "1000000000000000000"
+            },
+            {
+              "name": "initial spendable protocol DTF residual",
+              "value": "6382886"
+            }
+          ]
+        }
+      ],
+      "summary": "Ran 3 test suites in 6.48s (8.18s CPU time): 17 tests passed, 0 failed, 0 skipped (17 total tests)",
+      "exit": "0"
+    }
+  ],
+  "acceptanceProbes": {
+    "honestAccepted": true,
+    "nonzeroExitWithSuccessBannerRejected": true,
+    "zeroIssuanceRejected": true,
+    "zeroActivationRejected": true,
+    "zeroSelectedCasesRejected": true,
+    "missingTerminalExitRejected": true
+  }
+}

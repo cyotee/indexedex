@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"observeSettlement","inputs":[{"name":"from_","type":"address","internalType":"address"},{"name":"amount_","type":"uint256","internalType":"uint256"}],"outputs":[],"stateMutability":"nonpayable"}],"id":5819}

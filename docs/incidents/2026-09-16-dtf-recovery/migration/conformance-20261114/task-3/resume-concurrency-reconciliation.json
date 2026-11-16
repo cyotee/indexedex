@@ -1,0 +1,136 @@
+{
+  "type": "Task3ResumeConcurrentAmendment",
+  "date": "2026-11-15",
+  "status": "reconciled",
+  "observation": "A separate writer created the DoneClaim and changed five source-index/report files while this resume was running. No writer identity is inferred.",
+  "previousInspection": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/resume-byte-review.json",
+  "previousPreservation": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/resume-preservation.json",
+  "concurrentClaim": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-3-done.json",
+    "sha256": "53122a626c3f55901389213b1bd4bd14999b3b76876361d5c602400e71034091",
+    "retainedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/retained-before-resume/concurrent-task-3-done.json"
+  },
+  "changedProtectedFiles": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/report.md",
+      "sha256": "2de0b12e4f6e6729d1b50eac0ee8481ebc74ba614b8e806bf1a063cdad9d818c",
+      "bytes": 7311,
+      "afterSha256": "f99c2fd4bcb65b921448910245a9bbdff709f5eb99b99d82073bb8cb76367108"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+      "sha256": "fa00006504a75b16a411c966d5de0fcb3bb926dfcf572a5d4e04c94cd4241605",
+      "bytes": 209517,
+      "afterSha256": "82233f20f3eb4ba21ee927a4f421b75615e57f9ee0f426ad4a6a1cb93b5a465a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "sha256": "86687ab4bf579b2ba8635ee5efe4eb935df27bcf7d17a34314018353ded9dc97",
+      "bytes": 99488,
+      "afterSha256": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "sha256": "d4efc66c1acabf3d66b98d3e890f1532e919ede6daf558e5091ed8b3ef5208a9",
+      "bytes": 19104,
+      "afterSha256": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "sha256": "f33e6ce5eb4dfe88fe2f594b19ba4a6708333579230db1f8d8564d8dbf13ce94",
+      "bytes": 13232,
+      "afterSha256": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64"
+    }
+  ],
+  "classification": "source-observations.json and source-manifest.json differ only by added specificationAuthority; source rows and all source evidence fields are byte-equivalent as JSON values. Markdown indexes add the corresponding local specification reference. Report adds that same follow-up.",
+  "observationSourceRowsUnchanged": true,
+  "manifestSourceRowsUnchanged": true,
+  "observationChangedTopKeys": [
+    "specificationAuthority"
+  ],
+  "manifestChangedTopKeys": [
+    "specificationAuthority"
+  ],
+  "currentIndexBindings": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "bytes": 101287,
+      "sha256": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677",
+      "baselineSha256": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "bytes": 19779,
+      "sha256": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298",
+      "baselineSha256": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "bytes": 13907,
+      "sha256": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64",
+      "baselineSha256": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4"
+    }
+  ],
+  "currentObservations": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+    "bytes": 211316,
+    "sha256": "82233f20f3eb4ba21ee927a4f421b75615e57f9ee0f426ad4a6a1cb93b5a465a"
+  },
+  "specificationAuthority": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+    "bytes": 98213,
+    "status": "confirmed amended local specification for wave 1",
+    "confirmation": "User reports task-1 independent confirmation; exact local raw-file SHA-256 matches the supplied fingerprint.",
+    "references": [
+      {
+        "section": "1.10",
+        "lines": [
+          122,
+          134
+        ],
+        "scope": "Manual Weighted pricing and keep-until-reloaded precedence; no change to authenticated source/custody/conservation obligations."
+      },
+      {
+        "section": "1.9",
+        "lines": [
+          112,
+          120
+        ],
+        "scope": "Iterative reward harvesting and conditional permanent custody."
+      },
+      {
+        "section": "2 source identity table",
+        "lines": [
+          181,
+          195
+        ],
+        "scope": "Fixed legacy identities and actual source-unit models; refresh operational pins before configuration."
+      },
+      {
+        "section": "3 E1/E2",
+        "lines": [
+          197,
+          209
+        ],
+        "scope": "Source route closure, configured original-wallet surrender, measured custody and conservation."
+      },
+      {
+        "section": "Implementation task 1",
+        "lines": [
+          462,
+          471
+        ],
+        "scope": "Every source row needs executable evidence or a concrete blocker; preserve historical evidence."
+      }
+    ],
+    "qualification": "This binds specification references only. Historical source archives and completed QA retain their original byte/source bindings and wording; no recovery/source checks are repeated."
+  },
+  "specificationRawSha256Matches": true,
+  "task1DiffUnchanged": true,
+  "task2UntrackedPathSetUnchanged": true,
+  "allOtherSelectedProtectedFilesUnchanged": true,
+  "completedEvidenceRerun": false,
+  "acceptanceEffect": "No changed source/custody/conservation fact and no required QA rerun. Current hashes supersede the earlier inspection snapshot hashes only. No concurrent source index edit is reverted or replaced."
+}
+

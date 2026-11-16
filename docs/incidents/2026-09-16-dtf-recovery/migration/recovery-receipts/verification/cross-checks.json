@@ -1,0 +1,27 @@
+{
+  "normalizedResultsEqual": true,
+  "reconciliationEqual": true,
+  "rawResponseComparisons": 1278,
+  "byteIdenticalResponses": 1277,
+  "differingResponses": [
+    {
+      "id": 482,
+      "method": "eth_getBlockByNumber",
+      "params": [
+        "0x3da6876",
+        false
+      ],
+      "producer": "e598a900892bdaa06ab60cc2d685bf0323dc30f9233be37cbde61e6a13885797",
+      "verifier": "3e05c0703fdd051d5b525bdf97883e57cddfe9762141c4c3bca17abad0f7f9c3"
+    }
+  ],
+  "parsedDifferingEnvelopesDeepEqual": true,
+  "explanation": "Only JSON-RPC envelope property order differs for request 482; normalized complete results are identical. HTTP-manifest hashes therefore differ, and archive.http.sha256 is the only archive semantic difference.",
+  "archiveDifferences": [
+    {
+      "path": "archive.http.sha256",
+      "producer": "aafc37d15f223382c84679188a8b5a2f125d4d5c1b645dddfbb1941ab87e151f",
+      "verifier": "dc93956548bb279085571472b19cc87d9e62e257ea90c76559ce8d7be46e8290"
+    }
+  ]
+}

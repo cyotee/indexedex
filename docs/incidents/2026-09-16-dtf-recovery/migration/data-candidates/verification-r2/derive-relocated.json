@@ -1,0 +1,16 @@
+{
+  "executable": "bun",
+  "args": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/cli.ts",
+    "derive-candidates",
+    "--input",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/relocated-root/2026-09-16-dtf-recovery",
+    "--output",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/full-relocated"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2",
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/derive-relocated.stdout",
+  "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/derive-relocated.stderr"
+}

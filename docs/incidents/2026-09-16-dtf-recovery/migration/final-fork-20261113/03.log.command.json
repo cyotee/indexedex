@@ -1,0 +1,1 @@
+{"command":["python3","scripts/forge-artifacts.py","test","contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol","--test-root","test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration","--","-j","1","--compute-units-per-second","10","--rpc-timeout","120","-vv"],"code":0,"signal":null}

@@ -1,0 +1,3353 @@
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+new file mode 100644
+index 00000000..029e9278
+--- /dev/null
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -0,0 +1,268 @@
++# Bounded Migration operator runbook
++
++## Preparation and read-only validation
++
++Entrypoint: `bun scripts/recovery/dtf-migration/cli.ts`.
++Use `--help` for the implemented command domain.
++
++```text
++bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
++bun scripts/recovery/dtf-migration/cli.ts validate --manifest <file>
++```
++
++Supply real paths and set the environment variable named by `domain.rpcEnv`
++outside the command line. Never put a private endpoint or signer in evidence.
++The complete input and execution-consumer contracts are in
++`operator/preparation/interface.md`; the runtime schemas are in
++`scripts/recovery/dtf-migration/schema.ts`.
++
++Preparation requires an actual funded and captured snapshot. It verifies raw
++source SHA-256 and byte lengths, full original proof objects, origin
++partitions, code/domain identities, the complete immutable snapshot and
++separate ETH/DTF frozen quotes. It writes full `independent.json` and
++`nfts.json` review mirrors plus the accepted `manifest.json`. These contain
++configuration, not issued bonds. Every write is exclusive; retain a failed
++directory as failed evidence and select a fresh output directory.
++
++Validation reconstructs the manifest from its pinned sources and read-only
++RPC calls. Execution must consume the typed return of `validateManifest`,
++not the review mirrors or a manually edited payload. `blocked.json` is
++rejected evidence, never an executable manifest. Unknown original inputs
++remain errors. No unresolved fungible/history/TokenStaking allocation is
++generated, and earlier claim/sale holding is not earlier liquidation.
++
++Local script checks:
++
++```sh
++bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts
++```
++
++`operator/preparation/deterministic-fixture.json` records exact synthetic
++wire-fixture replacements, IDs and quote outputs. It is not an EVM
++execution, real pricing evidence, approved allocation or public loader input.
++
++## Execution and recovery
++
++The fixed stage names remain `deploy`, `fund`, `capture`, `configure`,
++`independent-issue`, `verify`, `activate`, `harvest`, `resume`, and `rehearse`.
++The execution schema is `scripts/recovery/dtf-migration/execution-schema.ts`.
++An execution manifest is a strict `dtf-operator-execution-v1` object. It binds
++chain, RPC environment-variable name, signer, proxy, registry, package, every
++installed facet runtime, raw source/ABI fingerprints, optional exact local
++instance/fork identity, typed package arguments and funding inputs. It accepts
++no arbitrary target/calldata. The `sources` array must include the genuine
++`migration-abi`, `allocation-abi`, `recovery-abi` and `package-abi` artifacts.
++All source paths are absolute, quantities decimal strings and unknown values
++invalid.
++
++Before capture, `snapshotId` and `preparedManifest` are null. Deployment
++receives complete `IUniswapV4DetfMigrationDFPkg.PkgArgs` as `deployment`;
++the package calls the actual manager registry. `funding.donations` contains
++unique identities and complete token/amount/native/minimum/deadline values.
++`funding.genesis` is the optional complete external-leg bootstrap. After
++capture, create the preparation input from the actual snapshot, run `prepare`,
++and bind its path and snapshot ID in a new execution manifest. The execution
++lane always calls `validateManifest`; it never trusts a payload hash alone.
++
++```text
++bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
++bun scripts/recovery/dtf-migration/cli.ts resume --manifest <file> --checkpoint <directory>
++```
++
++Each checkpoint directory belongs to one complete manifest and one stage.
++Use a new directory for a new stage or changed full replacement. Defaults are
++read-only domain/plan validation, not a stateful EVM simulation and not a
++receipt. Nothing inherits execution mode from an earlier process.
++
++For an owned local fork, explicitly add
++`--execute-local --instance-id <observed anvil_metadata.instanceId>`.
++The RPC must be loopback and the manifest's chain, instance, fork height and
++fork hash must all match. Only the public Anvil development account is selected.
++Public mode requires fresh `--broadcast`, `--confirm-chain`,
++`--confirm-proxy`, `--confirm-snapshot` and `--signer-key-env`; synthetic-local
++inputs reject it. Public execution has not been authorized for this task.
++For the typed pre-capture domain, the fresh snapshot confirmation is the
++literal `uncaptured`; it is not a bytes32 snapshot or a quote. After capture
++the actual snapshot ID is mandatory.
++
++The journal publishes a fully signed transaction intent and hash, nonce,
++starting block, complete typed operation and domain fingerprint before sending.
++Files are exclusively created and synced before publication, then the directory
++is synced. A crash before a receipt checkpoint leaves the same signed hash
++available for reconciliation. Resume checks the canonical receipt, exact
++transaction and receipt-block contract state, including actual bond IDs,
++principal, recipient, issuance clock and 90-day cliff. A reverted transaction,
++missing completed receipt, changed nonce without a known receipt, pending
++transaction or conflicting domain fails closed. There is no blanket retry.
++
++Configuration and issuance use bounded singleton rows. `--reverse` may reorder
++only their unsettled rows; prior intents are reconciled first. Donations,
++genesis and selected recovery stages preserve their order and identity.
++Complete configuration replacements do not change prior issued bonds.
++`--fault-after-mined` is synthetic-local only and interrupts a donation or
++independent issuance after its actual mined receipt and before completion.
++
++`verify` reads complete configurations and issuance independently of transaction
++submission. `activate` checks those configurations before executing and records
++the atomic removal of every allocation selector. `harvest` uses only the
++admitted enum tuples from preparation. Weighted receipt amounts are selected
++from attributed gons and a source index, then the actual operation is simulated
++before signing. Stored native inventory is not treated as a live quote;
++unrelated balances never expand its budget.
++
++## Local rehearsal
++
++The fixed rehearsal invocation is:
++
++```sh
++bun scripts/recovery/dtf-migration/cli.ts rehearse \
++  --rpc-alias robinhood_mainnet_alchemy \
++  --fork-block 108944663 \
++  --port 18560 \
++  --checkpoint .omo-runtime/dtf-migration-operator/checkpoints \
++  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/operator
++```
++
++The source pin is chain4663, L2 block108944663, hash
++`0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733`,
++not the post-funding snapshot. Rehearsal retains actual registry
++deployment and mined receipts, both mined-before-checkpoint interruptions,
++fresh-process resume, no duplicate funding/issuance, unchanged unclaimed
++supply, reordered remaining work, domain rejections, accrued attributed-gon
++recovery and owned runtime cleanup. Implementation evidence remains in
++`operator/execution/report.md`. The subsequent fixed-command rehearsal,
++corrections, gas, source bindings and cleanup are in `operator/rehearsal/report.md`;
++the presence of a command is not proof that its rehearsal passed.
++
++The environment stage is
++`Phase_08_Stage_00_OperatorEnvironment.s.sol`; typed transaction simulations
++are in `Phase_08_Stage_01_MigrationExecution.s.sol`. Both compile with Solar.
++The local environment uses real holder-funded historical DTF and genuine
++production packages; its new WETH/rate/liquidity configuration is synthetic
++and not a proposed public deployment. The environment computes a proxy in
++simulation; the `deploy` CLI separately mines its actual registry deployment.
++Every local command and receipt is retained under an exclusive rehearsal
++evidence directory. Journals are copied there before the owned node exits
++and its temporary checkpoint root is removed.
++
++Run from the operator worktree on `work/dtf-migration-phase-08-operator`,
++based on independently accepted recovery commit
++`421072a7630a0d3d47a6f36e1062d9eae98c93e2`. The existing archive alias is
++resolved through `forge config --json`. On this workstation its credential
++is in the existing interactive login environment; `/bin/zsh -lic` can wrap
++the exact command above. Do not print the resolved endpoint. The wrapper
++uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
++and the existing warm `out/`, `cache_forge/` and dependency links.
++
++Port 18560 must be unused and the chosen checkpoint directory absent before
++starting. The command creates its own node and checkpoint directory; it
++does not adopt an existing node or overwrite an old checkpoint. EIP-170
++remains enabled. The local 100-million block gas cap, one-billion Forge
++simulation budget and legacy fee selection are rehearsal parameters, not
++target-chain transaction limits or a live funding quote.
++
++The final local parent deployment consumed **42,985,843 gas**, exceeding
++the separately recorded historical `getMaxTxGasLimit()` value of
++**32,000,000**. The permissive local fork mined it; this does not establish
++that the same deployment can run publicly. Preserve this deployment
++feasibility issue for the separately authorized production/package lane.
++
++### Stage and evidence order
++
++| Step | Required input | Recorded result |
++| --- | --- | --- |
++| `deploy` | Complete pre-capture execution manifest and genuine registered package | Registry membership, runtime/facet bindings and actual owner |
++| `fund` | Distinct donation identities, full values and optional all-leg genesis | Actual received-capital events, protected inventory and genesis supply |
++| `capture` | Actually funded reserve | Immutable snapshot ID and both RPC block and emitted EVM block provenance |
++| `prepare`, `validate` | Pinned source originals and actual captured snapshot | Separate whole independent/NFT replacements, native quotes and fingerprints |
++| `configure` | Validated post-capture manifest | Actual replacement IDs/credits; unchanged supply |
++| `independent-issue` | Explicit selected recipients | Actual new funded bond IDs, principal, recipient and fresh cliff |
++| Holder surrender | Holder approval and `surrenderMigrationNft` on the real proxy | Actual old NFT custody/consumption and a separate funded new bond |
++| `verify`, `activate` | Final replacement manifest and completed selected issuance | Effective configurations, atomic selector removal and postactivation verification |
++| `harvest` | Consumed custody or attributed inventory; bounded typed selection | Measured claim/conversion/sale/donation and separate revaluation events |
++
++The rehearsal performs bounded recovery before activation, then verifies
++activation. Recovery remains a separate retained API. Earlier sale is
++sale-and-hold, not receipt redemption or DTF liquidation.
++
++### Interruption and recovery procedure
++
++1. Keep the original manifest, its raw source files and checkpoint directory.
++   Start `resume` without execution flags to validate the domain without
++   selecting a signer or sending a transaction.
++2. For the same owned local instance, explicitly repeat `--execute-local`
++   and its exact `--instance-id`. The dead writer's lock is released only
++   after its process is proven absent.
++3. The journal first reconciles every existing signed intent against the
++   canonical transaction, receipt and receipt-block state. A mined donation
++   or issuance uses the same hash/nonce; it is not sent again.
++4. Only independent unsettled configuration/issuance rows may use
++   `--reverse`. Funding, genesis and recovery order cannot be reversed.
++   A changed manifest, snapshot, proxy, package, source or payload requires
++   review and a new domain, not editing an old checkpoint to bypass rejection.
++5. Stop on ambiguity, a canonical revert or a domain mismatch. Preserve the
++   failed files and diagnose the exact intent; there is no automatic retry,
++   rollback of already mined transactions or permission to duplicate a
++   donation under a new identity.
++
++The real rehearsal retains `donation-before-resume.json` and
++`issuance-before-resume.json` while the successful receipt exists but its
++completion file does not. Matching `*-resumed.json` files bind that same
++receipt to the fresh-process completion, including emitted bond identity.
++Four synthetic independent recipients leave three selected and one
++unclaimed. After the first selected issuance is interrupted, two unsettled
++rows remain; `reordered-issuance.json` checks their actual nonce order is
++reversed, with exactly one bond per selected recipient.
++
++The original and reordered preparation inputs must produce byte-identical
++`manifest.json`, `independent.json` and `nfts.json` within the same pinned
++domain. `deterministic-preparation.json` records their SHA-256 and sizes.
++Different node instances, evidence paths or snapshot domains legitimately
++change domain-bound fingerprints; they are not claimed byte-identical.
++
++Every deliberate rejection must exit 1 with `DOMAIN` and leave the signer
++nonce unchanged. The five wrong-domain cases are chain, proxy, package,
++snapshot and prepared payload. A sixth case rejects reversing funding.
++Default resumes are separately checked to leave the nonce unchanged.
++
++### Reading receipts and cleanup
++
++Each `execution/rehearsal-<run>/` retains the redacted Anvil argv, Solar
++environment command, numbered CLI command/exit records and logs, actual
++infrastructure/fixture receipts, deterministic data and `journal-*`
++directories. `.intent.json` contains signed local-development transaction
++bytes; `.receipt.json` contains canonical receipt and checked state.
++Simulation/read-only output is never counted as a mined receipt.
++
++Use `operator/rehearsal/transactions.json`, `gas.json` and
++`source-evidence-bindings.json` to join commands, nonces, actual bond IDs,
++native gas used, executable artifacts and source/evidence fingerprints.
++Receipt gas describes these specific local transactions only. Retain the
++admitted bound of at most eight weighted claims or one other recovery step,
++and estimate each exact selected operation against actual chain limits
++before any separately authorized operation.
++
++The CLI awaits node exit, closes receipt subscriptions/providers, stops
++holder impersonation in `finally`, copies checkpoint bytes into evidence,
++then removes its owned checkpoint root. `cleanup.json` records that sequence.
++The rehearsal report also records port/PID absence and removal of the empty
++task-created runtime parent. Preserve evidence, shared services, warm
++artifacts and dependency links.
++
++### Required categories still blocked
++
++| Category | Unclosed gate |
++| --- | --- |
++| Weighted and earlier liquid DETF | E2 transfer ancestry and consumption |
++| Weighted receipt | E2 gon ancestry and proportional consumption |
++| Earlier receipt | E2 ancestry/supply discrepancy and disabled exits |
++| Weighted SY | E2 wrapper look-through and nonduplication |
++| TokenStaking, claim-vault rights | E1/E2 claim composition, ancestry and custody |
++| Underlying SE shares, fungible LP | E1/E2 complete discovery and contribution attribution |
++| Earlier liquidation | SB-E1/E2/E3 disabled exits; SB-E4 unproved liquid conversion |
++
++These categories remain in every disposition matrix, even with zero input
++rows. None obtains invented credit, an executable substitute or a no-op
++success. Synthetic originals, external liquidity and local funding are
++operational test data, not approved allocations. Full original task 9 and
++release remain open.
+diff --git a/scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol b/scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol
+index 966d6afd..3fb4fa98 100644
+--- a/scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol
++++ b/scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol
+@@ -96,7 +96,7 @@ contract MigrationCoreLocalQA is TestBase_UniswapV4DetfMigration {
+     event CorePrincipalPaid(address indexed parent, uint256 amount, uint256 deferredBondRewards);
+     event CoreRewardsPaid(address indexed parent, uint256 bondRewards, uint256 nativeRT, uint256 redeemed, uint256 remainder);
+     function setUp() public override {}
+-    function _localInfrastructure() private {
++    function _localInfrastructure() internal {
+         (create3Factory, diamondPackageFactory) = InitDevService.initEnv(DEV);
+         diamondFactory = diamondPackageFactory;
+         owner = DEV;
+diff --git a/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol
+new file mode 100644
+index 00000000..dbc45f00
+--- /dev/null
++++ b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {MigrationCoreLocalQA} from "./MigrationCoreLocalQA.s.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
++import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
++import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
++import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
++import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
++import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
++import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {UniswapV4DetfProductionSeDeployLib as SeLib}
++    from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
++import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg as V3Package}
++    from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
++import {IUniswapV4DetfMigrationDFPkg as MigrationPackage}
++    from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol";
++import {IUniswapV4StandardExchangeWeightedBufferHookPackage as HookPackage}
++    from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
++import {UniswapV4StandardExchangeWeightedBufferHook_FactoryService as HookFactory}
++    from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol";
++import {IUniswapV4HookStagedPairInit} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
++import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
++import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
++
++/// @notice Synthetic local infrastructure only. The CLI separately deploys the real parent.
++/// @dev Real DTF must already have been transferred by an actual holder on the owned fork.
++contract Phase_08_Stage_00_OperatorEnvironment is MigrationCoreLocalQA {
++    address internal constant ORIGINAL_DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
++
++    function prepareEnvironment() external {
++        require(block.chainid == 4663 && tx.origin == DEV, "owned rehearsal identity");
++        require(IERC20(ORIGINAL_DTF).balanceOf(DEV) >= 10000 ether, "real holder-funded DTF");
++        localBroadcast = true;
++        payer = DEV;
++        migrationOwner = DEV;
++        vm.startBroadcast(DEV);
++        _localInfrastructure();
++        pairA = create3Factory.create3WithArgs(
++            ArtifactCreationCode.creationCode(create3Factory,
++                "lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol:WETH9"),
++            "", keccak256("migration.weth")
++        );
++        pairB = ORIGINAL_DTF;
++        address rate_ = _deployRateFixture();
++        IWETH(pairA).deposit{value: 10000 ether}();
++        SimpleMintableERC20(rate_).mint(DEV, 20000 ether);
++        pm = IPoolManager(create3Factory.create3WithArgs(
++            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
++            abi.encode(DEV), keccak256("migration.poolmanager")
++        ));
++        IUniswapV3Factory factory_ = IUniswapV3Factory(create3Factory.create3WithArgs(
++            ArtifactCreationCode.creationCode(create3Factory,
++                "lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol:UniswapV3Factory"),
++            "", keccak256("migration.v3")
++        ));
++        V3Package v3_ = _migrationV3Package(factory_);
++        se0 = address(SeLib.createUniv3PoolOneToOne(factory_, pairA, rate_, 3000));
++        se1 = address(SeLib.createUniv3PoolOneToOne(factory_, pairB, rate_, 3000));
++        _seedMigrationPool(SeLibPool(se0), bytes32("A"));
++        _seedMigrationPool(SeLibPool(se1), bytes32("B"));
++        se0 = v3_.deployVault(SeLibPool(se0));
++        se1 = v3_.deployVault(SeLibPool(se1));
++        _activateMigrationSe(se0, pairA, rate_);
++        _activateMigrationSe(se1, pairB, rate_);
++        _migrationHookPackage();
++        _migrationPackages();
++        MigrationPackage.PkgArgs memory args_ = _migrationArgs(DEV);
++        address predicted_ = diamondPackageFactory.calcAddress(
++            IDiamondFactoryPackage(address(migrationPkg)), abi.encode(args_)
++        );
++        args_.baseArgs.hook = _prepareHook(predicted_);
++        vm.stopBroadcast();
++        // This call is simulation-only: it establishes exact predicted runtime and
++        // installed facets without recording a deployment transaction in this stage.
++        address simulated_ = migrationPkg.deployVault(args_);
++        require(simulated_ == predicted_, "registry prediction");
++        string memory key_ = "operator";
++        vm.serializeAddress(key_, "proxy", predicted_);
++        vm.serializeAddress(key_, "registry", address(indexedexManager));
++        vm.serializeAddress(key_, "package", address(migrationPkg));
++        vm.serializeAddress(key_, "pairToken", pairB);
++        vm.serializeAddress(key_, "weth", pairA);
++        vm.serializeBytes(key_, "arguments", abi.encode(args_));
++        vm.serializeBytes32(key_, "proxyCodeHash", predicted_.codehash);
++        IDiamondLoupe.Facet[] memory facets_ = IDiamondLoupe(predicted_).facets();
++        address[] memory addresses_ = new address[](facets_.length);
++        for (uint256 i_; i_ < facets_.length; ++i_) addresses_[i_] = facets_[i_].facetAddress;
++        string memory output_ = vm.serializeAddress(key_, "facets", addresses_);
++        vm.writeJson(output_, vm.envString("OPERATOR_ENVIRONMENT_OUTPUT"));
++    }
++
++    function _prepareHook(address predicted_) private returns (address) {
++        address[] memory tokens_ = new address[](3);
++        tokens_[0] = predicted_; tokens_[1] = pairA; tokens_[2] = pairB;
++        _sortInPlace(tokens_);
++        uint256[] memory weights_ = new uint256[](3);
++        address[] memory exchanges_ = new address[](3);
++        for (uint256 i_; i_ < 3; ++i_) {
++            weights_[i_] = tokens_[i_] == predicted_ ? 4e17 : 3e17;
++            exchanges_[i_] = tokens_[i_] == predicted_ ? address(0) : tokens_[i_] == pairA ? se0 : se1;
++        }
++        HookPackage.PkgArgs memory args_ = HookPackage.PkgArgs(
++            address(pm), address(indexedexManager), 3, tokens_, weights_, exchanges_,
++            RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, tokens_, exchanges_),
++            HookPkgArgsDecimalsLib.tokenDecimals(tokens_, predicted_), HookPkgArgsDecimalsLib.seDecimals(exchanges_),
++            true, predicted_
++        );
++        address hook_ = weightedHookPkg.deployVault(args_, HookFactory.findMineNonce(hookFactory, weightedHookPkg, args_));
++        IUniswapV4HookStagedPairInit init_ = IUniswapV4HookStagedPairInit(hook_);
++        init_.deployPair(tokens_[0], tokens_[1]);
++        init_.deployPair(tokens_[0], tokens_[2]);
++        init_.deployPair(tokens_[1], tokens_[2]);
++        require(init_.finalizeInitialization(), "hook initialized");
++        return hook_;
++    }
++}
++
++import {IUniswapV3Pool as SeLibPool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
+diff --git a/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+new file mode 100644
+index 00000000..bfaa8ea6
+--- /dev/null
++++ b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {Script} from "forge-std/Script.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation}
++    from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigrationDFPkg as Package}
++    from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol";
++import {IUniswapV4DetfMigrationRecovery as Recovery}
++    from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol";
++
++/// @notice Typed stage simulations. The CLI owns durable intents and submission.
++/// @dev No target/calldata executor and no implicit run() or broadcast flag.
++contract Phase_08_Stage_01_MigrationExecution is Script {
++    function deploy(Package package_, Package.PkgArgs calldata args_) external returns (address proxy_) {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        proxy_ = package_.deployVault(args_);
++        vm.stopBroadcast();
++    }
++
++    function fund(
++        Migration proxy_, IERC20[] calldata tokens_, uint256[] calldata amounts_,
++        uint256 nativeAmount_, uint256 minimum_, uint256 deadline_
++    ) external returns (uint256 lpOut_) {
++        require(tokens_.length == amounts_.length, "donation arrays");
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        for (uint256 i_; i_ < tokens_.length; ++i_) {
++            require(tokens_[i_].approve(address(proxy_), amounts_[i_]), "donation approval");
++        }
++        lpOut_ = proxy_.donateMigrationCapital{value: nativeAmount_}(
++            tokens_, amounts_, nativeAmount_, minimum_, deadline_
++        );
++        vm.stopBroadcast();
++    }
++
++    function bootstrap(
++        Allocation proxy_, Migration.GenesisLeg[] calldata legs_, uint256 anchor_,
++        uint256 minimum_, uint256 deadline_
++    ) external returns (uint256 selfMinted_, uint256 lpOut_) {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        (selfMinted_, lpOut_) = proxy_.bootstrapMigrationReserve(legs_, anchor_, minimum_, deadline_);
++        vm.stopBroadcast();
++    }
++
++    function capture(Allocation proxy_) external returns (bytes32 snapshot_) {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        snapshot_ = proxy_.captureMigrationSnapshot();
++        vm.stopBroadcast();
++    }
++
++    function configureIndependent(Allocation proxy_, Migration.IndependentAllocationInput[] calldata inputs_) external {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        proxy_.configureIndependentAllocations(inputs_);
++        vm.stopBroadcast();
++    }
++
++    function configureNfts(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_) external {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        proxy_.configureNftEntitlements(inputs_);
++        vm.stopBroadcast();
++    }
++
++    function independentIssue(Allocation proxy_, Migration.IndependentIssuanceRequest[] calldata requests_)
++        external returns (uint256[] memory ids_)
++    {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        ids_ = proxy_.issueIndependentAllocations(requests_);
++        vm.stopBroadcast();
++    }
++
++    function activate(Allocation proxy_) external {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        proxy_.activateMigration();
++        vm.stopBroadcast();
++    }
++
++    function harvest(Recovery proxy_, Recovery.Step[] calldata steps_, uint256 deadline_) external {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        proxy_.recoverMigrationNfts(steps_, deadline_);
++        vm.stopBroadcast();
++    }
++}
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+new file mode 100644
+index 00000000..29227c55
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -0,0 +1,121 @@
++#!/usr/bin/env bun
++import { parseArgs } from "node:util";
++import { z } from "zod";
++import { prepareFile, validateManifest } from "./preparation.js";
++import { PreparationError } from "./schema.js";
++import { execute } from "./execution.js";
++import { ExecutionError, stage } from "./execution-schema.js";
++import type { Mode } from "./execution-schema.js";
++import { rehearse } from "./rehearse.js";
++
++export const help = `Bounded Migration operator
++  bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
++  bun scripts/recovery/dtf-migration/cli.ts validate --manifest <file>
++  bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
++  bun scripts/recovery/dtf-migration/cli.ts resume --manifest <file> --checkpoint <directory>
++
++prepare reads caller-pinned evidence and the actual immutable snapshot.
++validate rereads evidence, code identities, snapshot and independent ETH/DTF quotes.
++RPC comes only from the manifest's rpcEnv environment variable. No signer is loaded.
++All integers are decimal strings. Inputs are full replacements, not deltas.
++Unsupported categories fail closed. Synthetic datasets are loopback-only.
++Stages: deploy, fund, capture, configure, independent-issue, verify, activate, harvest.
++Every stage and resume defaults to read-only validation; no signer is loaded.
++Local execution: --execute-local --instance-id <exact observed Anvil instance ID>.
++Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
++  --confirm-snapshot <id> --signer-key-env <selected environment variable name>.
++--reverse reorders only independent unsettled configuration/issuance rows.
++--fault-after-mined is restricted to synthetic-local interruption rehearsal.
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
++    --fork-block 108944663 --port 18560 --checkpoint <directory> --evidence <directory>
++`;
++
++export async function main(args: readonly string[]): Promise<void> {
++  const { values, positionals, tokens } = parseArgs({
++    args: [...args], allowPositionals: true, strict: true, tokens: true,
++    options: { input: { type: "string" }, output: { type: "string" },
++      manifest: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
++      "execute-local": { type: "boolean" }, "instance-id": { type: "string" },
++      broadcast: { type: "boolean" }, "confirm-chain": { type: "string" },
++      "confirm-proxy": { type: "string" }, "confirm-snapshot": { type: "string" },
++      "signer-key-env": { type: "string" }, reverse: { type: "boolean" },
++      "fault-after-mined": { type: "boolean" }, "rpc-alias": { type: "string" },
++      "fork-block": { type: "string" }, port: { type: "string" }, evidence: { type: "string" } },
++  });
++  const suppliedOptions = tokens.filter((token) => token.kind === "option").map((token) => token.name);
++  if (new Set(suppliedOptions).size !== suppliedOptions.length) {
++    throw new PreparationError("INPUT", "duplicate options are not accepted");
++  }
++  if (values.help && positionals.length === 0) {
++    console.log(help);
++    return;
++  }
++  if (positionals.length !== 1) throw new PreparationError("INPUT", "exactly one command required");
++  if (["prepare", "validate"].includes(positionals[0] ?? "")
++    && suppliedOptions.some((name) => !["input", "output", "manifest", "help"].includes(name))) {
++    throw new PreparationError("INPUT", "preparation commands accept no execution flags");
++  }
++  switch (positionals[0]) {
++    case "rehearse": {
++      if (!values["rpc-alias"] || !values["fork-block"] || !values.port || !values.checkpoint || !values.evidence
++        || suppliedOptions.some((name) => !["rpc-alias", "fork-block", "port", "checkpoint", "evidence"].includes(name))) {
++        throw new PreparationError("INPUT", "rehearse requires the exact pinned invocation");
++      }
++      console.log(JSON.stringify(await rehearse({ rpcAlias: values["rpc-alias"], forkBlock: values["fork-block"],
++        port: values.port, checkpoint: values.checkpoint, evidence: values.evidence })));
++      return;
++    }
++    case "prepare": {
++      if (!values.input || !values.output || values.manifest || values.help) {
++        throw new PreparationError("INPUT", "prepare requires only --input and --output");
++      }
++      const result = await prepareFile(values.input, values.output);
++      console.log(JSON.stringify({ command: "prepare", manifestHash: result.normalizedHash,
++        payloadHash: result.payloadHash, fullTask9: result.fullTask9, mode: "read-only" }));
++      return;
++    }
++    case "validate": {
++      if (!values.manifest || values.input || values.output || values.help) {
++        throw new PreparationError("INPUT", "validate requires only --manifest");
++      }
++      const result = await validateManifest(values.manifest);
++      console.log(JSON.stringify({ command: "validate", payloadHash: result.payloadHash,
++        fullTask9: result.fullTask9, mode: "read-only" }));
++      return;
++    }
++    default: {
++      const command = positionals[0] === "resume" ? "resume" : stage.parse(positionals[0]);
++      if (!values.manifest || !values.checkpoint || values.input || values.output || values.help) {
++        throw new PreparationError("INPUT", "stage requires only manifest, checkpoint, and explicit execution options");
++      }
++      if (values["rpc-alias"] || values["fork-block"] || values.port || values.evidence) throw new PreparationError("INPUT", "rehearsal flags require rehearse");
++      if (values["execute-local"] && values.broadcast) throw new PreparationError("INPUT", "execution modes are exclusive");
++      let mode: Mode = { kind: "simulate" };
++      if (values["execute-local"]) {
++        if (!values["instance-id"] || values["confirm-chain"] || values["confirm-proxy"]
++          || values["confirm-snapshot"] || values["signer-key-env"]) throw new PreparationError("INPUT", "local requires only exact instance confirmation");
++        mode = { kind: "local", instanceId: values["instance-id"] };
++      } else if (values.broadcast) {
++        if (!values["confirm-chain"] || !values["confirm-proxy"] || !values["confirm-snapshot"]
++          || !values["signer-key-env"] || values["instance-id"]) throw new PreparationError("INPUT", "all fresh public confirmations required");
++        mode = { kind: "broadcast", chainId: values["confirm-chain"], proxy: values["confirm-proxy"].toLowerCase(),
++          snapshotId: values["confirm-snapshot"].toLowerCase(), keyEnv: values["signer-key-env"] };
++      } else if (values["instance-id"] || values["confirm-chain"] || values["confirm-proxy"]
++        || values["confirm-snapshot"] || values["signer-key-env"]) throw new PreparationError("INPUT", "confirmation requires explicit mode");
++      console.log(JSON.stringify(await execute({ command, manifestPath: values.manifest, checkpoint: values.checkpoint,
++        mode, reverse: values.reverse ?? false, faultAfterMined: values["fault-after-mined"] ?? false })));
++      return;
++    }
++  }
++}
++
++if (import.meta.main) {
++  try {
++    await main(process.argv.slice(2));
++  } catch (error) {
++    if (error instanceof PreparationError || error instanceof ExecutionError) console.error(JSON.stringify({ error: error.code, message: error.message }));
++    else if (error instanceof z.ZodError) console.error(JSON.stringify({ error: "INPUT", issues: error.issues }));
++    else console.error(JSON.stringify({ error: "INPUT", message: "command or file acquisition failed" }));
++    process.exitCode = 1;
++  }
++}
+diff --git a/scripts/recovery/dtf-migration/execution-domain.ts b/scripts/recovery/dtf-migration/execution-domain.ts
+new file mode 100644
+index 00000000..937b59e5
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/execution-domain.ts
+@@ -0,0 +1,100 @@
++import { readFile } from "node:fs/promises";
++import { resolve } from "node:path";
++import { Interface, Result, keccak256 } from "ethers";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++import { validateManifest } from "./preparation.js";
++import { address, hex } from "./schema.js";
++import { ExecutionError, executionManifest } from "./execution-schema.js";
++import type { ExecutionManifest } from "./execution-schema.js";
++import type { Rpc } from "./execution-rpc.js";
++
++export const registryAbi = new Interface(["function vaultsOfPackage(address) view returns (address[])"]);
++export const loupeAbi = new Interface([
++  "function facetAddress(bytes4) view returns (address)",
++  "function facets() view returns ((address facetAddress,bytes4[] functionSelectors)[])",
++]);
++
++export async function loadExecution(path: string) {
++  const manifest = executionManifest.parse(JSON.parse(await readFile(resolve(path), "utf8")));
++  for (const source of manifest.sources) {
++    if (!source.path.startsWith("/")) throw new ExecutionError("DOMAIN", "execution source paths must be absolute");
++    const bytes = await readFile(source.path);
++    if (fingerprint(bytes) !== source.sha256 || String(bytes.length) !== source.bytes) {
++      throw new ExecutionError("DOMAIN", `source binding differs: ${source.id}`);
++    }
++  }
++  const prepared = manifest.preparedManifest ? await validateManifest(manifest.preparedManifest) : undefined;
++  if (prepared && (prepared.input.domain.chainId !== manifest.chainId
++    || prepared.input.domain.proxy !== manifest.proxy || prepared.input.domain.snapshotId !== manifest.snapshotId
++    || prepared.input.purpose !== manifest.purpose || prepared.input.domain.rpcEnv !== manifest.rpcEnv
++    || canonical(prepared.input.domain.bindings) !== canonical([...manifest.bindings].sort(
++      (a, b) => a.role.localeCompare(b.role) || a.address.localeCompare(b.address))))) {
++    throw new ExecutionError("DOMAIN", "preparation and execution domains disagree");
++  }
++  if (!prepared && manifest.snapshotId) throw new ExecutionError("DOMAIN", "snapshot requires validated preparation");
++  const artifact = async (name: string) => {
++    const item = manifest.sources.find((s) => s.id === name);
++    if (!item) throw new ExecutionError("DOMAIN", `missing bound ABI artifact ${name}`);
++    const value = z.object({ abi: z.array(z.unknown()) }).parse(JSON.parse(await readFile(item.path, "utf8")));
++    return new Interface(JSON.stringify(value.abi));
++  };
++  const migration = await artifact("migration-abi");
++  const allocation = await artifact("allocation-abi");
++  const recovery = await artifact("recovery-abi");
++  const pkg = await artifact("package-abi");
++  return { manifest, prepared, abis: { migration, allocation, recovery, pkg },
++    domain: { manifest, preparedHash: prepared?.normalizedHash ?? null, payloadHash: prepared?.payloadHash ?? null } };
++}
++export type ExecutionDomain = Awaited<ReturnType<typeof loadExecution>>;
++
++export async function checkRelationships(rpc: Rpc, domain: ExecutionDomain, allowUndeployed: boolean): Promise<void> {
++  const m = domain.manifest;
++  for (const role of ["proxy", "registry", "package", "facet"] as const) {
++    const bindings = m.bindings.filter((b) => b.role === role);
++    if (bindings.length === 0 || (role !== "facet" && bindings.length !== 1)) {
++      throw new ExecutionError("DOMAIN", `missing or ambiguous ${role} identity`);
++    }
++  }
++  for (const binding of m.bindings) {
++    if (binding.role !== "facet" && binding.address !== m[binding.role]) throw new ExecutionError("DOMAIN", "wrong role address");
++    const code = hex.parse(await rpc.send("eth_getCode", [binding.address, "latest"]));
++    if (allowUndeployed && binding.role === "proxy" && code === "0x") continue;
++    if (code === "0x" || keccak256(code) !== binding.codeHash) throw new ExecutionError("DOMAIN", `${binding.role} runtime changed`);
++  }
++  if (allowUndeployed && hex.parse(await rpc.send("eth_getCode", [m.proxy, "latest"])) === "0x") return;
++  const registered = z.array(address).parse((await rpc.call(m.registry, registryAbi, "vaultsOfPackage", [m.package]))[0]);
++  if (!registered.includes(m.proxy)) throw new ExecutionError("DOMAIN", "proxy is not registered under bound package");
++  const facets: unknown = (await rpc.call(m.proxy, loupeAbi, "facets"))[0];
++  const rows = z.array(z.tuple([address, z.array(z.string())])).parse(facets);
++  for (const [facet] of rows) {
++    if (!m.bindings.some((b) => b.role === "facet" && b.address === facet)) {
++      throw new ExecutionError("DOMAIN", "installed facet not in reviewed bindings");
++    }
++  }
++  const activated = (await rpc.call(m.proxy, domain.abis.migration, "migrationActivated"))[0] === true;
++  const cuts: unknown = (await rpc.call(m.package, new Interface([
++    "function facetCuts() view returns((address facetAddress,uint8 action,bytes4[] functionSelectors)[])",
++  ]), "facetCuts"))[0];
++  if (!Array.isArray(cuts)) throw new ExecutionError("DOMAIN", "invalid package cuts");
++  for (const raw of cuts) {
++    if (!(raw instanceof Result)) throw new ExecutionError("DOMAIN", "invalid facet cut");
++    const expected = address.parse(raw.getValue("facetAddress"));
++    for (const selector of z.array(z.string()).parse(raw.getValue("functionSelectors"))) {
++      const removable = domain.abis.allocation.getFunction(selector) !== null;
++      const actual = String((await rpc.call(m.proxy, loupeAbi, "facetAddress", [selector]))[0]).toLowerCase();
++      if (actual !== (activated && removable ? "0x0000000000000000000000000000000000000000" : expected)) {
++        throw new ExecutionError("DOMAIN", "installed selector differs from bound package");
++      }
++    }
++  }
++  if (m.snapshotId) {
++    const snapshot = await rpc.call(m.proxy, domain.abis.migration, "migrationSnapshot");
++    if (snapshot[0].id !== m.snapshotId) throw new ExecutionError("DOMAIN", "current snapshot changed");
++  }
++}
++
++export function requirePrepared(domain: ExecutionDomain) {
++  if (!domain.prepared) throw new ExecutionError("DOMAIN", "stage requires actual post-capture preparation");
++  return domain.prepared;
++}
+diff --git a/scripts/recovery/dtf-migration/execution-plan.ts b/scripts/recovery/dtf-migration/execution-plan.ts
+new file mode 100644
+index 00000000..5665652f
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/execution-plan.ts
+@@ -0,0 +1,80 @@
++import { Interface } from "ethers";
++import { canonical, fingerprint } from "./provenance.js";
++import { requirePrepared } from "./execution-domain.js";
++import type { ExecutionDomain } from "./execution-domain.js";
++import { assertNever } from "./execution-rpc.js";
++import { ExecutionError } from "./execution-schema.js";
++import type { Operation, Stage } from "./execution-schema.js";
++
++export const erc20Abi = new Interface([
++  "function approve(address,uint256) returns (bool)",
++  "function allowance(address,address) view returns (uint256)",
++  "function balanceOf(address) view returns (uint256)",
++  "function totalSupply() view returns (uint256)",
++]);
++export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[] {
++  const { manifest: m, abis } = domain;
++  const operations: Operation[] = [];
++  const add = (method: string, args: readonly unknown[], iface = abis.allocation, to = m.proxy, value = "0") => {
++    const transaction = { from: m.signer, to, data: iface.encodeFunctionData(method, args), value };
++    operations.push({ id: fingerprint(canonical({ stage, method, transaction })), stage, method, transaction });
++  };
++  switch (stage) {
++    case "deploy":
++      if (!m.deployment) throw new ExecutionError("DOMAIN", "deploy requires complete typed package arguments");
++      add("deployVault", [m.deployment], abis.pkg, m.package);
++      break;
++    case "fund":
++      if (new Set(m.funding.donations.map((r) => r.id)).size !== m.funding.donations.length) {
++        throw new ExecutionError("DOMAIN", "duplicate funding identity");
++      }
++      for (const donation of m.funding.donations) {
++        if (donation.tokens.length !== donation.amounts.length
++          || new Set(donation.tokens).size !== donation.tokens.length) throw new ExecutionError("DOMAIN", "invalid donation token amounts");
++        for (const [i, token] of donation.tokens.entries()) {
++          const amount = donation.amounts[i];
++          if (!amount) throw new ExecutionError("DOMAIN", "missing donation amount");
++          add("approve", [m.proxy, amount], erc20Abi, token);
++          const approval = operations.pop();
++          if (!approval) throw new ExecutionError("DOMAIN", "missing approval plan");
++          operations.push({ ...approval, id: fingerprint(canonical({ donation: donation.id, token, transaction: approval.transaction })) });
++        }
++        add("donateMigrationCapital", [donation.tokens, donation.amounts, donation.nativeAmount, donation.minimum,
++          donation.deadline], abis.migration, m.proxy, donation.nativeAmount);
++        // Distinct intentional donations must remain distinct even with equal values.
++        const last = operations.pop();
++        if (!last) throw new ExecutionError("DOMAIN", "missing donation plan");
++        operations.push({ ...last, id: fingerprint(canonical({ id: donation.id, transaction: last.transaction })) });
++      }
++      if (m.funding.genesis) {
++        const g = m.funding.genesis;
++        add("bootstrapMigrationReserve", [g.legs, g.anchorIndex, g.minimum, g.deadline]);
++      }
++      if (!operations.length) throw new ExecutionError("DOMAIN", "no funding operation selected");
++      break;
++    case "capture": add("captureMigrationSnapshot", []); break;
++    case "configure": {
++      const p = requirePrepared(domain);
++      for (const row of p.payloads.configure.independent) add("configureIndependentAllocations", [[row.input]]);
++      for (const row of p.payloads.configure.nfts) add("configureNftEntitlements", [[row.input]]);
++      if (!operations.length) throw new ExecutionError("DOMAIN", "no supported configuration selected");
++      break;
++    }
++    case "independent-issue":
++      for (const row of requirePrepared(domain).payloads.independentIssue.requests) add("issueIndependentAllocations", [[row]]);
++      if (!operations.length) throw new ExecutionError("DOMAIN", "no independent issuance selected");
++      break;
++    case "activate": requirePrepared(domain); add("activateMigration", []); break;
++    case "harvest": {
++      const h = requirePrepared(domain).payloads.harvest;
++      if (!h.steps.length) throw new ExecutionError("DOMAIN", "no admitted recovery step selected");
++      const names = ["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
++        "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate"] as const;
++      add("recoverMigrationNfts", [h.steps.map((s) => ({ ...s, stage: names.indexOf(s.stage) })), h.deadline], abis.recovery);
++      break;
++    }
++    case "verify": requirePrepared(domain); break;
++    default: assertNever(stage);
++  }
++  return operations;
++}
+diff --git a/scripts/recovery/dtf-migration/execution-rpc.ts b/scripts/recovery/dtf-migration/execution-rpc.ts
+new file mode 100644
+index 00000000..7fb6f904
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/execution-rpc.ts
+@@ -0,0 +1,161 @@
++import { FetchRequest, Interface, JsonRpcProvider, Network, Wallet } from "ethers";
++import { z } from "zod";
++import { hash, hex } from "./schema.js";
++import { ExecutionError, quantity, receipt } from "./execution-schema.js";
++import type { ExecutionManifest, Mode, Receipt } from "./execution-schema.js";
++
++export const DEV = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266";
++// Public Anvil development key. Never selected for nonlocal execution.
++const DEV_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
++const headerSchema = z.object({ hash, number: quantity }).passthrough();
++
++export class Rpc {
++  readonly provider: JsonRpcProvider;
++  readonly endpoint: URL;
++  constructor(readonly manifest: ExecutionManifest) {
++    const endpoint = process.env[manifest.rpcEnv];
++    if (!endpoint) throw new ExecutionError("DOMAIN", "missing selected RPC environment variable");
++    this.endpoint = new URL(endpoint);
++    if (!["http:", "https:"].includes(this.endpoint.protocol)) throw new ExecutionError("DOMAIN", "HTTP RPC required");
++    const request = new FetchRequest(endpoint);
++    request.timeout = 15000;
++    this.provider = new JsonRpcProvider(request, new Network("migration", BigInt(manifest.chainId)),
++      { staticNetwork: true, batchMaxCount: 1, cacheTimeout: -1 });
++  }
++
++  async send(method: string, params: readonly unknown[]): Promise<unknown> {
++    try { return await this.provider.send(method, [...params]); }
++    catch (error) {
++      if (error instanceof Error) {
++        const revert = "data" in error && typeof error.data === "string" && /^0x[0-9a-f]*$/i.test(error.data) ? error.data : "unavailable";
++        throw new ExecutionError("RPC", `${method} failed; revert=${revert}; endpoint redacted`);
++      }
++      throw error;
++    }
++  }
++
++  async guard(mode: Mode): Promise<void> {
++    if (BigInt(quantity.parse(await this.send("eth_chainId", []))).toString() !== this.manifest.chainId) {
++      throw new ExecutionError("DOMAIN", "wrong chain");
++    }
++    const loopback = ["127.0.0.1", "localhost", "[::1]"].includes(this.endpoint.hostname);
++    if (this.manifest.purpose === "synthetic-local" && !loopback) throw new ExecutionError("DOMAIN", "synthetic input is local only");
++    if (this.manifest.local) {
++      if (!loopback) throw new ExecutionError("DOMAIN", "local identity requires loopback");
++      const metadata = z.object({
++        instanceId: z.string(),
++        forkedNetwork: z.object({
++          chainId: z.number().int().safe(), forkBlockNumber: z.number().int().safe(), forkBlockHash: hash,
++        }),
++      }).passthrough().parse(await this.send("anvil_metadata", []));
++      const expected = this.manifest.local;
++      if (metadata.instanceId !== expected.instanceId
++        || String(metadata.forkedNetwork.chainId) !== this.manifest.chainId
++        || String(metadata.forkedNetwork.forkBlockNumber) !== expected.forkBlockNumber
++        || metadata.forkedNetwork.forkBlockHash !== expected.forkBlockHash) {
++        throw new ExecutionError("DOMAIN", "Anvil instance or fork identity changed");
++      }
++      const block = await this.header(`0x${BigInt(expected.forkBlockNumber).toString(16)}`);
++      if (block.hash !== expected.forkBlockHash) throw new ExecutionError("DOMAIN", "historical fork header changed");
++    }
++    switch (mode.kind) {
++      case "simulate": return;
++      case "local":
++        if (!loopback || !this.manifest.local || mode.instanceId !== this.manifest.local.instanceId
++          || this.manifest.signer !== DEV) throw new ExecutionError("DOMAIN", "explicit exact local identity required");
++        return;
++      case "broadcast":
++        if (this.manifest.purpose !== "operational-review" || this.manifest.local || loopback
++          || mode.chainId !== this.manifest.chainId || mode.proxy !== this.manifest.proxy
++          || mode.snapshotId !== (this.manifest.snapshotId ?? "uncaptured")) {
++          throw new ExecutionError("DOMAIN", "fresh chain/proxy/snapshot confirmations required");
++        }
++        return;
++      default: return assertNever(mode);
++    }
++  }
++
++  wallet(mode: Mode): Wallet {
++    switch (mode.kind) {
++      case "simulate": throw new ExecutionError("DOMAIN", "simulation cannot load a signer");
++      case "local": return new Wallet(DEV_KEY);
++      case "broadcast": {
++        const key = process.env[mode.keyEnv];
++        if (!key) throw new ExecutionError("DOMAIN", "selected signing key unavailable");
++        const wallet = new Wallet(key);
++        if (wallet.address.toLowerCase() !== this.manifest.signer) throw new ExecutionError("DOMAIN", "wrong signer");
++        return wallet;
++      }
++      default: return assertNever(mode);
++    }
++  }
++
++  async header(tag = "latest") { return headerSchema.parse(await this.send("eth_getBlockByNumber", [tag, false])); }
++  async nonce(tag: "latest" | "pending"): Promise<bigint> {
++    return BigInt(quantity.parse(await this.send("eth_getTransactionCount", [this.manifest.signer, tag])));
++  }
++  async call(to: string, iface: Interface, method: string, args: readonly unknown[] = [], block = "latest") {
++    const value = hex.parse(await this.send("eth_call", [{ to, data: iface.encodeFunctionData(method, args) }, block]));
++    return iface.decodeFunctionResult(method, value);
++  }
++  async canonicalReceipt(txHash: string): Promise<Receipt | undefined> {
++    const value = await this.send("eth_getTransactionReceipt", [txHash]);
++    if (value === null) return undefined;
++    const mined = receipt.parse(value);
++    if (mined.transactionHash !== txHash || (await this.header(mined.blockNumber)).hash !== mined.blockHash) {
++      throw new ExecutionError("AMBIGUOUS", "receipt is not canonical");
++    }
++    return mined;
++  }
++  close(): void { this.provider.destroy(); }
++}
++export function assertNever(value: never): never { throw new ExecutionError("DOMAIN", `unknown variant ${String(value)}`); }
++
++// Subscription acknowledgement precedes the caller's send. A single immediate
++// receipt read also covers automining between the subscription and send response.
++export async function subscribeReceipt(rpc: Pick<Rpc, "endpoint" | "canonicalReceipt">, txHash: string) {
++  const endpoint = new URL(rpc.endpoint);
++  endpoint.protocol = endpoint.protocol === "https:" ? "wss:" : "ws:";
++  const socket = new WebSocket(endpoint);
++  const signal = AbortSignal.timeout(60000);
++  let acknowledge: () => void = () => undefined;
++  let fail: (reason: unknown) => void = () => undefined;
++  const ready = new Promise<void>((resolve, reject) => { acknowledge = resolve; fail = reject; });
++  let deliver: (value: Receipt) => void = () => undefined;
++  let rejectReceipt: (reason: unknown) => void = () => undefined;
++  const result = new Promise<Receipt>((resolve, reject) => { deliver = resolve; rejectReceipt = reject; });
++  // A rejection can precede caller await during send; keep it handled, not swallowed.
++  void result.catch(() => undefined);
++  const check = async () => {
++    try { const value = await rpc.canonicalReceipt(txHash); if (value) deliver(value); }
++    catch (error) { rejectReceipt(error); }
++  };
++  const abort = () => {
++    const error = new ExecutionError("AMBIGUOUS", "bounded receipt subscription ended; resume must reconcile");
++    fail(error); rejectReceipt(error); socket.close();
++  };
++  signal.addEventListener("abort", abort, { once: true });
++  socket.addEventListener("open", () => socket.send(JSON.stringify({
++    jsonrpc: "2.0", id: 1, method: "eth_subscribe", params: ["newHeads"],
++  })), { once: true });
++  socket.addEventListener("error", abort, { once: true });
++  socket.addEventListener("close", abort, { once: true });
++  socket.addEventListener("message", (event) => {
++    try {
++      const message = z.object({ id: z.number().optional(), result: z.unknown().optional(),
++        method: z.string().optional(), error: z.unknown().optional() }).passthrough().parse(JSON.parse(String(event.data)));
++      if (message.id === 1 && typeof message.result === "string") acknowledge();
++      else if (message.error) abort();
++      else if (message.method === "eth_subscription") void check();
++    } catch (error) { fail(error); rejectReceipt(error); }
++  });
++  try { await ready; } catch (error) { socket.close(); throw error; }
++  return {
++    async mined(): Promise<Receipt> { await check(); return result; },
++    close(): void {
++      signal.removeEventListener("abort", abort);
++      socket.removeEventListener("close", abort);
++      socket.close();
++    },
++  };
++}
+diff --git a/scripts/recovery/dtf-migration/execution-schema.ts b/scripts/recovery/dtf-migration/execution-schema.ts
+new file mode 100644
+index 00000000..86f27679
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/execution-schema.ts
+@@ -0,0 +1,106 @@
++import { z } from "zod";
++import { address, binding, hash, hex, identity, positive, sha256, source, uint } from "./schema.js";
++
++export const stages = ["deploy", "fund", "capture", "configure", "independent-issue",
++  "verify", "activate", "harvest"] as const;
++export const stage = z.enum(stages);
++export type Stage = z.infer<typeof stage>;
++export const quantity = z.string().regex(/^0x[0-9a-fA-F]+$/);
++export const localIdentity = z.object({
++  instanceId: z.string().min(1),
++  forkBlockNumber: uint,
++  forkBlockHash: identity,
++}).strict().readonly();
++const route = z.object({ token: address, vault: address }).strict().readonly();
++const routeMode = z.enum(["0", "1"]);
++export const packageArguments = z.object({
++  baseArgs: z.object({
++    name: z.string().min(1), symbol: z.string().min(1), hook: address, ownerOnlyLiquidity: z.boolean(),
++    creationPairPerDetfWad: z.array(uint).readonly(), openingPairPerDetfWad: z.array(uint).readonly(),
++    mintThreshold: uint, burnThreshold: uint, expansionClosureRatePerYearWad: uint,
++    creator: z.string().regex(/^0x[0-9a-fA-F]{40}$/).transform((value) => value.toLowerCase()),
++    claimName: z.string(), claimSymbol: z.string(), bondName: z.string(), bondSymbol: z.string(),
++    mintRouteMode: routeMode, mintRoutes: z.array(route).readonly(),
++    burnRouteMode: routeMode, burnRoutes: z.array(route).readonly(),
++    bondRouteMode: routeMode, bondRoutes: z.array(route).readonly(),
++    donateRouteMode: routeMode, donateRoutes: z.array(route).readonly(),
++  }).strict().readonly(),
++  owner: address, ownershipBufferPeriod: uint, weth: address, originalDtf: address,
++}).strict().readonly();
++export const funding = z.object({
++  donations: z.array(z.object({
++    id: identity,
++    tokens: z.array(address).readonly(),
++    amounts: z.array(positive).readonly(),
++    nativeAmount: uint,
++    minimum: uint,
++    deadline: positive,
++  }).strict().readonly()).readonly(),
++  genesis: z.object({
++    legs: z.array(z.object({ token: address, amount: positive, minSharesOut: positive }).strict().readonly()).min(1).readonly(),
++    anchorIndex: uint, minimum: positive, deadline: positive,
++  }).strict().readonly().nullable(),
++}).strict().readonly();
++// Pre-capture work has no fabricated snapshot. Post-capture work references the
++// preparation manifest, which is reconstructed through validateManifest.
++export const executionManifest = z.object({
++  version: z.literal("dtf-operator-execution-v1"),
++  purpose: z.enum(["synthetic-local", "operational-review"]),
++  chainId: positive,
++  rpcEnv: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
++  signer: address,
++  local: localIdentity.nullable(),
++  proxy: address,
++  registry: address,
++  package: address,
++  snapshotId: identity.nullable(),
++  bindings: z.array(binding).min(3).readonly(),
++  sources: z.array(source).min(1).readonly(),
++  preparedManifest: z.string().min(1).nullable(),
++  deployment: packageArguments.nullable(),
++  funding,
++}).strict().readonly();
++export type ExecutionManifest = z.infer<typeof executionManifest>;
++export type Mode =
++  | { readonly kind: "simulate" }
++  | { readonly kind: "local"; readonly instanceId: string }
++  | { readonly kind: "broadcast"; readonly chainId: string; readonly proxy: string;
++      readonly snapshotId: string; readonly keyEnv: string };
++export class ExecutionError extends Error {
++  constructor(readonly code: "DOMAIN" | "INTENT" | "AMBIGUOUS" | "REVERT" | "STATE" | "LOCK" | "RPC", message: string) {
++    super(message);
++    this.name = "ExecutionError";
++  }
++}
++export const transaction = z.object({
++  from: address, to: address, data: hex, value: uint,
++}).strict().readonly();
++export type Operation = {
++  readonly id: string;
++  readonly stage: Stage;
++  readonly method: string;
++  readonly transaction: z.infer<typeof transaction>;
++};
++export const rpcLog = z.object({
++  address, topics: z.array(hash), data: hex, logIndex: quantity,
++}).passthrough().readonly();
++export const receipt = z.object({
++  transactionHash: hash, blockHash: hash, blockNumber: quantity,
++  from: address, to: address.nullable(), status: quantity,
++  transactionIndex: quantity, logs: z.array(rpcLog),
++}).passthrough().readonly();
++export type Receipt = z.infer<typeof receipt>;
++export const intent = z.object({
++  version: z.literal("dtf-operator-intent-v1"),
++  domainHash: sha256, id: sha256, stage,
++  method: z.string(), transaction,
++  nonce: uint, startBlock: uint,
++  signedTransaction: hex, transactionHash: identity,
++}).strict().readonly();
++export type Intent = z.infer<typeof intent>;
++export const completion = z.object({
++  intentHash: sha256, receipt,
++  state: z.record(z.string(), z.string()),
++  events: z.array(z.object({ name: z.string(), values: z.array(z.string()) }).strict()),
++}).strict().readonly();
++export type Completion = z.infer<typeof completion>;
+diff --git a/scripts/recovery/dtf-migration/execution-state.ts b/scripts/recovery/dtf-migration/execution-state.ts
+new file mode 100644
+index 00000000..9950b387
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/execution-state.ts
+@@ -0,0 +1,204 @@
++import { Interface, Result } from "ethers";
++import { z } from "zod";
++import { requirePrepared, checkRelationships, loupeAbi } from "./execution-domain.js";
++import type { ExecutionDomain } from "./execution-domain.js";
++import { erc20Abi } from "./execution-plan.js";
++import type { Rpc } from "./execution-rpc.js";
++import { ExecutionError } from "./execution-schema.js";
++import type { Completion, Intent, Receipt } from "./execution-schema.js";
++import { canonical, fingerprint } from "./provenance.js";
++
++function tuple(value: unknown): Result {
++  if (!(value instanceof Result)) throw new ExecutionError("STATE", "invalid contract tuple");
++  return value;
++}
++function valueString(value: unknown): string {
++  if (typeof value === "bigint" || typeof value === "boolean" || typeof value === "string") return String(value);
++  if (value instanceof Result) return canonical(value.toArray(true).map(valueString));
++  if (Array.isArray(value)) return canonical(value.map(valueString));
++  throw new ExecutionError("STATE", "unsupported contract result");
++}
++
++export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item: Intent, mined: Receipt): Promise<Completion> {
++  if (BigInt(mined.status) !== 1n) throw new ExecutionError("REVERT", `canonical transaction reverted: ${item.transactionHash}`);
++  if (mined.from !== item.transaction.from || mined.to !== item.transaction.to) {
++    throw new ExecutionError("INTENT", "receipt target or signer mismatch");
++  }
++  const { manifest: m, abis } = domain;
++  const events: { name: string; values: string[] }[] = [];
++  for (const log of mined.logs) {
++    if (log.address !== m.proxy) continue;
++    for (const abi of [abis.migration, abis.allocation, abis.recovery]) {
++      const parsed = abi.parseLog({ topics: [...log.topics], data: log.data });
++      if (parsed) { events.push({ name: parsed.name, values: [...parsed.args].map(valueString) }); break; }
++    }
++  }
++  const state: Record<string, string> = {};
++  const at = mined.blockNumber;
++  const query = async (method: string, args: readonly unknown[] = []) => {
++    const result = await rpc.call(m.proxy, abis.migration, method, args, at);
++    state[`${method}:${canonical(args.map(valueString))}`] = canonical([...result].map(valueString));
++    return result;
++  };
++  const requireEvent = (name: string) => {
++    if (!events.some((e) => e.name === name)) throw new ExecutionError("STATE", `missing actual ${name} event`);
++  };
++  switch (item.method) {
++    case "deployVault":
++      await checkRelationships(rpc, domain, false);
++      state["owner"] = String((await query("owner"))[0]).toLowerCase();
++      if (state["owner"] !== m.deployment?.owner) throw new ExecutionError("STATE", "deployed owner mismatch");
++      break;
++    case "approve": {
++      const allowance = await rpc.call(item.transaction.to, erc20Abi, "allowance", [m.signer, m.proxy], at);
++      const args = erc20Abi.decodeFunctionData("approve", item.transaction.data);
++      if (allowance[0] !== args[1]) throw new ExecutionError("STATE", "approval state mismatch");
++      state["allowance"] = valueString(allowance[0]);
++      break;
++    }
++    case "donateMigrationCapital": {
++      requireEvent("MigrationCapitalReceived");
++      const args = abis.migration.decodeFunctionData(item.method, item.transaction.data);
++      const tokens = z.array(z.string()).parse(args[0]);
++      const amounts = z.array(z.bigint()).parse(args[1]);
++      const expected = new Map(tokens.map((token, i) => [token.toLowerCase(), z.bigint().parse(amounts[i])] as const));
++      const native = z.bigint().parse(args[2]);
++      if (native > 0n) {
++        const source = tuple((await query("migrationSnapshotSource"))[0]);
++        const weth = String(source.getValue("weth")).toLowerCase();
++        expected.set(weth, (expected.get(weth) ?? 0n) + native);
++      }
++      for (const [token, amount] of expected) {
++        const received = events.filter((e) => e.name === "MigrationCapitalReceived"
++          && e.values[0]?.toLowerCase() === m.signer && e.values[1]?.toLowerCase() === token.toLowerCase())
++          .reduce((sum, e) => sum + BigInt(z.string().parse(e.values[2])), 0n);
++        if (received !== amount) throw new ExecutionError("STATE", "donation receipt amount mismatch");
++        await query("migrationDonationInventory", [token]);
++      }
++      state["nativeAmount"] = valueString(args[2]);
++      break;
++    }
++    case "bootstrapMigrationReserve":
++      requireEvent("MigrationReserveBootstrapped");
++      await query("migrationBootstrapSelfMinted");
++      break;
++    case "captureMigrationSnapshot": {
++      requireEvent("MigrationSnapshotCaptured");
++      const snapshot = tuple((await query("migrationSnapshot"))[0]);
++      if (!events.some((e) => e.name === "MigrationSnapshotCaptured" && e.values[0] === snapshot.getValue("id"))) {
++        throw new ExecutionError("STATE", "captured snapshot event/state mismatch");
++      }
++      break;
++    }
++    case "configureIndependentAllocations":
++    case "configureNftEntitlements": {
++      const p = requirePrepared(domain);
++      const independent = item.method === "configureIndependentAllocations";
++      requireEvent(independent ? "IndependentAllocationConfigured" : "NftEntitlementConfigured");
++      const args = abis.allocation.decodeFunctionData(item.method, item.transaction.data);
++      const rows: unknown = args[0];
++      if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid configuration tuple array");
++      for (const row of rows) {
++        const r = tuple(row);
++        const expected = independent
++          ? p.payloads.configure.independent.find((x) => x.input.recipient === String(r.getValue("recipient")).toLowerCase())
++          : p.payloads.configure.nfts.find((x) => x.input.collection === String(r.getValue("collection")).toLowerCase()
++            && x.input.tokenId === String(r.getValue("tokenId")));
++        if (!expected) throw new ExecutionError("STATE", "unbound configuration");
++        const actual = tuple((await query(independent ? "independentAllocation" : "nftEntitlement",
++          independent ? [r.getValue("recipient")] : [r.getValue("collection"), r.getValue("tokenId")]))[0]);
++        if (actual.getValue("configurationId") !== expected.configurationId
++          || String(actual.getValue(independent ? "totalCredit" : "credit")) !== expected.quotedCredit) {
++          throw new ExecutionError("STATE", "configuration state differs from full payload");
++        }
++      }
++      break;
++    }
++    case "issueIndependentAllocations": {
++      requireEvent("IndependentAllocationIssued");
++      for (const event of events.filter((e) => e.name === "IndependentAllocationIssued")) {
++        const recipient = event.values[0];
++        if (!recipient) throw new ExecutionError("STATE", "missing issued recipient");
++        const issued = tuple((await query("independentIssuance", [recipient]))[0]);
++        if (issued.getValue("issued") !== true || String(issued.getValue("bondTokenId")) !== event.values[2]
++          || issued.getValue("configurationId") !== event.values[1]
++          || String(issued.getValue("credit")) !== event.values[3]) throw new ExecutionError("STATE", "issuance receipt/state mismatch");
++        const bond = String((await query("bondNftVault"))[0]);
++        const bondAbi = new Interface([
++          "function ownerOf(uint256) view returns(address)",
++          "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
++          "function isMigrationPosition(uint256) view returns(bool)",
++        ]);
++        const bondId = issued.getValue("bondTokenId");
++        const position = tuple((await rpc.call(bond, bondAbi, "positionOf", [bondId], at))[0]);
++        if (position.getValue("principal") !== issued.getValue("credit")
++          || position.getValue("startTimestamp") !== issued.getValue("issuedAt")
++          || position.getValue("vestingDuration") !== 7776000n
++          || String((await rpc.call(bond, bondAbi, "ownerOf", [bondId], at))[0]).toLowerCase() !== recipient.toLowerCase()
++          || (await rpc.call(bond, bondAbi, "isMigrationPosition", [bondId], at))[0] !== true) {
++          throw new ExecutionError("STATE", "actual bond identity, principal, owner or fresh cliff differs");
++        }
++        state[`bond:${bondId}`] = valueString(position);
++      }
++      break;
++    }
++    case "activateMigration":
++      requireEvent("MigrationActivated");
++      if ((await query("migrationActivated"))[0] !== true) throw new ExecutionError("STATE", "activation state mismatch");
++      for (const fragment of abis.allocation.fragments) {
++        if (fragment.type !== "function") continue;
++        const fn = abis.allocation.getFunction(fragment.format("sighash"));
++        if (!fn || String((await rpc.call(m.proxy, loupeAbi, "facetAddress", [fn.selector], at))[0])
++          !== "0x0000000000000000000000000000000000000000") throw new ExecutionError("STATE", "administration selector survived activation");
++      }
++      break;
++    case "recoverMigrationNfts": {
++      if (!events.some((e) => ["MigrationRecoveryClaimed", "MigrationRecoverySold", "MigrationRecoveryConverted",
++        "MigrationRecoveryDonated"].includes(e.name))) throw new ExecutionError("STATE", "recovery has no economic event");
++      const gons = await rpc.call(m.proxy, abis.recovery, "migrationRecoveryGons", [], at);
++      state["attributedGons"] = valueString(gons[0]);
++      for (const token of ["0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
++        "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7", "0xee5576fa1bcaa380e591d01245f406f3f384eb01"]) {
++        state[`inventory:${token}`] = valueString((await rpc.call(m.proxy, abis.recovery, "migrationRecoveryInventory", [token], at))[0]);
++      }
++      const steps: unknown = abis.recovery.decodeFunctionData(item.method, item.transaction.data)[0];
++      if (!Array.isArray(steps)) throw new ExecutionError("STATE", "invalid recovery selection");
++      for (const raw of steps) {
++        const step = tuple(raw);
++        const stage = z.bigint().parse(step.getValue("stage"));
++        const tokenId = z.bigint().parse(step.getValue("tokenId"));
++        if (tokenId === 0n) continue;
++        const collection = stage <= 2n ? "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e"
++          : "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
++        const surrender = tuple((await query("nftSurrender", [collection, tokenId]))[0]);
++        if (surrender.getValue("consumed") !== true) throw new ExecutionError("STATE", "recovery lacks consumed custody");
++        state[`recovery:${collection}:${tokenId}`] = valueString(
++          (await rpc.call(m.proxy, abis.recovery, "migrationNftRecovery", [collection, tokenId], at))[0]);
++      }
++      break;
++    }
++    default: throw new ExecutionError("INTENT", "method outside fixed stage plan");
++  }
++  return { intentHash: fingerprint(canonical(item)), receipt: mined, state, events };
++}
++
++export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
++  const prepared = requirePrepared(domain);
++  const rows = [];
++  for (const row of prepared.payloads.configure.independent) {
++    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "independentAllocation", [row.input.recipient]))[0]);
++    const issuance = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "independentIssuance", [row.input.recipient]))[0]);
++    if (actual.getValue("configurationId") !== row.configurationId || String(actual.getValue("totalCredit")) !== row.quotedCredit) {
++      throw new ExecutionError("STATE", "independent configuration mismatch");
++    }
++    rows.push({ recipient: row.input.recipient, issued: issuance.getValue("issued") === true,
++      bondTokenId: String(issuance.getValue("bondTokenId")) });
++  }
++  for (const row of prepared.payloads.configure.nfts) {
++    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "nftEntitlement",
++      [row.input.collection, row.input.tokenId]))[0]);
++    if (actual.getValue("configurationId") !== row.configurationId || actual.getValue("originalId") !== row.originalId
++      || String(actual.getValue("credit")) !== row.quotedCredit) throw new ExecutionError("STATE", "NFT configuration mismatch");
++  }
++  return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };
++}
+diff --git a/scripts/recovery/dtf-migration/execution.test.ts b/scripts/recovery/dtf-migration/execution.test.ts
+new file mode 100644
+index 00000000..3621773e
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/execution.test.ts
+@@ -0,0 +1,84 @@
++import { afterEach, test } from "node:test";
++import assert from "node:assert/strict";
++import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { Wallet, keccak256 } from "ethers";
++import { Journal } from "./journal.js";
++import { canonical, fingerprint } from "./provenance.js";
++import { intent, funding } from "./execution-schema.js";
++import { main } from "./cli.js";
++
++const roots: string[] = [];
++async function directory() {
++  const root = await mkdtemp(join(tmpdir(), "dtf-execution-test-"));
++  roots.push(root);
++  return root;
++}
++afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true }); });
++
++test("journal refuses live concurrent writers and changed domains", async () => {
++  const root = await directory();
++  const journal = await Journal.acquire(root, { chain: "4663", proxy: "original" });
++  await assert.rejects(Journal.acquire(root, { chain: "4663", proxy: "original" }), /live writer/);
++  await journal.close();
++  await assert.rejects(Journal.acquire(root, { chain: "4663", proxy: "different" }), /domain changed/);
++  const resumed = await Journal.acquire(root, { chain: "4663", proxy: "original" });
++  await resumed.close();
++});
++
++test("durable signed intent survives reopening without acquiring another nonce", async () => {
++  const root = await directory();
++  const domain = { chain: "4663", snapshot: "frozen", payload: "complete" };
++  const journal = await Journal.acquire(root, domain);
++  const wallet = new Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
++  const transaction = { from: wallet.address.toLowerCase(), to: "0x1111111111111111111111111111111111111111", data: "0x", value: "19" };
++  const raw = await wallet.signTransaction({ to: transaction.to, value: 19n, nonce: 7, gasPrice: 2n, gasLimit: 21000n, chainId: 4663n });
++  const record = intent.parse({
++    version: "dtf-operator-intent-v1", domainHash: journal.domainHash, id: fingerprint("donation"),
++    stage: "fund", method: "donateMigrationCapital", transaction, nonce: "7", startBlock: "100",
++    signedTransaction: raw, transactionHash: keccak256(raw),
++  });
++  await journal.persistIntent(record);
++  await journal.close();
++  const resumed = await Journal.acquire(root, domain);
++  assert.deepEqual(await resumed.intents(), [record]);
++  await assert.rejects(resumed.persistIntent(record), { code: "EEXIST" });
++  assert.equal((await readdir(root)).filter((name) => name.endsWith(".intent.json")).length, 1);
++  await resumed.close();
++});
++
++test("journal rejects a foreign intent rather than accepting its receipt", async () => {
++  const root = await directory();
++  const journal = await Journal.acquire(root, { payload: "one" });
++  await writeFile(join(root, "foreign.intent.json"), "{}");
++  await assert.rejects(journal.intents());
++  await journal.close();
++  assert.equal(JSON.parse(await readFile(join(root, "domain.json"), "utf8")).payload, "one");
++});
++
++test("partial unpublished records cannot become completed operations", async () => {
++  const root = await directory();
++  const journal = await Journal.acquire(root, { payload: "one" });
++  await writeFile(join(root, "interrupted.intent.json.pending"), '{"nonce":');
++  assert.deepEqual(await journal.intents(), []);
++  await journal.close();
++});
++
++test("funding rejects arbitrary calldata and unknown native values", () => {
++  assert.equal(funding.safeParse({ donations: [], genesis: null, calldata: "0x" }).success, false);
++  assert.equal(funding.safeParse({ donations: [{
++    id: `0x${"1".repeat(64)}`, tokens: [], amounts: [], nativeAmount: null, minimum: "0", deadline: "100",
++  }], genesis: null }).success, false);
++});
++
++for (const { args, reason } of [
++  { args: ["fund", "--manifest", "unused", "--checkpoint", "unused", "--execute-local", "--broadcast"], reason: /execution modes are exclusive/ },
++  { args: ["resume", "--manifest", "unused", "--checkpoint", "unused", "--instance-id", "old"], reason: /confirmation requires explicit mode/ },
++  { args: ["activate", "--manifest", "unused", "--checkpoint", "unused", "--broadcast"], reason: /all fresh public confirmations required/ },
++  { args: ["fund", "--manifest", "unused", "--checkpoint", "unused", "--target", "0x1111111111111111111111111111111111111111"], reason: /Unknown option/ },
++]) {
++  test(`CLI rejects ambiguous authority before file or network access: ${canonical(args)}`, async () => {
++    await assert.rejects(main(args), reason);
++  });
++}
+diff --git a/scripts/recovery/dtf-migration/execution.ts b/scripts/recovery/dtf-migration/execution.ts
+new file mode 100644
+index 00000000..2ce759db
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/execution.ts
+@@ -0,0 +1,178 @@
++import { readFile, readdir, open } from "node:fs/promises";
++import { join } from "node:path";
++import { Transaction, keccak256 } from "ethers";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++import { checkRelationships, loadExecution } from "./execution-domain.js";
++import type { ExecutionDomain } from "./execution-domain.js";
++import { plan } from "./execution-plan.js";
++import { Rpc, subscribeReceipt } from "./execution-rpc.js";
++import { captureCompletion, verifyConfiguration } from "./execution-state.js";
++import { ExecutionError, intent, quantity, stage as stageSchema } from "./execution-schema.js";
++import type { Intent, Mode, Operation, Stage } from "./execution-schema.js";
++import { Journal } from "./journal.js";
++import { hash, hex } from "./schema.js";
++
++type Run = {
++  readonly command: Stage | "resume";
++  readonly manifestPath: string;
++  readonly checkpoint: string;
++  readonly mode: Mode;
++  readonly reverse: boolean;
++  readonly faultAfterMined: boolean;
++};
++const runSchema = z.object({ stage: stageSchema, operationIds: z.array(z.string()) }).strict();
++
++function validateIntent(record: Intent, operation: Operation): void {
++  const signed = Transaction.from(record.signedTransaction);
++  if (record.id !== operation.id || record.stage !== operation.stage || record.method !== operation.method
++    || canonical(record.transaction) !== canonical(operation.transaction)
++    || signed.hash !== record.transactionHash || signed.from?.toLowerCase() !== operation.transaction.from
++    || signed.to?.toLowerCase() !== operation.transaction.to || signed.data !== operation.transaction.data
++    || signed.value.toString() !== operation.transaction.value || String(signed.nonce) !== record.nonce) {
++    throw new ExecutionError("INTENT", "signed transaction does not match fixed stage operation");
++  }
++}
++
++async function reconcile(rpc: Rpc, domain: ExecutionDomain, journal: Journal, record: Intent) {
++  const saved = await journal.completed(record);
++  const mined = await rpc.canonicalReceipt(record.transactionHash);
++  if (!mined) {
++    if (saved) throw new ExecutionError("AMBIGUOUS", "completed receipt disappeared; no replay permitted");
++    const found = await rpc.send("eth_getTransactionByHash", [record.transactionHash]);
++    if (found !== null) throw new ExecutionError("AMBIGUOUS", "transaction exists without canonical receipt; no resend");
++    if (await rpc.nonce("latest") !== BigInt(record.nonce) || await rpc.nonce("pending") !== BigInt(record.nonce)) {
++      throw new ExecutionError("AMBIGUOUS", "nonce moved without known canonical receipt; no resend");
++    }
++    return undefined;
++  }
++  const actual = z.object({ hash, from: z.string(), to: z.string().nullable(), input: hex,
++    value: quantity, nonce: quantity, blockHash: hash }).passthrough().parse(
++    await rpc.send("eth_getTransactionByHash", [record.transactionHash]));
++  if (actual.hash !== record.transactionHash || actual.from.toLowerCase() !== record.transaction.from
++    || actual.to?.toLowerCase() !== record.transaction.to || actual.input !== record.transaction.data
++    || BigInt(actual.nonce).toString() !== record.nonce || actual.blockHash !== mined.blockHash
++    || BigInt(actual.value).toString() !== record.transaction.value) throw new ExecutionError("INTENT", "canonical transaction differs");
++  const result = await captureCompletion(rpc, domain, record, mined);
++  if (saved && canonical(saved) !== canonical(result)) throw new ExecutionError("STATE", "canonical receipt/state differs from checkpoint");
++  if (!saved) await journal.complete(record, result);
++  return result;
++}
++
++export async function execute(run: Run) {
++  const domain = await loadExecution(run.manifestPath);
++  const rpc = new Rpc(domain.manifest);
++  try {
++    await rpc.guard(run.mode);
++    const storedRun = run.command === "resume" ? runSchema.parse(
++      JSON.parse(await readFile(join(run.checkpoint, "run.json"), "utf8"))) : undefined;
++    const selected = storedRun?.stage ?? stageSchema.parse(run.command);
++    if (storedRun && canonical(JSON.parse(await readFile(join(run.checkpoint, "domain.json"), "utf8"))) !== canonical(domain.domain)) {
++      throw new ExecutionError("DOMAIN", "checkpoint domain changed");
++    }
++    await checkRelationships(rpc, domain, selected === "deploy");
++    if (selected === "verify") return { mode: "read-only", command: selected, verification: await verifyConfiguration(rpc, domain) };
++    if (selected === "activate") {
++      const verified = await verifyConfiguration(rpc, domain);
++      for (const request of domain.prepared?.payloads.independentIssue.requests ?? []) {
++        if (!verified.rows.some((row) => row.recipient === request.recipient && row.issued)) {
++          throw new ExecutionError("STATE", "selected independent issuance is unfinished");
++        }
++      }
++    }
++    const operations = plan(domain, selected);
++    if (new Set(operations.map((o) => o.id)).size !== operations.length) throw new ExecutionError("INTENT", "duplicate operation identity");
++    if (run.reverse && !["configure", "independent-issue"].includes(selected)) throw new ExecutionError("DOMAIN", "only independent unsettled rows may reorder");
++    if (storedRun && canonical([...storedRun.operationIds].sort()) !== canonical(operations.map((o) => o.id).sort())) {
++      throw new ExecutionError("DOMAIN", "resume plan differs");
++    }
++    if (run.faultAfterMined && (run.mode.kind !== "local" || domain.manifest.purpose !== "synthetic-local")) {
++      throw new ExecutionError("DOMAIN", "fault injection is synthetic-local only");
++    }
++    if (run.mode.kind === "simulate") {
++      // No wallet, send, inherited mode, or success receipt on the default path.
++      return { mode: "read-only", command: selected, domainHash: fingerprint(canonical(domain.domain)),
++        operationIds: operations.map((o) => o.id), fullTask9: "open" };
++    }
++    const journal = await Journal.acquire(run.checkpoint, domain.domain);
++    try {
++      const runPath = join(run.checkpoint, "run.json");
++      const expectedRun = { stage: selected, operationIds: operations.map((o) => o.id) };
++      if ((await readdir(run.checkpoint)).includes("run.json")) {
++        const previous = runSchema.parse(JSON.parse(await readFile(runPath, "utf8")));
++        if (canonical(previous) !== canonical(expectedRun)) throw new ExecutionError("DOMAIN", "checkpoint command changed");
++      } else {
++        const file = await open(runPath, "wx", 0o600);
++        try { await file.writeFile(canonical(expectedRun)); await file.sync(); } finally { await file.close(); }
++        await journal.syncDirectory();
++      }
++      const existing = await journal.intents();
++      for (const record of existing) {
++        const operation = operations.find((o) => o.id === record.id);
++        if (!operation) throw new ExecutionError("INTENT", "checkpoint contains unselected operation");
++        validateIntent(record, operation);
++        if (Transaction.from(record.signedTransaction).chainId.toString() !== domain.manifest.chainId) {
++          throw new ExecutionError("DOMAIN", "signed transaction chain changed");
++        }
++      }
++      const results = [];
++      // Resolve every prior intent before assigning another nonce, regardless of batching.
++      for (const record of existing) {
++        const result = await reconcile(rpc, domain, journal, record);
++        if (result) results.push(result);
++      }
++      for (const operation of run.reverse ? [...operations].reverse() : operations) {
++        let record = existing.find((i) => i.id === operation.id);
++        if (record && await journal.completed(record)) continue;
++        await rpc.guard(run.mode);
++        if (!record) {
++          const nonce = await rpc.nonce("pending");
++          if (nonce !== await rpc.nonce("latest")) throw new ExecutionError("AMBIGUOUS", "signer has pending unrelated transaction");
++          const { from, to, data, value } = operation.transaction;
++          // Exact finite ABI operation is simulated before signing. No retry after a revert.
++          const simulationInput = { from, to, data, value: `0x${BigInt(value).toString(16)}` };
++          let simulated: string;
++          try { simulated = hex.parse(await rpc.send("eth_call", [simulationInput, "latest"])); }
++          catch (error) {
++            if (run.mode.kind === "local") {
++              const trace = await rpc.send("debug_traceCall", [simulationInput, "latest", { tracer: "callTracer" }]);
++              const file = await open(join(run.checkpoint, `${operation.id}.simulation-failure.json`), "wx", 0o600);
++              try { await file.writeFile(canonical({ operation, trace })); await file.sync(); } finally { await file.close(); }
++            }
++            throw error;
++          }
++          if (operation.method === "deployVault"
++            && String(domain.abis.pkg.decodeFunctionResult("deployVault", simulated)[0]).toLowerCase() !== domain.manifest.proxy) {
++            throw new ExecutionError("DOMAIN", "package deployment does not predict bound proxy");
++          }
++          const estimate = BigInt(quantity.parse(await rpc.send("eth_estimateGas", [{ from, to, data, value: `0x${BigInt(value).toString(16)}` }])));
++          const gasPrice = BigInt(quantity.parse(await rpc.send("eth_gasPrice", [])));
++          if (nonce > BigInt(Number.MAX_SAFE_INTEGER)) throw new ExecutionError("INTENT", "nonce exceeds signer safe range");
++          const raw = await rpc.wallet(run.mode).signTransaction({
++            chainId: BigInt(domain.manifest.chainId), nonce: Number(nonce), to, data, value: BigInt(value),
++            gasLimit: estimate * 3n / 2n, gasPrice, type: 0,
++          });
++          record = intent.parse({ version: "dtf-operator-intent-v1", domainHash: journal.domainHash,
++            id: operation.id, stage: operation.stage, method: operation.method, transaction: operation.transaction,
++            nonce: nonce.toString(), startBlock: BigInt((await rpc.header()).number).toString(),
++            signedTransaction: raw, transactionHash: keccak256(raw) });
++          await journal.persistIntent(record);
++        }
++        const watch = await subscribeReceipt(rpc, record.transactionHash);
++        try {
++          const sent = hash.parse(await rpc.send("eth_sendRawTransaction", [record.signedTransaction]));
++          if (sent !== record.transactionHash) throw new ExecutionError("INTENT", "node returned another transaction hash");
++          const mined = await watch.mined();
++          if (run.faultAfterMined && ["donateMigrationCapital", "issueIndependentAllocations"].includes(record.method)) {
++            console.log(JSON.stringify({ fault: "mined-before-checkpoint", transactionHash: mined.transactionHash, nonce: record.nonce }));
++            process.kill(process.pid, "SIGKILL");
++          }
++          const result = await reconcile(rpc, domain, journal, record);
++          if (!result) throw new ExecutionError("AMBIGUOUS", "mined transaction disappeared");
++          results.push(result);
++        } finally { watch.close(); }
++      }
++      return { command: selected, mode: run.mode.kind, receipts: results, fullTask9: "open" };
++    } finally { await journal.close(); }
++  } finally { rpc.close(); }
++}
+diff --git a/scripts/recovery/dtf-migration/journal.ts b/scripts/recovery/dtf-migration/journal.ts
+new file mode 100644
+index 00000000..3e5fb35d
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/journal.ts
+@@ -0,0 +1,107 @@
++import { link, mkdir, open, readFile, readdir, unlink } from "node:fs/promises";
++import { join } from "node:path";
++import { randomUUID } from "node:crypto";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++import { completion, ExecutionError, intent } from "./execution-schema.js";
++import type { Completion, Intent } from "./execution-schema.js";
++
++async function durableCreate(path: string, value: unknown): Promise<void> {
++  const temporary = `${path}.${randomUUID()}.pending`;
++  const file = await open(temporary, "wx", 0o600);
++  try {
++    await file.writeFile(`${canonical(value)}\n`);
++    await file.sync();
++  } finally {
++    await file.close();
++  }
++  try { await link(temporary, path); } finally { await unlink(temporary); }
++}
++
++export class Journal {
++  private constructor(readonly directory: string, readonly domainHash: string) {}
++
++  static async acquire(directory: string, domain: unknown): Promise<Journal> {
++    await mkdir(directory, { recursive: true, mode: 0o700 });
++    const domainHash = fingerprint(canonical(domain));
++    const lockPath = join(directory, "lock");
++    try {
++      await durableCreate(lockPath, { pid: process.pid });
++    } catch (error) {
++      if (!(error instanceof Error) || !("code" in error) || error.code !== "EEXIST") throw error;
++      const old = z.object({ pid: z.number().int().positive() }).strict().parse(JSON.parse(await readFile(lockPath, "utf8")));
++      try {
++        process.kill(old.pid, 0);
++      } catch (cause) {
++        if (!(cause instanceof Error) || !("code" in cause) || cause.code !== "ESRCH") throw cause;
++        // Only a proven dead writer can relinquish this exclusive local lock.
++        await unlink(lockPath);
++        return Journal.acquire(directory, domain);
++      }
++      throw new ExecutionError("LOCK", "checkpoint has a live writer");
++    }
++    const journal = new Journal(directory, domainHash);
++    try {
++      const names = await readdir(directory);
++      if (names.includes("domain.json")) {
++        const previous: unknown = JSON.parse(await readFile(join(directory, "domain.json"), "utf8"));
++        if (canonical(previous) !== canonical(domain)) throw new ExecutionError("DOMAIN", "checkpoint domain changed");
++      } else {
++        await durableCreate(join(directory, "domain.json"), domain);
++      }
++      await journal.syncDirectory();
++      return journal;
++    } catch (error) {
++      await journal.close();
++      throw error;
++    }
++  }
++
++  async syncDirectory(): Promise<void> {
++    const directory = await open(this.directory, "r");
++    try { await directory.sync(); } finally { await directory.close(); }
++  }
++
++  async intents(): Promise<readonly Intent[]> {
++    const names = (await readdir(this.directory)).filter((name) => name.endsWith(".intent.json"));
++    const records = await Promise.all(names.map(async (name) => {
++      const record = intent.parse(JSON.parse(await readFile(join(this.directory, name), "utf8")));
++      if (name !== `${record.id}.intent.json`) throw new ExecutionError("INTENT", "intent filename differs from operation identity");
++      return record;
++    }));
++    for (const record of records) {
++      if (record.domainHash !== this.domainHash
++        || !names.includes(`${record.id}.intent.json`)) throw new ExecutionError("DOMAIN", "foreign intent");
++    }
++    if (new Set(records.map((r) => r.nonce)).size !== records.length) throw new ExecutionError("INTENT", "multiple intents claim the same nonce");
++    return records.sort((a, b) => BigInt(a.nonce) < BigInt(b.nonce) ? -1 : 1);
++  }
++
++  async persistIntent(record: Intent): Promise<void> {
++    if (record.domainHash !== this.domainHash) throw new ExecutionError("DOMAIN", "foreign intent");
++    await durableCreate(join(this.directory, `${record.id}.intent.json`), record);
++    await this.syncDirectory();
++  }
++
++  async completed(record: Intent): Promise<Completion | undefined> {
++    const name = `${record.id}.receipt.json`;
++    if (!(await readdir(this.directory)).includes(name)) return undefined;
++    const result = completion.parse(JSON.parse(await readFile(join(this.directory, name), "utf8")));
++    if (result.intentHash !== fingerprint(canonical(record))
++      || result.receipt.transactionHash !== record.transactionHash) {
++      throw new ExecutionError("INTENT", "receipt does not bind this exact signed intent");
++    }
++    return result;
++  }
++
++  async complete(record: Intent, result: Completion): Promise<void> {
++    if (result.intentHash !== fingerprint(canonical(record))) throw new ExecutionError("INTENT", "wrong intent receipt");
++    await durableCreate(join(this.directory, `${record.id}.receipt.json`), result);
++    await this.syncDirectory();
++  }
++
++  async close(): Promise<void> {
++    await unlink(join(this.directory, "lock"));
++    await this.syncDirectory();
++  }
++}
+diff --git a/scripts/recovery/dtf-migration/payloads.ts b/scripts/recovery/dtf-migration/payloads.ts
+new file mode 100644
+index 00000000..8e442617
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/payloads.ts
+@@ -0,0 +1,127 @@
++import { AbiCoder, keccak256 } from "ethers";
++import { categories, PreparationError } from "./schema.js";
++import type { Domain, NftOriginal, Original, PreparationInput } from "./schema.js";
++
++const coder = AbiCoder.defaultAbiCoder();
++const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
++const nftTuple = "tuple(address collection,uint256 tokenId,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
++export const weightedCollection = "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e";
++export const earlierCollection = "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
++export type IndependentPayload = {
++  readonly recipient: string;
++  readonly evidenceId: string;
++  readonly entitlements: readonly Original[];
++};
++export type ConfigurationPayload = {
++  readonly independent: readonly IndependentPayload[];
++  readonly nfts: readonly NftOriginal[];
++};
++
++export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal): string {
++  const tuple = "recipient" in input ? independentTuple : nftTuple;
++  return keccak256(coder.encode(["uint256", "address", "bytes32", tuple],
++    [domain.chainId, domain.proxy, domain.snapshotId, input]));
++}
++
++export function nftOrigin(domain: Domain, input: NftOriginal): string {
++  return keccak256(coder.encode(["string", "uint256", "address", "bytes32", "address", "uint256"],
++    ["migration.nft", domain.chainId, domain.proxy, domain.snapshotId, input.collection, input.tokenId]));
++}
++
++const blockedGate = {
++  "weighted-liquid": "E2: ordinary-transfer contribution ancestry and consumption unproved",
++  "earlier-liquid": "E2: ordinary-transfer contribution ancestry and consumption unproved",
++  "weighted-receipt": "E2: gon ancestry and proportional consumption unproved",
++  "earlier-receipt": "E2: receipt ancestry/supply discrepancy and disabled exits",
++  "weighted-sy": "E2: wrapper look-through ancestry and nonduplication unproved",
++  "token-staking": "E1/E2: nontransferable claim composition and attribution unproved",
++  "claim-vault": "E1/E2: remaining claim ancestry and custody path unproved",
++  "underlying-se": "E1/E2: complete source discovery and contribution attribution unproved",
++  "fungible-lp": "E1/E2: complete source discovery and contribution attribution unproved",
++  "earlier-liquidation": "SB-E1/E2/E3 disabled earlier SE exits; SB-E4 liquid conversion unproved",
++} as const;
++
++export function dispositions(input: PreparationInput) {
++  return categories.map((category) => {
++    switch (category) {
++      case "independent": return { category, disposition: "bounded", gate: "verified disjoint originals only" };
++      case "weighted-nft":
++      case "earlier-nft": return { category, disposition: "bounded", gate: "configuration only; real holder surrender required" };
++      default: return { category, disposition: "blocked", gate: blockedGate[category] };
++    }
++  }).map((row) => ({ ...row, records: input.exposures.filter((e) => e.category === row.category).length.toString() }));
++}
++
++export function buildPayloads(input: PreparationInput): ConfigurationPayload {
++  const origins = new Map(input.exposures.map((e) => [e.originId, e]));
++  if (origins.size !== input.exposures.length) throw new PreparationError("PROVENANCE", "duplicate origin");
++  const used = new Set<string>();
++  const claimOrigin = (id: string, category: string): void => {
++    const origin = origins.get(id);
++    if (!origin || origin.category !== category) throw new PreparationError("PROVENANCE", `missing matching origin ${id}`);
++    if (used.has(id)) throw new PreparationError("PROVENANCE", `overlapping original ${id}`);
++    used.add(id);
++  };
++  for (const row of dispositions(input)) {
++    if (row.disposition === "blocked" && row.records !== "0") throw new PreparationError("BLOCKED", `${row.category}: ${row.gate}`);
++  }
++  const independent = input.independent.map((row) => {
++    for (const item of row.entitlements) claimOrigin(item.original.entitlementId, "independent");
++    return { recipient: row.recipient, evidenceId: row.evidenceId,
++      entitlements: row.entitlements.map((e) => e.original).sort((a, b) => a.entitlementId.localeCompare(b.entitlementId)) };
++  }).sort((a, b) => a.recipient.localeCompare(b.recipient));
++  if (new Set(independent.map((r) => r.recipient)).size !== independent.length) {
++    throw new PreparationError("INPUT", "duplicate recipient; supply one complete replacement");
++  }
++  const nfts = input.nfts.map(({ original }) => {
++    if (input.domain.chainId !== "4663") throw new PreparationError("DOMAIN", "NFT sources require chain 4663");
++    const category = original.collection === weightedCollection ? "weighted-nft"
++      : original.collection === earlierCollection ? "earlier-nft" : undefined;
++    if (!category) throw new PreparationError("BLOCKED", `unsupported NFT collection ${original.collection}`);
++    const id = nftOrigin(input.domain, original);
++    claimOrigin(id, category);
++    if (origins.get(id)?.originalUnits !== original.originalUnits) {
++      throw new PreparationError("PROVENANCE", "NFT original units differ from reconciled origin");
++    }
++    return original;
++  }).sort((a, b) => a.collection.localeCompare(b.collection)
++    || (BigInt(a.tokenId) < BigInt(b.tokenId) ? -1 : BigInt(a.tokenId) > BigInt(b.tokenId) ? 1 : 0));
++  if (used.size !== origins.size) throw new PreparationError("PROVENANCE", "unassigned origin; no silent omission");
++  if (new Set(input.issueRecipients).size !== input.issueRecipients.length) {
++    throw new PreparationError("INPUT", "duplicate issuance recipient");
++  }
++  for (const recipient of input.issueRecipients) {
++    if (!independent.some((r) => r.recipient === recipient)) throw new PreparationError("INPUT", "issuance lacks configuration");
++  }
++  if (input.harvest.steps.length > 1 && input.harvest.steps.some((step) =>
++    !["WeightedClaim", "WeightedPrincipal", "WeightedRewards"].includes(step.stage))) {
++    throw new PreparationError("INPUT", "batch bound is eight weighted claims or one other recovery step");
++  }
++  for (const step of input.harvest.steps) {
++    switch (step.stage) {
++      case "WeightedClaim":
++      case "WeightedPrincipal":
++      case "WeightedRewards":
++      case "EarlierClaim":
++      case "EarlierSale":
++        if (BigInt(step.tokenId) < 3n || step.amount !== "0"
++          || (step.stage !== "EarlierSale" && step.minimum !== "0")) {
++          throw new PreparationError("INPUT", "invalid NFT recovery fields");
++        }
++        break;
++      case "WeightedUnstake":
++      case "WeightedConvert":
++      case "Donate":
++        if (step.tokenId !== "0" || step.amount === "0"
++          || (step.stage === "WeightedUnstake" && step.minimum !== "0")) {
++          throw new PreparationError("INPUT", "invalid conversion recovery fields");
++        }
++        break;
++      default: step.stage satisfies never;
++    }
++  }
++  if (input.harvest.steps.length > 0 && (input.domain.chainId !== "4663" || input.harvest.deadline === "0")) {
++    throw new PreparationError("DOMAIN", "recovery requires chain 4663 and deadline");
++  }
++  return { independent, nfts };
++}
+diff --git a/scripts/recovery/dtf-migration/preparation.fixture.ts b/scripts/recovery/dtf-migration/preparation.fixture.ts
+new file mode 100644
+index 00000000..1464966e
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/preparation.fixture.ts
+@@ -0,0 +1,141 @@
++// Synthetic wire fixture only. This is not an EVM or a real pricing proof.
++import { AbiCoder, Interface, keccak256 } from "ethers";
++import type { ParamType } from "ethers";
++import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import { join, resolve } from "node:path";
++import { createServer } from "node:http";
++import { once } from "node:events";
++import { text } from "node:stream/consumers";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++import { earlierCollection, nftOrigin, weightedCollection } from "./payloads.js";
++import { domain as domainSchema, nftOriginal, preparationInput } from "./schema.js";
++
++export const h = (n: number): string => `0x${n.toString(16).padStart(64, "0")}`;
++export const a = (n: number): string => `0x${n.toString(16).padStart(40, "0")}`;
++const coder = AbiCoder.defaultAbiCoder();
++function zero(param: ParamType): unknown {
++  if (param.baseType === "tuple") return param.components?.map(zero);
++  if (param.baseType === "array" && param.arrayChildren) {
++    const child = param.arrayChildren;
++    return Array.from({ length: Math.max(0, param.arrayLength ?? 0) }, () => zero(child));
++  }
++  if (param.type === "address") return a(1);
++  if (param.type === "bool") return false;
++  if (param.type.startsWith("bytes")) return param.type === "bytes" ? "0x" : h(0);
++  return 0n;
++}
++
++export async function fixture() {
++  const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
++  const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
++  const artifactBytes = await readFile(artifactPath);
++  const artifact = z.object({ abi: z.array(z.unknown()) }).parse(JSON.parse(artifactBytes.toString()));
++  const iface = new Interface(JSON.stringify(artifact.abi));
++  const fragment = iface.getFunction("migrationSnapshot");
++  const output = fragment?.outputs[0];
++  if (!fragment || !output?.components) throw new Error("warm Migration ABI required");
++  const values = output.components.map(zero);
++  const set = (name: string, value: unknown): void => {
++    const index = output.components?.findIndex((p) => p.name === name);
++    if (index === undefined || index < 0) throw new Error(`missing ${name}`);
++    values[index] = value;
++  };
++  set("version", 1n);
++  set("chainId", 4663n);
++  set("consumer", a(10));
++  set("source", [a(10), a(11), a(12), a(13)]);
++  const snapshotId = keccak256(coder.encode(["string", output], ["IndexedEx.frozen-original-credit", values]));
++  set("id", snapshotId);
++  const snapshot = iface.encodeFunctionResult(fragment, [values]);
++  const preview = new Interface(["function previewOriginalCredit(uint256,uint256) view returns(uint256)"]);
++  const changes = { chain: "0x1237", code: "0x6000", snapshot, combinedMismatch: false };
++  const methods: string[] = [];
++  const rpcRequest = z.object({ id: z.number(), method: z.string(), params: z.array(z.unknown()) });
++  const server = createServer(async (request, response) => {
++      const rpc = rpcRequest.parse(JSON.parse(await text(request)));
++      methods.push(rpc.method);
++      let result: unknown;
++      switch (rpc.method) {
++        case "eth_chainId": result = changes.chain; break;
++        case "eth_getBlockByNumber": result = { number: "0x64", hash: h(100), parentHash: h(99) }; break;
++        case "eth_getCode": result = changes.code; break;
++        case "eth_call": {
++          const call = z.object({ data: z.string() }).parse(rpc.params[0]);
++          if (call.data === iface.encodeFunctionData(fragment)) result = changes.snapshot;
++          else {
++            const args = preview.decodeFunctionData("previewOriginalCredit", call.data);
++            const eth = BigInt(args[0]);
++            const dtf = BigInt(args[1]);
++            const value = eth / 10n + dtf / 11n + (changes.combinedMismatch && eth > 0n && dtf > 0n ? 1n : 0n);
++            result = preview.encodeFunctionResult("previewOriginalCredit", [value]);
++          }
++          break;
++        }
++        default:
++          response.end(JSON.stringify({ jsonrpc: "2.0", id: rpc.id, error: { code: -32601, message: "read not supported" } }));
++          return;
++      }
++      response.setHeader("Content-Type", "application/json");
++      response.end(JSON.stringify({ jsonrpc: "2.0", id: rpc.id, result }));
++  });
++  const ready = once(server, "listening", { signal: AbortSignal.timeout(5000) });
++  server.listen(0, "127.0.0.1");
++  await ready;
++  const listener = server.address();
++  if (!listener || typeof listener === "string") throw new Error("missing TCP listener");
++  const envName = `DTF_TEST_RPC_${listener.port}`;
++  process.env[envName] = `http://127.0.0.1:${listener.port}`;
++  const domain = {
++    chainId: "4663", proxy: a(10), snapshotId, blockNumber: "100", blockHash: h(100),
++    rpcEnv: envName, snapshotArtifact: artifactPath,
++    bindings: [
++      { role: "proxy", address: a(10), codeHash: keccak256("0x6000") },
++      { role: "registry", address: a(11), codeHash: keccak256("0x6000") },
++      { role: "package", address: a(12), codeHash: keccak256("0x6000") },
++      { role: "facet", address: a(13), codeHash: keccak256("0x6000") },
++    ],
++  };
++  const original = { entitlementId: h(200), originalEth: "90071992547409931234",
++    originalDtf: "110", evidenceId: h(201) };
++  const nft = { collection: weightedCollection, tokenId: "3", originalUnits: "100",
++    originalEth: "100", originalDtf: "22", evidenceId: h(202), contributionsKnown: true };
++  const earlier = { ...nft, collection: earlierCollection, originalUnits: "2281854312954086546", evidenceId: h(204) };
++  const nftId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(nft));
++  const earlierId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(earlier));
++  const exposures = [
++    { originId: h(200), category: "independent", originalUnits: "100", descendants: [{ id: h(210), units: "80" }],
++      recoveredUnits: "10", excludedUnits: "10" },
++    { originId: nftId, category: "weighted-nft", originalUnits: "100", descendants: [{ id: h(211), units: "100" }],
++      recoveredUnits: "0", excludedUnits: "0" },
++    { originId: earlierId, category: "earlier-nft", originalUnits: earlier.originalUnits,
++      descendants: [{ id: h(212), units: earlier.originalUnits }], recoveredUnits: "0", excludedUnits: "0" },
++  ];
++  const evidence = { originals: [original, nft, earlier], exposures };
++  const evidencePath = join(root, "evidence.json");
++  const raw = canonical(evidence);
++  await writeFile(evidencePath, raw);
++  const input = preparationInput.parse({
++    version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
++    sources: [
++      { id: "proof", path: evidencePath, sha256: fingerprint(raw), bytes: Buffer.byteLength(raw).toString(),
++        provenance: { kind: "file", authority: "Synthetic wire fixture; not an approved historical allocation" } },
++      { id: "abi", path: artifactPath, sha256: fingerprint(artifactBytes), bytes: artifactBytes.length.toString(),
++        provenance: { kind: "file", authority: "Warm artifact from accepted source base421072a7" } },
++    ],
++    exposures: exposures.map((e, i) => ({ ...e, proof: { sourceId: "proof", pointer: `/exposures/${i}` } })),
++    independent: [{ recipient: a(20), evidenceId: h(203),
++      entitlements: [{ original, proof: { sourceId: "proof", pointer: "/originals/0" } }] }],
++    nfts: [
++      { original: nft, proof: { sourceId: "proof", pointer: "/originals/1" } },
++      { original: earlier, proof: { sourceId: "proof", pointer: "/originals/2" } },
++    ],
++    issueRecipients: [a(20)], harvest: { steps: [], deadline: "0" },
++  });
++  return { root, input, changes, methods, evidencePath, async close() {
++    await new Promise<void>((accept, reject) => server.close((error) => error ? reject(error) : accept()));
++    delete process.env[envName];
++    await rm(root, { recursive: true });
++  } };
++}
+diff --git a/scripts/recovery/dtf-migration/preparation.test.ts b/scripts/recovery/dtf-migration/preparation.test.ts
+new file mode 100644
+index 00000000..eacded58
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/preparation.test.ts
+@@ -0,0 +1,205 @@
++import { afterEach, test } from "node:test";
++import assert from "node:assert/strict";
++import { writeFile } from "node:fs/promises";
++import { spawn } from "node:child_process";
++import { once } from "node:events";
++import { text } from "node:stream/consumers";
++import { join } from "node:path";
++import { fixture, h, a } from "./preparation.fixture.js";
++import { canonical, fingerprint } from "./provenance.js";
++import { buildPayloads, configurationId, dispositions } from "./payloads.js";
++import { normalize, prepareDomain, prepareFile, validateManifest } from "./preparation.js";
++import { preparationInput, uint } from "./schema.js";
++import { main } from "./cli.js";
++
++const fixtures: Awaited<ReturnType<typeof fixture>>[] = [];
++async function setup() {
++  const f = await fixture();
++  fixtures.push(f);
++  return f;
++}
++afterEach(async () => {
++  for (const f of fixtures.splice(0)) await f.close();
++});
++
++test("normalizes native integer strings without floating point", () => {
++  assert.equal(uint.parse("00090071992547409931234"), "90071992547409931234");
++});
++for (const value of ["", "-1", "1.5", "1e18", 0, null, (2n ** 256n).toString()]) {
++  test(`rejects unknown or non-native amount ${value}`, () => {
++    assert.equal(uint.safeParse(value).success, false);
++  });
++}
++test("emits full separate replacements and independently quoted native credits", async () => {
++  const f = await setup();
++  const result = await prepareDomain(f.input);
++  assert.equal(result.payloads.configure.independent[0]?.input.entitlements[0]?.originalEth, "90071992547409931234");
++  assert.deepEqual(result.quoteEvidence.quotes, [
++    { originalEth: "100", originalDtf: "22", ethCredit: "10", dtfCredit: "2", credit: "12" },
++    { originalEth: "90071992547409931234", originalDtf: "110", ethCredit: "9007199254740993123",
++      dtfCredit: "10", credit: "9007199254740993133" },
++  ]);
++  assert.deepEqual(result.payloads.configure.nfts.map((r) => r.input),
++    [...f.input.nfts.map((r) => r.original)].sort((a, b) => a.collection.localeCompare(b.collection)));
++  assert.deepEqual(result.payloads.independentIssue.requests, [{
++    recipient: a(20), configurationId: result.payloads.configure.independent[0]?.configurationId,
++  }]);
++  assert.equal(result.dispositions.filter((d) => d.disposition === "blocked").length, 10);
++  assert.equal(f.methods.every((m) => ["eth_chainId", "eth_getBlockByNumber", "eth_getCode", "eth_call"].includes(m)), true);
++});
++test("normalization is stable under reordered records and source bindings", async () => {
++  const f = await setup();
++  const reordered = { ...f.input, sources: [...f.input.sources].reverse(), exposures: [...f.input.exposures].reverse(),
++    domain: { ...f.input.domain, bindings: [...f.input.domain.bindings].reverse() } };
++  assert.equal(canonical(normalize(reordered)), canonical(normalize(f.input)));
++});
++test("full replacements change identities instead of generating credit deltas", async () => {
++  const f = await setup();
++  const payload = buildPayloads(f.input).independent[0];
++  assert.ok(payload);
++  const replacement = { ...payload, evidenceId: h(500) };
++  assert.notEqual(configurationId(f.input.domain, replacement), configurationId(f.input.domain, payload));
++  assert.notEqual(configurationId({ ...f.input.domain, proxy: a(50) }, payload), configurationId(f.input.domain, payload));
++});
++for (const kind of ["chain", "block", "snapshot", "proxy", "package"] as const) {
++  test(`rejects wrong ${kind} domain before accepting payloads`, async () => {
++    const f = await setup();
++    const input = {
++      ...f.input, nfts: [], exposures: f.input.exposures.filter((e) => e.category === "independent"), domain: {
++        ...f.input.domain,
++        chainId: kind === "chain" ? "1" : f.input.domain.chainId,
++        blockHash: kind === "block" ? h(3) : f.input.domain.blockHash,
++        snapshotId: kind === "snapshot" ? h(4) : f.input.domain.snapshotId,
++        proxy: kind === "proxy" ? a(99) : f.input.domain.proxy,
++        bindings: f.input.domain.bindings.map((b) => kind === "package" && b.role === "package" ? { ...b, codeHash: h(5) } : b),
++      },
++    };
++    const expected = { chain: /wrong chain/, block: /wrong canonical block/, snapshot: /snapshot identity/,
++      proxy: /wrong proxy binding/, package: /wrong package code/ };
++    await assert.rejects(prepareDomain(input), expected[kind]);
++  });
++}
++test("rejects source tampering rather than trusting quoted originals", async () => {
++  const f = await setup();
++  await writeFile(f.evidencePath, "{}");
++  await assert.rejects(prepareDomain(f.input), /source bytes differ/);
++});
++test("rejects originals that do not match their raw proof", async () => {
++  const f = await setup();
++  const row = f.input.nfts[0];
++  assert.ok(row);
++  await assert.rejects(prepareDomain({ ...f.input, nfts: [{ ...row, original: { ...row.original, originalEth: "101" } }] }),
++    /proof does not match/);
++});
++test("rejects unknown contributions and arbitrary credit fields at the schema boundary", async () => {
++  const f = await setup();
++  const row = f.input.nfts[0];
++  assert.equal(preparationInput.safeParse({ ...f.input,
++    nfts: [{ ...row, original: { ...row?.original, contributionsKnown: false, credit: "100" } }] }).success, false);
++});
++test("rejects overlapping originals and missing origin partitions", async () => {
++  const f = await setup();
++  const row = f.input.independent[0];
++  assert.ok(row);
++  assert.throws(() => buildPayloads({ ...f.input, independent: [row, { ...row, recipient: a(25) }] }), /overlapping original/);
++  assert.throws(() => buildPayloads({ ...f.input, nfts: [] }), /unassigned origin/);
++});
++for (const category of ["weighted-liquid", "earlier-liquid", "weighted-receipt", "earlier-receipt",
++  "weighted-sy", "token-staking", "claim-vault", "underlying-se", "fungible-lp", "earlier-liquidation"] as const) {
++  test(`blocks ${category} without forging executable config`, async () => {
++    const f = await setup();
++    const row = f.input.exposures[0];
++    assert.ok(row);
++    assert.throws(() => buildPayloads({ ...f.input, exposures: [{ ...row, category }] }), new RegExp(category));
++  });
++}
++test("rejects a nonconserving origin partition", async () => {
++  const f = await setup();
++  const exposures = f.input.exposures.map(({ proof, ...e }, i) => i === 0 ? { ...e, recoveredUnits: "11" } : e);
++  const body = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
++    ...f.input.nfts.map((n) => n.original)], exposures });
++  await writeFile(f.evidencePath, body);
++  const input = preparationInput.parse({ ...f.input,
++    sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(body), bytes: Buffer.byteLength(body).toString() } : s),
++    exposures: f.input.exposures.map((e, i) => i === 0 ? { ...e, recoveredUnits: "11" } : e) });
++  await assert.rejects(prepareDomain(input), /origin partition differs/);
++});
++test("rejects combined quotes that differ from independent frozen component quotes", async () => {
++  const f = await setup();
++  f.changes.combinedMismatch = true;
++  await assert.rejects(prepareDomain(f.input), /component quote mismatch/);
++});
++test("revalidates persisted manifest payloads and refuses overwrite", async () => {
++  const f = await setup();
++  const inputPath = join(f.root, "input.json");
++  await writeFile(inputPath, canonical(f.input));
++  await prepareFile(inputPath, f.root);
++  const manifestPath = join(f.root, "manifest.json");
++  const result = await validateManifest(manifestPath);
++  await writeFile(manifestPath, canonical({ ...result, payloadHash: "f".repeat(64) }));
++  await assert.rejects(validateManifest(manifestPath), /binding differs/);
++  await assert.rejects(prepareFile(inputPath, f.root), /EEXIST/);
++});
++test("actual CLI prepares and validates through read-only transport", async () => {
++  const f = await setup();
++  const input = join(f.root, "input.json");
++  await writeFile(input, canonical(f.input));
++  for (const args of [["prepare", "--input", input, "--output", f.root], ["validate", "--manifest", join(f.root, "manifest.json")]]) {
++    const child = spawn(process.execPath, ["scripts/recovery/dtf-migration/cli.ts", ...args], {
++      env: process.env, stdio: ["ignore", "pipe", "pipe"],
++    });
++    const done = once(child, "exit", { signal: AbortSignal.timeout(5000) });
++    assert.ok(child.stdout);
++    assert.ok(child.stderr);
++    const [stdout, stderr, [exit]] = await Promise.all([text(child.stdout), text(child.stderr), done]);
++    assert.deepEqual({ exit, stderr }, { exit: 0, stderr: "" });
++    assert.equal(JSON.parse(stdout).mode, "read-only");
++  }
++});
++test("rejects missing RPC and synthetic nonlocal endpoints", async () => {
++  const f = await setup();
++  await assert.rejects(prepareDomain({ ...f.input, domain: { ...f.input.domain, rpcEnv: "DTF_MISSING_RPC" } }), /missing RPC/);
++  const envName = f.input.domain.rpcEnv;
++  const previous = process.env[envName];
++  process.env[envName] = "https://example.invalid";
++  try {
++    await assert.rejects(prepareDomain(f.input), /loopback RPC/);
++  } finally {
++    process.env[envName] = previous;
++  }
++});
++for (const args of [
++  ["prepare", "--input", "a", "--input", "b", "--output", "c"],
++  ["validate", "--manifest", "x", "--broadcast"],
++  ["validate", "--manifest", "x", "--execute-local"],
++  ["prepare", "--input", "a"],
++]) {
++  test(`rejects ambiguous or executing preparation arguments ${args.join(" ")}`, async () => {
++    await assert.rejects(main(args));
++  });
++}
++test("rejects invalid recovery fields and unproved multi-conversion batches", async () => {
++  const f = await setup();
++  const step = { stage: "WeightedUnstake", tokenId: "0", amount: "1", minimum: "0" } as const;
++  assert.throws(() => buildPayloads({ ...f.input, harvest: { steps: [{ ...step, tokenId: "3" }], deadline: "100" } }),
++    /invalid conversion/);
++  assert.throws(() => buildPayloads({ ...f.input, harvest: { steps: [step, step], deadline: "100" } }),
++    /batch bound/);
++});
++test("preserves all category dispositions but emits no manifest for blocked exposure", async () => {
++  const f = await setup();
++  const exposures = f.input.exposures.map(({ proof, ...e }) => ({ ...e, category: "token-staking" }));
++  const raw = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
++    ...f.input.nfts.map((n) => n.original)], exposures });
++  await writeFile(f.evidencePath, raw);
++  const input = preparationInput.parse({ ...f.input,
++    sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(raw), bytes: Buffer.byteLength(raw).toString() } : s),
++    exposures: f.input.exposures.map((e) => ({ ...e, category: "token-staking" })) });
++  const inputPath = join(f.root, "input.json");
++  await writeFile(inputPath, canonical(input));
++  await assert.rejects(prepareFile(inputPath, f.root), /token-staking/);
++  const { readFile } = await import("node:fs/promises");
++  const report = JSON.parse(await readFile(join(f.root, "blocked.json"), "utf8"));
++  assert.deepEqual(report.dispositions, dispositions(input));
++  await assert.rejects(readFile(join(f.root, "manifest.json")), { code: "ENOENT" });
++});
+diff --git a/scripts/recovery/dtf-migration/preparation.ts b/scripts/recovery/dtf-migration/preparation.ts
+new file mode 100644
+index 00000000..1ba3a1ae
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/preparation.ts
+@@ -0,0 +1,113 @@
++import { mkdir, readFile, writeFile } from "node:fs/promises";
++import { resolve } from "node:path";
++import { z } from "zod";
++import { buildPayloads, configurationId, dispositions, nftOrigin } from "./payloads.js";
++import { canonical, fingerprint, loadInput, validateProvenance } from "./provenance.js";
++import { quoteOriginals } from "./quotes.js";
++import { PreparationError, preparationInput, sha256 } from "./schema.js";
++import type { PreparationInput } from "./schema.js";
++
++export function normalize(input: PreparationInput): PreparationInput {
++  return preparationInput.parse({
++    ...input,
++    sources: [...input.sources].sort((a, b) => a.id.localeCompare(b.id)),
++    exposures: input.exposures.map((e) => ({ ...e, descendants: [...e.descendants].sort((a, b) => a.id.localeCompare(b.id)) }))
++      .sort((a, b) => a.originId.localeCompare(b.originId)),
++    independent: input.independent.map((r) => ({ ...r,
++      entitlements: [...r.entitlements].sort((a, b) => a.original.entitlementId.localeCompare(b.original.entitlementId)) }))
++      .sort((a, b) => a.recipient.localeCompare(b.recipient)),
++    nfts: [...input.nfts].sort((a, b) => a.original.collection.localeCompare(b.original.collection)
++      || (BigInt(a.original.tokenId) < BigInt(b.original.tokenId) ? -1 : BigInt(a.original.tokenId) > BigInt(b.original.tokenId) ? 1 : 0)),
++    issueRecipients: [...input.issueRecipients].sort(),
++    domain: { ...input.domain, bindings: [...input.domain.bindings]
++      .sort((a, b) => a.role.localeCompare(b.role) || a.address.localeCompare(b.address)) },
++  });
++}
++
++export async function prepareDomain(input: PreparationInput) {
++  const normalized = normalize(input);
++  await validateProvenance(normalized);
++  const payloads = buildPayloads(normalized);
++  const quotes = await quoteOriginals(normalized, payloads);
++  const creditOf = (original: { readonly originalEth: string; readonly originalDtf: string }): bigint => {
++    const quote = quotes.quotes.find((q) => q.originalEth === original.originalEth && q.originalDtf === original.originalDtf);
++    if (!quote) throw new PreparationError("QUOTE", "missing original quote");
++    return BigInt(quote.credit);
++  };
++  const independent = payloads.independent.map((r) => {
++    const total = r.entitlements.reduce((sum, e) => sum + creditOf(e), 0n);
++    if (total >= 2n ** 256n) throw new PreparationError("QUOTE", "recipient total overflows uint256");
++    return { input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: total.toString() };
++  });
++  const nfts = payloads.nfts.map((r) => ({
++    input: r, configurationId: configurationId(normalized.domain, r), originalId: nftOrigin(normalized.domain, r),
++    quotedCredit: creditOf(r).toString(),
++  }));
++  const requests = normalized.issueRecipients.map((recipient) => {
++    const config = independent.find((r) => r.input.recipient === recipient);
++    if (!config) throw new PreparationError("INPUT", "missing selected recipient");
++    if (config.quotedCredit === "0") throw new PreparationError("QUOTE", "invalid issuance credit");
++    return { recipient, configurationId: config.configurationId };
++  });
++  return {
++    version: "dtf-operator-manifest-v1" as const,
++    input: normalized,
++    normalizedHash: fingerprint(canonical(normalized)),
++    payloads: {
++      configure: { independent, nfts },
++      independentIssue: { requests },
++      harvest: normalized.harvest,
++    },
++    payloadHash: fingerprint(canonical({ independent, nfts, requests, harvest: normalized.harvest })),
++    quoteEvidence: quotes,
++    dispositions: dispositions(normalized),
++    fullTask9: "open" as const,
++  };
++}
++export type PreparedDomain = Awaited<ReturnType<typeof prepareDomain>>;
++
++const envelope = z.object({
++  version: z.literal("dtf-operator-manifest-v1"),
++  input: preparationInput,
++  normalizedHash: sha256,
++  payloads: z.unknown(),
++  payloadHash: sha256,
++  quoteEvidence: z.unknown(),
++  dispositions: z.unknown(),
++  fullTask9: z.literal("open"),
++}).strict();
++
++export async function prepareFile(inputPath: string, outputDirectory: string): Promise<PreparedDomain> {
++  const input = await loadInput(resolve(inputPath));
++  let prepared: PreparedDomain;
++  try {
++    prepared = await prepareDomain(input);
++  } catch (error) {
++    if (error instanceof PreparationError && error.code === "BLOCKED") {
++      await mkdir(outputDirectory, { recursive: true });
++      await writeFile(resolve(outputDirectory, "blocked.json"), `${canonical({
++        status: "blocked", error: error.message, normalizedHash: fingerprint(canonical(normalize(input))),
++        dispositions: dispositions(input), fullTask9: "open",
++      })}\n`, { flag: "wx" });
++    }
++    throw error;
++  }
++  await mkdir(outputDirectory, { recursive: true });
++  await writeFile(resolve(outputDirectory, "independent.json"),
++    `${canonical(prepared.payloads.configure.independent.map((r) => r.input))}\n`, { flag: "wx" });
++  await writeFile(resolve(outputDirectory, "nfts.json"),
++    `${canonical(prepared.payloads.configure.nfts.map((r) => r.input))}\n`, { flag: "wx" });
++  // Exclusive creation protects a prior accepted dataset from accidental overwrite.
++  // Manifest is the acceptance marker, written only after all review mirrors.
++  await writeFile(resolve(outputDirectory, "manifest.json"), `${canonical(prepared)}\n`, { flag: "wx" });
++  return prepared;
++}
++
++export async function validateManifest(path: string): Promise<PreparedDomain> {
++  const supplied = envelope.parse(JSON.parse(await readFile(path, "utf8")));
++  const current = await prepareDomain(supplied.input);
++  if (canonical(supplied) !== canonical(current)) {
++    throw new PreparationError("DOMAIN", "manifest, source, snapshot, quote or payload binding differs");
++  }
++  return current;
++}
+diff --git a/scripts/recovery/dtf-migration/provenance.ts b/scripts/recovery/dtf-migration/provenance.ts
+new file mode 100644
+index 00000000..0bf60811
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/provenance.ts
+@@ -0,0 +1,80 @@
++import { createHash } from "node:crypto";
++import { readFile } from "node:fs/promises";
++import { dirname, resolve } from "node:path";
++import { z } from "zod";
++import { PreparationError, preparationInput } from "./schema.js";
++import type { PreparationInput, Proof } from "./schema.js";
++
++export function canonical(value: unknown): string {
++  if (value === null || typeof value !== "object") return JSON.stringify(value);
++  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
++  return `{${Object.entries(value).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
++    .map(([key, item]) => `${JSON.stringify(key)}:${canonical(item)}`).join(",")}}`;
++}
++
++export function fingerprint(value: string | Uint8Array): string {
++  return createHash("sha256").update(value).digest("hex");
++}
++
++export async function loadInput(path: string): Promise<PreparationInput> {
++  const input = preparationInput.parse(JSON.parse(await readFile(path, "utf8")));
++  return preparationInput.parse({
++    ...input,
++    domain: { ...input.domain, snapshotArtifact: resolve(dirname(path), input.domain.snapshotArtifact) },
++    sources: input.sources.map((s) => ({ ...s, path: resolve(dirname(path), s.path) })),
++  });
++}
++
++function pointerValue(root: unknown, pointer: string): unknown {
++  return pointer.split("/").slice(1).reduce<unknown>((current, part) => {
++    const key = part.replace(/~1/g, "/").replace(/~0/g, "~");
++    if (Array.isArray(current)) {
++      if (!/^(0|[1-9][0-9]*)$/.test(key)) throw new PreparationError("PROVENANCE", "invalid array pointer");
++      return current[Number(key)];
++    }
++    const object = z.record(z.unknown()).parse(current);
++    if (!Object.hasOwn(object, key)) throw new PreparationError("PROVENANCE", `missing pointer ${pointer}`);
++    return object[key];
++  }, root);
++}
++
++export async function validateProvenance(input: PreparationInput): Promise<void> {
++  const sources = new Map<string, Uint8Array>();
++  for (const source of input.sources) {
++    if (sources.has(source.id)) throw new PreparationError("PROVENANCE", `duplicate source ${source.id}`);
++    const bytes = await readFile(source.path);
++    if (BigInt(bytes.byteLength) !== BigInt(source.bytes) || fingerprint(bytes) !== source.sha256) {
++      throw new PreparationError("PROVENANCE", `source bytes differ: ${source.id}`);
++    }
++    sources.set(source.id, bytes);
++  }
++  if (!input.sources.some((s) => s.path === input.domain.snapshotArtifact)) {
++    throw new PreparationError("PROVENANCE", "snapshot ABI artifact must be fingerprinted");
++  }
++  const check = (proof: Proof, value: unknown): void => {
++    const raw = sources.get(proof.sourceId);
++    if (!raw) throw new PreparationError("PROVENANCE", `missing source ${proof.sourceId}`);
++    const recorded = pointerValue(JSON.parse(new TextDecoder().decode(raw)), proof.pointer);
++    if (canonical(recorded) !== canonical(value)) {
++      throw new PreparationError("PROVENANCE", `proof does not match full original: ${proof.sourceId}${proof.pointer}`);
++    }
++  };
++  for (const row of input.independent) for (const item of row.entitlements) check(item.proof, item.original);
++  for (const row of input.nfts) check(row.proof, row.original);
++  const descendants = new Set<string>();
++  for (const row of input.exposures) {
++    const { proof, ...record } = row;
++    check(proof, record);
++    const ids = row.descendants.map((d) => d.id);
++    if (new Set(ids).size !== ids.length) throw new PreparationError("PROVENANCE", "duplicate descendant");
++    for (const id of ids) {
++      if (descendants.has(id)) throw new PreparationError("PROVENANCE", "descendant overlaps another origin");
++      descendants.add(id);
++    }
++    const partition = row.descendants.reduce((sum, d) => sum + BigInt(d.units), 0n)
++      + BigInt(row.recoveredUnits) + BigInt(row.excludedUnits);
++    if (partition !== BigInt(row.originalUnits)) {
++      throw new PreparationError("PROVENANCE", `origin partition differs: ${row.originId}`);
++    }
++  }
++}
+diff --git a/scripts/recovery/dtf-migration/quotes.ts b/scripts/recovery/dtf-migration/quotes.ts
+new file mode 100644
+index 00000000..72c9462e
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/quotes.ts
+@@ -0,0 +1,115 @@
++import { AbiCoder, FetchRequest, Interface, JsonRpcProvider, Network, Result, keccak256 } from "ethers";
++import { readFile } from "node:fs/promises";
++import { z } from "zod";
++import { address, hash, hex, PreparationError, uint } from "./schema.js";
++import type { PreparationInput } from "./schema.js";
++import type { ConfigurationPayload } from "./payloads.js";
++
++const preview = new Interface(["function previewOriginalCredit(uint256,uint256) view returns (uint256)"]);
++const quantity = z.string().regex(/^0x[0-9a-fA-F]+$/);
++const header = z.object({ number: quantity, hash, parentHash: hash }).passthrough();
++export type Quote = {
++  readonly originalEth: string;
++  readonly originalDtf: string;
++  readonly ethCredit: string;
++  readonly dtfCredit: string;
++  readonly credit: string;
++};
++export type QuoteEvidence = {
++  readonly snapshot: string;
++  readonly snapshotId: string;
++  readonly blockHash: string;
++  readonly quotes: readonly Quote[];
++};
++
++// No signer is created. Only these explicit eth_* reads are sent by this module.
++export async function quoteOriginals(input: PreparationInput, payloads: ConfigurationPayload): Promise<QuoteEvidence> {
++  const url = process.env[input.domain.rpcEnv];
++  if (!url) throw new PreparationError("INPUT", `missing RPC environment variable ${input.domain.rpcEnv}`);
++  const endpoint = new URL(url);
++  if (!["http:", "https:"].includes(endpoint.protocol)) throw new PreparationError("DOMAIN", "HTTP RPC required");
++  if (input.purpose === "synthetic-local"
++    && !["localhost", "127.0.0.1", "[::1]"].includes(endpoint.hostname)) {
++    throw new PreparationError("DOMAIN", "synthetic inputs require loopback RPC");
++  }
++  const request = new FetchRequest(url);
++  request.timeout = 15000;
++  const provider = new JsonRpcProvider(request, new Network("dtf-operator", BigInt(input.domain.chainId)),
++    { batchMaxCount: 1, staticNetwork: true });
++  try {
++    const chain = quantity.parse(await provider.send("eth_chainId", []));
++    if (BigInt(chain).toString() !== input.domain.chainId) throw new PreparationError("DOMAIN", "wrong chain");
++    const blockTag = `0x${BigInt(input.domain.blockNumber).toString(16)}`;
++    const before = header.parse(await provider.send("eth_getBlockByNumber", [blockTag, false]));
++    if (before.hash !== input.domain.blockHash || BigInt(before.number).toString() !== input.domain.blockNumber) {
++      throw new PreparationError("DOMAIN", "wrong canonical block");
++    }
++    for (const role of ["proxy", "registry", "package", "facet"] as const) {
++      if (!input.domain.bindings.some((b) => b.role === role)) throw new PreparationError("DOMAIN", `missing ${role} binding`);
++    }
++    const proxies = input.domain.bindings.filter((b) => b.role === "proxy");
++    if (proxies.length !== 1 || proxies[0]?.address !== input.domain.proxy) {
++      throw new PreparationError("DOMAIN", "wrong proxy binding");
++    }
++    for (const binding of input.domain.bindings) {
++      const code = hex.parse(await provider.send("eth_getCode", [binding.address, blockTag]));
++      if (code === "0x" || keccak256(code) !== binding.codeHash) {
++        throw new PreparationError("DOMAIN", `wrong ${binding.role} code`);
++      }
++    }
++    const artifact = z.object({ abi: z.array(z.unknown()) }).parse(
++      JSON.parse(await readFile(input.domain.snapshotArtifact, "utf8")));
++    const iface = new Interface(JSON.stringify(artifact.abi));
++    const fragment = iface.getFunction("migrationSnapshot");
++    const output = fragment?.outputs[0];
++    if (!fragment || !output?.components) throw new PreparationError("INPUT", "missing snapshot ABI");
++    const encoded = hex.parse(await provider.send("eth_call", [
++      { to: input.domain.proxy, data: iface.encodeFunctionData(fragment) }, blockTag,
++    ]));
++    const snapshot: unknown = iface.decodeFunctionResult(fragment, encoded)[0];
++    if (!(snapshot instanceof Result)) throw new PreparationError("QUOTE", "invalid snapshot tuple");
++    const id = hash.parse(snapshot.getValue("id"));
++    const values = snapshot.toArray();
++    const idIndex = output.components.findIndex((p) => p.name === "id");
++    if (idIndex < 0) throw new PreparationError("INPUT", "missing snapshot ID ABI");
++    values[idIndex] = `0x${"0".repeat(64)}`;
++    const sealed = keccak256(AbiCoder.defaultAbiCoder().encode(["string", output],
++      ["IndexedEx.frozen-original-credit", values]));
++    const source: unknown = snapshot.getValue("source");
++    if (!(source instanceof Result) || sealed !== id || id !== input.domain.snapshotId
++      || address.parse(snapshot.getValue("consumer")) !== input.domain.proxy
++      || address.parse(source.getValue("subject")) !== input.domain.proxy
++      || BigInt(snapshot.getValue("chainId")).toString() !== input.domain.chainId
++      || BigInt(snapshot.getValue("version")) !== 1n) {
++      throw new PreparationError("DOMAIN", "snapshot identity/source mismatch");
++    }
++    const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts];
++    const pairs = new Map(originals.map((r) => [`${r.originalEth}:${r.originalDtf}`, r]));
++    const quotes: Quote[] = [];
++    for (const [, original] of [...pairs].sort(([a], [b]) => a.localeCompare(b))) {
++      const evaluate = async (eth: string, dtf: string): Promise<string> => {
++        const result = hex.parse(await provider.send("eth_call", [{
++          to: input.domain.proxy, data: preview.encodeFunctionData("previewOriginalCredit", [eth, dtf]),
++        }, blockTag]));
++        const decoded: unknown = preview.decodeFunctionResult("previewOriginalCredit", result)[0];
++        return z.bigint().transform((v) => uint.parse(v.toString())).parse(decoded);
++      };
++      const ethCredit = await evaluate(original.originalEth, "0");
++      const dtfCredit = await evaluate("0", original.originalDtf);
++      const credit = await evaluate(original.originalEth, original.originalDtf);
++      if (BigInt(ethCredit) + BigInt(dtfCredit) !== BigInt(credit)) {
++        throw new PreparationError("QUOTE", "independent component quote mismatch");
++      }
++      quotes.push({ originalEth: original.originalEth, originalDtf: original.originalDtf, ethCredit, dtfCredit, credit });
++    }
++    const after = header.parse(await provider.send("eth_getBlockByNumber", [blockTag, false]));
++    if (after.hash !== before.hash) throw new PreparationError("DOMAIN", "block changed during reads");
++    return { snapshot: encoded, snapshotId: id, blockHash: before.hash, quotes };
++  } catch (error) {
++    if (error instanceof PreparationError || error instanceof z.ZodError) throw error;
++    // RPC libraries can include private endpoints in errors; retain no resolved URL.
++    throw new PreparationError("QUOTE", "read-only RPC/ABI acquisition failed; no payload accepted");
++  } finally {
++    provider.destroy();
++  }
++}
+diff --git a/scripts/recovery/dtf-migration/rehearsal-chain.ts b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+new file mode 100644
+index 00000000..ccfb8d3f
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+@@ -0,0 +1,72 @@
++import { FetchRequest, Interface, JsonRpcProvider, Network } from "ethers";
++import { z } from "zod";
++import { address, hash, hex } from "./schema.js";
++import { ExecutionError, quantity, receipt } from "./execution-schema.js";
++import { subscribeReceipt } from "./execution-rpc.js";
++import type { Receipt } from "./execution-schema.js";
++
++export const LEGACY = {
++  weighted: "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
++  earlier: "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
++  receipt: "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
++  detf: "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
++  dtf: "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
++} as const;
++export const legacyAbi = new Interface([
++  "function ownerOf(uint256) view returns(address)",
++  "function approve(address,uint256)",
++  "function transfer(address,uint256) returns(bool)",
++  "function balanceOf(address) view returns(uint256)",
++  "function claimBond(uint256,address) returns(uint256,uint256)",
++  "function stakingState() view returns((uint256 totalGons,uint256 gonsPerUnit,uint256 accountedBacking,uint256 allocationDust,uint256 stakingDust,uint256 feeWeight,uint256 creatorWeight))",
++  "function exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns(uint256)",
++]);
++export class RehearsalChain {
++  readonly endpoint: URL;
++  readonly provider: JsonRpcProvider;
++  readonly receipts: Receipt[] = [];
++  constructor(port: string) {
++    this.endpoint = new URL(`http://127.0.0.1:${port}`);
++    const request = new FetchRequest(this.endpoint.toString());
++    request.timeout = 15000;
++    this.provider = new JsonRpcProvider(request, new Network("owned-anvil", 4663), { batchMaxCount: 1, staticNetwork: true, cacheTimeout: -1 });
++  }
++  async send(method: string, params: readonly unknown[]): Promise<unknown> { return this.provider.send(method, [...params]); }
++  async call(target: string, abi: Interface, method: string, args: readonly unknown[] = []) {
++    return abi.decodeFunctionResult(method, hex.parse(await this.send("eth_call", [{ to: target, data: abi.encodeFunctionData(method, args) }, "latest"])));
++  }
++  async canonicalReceipt(transactionHash: string): Promise<Receipt | undefined> {
++    const raw = await this.send("eth_getTransactionReceipt", [transactionHash]);
++    if (raw === null) return undefined;
++    const mined = receipt.parse(raw);
++    const block = z.object({ hash }).passthrough().parse(await this.send("eth_getBlockByNumber", [mined.blockNumber, false]));
++    if (block.hash !== mined.blockHash) throw new ExecutionError("AMBIGUOUS", "fixture receipt is not canonical");
++    return mined;
++  }
++  async transact(target: string, request: { readonly from: string; readonly data: string; readonly value?: string }) {
++    // This fixture-only path uses unlocked holders, never a production key.
++    // Subscribe before submitting; a pending event triggers the exact receipt read.
++    let selected: string | undefined;
++    const watch = await subscribeReceipt({ endpoint: this.endpoint,
++      canonicalReceipt: async () => selected ? this.canonicalReceipt(selected) : undefined }, `0x${"0".repeat(64)}`);
++    try {
++      const gasPrice = quantity.parse(await this.send("eth_gasPrice", []));
++      selected = hash.parse(await this.send("eth_sendTransaction", [{ ...request, to: target, gas: "0x5f5e100", gasPrice, type: "0x0" }]));
++      const mined = await watch.mined();
++      if (BigInt(mined.status) !== 1n) throw new ExecutionError("REVERT", `fixture transaction reverted: ${selected}`);
++      this.receipts.push(mined);
++      return mined;
++    } finally { watch.close(); }
++  }
++  async withHolder(tokenId: string, action: (holder: string) => Promise<void>) {
++    const holder = address.parse((await this.call(LEGACY.weighted, legacyAbi, "ownerOf", [tokenId]))[0]);
++    await this.send("anvil_setBalance", [holder, "0x3635c9adc5dea00000"]);
++    await this.send("anvil_impersonateAccount", [holder]);
++    try { await action(holder); }
++    finally { await this.send("anvil_stopImpersonatingAccount", [holder]); }
++  }
++  async timestamp(): Promise<bigint> {
++    return BigInt(z.object({ timestamp: quantity }).passthrough().parse(await this.send("eth_getBlockByNumber", ["latest", false])).timestamp);
++  }
++  close() { this.provider.destroy(); }
++}
+diff --git a/scripts/recovery/dtf-migration/rehearsal-data.ts b/scripts/recovery/dtf-migration/rehearsal-data.ts
+new file mode 100644
+index 00000000..7d60598b
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearsal-data.ts
+@@ -0,0 +1,158 @@
++import { readFile, writeFile } from "node:fs/promises";
++import { resolve, join } from "node:path";
++import { AbiCoder, Interface, Result, keccak256 } from "ethers";
++import type { ParamType } from "ethers";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++import { address, hash, hex, preparationInput } from "./schema.js";
++import type { PreparationInput } from "./schema.js";
++import { executionManifest, ExecutionError, packageArguments } from "./execution-schema.js";
++import type { ExecutionManifest } from "./execution-schema.js";
++import type { RehearsalChain } from "./rehearsal-chain.js";
++import { LEGACY } from "./rehearsal-chain.js";
++import { DEV } from "./execution-rpc.js";
++import { nftOrigin } from "./payloads.js";
++
++// Standard public Anvil mnemonic, derivation indices 100-103. The commonly
++// used indices 0-2 carry historical EIP-7702 code on this fork, so cannot receive
++// these NFTs without an ERC721Receiver implementation.
++export const RECIPIENTS = [
++  "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d",
++  "0x9586a4833970847aef259ad5bfb7aa8901ddf746",
++  "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
++  "0xc4c81d5c1851702d27d602aa8ff830a7689f17cc",
++] as const;
++export async function sourceFile(id: string, path: string) {
++  const fullPath = resolve(path);
++  const bytes = await readFile(fullPath);
++  return { id, path: fullPath, sha256: fingerprint(bytes), bytes: String(bytes.length),
++    provenance: { kind: "file" as const, authority: "synthetic-local rehearsal; not approved historical allocation" } };
++}
++export async function save(path: string, data: unknown) { await writeFile(path, `${canonical(data)}\n`, { flag: "wx" }); }
++export async function interfaceFile(path: string) {
++  const artifact = z.object({ abi: z.array(z.unknown()) }).parse(JSON.parse(await readFile(path, "utf8")));
++  return new Interface(JSON.stringify(artifact.abi));
++}
++function nativeJson(parameter: ParamType, value: unknown): unknown {
++  if (parameter.baseType === "array") {
++    if (!Array.isArray(value) || !parameter.arrayChildren) throw new ExecutionError("DOMAIN", "invalid ABI array");
++    const child = parameter.arrayChildren;
++    return value.map((entry) => nativeJson(child, entry));
++  }
++  if (parameter.baseType === "tuple") {
++    if (!(value instanceof Result) || !parameter.components) throw new ExecutionError("DOMAIN", "invalid ABI tuple");
++    return Object.fromEntries(parameter.components.map((child, index) => [child.name, nativeJson(child, value[index])]));
++  }
++  if (typeof value === "bigint") return value.toString();
++  return value;
++}
++export async function bootstrapManifest(chain: RehearsalChain, environmentPath: string): Promise<ExecutionManifest> {
++  const environment = z.object({
++    proxy: address, registry: address, package: address, weth: address,
++    pairToken: address, arguments: hex, proxyCodeHash: hash, facets: z.array(address),
++  }).strict().parse(JSON.parse(await readFile(environmentPath, "utf8")));
++  const sources = await Promise.all([
++    sourceFile("migration-abi", "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json"),
++    sourceFile("allocation-abi", "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json"),
++    sourceFile("recovery-abi", "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"),
++    sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
++    sourceFile("environment", environmentPath),
++  ]);
++  const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
++  const parameter = pkg.getFunction("deployVault")?.inputs[0];
++  if (!parameter) throw new ExecutionError("DOMAIN", "missing genuine package arguments ABI");
++  const deployment = packageArguments.parse(nativeJson(parameter, AbiCoder.defaultAbiCoder().decode([parameter], environment.arguments)[0]));
++  const bindings = [{ role: "proxy" as const, address: environment.proxy, codeHash: environment.proxyCodeHash }];
++  const bound = [
++    { role: "registry", address: environment.registry }, { role: "package", address: environment.package },
++    ...environment.facets.map((address) => ({ role: "facet", address })),
++  ];
++  const allBindings = [...bindings];
++  // Runtime boundary is parsed by executionManifest below.
++  const otherBindings = [];
++  for (const binding of bound) {
++    const code = hex.parse(await chain.send("eth_getCode", [binding.address, "latest"]));
++    if (code === "0x") throw new ExecutionError("DOMAIN", `environment did not deploy ${binding.role}`);
++    otherBindings.push({ ...binding, codeHash: keccak256(code) });
++  }
++  const metadata = z.object({
++    instanceId: z.string(), forkedNetwork: z.object({ forkBlockNumber: z.number().int().safe(), forkBlockHash: hash }).passthrough(),
++  }).passthrough().parse(await chain.send("anvil_metadata", []));
++  const deadline = (await chain.timestamp() + 3600n).toString();
++  return executionManifest.parse({
++    version: "dtf-operator-execution-v1", purpose: "synthetic-local", chainId: "4663", rpcEnv: "DTF_OPERATOR_LOCAL_RPC",
++    signer: DEV, local: { instanceId: metadata.instanceId, forkBlockNumber: String(metadata.forkedNetwork.forkBlockNumber),
++      forkBlockHash: metadata.forkedNetwork.forkBlockHash }, proxy: environment.proxy, registry: environment.registry,
++    package: environment.package, snapshotId: null, preparedManifest: null, deployment, sources,
++    bindings: [...allBindings, ...otherBindings],
++    funding: { donations: [{ id: `0x${fingerprint("synthetic donation one")}`, tokens: [environment.weth, LEGACY.dtf],
++      amounts: ["900000000000000000000", "1000000000000000000000"], nativeAmount: "100000000000000000000", minimum: "0", deadline }],
++    genesis: { legs: [
++      { token: environment.weth, amount: "1000000000000000000000", minSharesOut: "1" },
++      { token: LEGACY.dtf, amount: "1000000000000000000000", minSharesOut: "1" },
++    ], anchorIndex: "0", minimum: "1", deadline } },
++  });
++}
++
++export async function preparationFixture(chain: RehearsalChain, manifest: ExecutionManifest, directory: string) {
++  const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
++  const snapshot: unknown = (await chain.call(manifest.proxy, migration, "migrationSnapshot"))[0];
++  if (!(snapshot instanceof Result)) throw new ExecutionError("STATE", "snapshot tuple");
++  const block = z.object({ hash, number: z.string() }).passthrough().parse(await chain.send("eth_getBlockByNumber", ["latest", false]));
++  const domain = { chainId: "4663", proxy: manifest.proxy, snapshotId: hash.parse(snapshot.getValue("id")),
++    blockNumber: BigInt(block.number).toString(), blockHash: block.hash, rpcEnv: manifest.rpcEnv,
++    snapshotArtifact: resolve("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json"), bindings: manifest.bindings };
++  const recipients = RECIPIENTS;
++  for (const recipient of recipients) {
++    if (await chain.send("eth_getCode", [recipient, "latest"]) !== "0x") throw new ExecutionError("DOMAIN", "synthetic recipient is no longer an EOA");
++  }
++  await save(join(directory, "recipient-identity.json"), { recipients, derivationIndices: [100, 101, 102, 103], observedCode: "0x" });
++  const originals = recipients.map((_, i) => ({ entitlementId: `0x${fingerprint(`synthetic independent ${i}`)}`,
++    originalEth: "1000000000000", originalDtf: "0", evidenceId: `0x${fingerprint(`synthetic proof ${i}`)}` }));
++  const nfts = [
++    { collection: LEGACY.weighted, tokenId: "4", originalUnits: "281387179", originalEth: "30000000000000000",
++      originalDtf: "0", evidenceId: "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe", contributionsKnown: true as const },
++    { collection: LEGACY.weighted, tokenId: "26", originalUnits: "56299", originalEth: "0",
++      originalDtf: "50000000000000000000", evidenceId: "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d", contributionsKnown: true as const },
++    { collection: LEGACY.earlier, tokenId: "3", originalUnits: "562524912595035608166", originalEth: "2000000000000000000",
++      originalDtf: "0", evidenceId: "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75", contributionsKnown: true as const },
++  ];
++  const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
++    ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" }))];
++  const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
++    descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
++  const evidencePath = join(directory, "synthetic-originals.json");
++  await save(evidencePath, { originals, nfts, exposures });
++  const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
++  const input = preparationInput.parse({
++    version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
++    sources: [...manifest.sources, await sourceFile("synthetic-proof", evidencePath)],
++    exposures: exposures.map((e, i) => ({ ...e, proof: proof(`/exposures/${i}`) })),
++    independent: recipients.map((recipient, i) => ({ recipient, evidenceId: `0x${fingerprint(`synthetic group ${i}`)}`,
++      entitlements: [{ original: originals[i], proof: proof(`/originals/${i}`) }] })),
++    nfts: nfts.map((original, i) => ({ original, proof: proof(`/nfts/${i}`) })),
++    issueRecipients: recipients.slice(0, 3),
++    harvest: { steps: [{ stage: "WeightedClaim", tokenId: "4", amount: "0", minimum: "0" }],
++      deadline: (await chain.timestamp() + 365n * 86400n).toString() },
++  });
++  await save(join(directory, "input.json"), input);
++  return input;
++}
++
++export async function replacementFixture(input: PreparationInput, directory: string) {
++  const independent = input.independent.map((row) => row.recipient !== RECIPIENTS[0] ? row : {
++    ...row, entitlements: row.entitlements.map((e) => ({
++      ...e, original: { ...e.original, originalEth: (BigInt(e.original.originalEth) * 2n).toString() },
++    })),
++  });
++  const evidencePath = join(directory, "synthetic-replacement-originals.json");
++  await save(evidencePath, {
++    originals: independent.flatMap((row) => row.entitlements.map((e) => e.original)),
++    nfts: input.nfts.map((row) => row.original),
++    exposures: input.exposures.map(({ proof: _proof, ...exposure }) => exposure),
++  });
++  const replacement = preparationInput.parse({ ...input, independent,
++    sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
++  await save(join(directory, "replacement-input.json"), replacement);
++  return replacement;
++}
+diff --git a/scripts/recovery/dtf-migration/rehearsal-process.ts b/scripts/recovery/dtf-migration/rehearsal-process.ts
+new file mode 100644
+index 00000000..380d2f6f
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearsal-process.ts
+@@ -0,0 +1,66 @@
++import { spawn } from "node:child_process";
++import type { ChildProcess } from "node:child_process";
++import { once } from "node:events";
++import { writeFile } from "node:fs/promises";
++import { join } from "node:path";
++import { ExecutionError } from "./execution-schema.js";
++
++export const FOUNDRY = "/Users/cyotee/.foundry/bin";
++export async function child(command: readonly string[], evidence: string, environment = process.env) {
++  const executable = command[0];
++  if (!executable) throw new ExecutionError("DOMAIN", "empty command");
++  const process_ = spawn(executable, command.slice(1), { env: environment, stdio: ["ignore", "pipe", "pipe"] });
++  const exited = once(process_, "close", { signal: AbortSignal.timeout(3600000) });
++  let output = "";
++  process_.stdout?.on("data", (data: Buffer) => { output += data.toString(); });
++  process_.stderr?.on("data", (data: Buffer) => { output += data.toString(); });
++  let result: unknown[];
++  try { result = await exited; }
++  catch (error) { await stopProcess(process_); throw error; }
++  const [code, signal] = result;
++  await writeFile(evidence, output, { flag: "wx" });
++  await writeFile(`${evidence}.command.json`, JSON.stringify({ command, code, signal }), { flag: "wx" });
++  return { code, signal, output };
++}
++
++export async function launchAnvil(args: readonly string[], evidence: string, secret: string) {
++  const process_ = spawn(join(FOUNDRY, "anvil"), [...args], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
++  let output = "";
++  const scrub = (text: string) => text.replaceAll(secret, "<redacted-upstream>");
++  const ready = new Promise<void>((resolve, reject) => {
++    const signal = AbortSignal.timeout(30000);
++    const abort = () => reject(new ExecutionError("RPC", "Anvil did not emit readiness before deadline"));
++    signal.addEventListener("abort", abort, { once: true });
++    const data = (chunk: Buffer) => {
++      output += scrub(chunk.toString());
++      if (output.includes("Listening on")) {
++        signal.removeEventListener("abort", abort);
++        resolve();
++      }
++    };
++    process_.stdout?.on("data", data);
++    process_.stderr?.on("data", data);
++    process_.once("error", reject);
++    process_.once("exit", (code) => reject(new ExecutionError("RPC", `Anvil exited before readiness: ${code}`)));
++  });
++  try { await ready; }
++  catch (error) {
++    await stopProcess(process_);
++    await writeFile(evidence, output, { flag: "wx" });
++    throw error;
++  }
++  return {
++    pid: process_.pid,
++    async close() {
++      await stopProcess(process_);
++      await writeFile(evidence, output, { flag: "wx" });
++    },
++  };
++}
++
++async function stopProcess(process_: ChildProcess) {
++  if (process_.exitCode !== null || process_.signalCode !== null) return;
++  const exited = once(process_, "exit", { signal: AbortSignal.timeout(15000) });
++  process_.kill("SIGTERM");
++  await exited;
++}
+diff --git a/scripts/recovery/dtf-migration/rehearsal-proof.ts b/scripts/recovery/dtf-migration/rehearsal-proof.ts
+new file mode 100644
+index 00000000..7eed588a
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearsal-proof.ts
+@@ -0,0 +1,80 @@
++import { readFile, readdir } from "node:fs/promises";
++import { join } from "node:path";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++import { completion, intent, ExecutionError } from "./execution-schema.js";
++import type { Intent, Receipt } from "./execution-schema.js";
++import type { PreparationInput } from "./schema.js";
++import type { RehearsalChain } from "./rehearsal-chain.js";
++import { save } from "./rehearsal-data.js";
++
++export async function interruptedReceipt(chain: RehearsalChain, checkpoint: string, evidence: string) {
++  const files = await readdir(checkpoint);
++  const incomplete = files.filter((name) => name.endsWith(".intent.json")
++    && !files.includes(name.replace(".intent.json", ".receipt.json")));
++  if (incomplete.length !== 1 || !incomplete[0]) throw new ExecutionError("STATE", "expected one mined incomplete intent");
++  const record = intent.parse(JSON.parse(await readFile(join(checkpoint, incomplete[0]), "utf8")));
++  const mined = await chain.canonicalReceipt(record.transactionHash);
++  if (!mined || BigInt(mined.status) !== 1n) throw new ExecutionError("STATE", "interrupted intent lacks successful canonical receipt");
++  const actual = z.object({ hash: z.string(), nonce: z.string() }).passthrough().parse(
++    await chain.send("eth_getTransactionByHash", [record.transactionHash]));
++  if (actual.hash !== record.transactionHash || BigInt(actual.nonce).toString() !== record.nonce) {
++    throw new ExecutionError("STATE", "interrupted transaction identity differs");
++  }
++  await save(evidence, { intent: record, receipt: mined, transaction: actual, completionPresent: false });
++  return { intent: record, receipt: mined };
++}
++
++export async function recoveredReceipt(
++  before: { readonly intent: Intent; readonly receipt: Receipt }, checkpoint: string, evidence: string,
++) {
++  const after = completion.parse(JSON.parse(await readFile(join(checkpoint, `${before.intent.id}.receipt.json`), "utf8")));
++  if (after.intentHash !== fingerprint(canonical(before.intent)) || canonical(after.receipt) !== canonical(before.receipt)) {
++    throw new ExecutionError("STATE", "resume did not recover the identical mined transaction");
++  }
++  await save(evidence, { transactionHash: before.intent.transactionHash, nonce: before.intent.nonce,
++    sameCanonicalReceipt: true, events: after.events, state: after.state });
++}
++
++export async function checkRemainingOrder(input: PreparationInput, checkpoint: string, evidence: string) {
++  const selected = [...input.issueRecipients].sort();
++  if (selected.length < 3) throw new ExecutionError("STATE", "reordering needs at least two unsettled issuance rows");
++  const rows = [];
++  for (const file of await readdir(checkpoint)) {
++    if (!file.endsWith(".intent.json")) continue;
++    const record = intent.parse(JSON.parse(await readFile(join(checkpoint, file), "utf8")));
++    const done = completion.parse(JSON.parse(await readFile(join(checkpoint, `${record.id}.receipt.json`), "utf8")));
++    const issued = done.events.find((event) => event.name === "IndependentAllocationIssued");
++    if (!issued) throw new ExecutionError("STATE", "issuance lacks emitted identity");
++    rows.push({ nonce: record.nonce, transactionHash: record.transactionHash,
++      recipient: issued.values[0]?.toLowerCase(), bondTokenId: issued.values[2], credit: issued.values[3] });
++  }
++  rows.sort((a, b) => BigInt(a.nonce) < BigInt(b.nonce) ? -1 : 1);
++  const expected = [selected[0], ...selected.slice(1).reverse()];
++  if (canonical(rows.map((row) => row.recipient)) !== canonical(expected)
++    || new Set(rows.map((row) => row.bondTokenId)).size !== selected.length) {
++    throw new ExecutionError("STATE", "remaining issuance was not reversed exactly once");
++  }
++  await save(evidence, { originalOrder: selected, expectedAfterInterruption: expected, actual: rows });
++}
++
++export async function checkPreparation(context: {
++  readonly input: PreparationInput; readonly evidence: string;
++  readonly cli: (args: readonly string[]) => Promise<unknown>;
++}) {
++  const { input, evidence, cli } = context;
++  const path = join(evidence, "reordered-input.json");
++  await save(path, { ...input, sources: [...input.sources].reverse(), exposures: [...input.exposures].reverse(),
++    independent: [...input.independent].reverse(), nfts: [...input.nfts].reverse(),
++    issueRecipients: [...input.issueRecipients].reverse(),
++    domain: { ...input.domain, bindings: [...input.domain.bindings].reverse() } });
++  await cli(["prepare", "--input", path, "--output", join(evidence, "prepared-reordered")]);
++  const outputs = [];
++  for (const name of ["manifest.json", "independent.json", "nfts.json"]) {
++    const original = await readFile(join(evidence, "prepared", name));
++    const reordered = await readFile(join(evidence, "prepared-reordered", name));
++    if (!original.equals(reordered)) throw new ExecutionError("STATE", "preparation depends on input order");
++    outputs.push({ name, bytes: original.length, sha256: fingerprint(original), byteIdentical: true });
++  }
++  await save(join(evidence, "deterministic-preparation.json"), { outputs });
++}
+diff --git a/scripts/recovery/dtf-migration/rehearsal-recovery.ts b/scripts/recovery/dtf-migration/rehearsal-recovery.ts
+new file mode 100644
+index 00000000..a63a7df4
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearsal-recovery.ts
+@@ -0,0 +1,79 @@
++import { join } from "node:path";
++import { address } from "./schema.js";
++import type { PreparationInput, RecoveryStep } from "./schema.js";
++import type { ExecutionManifest } from "./execution-schema.js";
++import { ExecutionError } from "./execution-schema.js";
++import { LEGACY, legacyAbi } from "./rehearsal-chain.js";
++import type { RehearsalChain } from "./rehearsal-chain.js";
++import { interfaceFile, save } from "./rehearsal-data.js";
++import { DEV } from "./execution-rpc.js";
++
++type Context = {
++  readonly chain: RehearsalChain; readonly manifest: ExecutionManifest; readonly input: PreparationInput;
++  readonly evidence: string; readonly runtime: string; readonly local: readonly string[];
++  readonly cli: (args: readonly string[], expected?: "success" | "fault" | "reject") => Promise<unknown>;
++};
++export async function exerciseRecovery(context: Context) {
++  const { chain, manifest, input, evidence, runtime, cli, local } = context;
++  const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
++  const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
++  for (const nft of input.nfts) {
++    const { collection, tokenId } = nft.original;
++    const holder = address.parse((await chain.call(collection, legacyAbi, "ownerOf", [tokenId]))[0]);
++    await chain.send("anvil_setBalance", [holder, "0x3635c9adc5dea00000"]);
++    await chain.send("anvil_impersonateAccount", [holder]);
++    try {
++      await chain.transact(collection, { from: holder, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
++      await chain.transact(manifest.proxy, { from: holder, data: migration.encodeFunctionData("surrenderMigrationNft",
++        [collection, tokenId, "1", (await chain.timestamp() + 3600n).toString()]) });
++      const consumed = (await chain.call(manifest.proxy, migration, "nftSurrender", [collection, tokenId]))[0];
++      if (!consumed.consumed || consumed.holder.toLowerCase() !== holder) throw new ExecutionError("STATE", "real caller surrender not consumed");
++    } finally { await chain.send("anvil_stopImpersonatingAccount", [holder]); }
++  }
++  let sequence = 0;
++  const harvest = async (step: RecoveryStep) => {
++    const name = `harvest-${String(++sequence).padStart(2, "0")}-${step.stage}`;
++    const path = join(evidence, `${name}-input.json`);
++    const directory = join(evidence, name);
++    await save(path, { ...input, harvest: { steps: [step], deadline: (await chain.timestamp() + 3600n).toString() } });
++    await cli(["prepare", "--input", path, "--output", directory]);
++    const executionPath = join(evidence, `${name}-execution.json`);
++    await save(executionPath, { ...manifest, preparedManifest: join(directory, "manifest.json") });
++    await cli(["harvest", "--manifest", executionPath, "--checkpoint", join(runtime, name), ...local]);
++  };
++  const nftStep = (stage: RecoveryStep["stage"], tokenId: string): RecoveryStep => ({ stage, tokenId, amount: "0", minimum: "0" });
++  const conversion = (stage: RecoveryStep["stage"], amount: bigint): RecoveryStep => ({
++    stage, tokenId: "0", amount: amount.toString(), minimum: stage === "WeightedUnstake" ? "0" : "1",
++  });
++  await harvest(nftStep("WeightedClaim", "4"));
++  await harvest(nftStep("WeightedPrincipal", "26"));
++  await harvest(nftStep("WeightedRewards", "26"));
++  const original = BigInt((await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [LEGACY.receipt]))[0]);
++  if (original === 0n) throw new ExecutionError("STATE", "weighted claims created no attributed inventory");
++  await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 8n * 3600n)]);
++  await chain.send("evm_mine", []);
++  await harvest(conversion("WeightedUnstake", original));
++  const gons = BigInt((await chain.call(manifest.proxy, recovery, "migrationRecoveryGons"))[0]);
++  const divisor = BigInt((await chain.call(LEGACY.receipt, legacyAbi, "stakingState"))[0].gonsPerUnit);
++  const accrued = gons / divisor;
++  if (accrued === 0n) throw new ExecutionError("STATE", "accrued attributed recovery witness did not grow");
++  // Use attributed gons only. The execution path simulates the actual synchronized
++  // source operation before signing; never substitute proxy balance or stored zero.
++  await harvest(conversion("WeightedUnstake", accrued));
++  const weighted = BigInt((await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [LEGACY.detf]))[0]);
++  if (weighted !== original + accrued) throw new ExecutionError("STATE", "actual gon recovery output differs");
++  await harvest(conversion("WeightedConvert", weighted));
++  const recovered = BigInt((await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [LEGACY.dtf]))[0]);
++  const donation = recovered > 10n ** 18n ? 10n ** 18n : recovered;
++  await harvest(conversion("Donate", donation));
++  await harvest(nftStep("EarlierClaim", "3"));
++  await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 365n * 86400n)]);
++  await chain.send("evm_mine", []);
++  await harvest({ ...nftStep("EarlierSale", "3"), minimum: "1" });
++  await save(join(evidence, "recovery-observation.json"), {
++    original: original.toString(), attributedGonsAfterOriginalSpent: gons.toString(), synchronizedDivisor: divisor.toString(),
++    accrued: accrued.toString(), actualWeightedOutput: weighted.toString(), convertedDtf: recovered.toString(),
++    donated: donation.toString(), fixedDestination: manifest.proxy, owner: DEV,
++    earlierLiquidation: "blocked: SB-E1/E2/E3/E4; sale-and-hold is not liquidation",
++  });
++}
+diff --git a/scripts/recovery/dtf-migration/rehearse.ts b/scripts/recovery/dtf-migration/rehearse.ts
+new file mode 100644
+index 00000000..6ca97734
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearse.ts
+@@ -0,0 +1,226 @@
++import { spawn } from "node:child_process";
++import { once } from "node:events";
++import { copyFile, mkdir, readFile, rm, readdir } from "node:fs/promises";
++import { resolve, join, dirname } from "node:path";
++import { z } from "zod";
++import { Interface } from "ethers";
++import { child, FOUNDRY, launchAnvil } from "./rehearsal-process.js";
++import { RehearsalChain, LEGACY, legacyAbi } from "./rehearsal-chain.js";
++import { bootstrapManifest, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
++import { DEV } from "./execution-rpc.js";
++import { ExecutionError, rpcLog } from "./execution-schema.js";
++import { hash } from "./schema.js";
++import { exerciseRecovery } from "./rehearsal-recovery.js";
++import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt } from "./rehearsal-proof.js";
++
++const PIN_HASH = "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733";
++async function resolveAlias(): Promise<string> {
++  const config = spawn(join(FOUNDRY, "forge"), ["config", "--json"], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
++  const exit = once(config, "exit", { signal: AbortSignal.timeout(15000) });
++  let output = "";
++  config.stdout?.on("data", (data: Buffer) => { output += data.toString(); });
++  config.stderr?.resume();
++  if ((await exit)[0] !== 0) throw new ExecutionError("RPC", "existing Foundry alias resolution failed");
++  const parsed = z.object({ rpc_endpoints: z.record(z.string(), z.string()) }).passthrough().parse(JSON.parse(output));
++  const url = parsed.rpc_endpoints["robinhood_mainnet_alchemy"]?.replace(/\$\{([A-Z][A-Z0-9_]*)\}/g,
++    (match: string, key: string) => process.env[key] ?? match);
++  if (!url || url.includes("${")) throw new ExecutionError("RPC", "existing archive credential is unavailable");
++  return url;
++}
++
++export async function rehearse(options: {
++  readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
++  readonly checkpoint: string; readonly evidence: string;
++}) {
++  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18560") {
++    throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
++  }
++  const evidence = resolve(options.evidence, "execution", `rehearsal-${Date.now()}`);
++  const runtime = resolve(options.checkpoint);
++  await mkdir(evidence, { recursive: true });
++  const upstream = await resolveAlias();
++  await mkdir(dirname(runtime), { recursive: true });
++  // Rehearsals never reuse an earlier node's runtime. Evidence remains outside it.
++  await mkdir(runtime, { recursive: false, mode: 0o700 });
++  const args = ["--host", "127.0.0.1", "--port", options.port, "--chain-id", "4663",
++    "--fork-url", upstream, "--fork-block-number", options.forkBlock, "--gas-limit", "100000000",
++    "--disable-min-priority-fee", "--balance", "1000000"];
++  await save(join(evidence, "anvil-command.json"), { command: [join(FOUNDRY, "anvil"), ...args.map((a) => a === upstream ? "<resolved archive alias>" : a)] });
++  let node: Awaited<ReturnType<typeof launchAnvil>>;
++  try { node = await launchAnvil(args, join(evidence, "anvil.log"), upstream); }
++  catch (error) {
++    await rm(runtime, { recursive: true });
++    await save(join(evidence, "cleanup.json"), { node: "launch failed and process stopped", runtime: "removed" });
++    throw error;
++  }
++  const chain = new RehearsalChain(options.port);
++  const previousRpc = process.env["DTF_OPERATOR_LOCAL_RPC"];
++  process.env["DTF_OPERATOR_LOCAL_RPC"] = chain.endpoint.toString();
++  let sequence = 0;
++  const cli = async (args: readonly string[], expected: "success" | "fault" | "reject" = "success") => {
++    const nonceBefore = expected === "reject" ? await chain.send("eth_getTransactionCount", [DEV, "latest"]) : undefined;
++    const result = await child([process.execPath, "scripts/recovery/dtf-migration/cli.ts", ...args],
++      join(evidence, `${String(++sequence).padStart(3, "0")}-${args[0]}.log`));
++    if (expected === "success" && result.code !== 0) throw new ExecutionError("STATE", `CLI ${args[0]} failed; see command evidence`);
++    if (expected === "fault" && (result.signal !== "SIGKILL" || !result.output.includes('"fault":"mined-before-checkpoint"'))) {
++      throw new ExecutionError("STATE", "expected actual mined interruption did not occur");
++    }
++    if (expected === "reject") {
++      if (result.code !== 1) throw new ExecutionError("STATE", "negative did not fail with a controlled rejection");
++      z.object({ error: z.literal("DOMAIN") }).passthrough().parse(JSON.parse(result.output.trim()));
++      const nonceAfter = await chain.send("eth_getTransactionCount", [DEV, "latest"]);
++      if (nonceBefore !== nonceAfter) throw new ExecutionError("STATE", "rejected command submitted a transaction");
++      await save(join(evidence, `${String(sequence).padStart(3, "0")}-rejection.json`), { nonceBefore, nonceAfter, error: "DOMAIN" });
++    }
++    return result;
++  };
++  try {
++    const pin = z.object({ hash, number: z.string(), l1BlockNumber: z.string().optional() }).passthrough().parse(
++      await chain.send("eth_getBlockByNumber", ["0x67e5d17", false]));
++    if (pin.hash !== PIN_HASH) throw new ExecutionError("DOMAIN", "historical header does not match");
++    await save(join(evidence, "historical-header.json"), pin);
++    await chain.send("anvil_setBalance", [DEV, "0xd3c21bcecceda1000000"]);
++    await chain.withHolder("3", async (holder) => {
++      await chain.transact(LEGACY.weighted, { from: holder, data: legacyAbi.encodeFunctionData("claimBond", ["3", holder]) });
++      const held = String((await chain.call(LEGACY.receipt, legacyAbi, "balanceOf", [holder]))[0]);
++      const deadline = (await chain.timestamp() + 3600n).toString();
++      await chain.transact(LEGACY.receipt, { from: holder,
++        data: legacyAbi.encodeFunctionData("exchangeIn", [LEGACY.receipt, held, LEGACY.detf, held, holder, false, deadline]) });
++      await chain.transact(LEGACY.detf, { from: holder, data: legacyAbi.encodeFunctionData("approve", [LEGACY.detf, held]) });
++      await chain.transact(LEGACY.detf, { from: holder,
++        data: legacyAbi.encodeFunctionData("exchangeIn", [LEGACY.detf, held, LEGACY.dtf, "10000000000000000000000", holder, false, deadline]) });
++      await chain.transact(LEGACY.dtf, { from: holder,
++        data: legacyAbi.encodeFunctionData("transfer", [DEV, "10000000000000000000000"]) });
++    });
++    const environmentPath = join(evidence, "environment.json");
++    const environment: NodeJS.ProcessEnv = { ...process.env, SENDER: DEV, OPERATOR_ENVIRONMENT_OUTPUT: environmentPath,
++      PATH: `${FOUNDRY}:${process.env["PATH"] ?? ""}` };
++    delete environment["PRIVATE_KEY"];
++    const setup = await child([join(FOUNDRY, "forge"), "script", "--use", "solar",
++      "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
++      "--sig", "prepareEnvironment()", "--rpc-url", chain.endpoint.toString(), "--sender", DEV,
++      "--unlocked", "--broadcast", "--slow", "--legacy", "--gas-price", "2000000000",
++      "--gas-limit", "1000000000", "--gas-estimate-multiplier", "200"],
++    join(evidence, "environment-stage.log"), environment);
++    if (setup.code !== 0) throw new ExecutionError("STATE", "genuine environment stage failed");
++    await copyFile("broadcast/Phase_08_Stage_00_OperatorEnvironment.s.sol/4663/prepareEnvironment-latest.json",
++      join(evidence, "environment-mined-transactions.json"));
++    const manifest = await bootstrapManifest(chain, environmentPath);
++    const pre = join(evidence, "pre-capture.json");
++    await save(pre, manifest);
++    const local = ["--execute-local", "--instance-id", manifest.local?.instanceId ?? ""];
++    await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy")]);
++    await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy"), ...local]);
++    const fund = join(runtime, "fund");
++    await cli(["fund", "--manifest", pre, "--checkpoint", fund, ...local, "--fault-after-mined"], "fault");
++    const donationFault = await interruptedReceipt(chain, fund, join(evidence, "donation-before-resume.json"));
++    const donorNonce = await chain.send("eth_getTransactionCount", [DEV, "latest"]);
++    await cli(["resume", "--manifest", pre, "--checkpoint", fund]);
++    if (await chain.send("eth_getTransactionCount", [DEV, "latest"]) !== donorNonce) throw new ExecutionError("STATE", "default resume sent a transaction");
++    await cli(["resume", "--manifest", pre, "--checkpoint", fund, ...local]);
++    await recoveredReceipt(donationFault, fund, join(evidence, "donation-resumed.json"));
++    await cli(["resume", "--manifest", pre, "--checkpoint", fund, ...local, "--reverse"], "reject");
++    const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
++    const receivedEvent = migration.getEvent("MigrationCapitalReceived");
++    if (!receivedEvent) throw new ExecutionError("STATE", "missing donation event ABI");
++    const fundingLogs = z.array(rpcLog).parse(await chain.send("eth_getLogs", [{
++      address: manifest.proxy, fromBlock: "0x67e5d17", toBlock: "latest", topics: [receivedEvent.topicHash],
++    }]));
++    const fundingTotals = new Map<string, bigint>();
++    for (const log of fundingLogs) {
++      const parsed = migration.parseLog({ topics: [...log.topics], data: log.data });
++      if (!parsed || String(parsed.args[0]).toLowerCase() !== DEV) throw new ExecutionError("STATE", "unexpected funding donor");
++      const token = String(parsed.args[1]).toLowerCase();
++      fundingTotals.set(token, (fundingTotals.get(token) ?? 0n) + z.bigint().parse(parsed.args[2]));
++    }
++    if (fundingTotals.get(manifest.deployment?.weth ?? "") !== 1000n * 10n ** 18n
++      || fundingTotals.get(LEGACY.dtf) !== 1000n * 10n ** 18n) throw new ExecutionError("STATE", "donation was duplicated or incompletely recovered");
++    const supplyAbi = new Interface(["function totalSupply() view returns(uint256)"]);
++    const genesisSupply = String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]);
++    await save(join(evidence, "funding-observation.json"), { donorNonce,
++      totals: Object.fromEntries([...fundingTotals].map(([token, amount]) => [token, amount.toString()])),
++      actualCapitalEvents: fundingLogs.length, genesisSupply });
++    await cli(["capture", "--manifest", pre, "--checkpoint", join(runtime, "capture"), ...local]);
++    let input = await preparationFixture(chain, manifest, evidence);
++    const prepared = join(evidence, "prepared");
++    await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
++    await cli(["validate", "--manifest", join(prepared, "manifest.json")]);
++    await checkPreparation({ input, evidence, cli });
++    let post = { ...manifest, snapshotId: input.domain.snapshotId, preparedManifest: join(prepared, "manifest.json") };
++    let postPath = join(evidence, "post-capture.json");
++    await save(postPath, post);
++    await cli(["configure", "--manifest", postPath, "--checkpoint", join(runtime, "configure"), ...local, "--reverse"]);
++    const supplyBefore = String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]);
++    if (supplyBefore !== genesisSupply) throw new ExecutionError("STATE", "configuration minted supply");
++    const issue = join(runtime, "issue");
++    await cli(["independent-issue", "--manifest", postPath, "--checkpoint", issue, ...local, "--fault-after-mined"], "fault");
++    const issueFault = await interruptedReceipt(chain, issue, join(evidence, "issuance-before-resume.json"));
++    const issueNonce = await chain.send("eth_getTransactionCount", [DEV, "latest"]);
++    await cli(["resume", "--manifest", postPath, "--checkpoint", issue]);
++    if (await chain.send("eth_getTransactionCount", [DEV, "latest"]) !== issueNonce) throw new ExecutionError("STATE", "default issuance resume sent");
++    await cli(["resume", "--manifest", postPath, "--checkpoint", issue, ...local, "--reverse"]);
++    await recoveredReceipt(issueFault, issue, join(evidence, "issuance-resumed.json"));
++    await checkRemainingOrder(input, issue, join(evidence, "reordered-issuance.json"));
++    await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify")]);
++    const unclaimed = (await chain.call(manifest.proxy, migration, "independentIssuance",
++      [RECIPIENTS[3]]))[0];
++    if (unclaimed.issued || unclaimed.bondTokenId !== 0n) throw new ExecutionError("STATE", "unselected configuration issued");
++    await save(join(evidence, "issuance-observation.json"), { supplyBefore,
++      supplyAfter: String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]),
++      unclaimedIssued: unclaimed.issued, unclaimedBond: String(unclaimed.bondTokenId) });
++    for (const field of ["chainId", "proxy", "package", "snapshotId"] as const) {
++      const changed = { ...post, [field]: field === "chainId" ? "1" : field === "snapshotId" ? `0x${"9".repeat(64)}` : "0x1111111111111111111111111111111111111111" };
++      const changedPath = join(evidence, `reject-${field}.json`);
++      await save(changedPath, changed);
++      await cli(["resume", "--manifest", changedPath, "--checkpoint", issue, ...local], "reject");
++    }
++    const tamperedPath = join(evidence, "tampered-prepared.json");
++    await save(tamperedPath, { ...JSON.parse(await readFile(post.preparedManifest, "utf8")), payloadHash: "f".repeat(64) });
++    const tamperedExecution = join(evidence, "reject-payload.json");
++    await save(tamperedExecution, { ...post, preparedManifest: tamperedPath });
++    await cli(["resume", "--manifest", tamperedExecution, "--checkpoint", issue, ...local], "reject");
++    const issuedBeforeReplacement = (await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString();
++    const replacementSupply = String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]);
++    input = await replacementFixture(input, evidence);
++    const replacement = join(evidence, "replacement");
++    await cli(["prepare", "--input", join(evidence, "replacement-input.json"), "--output", replacement]);
++    post = { ...post, preparedManifest: join(replacement, "manifest.json") };
++    postPath = join(evidence, "replacement-execution.json");
++    await save(postPath, post);
++    await cli(["configure", "--manifest", postPath, "--checkpoint", join(runtime, "replacement"), ...local]);
++    if ((await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString() !== issuedBeforeReplacement
++      || String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]) !== replacementSupply) {
++      throw new ExecutionError("STATE", "full replacement modified delivered issuance or supply");
++    }
++    await save(join(evidence, "replacement-observation.json"), { issuedBeforeReplacement, replacementSupply,
++      issuedAfterReplacement: (await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString() });
++    await exerciseRecovery({ chain, manifest: post, input, evidence, runtime, cli, local });
++    await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
++    await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
++    return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
++  } catch (error) {
++    if (error instanceof Error) await save(join(evidence, "failure.json"), {
++      name: error.name, message: error instanceof ExecutionError ? error.message : "local rehearsal dependency failed",
++      code: error instanceof ExecutionError ? error.code : "LOCAL_DEPENDENCY",
++    });
++    throw error;
++  } finally {
++    try {
++      await save(join(evidence, "fixture-receipts.json"), chain.receipts);
++      // Copy raw bytes, including an interrupted partial publication, as evidence.
++      for (const name of await readdir(runtime)) {
++        const source = join(runtime, name);
++        const target = join(evidence, `journal-${name}`);
++        await mkdir(target);
++        for (const file of await readdir(source)) await copyFile(join(source, file), join(target, file));
++      }
++    } finally {
++      chain.close();
++      await node.close();
++      await rm(runtime, { recursive: true });
++      if (previousRpc === undefined) delete process.env["DTF_OPERATOR_LOCAL_RPC"];
++      else process.env["DTF_OPERATOR_LOCAL_RPC"] = previousRpc;
++      await save(join(evidence, "cleanup.json"), { pid: node.pid, node: "exited", runtime: "removed", checkpoint: runtime, evidence: "retained" });
++    }
++  }
++}
+diff --git a/scripts/recovery/dtf-migration/schema.ts b/scripts/recovery/dtf-migration/schema.ts
+new file mode 100644
+index 00000000..ca7525de
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/schema.ts
+@@ -0,0 +1,116 @@
++import { z } from "zod";
++
++export const uint = z.string().regex(/^[0-9]+$/).transform((v) => BigInt(v).toString())
++  .refine((v) => BigInt(v) < 2n ** 256n, "uint256 overflow");
++export const positive = uint.refine((v) => BigInt(v) > 0n, "positive integer required");
++export const address = z.string().regex(/^0x[0-9a-fA-F]{40}$/).transform((v) => v.toLowerCase())
++  .refine((v) => v !== `0x${"0".repeat(40)}`, "zero address");
++export const hash = z.string().regex(/^0x[0-9a-fA-F]{64}$/).transform((v) => v.toLowerCase());
++export const identity = hash.refine((v) => v !== `0x${"0".repeat(64)}`, "zero identity");
++export const sha256 = z.string().regex(/^[0-9a-f]{64}$/);
++export const hex = z.string().regex(/^0x(?:[0-9a-fA-F]{2})*$/).transform((v) => v.toLowerCase());
++export const categories = [
++  "independent", "weighted-nft", "earlier-nft", "weighted-liquid", "earlier-liquid",
++  "weighted-receipt", "earlier-receipt", "weighted-sy", "token-staking",
++  "claim-vault", "underlying-se", "fungible-lp", "earlier-liquidation",
++] as const;
++export const proof = z.object({
++  sourceId: z.string().min(1),
++  pointer: z.string().regex(/^(?:\/(?:[^~]|~[01])*)*$/),
++}).strict().readonly();
++export const original = z.object({
++  entitlementId: identity,
++  originalEth: uint,
++  originalDtf: uint,
++  evidenceId: identity,
++}).strict().readonly();
++export const independent = z.object({
++  recipient: address,
++  evidenceId: identity,
++  entitlements: z.array(z.object({ original, proof }).strict().readonly()).min(1).readonly(),
++}).strict().readonly();
++export const nftOriginal = z.object({
++  collection: address,
++  tokenId: uint.refine((v) => BigInt(v) >= 3n, "reserved NFT ID"),
++  originalUnits: positive,
++  originalEth: uint,
++  originalDtf: uint,
++  evidenceId: identity,
++  contributionsKnown: z.literal(true),
++}).strict().readonly();
++export const nft = z.object({ original: nftOriginal, proof }).strict().readonly();
++export const binding = z.object({
++  role: z.enum(["proxy", "registry", "package", "facet"]),
++  address,
++  codeHash: identity,
++}).strict().readonly();
++export const domain = z.object({
++  chainId: positive,
++  proxy: address,
++  snapshotId: identity,
++  blockNumber: uint,
++  blockHash: identity,
++  rpcEnv: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
++  snapshotArtifact: z.string().min(1),
++  bindings: z.array(binding).min(4).readonly(),
++}).strict().readonly();
++export const source = z.object({
++  id: z.string().min(1),
++  path: z.string().min(1),
++  sha256,
++  bytes: uint,
++  provenance: z.discriminatedUnion("kind", [
++    z.object({ kind: z.literal("file"), authority: z.string().min(1) }).strict(),
++    z.object({
++      kind: z.literal("chain"), chainId: positive, blockNumber: uint, blockHash: identity,
++      contract: address, method: z.enum(["eth_getLogs", "eth_getTransactionReceipt", "eth_call", "eth_getCode"]),
++      locator: z.string().min(1),
++    }).strict(),
++  ]).readonly(),
++}).strict().readonly();
++// Every economic origin is partitioned, in its own source-specific unit.
++// Descendants/recoveries are accounting observations, never extra quote inputs.
++export const exposure = z.object({
++  originId: identity,
++  category: z.enum(categories),
++  originalUnits: positive,
++  descendants: z.array(z.object({ id: identity, units: uint }).strict().readonly()).readonly(),
++  recoveredUnits: uint,
++  excludedUnits: uint,
++  proof,
++}).strict().readonly();
++export const recoveryStep = z.object({
++  stage: z.enum(["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
++    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate"]),
++  tokenId: uint,
++  amount: uint,
++  minimum: uint,
++}).strict().readonly();
++export const preparationInput = z.object({
++  version: z.literal("dtf-operator-preparation-v1"),
++  purpose: z.enum(["synthetic-local", "operational-review"]),
++  domain,
++  sources: z.array(source).min(1).readonly(),
++  exposures: z.array(exposure).readonly(),
++  independent: z.array(independent).readonly(),
++  nfts: z.array(nft).readonly(),
++  issueRecipients: z.array(address).readonly(),
++  harvest: z.object({
++    steps: z.array(recoveryStep).max(8).readonly(),
++    deadline: uint,
++  }).strict().readonly(),
++}).strict().readonly();
++
++export type PreparationInput = z.infer<typeof preparationInput>;
++export type Domain = z.infer<typeof domain>;
++export type Proof = z.infer<typeof proof>;
++export type Original = z.infer<typeof original>;
++export type NftOriginal = z.infer<typeof nftOriginal>;
++export type RecoveryStep = z.infer<typeof recoveryStep>;
++
++export class PreparationError extends Error {
++  constructor(readonly code: "INPUT" | "PROVENANCE" | "DOMAIN" | "BLOCKED" | "QUOTE", message: string) {
++    super(message);
++    this.name = "PreparationError";
++  }
++}

@@ -1,0 +1,253 @@
+{
+  "schema": "claim-vault-independent-delivery-audit-v1",
+  "date": "2026-11-12",
+  "disposition": "needs-fix",
+  "immutableCommit": "9c227900b280713305d4a1a1d1cdc3d8d273f23d",
+  "parent": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+  "branch": "work/dtf-migration-phase-16-claim-vault",
+  "tree": "d0729eb87d2ab3c5f22b12e2bef0549226ba4239",
+  "sourceEntries": 40,
+  "changes": {
+    "A": 9,
+    "M": 31
+  },
+  "fullDiff": {
+    "bytes": 177324,
+    "sha256": "865909f6a01ac5fe4b7ff5983b47900057dd9f3c44c2ff629bbdb66e82268548",
+    "reviewedCompletely": true,
+    "command": "GIT_MASTER=1 git diff --ignore-submodules=all --no-ext-diff --no-renames 4a53299b490343ed904d70c92ecbc7360fcb7659 9c227900b280713305d4a1a1d1cdc3d8d273f23d --"
+  },
+  "commitMessage": "9c227900b280713305d4a1a1d1cdc3d8d273f23d\n4a53299b490343ed904d70c92ecbc7360fcb7659\nd0729eb87d2ab3c5f22b12e2bef0549226ba4239\nAdd verified bounded direct claim-vault surrender and recovery\n\nCo-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\n\n",
+  "coauthorTrailerLines": [
+    "Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>"
+  ],
+  "gitCommands": [
+    {
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "9c227900b280713305d4a1a1d1cdc3d8d273f23d\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "stdout": "work/dtf-migration-phase-16-claim-vault\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "show",
+        "-s",
+        "--format=%H%n%P%n%T%n%B",
+        "9c227900b280713305d4a1a1d1cdc3d8d273f23d"
+      ],
+      "exit": 0,
+      "stdout": "9c227900b280713305d4a1a1d1cdc3d8d273f23d\n4a53299b490343ed904d70c92ecbc7360fcb7659\nd0729eb87d2ab3c5f22b12e2bef0549226ba4239\nAdd verified bounded direct claim-vault surrender and recovery\n\nCo-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\n\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff-tree",
+        "-r",
+        "--no-commit-id",
+        "--raw",
+        "9c227900b280713305d4a1a1d1cdc3d8d273f23d"
+      ],
+      "exit": 0,
+      "stdout": ":100644 100644 1145ec509d3595b3c1869df3d484583f48eaf4cd a12dc91483849aa200e1e0f02b747a0033ced395 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol\n:100644 100644 122a61ce6ce0fbca187404b345fd58c8f3982fa0 63924607248603e223ee046f34eb9adda5f671c1 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol\n:100644 100644 59536456f542afe26993b9a4dd8605105f74da92 761eec056d6cd41c7f07e10967b60b266d145669 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol\n:000000 100644 0000000000000000000000000000000000000000 0d205254a2b4a13383150445adae1523fadf2384 A\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol\n:000000 100644 0000000000000000000000000000000000000000 54a211604ae8996575f8113affd2e5a31af076e0 A\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol\n:100644 100644 bc385446ee7938b870067353de1c12a025225107 b9702b97ae369005fd20a1b6006b483dba5507e0 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol\n:100644 100644 0c73d52743d195a51ea80a7feead911292644bd4 1b6469b01dcc5f01d82ff33b72a39c119b254a71 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol\n:100644 100644 4ff7b8d0d67c383c14b3c9af3f32d47571d8705e 1435eecc9c84bf74085f96bbd9b56ddf0753254e M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol\n:100644 100644 baa7a6d93923ef8f37d69b699209510acd7f8c5c 2577e90bde908d85e91ee7caf58030933865d6ce M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol\n:100644 100644 01fb78710aff0e23c4880914a95b0faeeb2c511b ff090b59212bc5eb75104e2ae4c563bfe7f3c643 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol\n:100644 100644 98d65e1de4552e171ad4017ef1e15a91ef5fb04b c058137e99fcfc948f3259de6e77d940faa6b392 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol\n:100644 100644 228e51ec5a4ea8b541c2668e1a42b26d7e98f764 891bf944be19595d56942fbb0bd8be61d870b8c9 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol\n:100644 100644 536c5ec76af52e549f6f8f8efb4c859f31019ed4 f3271a24a0059f1e9cd026d7f3bab4b3d876285c M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol\n:100644 100644 df8cc703538c2575172d34bf6b8c45b97ba6ae80 6be5a4797626ef783a0ad940cd71337f82bdf387 M\tcontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol\n:100644 100644 cff8fcc923c5c96235c45fc19451ad3f6f24cfdd ec069b76942b41ea887721f3189b062f2dd586ac M\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n:100644 100644 c67554bd1f6aca88db585830a126e47417ab3c55 cf7996f42b0a58a7fc72769af40d2866a25c7f5f M\tscripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol\n:000000 100644 0000000000000000000000000000000000000000 dfde1879ba2ed1d946cb2db4476f4bd411526d31 A\tscripts/recovery/dtf-migration/claim-vault.test.ts\n:100644 100644 1328df30759633e62c200fba2448e8926d308b61 433cbd078b10d279f74346602f89ee760c042368 M\tscripts/recovery/dtf-migration/cli.ts\n:100644 100644 f4e737dfe237772680fe81e5d0f4edbe4e16f900 99f58e4620bba8449a478306b9003879ddbabaed M\tscripts/recovery/dtf-migration/execution-plan.ts\n:100644 100644 0c71f3b828f10db7de522012426774ebbff8d2c0 81c2493107eae022346ce1dfef1f86e44b897962 M\tscripts/recovery/dtf-migration/execution-state.ts\n:100644 100644 98b0bf561d42a1f3ba8c5f1746358171ae96e980 e80c4bc9dd3c3d0f9e3122509f321dde43e96024 M\tscripts/recovery/dtf-migration/payloads.ts\n:100644 100644 6e71ff09afd977155ad1789302e0b1e7db19080b d4cf39e61acb151c69c3571dfcd89e6f14b948cb M\tscripts/recovery/dtf-migration/preparation.fixture.ts\n:100644 100644 69e0c89e9cd0c332c7a98423e7d734c09beeec28 a77fa9d9edced72ef2d0a132d5c33ef3bbfb3094 M\tscripts/recovery/dtf-migration/preparation.test.ts\n:100644 100644 2f2ea933a8ac7918aeb5e137d93029e5f0d6f75d 6d99ded3bf2cefba099c85ad57914d5f2604a3a1 M\tscripts/recovery/dtf-migration/preparation.ts\n:100644 100644 f8f444e1fcff8ffd925ead919816b5bb31a740af 2edc22a64158ff49a9199fcb165dde3e30850d4c M\tscripts/recovery/dtf-migration/provenance.ts\n:100644 100644 ba47110ba02a5c620bc344e5074d1cef5d555ba6 cff09ad3b8c8325737fa70437b50054de5c0b676 M\tscripts/recovery/dtf-migration/quotes.ts\n:000000 100644 0000000000000000000000000000000000000000 7727b062b9b004d58356555a67a48a3867f73165 A\tscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n:000000 100644 0000000000000000000000000000000000000000 07833b37a53267ce2cd0f56d163faa7fd4fbd62b A\tscripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n:100644 100644 4885225d09cfa1e4d823942a769b14d0fa4a4f20 e50677b9c9cdbab22b147ce3d614540a19374ef7 M\tscripts/recovery/dtf-migration/rehearsal-data.ts\n:100644 100644 ff1807aa9edaf95a3af6a9b03bb73628dedcc5a9 63fa1b2c089ed8f391642bfb726ac36486a73843 M\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts\n:100644 100644 5e11fdd19596940696bc96b34c24efe5e6ac6175 3cf06941c49fe568fcbb87a3f1a6550ebd0186f0 M\tscripts/recovery/dtf-migration/rehearsal-proof.ts\n:100644 100644 1ddc1888ebea5d59695af790e49919c1d83471d8 9e611e6ad7969712eafeeca86aea490703e64e91 M\tscripts/recovery/dtf-migration/rehearse.ts\n:100644 100644 725ef4884d63aea5fec5c9ef3b35984020122857 fcb4417f24a2f50ec9fbe66dc5395eb2100615f8 M\tscripts/recovery/dtf-migration/schema.ts\n:000000 100644 0000000000000000000000000000000000000000 3d7b2bcde51365ed6f5cdd397372abd3011e921d A\ttest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol\n:000000 100644 0000000000000000000000000000000000000000 ec83b05a2e9f7db4fa886f23f3b4e5fa98d1fee1 A\ttest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol\n:000000 100644 0000000000000000000000000000000000000000 5c5fa07c4e2367e8d6e81894ea273eaf7bd218ae A\ttest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol\n:000000 100644 0000000000000000000000000000000000000000 7c0fc6dcfe86d325e3d57e78f4416f96227d13f2 A\ttest/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol\n:100644 100644 e97194cb9d75c99440346215277d44bd420bdd7c 4140bcfb65b7d4a90f7cbc1a154723c2eb1ef62c M\ttest/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol\n:100644 100644 9ac6583e2b20d0717289a4a88a705bb26cb2300d ad4cf9ba4d9edd576a25f189fad28d172be21acb M\ttest/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol\n:100644 100644 53377ca45b037ea8b0a3d5230b10098d85646da6 0b923a766092ed7857c35791fd8493a86b88c101 M\ttest/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--check",
+        "4a53299b490343ed904d70c92ecbc7360fcb7659",
+        "9c227900b280713305d4a1a1d1cdc3d8d273f23d"
+      ],
+      "exit": 2,
+      "stdout": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol:20: new blank line at EOF.\ncontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol:58: new blank line at EOF.\nscripts/recovery/dtf-migration/claim-vault.test.ts:83: new blank line at EOF.\nscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts:110: new blank line at EOF.\nscripts/recovery/dtf-migration/rehearsal-claim-vault.ts:298: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol:201: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol:95: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol:194: new blank line at EOF.\ntest/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol:251: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--cached",
+        "--raw"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--raw"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-list",
+        "--count",
+        "4a53299b490343ed904d70c92ecbc7360fcb7659..9c227900b280713305d4a1a1d1cdc3d8d273f23d"
+      ],
+      "exit": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-parse",
+        "--abbrev-ref",
+        "@{upstream}"
+      ],
+      "exit": 128,
+      "stdout": "",
+      "stderr": "fatal: no upstream configured for branch 'work/dtf-migration-phase-16-claim-vault'\n"
+    }
+  ],
+  "initialStatus": {
+    "args": [
+      "status",
+      "--short",
+      "--ignore-submodules=all"
+    ],
+    "exit": 0,
+    "stdout": "?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/\n",
+    "stderr": ""
+  },
+  "index": {
+    "entryCount": 13037,
+    "lsFilesStageSha256": "7efe05396b65c6d6e10d73533e9ea6ca127b849363939336a9d93b40412e15ee",
+    "stagedRaw": "",
+    "unstagedRaw": "",
+    "precommitStatusSha256": "5aab41a93e8d4cc63ade9f2a1b1e6e015226852927e1bede734fe05abb259632",
+    "precommitStagedEntries": [],
+    "historicalForeignChanges": "Retained status-before.txt contains only the accepted 40 paths and excluded claim-vault evidence; all tracked status entries have an empty staged column. No independent precommit raw index byte inventory exists, so no historical index-byte identity is asserted."
+  },
+  "fullTreeComparison": {
+    "parentEntries": 13028,
+    "commitEntries": 13037,
+    "changesOutsideAccepted": []
+  },
+  "protectedRefs": {
+    "baselinePath": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/show-ref.txt",
+    "baselineSha256": "341e22d7b2e837ea239820cd243beb8a174eb8708a21b3d8db0d5bb83ebde2e2",
+    "count": 55,
+    "changes": [
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-16-claim-vault",
+        "before": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+        "after": "9c227900b280713305d4a1a1d1cdc3d8d273f23d"
+      }
+    ],
+    "newRefs": []
+  },
+  "upstream": "not configured; read-only lookup exited 128",
+  "operationState": [
+    {
+      "name": "MERGE_HEAD",
+      "exists": false
+    },
+    {
+      "name": "CHERRY_PICK_HEAD",
+      "exists": false
+    },
+    {
+      "name": "REVERT_HEAD",
+      "exists": false
+    },
+    {
+      "name": "rebase-apply",
+      "exists": false
+    },
+    {
+      "name": "rebase-merge",
+      "exists": false
+    },
+    {
+      "name": "index.lock",
+      "exists": false
+    }
+  ],
+  "sourceManifest": {
+    "sha256": "a2d5599854282782a3443d910f8f78a8bddd813537ccf44fd652c5651cc787ea",
+    "allCandidateFieldsIndependentlyReconciled": true
+  },
+  "whitespace": {
+    "disposition": "needs-fix",
+    "reproduction": {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--check",
+        "4a53299b490343ed904d70c92ecbc7360fcb7659",
+        "9c227900b280713305d4a1a1d1cdc3d8d273f23d"
+      ],
+      "exit": 2,
+      "stdout": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol:20: new blank line at EOF.\ncontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol:58: new blank line at EOF.\nscripts/recovery/dtf-migration/claim-vault.test.ts:83: new blank line at EOF.\nscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts:110: new blank line at EOF.\nscripts/recovery/dtf-migration/rehearsal-claim-vault.ts:298: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol:201: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol:95: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol:194: new blank line at EOF.\ntest/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol:251: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    "acceptedHashesDoNotWaiveFailure": true,
+    "sourceCorrectionPerformed": false,
+    "correctedSourceAccepted": false
+  },
+  "secretScan": {
+    "method": "Read complete current bytes for every accepted file; inspect URL, PRIVATE_KEY, mnemonic, vm.addr and private-key/PEM patterns and full committed diff.",
+    "references": [
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "line": 89,
+        "kind": "url",
+        "text": "  process.env[envName] = `http://127.0.0.1:${listener.port}`;"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+        "line": 213,
+        "kind": "url",
+        "text": "  process.env[envName] = \"https://example.invalid\";"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "line": 30,
+        "kind": "public-development-mnemonic",
+        "text": "  const wallet = HDNodeWallet.fromPhrase(\"test test test test test test test test test test test junk\","
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "line": 31,
+        "kind": "public-development-mnemonic",
+        "text": "  const wallet = HDNodeWallet.fromPhrase(\"test test test test test test test test test test test junk\","
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearse.ts",
+        "line": 107,
+        "kind": "key-reference",
+        "text": "    delete environment[\"PRIVATE_KEY\"];"
+      },
+      {
+        "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+        "line": 31,
+        "kind": "fork-fixture-key",
+        "text": "        seHolder = vm.addr(0xD7FC0570D1);"
+      }
+    ],
+    "resolvedSecretEndpoints": [],
+    "productionSigningMaterial": []
+  },
+  "diffLineCounts": {
+    "insertions": 1726,
+    "deletions": 69
+  }
+}

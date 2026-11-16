@@ -1,0 +1,205 @@
+{
+  "date": "2026-11-11",
+  "commit": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+  "parents": [
+    "5021e8d4a62bcbddc555f580ef98f8666d993aab"
+  ],
+  "subject": "Add verified two-generation NFT Migration surrender",
+  "trailer": "Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>",
+  "trailerCount": 1,
+  "pathCount": 18,
+  "equivalence": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "gitBlob": "af34dbdab9bbfc3c040818fd3c45c5ddb59e3bac",
+      "currentSha256": "3fc1997e34be0d40e6fb638fc6cc759d9333546df97ebebc97583522666dab4e",
+      "stagedSha256": "3fc1997e34be0d40e6fb638fc6cc759d9333546df97ebebc97583522666dab4e",
+      "committedSha256": "3fc1997e34be0d40e6fb638fc6cc759d9333546df97ebebc97583522666dab4e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "mode": "100644",
+      "gitBlob": "e953ad8e364ffcf91979b046ec0fa65fd0928b21",
+      "currentSha256": "903c1911a54398ef3a16a2f5007526530163aa68c502730f9cfd6581e388acdf",
+      "stagedSha256": "903c1911a54398ef3a16a2f5007526530163aa68c502730f9cfd6581e388acdf",
+      "committedSha256": "903c1911a54398ef3a16a2f5007526530163aa68c502730f9cfd6581e388acdf"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "mode": "100644",
+      "gitBlob": "c45f5e9f99bccaea7a9f1372848af412af2f4784",
+      "currentSha256": "a6835808e586eed607b91aa6ec545189026a3a0d7a1ad1609af38e2ffcde6532",
+      "stagedSha256": "a6835808e586eed607b91aa6ec545189026a3a0d7a1ad1609af38e2ffcde6532",
+      "committedSha256": "a6835808e586eed607b91aa6ec545189026a3a0d7a1ad1609af38e2ffcde6532"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "mode": "100644",
+      "gitBlob": "28b1796d39fa812ac039a4664c272175cd7d069c",
+      "currentSha256": "7f5365fcf5f4d91b3b08963a7239300ef6962a64eb95a9055b97f5ae6c8073d7",
+      "stagedSha256": "7f5365fcf5f4d91b3b08963a7239300ef6962a64eb95a9055b97f5ae6c8073d7",
+      "committedSha256": "7f5365fcf5f4d91b3b08963a7239300ef6962a64eb95a9055b97f5ae6c8073d7"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "mode": "100644",
+      "gitBlob": "1674f1c98a5486b9ec94354552364dca773d735c",
+      "currentSha256": "a18a4e44c739873a694c0caa27abbc1e0e1515f22d6391a81f0d2ab689bbe40e",
+      "stagedSha256": "a18a4e44c739873a694c0caa27abbc1e0e1515f22d6391a81f0d2ab689bbe40e",
+      "committedSha256": "a18a4e44c739873a694c0caa27abbc1e0e1515f22d6391a81f0d2ab689bbe40e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "mode": "100644",
+      "gitBlob": "5d08568f17fe789d67b3bb42ea810c80d07ce74b",
+      "currentSha256": "93b12ed360332a3b78649407002a43f207fc8dfdeaadf9f1e0c6608584f4c8e3",
+      "stagedSha256": "93b12ed360332a3b78649407002a43f207fc8dfdeaadf9f1e0c6608584f4c8e3",
+      "committedSha256": "93b12ed360332a3b78649407002a43f207fc8dfdeaadf9f1e0c6608584f4c8e3"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "mode": "100644",
+      "gitBlob": "f98e487ab7a8afda0fcce7c23e61cf8b6980dd11",
+      "currentSha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53",
+      "stagedSha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53",
+      "committedSha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "mode": "100644",
+      "gitBlob": "6edcb45c6cc06533bc81f134d4a65d2c3ba5c7e0",
+      "currentSha256": "bc6162ee4c60cd23a44337f1c9dc57cfbd37258d7ae591c47db1da49878e325d",
+      "stagedSha256": "bc6162ee4c60cd23a44337f1c9dc57cfbd37258d7ae591c47db1da49878e325d",
+      "committedSha256": "bc6162ee4c60cd23a44337f1c9dc57cfbd37258d7ae591c47db1da49878e325d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "gitBlob": "5b18890f8918458e91ab188f3f685cdfb06fa792",
+      "currentSha256": "dc0fd10bd5b3d345cfecbc5d9282884c1c2d3b0d983eeef846a8aff33cf79c2d",
+      "stagedSha256": "dc0fd10bd5b3d345cfecbc5d9282884c1c2d3b0d983eeef846a8aff33cf79c2d",
+      "committedSha256": "dc0fd10bd5b3d345cfecbc5d9282884c1c2d3b0d983eeef846a8aff33cf79c2d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol",
+      "mode": "100644",
+      "gitBlob": "21d3ea5a38730b25c232ee2de46e0a60724013b3",
+      "currentSha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395",
+      "stagedSha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395",
+      "committedSha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "mode": "100644",
+      "gitBlob": "0cbc1b15e5dadce4d83287e2ca8d8591204a5bca",
+      "currentSha256": "aa927b281d84741b7e71f47bcfea0fe1ca8c0dc5d12b18e6bcf3787d1ec994c3",
+      "stagedSha256": "aa927b281d84741b7e71f47bcfea0fe1ca8c0dc5d12b18e6bcf3787d1ec994c3",
+      "committedSha256": "aa927b281d84741b7e71f47bcfea0fe1ca8c0dc5d12b18e6bcf3787d1ec994c3"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "mode": "100644",
+      "gitBlob": "4c075d289693e4a59bcd3f6a818dfa9c66571222",
+      "currentSha256": "098bc174b787a504757e455d242de9b4df279f21d56a554172556e2fdb0d966c",
+      "stagedSha256": "098bc174b787a504757e455d242de9b4df279f21d56a554172556e2fdb0d966c",
+      "committedSha256": "098bc174b787a504757e455d242de9b4df279f21d56a554172556e2fdb0d966c"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "mode": "100644",
+      "gitBlob": "8a076100a9cd17d5c10e589771868e101a97ab50",
+      "currentSha256": "cab0fddc254598c5b8307a73d98fdd316aae7428ada96ef912920de49e0d6660",
+      "stagedSha256": "cab0fddc254598c5b8307a73d98fdd316aae7428ada96ef912920de49e0d6660",
+      "committedSha256": "cab0fddc254598c5b8307a73d98fdd316aae7428ada96ef912920de49e0d6660"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "mode": "100644",
+      "gitBlob": "804646499b2b6681b28bacbcdf9fed980cecc6e9",
+      "currentSha256": "d86e60fe414ec3bbbd5e6716369b5ec786c2f88dffc52cd435251f7577f977fa",
+      "stagedSha256": "d86e60fe414ec3bbbd5e6716369b5ec786c2f88dffc52cd435251f7577f977fa",
+      "committedSha256": "d86e60fe414ec3bbbd5e6716369b5ec786c2f88dffc52cd435251f7577f977fa"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "mode": "100644",
+      "gitBlob": "8fb34aa2fe1b837b86c20d97d6d69b5b26c0672b",
+      "currentSha256": "804bacac1d4323f83e8087aea2f6e0c75dda7389aafd2ad5a53d6d29eaaa9eec",
+      "stagedSha256": "804bacac1d4323f83e8087aea2f6e0c75dda7389aafd2ad5a53d6d29eaaa9eec",
+      "committedSha256": "804bacac1d4323f83e8087aea2f6e0c75dda7389aafd2ad5a53d6d29eaaa9eec"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "mode": "100644",
+      "gitBlob": "04742b97934fe4ac620ca80231f911d9e935fc01",
+      "currentSha256": "b35e791ba05df2d7b9988e9e346ea6b8c76c83dd1307ecb05894fca326c2215e",
+      "stagedSha256": "b35e791ba05df2d7b9988e9e346ea6b8c76c83dd1307ecb05894fca326c2215e",
+      "committedSha256": "b35e791ba05df2d7b9988e9e346ea6b8c76c83dd1307ecb05894fca326c2215e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "mode": "100644",
+      "gitBlob": "d73705dcba4febaae5b95d2258a2d23015c04338",
+      "currentSha256": "b0443d9613a28e015ff893c09a857e4372e0c19249d3b7c9d0b9866065e256d4",
+      "stagedSha256": "b0443d9613a28e015ff893c09a857e4372e0c19249d3b7c9d0b9866065e256d4",
+      "committedSha256": "b0443d9613a28e015ff893c09a857e4372e0c19249d3b7c9d0b9866065e256d4"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "mode": "100644",
+      "gitBlob": "3e0d5f52744583850d3c780c05ff9145c0f5935b",
+      "currentSha256": "75aa15aea842b5a8e3ea2d356d653b35efed96652be91294e49949abb53c6a9b",
+      "stagedSha256": "75aa15aea842b5a8e3ea2d356d653b35efed96652be91294e49949abb53c6a9b",
+      "committedSha256": "75aa15aea842b5a8e3ea2d356d653b35efed96652be91294e49949abb53c6a9b"
+    }
+  ],
+  "manifestSha256": "d409d4de9526c06a379eb16ce7040948e2a4bc70bbbbce7f2e8f56bcd2d98fd0",
+  "stagedPatchSha256": "9efa4e03221bcc6878e215226472c205847f07d88a4243dc158836f65ba17a1d",
+  "index": {
+    "serialization": "raw stdout of git ls-files --stage -z; UTF-8 with exact NUL terminators. Outside-scope filtering retains original order and one NUL per record.",
+    "baselineSha256": "2f991d84d21e7647d73a329bda0a0b479e08e5f3dd849c4a474e505cd49b9a41",
+    "stagedSha256": "dfb2087191eee7ee31af3502c765b2d06969c9923a8a9a4025272711160c3d49",
+    "finalSha256": "dfb2087191eee7ee31af3502c765b2d06969c9923a8a9a4025272711160c3d49",
+    "outsideScopeSha256": "529d459ee9188ad60856d352d4f193dfe00dd60971a9fe30ea23a4a4be2ce56e",
+    "stagedAndFinalEqual": true,
+    "cachedDiffEmpty": true
+  },
+  "preservation": {
+    "preservedEvidenceCount": 23,
+    "protectedInputCount": 17,
+    "main": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "integration": "6e27ecaa242c4acca132e3575a160514aad07b11",
+    "existingRefsUnchangedExceptAuthorizedBranch": true,
+    "concurrentAddedRefs": [
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-06-e2",
+        "before": null,
+        "after": "5021e8d4a62bcbddc555f580ef98f8666d993aab"
+      }
+    ],
+    "crane": {
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "index": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0\tlib/crane"
+    },
+    "cachesRetained": {
+      "out": true,
+      "cache_forge": true
+    }
+  },
+  "statusBeforeReceipt": "?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/commit/source-manifest.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/commit/staged.patch\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/contract.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/source-evidence.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/archive-audit.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/NftStageOneWitness.s.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/contract.md\n",
+  "verification": "Producer postcommit verification; not a separate independent reviewer.",
+  "testsRerun": false,
+  "sourceEdits": false,
+  "ownedRuntimePending": false,
+  "limits": [
+    "E1 complete category/caller/recovery closure",
+    "E2 authenticated ancestry and operational economic disjointness",
+    "E3/E4 actual recovery quote domain and funding inputs",
+    "E5 complete product payout matrix",
+    "Task8 bounded staged harvest/conversion/donation",
+    "Task9 operator inputs and interrupted/resumable rehearsal",
+    "Task10 complete invariants, gas and release validation",
+    "Final F1-F4 remain open"
+  ]
+}

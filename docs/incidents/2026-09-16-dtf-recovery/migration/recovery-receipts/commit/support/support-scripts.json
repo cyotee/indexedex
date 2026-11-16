@@ -1,0 +1,50 @@
+[
+  {
+    "path": "implementation/record.ts",
+    "bytes": 3736,
+    "sha256": "72bc4f6e70da3c764299febbc511bd63ff96141e30993d85d125b78167d89dc5",
+    "expectedBytes": 3736,
+    "expectedSha256": "72bc4f6e70da3c764299febbc511bd63ff96141e30993d85d125b78167d89dc5",
+    "match": true
+  },
+  {
+    "path": "implementation/reconcile.ts",
+    "bytes": 13242,
+    "sha256": "f674bdeec7407e1a9c61f46714ea250212796b0e68c58a2db23bca9c527eaec8",
+    "expectedBytes": 13242,
+    "expectedSha256": "f674bdeec7407e1a9c61f46714ea250212796b0e68c58a2db23bca9c527eaec8",
+    "match": true
+  },
+  {
+    "path": "implementation/finalize.ts",
+    "bytes": 7247,
+    "sha256": "0590298c2b68983f32652265f62021ba933d6a83cdce62a0e5ed021793adb8a5",
+    "expectedBytes": 7247,
+    "expectedSha256": "0590298c2b68983f32652265f62021ba933d6a83cdce62a0e5ed021793adb8a5",
+    "match": true
+  },
+  {
+    "path": "verification/run.ts",
+    "bytes": 5077,
+    "sha256": "2d9f7e694fb0a651ed9a18956090fdbd491b4a3bdeedfea29facbab90361cc05",
+    "expectedBytes": 5077,
+    "expectedSha256": "2d9f7e694fb0a651ed9a18956090fdbd491b4a3bdeedfea29facbab90361cc05",
+    "match": true
+  },
+  {
+    "path": "verification/raw.ts",
+    "bytes": 8808,
+    "sha256": "748e8e9ecdbe25b05d794a38d4e4856779b4ffc8768be657748aa33b7961e036",
+    "expectedBytes": 8808,
+    "expectedSha256": "748e8e9ecdbe25b05d794a38d4e4856779b4ffc8768be657748aa33b7961e036",
+    "match": true
+  },
+  {
+    "path": "verification/oracle.ts",
+    "bytes": 13054,
+    "sha256": "30960a884625cf481c0ed476e741eb64fe78a7db2954fde87ba8ac5c57228e32",
+    "expectedBytes": 13054,
+    "expectedSha256": "30960a884625cf481c0ed476e741eb64fe78a7db2954fde87ba8ac5c57228e32",
+    "match": true
+  }
+]

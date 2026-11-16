@@ -1,0 +1,10 @@
+[
+  {
+    "sourcePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "sourceSha256": "8192d15ff2aa039ea4bb306393205ed3e846270c482abcfb0f46c753e7353ac7",
+    "destinationPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "destinationSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+    "preservedPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/phase30-helper/record-verification.ts",
+    "reason": "Approved task 2 extends the delivered recorder with inventory and delivery modes. The complete original hermetic/fork/operator verification body and relative imports remain intact; the original raw file is losslessly archived. This replaces the executable helper only, not historical results or source authority."
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "path": "scripts/recovery/dtf-migration/bundle.ts",
+    "pureLines": 171
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+    "pureLines": 178
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+    "pureLines": 38
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+    "pureLines": 554
+  },
+  {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/run-attempt.ts",
+    "pureLines": 54
+  },
+  {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/prepare-native.ts",
+    "pureLines": 53
+  },
+  {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/manual-transport.ts",
+    "pureLines": 186
+  }
+]

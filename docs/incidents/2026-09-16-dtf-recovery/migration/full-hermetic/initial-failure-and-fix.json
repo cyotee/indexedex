@@ -1,0 +1,29 @@
+{
+  "base": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca",
+  "buildExit": 0,
+  "runtimeArtifactsExit": 0,
+  "testExit": 1,
+  "tests": {
+    "passed": 28575,
+    "failed": 1,
+    "skipped": 0,
+    "total": 28576,
+    "suites": 2687
+  },
+  "failure": {
+    "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol",
+    "test": "test_packageMetadata_matchesExpectedFacets",
+    "actual": "interface count: 16 != 15",
+    "classification": "in-scope stale assertion introduced by Migration phase2",
+    "introducingCommit": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+    "reason": "Package now advertises Frozen as its16th interface;15facet cuts remain unchanged;test was not updated"
+  },
+  "fix": {
+    "files": 1,
+    "sha256": "e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1",
+    "change": "Expect16interfaces and assert actual Frozen interfaceId at index15;retain every15facet assertion",
+    "diagnostics": "no Solidity diagnostics;git diff--check passed",
+    "newProductionSeam": false
+  },
+  "limits": "Initial failed raw logs preserved;no pre-existing failure waived,no test removed or weakened;corrected validation pending."
+}

@@ -1,0 +1,99 @@
+{
+  "schema": "claimed-sy-preservation-compare-v1",
+  "comparedAfter": [
+    "receipt.md",
+    "source-manifest.json",
+    "precommit/extra.json"
+  ],
+  "thisFileExcluded": true,
+  "thisFileDoesNotReplaceOriginalRows": true,
+  "docs": {
+    "originalCount": 2165,
+    "freshCount": 2182,
+    "missing": [],
+    "changed": [],
+    "added": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/cache_forge.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/docs-incidents-perms.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/docs-incidents.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/extra.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/gate-result.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/host-dependencies.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/indexes.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/out.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/recipe.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/show-ref.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/source-identity-before.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/status-before.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/tracked-diff.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/whitespace-before.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/whitespace-staged.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/receipt.md",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/source-manifest.json"
+    ]
+  },
+  "perms": {
+    "originalCount": 2272,
+    "freshCount": 2291,
+    "missing": [],
+    "changed": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration",
+        "before": {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration",
+          "kind": "dir",
+          "perm": "0o755",
+          "size": 160,
+          "sha256": null
+        },
+        "after": {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration",
+          "kind": "dir",
+          "perm": "0o755",
+          "size": 192,
+          "sha256": null
+        }
+      }
+    ],
+    "added": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/cache_forge.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/docs-incidents-perms.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/docs-incidents.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/extra.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/gate-result.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/host-dependencies.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/indexes.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/out.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/recipe.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/show-ref.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/source-identity-before.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/status-before.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/tracked-diff.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/whitespace-before.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/precommit/whitespace-staged.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/receipt.md",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/source-manifest.json"
+    ]
+  },
+  "out": {
+    "originalCount": 7355,
+    "missing": 0,
+    "changed": 0,
+    "added": 0
+  },
+  "cache": {
+    "originalCount": 611,
+    "missing": 0,
+    "changed": 0,
+    "added": 0
+  },
+  "host": {
+    "originalCount": 34,
+    "missing": 0,
+    "changed": []
+  },
+  "outsideCommitAdditions": [],
+  "permissionFileChanges": []
+}

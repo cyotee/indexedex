@@ -1,0 +1,139 @@
+{
+  "date": "2026-11-12",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp",
+  "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp && if lsof -nP -iTCP:18571 -sTCP:LISTEN >/dev/null 2>&1; then exit 1; else printf 'NO_18571_LISTENER\\n'; fi; for pid in 41253 62726; do if ps -p \"$pid\" -o pid=,command=; then exit 1; else printf 'PID_%s_ABSENT\\n' \"$pid\"; fi; done; test ! -e .omo-runtime/dtf-migration-held-se-lp/checkpoints && printf 'CHECKPOINT_ABSENT\\n'; test ! -e .omo-runtime/dtf-migration-held-se-lp && printf 'RUNTIME_PARENT_ABSENT\\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --cached --ignore-submodules=all --quiet && printf 'STAGED_EMPTY\\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --check && printf 'WHITESPACE_PASS\\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git --no-pager diff --ignore-submodules=all -- contracts scripts test docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md | shasum -a 256; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git rev-parse HEAD; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git branch --show-current",
+  "result": {
+    "text": "NO_18571_LISTENER\nPID_41253_ABSENT\nPID_62726_ABSENT\nCHECKPOINT_ABSENT\nRUNTIME_PARENT_ABSENT\nSTAGED_EMPTY\nWHITESPACE_PASS\neb9ca432107a6f3c0b73983d75eec6210e70ebf27a6e925a126cc859dda6b53f  -\n3ec0912bafebf9c0aa66770a72f04501e5c11865\nwork/dtf-migration-phase-21-held-se-lp",
+    "details": {
+      "status": "completed"
+    },
+    "images": [],
+    "hasError": false
+  },
+  "freshCliCleanup": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/.omo-runtime/dtf-migration-held-se-lp/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 62726,
+    "runtime": "removed"
+  },
+  "closedMonitors": [
+    {
+      "id": "mon_Y9B9SRGCTAAHVNMS",
+      "purpose": "complete required checks",
+      "exit": 0
+    },
+    {
+      "id": "mon_34J4GHM30SDKADBT",
+      "purpose": "fresh original HTTP observer",
+      "exit": 0
+    },
+    {
+      "id": "mon_35FXV242EPF6P5GE",
+      "purpose": "fresh pinned CLI",
+      "exit": 0
+    },
+    {
+      "id": "mon_YPX3A9WXCMGSM1T3",
+      "purpose": "first owned audit; preserved evidence-only argument display failure",
+      "exit": 1
+    },
+    {
+      "id": "mon_MZ587KQSHN0F47FZ",
+      "purpose": "final strict probes and corrected exact audit",
+      "exit": 0
+    }
+  ],
+  "candidateDiff": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/candidate.diff",
+    "bytes": 75884,
+    "sha256": "eb9ca432107a6f3c0b73983d75eec6210e70ebf27a6e925a126cc859dda6b53f",
+    "mode": 420
+  },
+  "finalPreservation": {
+    "entries": 3314,
+    "mismatches": []
+  },
+  "freshCaptureValidation": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "bytes": 103627,
+      "sha256": "9d5db7a8a1feababc1c418dbe1c9e6b1ee06b6cd009f292023fb65515bb4f2a6",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/0.base64",
+      "terminalNewline": false,
+      "decoded": {
+        "bytes": 103627,
+        "sha256": "9d5db7a8a1feababc1c418dbe1c9e6b1ee06b6cd009f292023fb65515bb4f2a6",
+        "terminalNewline": false
+      },
+      "encodedIdentity": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/0.base64",
+        "bytes": 139324,
+        "sha256": "9b7119ff327ca3c70e60776265ef616a3c655f59cd81a6e56fbb1ac798e4342c",
+        "mode": 420
+      }
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "bytes": 304055,
+      "sha256": "2390044653174e85ad007efd22b68821f7b1e831b7cfd20b63896dc65a04677f",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/1.base64",
+      "terminalNewline": false,
+      "decoded": {
+        "bytes": 304055,
+        "sha256": "2390044653174e85ad007efd22b68821f7b1e831b7cfd20b63896dc65a04677f",
+        "terminalNewline": false
+      },
+      "encodedIdentity": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/1.base64",
+        "bytes": 408787,
+        "sha256": "fdb9c6ff5226d9694fd338e7a96f9edf504a659a29138a72561be5db47a0a770",
+        "mode": 420
+      }
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "bytes": 98419,
+      "sha256": "0c5586a948c974a672d5260a5c24b478c660cdfaf04de720fd43147fcfa690ce",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/2.base64",
+      "terminalNewline": false,
+      "decoded": {
+        "bytes": 98419,
+        "sha256": "0c5586a948c974a672d5260a5c24b478c660cdfaf04de720fd43147fcfa690ce",
+        "terminalNewline": false
+      },
+      "encodedIdentity": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/2.base64",
+        "bytes": 132322,
+        "sha256": "7634014c65fb2a2e0e9f1f8465464efe2f29d28dfb3982712e43c2288ee6a954",
+        "mode": 420
+      }
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "bytes": 56070,
+      "sha256": "45a156bdeb2e86d02170e91d40d7635b570f20afce9c146032aacb060cddfe09",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/3.base64",
+      "terminalNewline": false,
+      "decoded": {
+        "bytes": 56070,
+        "sha256": "45a156bdeb2e86d02170e91d40d7635b570f20afce9c146032aacb060cddfe09",
+        "terminalNewline": false
+      },
+      "encodedIdentity": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/3.base64",
+        "bytes": 75383,
+        "sha256": "ed0fdf9e9391f3dfc721ffd50f864b8cda5fea7569c748acff39992463b85654",
+        "mode": 420
+      }
+    }
+  ],
+  "pendingOwnedOperations": 0,
+  "sourceFixes": 0,
+  "commitOrMerge": false,
+  "publicAction": false
+}

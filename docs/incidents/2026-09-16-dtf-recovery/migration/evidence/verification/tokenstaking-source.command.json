@@ -1,0 +1,24 @@
+{
+  "label": "tokenstaking-source",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "argv": [
+    "/opt/homebrew/bin/bun",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-source.mjs"
+  ],
+  "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-source.mjs'",
+  "binaryPassObservable": "HTTP 200 and source onchain runtime hash equals observed pinned facet; missing archive is evidence limitation",
+  "started": "2026-11-10T13:07:21.404Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S",
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S",
+    "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S/cache"
+  },
+  "credentialPresent": true
+}

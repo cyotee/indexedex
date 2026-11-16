@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "bun",
+    "--eval",
+    "import {readFile,writeFile} from \"node:fs/promises\"; import {createHash} from \"node:crypto\"; const p=\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/current-input.json\"; const b=await readFile(p); const a=JSON.parse(b.toString()); a.generatedAuditRecords=[p,\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery/inventory.json\"]; a.parentInventory={path:p,sha256:createHash(\"sha256\").update(b).digest(\"hex\")}; a.qualification+=\" Corrected self-reference ordering; prior failed attempt preserved.\"; await writeFile(\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/corrected-input.json\",JSON.stringify(a),{flag:\"wx\"}); console.log(\"CURRENT_INPUT_CORRECTED\");"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "started": "2026-11-15T19:38:07.996Z",
+  "finished": "2026-11-15T19:38:08.062Z",
+  "exit": 0,
+  "signal": null,
+  "stdoutBytes": 24,
+  "stderrBytes": 0
+}

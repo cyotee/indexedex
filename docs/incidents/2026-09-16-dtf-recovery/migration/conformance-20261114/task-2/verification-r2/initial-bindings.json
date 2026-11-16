@@ -1,0 +1,575 @@
+{
+  "bound": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/ulw-execute/dtf-conformance/task-2-done.json",
+      "size": 82490,
+      "sha256": "46590145e455f3befb2ad026170a4a79a0b42aaa5d5418e3b9567182572cc50a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/ulw-execute/dtf-conformance/task-2-verdict.json",
+      "size": 6309,
+      "sha256": "a80cdb9cf9042725c6a4d9763956e701ce5b858a1972e075e2b1eae64398a58a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "size": 20293,
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "size": 6762,
+      "sha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recovery.json",
+      "size": 158073593,
+      "sha256": "95536e259a87e21c9d3c02be208e64c766c4a48deb02054a7a797a36037a49f7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/delivery/inventory.json",
+      "size": 20813458,
+      "sha256": "7a40a2f63aa90f0c891da152d8d01c8d7db946381afef375c09b02288028ce21"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/delivery/delivery.json",
+      "size": 1529,
+      "sha256": "7cb251140f049b2f1d843b621d1a48781ff131b8806beb7a30f05d2ecee44ee4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/supersessions.json",
+      "size": 1124,
+      "sha256": "312c49b898c54a0b324a3c015aeebd362331c960692c53ec85b630351cf0820d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/report.md",
+      "size": 10349,
+      "sha256": "7deb827a9ff773ae54d36e768fa9b6c5f76a1e8e215e280649675d405062a468"
+    }
+  ],
+  "transitive": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "expected": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "actual": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "size": 20293
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "expected": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed",
+      "actual": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed",
+      "size": 6762
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/schema.ts",
+      "expected": "7adad90d124dde270cde7feaf8991eaf408018562b82ade262fa60361806113e",
+      "actual": "7adad90d124dde270cde7feaf8991eaf408018562b82ade262fa60361806113e",
+      "size": 10470
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "expected": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+      "actual": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+      "size": 11872
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "expected": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+      "actual": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+      "size": 6048
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "expected": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+      "actual": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+      "size": 1727
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/preparation.ts",
+      "expected": "8a66ef6229f4171d7cf1be031d451cd7a94f35cee3b7ef26a4ebdcff5a256b85",
+      "actual": "8a66ef6229f4171d7cf1be031d451cd7a94f35cee3b7ef26a4ebdcff5a256b85",
+      "size": 10828
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle-files.ts",
+      "expected": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+      "actual": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+      "size": 6094
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "expected": "14607d15bf59bf8a660a9339d28f710e309c3d6c53969fe3b6733bfb08971615",
+      "actual": "14607d15bf59bf8a660a9339d28f710e309c3d6c53969fe3b6733bfb08971615",
+      "size": 14491
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "expected": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+      "actual": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+      "size": 7869
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "expected": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+      "actual": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+      "size": 9271
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+      "expected": "6d0c7195f8603df8c2b4d8111c479fc87aa99a5a05cff51c4827c0c57060e09b",
+      "actual": "6d0c7195f8603df8c2b4d8111c479fc87aa99a5a05cff51c4827c0c57060e09b",
+      "size": 8392
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "expected": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+      "actual": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+      "size": 10148
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "expected": "52e74ce94be66ee46af14d4e07064b0428d737d0ce504b020eb469a79fbeca11",
+      "actual": "52e74ce94be66ee46af14d4e07064b0428d737d0ce504b020eb469a79fbeca11",
+      "size": 5635
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "expected": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "actual": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "size": 15737
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt-input.ts",
+      "expected": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+      "actual": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+      "size": 5724
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidates.ts",
+      "expected": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+      "actual": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+      "size": 3399
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "expected": "d8e75ad0776d96bf0b19e5cc97e0d57308130f1cd3c0fbd3ea722f05a07b3ef6",
+      "actual": "d8e75ad0776d96bf0b19e5cc97e0d57308130f1cd3c0fbd3ea722f05a07b3ef6",
+      "size": 6605
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "expected": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "actual": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "size": 4667
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+      "expected": "1c277d81758444791a2fcf2d0b9e871b86a4113bd5290f28d313eabc0af2f8e3",
+      "actual": "1c277d81758444791a2fcf2d0b9e871b86a4113bd5290f28d313eabc0af2f8e3",
+      "size": 3925
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/provenance.ts",
+      "expected": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+      "actual": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+      "size": 6200
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claimed-sy-source.ts",
+      "expected": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+      "actual": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+      "size": 2346
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claimed-sy-state.ts",
+      "expected": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+      "actual": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+      "size": 2929
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "expected": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "actual": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "size": 7950
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+      "expected": "6bd3a529d24be2c8a3d98daba48a9a330cccff5ea31079eff0ed389b11f9de88",
+      "actual": "6bd3a529d24be2c8a3d98daba48a9a330cccff5ea31079eff0ed389b11f9de88",
+      "size": 7866
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "expected": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+      "actual": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+      "size": 6464
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/quotes.ts",
+      "expected": "0bd1e87ad561e0a5ebb07ff7f89d0734a8954f37fcfc6239f582113f0322da9e",
+      "actual": "0bd1e87ad561e0a5ebb07ff7f89d0734a8954f37fcfc6239f582113f0322da9e",
+      "size": 7187
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "expected": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+      "actual": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+      "size": 8738
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.ts",
+      "expected": "89b528b228a37a926725684403ecb09a167211fe092bf8d50b553d4540837db7",
+      "actual": "89b528b228a37a926725684403ecb09a167211fe092bf8d50b553d4540837db7",
+      "size": 6846
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "expected": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+      "actual": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+      "size": 6178
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "expected": "fb0c0792ad24458d32745a16758c89527c0bbea0ac4a80174a2cc27c097d14ff",
+      "actual": "fb0c0792ad24458d32745a16758c89527c0bbea0ac4a80174a2cc27c097d14ff",
+      "size": 11168
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "expected": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+      "actual": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+      "size": 8096
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "expected": "61c8128124da092cbecbe8fb17d54d203f98519444653c43985890f726047d78",
+      "actual": "61c8128124da092cbecbe8fb17d54d203f98519444653c43985890f726047d78",
+      "size": 8962
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/payloads.ts",
+      "expected": "5dbdcb45dc59d404f578e0cb524ee9c9bc16b1fe438bb2e531e5f15a5d6327da",
+      "actual": "5dbdcb45dc59d404f578e0cb524ee9c9bc16b1fe438bb2e531e5f15a5d6327da",
+      "size": 17195
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "expected": "3b262fb7ab7b7b29457b60ebda0bcf8c9c8b33802e8621186b0262cb8f6f0595",
+      "actual": "3b262fb7ab7b7b29457b60ebda0bcf8c9c8b33802e8621186b0262cb8f6f0595",
+      "size": 3806
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-plan.ts",
+      "expected": "3af2b09763bbcb5c66dd184c1a5b68d94dd6ceee9e0b4b3fcb64839d933f0670",
+      "actual": "3af2b09763bbcb5c66dd184c1a5b68d94dd6ceee9e0b4b3fcb64839d933f0670",
+      "size": 6493
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "expected": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+      "actual": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+      "size": 8535
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "expected": "1a98917947dcca4514f8299e4cbeadc4957b2cb0288fc48476c8bdb0d8e2da5d",
+      "actual": "1a98917947dcca4514f8299e4cbeadc4957b2cb0288fc48476c8bdb0d8e2da5d",
+      "size": 10415
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "expected": "8f9717e4478bc9a1333991c34782060d2bb4dee1d9d1c65931faecf798be3668",
+      "actual": "8f9717e4478bc9a1333991c34782060d2bb4dee1d9d1c65931faecf798be3668",
+      "size": 7903
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+      "expected": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437",
+      "actual": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437",
+      "size": 13484
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claimed-sy.ts",
+      "expected": "a1aa3a16238782e5d3108b74435b37a482411adafe8a6a1d6cdcef209f94bd78",
+      "actual": "a1aa3a16238782e5d3108b74435b37a482411adafe8a6a1d6cdcef209f94bd78",
+      "size": 8230
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "expected": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+      "actual": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+      "size": 9883
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "expected": "50960d918b03d2c0a517ef498dba4ea601aefdc439fe39e425c2c6e156b04b30",
+      "actual": "50960d918b03d2c0a517ef498dba4ea601aefdc439fe39e425c2c6e156b04b30",
+      "size": 9538
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "expected": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+      "actual": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+      "size": 10884
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "expected": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c",
+      "actual": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c",
+      "size": 5719
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "expected": "10689bc57cb3df16dbc60aaf4d03fadd45c3eb9b28d8c182c6cf274f206e0326",
+      "actual": "10689bc57cb3df16dbc60aaf4d03fadd45c3eb9b28d8c182c6cf274f206e0326",
+      "size": 13879
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "expected": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+      "actual": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+      "size": 6421
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-schema.ts",
+      "expected": "526094ef3b5697e46a6fe918a7fd346844f0ab576c775acfc100f985a0cff303",
+      "actual": "526094ef3b5697e46a6fe918a7fd346844f0ab576c775acfc100f985a0cff303",
+      "size": 5059
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "expected": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+      "actual": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+      "size": 19046
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "expected": "dacce1a43a7c9e603e9f354a2d3931adc6e509b7b00d3016ea00a37f5d49113a",
+      "actual": "dacce1a43a7c9e603e9f354a2d3931adc6e509b7b00d3016ea00a37f5d49113a",
+      "size": 5607
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "expected": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "actual": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "size": 8426
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "expected": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+      "actual": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+      "size": 22048
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution.test.ts",
+      "expected": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "actual": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "size": 6162
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "expected": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "actual": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "size": 2869
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "expected": "2e530249f7c13bd39d4fda8e38dd36b2de4b176c5629902d8272b2fa4342b1eb",
+      "actual": "2e530249f7c13bd39d4fda8e38dd36b2de4b176c5629902d8272b2fa4342b1eb",
+      "size": 4034
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "expected": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+      "actual": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+      "size": 18490
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "expected": "ad822ba0cd573e615ec09433e30047ac0f426ac0d5fe4e40fd80cdc2c290fcfe",
+      "actual": "ad822ba0cd573e615ec09433e30047ac0f426ac0d5fe4e40fd80cdc2c290fcfe",
+      "size": 12829
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "expected": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+      "actual": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+      "size": 6560
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "expected": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+      "actual": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+      "size": 5443
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "expected": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+      "actual": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+      "size": 12218
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt-association.ts",
+      "expected": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+      "actual": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+      "size": 3491
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claimed-sy-member.ts",
+      "expected": "cf79c6f106ffd7393254b05785fca61e3129cea385b9469c1c1f841f89c23e47",
+      "actual": "cf79c6f106ffd7393254b05785fca61e3129cea385b9469c1c1f841f89c23e47",
+      "size": 10532
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "expected": "c625d384632c459a4d40a1fe434096635b86b172ad867ceb5b3d35cbd228d9b5",
+      "actual": "c625d384632c459a4d40a1fe434096635b86b172ad867ceb5b3d35cbd228d9b5",
+      "size": 13875
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidate-input.ts",
+      "expected": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "actual": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "size": 6757
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/preparation.test.ts",
+      "expected": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+      "actual": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+      "size": 14484
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "expected": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+      "actual": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+      "size": 4679
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-deployment.ts",
+      "expected": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+      "actual": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+      "size": 4485
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidates.test.ts",
+      "expected": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+      "actual": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+      "size": 9086
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "expected": "4adf63cf79fcf192aa31ec8b5e194e71b3729992d6484bf5661c9f2120da0048",
+      "actual": "4adf63cf79fcf192aa31ec8b5e194e71b3729992d6484bf5661c9f2120da0048",
+      "size": 11915
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "expected": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "actual": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "size": 4694
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearse.ts",
+      "expected": "2eab21885a6cdde6856fda244ed3f9f716755d9c91ebd708a10720b76913f7a9",
+      "actual": "2eab21885a6cdde6856fda244ed3f9f716755d9c91ebd708a10720b76913f7a9",
+      "size": 30308
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution.ts",
+      "expected": "c938b02f82335b0cb2ef5d581c67cabc9239e3fd4e7510011e78f473b6d3d613",
+      "actual": "c938b02f82335b0cb2ef5d581c67cabc9239e3fd4e7510011e78f473b6d3d613",
+      "size": 11833
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt.test.ts",
+      "expected": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+      "actual": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+      "size": 9645
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "expected": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+      "actual": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+      "size": 6581
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/journal.ts",
+      "expected": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "actual": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "size": 4792
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "expected": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+      "actual": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+      "size": 20029
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "expected": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+      "actual": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+      "size": 6745
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "expected": "b5814a1b844af5c0a37c03f987cf099934e3d911027d3d6526688455cab280c8",
+      "actual": "b5814a1b844af5c0a37c03f987cf099934e3d911027d3d6526688455cab280c8",
+      "size": 25218
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "expected": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+      "actual": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+      "size": 8477
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "expected": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "actual": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "size": 4636
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts",
+      "expected": "08a4e8bb2c340abba9ddf9c1bfe69cb51089fe1b599e750391f315b0abcdad65",
+      "actual": "08a4e8bb2c340abba9ddf9c1bfe69cb51089fe1b599e750391f315b0abcdad65",
+      "size": 33200
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle.test.ts",
+      "expected": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+      "actual": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+      "size": 8959
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle.ts",
+      "expected": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+      "actual": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+      "size": 7823
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "expected": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+      "actual": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+      "size": 4913
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "expected": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "actual": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "size": 7120
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recover.ts",
+      "expected": "8ce91903f49ceaaf61dcfc52db9f24b80db5e2e481415abc632c77a6147d7289",
+      "actual": "8ce91903f49ceaaf61dcfc52db9f24b80db5e2e481415abc632c77a6147d7289",
+      "size": 9293
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts",
+      "expected": "873fca9d82988ff072c52fb0240214eee67c3510428ccc187d80fcce20a73237",
+      "actual": "873fca9d82988ff072c52fb0240214eee67c3510428ccc187d80fcce20a73237",
+      "size": 3138
+    }
+  ],
+  "archiveSha256": "a80cdb9cf9042725c6a4d9763956e701ce5b858a1972e075e2b1eae64398a58a",
+  "originalVerificationBodyPreserved": true
+}

@@ -1,0 +1,69 @@
+{
+  "status": "needs-fix",
+  "task": "Verify bootstrap identity and prepare only local dependency links",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "branch": "work/dtf-conformance-20261115-wave-1",
+  "baseline": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+  "identity": {
+    "result": "verified",
+    "commands": [
+      "GIT_MASTER=1 git worktree list --porcelain",
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' rev-parse HEAD",
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' status --porcelain=v1",
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex' rev-parse main"
+    ],
+    "observed": "The task worktree is branch work/dtf-conformance-20261115-wave-1 at c33f70683cbaabfedc2dbce1142fdd65660d4cf3; primary main resolves to the same commit. The task status command succeeds after restoring lib/crane as an empty directory."
+  },
+  "approved_plan": {
+    "path": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+    "command": "cmp -s '/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/plans/dtf-migration-conformance-remediation-20261114.md'",
+    "result": "success; byte-identical"
+  },
+  "dependency_links": {
+    "node_modules": {
+      "path": "node_modules",
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "command": "ln -s '/Users/cyotee/Projects/indexedex/node_modules' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/node_modules'",
+      "result": "created and retained; readlink confirmed target"
+    },
+    "lib/crane": {
+      "attempted_target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "commands": [
+        "rmdir '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/lib/crane'",
+        "ln -s '/Users/cyotee/Projects/indexedex/lib/crane' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/lib/crane'"
+      ],
+      "failure": "After link creation, GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' status --porcelain=v1 exited 128: error: expected submodule path 'lib/crane' not to be a symbolic link.",
+      "recovery_commands": [
+        "unlink '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/lib/crane'",
+        "mkdir '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/lib/crane'"
+      ],
+      "final_state": "No lib/crane link remains. The task path is restored to an empty uninitialized submodule directory; GIT_MASTER=1 git submodule status reports -fc0618bf5c34d0564f4367130feff443bd4efc89 lib/crane."
+    }
+  },
+  "primary_targets": {
+    "observed_after_attempt": [
+      "/Users/cyotee/Projects/indexedex/node_modules inode=2248915 size=9792 mtime=1792848273",
+      "/Users/cyotee/Projects/indexedex/lib/crane inode=862061 size=1856 mtime=1793760574"
+    ],
+    "result": "Both existing primary dependency directories were only read and left unchanged."
+  },
+  "task_worktree_status_after_recovery": [
+    "?? .omo/drafts/dtf-migration-conformance-remediation-20261114.md",
+    "?? .omo/drafts/hyperplan-dtf-conformance-insights-20261114.md",
+    "?? .omo/drafts/hyperplan-weighted-migration-insights-20261114.md",
+    "?? .omo/plans/dtf-migration-conformance-remediation-20261114.md",
+    "?? .omo/ulw-execute/",
+    "?? node_modules"
+  ],
+  "deferred": {
+    "install": "Not run.",
+    "compile_or_test": "Not run.",
+    "warm_foundry_artifacts": "out/ and cache_forge remain unseeded. Seed both from a warm checkout before the first Forge compile; no cache copy was started."
+  },
+  "cleanup": "Removed the incompatible task-local lib/crane symlink and recreated the empty task submodule directory. No temporary resources were created.",
+  "remaining_blocker": "The requested shared lib/crane symlink is incompatible with Git's submodule path validation in this worktree. Bootstrap is needs-fix until the task lead chooses a Git-compatible dependency arrangement.",
+  "remaining_risks": [
+    "The node_modules symlink is an untracked task-local link to the primary checkout.",
+    "The worktree is not ready for compilation until a supported lib/crane arrangement is selected and out/ plus cache_forge are seeded."
+  ]
+}

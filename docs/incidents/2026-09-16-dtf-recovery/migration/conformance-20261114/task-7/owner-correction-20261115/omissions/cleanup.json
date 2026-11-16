@@ -1,0 +1,22 @@
+{
+  "fixtureClose": "Both evidence scripts call fixture().close() in finally, which closes the loopback server, deletes its environment variable, and removes its temp directory.",
+  "processes": [
+    {
+      "bash_id": "bash_2",
+      "command": "focused bun test",
+      "exitCode": 0
+    },
+    {
+      "bash_id": "bash_3",
+      "command": "first manual-omissions run",
+      "exitCode": 0
+    },
+    {
+      "bash_id": "bash_4",
+      "command": "final manual-omissions run",
+      "exitCode": 0
+    }
+  ],
+  "tempPrefixAfterFinalRun": "dtf-prepare-test-6ABTvq and dtf-prepare-test-sSyY0e remained. They contain execution checkpoints and A/B prepared files, which this lane's preparation fixture does not write. They were not removed.",
+  "forbiddenOperationsPerformed": []
+}

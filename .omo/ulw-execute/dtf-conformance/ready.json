@@ -1,0 +1,25 @@
+{
+  "status": "confirmed",
+  "task": "Verify bootstrap identity and prepare only local dependency links",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "branch": "work/dtf-conformance-20261115-wave-1",
+  "baseline": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+  "previous_record": {
+    "archived_as": ".omo/ulw-execute/dtf-conformance/ready-symlink-attempt.json",
+    "preservation_check": "cmp -s ready.json ready-symlink-attempt.json exited 0 before ready.json was updated."
+  },
+  "crane_setup_report": ".omo/ulw-execute/dtf-conformance/crane-ready.json",
+  "confirmed_prerequisites": {
+    "parent_git_status": "GIT_MASTER=1 git -C '<worktree>' status --porcelain=v1 exited 0.",
+    "checkout_identity": "Task branch is work/dtf-conformance-20261115-wave-1 at c33f70683cbaabfedc2dbce1142fdd65660d4cf3; primary main is at the same commit.",
+    "approved_plan": "Byte comparison with the primary plan exited 0.",
+    "node_modules": "The task node_modules link resolves to /Users/cyotee/Projects/indexedex/node_modules.",
+    "crane": "The task has a populated plain local Crane copy. Its parent gitlink OID matches the primary Crane HEAD, its source files and symlink entries match the primary copy, and no .git metadata remains in the task copy. This is not claimed to be an initialized Git submodule.",
+    "imports_and_remappings": "Nine remapping targets exist, and all 10 scanned LayerZero/OFT-related Solidity imports resolve within the task-local Crane copy."
+  },
+  "deferred": {
+    "warm_foundry_artifacts": "Deferred. Task out/ and cache_forge remain unseeded; seed both from a warm checkout before the first Forge compile.",
+    "compile_or_test": "Not run. Confirmed status covers setup prerequisites and does not claim compilation or test success.",
+    "install_or_network": "Not run."
+  }
+}

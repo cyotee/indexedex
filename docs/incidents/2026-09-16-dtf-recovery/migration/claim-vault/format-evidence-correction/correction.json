@@ -1,0 +1,23 @@
+{
+  "finding": "F1",
+  "scope": "Correct only log byte-length bookkeeping; no source or runtime change.",
+  "priorValidationSha256": "bd2b881003fe1d3e6124f58e4b4bf75d6f88d44fd742ad1ff8a7c0f273bd6b70",
+  "priorSealSha256": "d0c49aac0d178f589d626a8639ce9790db92abcebc5eb6a287543057a3885934",
+  "priorEvidencePreserved": true,
+  "corrections": [
+    {
+      "name": "specs",
+      "oldCodeUnits": 229420,
+      "bytes": 269164,
+      "sha256": "f6897050e0874ac4b4605a5462740f60fab7083b066923a24dc2804f8075a11b"
+    },
+    {
+      "name": "forks",
+      "oldCodeUnits": 180237,
+      "bytes": 218681,
+      "sha256": "2b97a1c267c97c0591f1e3b4ccf03b4a007956dd48c454a3ff40e0843be78051"
+    }
+  ],
+  "validationResults": "validation-results.json",
+  "supersedes": "Only checks[*].bytes in ../format-correction/validation-results.json; all other prior results and bindings remain authoritative."
+}

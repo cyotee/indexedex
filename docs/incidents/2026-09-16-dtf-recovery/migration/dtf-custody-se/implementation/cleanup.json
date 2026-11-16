@@ -1,0 +1,247 @@
+{
+  "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se; lsof -nP -iTCP:18565 -sTCP:LISTEN; printf 'PORT_PROBE_EXIT=%s\n' \"$?\"; ps -p 94555,93710 -o pid=,command=; printf 'PID_PROBE_EXIT=%s\n' \"$?\"; test ! -e .omo-runtime/dtf-migration-dtf-custody-se/checkpoints; printf 'CHECKPOINT_ABSENT_EXIT=%s\n' \"$?\"; rmdir .omo-runtime/dtf-migration-dtf-custody-se; printf 'OWNED_PARENT_REMOVAL_EXIT=%s\n' \"$?\"; GIT_MASTER=1 git diff --check; printf 'WHITESPACE_EXIT=%s\n' \"$?\"; GIT_MASTER=1 git rev-parse HEAD; GIT_MASTER=1 git branch --show-current; GIT_MASTER=1 git diff --cached --name-only --ignore-submodules=all; ls -ld lib/crane node_modules out cache_forge",
+  "output": "PORT_PROBE_EXIT=1\nPID_PROBE_EXIT=1\nCHECKPOINT_ABSENT_EXIT=0\nOWNED_PARENT_REMOVAL_EXIT=0\nWHITESPACE_EXIT=0\n2baab6e58dafcc3fe5f9a94570d99987d58bf42b\nwork/dtf-migration-phase-15-dtf-custody-se\ndrwxr-xr-x@    9 cyotee  staff     288 Nov 11 15:28 cache_forge\nlrwxr-xr-x@    1 cyotee  staff      42 Nov 11 15:28 lib/crane -> /Users/cyotee/Projects/indexedex/lib/crane\nlrwxr-xr-x@    1 cyotee  staff      45 Nov 11 15:28 node_modules -> /Users/cyotee/Projects/indexedex/node_modules\ndrwxr-xr-x@ 6206 cyotee  staff  198592 Nov 11 15:49 out",
+  "successfulRun": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/rehearsal-1794441190961",
+    "cleanup": {
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/.omo-runtime/dtf-migration-dtf-custody-se/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 94555,
+      "runtime": "removed"
+    }
+  },
+  "failedRun": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/rehearsal-1794441130445",
+    "cleanup": {
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/.omo-runtime/dtf-migration-dtf-custody-se/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 93710,
+      "runtime": "removed"
+    }
+  },
+  "sourceSnapshotChecks": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "expected": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a",
+      "actual": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "expected": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a",
+      "actual": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "expected": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd",
+      "actual": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "expected": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d",
+      "actual": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "expected": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "actual": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "expected": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59",
+      "actual": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "expected": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f",
+      "actual": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "expected": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25",
+      "actual": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "expected": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac",
+      "actual": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "expected": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+      "actual": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "expected": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c",
+      "actual": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "expected": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5",
+      "actual": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "expected": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591",
+      "actual": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "expected": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3",
+      "actual": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "expected": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd",
+      "actual": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "expected": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0",
+      "actual": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "expected": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744",
+      "actual": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "expected": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa",
+      "actual": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "expected": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606",
+      "actual": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "expected": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77",
+      "actual": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "expected": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015",
+      "actual": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "expected": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4",
+      "actual": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "expected": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294",
+      "actual": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "expected": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58",
+      "actual": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "expected": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c",
+      "actual": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "expected": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86",
+      "actual": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "expected": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea",
+      "actual": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "expected": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "actual": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "expected": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64",
+      "actual": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "expected": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a",
+      "actual": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+      "expected": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa",
+      "actual": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol",
+      "expected": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0",
+      "actual": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+      "expected": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120",
+      "actual": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeConfiguration.t.sol",
+      "expected": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2",
+      "actual": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2"
+    }
+  ],
+  "authorityChecks": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+      "expected": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+      "actual": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "expected": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "actual": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "expected": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "actual": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "expected": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "actual": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/weighted/contract.md",
+      "expected": "6748c44550417a8e89d655969d9c032158916345367003e4c2679c0c2490b192",
+      "actual": "6748c44550417a8e89d655969d9c032158916345367003e4c2679c0c2490b192"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+      "expected": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc",
+      "actual": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+      "expected": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c",
+      "actual": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/report.md",
+      "expected": "a8239596a190ea6f3b236fe8fa55998e06a0bcd1ac34d5040dad5c6d17773f80",
+      "actual": "a8239596a190ea6f3b236fe8fa55998e06a0bcd1ac34d5040dad5c6d17773f80"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/commit/verification.md",
+      "expected": "9f1d4465d7b277cbcbe55bd314f07f8ea41418b1a947ccdfc5e8df38f440c6d6",
+      "actual": "9f1d4465d7b277cbcbe55bd314f07f8ea41418b1a947ccdfc5e8df38f440c6d6"
+    }
+  ],
+  "compiledSources": 706,
+  "ownedRuntimeRemaining": false,
+  "sourceModificationsStopped": true,
+  "scope": "Only 34 scoped source/test/operator/runbook paths and this implementation evidence directory. No commit, merge, public operation, provider bypass, source governance change, dependency/configuration change or held09 inspection/import/replay."
+}

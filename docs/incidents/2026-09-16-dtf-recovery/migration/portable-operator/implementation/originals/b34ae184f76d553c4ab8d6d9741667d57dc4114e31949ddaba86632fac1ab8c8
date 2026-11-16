@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"hasOutstandingShares","inputs":[],"outputs":[{"name":"","type":"bool","internalType":"bool"}],"stateMutability":"view"}],"id":735}

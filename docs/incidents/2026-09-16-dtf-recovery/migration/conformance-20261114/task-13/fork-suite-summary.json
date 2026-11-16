@@ -1,0 +1,255 @@
+{
+  "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/03.log",
+  "logSha256": "e0862260e4e33003e9e6cb430ca93e4c95475e222b171144f54fac18a23d995d",
+  "globalSummary": "Ran 30 test suites in 152.93s (280.60s CPU time): 183 tests passed, 0 failed, 0 skipped (183 total tests)",
+  "counts": {
+    "suites": 30,
+    "passed": 183,
+    "failed": 0,
+    "skipped": 0
+  },
+  "expectedFiles": [
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol"
+  ],
+  "selectedFiles": [
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol"
+  ],
+  "missingFiles": [],
+  "suites": [
+    {
+      "header": "Ran 10 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol:MigrationEarlierLiquidTest",
+      "line": 4050,
+      "summary": "Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 69.09s (50.19s CPU time)",
+      "summaryLine": 4061
+    },
+    {
+      "header": "Ran 11 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol:MigrationEarlierReceiptTest",
+      "line": 4063,
+      "summary": "Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 2.20s (1.47s CPU time)",
+      "summaryLine": 4075
+    },
+    {
+      "header": "Ran 10 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol:MigrationEarlierLpTest",
+      "line": 4077,
+      "summary": "Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 2.48s (1.46s CPU time)",
+      "summaryLine": 4088
+    },
+    {
+      "header": "Ran 12 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol:MigrationEarlierSeTest",
+      "line": 4090,
+      "summary": "Suite result: ok. 12 passed; 0 failed; 0 skipped; finished in 974.28ms (316.89ms CPU time)",
+      "summaryLine": 4103
+    },
+    {
+      "header": "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol:MigrationClaimVaultTest",
+      "line": 4105,
+      "summary": "Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 97.71s (378.59ms CPU time)",
+      "summaryLine": 4112
+    },
+    {
+      "header": "Ran 11 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol:MigrationWeightedLpTest",
+      "line": 4114,
+      "summary": "Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 1.33s (671.45ms CPU time)",
+      "summaryLine": 4126
+    },
+    {
+      "header": "Ran 11 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol:MigrationWeightedWethSeTest",
+      "line": 4128,
+      "summary": "Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 1.70s (1.04s CPU time)",
+      "summaryLine": 4140
+    },
+    {
+      "header": "Ran 4 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol:MigrationLegacyInvariantTest",
+      "line": 4142,
+      "summary": "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 6.99s (4.14s CPU time)",
+      "summaryLine": 4936
+    },
+    {
+      "header": "Ran 2 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol:MigrationLegacyLpExitTest",
+      "line": 4938,
+      "summary": "Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 813.72ms (545.14ms CPU time)",
+      "summaryLine": 4941
+    },
+    {
+      "header": "Ran 5 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol:MigrationLegacySeExitTest",
+      "line": 4943,
+      "summary": "Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 660.73ms (381.70ms CPU time)",
+      "summaryLine": 4955
+    },
+    {
+      "header": "Ran 11 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol:MigrationLegacySourcesTest",
+      "line": 4957,
+      "summary": "Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 3.76s (2.81s CPU time)",
+      "summaryLine": 4969
+    },
+    {
+      "header": "Ran 10 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol:MigrationNftLifecycleTest",
+      "line": 4971,
+      "summary": "Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 1.62s (986.32ms CPU time)",
+      "summaryLine": 4982
+    },
+    {
+      "header": "Ran 5 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol:MigrationOriginalWalletTest",
+      "line": 4984,
+      "summary": "Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 1.12s (470.47ms CPU time)",
+      "summaryLine": 4990
+    },
+    {
+      "header": "Ran 1 test for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol:MigrationDeploymentGasForkTest",
+      "line": 4992,
+      "summary": "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 19.44s (517.34ms CPU time)",
+      "summaryLine": 4994
+    },
+    {
+      "header": "Ran 3 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol:MigrationRecoveryAccrualTest",
+      "line": 4996,
+      "summary": "Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 708.67ms (87.68ms CPU time)",
+      "summaryLine": 5000
+    },
+    {
+      "header": "Ran 1 test for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol:MigrationRecoveryAccrualRollbackTest",
+      "line": 5002,
+      "summary": "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 797.15ms (143.31ms CPU time)",
+      "summaryLine": 5004
+    },
+    {
+      "header": "Ran 4 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol:MigrationRecoveryClaimVaultTest",
+      "line": 5006,
+      "summary": "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 962.06ms (309.24ms CPU time)",
+      "summaryLine": 5011
+    },
+    {
+      "header": "Ran 8 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol:MigrationRecoveryDonationTest",
+      "line": 5013,
+      "summary": "Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 1.44s (783.45ms CPU time)",
+      "summaryLine": 5022
+    },
+    {
+      "header": "Ran 4 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol:MigrationRecoveryDtfCustodySeTest",
+      "line": 5024,
+      "summary": "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 1.28s (290.95ms CPU time)",
+      "summaryLine": 5029
+    },
+    {
+      "header": "Ran 5 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol:MigrationRecoveryEarlierTest",
+      "line": 5031,
+      "summary": "Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 843.60ms (224.28ms CPU time)",
+      "summaryLine": 5037
+    },
+    {
+      "header": "Ran 1 test for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol:MigrationRecoveryGasTest",
+      "line": 5039,
+      "summary": "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 9.86s (9.22s CPU time)",
+      "summaryLine": 5043
+    },
+    {
+      "header": "Ran 7 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol:MigrationRecoveryWeightedTest",
+      "line": 5045,
+      "summary": "Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 802.89ms (169.81ms CPU time)",
+      "summaryLine": 5053
+    },
+    {
+      "header": "Ran 3 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol:MigrationRecoveryWeightedReceiptTest",
+      "line": 5055,
+      "summary": "Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 1.17s (414.93ms CPU time)",
+      "summaryLine": 5059
+    },
+    {
+      "header": "Ran 3 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol:MigrationRecoveryWeightedSyTest",
+      "line": 5061,
+      "summary": "Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 738.29ms (78.56ms CPU time)",
+      "summaryLine": 5065
+    },
+    {
+      "header": "Ran 2 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol:MigrationSourceUnitsInvariantTest",
+      "line": 5067,
+      "summary": "Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 12.19s (8.26s CPU time)",
+      "summaryLine": 5627
+    },
+    {
+      "header": "Ran 7 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol:MigrationWeightedLiquidTest",
+      "line": 5629,
+      "summary": "Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 825.95ms (157.65ms CPU time)",
+      "summaryLine": 5637
+    },
+    {
+      "header": "Ran 8 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol:MigrationWeightedReceiptTest",
+      "line": 5639,
+      "summary": "Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 1.01s (310.06ms CPU time)",
+      "summaryLine": 5648
+    },
+    {
+      "header": "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol:MigrationClaimedSyTest",
+      "line": 5650,
+      "summary": "Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 1.58s (935.86ms CPU time)",
+      "summaryLine": 5657
+    },
+    {
+      "header": "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol:MigrationWeightedSyTest",
+      "line": 5659,
+      "summary": "Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 745.50ms (99.24ms CPU time)",
+      "summaryLine": 5666
+    },
+    {
+      "header": "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol:MigrationDtfCustodySeTest",
+      "line": 5668,
+      "summary": "Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 35.77s (166.67ms CPU time)",
+      "summaryLine": 5675
+    }
+  ],
+  "observedForgeCommands": [
+    "forge build --use solar contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory.sol contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/test/stubs/SimpleMintableERC20.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol contracts/vaults/detf/common/sy/DETFSYDFPkg.sol contracts/vaults/detf/common/sy/DETFSYFacet.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeInFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeMarkerFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol lib/crane/contracts/protocols/launchpads/ponsFamily/v2/hooks/PonsV2MemeHook.sol lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/tokens/ERC721/ERC721Facet.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+    "forge test --use solar -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv --skip 'contracts/**' --skip 'test/foundry/fork/archive/**' --skip 'test/foundry/fork/base_main/**' --skip 'test/foundry/fork/eth_main/**' --skip 'test/foundry/fork/ethereum_main/**' --skip 'test/foundry/fork/protocols/**' --skip 'test/foundry/fork/robinhood_4663/**' --skip 'test/foundry/fork/robinhood_main/**' --skip 'test/foundry/fork/scripts/**' --skip test/foundry/fork/vaults/BalancerV3_ExactOut_Fork.t.sol --skip test/foundry/fork/vaults/BalancerV3_ExactOut_Regression.t.sol"
+  ],
+  "qualification": "All K test files selected with real nonzero case counts. Pinned forks passed; this does not supply task 10 rehearsal or task 12 portable current-chain lifecycle."
+}

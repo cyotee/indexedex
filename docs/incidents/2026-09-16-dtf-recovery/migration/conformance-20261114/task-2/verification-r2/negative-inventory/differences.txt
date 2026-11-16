@@ -1,0 +1,8 @@
+Retained root: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source
+Destination root: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination
+Source entries: 4; destination entries: 4
+missing	missing.txt	unresolved; delivery must fail until restored or source-qualified
+symlink	outward-link	unresolved; delivery must fail until restored or source-qualified
+semantic	preserved.txt	unresolved; delivery must fail until restored or source-qualified
+semantic	tampered.txt	unresolved; delivery must fail until restored or source-qualified
+Additional historical-source differences and exact archived destinations: conformance-20261114/task-2/recovery-differences.json (when present).

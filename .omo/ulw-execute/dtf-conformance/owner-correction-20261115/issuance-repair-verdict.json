@@ -1,0 +1,79 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "scope": "Issuance required child-event emitter/topic selection and exact proof validation in execution-state.ts and execution-state.test.ts only; excludes census sibling, shared QA and fresh task-10 lifecycle",
+  "confidence": "high",
+  "sources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "c86ed48392ad0c6909df77eb867b83b64d52dc9979f573dde30a29de847c1e47",
+      "bytes": 30452,
+      "pureLines": 428
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.test.ts",
+      "sha256": "31cfec3cfb1c1e032f4a5f6159600d17300f75a7b24d07b91e9ac0bea5b9d785",
+      "bytes": 21327,
+      "pureLines": 322
+    }
+  ],
+  "evidence": {
+    "claim": {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-done.json",
+      "sha256": "9a7f56e36558e7215d01ef1fc2f6286c8f668f14ed7700a7a2fe0a638804ad75"
+    },
+    "blocker": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-issuance-event-blocker.json",
+      "sha256": "267983cc22de6dfd188d1b77a08f6d9056c3de33c0e8ec4721b5e8e87030cb2d"
+    },
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance/independent/report.md",
+    "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance/independent/verification.json",
+    "retainedBeforeFixRegression": {
+      "exit": 1,
+      "error": "BUFFER_OVERRUN",
+      "meaning": "Valid issuance shape rejected by pre-fix production decoder"
+    },
+    "manualBefore": {
+      "exit": 0,
+      "meaning": "Expected original parser failure asserted; not accepted issuance"
+    },
+    "focusedStateTests": {
+      "exit": 0,
+      "passed": 10,
+      "failed": 0
+    },
+    "manualAfter": {
+      "exit": 0,
+      "positive": "New explicitly synthetic signed wire context",
+      "independentCorruptedReceiptRejections": 25,
+      "stalePrincipalRejected": true,
+      "statusZeroRejected": true
+    },
+    "currentOwnedSourceHashesMatch": true,
+    "originalReceiptDomainIntentDiagnosticHashesUnchanged": true,
+    "inMemoryReverseMatchesReviewedSetterState": true,
+    "emitterAndTopicSelectedBeforeDecoding": true,
+    "exactRequiredEventEncodingCountValuesAndOrderEnforced": true,
+    "noBroadExceptionSuppression": true,
+    "canonicalSafeguardsUnchanged": true,
+    "sourceBoundSetterRepairPreserved": true,
+    "testsOrReplaysRerunByVerifier": false
+  },
+  "limitations": [
+    "Only saved actual receipt/event facts and diagnostic are authenticated; complete historical getter proof unavailable and not claimed.",
+    "Successful completion is a new explicitly synthetic signed wire context, not a fresh Anvil issuance.",
+    "Census domain sibling excluded; shared operator suite and both strict tsc commands remain deferred after both writers finish. Earlier combined gate does not validate this changed tree.",
+    "State test/evidence fixture LSP freshness timeouts are not clean diagnostics.",
+    "Twenty-five independently corrupted inputs are not twenty-five production-code mutations.",
+    "No source edits, installations, Forge, RPC, transactions, delegation, readiness or task-10 closure.",
+    "JSON LSP unavailable because biome is not installed; JSON generated with JSON.stringify and no installation performed."
+  ],
+  "fixes": [],
+  "censusRepairAccepted": false,
+  "sharedGateAccepted": false,
+  "freshAnvilAccepted": false,
+  "task10Complete": false,
+  "parentReadinessMarkerWritten": false,
+  "writtenLast": true
+}

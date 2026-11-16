@@ -1,0 +1,74 @@
+{
+  "type": "DoneClaim",
+  "task": 2,
+  "status": "blocked",
+  "acceptance_met": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "gate": {
+    "path": ".omo/ulw-execute/dtf-conformance/ready.json",
+    "required_status": "confirmed",
+    "observed_status": "needs-fix",
+    "observation_method": "functions.read; first task input read; successful tool result, no shell exit code",
+    "source_binding": {
+      "task": "Verify bootstrap identity and prepare only local dependency links",
+      "baseline_reported_by_gate": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+      "branch_reported_by_gate": "work/dtf-conformance-20261115-wave-1",
+      "remaining_blocker_verbatim": "The requested shared lib/crane symlink is incompatible with Git's submodule path validation in this worktree. Bootstrap is needs-fix until the task lead chooses a Git-compatible dependency arrangement."
+    },
+    "interpretation": "The explicit require-confirmed prerequisite failed. No implementation or acceptance checks were authorized past this gate. Bootstrap statements were read as reported evidence, not independently reproduced."
+  },
+  "changes": [
+    ".omo/ulw-execute/dtf-conformance/task-2-done.json"
+  ],
+  "commands_executed": [],
+  "tool_checks": [
+    {
+      "tool": "functions.read",
+      "path": ".omo/ulw-execute/dtf-conformance/ready.json",
+      "result": "Read succeeded; status needs-fix fails required confirmed value.",
+      "exit_code": null
+    },
+    {
+      "tool": "functions.read",
+      "path": ".omo/ulw-execute/dtf-conformance/task-2-done.json",
+      "result": "ENOENT before creation; no existing claim overwritten.",
+      "exit_code": null
+    }
+  ],
+  "verification": {
+    "original_helpers_and_baseline_behavior": "Unrun: readiness gate failed before recovery investigation. No baseline test result is claimed.",
+    "happy_inventory": {
+      "command": "bun \"$D/resumed-integration/record-verification.ts\" inventory \"$E/task-2/inventory\" \"$R\" \"$D\"",
+      "result": "Unrun: readiness gate failed.",
+      "exit_code": null
+    },
+    "divergent_row_manual_review": "Unrun: inventory not generated.",
+    "compile_check_task_13_invocation": "Unrun: readiness gate failed; no compiler started.",
+    "negative_fixture_inventory_and_delivery": "Unrun: readiness gate failed; fixture directories not created.",
+    "source_and_destination_integrity": "No recovery files were read, copied or edited; no byte-integrity verification is claimed."
+  },
+  "manual_qa_artifacts": [],
+  "adversarial_classes": {
+    "stale_state": "Gate read directly at task entry. No historical success was substituted for its needs-fix status. No broader stale-state test performed.",
+    "dirty_worktree": "Unrun: no Git operations or recovery writes after failed gate. Dirty state listed inside ready.json is reported bootstrap evidence only.",
+    "misleading_success_output": "Blocked status and acceptance_met=false explicitly distinguish this report from successful task acceptance. No absent stdout or exit status manufactured.",
+    "malformed_input": "Applicable task-2 helper check, unrun because readiness failed.",
+    "symlink_boundaries": "Applicable task-2 fixture check, unrun because readiness failed. No outward symlink traversal performed.",
+    "generated_artifacts": "Applicable task-2 manifest check, unrun because readiness failed. No inventory or delivery outputs generated.",
+    "external_source_identity": "Not applicable to this gated run: task-3 source authentication was not invoked.",
+    "long_commands": "Not applicable to this gated run: no shell, compile, network or long command was invoked.",
+    "other_classes": "No changed executable behavior exists to exercise additional runtime adversarial classes; task-2 file-integrity acceptance remains unverified."
+  },
+  "cleanup": {
+    "owned_temporary_resources_created": [],
+    "removed_resources": [],
+    "result": "No cleanup required. Only this claim was created; no shared dependencies, caches, archived originals, live journals or unrelated files were modified."
+  },
+  "remaining_gate": "Task lead must resolve bootstrap and provide ready.json status confirmed before task 2 can execute.",
+  "remaining_risks": [
+    "All artifact recovery, reconciliation, inventory/delivery implementation and task-2 acceptance checks remain outstanding.",
+    "Tasks 3, 9, 11, 13 and 15 must not treat this blocked report as completed task-2 evidence.",
+    "No primary checkout or retained phase30 source was modified. No historical trace was retried."
+  ]
+}

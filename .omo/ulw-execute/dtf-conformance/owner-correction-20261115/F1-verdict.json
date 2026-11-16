@@ -1,0 +1,209 @@
+{
+  "type": "AdversarialVerify",
+  "verifier": "F1",
+  "reviewer": "st_01a1e0aa",
+  "date": "2026-11-15",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "scope": "Independent final review of truthful bounded partial delivery, obligation preservation, evidence classification and stop/dependency disposition only.",
+  "full_goal_met": false,
+  "known_unmet": [10, 12, 13, 14, 15],
+  "confirmed_implementation_rows_at_admitted_scope": [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 16],
+  "task_15_full_acceptance": false,
+  "release_readiness": false,
+  "requeue_authorized": false,
+  "other_final_reviews_preapproved": false,
+  "additive_final_closeout_certified": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "reason": "The package preserves every mapped obligation and explicitly distinguishes confirmed finite scope, limited historical or synthetic proof, and unmet full outcomes. The authentic delivery exit remains 1, the original task-10 clock is not reset, frozen rehearsal work is identified, the withdrawn witness pin stays removed, and no financial or public-action approval is implied. No additional product defect or concealed acceptance claim was established in the inspected verified scope.",
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+    "bytes": 37865,
+    "sha256": "3e585a1be4d948804af6e6b97a474087b02360bb1c8492b8a93c4dbe8cae2345"
+  },
+  "authority": {
+    "plan": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+    "plan_sha256": "efda25688a867c89d9854c9f3d92b6779a0537dc968b6281aa2fd8f88c7af23a",
+    "amended_P": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "amended_P_sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+    "bounded_brief": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/bounded-final-review-brief.md",
+    "complete_plan_and_P_read": true,
+    "complete_historical_baseline_PRD_read": true,
+    "both_complete_hyperplan_bundles_read": true,
+    "complete_approved_draft_read": true,
+    "current_user_bounded_review_instruction_is_controlling": true,
+    "parent_claims_treated_as_new_user_product_decisions": false,
+    "unavailable_historical_review": {
+      "path": "docs/reviews/dtf-migration-plan-execution-20261114/REMEDIATION_PRD.md",
+      "result": "ENOENT in the permitted worktree; not present in saved boundary control records",
+      "direct_read_completed": false,
+      "qualification": "Reconciled scope was read in the complete P, both hyperplan bundles, approved draft and confirmed task-1/prior final-review evidence. No claim to have reread the unavailable F1-F6 report; no out-of-worktree fallback."
+    }
+  },
+  "manual_review": {
+    "channel": "Agent file reads of authorities, actual partial-boundary inventory and receipts, linked raw witnesses, confirmed source-scoped reviews and selected current authentication source; bounded programmatic JSON queries and raw-byte comparisons.",
+    "prepared_before_handoff": true,
+    "final_report_written_after_actual_handoff": true,
+    "boundary_polling": false,
+    "boundary_subscription": {
+      "monitor": "mon_BZ650Y5NS0TRHA0F",
+      "result": "Create event delivered and watcher completed.",
+      "later_stop_attempt": "No terminal session found with id: watch_1",
+      "pending_wait": false
+    },
+    "new_product_or_runtime_QA": false,
+    "settled_checks_rerun": false
+  },
+  "boundary": {
+    "claim": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/partial-boundary-done.json",
+    "inventory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+    "inventory_bytes": 33680555,
+    "inventory_sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+    "inventory_binding_matches_handoff": true,
+    "destination_entries": 123368,
+    "destination_types": {
+      "file": 98075,
+      "directory": 25127,
+      "symlink": 166
+    },
+    "retained_source_entries": 13613,
+    "companion_catalog_entries": 311,
+    "companion_regular_files_independently_compared": 305,
+    "companion_regular_file_mismatches": [],
+    "companion_nonfiles": {
+      "deletion_tombstones": 4,
+      "dependency_symlink": 1,
+      "vendor_directory": 1,
+      "external_targets_traversed": false
+    },
+    "inspected_boundary_artifact_hashes_matched": 8,
+    "both_helpers_present": true,
+    "changed_helper_identity": "verify-bounded-deployments.ts matches its retained task-13 identity, not its earlier task-2 origin identity.",
+    "strict_delivery": {
+      "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected/delivery.json",
+      "receipt_sha256": "62567227331d35062e499681536c9cc7cd060a2f138fdc2db28363fdee1370a6",
+      "command_receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/result.json",
+      "actual_exit": 1,
+      "completed": false,
+      "destination_entries_at_scan": 123361,
+      "failure_messages": 340,
+      "preserved_symlinks": 166,
+      "retained_byte_differences": [
+        "recovery-route-disposition.md",
+        "resumed-integration/verify-bounded-deployments.ts",
+        "source-manifest.json",
+        "source-route-matrix.md"
+      ],
+      "counting": "Two messages per preserved symlink and two checks per divergent retained file.",
+      "failure_list_agrees_with_current_summary": true,
+      "failure_relabelled_as_success": false
+    },
+    "retained_checkpoint_files": 107,
+    "retained_checkpoint_bytes": 677799,
+    "checkpoint_copy_claimed_replay_ready": false,
+    "unverified_rehearsal_paths": 10,
+    "mixed_ownership_preserved": "rehearsal-data.ts: confirmed generated pricing-ABI binding, unverified broader rehearsal lifecycle.",
+    "baseline_edited_by_reviewer": false,
+    "entire_evidence_tree_independently_rehashed": false,
+    "self_reference_exception_preserved": true,
+    "new_final_reports_require_later_additive_closeout": true
+  },
+  "proof_classification": {
+    "current_operator_gate": {
+      "passed": 336,
+      "failed": 0,
+      "files": 21,
+      "strict_operator_types": "confirmed",
+      "retained_helper_types": "confirmed with historical input-inventory limit",
+      "historical_helper_inputs_bound": 28,
+      "historical_helper_inputs_reachable": 29,
+      "unbound_historical_input": "task-11/recovery.ts",
+      "synthetic_CLI_is_real_task10_lifecycle": false,
+      "gate_is_full_task13_certification": false
+    },
+    "retained_contract_and_fork_results": {
+      "hermetic_passed": 28641,
+      "migration_fork_passed": 183,
+      "raw_result_receipts_exit": 0,
+      "scope": "Historical source-qualified evidence only; not renewed full task-13 acceptance."
+    },
+    "actual_partial_runtime": [
+      "Successful configure A with missing completion checkpoint",
+      "Separate successful B setter; no completed A-after-B recovery",
+      "Genuine local 10000-DTF setup transfer with publicFunderApproved false",
+      "Narrow actual donation-identity and no-resend observations"
+    ],
+    "known_missing_lifecycle": [
+      "A-after-B historical recovery without resend",
+      "Same recipient current B configuration with immutable A issuance",
+      "Actual same-block A/B and transaction-prefix recovery",
+      "Successful unset-pricing paid owner purchase and activation",
+      "Original-wallet NFT 3 two funded contribution bonds and cliff claims",
+      "Separate second-callback receiver rollback and later success",
+      "Complete postactivation source, recovery, ordinary and portability continuation"
+    ],
+    "withdrawn_claimWitnessCodeHash": {
+      "current_operator_symbol_and_old_pin_search_matches": 0,
+      "current_operator_files_searched": 87,
+      "replacement_pin_introduced": false,
+      "source_transaction_trace_and_conservation_checks_retained": true
+    }
+  },
+  "coverage": {
+    "migration_policies": 15,
+    "feasibility_gates": 5,
+    "acceptance_ids": 53,
+    "acceptance_rows_met_at_named_finite_scope": 16,
+    "acceptance_rows_with_limited_proof_and_named_unmet_owner": 37,
+    "source_categories": 14,
+    "arithmetic_examples": 13,
+    "stateful_invariant_obligations": 12,
+    "owner_clarifications": 10,
+    "original_tasks": 10,
+    "original_final_verifiers": 4,
+    "original_section_11": "unmet",
+    "qualification": "Coverage means individually dispositioned against actual witnesses or known blocked owners. Met at a finite retained scope does not certify current full conformance."
+  },
+  "stop_and_dependency_review": {
+    "original_opened_at": "2026-11-15T14:55:25.715Z",
+    "original_deadline": "2026-11-15T18:55:25.715Z",
+    "activity_observed_after_deadline": "2026-11-15T18:56:48.717Z",
+    "termination_receipt_recorded_at": "2026-11-15T19:06:05.503Z",
+    "precise_deadline_termination_certified": false,
+    "clock_reset": false,
+    "attempt52_normal_exit": null,
+    "attempt52_normal_result": false,
+    "post_bound_partial_facts_promoted_to_in_bound_acceptance": false,
+    "known_failed_dependencies_treated_as_passed": false,
+    "known_gaps_requeued": false,
+    "cleanup_basis": "Retained forced-termination and process/listener observations; no new probe.",
+    "final_wave_basis": "Explicit bounded-final-wave rule permits truthful partial review while full outcome remains unmet."
+  },
+  "new_product_defects_established": [],
+  "new_verified_scope_acceptance_blockers": [],
+  "limits": [
+    "Historical review REMEDIATION_PRD is absent from the permitted worktree and was not directly reread.",
+    "Retained H/F results, invariant bounds, source conditions and gas snapshot branches retain their original scope.",
+    "No exhaustive fresh code audit, signature re-verification, vendor-tree audit or current chain attestation.",
+    "The entire approximately 16 GB evidence tree and unrelated historical writer preservation were not independently rehashed by F1.",
+    "Strict delivery remains failed; this review does not certify full task 15 or the later additive closeout.",
+    "Other current final reviews are not preapproved.",
+    "No financial allocation, production pricing book, public donor, deployment, funding, activation, issuance, governance action, merge, commit or release is approved."
+  ],
+  "actions": {
+    "delegation": false,
+    "implementation_or_fixture_edits": false,
+    "tests_or_builds": false,
+    "project_scripts": false,
+    "installs": false,
+    "RPC_or_Anvil": false,
+    "Git_or_commits": false,
+    "public_or_financial_actions": false,
+    "baseline_edits": false,
+    "only_outputs": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+      ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F1-verdict.json"
+    ]
+  },
+  "verdict_written_last": true
+}

@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"eth_blockNumber\",\"params\":[]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"0x67e5d17\"}",
+  "httpStatus": 200,
+  "raw": true
+}

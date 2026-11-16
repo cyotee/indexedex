@@ -1,0 +1,637 @@
+{
+  "at": "2026-11-10T13:22:34.715Z",
+  "scope": "Offline interpretation of existing terminal receipts; no repeated chain probe",
+  "checks": [
+    {
+      "name": "metered terminal exit",
+      "actual": 2,
+      "expected": 2,
+      "pass": true
+    },
+    {
+      "name": "metered overall retains failures",
+      "actual": "FAIL",
+      "expected": "FAIL",
+      "pass": true
+    },
+    {
+      "name": "metered harness error absent",
+      "actual": null,
+      "expected": null,
+      "pass": true
+    },
+    {
+      "name": "metered pin exact",
+      "actual": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "expected": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "pass": true
+    },
+    {
+      "name": "successful inner claim rolled back by failed outer transaction: failed transaction",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "successful inner claim rolled back by failed outer transaction: inner call succeeded",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "successful inner claim rolled back by failed outer transaction: state unchanged",
+      "actual": {
+        "weight": "64890781291192882058375",
+        "sy": "0",
+        "supply": "15338080546808403036783930",
+        "vaultShares": "276912583840862116302"
+      },
+      "expected": {
+        "weight": "64890781291192882058375",
+        "sy": "0",
+        "supply": "15338080546808403036783930",
+        "vaultShares": "276912583840862116302"
+      },
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: partial exact custody: mined",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: partial exact custody: owner delta",
+      "actual": "2769125838408621163",
+      "expected": "2769125838408621163",
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: partial exact custody: custody delta",
+      "actual": "2769125838408621163",
+      "expected": "2769125838408621163",
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: partial exact custody: unauthorized rejected",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: harvest: actual receipt 0xB55604CF4dcdABB362078e106D20F98512391EdF",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: failed transfer outer rollback: failed transaction",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: failed transfer outer rollback: inner call succeeded",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "claim-vault shares: failed transfer outer rollback: state unchanged",
+      "actual": {
+        "owner": "276912583840862116302",
+        "custody": "0",
+        "allowance": "2769125838408621163"
+      },
+      "expected": {
+        "owner": "276912583840862116302",
+        "custody": "0",
+        "allowance": "2769125838408621163"
+      },
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: partial exact custody: mined",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: partial exact custody: owner delta",
+      "actual": "2402083350942343165016427703439986226",
+      "expected": "2402083350942343165016427703439986226",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: partial exact custody: custody delta",
+      "actual": "2402083350942343165016427703439986226",
+      "expected": "2402083350942343165016427703439986226",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: partial exact custody: unauthorized rejected",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: harvest: actual receipt 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: harvest: no output 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: harvest: actual receipt 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: harvest: no output 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: failed transfer outer rollback: failed transaction",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: failed transfer outer rollback: inner call succeeded",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "earlier underlying SE: failed transfer outer rollback: state unchanged",
+      "actual": {
+        "owner": "240208335094234316501642770343998622608",
+        "custody": "0",
+        "allowance": "2402083350942343165016427703439986226"
+      },
+      "expected": {
+        "owner": "240208335094234316501642770343998622608",
+        "custody": "0",
+        "allowance": "2402083350942343165016427703439986226"
+      },
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: partial exact custody: mined",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: partial exact custody: owner delta",
+      "actual": "1075167226680908457977200216751522",
+      "expected": "1075167226680908457977200216751522",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: partial exact custody: custody delta",
+      "actual": "1075167226680908457977200216751522",
+      "expected": "1075167226680908457977200216751522",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: partial exact custody: unauthorized rejected",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: harvest: actual receipt 0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: harvest: no output 0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: harvest: actual receipt 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: harvest: no output 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: failed transfer outer rollback: failed transaction",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: failed transfer outer rollback: inner call succeeded",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "earlier fungible LP: failed transfer outer rollback: state unchanged",
+      "actual": {
+        "owner": "107516722668090845797720021675152213",
+        "custody": "0",
+        "allowance": "1075167226680908457977200216751522"
+      },
+      "expected": {
+        "owner": "107516722668090845797720021675152213",
+        "custody": "0",
+        "allowance": "1075167226680908457977200216751522"
+      },
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: partial exact custody: mined",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: partial exact custody: owner delta",
+      "actual": "23634291028048331275075",
+      "expected": "23634291028048331275075",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: partial exact custody: custody delta",
+      "actual": "23634291028048331275075",
+      "expected": "23634291028048331275075",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: partial exact custody: unauthorized rejected",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: actual receipt 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: no output 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: actual receipt 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: no output 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: actual receipt 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: no output 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: actual receipt 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest: no output 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: failed transfer outer rollback: failed transaction",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: failed transfer outer rollback: inner call succeeded",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "weighted WETH-leg SE: failed transfer outer rollback: state unchanged",
+      "actual": {
+        "owner": "2363429102804833127507538",
+        "custody": "0",
+        "allowance": "23634291028048331275075"
+      },
+      "expected": {
+        "owner": "2363429102804833127507538",
+        "custody": "0",
+        "allowance": "23634291028048331275075"
+      },
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: partial exact custody: mined",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: partial exact custody: owner delta",
+      "actual": "1622646459016401842967981100000000",
+      "expected": "1622646459016401842967981100000000",
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: partial exact custody: custody delta",
+      "actual": "1622646459016401842967981100000000",
+      "expected": "1622646459016401842967981100000000",
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: partial exact custody: unauthorized rejected",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: harvest: actual receipt 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: failed transfer outer rollback: failed transaction",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: failed transfer outer rollback: inner call succeeded",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "weighted DTF custody SE: failed transfer outer rollback: state unchanged",
+      "actual": {
+        "owner": "162264645901640184296798110000000000",
+        "custody": "0",
+        "allowance": "1622646459016401842967981100000000"
+      },
+      "expected": {
+        "owner": "162264645901640184296798110000000000",
+        "custody": "0",
+        "allowance": "1622646459016401842967981100000000"
+      },
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: partial exact custody: mined",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: partial exact custody: owner delta",
+      "actual": "15166467477246491",
+      "expected": "15166467477246491",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: partial exact custody: custody delta",
+      "actual": "15166467477246491",
+      "expected": "15166467477246491",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: partial exact custody: unauthorized rejected",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: actual receipt 0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: harvest: no output 0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "actual": "0",
+      "expected": "0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: failed transfer outer rollback: failed transaction",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: failed transfer outer rollback: inner call succeeded",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "weighted fungible LP: failed transfer outer rollback: state unchanged",
+      "actual": {
+        "owner": "1516646747724649142",
+        "custody": "0",
+        "allowance": "15166467477246491"
+      },
+      "expected": {
+        "owner": "1516646747724649142",
+        "custody": "0",
+        "allowance": "15166467477246491"
+      },
+      "pass": true
+    },
+    {
+      "name": "caller checks present",
+      "actual": 2,
+      "expected": 2,
+      "pass": true
+    },
+    {
+      "name": "caller failure absent",
+      "actual": null,
+      "expected": null,
+      "pass": true
+    },
+    {
+      "name": "caller state restored",
+      "actual": {
+        "holder": "64890781291192882058375",
+        "custody": "0",
+        "supply": "15338080546808403036783930"
+      },
+      "expected": {
+        "holder": "64890781291192882058375",
+        "custody": "0",
+        "supply": "15338080546808403036783930"
+      },
+      "pass": true
+    },
+    {
+      "name": "caller ordinary forwarding failed",
+      "actual": "0x0",
+      "expected": "0x0",
+      "pass": true
+    },
+    {
+      "name": "caller expected exact revert",
+      "actual": "0x936d426d0000000000000000000000001a0511e3d0657f00eb5d2695478f9ee1d1debce4000000000000000000000000000000000000000000000dbdbc7e523eeb8854870000000000000000000000000000000000000000000000000000000000000000",
+      "expected": "0x936d426d0000000000000000000000001a0511e3d0657f00eb5d2695478f9ee1d1debce4000000000000000000000000000000000000000000000dbdbc7e523eeb8854870000000000000000000000000000000000000000000000000000000000000000",
+      "pass": true
+    },
+    {
+      "name": "holder direct reassignment succeeded",
+      "actual": "0x1",
+      "expected": "0x1",
+      "pass": true
+    },
+    {
+      "name": "no recipient callback",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    }
+  ],
+  "failed": []
+}

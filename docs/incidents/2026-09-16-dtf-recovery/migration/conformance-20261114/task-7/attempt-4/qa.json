@@ -1,0 +1,88 @@
+{
+  "task": 7,
+  "status": "blocked",
+  "authoritativeAttempt": 4,
+  "pathsRelativeTo": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7",
+  "sourceFingerprint": "5dfb2a5436f7a5ecee47c35d0b98a45ca23d03d1e96bda4746bfd8ac1b180be5",
+  "supersedes": [
+    "qa.json",
+    "commands.json",
+    "source-inventory.json",
+    "adversarial.json",
+    "attempt-2/happy.command.json",
+    "attempt-3/happy.command.json"
+  ],
+  "checks": {
+    "requiredBun": {
+      "exitCode": 0,
+      "passed": 56,
+      "failed": 0,
+      "receipt": "attempt-4/happy.command.json"
+    },
+    "strictTypes": {
+      "exitCode": 0,
+      "receipt": "attempt-4/types.command.json"
+    },
+    "dependent": {
+      "exitCode": 1,
+      "passed": 162,
+      "failed": 1,
+      "receipt": "attempt-4/dependent.command.json"
+    },
+    "realMixedRecordRehearsal": {
+      "exitCode": 0,
+      "manualQa": "pass",
+      "trace": "state-trace.json",
+      "sourceBinding": "rehearsal-source-bindings.json"
+    },
+    "scopedDiff": {
+      "exitCode": 0
+    }
+  },
+  "blockers": [
+    {
+      "id": "B1",
+      "status": "blocked",
+      "requirement": "Exact requested Forge helper command succeeds",
+      "command": "python3 scripts/forge-artifacts.py script scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --sig 'runMixedRecordRehearsal()' -vv",
+      "exitCode": 2,
+      "evidence": "required-forge.log",
+      "cause": "scripts/forge-artifacts.py accepts audit, plan, build, and test only; script is not a supported action.",
+      "scope": "The helper is outside task 7 allowed writes. It was not changed.",
+      "alternative": "Supported helper artifact build and explicit Solar script both succeeded; this does not turn the required command into a pass."
+    },
+    {
+      "id": "B2",
+      "status": "blocked",
+      "requirement": "Existing claimed-SY fixed witness runtime identity agrees with freshly compiled artifact",
+      "test": "fixed witness pin matches the concrete compiled router used by the rehearsal",
+      "testLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:89-92",
+      "pinLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.ts:11",
+      "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "pinUnchangedFromHead": true,
+      "evidence": "dependent-acceptance.log",
+      "disposition": "Preserved the source pin and the failing assertion. No artifact substitution, expected-value update, skip, or installation."
+    }
+  ],
+  "finalAdditions": [
+    "An overwritten intra-block book authenticates through its exact canonical setter and later successful loader, with ordered full configuration preimages and bound executing code. A missing or altered load fails closed.",
+    "An unsigned blocked checkpoint is terminal and releases the root reservation for a new immutable execution; signed uncertainty retains the reservation. A terminal blocked journal is never rewritten or reopened."
+  ],
+  "limitations": [
+    "The exact requested Forge helper invocation is unsupported. The successful helper build plus explicit Solar script is a separate result.",
+    "The fixed claimed-SY witness runtime pin remains different from the fresh Solar artifact; that assertion still fails.",
+    "Transport tests exercise the real operator and reconciler through local wire fixtures. The real hermetic script exercises registry/proxy contracts. Full real-RPC lifecycle and portable scenario runs belong to tasks 10-12 and were not claimed here.",
+    "The real script configured the two NFT 3 components and checked stable identity; actual legacy NFT surrender and its two funded bonds are not claimed by this task-7 trace."
+  ],
+  "mutation": {
+    "evidence": "mutation-domain.log",
+    "expectedFailure": "Missing expected rejection",
+    "restorationEvidence": "happy-final.command.json",
+    "subsequentFinalGuardCoverage": "attempt-4/happy.log"
+  },
+  "forbiddenOperationsPerformed": []
+}

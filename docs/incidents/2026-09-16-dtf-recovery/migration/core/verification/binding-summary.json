@@ -1,0 +1,56 @@
+{
+  "checkedAt": "2026-11-10T22:37:03.586Z",
+  "base": "6e27ecaa242c4acca132e3575a160514aad07b11",
+  "branch": "work/dtf-migration-phase-04",
+  "productionSources": 45,
+  "allSourceHashes": 2479,
+  "artifactFiles": 927,
+  "sha256SourceMismatch": [],
+  "keccakSourceMismatch": [],
+  "artifactMismatch": [],
+  "metadataMismatch": [],
+  "transactionInputMismatches": [],
+  "receiptBlockMismatches": [],
+  "producerLogCounts": [
+    {
+      "file": "focused-15.log",
+      "sha256": "f55e36be618e7bd5129d51bb7df26748333c48a0e6430338138206b5cb7b5b76",
+      "passes": 59,
+      "failures": 0
+    },
+    {
+      "file": "combined-01.log",
+      "sha256": "7e433ef3ce13d2112fc70d1e7340db14a5da1c7c60f54f5d218938be0357cb0c",
+      "passes": 10078,
+      "failures": 0
+    },
+    {
+      "file": "qa-build-03.log",
+      "sha256": "bb6bcc4a1eecd5ca12d9c114811366f63a27a18a324a7eadd9e27cffdff31bd2",
+      "passes": 0,
+      "failures": 0
+    }
+  ],
+  "requiredInputHashes": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core-brief.md",
+      "sha256": "8faaabe91571a848a4b830f2591bf3190699e224bfff3bbeab0dc80810d871ed"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration/package/egress-contract-r3.md",
+      "sha256": "97648b43f3249ea7a5b5b1f9bf0dc34cb09e095908015c8545a540029ce36701"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration/package/egress-r3-verification.md",
+      "sha256": "96651f4a73fb17b7890cc5687eaf4fea9350d3cbab632e69cd81b0371dbc9a80"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/report.md",
+      "sha256": "bbc09ed1a30b3033e6499069bb30ad8f77d48baf79fc5f974b58be01def3272b"
+    }
+  ]
+}

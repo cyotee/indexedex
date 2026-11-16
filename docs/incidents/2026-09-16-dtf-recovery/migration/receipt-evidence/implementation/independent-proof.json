@@ -1,0 +1,4312 @@
+{
+  "bindingChecks": 36,
+  "rawRecords": 77,
+  "weighted": 43,
+  "earlier": 16,
+  "claims": 18,
+  "httpCaptures": 310,
+  "authenticated": true,
+  "rows": [
+    {
+      "locator": "evidence/weighted-bonds.csv#row=2",
+      "tx": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+      "kind": "weighted",
+      "recipient": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "mints": [
+        {
+          "logIndex": "48",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+          "tokenId": "3",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "49",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000003",
+            "0x00000000000000000000000072bea6fa3e68ef18c87d045aac7c4aa5249d933b"
+          ],
+          "values": [
+            "3772281649",
+            "1789321770",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "362893857600000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "8",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "362893857600000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "999999000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "6",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "999999000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "3772281649",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=3",
+      "tx": "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "245",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "4",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "246",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000004",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "281387179",
+            "1789341594",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "30000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "211",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "30000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "281387179",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=4",
+      "tx": "0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "29",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "5",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "30",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000005",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "462445599",
+            "1789341641",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "50000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "1",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "50000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "462445599",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=5",
+      "tx": "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "183",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "6",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "184",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000006",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "740825635",
+            "1789341678",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "80000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "155",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "80000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "740825635",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=6",
+      "tx": "0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "86",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "7",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "87",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000007",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "1200103129",
+            "1789341718",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "130000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "58",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "130000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "1200103129",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=7",
+      "tx": "0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "29",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "8",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "30",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000008",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "1937763154",
+            "1789341775",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "220000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "1",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "220000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "1937763154",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=8",
+      "tx": "0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "89",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "9",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "90",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000009",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "3147607863",
+            "1789341908",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "150000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "59",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "150000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "3147607863",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=9",
+      "tx": "0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "105",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "10",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "106",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000000a",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "5077481904",
+            "1789341970",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "180000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "71",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "180000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "5077481904",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=10",
+      "tx": "0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b",
+      "kind": "weighted",
+      "recipient": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "mints": [
+        {
+          "logIndex": "33",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+          "tokenId": "11",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "34",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000000b",
+            "0x0000000000000000000000003e01a5779cfa830794dbb9c8673a61b3c5c5608a"
+          ],
+          "values": [
+            "44048877",
+            "1789362973",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "117620151493077568323998",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "5",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "117620151493077568323998"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "44048877",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=11",
+      "tx": "0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1",
+      "kind": "weighted",
+      "recipient": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "mints": [
+        {
+          "logIndex": "111",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+          "tokenId": "12",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "112",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000000c",
+            "0x000000000000000000000000b2b12665da21fccfb9b8e4d4f2349a4c835fc669"
+          ],
+          "values": [
+            "1455956506",
+            "1789379439",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1000000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "85",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "1000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "1455956506",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=12",
+      "tx": "0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb",
+      "kind": "weighted",
+      "recipient": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "mints": [
+        {
+          "logIndex": "59",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+          "tokenId": "13",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "60",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000000d",
+            "0x000000000000000000000000e8ca5d7b03204d110ff8a06753e7cd90defc544a"
+          ],
+          "values": [
+            "1915",
+            "1789381356",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "33",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "1000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "1915",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=13",
+      "tx": "0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd",
+      "kind": "weighted",
+      "recipient": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "mints": [
+        {
+          "logIndex": "79",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+          "tokenId": "14",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "80",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000000e",
+            "0x0000000000000000000000005160f655bf9b567f8a47a4f107371ad938126c3c"
+          ],
+          "values": [
+            "191603",
+            "1789381380",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "100000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "53",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "100000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "191603",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=14",
+      "tx": "0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27",
+      "kind": "weighted",
+      "recipient": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "mints": [
+        {
+          "logIndex": "61",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+          "tokenId": "15",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "62",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000000f",
+            "0x000000000000000000000000e8ca5d7b03204d110ff8a06753e7cd90defc544a"
+          ],
+          "values": [
+            "1915",
+            "1789381400",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "35",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "1000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "1915",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=15",
+      "tx": "0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1",
+      "kind": "weighted",
+      "recipient": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "mints": [
+        {
+          "logIndex": "65",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+          "tokenId": "16",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "66",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000010",
+            "0x00000000000000000000000003f523d7243aaf869c44322197b4fc55e0d12cd7"
+          ],
+          "values": [
+            "153080136",
+            "1789386794",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "84207000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "39",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "84207000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "153080136",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=16",
+      "tx": "0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b",
+      "kind": "weighted",
+      "recipient": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "mints": [
+        {
+          "logIndex": "26",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+          "tokenId": "17",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "27",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000011",
+            "0x0000000000000000000000004aa38d56933887bdba2e790fa45509bfd9d1b938"
+          ],
+          "values": [
+            "179696",
+            "1789389684",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "100000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "0",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "100000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "179696",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=17",
+      "tx": "0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd",
+      "kind": "weighted",
+      "recipient": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "mints": [
+        {
+          "logIndex": "34",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+          "tokenId": "18",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "35",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000012",
+            "0x000000000000000000000000dc7d32b21cfdf003b5467141bd67e1f68a732cce"
+          ],
+          "values": [
+            "49053117",
+            "1789393072",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "28722838050154716955768",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "8",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "28722838050154716955768"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "49053117",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=18",
+      "tx": "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9",
+      "kind": "weighted",
+      "recipient": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "mints": [
+        {
+          "logIndex": "40",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+          "tokenId": "19",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "41",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000013",
+            "0x00000000000000000000000026acc4c07cac494d49054eaad406ef108a074a66"
+          ],
+          "values": [
+            "133006119",
+            "1789394945",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "100000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "12",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "133006119",
+      "savedMismatches": [],
+      "conflicts": [
+        "indirect-purchase-or-different-caller"
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=19",
+      "tx": "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71",
+      "kind": "weighted",
+      "recipient": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "mints": [
+        {
+          "logIndex": "85",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+          "tokenId": "20",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "86",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000014",
+            "0x00000000000000000000000026acc4c07cac494d49054eaad406ef108a074a66"
+          ],
+          "values": [
+            "266266893",
+            "1789395379",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "200000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "57",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "200000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "266266893",
+      "savedMismatches": [],
+      "conflicts": [
+        "indirect-purchase-or-different-caller"
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=20",
+      "tx": "0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d",
+      "kind": "weighted",
+      "recipient": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "mints": [
+        {
+          "logIndex": "108",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+          "tokenId": "21",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "109",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000015",
+            "0x000000000000000000000000ed2e9d1e229e6a78baf74abc7314bd16b9924f33"
+          ],
+          "values": [
+            "17650489",
+            "1789402198",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "13638592554139803593186",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "80",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "13638592554139803593186"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "17650489",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=21",
+      "tx": "0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac",
+      "kind": "weighted",
+      "recipient": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "mints": [
+        {
+          "logIndex": "67",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+          "tokenId": "22",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "68",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000016",
+            "0x0000000000000000000000008b73c11e053581620bf5d7826d0942c50cb7b9cf"
+          ],
+          "values": [
+            "1288034730",
+            "1789402848",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1010505832294964975193008",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "39",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "1010505832294964975193008"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "1288034730",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=22",
+      "tx": "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a",
+      "kind": "weighted",
+      "recipient": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "mints": [
+        {
+          "logIndex": "28",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+          "tokenId": "23",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "29",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000017",
+            "0x00000000000000000000000026acc4c07cac494d49054eaad406ef108a074a66"
+          ],
+          "values": [
+            "252865083",
+            "1789411246",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "200000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "2",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "200000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "252865083",
+      "savedMismatches": [],
+      "conflicts": [
+        "indirect-purchase-or-different-caller"
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=23",
+      "tx": "0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "37",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "24",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "38",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000018",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "1300890757",
+            "1789412736",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "2000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "5",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "2000000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "1300890757",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=24",
+      "tx": "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970",
+      "kind": "weighted",
+      "recipient": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "mints": [
+        {
+          "logIndex": "82",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+          "tokenId": "25",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "83",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000019",
+            "0x000000000000000000000000f0f80dd7e46ee7c3e7bd68f806bab1875f069530"
+          ],
+          "values": [
+            "53274997",
+            "1789417491",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "50000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "54",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "50000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "53274997",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=25",
+      "tx": "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d",
+      "kind": "weighted",
+      "recipient": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "mints": [
+        {
+          "logIndex": "143",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+          "tokenId": "26",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "144",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000001a",
+            "0x000000000000000000000000c379feb4182211abe71a34858265e4bf5ff35e06"
+          ],
+          "values": [
+            "56299",
+            "1789421422",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "50000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "117",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "50000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "56299",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=26",
+      "tx": "0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0",
+      "kind": "weighted",
+      "recipient": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "mints": [
+        {
+          "logIndex": "98",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+          "tokenId": "27",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "99",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000001b",
+            "0x0000000000000000000000004aa38d56933887bdba2e790fa45509bfd9d1b938"
+          ],
+          "values": [
+            "3302546215",
+            "1789436358",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "3638287394965303325165504",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "70",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "3638287394965303325165504"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "3302546215",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=27",
+      "tx": "0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737",
+      "kind": "weighted",
+      "recipient": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "mints": [
+        {
+          "logIndex": "61",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+          "tokenId": "28",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "62",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000001c",
+            "0x000000000000000000000000b63159deb0ed4b388b964c5eb5a9f2845e469a08"
+          ],
+          "values": [
+            "3726336268",
+            "1789439113",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "4646962928061246692056443",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "33",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "4646962928061246692056443"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "3726336268",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=28",
+      "tx": "0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1",
+      "kind": "weighted",
+      "recipient": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "mints": [
+        {
+          "logIndex": "27",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+          "tokenId": "29",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "28",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000001d",
+            "0x000000000000000000000000cb2735084b4c10343e2f54c2c7573615ccf4d97f"
+          ],
+          "values": [
+            "1777911406",
+            "1789443001",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "2000000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "1",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "2000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "1777911406",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=29",
+      "tx": "0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "35",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "30",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "36",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000001e",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "457125470",
+            "1789447948",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "500000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "7",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "500000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "457125470",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=30",
+      "tx": "0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "38",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "31",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "39",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000001f",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "4031493805",
+            "1789448055",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "6190000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "6",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "6190000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "4031493805",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=31",
+      "tx": "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914",
+      "kind": "weighted",
+      "recipient": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "mints": [
+        {
+          "logIndex": "26",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x4dfebb21d855115d4019819393e514977e490e5d",
+          "tokenId": "32",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "27",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000020",
+            "0x0000000000000000000000004dfebb21d855115d4019819393e514977e490e5d"
+          ],
+          "values": [
+            "54436459",
+            "1789448266",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "56017714220190058289217",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "0",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x4dfebb21d855115d4019819393e514977e490e5d",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "56017714220190058289217"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "54436459",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=32",
+      "tx": "0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc",
+      "kind": "weighted",
+      "recipient": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "mints": [
+        {
+          "logIndex": "28",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+          "tokenId": "33",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "29",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000021",
+            "0x0000000000000000000000009140e11bb397188a0c930e91f3f266029c35524d"
+          ],
+          "values": [
+            "13798634863",
+            "1789451440",
+            "5184000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "15063801572703677690083241",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "0",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "15063801572703677690083241"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "13798634863",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=33",
+      "tx": "0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92",
+      "kind": "weighted",
+      "recipient": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "mints": [
+        {
+          "logIndex": "68",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+          "tokenId": "34",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "69",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000022",
+            "0x000000000000000000000000ba9b369a75e216cc9d73c9f3f916c939a5755a08"
+          ],
+          "values": [
+            "59081498",
+            "1789453427",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "6412108793936732436515",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "40",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "6412108793936732436515"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "59081498",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=34",
+      "tx": "0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b",
+      "kind": "weighted",
+      "recipient": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "mints": [
+        {
+          "logIndex": "50",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+          "tokenId": "35",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "51",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000023",
+            "0x0000000000000000000000003b7137ef234e0a6bce37b19d3e1c4bb4584e0866"
+          ],
+          "values": [
+            "182228084",
+            "1789457121",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "14069000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "22",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "14069000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "182228084",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=35",
+      "tx": "0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb",
+      "kind": "weighted",
+      "recipient": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "mints": [
+        {
+          "logIndex": "62",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+          "tokenId": "36",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "63",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000024",
+            "0x0000000000000000000000003b7137ef234e0a6bce37b19d3e1c4bb4584e0866"
+          ],
+          "values": [
+            "1642192630",
+            "1789457634",
+            "15552000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "126626591392013828699598",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "36",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "126626591392013828699598"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "1642192630",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=36",
+      "tx": "0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "37",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "37",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "38",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000025",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "51168348039",
+            "1789463711",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "3929803780631121610",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "5",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "3929803780631121610"
+            }
+          ]
+        }
+      ],
+      "basis": "51168348039",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=37",
+      "tx": "0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "59",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "38",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "60",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000026",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "28366285153",
+            "1789464556",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "2000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "27",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "2000000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "28366285153",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=38",
+      "tx": "0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "58",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "39",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "59",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000027",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "73833949104",
+            "1789464678",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "6000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "26",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "6000000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "73833949104",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=39",
+      "tx": "0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9",
+      "kind": "weighted",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "mints": [
+        {
+          "logIndex": "42",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+          "tokenId": "40",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "43",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000028",
+            "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+          ],
+          "values": [
+            "15681307429",
+            "1789464875",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "1000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "8",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "1000000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "15681307429",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=40",
+      "tx": "0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4",
+      "kind": "weighted",
+      "recipient": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "mints": [
+        {
+          "logIndex": "42",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+          "tokenId": "41",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "43",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x0000000000000000000000000000000000000000000000000000000000000029",
+            "0x00000000000000000000000074d09665900a5f29bac25befd30c73a5962d44e7"
+          ],
+          "values": [
+            "746187269",
+            "1789477217",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "50000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "10",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "50000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "746187269",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=41",
+      "tx": "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba",
+      "kind": "weighted",
+      "recipient": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "mints": [
+        {
+          "logIndex": "71",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+          "tokenId": "42",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "72",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000002a",
+            "0x00000000000000000000000026acc4c07cac494d49054eaad406ef108a074a66"
+          ],
+          "values": [
+            "5129740381",
+            "1789501735",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "400000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "45",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "400000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "5129740381",
+      "savedMismatches": [],
+      "conflicts": [
+        "indirect-purchase-or-different-caller"
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=42",
+      "tx": "0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27",
+      "kind": "weighted",
+      "recipient": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "mints": [
+        {
+          "logIndex": "51",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+          "tokenId": "43",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "52",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000002b",
+            "0x000000000000000000000000b4b258c63d56c11f97d3f881d19aa296945846ae"
+          ],
+          "values": [
+            "1564401756",
+            "1789526703",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "100000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "23",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "1564401756",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=43",
+      "tx": "0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd",
+      "kind": "weighted",
+      "recipient": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "mints": [
+        {
+          "logIndex": "28",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+          "tokenId": "44",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "29",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000002c",
+            "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+          ],
+          "values": [
+            "81035885",
+            "1789565294",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "0",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "1000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "81035885",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=44",
+      "tx": "0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731",
+      "kind": "weighted",
+      "recipient": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "mints": [
+        {
+          "logIndex": "51",
+          "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+          "tokenId": "45",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "52",
+          "topics": [
+            "0x80011bda9effa4f3a58820ca8e5f6579f0a2b5097a83547fc465feae7eac0f63",
+            "0x000000000000000000000000000000000000000000000000000000000000002d",
+            "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+          ],
+          "values": [
+            "12596732131",
+            "1789565776",
+            "2592000"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "100000000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "23",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+              "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "tokenId": null,
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "12596732131",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=2",
+      "tx": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+      "kind": "earlier",
+      "recipient": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+      "mints": [
+        {
+          "logIndex": "33",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+          "tokenId": "3",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "34",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000003",
+            "0x000000000000000000000000495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed"
+          ],
+          "values": [
+            "562524912595035608166",
+            "1500000000000000000",
+            "1803205295"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "1778859964387451305574664",
+          "inbound": [
+            {
+              "logIndex": "18",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1778859964387451305574664"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "2000000000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "11",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "2000000000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "562524912595035608166",
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=3",
+      "tx": "0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4",
+      "kind": "earlier",
+      "recipient": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+      "mints": [
+        {
+          "logIndex": "19",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+          "tokenId": "4",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "20",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000004",
+            "0x000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d"
+          ],
+          "values": [
+            "2281854312954086546",
+            "1000561780219094285",
+            "1788261679"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "7215852540309913726431",
+          "routed": "3703818",
+          "inbound": [
+            {
+              "logIndex": "3",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "7215852540309913726431"
+            },
+            {
+              "logIndex": "11",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "3703818"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "2281854312954086546",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=4",
+      "tx": "0x80a7af214d8aafe95e2b62b6c67a28b98ef1601f417a5c07b942e44e717f8fa1",
+      "kind": "earlier",
+      "recipient": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+      "mints": [
+        {
+          "logIndex": "32",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+          "tokenId": "5",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "33",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000005",
+            "0x000000000000000000000000fad14e74911353728b9bbfd9f0566827790c16c2"
+          ],
+          "values": [
+            "4733571557235944381",
+            "1013123810118285945",
+            "1790249586"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "14939945008882434692090",
+          "routed": "5679593238886465",
+          "inbound": [
+            {
+              "logIndex": "16",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "14939945008882434692090"
+            },
+            {
+              "logIndex": "24",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "6542043"
+            },
+            {
+              "logIndex": "44",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1791001147"
+            },
+            {
+              "logIndex": "49",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "5679591441343275"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "4733571557235944381",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=5",
+      "tx": "0x68cf362d094e28799bb02943c0fa5d8b7a4577d40d701e360c791bc715ed7535",
+      "kind": "earlier",
+      "recipient": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+      "mints": [
+        {
+          "logIndex": "24",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+          "tokenId": "6",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "25",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000006",
+            "0x000000000000000000000000d3d58fdd70b33143052de127be8700fa37825e96"
+          ],
+          "values": [
+            "17499787460727814908",
+            "1001264005492962142",
+            "1788535559"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "55026060195080703684401",
+          "routed": "62816193844203301",
+          "inbound": [
+            {
+              "logIndex": "8",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "55026060195080703684401"
+            },
+            {
+              "logIndex": "16",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "368711"
+            },
+            {
+              "logIndex": "36",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "212545101060"
+            },
+            {
+              "logIndex": "41",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "62815981298733530"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "17499787460727814908",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=6",
+      "tx": "0x90ad17355e01e23c01e80ab93b246a61c0e791a7d85066c6341fcbf44b963067",
+      "kind": "earlier",
+      "recipient": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "mints": [
+        {
+          "logIndex": "56",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+          "tokenId": "7",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "57",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000007",
+            "0x0000000000000000000000005f0a91bef93b0f947cd82ea39ec2939d6aec663a"
+          ],
+          "values": [
+            "101771406718761253180",
+            "1000000000000000000",
+            "1787759729"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "320000000000000000000000",
+          "routed": "327306939002799687",
+          "inbound": [
+            {
+              "logIndex": "40",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "320000000000000000000000"
+            },
+            {
+              "logIndex": "48",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "9759514"
+            },
+            {
+              "logIndex": "68",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "4922390452803"
+            },
+            {
+              "logIndex": "73",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "327302016602587370"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "101771406718761253180",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=7",
+      "tx": "0x176e169d8d7add51dce9f3f5009f6322f93264fc7cfdc17a5d2c969066a4a88f",
+      "kind": "earlier",
+      "recipient": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+      "mints": [
+        {
+          "logIndex": "45",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+          "tokenId": "8",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "46",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000008",
+            "0x00000000000000000000000073c121d572e065c8b6fa6acec6b40deffb62e1df"
+          ],
+          "values": [
+            "3177276484339682675",
+            "1500000000000000000",
+            "1803230928"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "10000000000000000000000",
+          "routed": "10210351169511441",
+          "inbound": [
+            {
+              "logIndex": "29",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "10000000000000000000000"
+            },
+            {
+              "logIndex": "37",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "7238155"
+            },
+            {
+              "logIndex": "57",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "4756321426"
+            },
+            {
+              "logIndex": "62",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "10210346405951860"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "3177276484339682675",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=8",
+      "tx": "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55",
+      "kind": "earlier",
+      "recipient": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      "mints": [
+        {
+          "logIndex": "23",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+          "tokenId": "9",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "24",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000009",
+            "0x00000000000000000000000076b60dcf71da2294f8aa034432d925d1eed8cf68"
+          ],
+          "values": [
+            "26355776123062198039",
+            "1000000000000000000",
+            "1787797897"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "0",
+          "routed": "41454715583251193437",
+          "inbound": [
+            {
+              "logIndex": "8",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "41454674363068691516"
+            },
+            {
+              "logIndex": "16",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "3421"
+            },
+            {
+              "logIndex": "35",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "149677359"
+            },
+            {
+              "logIndex": "40",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "41220032821141"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "100000000000000",
+          "routed": "0",
+          "inbound": [
+            {
+              "logIndex": "1",
+              "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+              "from": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "100000000000000"
+            }
+          ]
+        }
+      ],
+      "basis": "26355776123062198039",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=9",
+      "tx": "0x8ec17aa049770ee9c2d525d5e6e1c707ee42f2c039532526de56a132c9f5876f",
+      "kind": "earlier",
+      "recipient": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "mints": [
+        {
+          "logIndex": "16",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+          "tokenId": "10",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "17",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x000000000000000000000000000000000000000000000000000000000000000a",
+            "0x00000000000000000000000052f5e84f5ef47a9a0ee998856ec2ee5c27ea8497"
+          ],
+          "values": [
+            "635830119561554894104",
+            "1000000000000000000",
+            "1787824066"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1000000000000000000000",
+          "routed": "2848",
+          "inbound": [
+            {
+              "logIndex": "0",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1000000000000000000000"
+            },
+            {
+              "logIndex": "8",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "2848"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "635830119561554894104",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=10",
+      "tx": "0xb6292353395922bd69b073664afb0188d47cbdbfcc4d13cd185ac37d4cb4ad73",
+      "kind": "earlier",
+      "recipient": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "mints": [
+        {
+          "logIndex": "33",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+          "tokenId": "11",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "34",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x000000000000000000000000000000000000000000000000000000000000000b",
+            "0x00000000000000000000000052f5e84f5ef47a9a0ee998856ec2ee5c27ea8497"
+          ],
+          "values": [
+            "63710177980044045505074",
+            "1013123810118285945",
+            "1790330314"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "100000000000000000000",
+          "routed": "3",
+          "inbound": [
+            {
+              "logIndex": "18",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "100000000000000000000"
+            },
+            {
+              "logIndex": "25",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "3"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "63710177980044045505074",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=11",
+      "tx": "0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24",
+      "kind": "earlier",
+      "recipient": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "mints": [
+        {
+          "logIndex": "40",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+          "tokenId": "12",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "41",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x000000000000000000000000000000000000000000000000000000000000000c",
+            "0x00000000000000000000000052f5e84f5ef47a9a0ee998856ec2ee5c27ea8497"
+          ],
+          "values": [
+            "47848240999749918187208884",
+            "1000000000000000000",
+            "1787825624"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "75081277576132719227716",
+          "routed": "2",
+          "inbound": [
+            {
+              "logIndex": "24",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "75081277576132719227716"
+            },
+            {
+              "logIndex": "32",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "2"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "47848240999749918187208884",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=12",
+      "tx": "0xa18c5713d0e7f67099072b20ecca3418c89dc9bf61af2f503f9fa04f97f5625b",
+      "kind": "earlier",
+      "recipient": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "mints": [
+        {
+          "logIndex": "31",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+          "tokenId": "13",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "32",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x000000000000000000000000000000000000000000000000000000000000000d",
+            "0x0000000000000000000000005f0a91bef93b0f947cd82ea39ec2939d6aec663a"
+          ],
+          "values": [
+            "14076427465745415752889694594",
+            "1013123810118285945",
+            "1790332861"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "22000000000000000000",
+          "routed": "5212466",
+          "inbound": [
+            {
+              "logIndex": "16",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "22000000000000000000"
+            },
+            {
+              "logIndex": "23",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1"
+            },
+            {
+              "logIndex": "47",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "5212465"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "14076427465745415752889694594",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=13",
+      "tx": "0x1b17aaa9a895121a4b496bb5c74ba00e4ed445951f2ed1a6cc7ba3b1dc77a829",
+      "kind": "earlier",
+      "recipient": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "mints": [
+        {
+          "logIndex": "146",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+          "tokenId": "14",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "147",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x000000000000000000000000000000000000000000000000000000000000000e",
+            "0x0000000000000000000000005f0a91bef93b0f947cd82ea39ec2939d6aec663a"
+          ],
+          "values": [
+            "63994795678617495504331915305",
+            "1013123810118285945",
+            "1790332934"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "100000000000000000000",
+          "routed": "1390591",
+          "inbound": [
+            {
+              "logIndex": "130",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "100000000000000000000"
+            },
+            {
+              "logIndex": "138",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1"
+            },
+            {
+              "logIndex": "162",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1390590"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "63994795678617495504331915305",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=14",
+      "tx": "0xa45445505ce0d5c5f8011d49bef9344f883a245d6a86a0752a610376c6bb5287",
+      "kind": "earlier",
+      "recipient": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "mints": [
+        {
+          "logIndex": "31",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+          "tokenId": "15",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "32",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x000000000000000000000000000000000000000000000000000000000000000f",
+            "0x0000000000000000000000005f0a91bef93b0f947cd82ea39ec2939d6aec663a"
+          ],
+          "values": [
+            "384036613756141320755161221429",
+            "1013123810118285945",
+            "1790333485"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "600000000000000000000",
+          "routed": "1444477",
+          "inbound": [
+            {
+              "logIndex": "15",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "600000000000000000000"
+            },
+            {
+              "logIndex": "23",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1"
+            },
+            {
+              "logIndex": "47",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1444476"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "384036613756141320755161221429",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=15",
+      "tx": "0x0a902f1d04b7da358cc37504cb976901597febc12f72d13cf9d2db660190ec8a",
+      "kind": "earlier",
+      "recipient": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "mints": [
+        {
+          "logIndex": "20",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+          "tokenId": "16",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "21",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000010",
+            "0x000000000000000000000000bedf78eb17a054d972c85ce222e2175f19899cd6"
+          ],
+          "values": [
+            "682214153247983854950221048859993",
+            "1013123810118285945",
+            "1790345310"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1063674247110000000000",
+          "routed": "1",
+          "inbound": [
+            {
+              "logIndex": "4",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1063674247110000000000"
+            },
+            {
+              "logIndex": "12",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "682214153247983854950221048859993",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=16",
+      "tx": "0xb525bd3a74304840614be0fd894afd6f24b93f022be6b2c8d6be5df04d7314b6",
+      "kind": "earlier",
+      "recipient": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "mints": [
+        {
+          "logIndex": "128",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+          "tokenId": "17",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "129",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000011",
+            "0x000000000000000000000000bedf78eb17a054d972c85ce222e2175f19899cd6"
+          ],
+          "values": [
+            "75379755917867944374016634265685128",
+            "1000000000000000000",
+            "1787840867"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "117496434189960639589934",
+          "routed": "1",
+          "inbound": [
+            {
+              "logIndex": "112",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "117496434189960639589934"
+            },
+            {
+              "logIndex": "120",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "75379755917867944374016634265685128",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=17",
+      "tx": "0x46b804fa90b141eb7ec105162f11d9b70238f5cdd44284caffefab1c01574e1d",
+      "kind": "earlier",
+      "recipient": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+      "mints": [
+        {
+          "logIndex": "16",
+          "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+          "tokenId": "18",
+          "amount": null
+        }
+      ],
+      "events": [
+        {
+          "logIndex": "17",
+          "topics": [
+            "0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5",
+            "0x0000000000000000000000000000000000000000000000000000000000000012",
+            "0x00000000000000000000000024e447b7407a304b024a5a57d7638f4cb6d5d0fb"
+          ],
+          "values": [
+            "900849466801106375326463227667169",
+            "1050000000000000000",
+            "1790443692"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "direct": "1000000000000000000",
+          "routed": "16837633828346",
+          "inbound": [
+            {
+              "logIndex": "0",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1000000000000000000"
+            },
+            {
+              "logIndex": "8",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "1"
+            },
+            {
+              "logIndex": "28",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "238525881"
+            },
+            {
+              "logIndex": "33",
+              "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+              "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+              "tokenId": null,
+              "amount": "16837395302464"
+            }
+          ]
+        },
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "direct": "0",
+          "routed": "0",
+          "inbound": []
+        }
+      ],
+      "basis": "900849466801106375326463227667169",
+      "savedMismatches": [],
+      "conflicts": [
+        "routed-dtf"
+      ]
+    },
+    {
+      "locator": "conversions.csv#row=9",
+      "tx": "0x18a901415a4bd9fcf0e755073c96af42ab1e987793e621397b5f1a62a4f11633",
+      "kind": "claim",
+      "caller": "0x2f343d13d6fc2f03661b8956170c521afc58fdf3",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb700000000000000000000000000000000000000000000f982271bebb4ddf5a324",
+      "events": [
+        {
+          "logIndex": "3",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x0000000000000000000000002f343d13d6fc2f03661b8956170c521afc58fdf3"
+          ],
+          "values": [
+            "1178270149069277800801060",
+            "2127240307"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "1",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x2f343d13d6fc2f03661b8956170c521afc58fdf3",
+          "tokenId": null,
+          "amount": "2127240307"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=10",
+      "tx": "0xcc2f56ba8307c54a15aab8ac3436c10e582ca25cbeb3535a33bf3ce807b8b5eb",
+      "kind": "claim",
+      "caller": "0x5dc0062b3bc99b8597385de95dcf0fea3ab2632e",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb700000000000000000000000000000000000000000000498c2d003706159422ea",
+      "events": [
+        {
+          "logIndex": "3",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x0000000000000000000000005dc0062b3bc99b8597385de95dcf0fea3ab2632e"
+          ],
+          "values": [
+            "347318540072034415944426",
+            "627046351"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "1",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x5dc0062b3bc99b8597385de95dcf0fea3ab2632e",
+          "tokenId": null,
+          "amount": "627046351"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=11",
+      "tx": "0x46c378100ae0013788ac9a0b121f703d7221cd318361dd97306c611bbab5e63c",
+      "kind": "claim",
+      "caller": "0x01b0b538d0201efacdde7bb0397abb2133723009",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb700000000000000000000000000000000000000000000276111da2ba3d3f65c37",
+      "events": [
+        {
+          "logIndex": "18",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x00000000000000000000000001b0b538d0201efacdde7bb0397abb2133723009"
+          ],
+          "values": [
+            "185962913395692193340471",
+            "335736083"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "16",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x01b0b538d0201efacdde7bb0397abb2133723009",
+          "tokenId": null,
+          "amount": "335736083"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=12",
+      "tx": "0xb75131dc5bc5972d9352c79eec2780a2e8383c07019ac83a26d1673eecd197f6",
+      "kind": "claim",
+      "caller": "0x4e4f1c1c6a1d02a89eace8c58f8f76f5d5a89e16",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb70000000000000000000000000000000000000000000002f34c51e9ef1aec160b",
+      "events": [
+        {
+          "logIndex": "29",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x0000000000000000000000004e4f1c1c6a1d02a89eace8c58f8f76f5d5a89e16"
+          ],
+          "values": [
+            "13932791209483865691659",
+            "25154159"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "27",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x4e4f1c1c6a1d02a89eace8c58f8f76f5d5a89e16",
+          "tokenId": null,
+          "amount": "25154159"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=13",
+      "tx": "0xfe94d5b99356f17b9aa3ccb73c0f74d09710203cc6fc737d49469e8a950ce14c",
+      "kind": "claim",
+      "caller": "0x9ce4fe68a3fd27d1275bab0e1f36734fc3503e92",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb700000000000000000000000000000000000000000000036189ecb4ee664f7133",
+      "events": [
+        {
+          "logIndex": "33",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x0000000000000000000000009ce4fe68a3fd27d1275bab0e1f36734fc3503e92"
+          ],
+          "values": [
+            "15966372141172473688371",
+            "28825571"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "31",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x9ce4fe68a3fd27d1275bab0e1f36734fc3503e92",
+          "tokenId": null,
+          "amount": "28825571"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=14",
+      "tx": "0x6f3a212a99ee8c6d42d4ac861c262b08ce20a3205217d7389c5b8fb60472467d",
+      "kind": "claim",
+      "caller": "0xf2f86bc7e613cf7241babf4bd23882be5f029254",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000003a2b20f75d8ee6f0465d",
+      "events": [
+        {
+          "logIndex": "118",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000f2f86bc7e613cf7241babf4bd23882be5f029254"
+          ],
+          "values": [
+            "274692841471805735585373",
+            "495928446"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "116",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0xf2f86bc7e613cf7241babf4bd23882be5f029254",
+          "tokenId": null,
+          "amount": "495928446"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=15",
+      "tx": "0x1392fdbd61c35922c1dfdff61287e41f867f7d95b0a4154ea41c16a866d13c59",
+      "kind": "claim",
+      "caller": "0x58fbac0714a77a30b266776616d93911e36d363e",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb700000000000000000000000000000000000000000000160606c8dfe501e927ff",
+      "events": [
+        {
+          "logIndex": "36",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x00000000000000000000000058fbac0714a77a30b266776616d93911e36d363e"
+          ],
+          "values": [
+            "104003231974308694271999",
+            "187766674"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "34",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x58fbac0714a77a30b266776616d93911e36d363e",
+          "tokenId": null,
+          "amount": "187766674"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=16",
+      "tx": "0x9bfb64d84640287fb616ed140aa36b4e3fdf179f560350aef16673849160e30a",
+      "kind": "claim",
+      "caller": "0xfa1b87f9f7889a7c54240054aab6ce65d5d7907d",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb70000000000000000000000000000000000000000000055f65d5f5731f9aacdc4",
+      "events": [
+        {
+          "logIndex": "137",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000fa1b87f9f7889a7c54240054aab6ce65d5d7907d"
+          ],
+          "values": [
+            "405945778278292861406660",
+            "732891538"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "135",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0xfa1b87f9f7889a7c54240054aab6ce65d5d7907d",
+          "tokenId": null,
+          "amount": "732891538"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=17",
+      "tx": "0x2d2af212a74d400c88c2c02024d390ca86094db638f39cf71ff65505b90f5159",
+      "kind": "claim",
+      "caller": "0x207bfad97ca2bf071cb07022b3e44c68587e9ca9",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000004b301b949960d68d960f",
+      "events": [
+        {
+          "logIndex": "5",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000207bfad97ca2bf071cb07022b3e44c68587e9ca9"
+          ],
+          "values": [
+            "355064917312738222249487",
+            "641031604"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "3",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x207bfad97ca2bf071cb07022b3e44c68587e9ca9",
+          "tokenId": null,
+          "amount": "641031604"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=18",
+      "tx": "0xa2a18ead28fada4b37b69cc06ab2c204c0f4a0a86d171ab86e3de1c47fdc89b0",
+      "kind": "claim",
+      "caller": "0x812e1cfdd31d8678800e99b6851119b9788e2203",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000000f8ce03b68c038342a06",
+      "events": [
+        {
+          "logIndex": "13",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000812e1cfdd31d8678800e99b6851119b9788e2203"
+          ],
+          "values": [
+            "73434199036626923170310",
+            "132577565"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "11",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x812e1cfdd31d8678800e99b6851119b9788e2203",
+          "tokenId": null,
+          "amount": "132577565"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=19",
+      "tx": "0xb6f023ef0f126751048591864cc23e9f996d945a772fe2c0d3218cd2fcfeec57",
+      "kind": "claim",
+      "caller": "0x3ce87096dc62090355e97b305174f6497f3e4506",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000000478a0a86dad798eb70f",
+      "events": [
+        {
+          "logIndex": "60",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x0000000000000000000000003ce87096dc62090355e97b305174f6497f3e4506"
+          ],
+          "values": [
+            "21114651843757719074575",
+            "38120237"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "58",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x3ce87096dc62090355e97b305174f6497f3e4506",
+          "tokenId": null,
+          "amount": "38120237"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=20",
+      "tx": "0xfb6775b9b1010052f343be52bcd7636008930ee82f0c0b2c2ef700133492fb9f",
+      "kind": "claim",
+      "caller": "0xcc242e943cb785794f93acaa835307fabae84bd4",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb700000000000000000000000000000000000000000000152d02c7e14af6800000",
+      "events": [
+        {
+          "logIndex": "36",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000cc242e943cb785794f93acaa835307fabae84bd4"
+          ],
+          "values": [
+            "100000000000000000000000",
+            "180539268"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "34",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0xcc242e943cb785794f93acaa835307fabae84bd4",
+          "tokenId": null,
+          "amount": "180539268"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=21",
+      "tx": "0x6ece614ad85798eef4244cc58262b3edafce211f135a66f68e0354bbf57a12bb",
+      "kind": "claim",
+      "caller": "0x5512144047c2d55297c8470b93e8da87864617cd",
+      "callee": "0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789",
+      "value": "0x0",
+      "calldata": "0x1fad948c00000000000000000000000000000000000000000000000000000000000000400000000000000000000000005512144047c2d55297c8470b93e8da87864617cd000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000200000000000000000000000002c0400cf47e5ea01364e44c237aed22d7ae86199000000000000000000000000000000000000000000000000000000000000000f00000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000019633100000000000000000000000000000000000000000000000000000000000139ad00000000000000000000000000000000000000000000000000000000000177000000000000000000000000000000000000000000000000000000000003bf5b5c00000000000000000000000000000000000000000000000000000000005b8d80000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000003200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014134fcd5be000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020000000000000000000000000e4c9ff4cfd17ae73ecb3825ebdf7db113c146d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000024a224dcb700000000000000000000000000000000000000000000043c33c19375648000000000000000000000000000000000000000000000000000000000000062635f34793073316c6a690b008021802180218021802180218021802100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000041ea3835e671b8520eaaab8c5da29104d296b7d080331efc6851b77b430ee16241623f0825647010e230386e29a43f5713b4c6f2126f873671de31dfa03d5edd5d1c00000000000000000000000000000000000000000000000000000000000000",
+      "events": [
+        {
+          "logIndex": "36",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x0000000000000000000000002c0400cf47e5ea01364e44c237aed22d7ae86199"
+          ],
+          "values": [
+            "20000000000000000000000",
+            "36107853"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "34",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x2c0400cf47e5ea01364e44c237aed22d7ae86199",
+          "tokenId": null,
+          "amount": "36107853"
+        }
+      ],
+      "direct": false,
+      "savedMismatches": [],
+      "conflicts": [
+        "indirect-or-unexpected-claim-call"
+      ]
+    },
+    {
+      "locator": "conversions.csv#row=22",
+      "tx": "0x54bfafb5c45ccad2864b8bf33b09af405ac140ea5a4d5f545f45c69c4e9fa788",
+      "kind": "claim",
+      "caller": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000001627c008c76f4e22bea5",
+      "events": [
+        {
+          "logIndex": "12",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000082cb14f04d9c485473dedc00d604d7e9abca303"
+          ],
+          "values": [
+            "104625323171142829260453",
+            "188889793"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "10",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+          "tokenId": null,
+          "amount": "188889793"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=23",
+      "tx": "0x0796e4c035042a7d31f9ab7725b3d628cc4943f002e0d08319a36549f106d195",
+      "kind": "claim",
+      "caller": "0xa3826327e4f2ed3750065f8a2704ad056181cc5f",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000001024fb99a5d1d928b270",
+      "events": [
+        {
+          "logIndex": "25",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000a3826327e4f2ed3750065f8a2704ad056181cc5f"
+          ],
+          "values": [
+            "76240076216663533990512",
+            "137643275"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "23",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0xa3826327e4f2ed3750065f8a2704ad056181cc5f",
+          "tokenId": null,
+          "amount": "137643275"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=24",
+      "tx": "0x0922c32033aa4f6f55ab79358e174f85ae4ce9ef25f71d7cc9b0fb7350a5c4f4",
+      "kind": "claim",
+      "caller": "0x627d5c398e0c3bba50f61e9b08f5a723b00e81ad",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb700000000000000000000000000000000000000000000cdf5a736addf2968285f",
+      "events": [
+        {
+          "logIndex": "63",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x000000000000000000000000627d5c398e0c3bba50f61e9b08f5a723b00e81ad"
+          ],
+          "values": [
+            "972616630295363169298527",
+            "1755954949"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "61",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x627d5c398e0c3bba50f61e9b08f5a723b00e81ad",
+          "tokenId": null,
+          "amount": "1755954949"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=25",
+      "tx": "0x52bd26796b74db632891d2786814fad89ec88089fb33f83e1f3bc094e7cd0439",
+      "kind": "claim",
+      "caller": "0x5151e65d3537aef202007dc5f62d3bbdbd261073",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000000531b59eaffbb0c8310a",
+      "events": [
+        {
+          "logIndex": "3",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x0000000000000000000000005151e65d3537aef202007dc5f62d3bbdbd261073"
+          ],
+          "values": [
+            "24528809965022716899594",
+            "44284134"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "1",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x5151e65d3537aef202007dc5f62d3bbdbd261073",
+          "tokenId": null,
+          "amount": "44284134"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    },
+    {
+      "locator": "conversions.csv#row=26",
+      "tx": "0xa35ed940f520b62033d876d2471d36d6ffaa042617534b6ddc4603cc9ed89e3d",
+      "kind": "claim",
+      "caller": "0x56188b8bbe70013408553ce28124f6d48e5896e6",
+      "callee": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "value": "0x0",
+      "calldata": "0xa224dcb7000000000000000000000000000000000000000000001568332b8964919ab794",
+      "events": [
+        {
+          "logIndex": "12",
+          "topics": [
+            "0xf46e2027cc5f37ad1d025398a7b4978222381fea70a2bff669b9f340b2d594ed",
+            "0x00000000000000000000000056188b8bbe70013408553ce28124f6d48e5896e6"
+          ],
+          "values": [
+            "101091844715713308309396",
+            "182510476"
+          ]
+        }
+      ],
+      "output": [
+        {
+          "logIndex": "10",
+          "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+          "to": "0x56188b8bbe70013408553ce28124f6d48e5896e6",
+          "tokenId": null,
+          "amount": "182510476"
+        }
+      ],
+      "direct": true,
+      "savedMismatches": [],
+      "conflicts": []
+    }
+  ],
+  "limits": "Known named records only; no eligibility, W0/Q0, prior-credit zero, current control, net contribution or exhaustive history."
+}

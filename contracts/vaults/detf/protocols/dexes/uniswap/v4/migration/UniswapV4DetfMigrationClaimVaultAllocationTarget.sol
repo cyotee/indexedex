@@ -5,29 +5,28 @@ import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwn
 import {UniswapV4DetfMigrationPolicy} from "./UniswapV4DetfMigrationPolicy.sol";
 import {UniswapV4DetfMigrationRepo as Repo} from "./UniswapV4DetfMigrationRepo.sol";
 import {IUniswapV4DetfMigration as Migration} from "./interfaces/IUniswapV4DetfMigration.sol";
-import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswapV4DetfMigrationSnapshot.sol";
-import {UniswapV4DetfMigrationSnapshotLib as SnapshotLib} from "./UniswapV4DetfMigrationSnapshotLib.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "./interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+import {UniswapV4DetfMigrationWeightedPricingLib as PricingLib} from "./UniswapV4DetfMigrationWeightedPricingLib.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyRecoveryLib.sol";
 import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
 
 /// @notice Separate removable loader keeps both administration facets within EIP170.
 contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrationPolicy {
-    function configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_)
+    function configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        _configureNftEntitlements(inputs_, false);
+        _configureNftEntitlements(inputs_, false, Repo._weightedPricing(expectedBookId_));
     }
 
-    function configureNftContributionEntitlements(Migration.NftEntitlementInput[] calldata inputs_)
+    function configureNftContributionEntitlements(Migration.NftEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        _configureNftEntitlements(inputs_, true);
+        _configureNftEntitlements(inputs_, true, Repo._weightedPricing(expectedBookId_));
     }
 
-    function _configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_, bool separate_)
+    function _configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_, bool separate_, Pricing.Book memory book_)
         private
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.NftEntitlementInput calldata input_ = inputs_[i_];
@@ -60,13 +59,13 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             Migration.NftContribution[] storage contributions_ = m_.nftContributions[input_.collection][input_.tokenId];
             if (separate_) {
                 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_, true));
-                uint256 ethCredit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, 0);
-                uint256 dtfCredit_ = SnapshotLib.evaluateOriginals(book_, 0, input_.originalDtf);
+                uint256 ethCredit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, 0);
+                uint256 dtfCredit_ = PricingLib.evaluateOriginals(book_, 0, input_.originalDtf);
                 contributions_.push(Migration.NftContribution(input_.originalEth, 0, ethCredit_));
                 contributions_.push(Migration.NftContribution(0, input_.originalDtf, dtfCredit_));
                 credit_ = ethCredit_ + dtfCredit_;
             } else {
-                credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+                credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
                 contributions_.push(Migration.NftContribution(input_.originalEth, input_.originalDtf, credit_));
             }
             m_.nftEntitlements[input_.collection][input_.tokenId] =
@@ -77,10 +76,10 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             );
         }
     }
-    function configureHeldSeLpEntitlements(Migration.HeldSeLpEntitlementInput[] calldata inputs_)
+    function configureHeldSeLpEntitlements(Migration.HeldSeLpEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.HeldSeLpEntitlementInput calldata input_ = inputs_[i_];
@@ -95,7 +94,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.HeldSeLpIdentityConsumed(original_);
             }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
             m_.heldSeLpEntitlements[original_] = Migration.HeldSeLpEntitlement(true, input_, config_, credit_);
             surrender_.remainingUnits = input_.originalUnits;
@@ -106,10 +105,10 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
         }
     }
 
-    function configureWeightedLiquidEntitlements(Migration.WeightedLiquidEntitlementInput[] calldata inputs_)
+    function configureWeightedLiquidEntitlements(Migration.WeightedLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.WeightedLiquidEntitlementInput calldata input_ = inputs_[i_];
@@ -127,7 +126,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.WeightedLiquidIdentityConsumed(original_);
             }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
             m_.weightedLiquidEntitlements[original_] =
                 Migration.WeightedLiquidEntitlement(true, input_, config_, credit_);
@@ -162,10 +161,10 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
         }
     }
 
-    function configureEarlierLiquidEntitlements(Migration.EarlierLiquidEntitlementInput[] calldata inputs_)
+    function configureEarlierLiquidEntitlements(Migration.EarlierLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.EarlierLiquidEntitlementInput calldata input_ = inputs_[i_];
@@ -182,7 +181,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.EarlierLiquidIdentityConsumed(original_);
             }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
             m_.earlierLiquidEntitlements[original_] =
                 Migration.EarlierLiquidEntitlement(true, input_, config_, credit_);
@@ -194,10 +193,10 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
         }
     }
 
-    function configureClaimVaultEntitlements(Migration.ClaimVaultEntitlementInput[] calldata inputs_)
+    function configureClaimVaultEntitlements(Migration.ClaimVaultEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.ClaimVaultEntitlementInput calldata input_ = inputs_[i_];
@@ -223,7 +222,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.ClaimVaultIdentityConsumed(original_);
             }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
             m_.claimVaultEntitlements[original_] = Migration.ClaimVaultEntitlement(true, input_, config_, credit_);
             surrender_.remainingUnits = input_.originalUnits;
@@ -234,10 +233,10 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
         }
     }
 
-    function configureWeightedReceiptEntitlements(Migration.WeightedReceiptEntitlementInput[] calldata inputs_)
+    function configureWeightedReceiptEntitlements(Migration.WeightedReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.WeightedReceiptEntitlementInput calldata input_ = inputs_[i_];
@@ -263,7 +262,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.WeightedReceiptIdentityConsumed(original_);
             }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
             m_.weightedReceiptEntitlements[original_] =
                 Migration.WeightedReceiptEntitlement(true, input_, config_, credit_);
@@ -275,10 +274,10 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
         }
     }
 
-    function configureEarlierReceiptEntitlements(Migration.EarlierReceiptEntitlementInput[] calldata inputs_)
+    function configureEarlierReceiptEntitlements(Migration.EarlierReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.EarlierReceiptEntitlementInput calldata input_ = inputs_[i_];
@@ -304,7 +303,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.EarlierReceiptIdentityConsumed(original_);
             }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
             m_.earlierReceiptEntitlements[original_] =
                 Migration.EarlierReceiptEntitlement(true, input_, config_, credit_);

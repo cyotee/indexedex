@@ -1,0 +1,103 @@
+{
+  "status": "INCOMPLETE/BOUNDED-STOP",
+  "task10Complete": false,
+  "originalBound": "2026-11-15T18:55:25.715Z",
+  "clockReset": false,
+  "scenarios": [
+    {
+      "id": "mixed-pricing",
+      "status": "UNMET",
+      "partialEvidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/configure-a-before-resume.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/independent-owner-b/set-pricing/9cb83a43f7d864409ba38e26d39e871196672d002eca8764491977d42b2ef7f0.receipt.json"
+      ],
+      "facts": {
+        "configureA": "0x8614d4e76a949cd7414587de30b88f9605b108f8b35fad31643ec3e00c8494d7",
+        "configureAStatus": "0x1",
+        "ownerBSetter": "0x6a0fe35c9f274e05d7043e4c7e734d742ea46cb94f93462ac9563cd1c66f1fcb",
+        "ownerBStatus": "0x1"
+      },
+      "missing": [
+        "A recovery after B",
+        "mixed immutable-A/current-B completion",
+        "post-purchase setter/activation proof"
+      ]
+    },
+    {
+      "id": "same-block",
+      "status": "UNMET",
+      "missing": [
+        "same-block A/B execution",
+        "transaction-prefix recovery",
+        "tampered index/log/credit/event runtime rejection"
+      ]
+    },
+    {
+      "id": "unset-pricing-owner",
+      "status": "UNMET",
+      "partialEvidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-empty-census-blocker.json"
+      ],
+      "missing": [
+        "successful real paid owner bond",
+        "activation with unset pricing",
+        "retained unset getter after activation"
+      ]
+    },
+    {
+      "id": "donation-identities",
+      "status": "PRODUCER-EVIDENCE-MET",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/donation-scenario-audit.json"
+      ],
+      "independentLifecycleAcceptance": false
+    },
+    {
+      "id": "nft-three-original-wallet",
+      "status": "UNMET",
+      "missing": [
+        "actual two funded contribution bonds",
+        "exact originals/floor/aggregate transfer proof",
+        "90-day cliff-minus/exact/plus-one principal claims"
+      ]
+    },
+    {
+      "id": "synthetic-receiver",
+      "status": "UNMET",
+      "missing": [
+        "real second-receiver rejection rollback",
+        "subsequent marked/funded two-bond success"
+      ]
+    },
+    {
+      "id": "negative-cases",
+      "status": "UNMET",
+      "partialEvidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-07/rehearsal-1794759018867/claimed-intake-rejections.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207"
+      ],
+      "missing": [
+        "stale signed A after B",
+        "complete final wrong-domain/artifact/history/chain/proxy corpus"
+      ]
+    },
+    {
+      "id": "source-recovery-portability",
+      "status": "UNMET",
+      "partialEvidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770"
+      ],
+      "missing": [
+        "all post-activation source admissions",
+        "all recovery witnesses",
+        "complete portable lifecycle followthrough"
+      ]
+    }
+  ],
+  "metProducerGroups": 1,
+  "unmetGroups": 7,
+  "lastRuntime": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770",
+  "lastCliLog": "045-set-pricing.log",
+  "normalResultUnavailable": true,
+  "terminationReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json"
+}

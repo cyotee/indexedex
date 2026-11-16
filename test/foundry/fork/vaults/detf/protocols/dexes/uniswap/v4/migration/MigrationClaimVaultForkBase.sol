@@ -66,7 +66,7 @@ abstract contract MigrationClaimVaultForkBase is MigrationRecoveryDonationForkBa
 
     function _configureSe(address wallet_, uint256 q_) internal returns (uint256) {
         vm.prank(migrationOwner);
-        allocation.configureClaimVaultEntitlements(_seInputs(wallet_, q_));
+        allocation.configureClaimVaultEntitlements(_seInputs(wallet_, q_), pricingId);
         return migration.claimVaultEntitlement(SE_ORIGIN).credit;
     }
 

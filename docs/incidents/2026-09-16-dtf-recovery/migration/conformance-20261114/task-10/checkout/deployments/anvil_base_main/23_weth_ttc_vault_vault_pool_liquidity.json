@@ -1,0 +1,7 @@
+{
+  "balancerAbVaultVaultPool": "0xa94e4905EE62A951A5E9B868BffA2bf63C13F87d",
+  "balancerAcVaultVaultPool": "0x04D75331661FB8926c371E362C066FC8feE566A1",
+  "balancerBcVaultVaultPool": "0x5De3225b511cEec4cf6951d5938bFC7bf29FC056",
+  "balancerWethcVaultVaultPool": "0xBF0bcD742c2527fa6EFE3cD7eC9eE8e231A3161c",
+  "initialVaultShares": 1000000000000000000
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"previewStakingGonsPerUnit","inputs":[{"name":"tokenIn_","type":"address","internalType":"contract IERC20"},{"name":"amountIn_","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"}],"id":729}

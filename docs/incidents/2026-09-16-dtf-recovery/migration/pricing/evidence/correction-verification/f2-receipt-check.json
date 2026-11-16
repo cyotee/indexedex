@@ -1,0 +1,122 @@
+{
+  "checkedAt": "2026-11-10T15:57:58.128Z",
+  "testReruns": 0,
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/real-proxy-trace.log",
+      "sha256": "f0b630348aa7944a893decce3ebf069eab3e2c8be9220f7a607b830b6fd5a660",
+      "executedPassLines": 0,
+      "selectedLines": [
+        {
+          "line": 94,
+          "text": "Warning: no tests match the provided pattern:"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/verification/real-proxy.log",
+      "sha256": "4c7ff6e57fe374d20a471172271dee553b8c989510774767f0a9b3711cca404b",
+      "executedPassLines": 0,
+      "selectedLines": [
+        {
+          "line": 5,
+          "text": "Warning: no tests match the provided pattern:"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/verification/real-proxy-exact-signature.log",
+      "sha256": "d060d7fc27b016cbd4f3d2aad3377b4841ca07cdfb3931a7833c6b7a87c0b561",
+      "executedPassLines": 1,
+      "selectedLines": [
+        {
+          "line": 7,
+          "text": "[PASS] test_MigrationSnapshot_RealProxyCaptureAndFreeze() (gas: 13063518)"
+        },
+        {
+          "line": 3340,
+          "text": "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 340.65ms (6.94ms CPU time)"
+        },
+        {
+          "line": 3342,
+          "text": "Ran 1 test suite in 533.32ms (340.65ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final.log",
+      "sha256": "a11c888997a3670a5e9df25daf0508e5ae00308143af4d8035bfe8662d456b37",
+      "executedPassLines": 111,
+      "selectedLines": [
+        {
+          "line": 3658,
+          "text": "Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 6.93ms (1.09ms CPU time)"
+        },
+        {
+          "line": 3674,
+          "text": "Suite result: ok. 13 passed; 0 failed; 0 skipped; finished in 146.51ms (132.44ms CPU time)"
+        },
+        {
+          "line": 3686,
+          "text": "Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 145.87ms (8.57ms CPU time)"
+        },
+        {
+          "line": 3707,
+          "text": "Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 146.06ms (281.87ms CPU time)"
+        },
+        {
+          "line": 3712,
+          "text": "Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 270.48ms (2.66ms CPU time)"
+        },
+        {
+          "line": 3716,
+          "text": "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 278.91ms (11.65ms CPU time)"
+        },
+        {
+          "line": 3726,
+          "text": "Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 288.92ms (26.41ms CPU time)"
+        },
+        {
+          "line": 3735,
+          "text": "Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 291.28ms (8.71ms CPU time)"
+        },
+        {
+          "line": 3748,
+          "text": "Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 303.32ms (8.67ms CPU time)"
+        },
+        {
+          "line": 3755,
+          "text": "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 319.36ms (24.67ms CPU time)"
+        },
+        {
+          "line": 3759,
+          "text": "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 321.60ms (16.25ms CPU time)"
+        },
+        {
+          "line": 3763,
+          "text": "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 380.33ms (21.11ms CPU time)"
+        },
+        {
+          "line": 3773,
+          "text": "[PASS] test_MigrationSnapshot_RealProxyCaptureAndFreeze() (gas: 13063518)"
+        },
+        {
+          "line": 3786,
+          "text": "Suite result: ok. 14 passed; 0 failed; 0 skipped; finished in 404.30ms (184.73ms CPU time)"
+        },
+        {
+          "line": 3793,
+          "text": "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 441.27ms (108.84ms CPU time)"
+        },
+        {
+          "line": 3812,
+          "text": "Suite result: ok. 16 passed; 0 failed; 0 skipped; finished in 513.78ms (397.61ms CPU time)"
+        },
+        {
+          "line": 3814,
+          "text": "Ran 15 test suites in 515.44ms (4.26s CPU time): 111 tests passed, 0 failed, 0 skipped (111 total tests)"
+        }
+      ]
+    }
+  ]
+}

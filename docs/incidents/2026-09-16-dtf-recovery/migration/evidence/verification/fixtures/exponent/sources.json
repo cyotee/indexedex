@@ -1,0 +1,12 @@
+{
+  "chainId": 4663,
+  "sources": [
+    {
+      "id": "S001",
+      "path": "sample.csv",
+      "bytes": 17,
+      "sha256": "9212857215b3efcb2cc9e3ac005aef659fb4a3b292644b999df9d460dd03ad08"
+    }
+  ]
+}
+

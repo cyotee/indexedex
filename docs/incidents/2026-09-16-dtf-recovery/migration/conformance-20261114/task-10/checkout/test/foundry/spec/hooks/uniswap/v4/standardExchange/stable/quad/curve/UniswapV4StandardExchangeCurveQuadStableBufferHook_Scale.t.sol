@@ -1,0 +1,207 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {
+    UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
+import {MintableERC20Decimals as StubDecimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
+
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
+    function test_stableInvariant_newtonOvershootUsesFullWidthSquare() public pure {
+        uint256[4] memory reserves = [
+            uint256(499482250145296174215000000000000),
+            499999999999961962030,
+            499999999999961962030,
+            499999999999961962030
+        ];
+        // Independent arbitrary-precision integer iteration, including the
+        // solver's invariant +1 and final output -1 rounding.
+        assertEq(Math.getD(reserves, 10_000), 316847265070611102519523408);
+        uint256 out = Math.quoteExactInRated(reserves, 1, 0, 36136072, 10_000);
+        assertEq(out, 18049320843520141448);
+        reserves[1] += 36136072;
+        reserves[0] -= out;
+        assertGe(Math.getD(reserves, 10_000), 316847265070611102519523408);
+    }
+
+    function test_stableInvariant_extremeImbalance_independentRootAndPermutation() public pure {
+        uint256 expectedD = 65_389_163_658;
+        // Integer root of 400*S = 399*D + D^5/(256*product(book)),
+        // evaluated independently with arbitrary-precision integer arithmetic.
+        for (uint256 big; big < 4; ++big) {
+            uint256[4] memory permuted = [uint256(127_193_491_014_612_794_248), 949, 872, 872];
+            (permuted[0], permuted[big]) = (permuted[big], permuted[0]);
+            uint256 inputIndex = big == 1 ? 0 : 1;
+            assertEq(Math.getD(permuted, 10_000), expectedD, "invariant independent of currency order");
+            uint256 out = Math.quoteExactInRated(permuted, inputIndex, big, 63, 10_000);
+            assertEq(out, 4_022_698_071_222_784_755, "independent quadratic output root");
+            permuted[inputIndex] += 63;
+            permuted[big] -= out;
+            assertGe(Math.getD(permuted, 10_000), expectedD, "swap preserves invariant");
+        }
+    }
+
+    function test_stableInvariant_largeSingleJoin() public pure {
+        uint256[4] memory reserves = [uint256(980), 3_598_017_528_478_584, 1065, 980];
+        uint256 beforeD = Math.getD(reserves, 10_000);
+        uint256 amount = 67_956_303_914_057_137_153;
+        uint256 shares = Math.singleJoinExactInShares(reserves, amount, 1, 10_000, 268_400_699, 3e14);
+        assertGt(shares, 0, "surplus DETF can rejoin after claim redemption");
+        reserves[1] += amount;
+        uint256 afterD = Math.getD(reserves, 10_000);
+        assertGt(afterD, beforeD, "positive deposit increases invariant");
+        // Independent root of 400*S = 399*D + D^5/(256*product(reserves)).
+        assertApproxEqAbs(afterD, 54_565_914_790, 100, "StableSwap root with integer rounding");
+    }
+
+    function testFuzz_stableInvariant_imbalancedDepositIncreasesD(uint64 balance, uint64 deposit) public pure {
+        uint256[4] memory reserves = [uint256(980), uint256(balance) + 1e12, 1065, 980];
+        uint256 beforeD = Math.getD(reserves, 10_000);
+        reserves[1] += uint256(deposit) + reserves[1] / 10;
+        assertGt(Math.getD(reserves, 10_000), beforeD, "invariant is monotonic across solver paths");
+    }
+
+    function test_geoMean4_firstMintDomain() public pure {
+        uint256 g = Math.geometricMean4(1e18, 1e18, 1e18, 1e18);
+        assertEq(g, 1e18);
+        uint256 shares = Math.firstMintShares([uint256(1e21), 1e21, 1e21, 1e21]);
+        assertEq(shares, 1e21 - 1000);
+    }
+
+    function test_dualScale_seVsRaw() public {
+        assertGt(quad.invScale(0), 0);
+        assertGt(quad.ratedScale(0), 0);
+        _firstMintEqual(100 ether);
+        assertEq(quad.nativeReserve(0), quad.seBalance(0));
+        assertGt(quad.ratedBalance(0), 0);
+    }
+
+    function test_seMatrix_1to4() public {
+        for (uint8 n = 1; n <= 4; ++n) {
+            _deployHookWithArgs(_argsSeCount(n));
+            _fundAndApprove(token0);
+            _fundAndApprove(token1);
+            _fundAndApprove(token2);
+            _fundAndApprove(token3);
+            _assertAllDoorsLive();
+            uint256 shares = _firstMintEqual(50 ether);
+            assertGt(shares, 0);
+        }
+    }
+
+    /// @notice FIX-SCALE-6-18: 6-dec SE-buffered + three 18-dec self-legs.
+    function test_FIX_SCALE_6_18_mixedDecimalsFirstMint() public {
+        StubDecimals t6 = new StubDecimals("Six", "SIX", 6);
+        SimpleMintableERC20 t18a = new SimpleMintableERC20("E18a", "E18A");
+        SimpleMintableERC20 t18b = new SimpleMintableERC20("E18b", "E18B");
+        SimpleMintableERC20 t18c = new SimpleMintableERC20("E18c", "E18C");
+        SimpleYieldERC4626 vault6 = new SimpleYieldERC4626(t6);
+        address se6 = _deployERC4626SE(address(vault6));
+
+        address[4] memory toks = [address(t6), address(t18a), address(t18b), address(t18c)];
+        for (uint256 i; i < 4; ++i) {
+            for (uint256 j = i + 1; j < 4; ++j) {
+                if (toks[j] < toks[i]) (toks[i], toks[j]) = (toks[j], toks[i]);
+            }
+        }
+        address[4] memory ses;
+        address[4] memory rps;
+        uint8 i6;
+        uint8 i18;
+        bool set18;
+        for (uint8 i; i < 4; ++i) {
+            if (toks[i] == address(t6)) {
+                i6 = i;
+                ses[i] = se6;
+            } else if (!set18) {
+                i18 = i;
+                set18 = true;
+            }
+        }
+
+        _deployHookWithArgs(_pkgArgs(toks, ses, rps, DEFAULT_BASE_AMP));
+
+        t6.mint(user, 1_000_000e6);
+        t18a.mint(user, 1_000_000 ether);
+        t18b.mint(user, 1_000_000 ether);
+        t18c.mint(user, 1_000_000 ether);
+        vm.startPrank(user);
+        t6.approve(hook, type(uint256).max);
+        t18a.approve(hook, type(uint256).max);
+        t18b.approve(hook, type(uint256).max);
+        t18c.approve(hook, type(uint256).max);
+        vm.stopPrank();
+
+        uint8 se6Dec = IERC20Metadata(se6).decimals();
+        assertEq(quad.ratedScale(i6), 10 ** uint256(36 - 6), "ratedScale 6dec");
+        assertEq(quad.invScale(i6), 10 ** uint256(36 - se6Dec), "SE inv share scale");
+        assertEq(quad.invScale(i18), quad.ratedScale(i18), "self-leg inv==rated");
+        assertTrue(quad.ratedScale(i6) != quad.ratedScale(i18), "cross-leg scales differ");
+
+        uint256[] memory amounts = new uint256[](4);
+        for (uint8 i; i < 4; ++i) {
+            amounts[i] = toks[i] == address(t6) ? 100_000e6 : 100 ether;
+        }
+        bool[] memory flags = _prepareShareSeed(amounts, user);
+        (uint256 prev,) = quad.previewJoinProportionalFlexible(amounts, flags);
+        vm.prank(user);
+        (uint256 shares,) = quad.joinProportionalFlexible(amounts, flags, user, prev, block.timestamp + 1 hours);
+        assertEq(shares, prev);
+        assertGt(shares, 0, "first mint mixed decimals");
+        assertTrue(quad.isFullBook());
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000);
+    }
+
+    function test_donation_rawFace_doesNotChangeBookedJoin() public {
+        _firstMintEqual(200 ether);
+        uint256[] memory amounts = new uint256[](4);
+        for (uint256 i; i < 4; ++i) amounts[i] = 20 ether;
+        (uint256 sharesBefore,) = quad.previewJoinProportional(amounts);
+        token1.mint(hook, 100 ether);
+        assertEq(quad.nativeReserve(1) + 100 ether, token1.balanceOf(hook), "ambient custody excluded");
+        (uint256 sharesAfter,) = quad.previewJoinProportional(amounts);
+        assertEq(sharesAfter, sharesBefore, "ambient custody does not value LP ownership");
+    }
+
+    function test_FIX_RATED_RP_nonOneRate() public {
+        RateProviderMock rp = new RateProviderMock();
+        rp.mockRate(1.25e18);
+        address[4] memory toks = [address(token0), address(token1), address(token2), address(token3)];
+        address[4] memory ses;
+        ses[0] = se0;
+        address[4] memory rps;
+        rps[0] = address(rp);
+        _deployHookWithArgs(_pkgArgs(toks, ses, rps, DEFAULT_BASE_AMP));
+        _fundAndApprove(token0);
+        _fundAndApprove(token1);
+        _fundAndApprove(token2);
+        _fundAndApprove(token3);
+        _firstMintEqual(200 ether);
+        uint256 seBal = quad.seBalance(0);
+        uint256 rated = quad.ratedBalance(0);
+        // rated = seBal * rate / 1e18 in pair units (before scale display)
+        assertEq(rated, token0.balanceOf(hook) + (seBal * 1.25e18) / 1e18, "local plus rated shares");
+        uint256 preview = quad.previewSwapExactIn(address(token0), address(token1), 1 ether);
+        assertGt(preview, 0);
+        uint256 b1 = token1.balanceOf(user);
+        _swapExactIn(address(token0), address(token1), 1 ether);
+        assertEq(token1.balanceOf(user) - b1, preview);
+    }
+
+    function test_faceDustOnSeLeg_notBook() public {
+        _firstMintEqual(50 ether);
+        uint256 bookMid = quad.nativeReserve(0);
+        token0.mint(hook, 5); // free pair dust on SE leg
+        assertEq(quad.nativeReserve(0), bookMid, "face dust not book");
+        assertEq(quad.nativeReserve(0), quad.seBalance(0), "still SE shares");
+    }
+}

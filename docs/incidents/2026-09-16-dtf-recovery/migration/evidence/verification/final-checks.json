@@ -1,0 +1,1276 @@
+{
+  "canonical_binding_notice": {
+    "status": "historical_superseded_report_binding",
+    "current_binding": "canonical-report-binding.json",
+    "notice": "The original verdict, pass flag, report hash and checks below are preserved as a historical receipt for the superseded recovery report. They do not bind the current canonical report. Root adopted the needs-fix/product report; use canonical-report-binding.json for its exact bytes and current verdict. Existing execution and cleanup observations remain historical evidence.",
+    "superseded_report_sha256": "3cccb5cd27df0b5bfc910e812c161d94c8bfb0f59161fbf5f5b684fc0bf09291",
+    "current_report_sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+  },
+  "schema": "phase01-final-file-receipt-check/1",
+  "at": "2026-11-10T13:29:22.817Z",
+  "verdict": "needs-human-review",
+  "pass": true,
+  "checks": [
+    {
+      "name": "requested report exists and contains verdict",
+      "pass": true,
+      "detail": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+        "bytes": 17746,
+        "sha256": "3cccb5cd27df0b5bfc910e812c161d94c8bfb0f59161fbf5f5b684fc0bf09291"
+      }
+    },
+    {
+      "name": "verdict agrees with E2 witness and claimant limitation",
+      "pass": true,
+      "detail": {
+        "e2": "FAIL_CURRENT_INTERFACES",
+        "credits": [
+          "1666",
+          "2334",
+          "1400",
+          "2600"
+        ],
+        "callerChecks": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "name": "all documented workload PIDs absent",
+      "pass": true,
+      "detail": {
+        "count": 45
+      }
+    },
+    {
+      "name": "all owned endpoints refuse TCP",
+      "pass": true,
+      "detail": {
+        "count": 6
+      }
+    },
+    {
+      "name": "all owned roots and paths absent",
+      "pass": true,
+      "detail": {
+        "count": 42
+      }
+    },
+    {
+      "name": "every run-command invocation has a bound terminal outcome",
+      "pass": true,
+      "detail": {
+        "count": 38
+      }
+    },
+    {
+      "name": "metered terminal outcome retained",
+      "pass": true,
+      "detail": {
+        "overall": "FAIL",
+        "harnessError": null
+      }
+    },
+    {
+      "name": "original workspace entries unchanged",
+      "pass": true,
+      "detail": {
+        "baselineEntries": 13017,
+        "receipt": "workspace-after.json",
+        "comparedAt": "2026-11-10T13:22:16.480Z",
+        "noOutsideBoundaryEditsAfterAudit": true
+      }
+    },
+    {
+      "name": "additional cleanup readback complete and its root absent",
+      "pass": true,
+      "detail": {
+        "command": "cleanup-readback.command.json",
+        "result": "cleanup-independent-readback.json",
+        "exitCode": null,
+        "exitCodeNote": "No separately captured exit; actual final result fields and process absence are recorded."
+      }
+    },
+    {
+      "name": "report evidence references resolve",
+      "pass": true,
+      "detail": {
+        "checked": 23,
+        "selfReceipt": "verification/final-checks.json is this output"
+      }
+    },
+    {
+      "name": "structured verdict matches final resource inventory",
+      "pass": true,
+      "detail": {
+        "paths": 42,
+        "pids": 45,
+        "ports": 6
+      }
+    },
+    {
+      "name": "no owned runtime process matches final scan",
+      "pass": true,
+      "detail": {
+        "command": "ps -axo pid=,ppid=,stat=,command=",
+        "matches": []
+      }
+    }
+  ],
+  "processes": [
+    {
+      "pid": 83171,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84737,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 2401,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 2133,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 85008,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84952,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 85468,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 2132,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 85467,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 87791,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 92679,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 83169,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 86612,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 83441,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 90976,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 83175,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 86670,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 3439,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 87790,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84752,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 86665,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84751,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84747,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 2051,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84726,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 82945,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 83173,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 90984,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84741,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 83177,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 82618,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 90980,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 3255,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84745,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84739,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 90982,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 2053,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 83335,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84743,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 83178,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 90978,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84735,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 84749,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 99661,
+      "absent": true,
+      "code": "ESRCH"
+    },
+    {
+      "pid": 86603,
+      "absent": true,
+      "code": "ESRCH"
+    }
+  ],
+  "ports": [
+    {
+      "endpoint": "http://127.0.0.1:60621",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:59408",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:59294",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:59553",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:60571",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:60411",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    }
+  ],
+  "directories": [
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/earlier-cp-original.jjvTdH",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-leading-zero.3L7Dt4",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit.8o2GlG",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-caller.wzthpX",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/cp-replay.m5VPZu/earlier-cp.WLV3OE",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/workspace-before.m55KlJ",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/control-blank-zero-clean.SYuG12",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/weighted-original.MaKkOm",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-metered.8mXENb",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/weighted-replay.NrIfF7",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-1.kJSwAx",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/cp-replay.m5VPZu",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-unlisted-float.WdfGmm",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/reconciliation.wdbQHP",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/control-negative-clean.7TgcDp",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/workspace-after.DI0gWh",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-unterminated.85R2K3",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-float.vhIA47",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/stale-reject.pz5Q6n",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-replay.uvjQui",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/stale-seed.B6TadN",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-negative.A8C5aq",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-duplicate-header.qWHFrw",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/native-replay.iMwywZ",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/workspace-before-r2.SAF0Uh",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-sources-original.2qQ55o",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-5.gZ0NlS",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-2.DJAff4",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-3.PeFOYs",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-blank-zero.EjPPV5",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/reconciliation-repeat.Mha983",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ",
+      "absent": true
+    }
+  ],
+  "report": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+    "bytes": 17746,
+    "sha256": "3cccb5cd27df0b5bfc910e812c161d94c8bfb0f59161fbf5f5b684fc0bf09291"
+  },
+  "artifactHashes": [
+    {
+      "path": "AdversarialVerify.json",
+      "bytes": 4356,
+      "sha256": "031f8f453dde3707d2f5e7f1483504bb98428c812d89e906636214ff2f109b60"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 9681,
+      "sha256": "251744fd10e63a5f01755c4499ca2bd106222e43433932acc9fbf91766ad90e3"
+    },
+    {
+      "path": "recovery-cleanup.json",
+      "bytes": 1688,
+      "sha256": "216ff46190d25c21a91b82b81cdb012688411866a54a435f20c6323369ced7b3"
+    },
+    {
+      "path": "cleanup-independent-readback.json",
+      "bytes": 10995,
+      "sha256": "1090a5d004a833eaa9285538e0ede93b4747e652299b5d3477b1ea34aa21373c"
+    },
+    {
+      "path": "workspace-after.json",
+      "bytes": 3632030,
+      "sha256": "c0488e7716c6ca1e5e49deb78f9ace908460694cbdd519f7bdce901ba129eefa"
+    },
+    {
+      "path": "other-metered.exit.json",
+      "bytes": 2625,
+      "sha256": "3f89d64c31c76bdca69c9daab6f88c57546c8b3ccb126a57b139f9e1550b2feb"
+    },
+    {
+      "path": "tokenstaking-caller.json",
+      "bytes": 94994,
+      "sha256": "1a06f2439e9531bb42ec0adebdbf212fbdc73046ecc498fca7655dedcc1b2230"
+    },
+    {
+      "path": "receipt-audit.json",
+      "bytes": 473981,
+      "sha256": "b55961bab55e90a8dc53798b91a7b5235fe3e490dab3b46647758ec9047651d7"
+    },
+    {
+      "path": "receipt-audit-r2.json",
+      "bytes": 488957,
+      "sha256": "a1f5dbd745bbdf8d1f1a679d8c3e387512a6b08f84dcce51357c827f7a6bf5f0"
+    },
+    {
+      "path": "recovery-observations.json",
+      "bytes": 17263,
+      "sha256": "ea0a2d288c6c1fdd55d0860a8bbe3a9d542a038cce89b62c0ce6b12fe289927c"
+    },
+    {
+      "path": "recovery-receipt-audit.json",
+      "bytes": 18951,
+      "sha256": "3f660c611494085db44169b1e718d2565ea3e66bb0c4193b899aae59fb872847"
+    },
+    {
+      "path": "portability-audit.json",
+      "bytes": 9812,
+      "sha256": "ce21c28d0fc6a7a0e4a4a46b62bfec567a16c55155c85bb2ebdefb7ed03d704f"
+    }
+  ],
+  "commandOutcomes": [
+    {
+      "command": "control-blank-zero-clean.command.json",
+      "exit": "control-blank-zero-clean.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/blank-zero-clean' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/control-blank-zero-clean.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 87791,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:59:42.225Z",
+      "finished": "2026-11-10T12:59:42.239Z",
+      "argvMatches": true,
+      "stdout": "control-blank-zero-clean.stdout.log",
+      "stderr": "control-blank-zero-clean.stderr.log"
+    },
+    {
+      "command": "control-negative-clean.command.json",
+      "exit": "control-negative-clean.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/negative-clean' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/control-negative-clean.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 87790,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:59:42.202Z",
+      "finished": "2026-11-10T12:59:42.216Z",
+      "argvMatches": true,
+      "stdout": "control-negative-clean.stdout.log",
+      "stderr": "control-negative-clean.stderr.log"
+    },
+    {
+      "command": "cp-replay.command.json",
+      "exit": "cp-replay.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/earlier-cp.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84952,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:55:13.769Z",
+      "finished": "2026-11-10T12:56:06.545Z",
+      "argvMatches": true,
+      "stdout": "cp-replay.stdout.log",
+      "stderr": "cp-replay.stderr.log"
+    },
+    {
+      "command": "earlier-cp-original.command.json",
+      "exit": "earlier-cp-original.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/earlier-cp/probe.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/earlier-cp-original'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 83171,
+      "code": 1,
+      "signal": null,
+      "started": "2026-11-10T12:52:27.170Z",
+      "finished": "2026-11-10T12:52:27.259Z",
+      "argvMatches": true,
+      "stdout": "earlier-cp-original.stdout.log",
+      "stderr": "earlier-cp-original.stderr.log"
+    },
+    {
+      "command": "independent-reconciliation.command.json",
+      "exit": "independent-reconciliation.exit.json",
+      "literal": "'python3' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/independent-reconcile.py'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84726,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.502Z",
+      "finished": "2026-11-10T12:54:53.735Z",
+      "argvMatches": true,
+      "stdout": "independent-reconciliation.stdout.log",
+      "stderr": "independent-reconciliation.stderr.log"
+    },
+    {
+      "command": "malformed-blank-zero.command.json",
+      "exit": "malformed-blank-zero.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/blank-zero' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-blank-zero.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84743,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.827Z",
+      "finished": "2026-11-10T12:54:53.841Z",
+      "argvMatches": true,
+      "stdout": "malformed-blank-zero.stdout.log",
+      "stderr": "malformed-blank-zero.stderr.log"
+    },
+    {
+      "command": "malformed-duplicate-header.command.json",
+      "exit": "malformed-duplicate-header.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/duplicate-header' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-duplicate-header.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84745,
+      "code": 1,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.850Z",
+      "finished": "2026-11-10T12:54:53.862Z",
+      "argvMatches": true,
+      "stdout": "malformed-duplicate-header.stdout.log",
+      "stderr": "malformed-duplicate-header.stderr.log"
+    },
+    {
+      "command": "malformed-exponent.command.json",
+      "exit": "malformed-exponent.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/exponent' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-exponent.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84739,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.787Z",
+      "finished": "2026-11-10T12:54:53.798Z",
+      "argvMatches": true,
+      "stdout": "malformed-exponent.stdout.log",
+      "stderr": "malformed-exponent.stderr.log"
+    },
+    {
+      "command": "malformed-float.command.json",
+      "exit": "malformed-float.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/float' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-float.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84735,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.744Z",
+      "finished": "2026-11-10T12:54:53.757Z",
+      "argvMatches": true,
+      "stdout": "malformed-float.stdout.log",
+      "stderr": "malformed-float.stderr.log"
+    },
+    {
+      "command": "malformed-leading-zero.command.json",
+      "exit": "malformed-leading-zero.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/leading-zero' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-leading-zero.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84737,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.765Z",
+      "finished": "2026-11-10T12:54:53.778Z",
+      "argvMatches": true,
+      "stdout": "malformed-leading-zero.stdout.log",
+      "stderr": "malformed-leading-zero.stderr.log"
+    },
+    {
+      "command": "malformed-negative.command.json",
+      "exit": "malformed-negative.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/negative' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-negative.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84741,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.807Z",
+      "finished": "2026-11-10T12:54:53.819Z",
+      "argvMatches": true,
+      "stdout": "malformed-negative.stdout.log",
+      "stderr": "malformed-negative.stderr.log"
+    },
+    {
+      "command": "malformed-unlisted-float.command.json",
+      "exit": "malformed-unlisted-float.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/unlisted-float' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-unlisted-float.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84749,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.894Z",
+      "finished": "2026-11-10T12:54:53.907Z",
+      "argvMatches": true,
+      "stdout": "malformed-unlisted-float.stdout.log",
+      "stderr": "malformed-unlisted-float.stderr.log"
+    },
+    {
+      "command": "malformed-unterminated.command.json",
+      "exit": "malformed-unterminated.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/unterminated' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-unterminated.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84747,
+      "code": 1,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.872Z",
+      "finished": "2026-11-10T12:54:53.885Z",
+      "argvMatches": true,
+      "stdout": "malformed-unterminated.stdout.log",
+      "stderr": "malformed-unterminated.stderr.log"
+    },
+    {
+      "command": "native-replay.command.json",
+      "exit": "native-replay.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '--preload' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/native-lp.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--native-lp-evidence' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.sources.json' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/native-replay'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 2051,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T13:20:19.820Z",
+      "finished": "2026-11-10T13:20:25.322Z",
+      "argvMatches": true,
+      "stdout": "native-replay.stdout.log",
+      "stderr": "native-replay.stderr.log"
+    },
+    {
+      "command": "other-metered.command.json",
+      "exit": "other-metered.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '--preload' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/other-sources-metered.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 86670,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:57:57.577Z",
+      "finished": "2026-11-10T13:19:53.551Z",
+      "argvMatches": true,
+      "stdout": "other-metered.stdout.log",
+      "stderr": "other-metered.stderr.log"
+    },
+    {
+      "command": "other-replay.command.json",
+      "exit": "other-replay.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/other-sources.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-replay'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 85467,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:56:06.554Z",
+      "finished": "2026-11-10T12:56:06.989Z",
+      "argvMatches": true,
+      "stdout": "other-replay.stdout.log",
+      "stderr": "other-replay.stderr.log"
+    },
+    {
+      "command": "other-sources-original.command.json",
+      "exit": "other-sources-original.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-sources-original'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 83173,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:52:27.268Z",
+      "finished": "2026-11-10T12:52:27.354Z",
+      "argvMatches": true,
+      "stdout": "other-sources-original.stdout.log",
+      "stderr": "other-sources-original.stderr.log"
+    },
+    {
+      "command": "receipt-audit-r2.command.json",
+      "exit": "receipt-audit-r2.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/audit-receipts.mjs' 'receipt-audit-r2'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 3255,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:21:59.103Z",
+      "finished": "2026-11-10T13:21:59.273Z",
+      "argvMatches": true,
+      "stdout": "receipt-audit-r2.stdout.log",
+      "stderr": "receipt-audit-r2.stderr.log"
+    },
+    {
+      "command": "receipt-audit.command.json",
+      "exit": "receipt-audit.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/audit-receipts.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 2401,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:20:39.313Z",
+      "finished": "2026-11-10T13:20:39.450Z",
+      "argvMatches": true,
+      "stdout": "receipt-audit.stdout.log",
+      "stderr": "receipt-audit.stderr.log"
+    },
+    {
+      "command": "reconciliation-repeat.command.json",
+      "exit": "reconciliation-repeat.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/reconciliation-repeat.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 83178,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:52:27.582Z",
+      "finished": "2026-11-10T12:52:27.692Z",
+      "argvMatches": true,
+      "stdout": "reconciliation-repeat.stdout.log",
+      "stderr": "reconciliation-repeat.stderr.log"
+    },
+    {
+      "command": "reconciliation.command.json",
+      "exit": "reconciliation.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/reconciliation.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 83177,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:52:27.462Z",
+      "finished": "2026-11-10T12:52:27.572Z",
+      "argvMatches": true,
+      "stdout": "reconciliation.stdout.log",
+      "stderr": "reconciliation.stderr.log"
+    },
+    {
+      "command": "stale-reject.command.json",
+      "exit": "stale-reject.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/float' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/stale-output.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84752,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.937Z",
+      "finished": "2026-11-10T12:54:53.949Z",
+      "argvMatches": true,
+      "stdout": "stale-reject.stdout.log",
+      "stderr": "stale-reject.stderr.log"
+    },
+    {
+      "command": "stale-seed.command.json",
+      "exit": "stale-seed.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/blank-zero' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/stale-output.json'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 84751,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:54:53.916Z",
+      "finished": "2026-11-10T12:54:53.929Z",
+      "argvMatches": true,
+      "stdout": "stale-seed.stdout.log",
+      "stderr": "stale-seed.stderr.log"
+    },
+    {
+      "command": "syntax-1.command.json",
+      "exit": "syntax-1.exit.json",
+      "literal": "'node' '--check' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/audit-receipts.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 90976,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:04:41.850Z",
+      "finished": "2026-11-10T13:04:41.900Z",
+      "argvMatches": true,
+      "stdout": "syntax-1.stdout.log",
+      "stderr": "syntax-1.stderr.log"
+    },
+    {
+      "command": "syntax-2.command.json",
+      "exit": "syntax-2.exit.json",
+      "literal": "'node' '--check' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cleanup.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 90978,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:04:41.910Z",
+      "finished": "2026-11-10T13:04:41.950Z",
+      "argvMatches": true,
+      "stdout": "syntax-2.stdout.log",
+      "stderr": "syntax-2.stderr.log"
+    },
+    {
+      "command": "syntax-3.command.json",
+      "exit": "syntax-3.exit.json",
+      "literal": "'node' '--check' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 90980,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:04:41.959Z",
+      "finished": "2026-11-10T13:04:42.000Z",
+      "argvMatches": true,
+      "stdout": "syntax-3.stdout.log",
+      "stderr": "syntax-3.stderr.log"
+    },
+    {
+      "command": "syntax-4.command.json",
+      "exit": "syntax-4.exit.json",
+      "literal": "'node' '--check' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/workspace-audit.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 90982,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:04:42.009Z",
+      "finished": "2026-11-10T13:04:42.053Z",
+      "argvMatches": true,
+      "stdout": "syntax-4.stdout.log",
+      "stderr": "syntax-4.stderr.log"
+    },
+    {
+      "command": "syntax-5.command.json",
+      "exit": "syntax-5.exit.json",
+      "literal": "'node' '--check' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/run-command.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 90984,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:04:42.063Z",
+      "finished": "2026-11-10T13:04:42.104Z",
+      "argvMatches": true,
+      "stdout": "syntax-5.stdout.log",
+      "stderr": "syntax-5.stderr.log"
+    },
+    {
+      "command": "tokenstaking-caller.command.json",
+      "exit": "tokenstaking-caller.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-caller.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 2132,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:20:25.311Z",
+      "finished": "2026-11-10T13:20:27.595Z",
+      "argvMatches": true,
+      "stdout": "tokenstaking-caller.stdout.log",
+      "stderr": "tokenstaking-caller.stderr.log"
+    },
+    {
+      "command": "tokenstaking-source.command.json",
+      "exit": "tokenstaking-source.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-source.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 92679,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T13:07:21.404Z",
+      "finished": "2026-11-10T13:07:22.500Z",
+      "argvMatches": true,
+      "stdout": "tokenstaking-source.stdout.log",
+      "stderr": "tokenstaking-source.stderr.log"
+    },
+    {
+      "command": "weighted-original.command.json",
+      "exit": "weighted-original.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/weighted/probe.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-original'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 83169,
+      "code": 1,
+      "signal": null,
+      "started": "2026-11-10T12:52:27.046Z",
+      "finished": "2026-11-10T12:52:27.160Z",
+      "argvMatches": true,
+      "stdout": "weighted-original.stdout.log",
+      "stderr": "weighted-original.stderr.log"
+    },
+    {
+      "command": "weighted-replay.command.json",
+      "exit": "weighted-replay.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/weighted.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 83335,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:52:39.321Z",
+      "finished": "2026-11-10T12:55:13.759Z",
+      "argvMatches": true,
+      "stdout": "weighted-replay.stdout.log",
+      "stderr": "weighted-replay.stderr.log"
+    },
+    {
+      "command": "witness-metered.command.json",
+      "exit": "witness-metered.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '--preload' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/witness-metered.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 86612,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:57:51.255Z",
+      "finished": "2026-11-10T12:57:57.567Z",
+      "argvMatches": true,
+      "stdout": "witness-metered.stdout.log",
+      "stderr": "witness-metered.stderr.log"
+    },
+    {
+      "command": "witness-original.command.json",
+      "exit": "witness-original.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/witness-original'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 83175,
+      "code": 1,
+      "signal": null,
+      "started": "2026-11-10T12:52:27.364Z",
+      "finished": "2026-11-10T12:52:27.453Z",
+      "argvMatches": true,
+      "stdout": "witness-original.stdout.log",
+      "stderr": "witness-original.stderr.log"
+    },
+    {
+      "command": "witness-replay.command.json",
+      "exit": "witness-replay.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/witness.mjs'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 85468,
+      "code": 2,
+      "signal": null,
+      "started": "2026-11-10T12:56:06.998Z",
+      "finished": "2026-11-10T12:56:07.337Z",
+      "argvMatches": true,
+      "stdout": "witness-replay.stdout.log",
+      "stderr": "witness-replay.stderr.log"
+    },
+    {
+      "command": "workspace-after.command.json",
+      "exit": "workspace-after.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/workspace-audit.mjs' 'after'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 3439,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T13:22:15.670Z",
+      "finished": "2026-11-10T13:22:16.673Z",
+      "argvMatches": true,
+      "stdout": "workspace-after.stdout.log",
+      "stderr": "workspace-after.stderr.log"
+    },
+    {
+      "command": "workspace-before-r2.command.json",
+      "exit": "workspace-before-r2.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/workspace-audit.mjs' 'before'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 82945,
+      "code": 0,
+      "signal": null,
+      "started": "2026-11-10T12:52:06.336Z",
+      "finished": "2026-11-10T12:52:07.491Z",
+      "argvMatches": true,
+      "stdout": "workspace-before-r2.stdout.log",
+      "stderr": "workspace-before-r2.stderr.log"
+    },
+    {
+      "command": "workspace-before.command.json",
+      "exit": "workspace-before.exit.json",
+      "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/workspace-audit.mjs' 'before'",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "childPid": 82618,
+      "code": 1,
+      "signal": null,
+      "started": "2026-11-10T12:51:33.520Z",
+      "finished": "2026-11-10T12:51:33.575Z",
+      "argvMatches": true,
+      "stdout": "workspace-before.stdout.log",
+      "stderr": "workspace-before.stderr.log"
+    }
+  ],
+  "auxiliaryCleanup": {
+    "command": "cleanup-readback.command.json",
+    "result": "cleanup-independent-readback.json",
+    "actualPass": true,
+    "recordedExitCode": null,
+    "recordedExitNote": "No standalone exit receipt; all result fields and final absent resources checked.",
+    "preservedFailure": "cleanup-attempt-failed.log"
+  },
+  "cleanupInvocation": {
+    "literal": "export TMPDIR='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz' NODE_COMPILE_CACHE='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/node-compile' BUN_RUNTIME_TRANSPILER_CACHE_PATH='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/bun-transpiler'; cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01'; /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cleanup.mjs'",
+    "exitCode": 0,
+    "receipt": "cleanup.json"
+  },
+  "links": [
+    {
+      "path": "verification/witness-r4.results.json",
+      "exists": true
+    },
+    {
+      "path": "verification/receipt-audit-r2.json",
+      "exists": true
+    },
+    {
+      "path": "../attribution-spec.md",
+      "exists": true
+    },
+    {
+      "path": "verification/tokenstaking-caller.json",
+      "exists": true
+    },
+    {
+      "path": "verification/weighted-replay.results.json",
+      "exists": true
+    },
+    {
+      "path": "verification/cp-replay.json",
+      "exists": true
+    },
+    {
+      "path": "verification/independent-reconciliation.json",
+      "exists": true
+    },
+    {
+      "path": "verification/portability-audit.json",
+      "exists": true
+    },
+    {
+      "path": "verification/other-metered.json",
+      "exists": true
+    },
+    {
+      "path": "verification/other-metered.exit.json",
+      "exists": true
+    },
+    {
+      "path": "verification/native-replay.json",
+      "exists": true
+    },
+    {
+      "path": "verification/recovery-observations.json",
+      "exists": true
+    },
+    {
+      "path": "verification/recovery-receipt-audit.json",
+      "exists": true
+    },
+    {
+      "path": "verification/tokenstaking-source.receipt.json",
+      "exists": true
+    },
+    {
+      "path": "verification/runner-findings.md",
+      "exists": true
+    },
+    {
+      "path": "../source-manifest.json",
+      "exists": true
+    },
+    {
+      "path": "../source-route-matrix.md",
+      "exists": true
+    },
+    {
+      "path": "verification/probe-contract.md",
+      "exists": true
+    },
+    {
+      "path": "verification/native-replay.command.json",
+      "exists": true
+    },
+    {
+      "path": "verification/cleanup.json",
+      "exists": true
+    },
+    {
+      "path": "verification/recovery-cleanup.json",
+      "exists": true
+    },
+    {
+      "path": "verification/cleanup-independent-readback.json",
+      "exists": true
+    },
+    {
+      "path": "verification/workspace-after.json",
+      "exists": true
+    }
+  ],
+  "integrity": {
+    "baseline": "workspace-before.json",
+    "final": "workspace-after.json",
+    "entries": 13017,
+    "changed": [],
+    "addedOutside": [],
+    "crane": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/lib/crane",
+      "kind": "symlink",
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane"
+    }
+  },
+  "limits": [
+    "Artifact verification and cleanup PASS do not imply E1/E2 closure.",
+    "Two pre-existing frozen Markdown fingerprint mismatches remain in provenance evidence.",
+    "No clean LSP or Migration integration result is claimed."
+  ]
+}

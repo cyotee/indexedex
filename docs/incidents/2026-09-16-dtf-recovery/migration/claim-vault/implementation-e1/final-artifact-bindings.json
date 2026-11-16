@@ -1,0 +1,242 @@
+{
+  "artifacts": [
+    {
+      "path": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "sha256": "d6539f8323ec5fa42af815b2d7425111484ba9530d9e138c2bc62d7e3488b342",
+      "creationTemplateSha256": "ba9ce06a08c54662c221e2c39387a8f3552c4136037afb3fc7a537a173dea67b",
+      "runtimeTemplateSha256": "e3a2b89c5c09efe90e40ae00b99d8b86ebbc9d84b421b0d2dbddbdf92cec7603",
+      "creationHash": null,
+      "runtimeHash": null,
+      "linkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 13292,
+              "length": 20
+            },
+            {
+              "start": 13496,
+              "length": 20
+            },
+            {
+              "start": 14220,
+              "length": 20
+            },
+            {
+              "start": 14438,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "runtimeLinkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 13274,
+              "length": 20
+            },
+            {
+              "start": 13478,
+              "length": 20
+            },
+            {
+              "start": 14202,
+              "length": 20
+            },
+            {
+              "start": 14420,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "note": "Null bytecode hashes denote unlinked templates; actual linked deployment hashes are in CLI execution-manifest bindings.",
+      "runtimeBytes": 24408
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "sha256": "a9e60bd3ec2baf2260f3e89484c8bf6182ba29a226a0946c74dbc074c2ecd8cc",
+      "creationTemplateSha256": "9ed6268c58958cb62d210b5cc74b7cb89aa4ff29564b223b0fcc2e6fa776ad42",
+      "runtimeTemplateSha256": "57d800fb4629e99b99312392e1a214a519a86e38028919970bc36f29452c8657",
+      "creationHash": null,
+      "runtimeHash": null,
+      "linkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 13040,
+              "length": 20
+            },
+            {
+              "start": 13229,
+              "length": 20
+            },
+            {
+              "start": 13776,
+              "length": 20
+            },
+            {
+              "start": 13991,
+              "length": 20
+            }
+          ]
+        },
+        "contracts/utils/StandardExchangeFrozenQuoteLib.sol": {
+          "StandardExchangeFrozenV3CaptureIdentity": [
+            {
+              "start": 12545,
+              "length": 20
+            }
+          ],
+          "StandardExchangeFrozenV3PreviewIdentity": [
+            {
+              "start": 12602,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "runtimeLinkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 13022,
+              "length": 20
+            },
+            {
+              "start": 13211,
+              "length": 20
+            },
+            {
+              "start": 13758,
+              "length": 20
+            },
+            {
+              "start": 13973,
+              "length": 20
+            }
+          ]
+        },
+        "contracts/utils/StandardExchangeFrozenQuoteLib.sol": {
+          "StandardExchangeFrozenV3CaptureIdentity": [
+            {
+              "start": 12527,
+              "length": 20
+            }
+          ],
+          "StandardExchangeFrozenV3PreviewIdentity": [
+            {
+              "start": 12584,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "note": "Null bytecode hashes denote unlinked templates; actual linked deployment hashes are in CLI execution-manifest bindings.",
+      "runtimeBytes": 24310
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol/UniswapV4DetfMigrationClaimVaultAllocationFacet.json",
+      "sha256": "1648afa18d3cbb3216530b23d0634fed900d898010bf53ef5a2676a3a6a77214",
+      "creationTemplateSha256": "21e04f7d737f127f40d8248819f0d985271db662b357261e3ff607127b7187db",
+      "runtimeTemplateSha256": "10e8ef6c7cc248494656e2be0612d3f77552e31374ab828461093107a722be32",
+      "creationHash": null,
+      "runtimeHash": null,
+      "linkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 4841,
+              "length": 20
+            },
+            {
+              "start": 5039,
+              "length": 20
+            },
+            {
+              "start": 5743,
+              "length": 20
+            },
+            {
+              "start": 5958,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "runtimeLinkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 4823,
+              "length": 20
+            },
+            {
+              "start": 5021,
+              "length": 20
+            },
+            {
+              "start": 5725,
+              "length": 20
+            },
+            {
+              "start": 5940,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "note": "Null bytecode hashes denote unlinked templates; actual linked deployment hashes are in CLI execution-manifest bindings.",
+      "runtimeBytes": 7002
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "sha256": "75c8eff472a3f21ddef463b230f7fe211b414069319f4a5473b460be1c9c5d14",
+      "creationTemplateSha256": "5921034b408e7b61c5a8319b29cdbb1465a38e779625b1488ade593c9105c0eb",
+      "runtimeTemplateSha256": "70f5bfc3f365da3ab7365ca45fd2579052b6c3d19b364a759172b2b24053c7ee",
+      "creationHash": "0x8756aa49e0b9df4fed847525e3506e1b3657a07e683c0e2ad83c0f64d7adf1f7",
+      "runtimeHash": "0xc0ca13b7e9d7eb488cd8a2eab5c0aa631feaac17f18d31181dcdcba2a51cef9d",
+      "linkReferences": {},
+      "runtimeLinkReferences": {},
+      "note": "Null bytecode hashes denote unlinked templates; actual linked deployment hashes are in CLI execution-manifest bindings.",
+      "runtimeBytes": 17077
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "sha256": "7180327e041719a15d1d66723d84c4859e9cac1c10d8e13fe6e41c74ffcf20b7",
+      "creationTemplateSha256": "497ca2ec76b5c64b4bce801ae7dfb3251596120890940303f68005da2973c82e",
+      "runtimeTemplateSha256": "f4eb4ecdc6924d7e98e347f0dd37d60efa5253b2183e5982bacfb73f66e483ea",
+      "creationHash": "0xfbdc824865910e553db8d7b8018a8df560c822838f18b3914e3880f6d2b59003",
+      "runtimeHash": "0x30f66262d155ae9bd5f2b4a5f2e34e0fc2b87000d9a9fa50b96388077842231f",
+      "linkReferences": {},
+      "runtimeLinkReferences": {},
+      "note": "Null bytecode hashes denote unlinked templates; actual linked deployment hashes are in CLI execution-manifest bindings.",
+      "runtimeBytes": 16714
+    },
+    {
+      "path": "out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+      "sha256": "7d31393919f2495808b82827f9d463df6c213839486911a85f844a4b11d1473b",
+      "creationTemplateSha256": "384b9716c1ec8f8990da18271ef82618a83b6bf02fba7569cf2510389c3eaeb4",
+      "runtimeTemplateSha256": "b0e8a5b5b40d528772af6cf585b021c668b9957332152fe90c62496a1fcfe780",
+      "creationHash": "0x6cf35f623ad20e8b67a5ea033b7de7b79874f37a01cca4f97bb6c0d6aa16e8d2",
+      "runtimeHash": "0x5177f8a843db005611e1c83e03f94519db57a5c05723d4b59827b2f94da2cee9",
+      "linkReferences": {},
+      "runtimeLinkReferences": {},
+      "note": "Null bytecode hashes denote unlinked templates; actual linked deployment hashes are in CLI execution-manifest bindings.",
+      "runtimeBytes": 116500
+    },
+    {
+      "path": "out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+      "sha256": "e865ef9f48b4e16adf6c01be3b17ac1470af49cfee5b246ec36a8c696b33f1e7",
+      "creationTemplateSha256": "1e8d758fb20ca440b5b1ad855416e5fcb95718f15ec12d6f1ba22bd9891528ea",
+      "runtimeTemplateSha256": "2af3ed5a230a4ca637ccbdb8778d1e6c50feb7940e1015ba2db410f3b0e75f6d",
+      "creationHash": "0x630cc02a174ef91bbb5613a7d2d56ec75c9d47a1086b0d0d675ca49b0598a7f7",
+      "runtimeHash": "0x91cecc9169a917c192242683ece4aec8bcf4caae1deb85bb84190a4d36e971eb",
+      "linkReferences": {},
+      "runtimeLinkReferences": {},
+      "note": "Null bytecode hashes denote unlinked templates; actual linked deployment hashes are in CLI execution-manifest bindings.",
+      "runtimeBytes": 5753
+    }
+  ]
+}

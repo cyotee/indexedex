@@ -1,0 +1,2310 @@
+{
+  "base": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "branch": "work/dtf-migration-phase-09-deployment-gas",
+  "sourceChecks": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "expected": "875f3848177ee974c3d754359c6a7e373e8a5d3bb176d153a830040fd635f9a7",
+      "actual": "875f3848177ee974c3d754359c6a7e373e8a5d3bb176d153a830040fd635f9a7",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "expected": "f51c7de94362d1a0f82c749a6e9681ca7083d713e10adbebd3362ca7ba378add",
+      "actual": "f51c7de94362d1a0f82c749a6e9681ca7083d713e10adbebd3362ca7ba378add",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "expected": "fedc082e2c02df8482caaa335b100bac23c93a38b8d8f24b600b549734dee85d",
+      "actual": "fedc082e2c02df8482caaa335b100bac23c93a38b8d8f24b600b549734dee85d",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "expected": "ba5ee14db60b2099d2bd157f3d0ded09338a04b773489bc545d98b178db2f9a2",
+      "actual": "ba5ee14db60b2099d2bd157f3d0ded09338a04b773489bc545d98b178db2f9a2",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "expected": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd",
+      "actual": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "expected": "707c62ecc97bd588df857f38b1463c0d4e29893c436a9e64c5d135831ea36827",
+      "actual": "707c62ecc97bd588df857f38b1463c0d4e29893c436a9e64c5d135831ea36827",
+      "match": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "expected": "a756cde236a1ddd38827a87bb738e79b9ace11569d3d51b41d49501f97d77046",
+      "actual": "a756cde236a1ddd38827a87bb738e79b9ace11569d3d51b41d49501f97d77046",
+      "match": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol",
+      "expected": "dbe2c9476fd6840ddeb5da28d5dbd2e2d8281f02cc261f6e22cdffb70b802d69",
+      "actual": "dbe2c9476fd6840ddeb5da28d5dbd2e2d8281f02cc261f6e22cdffb70b802d69",
+      "match": true
+    }
+  ],
+  "compilerChecks": [
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/fee/collector/IFeeCollectorManager.sol",
+      "expected": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "actual": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/fee/collector/IFeeCollectorSingleTokenPush.sol",
+      "expected": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "actual": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol",
+      "expected": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "actual": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+      "expected": "0xc8d9e0e326801ecb5848a12d16fb712b33d38cd045371304bfb234cad2bab073",
+      "actual": "0xc8d9e0e326801ecb5848a12d16fb712b33d38cd045371304bfb234cad2bab073",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "expected": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "actual": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IBasicVault.sol",
+      "expected": "0xf4c9fe3326e1e121f5f2eeff13dc5e3536d405e91a481653e99906fa82f03935",
+      "actual": "0xf4c9fe3326e1e121f5f2eeff13dc5e3536d405e91a481653e99906fa82f03935",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IDETFNFTVault.sol",
+      "expected": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "actual": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IDETFStandardizedYield.sol",
+      "expected": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "actual": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IDetfBondNFT.sol",
+      "expected": "0x95472254b83651ba35d96a54d998f035b00147674bec62c207f8abd70cbb7dbd",
+      "actual": "0x95472254b83651ba35d96a54d998f035b00147674bec62c207f8abd70cbb7dbd",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IFeeCollectorManager.sol",
+      "expected": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "actual": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IFeeCollectorSingleTokenPush.sol",
+      "expected": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "actual": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IRebasingClaimToken.sol",
+      "expected": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "actual": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IStakedDETF.sol",
+      "expected": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "actual": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IStandardExchange.sol",
+      "expected": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "actual": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "expected": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "actual": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IStandardVault.sol",
+      "expected": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "actual": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IStandardVaultPkg.sol",
+      "expected": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "actual": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IVaultFeeOracleQuery.sol",
+      "expected": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "actual": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IVaultRegistryDeployment.sol",
+      "expected": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "actual": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/IVaultRegistryEvents.sol",
+      "expected": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "actual": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/VaultFeeTypes.sol",
+      "expected": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "actual": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/detf/IDetf.sol",
+      "expected": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "actual": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/interfaces/proxies/IFeeCollectorProxy.sol",
+      "expected": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "actual": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/registries/vault/VaultTypeUtils.sol",
+      "expected": "0xcb6b9e05fa7da9f3ad8a2ee14e35a670477e44310b2416ffd719fb1d7b17178f",
+      "actual": "0xcb6b9e05fa7da9f3ad8a2ee14e35a670477e44310b2416ffd719fb1d7b17178f",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/basic/IBasicVault.sol",
+      "expected": "0xc0b6df6ada52539111db6db3c926f51d878d5765f61823a3432cc5e5c0ddd021",
+      "actual": "0xc0b6df6ada52539111db6db3c926f51d878d5765f61823a3432cc5e5c0ddd021",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol",
+      "expected": "0xf1f673e78dd519145fedfa180ec8f107e3e2f29fd8095a4f20175abfcc478462",
+      "actual": "0xf1f673e78dd519145fedfa180ec8f107e3e2f29fd8095a4f20175abfcc478462",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol",
+      "expected": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "actual": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol",
+      "expected": "0x2d7b05214575bb9055bf008f0f6dcbd0580e379a8c06eb5ba7ca3b16a47e5cfd",
+      "actual": "0x2d7b05214575bb9055bf008f0f6dcbd0580e379a8c06eb5ba7ca3b16a47e5cfd",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol",
+      "expected": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "actual": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol",
+      "expected": "0x17e1889cc88f6339e6d3342f27c06e71db088bcac0adea14ef0a9aac30429763",
+      "actual": "0x17e1889cc88f6339e6d3342f27c06e71db088bcac0adea14ef0a9aac30429763",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "expected": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+      "actual": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol",
+      "expected": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "actual": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/inventory/IDetfBondInventoryPolicy.sol",
+      "expected": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "actual": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol",
+      "expected": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "actual": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol",
+      "expected": "0x23e9f71a2607aac7a509c90bfb4bfe2959e91f3f0134bf0c93883de4eb9ed005",
+      "actual": "0x23e9f71a2607aac7a509c90bfb4bfe2959e91f3f0134bf0c93883de4eb9ed005",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol",
+      "expected": "0xed29d53498a59c0ce6e7917ab536df26ed502d9749651d0823f8591ec169e2e6",
+      "actual": "0xed29d53498a59c0ce6e7917ab536df26ed502d9749651d0823f8591ec169e2e6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol",
+      "expected": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "actual": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol",
+      "expected": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "actual": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol",
+      "expected": "0x3cf91c2b5498d326ae7672e2da07a3fe6667c5a17e26696284f71cf686abd1ba",
+      "actual": "0x3cf91c2b5498d326ae7672e2da07a3fe6667c5a17e26696284f71cf686abd1ba",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+      "expected": "0xb1f689d9c2c05bea3a2ceaa4e00038018d0d2b00e1a61678eb9a83c7df8ae59a",
+      "actual": "0xb1f689d9c2c05bea3a2ceaa4e00038018d0d2b00e1a61678eb9a83c7df8ae59a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "expected": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "actual": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol",
+      "expected": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "actual": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "expected": "0xc76db3e8fd3b6d36fb43b4c1dc4631e9722e693f84552c3aa7b3ff0cd2f5d3e2",
+      "actual": "0xc76db3e8fd3b6d36fb43b4c1dc4631e9722e693f84552c3aa7b3ff0cd2f5d3e2",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "expected": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+      "actual": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "expected": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+      "actual": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "expected": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "actual": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "expected": "0xf72952d452fac37fcfd0e909389e1eae53a64a47e2ac880f010421b866db5ee2",
+      "actual": "0xf72952d452fac37fcfd0e909389e1eae53a64a47e2ac880f010421b866db5ee2",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "expected": "0xc41b2b53d463ff9a8383fd409a0d40bf321ebf712065879ce37ea7d8da57a978",
+      "actual": "0xc41b2b53d463ff9a8383fd409a0d40bf321ebf712065879ce37ea7d8da57a978",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "expected": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "actual": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "expected": "0xb67eb202daa993c13797bd2d24990b147507c66920244a748e6db003bd78cffc",
+      "actual": "0xb67eb202daa993c13797bd2d24990b147507c66920244a748e6db003bd78cffc",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "expected": "0x67468ed4d7ddb966004c8d9652c438c7a7b267f8f28d36611407cc5f8a802de6",
+      "actual": "0x67468ed4d7ddb966004c8d9652c438c7a7b267f8f28d36611407cc5f8a802de6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "contracts/vaults/standard/StandardVaultRepo.sol",
+      "expected": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "actual": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/GeneralErrors.sol",
+      "expected": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "actual": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/access/ERC8023/IMultiStepOwnable.sol",
+      "expected": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "actual": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol",
+      "expected": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "actual": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/constants/Constants.sol",
+      "expected": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "actual": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/external/solady/utils/LibSort.sol",
+      "expected": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "actual": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/factories/diamondPkg/IDiamondFactoryPackage.sol",
+      "expected": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "actual": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/factories/diamondPkg/IFacet.sol",
+      "expected": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "actual": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/BetterIERC20.sol",
+      "expected": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "actual": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IDiamond.sol",
+      "expected": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "actual": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IDiamondFactoryPackage.sol",
+      "expected": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "actual": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol",
+      "expected": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "actual": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20.sol",
+      "expected": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "actual": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Errors.sol",
+      "expected": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "actual": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Events.sol",
+      "expected": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "actual": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Metadata.sol",
+      "expected": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "actual": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20MintBurn.sol",
+      "expected": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "actual": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Permit.sol",
+      "expected": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "actual": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC5267.sol",
+      "expected": "0xf7e0a2ca4b40c8bf24934d8c05c13aa0e6b34399560ad5746094b5808d6ad2d8",
+      "actual": "0xf7e0a2ca4b40c8bf24934d8c05c13aa0e6b34399560ad5746094b5808d6ad2d8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC721.sol",
+      "expected": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "actual": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC721Events.sol",
+      "expected": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "actual": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC721Receiver.sol",
+      "expected": "0x7a52be93ddb450f0975a5d878c34890643ff60157e1ef792f01858358d7f1a0c",
+      "actual": "0x7a52be93ddb450f0975a5d878c34890643ff60157e1ef792f01858358d7f1a0c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IFacet.sol",
+      "expected": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "actual": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IMultiStepOwnable.sol",
+      "expected": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "actual": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IPostDeployAccountHook.sol",
+      "expected": "0xb1a447fc2eeb4dc533bb4278c9e92458565893000d7c8597a71f096eeb67891e",
+      "actual": "0xb1a447fc2eeb4dc533bb4278c9e92458565893000d7c8597a71f096eeb67891e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeErrors.sol",
+      "expected": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "actual": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeIn.sol",
+      "expected": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "actual": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeOut.sol",
+      "expected": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "actual": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/introspection/ERC2535/IDiamond.sol",
+      "expected": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "actual": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol",
+      "expected": "0x454d0c476a65e5127dc068c3737de4d3a3235dce17bf8ba9d7f26a79e1bd5240",
+      "actual": "0x454d0c476a65e5127dc068c3737de4d3a3235dce17bf8ba9d7f26a79e1bd5240",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/ERC20Repo.sol",
+      "expected": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "actual": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20.sol",
+      "expected": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "actual": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Errors.sol",
+      "expected": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "actual": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Events.sol",
+      "expected": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "actual": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Metadata.sol",
+      "expected": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "actual": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Permit.sol",
+      "expected": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "actual": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol",
+      "expected": "0x10283bc7aa8390e61ef7fcecb36e234e978ab7c17d373a22cff8d37a1b430d78",
+      "actual": "0x10283bc7aa8390e61ef7fcecb36e234e978ab7c17d373a22cff8d37a1b430d78",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol",
+      "expected": "0x489dca56d51231482f63cc1dbf6a7b1d482e99fabc9cd9c4e64061e9a27d9bf8",
+      "actual": "0x489dca56d51231482f63cc1dbf6a7b1d482e99fabc9cd9c4e64061e9a27d9bf8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721.sol",
+      "expected": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "actual": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721Events.sol",
+      "expected": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "actual": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/Address.sol",
+      "expected": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "actual": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/BetterAddress.sol",
+      "expected": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "actual": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/BetterEfficientHashLib.sol",
+      "expected": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "actual": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/Bytecode.sol",
+      "expected": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "actual": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/Bytes32.sol",
+      "expected": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "actual": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/FixedPointMathLib.sol",
+      "expected": "0x047bfd9230031503f75a91beeafb8f1d96f08081278c6c96e74d357f6301e1fc",
+      "actual": "0x047bfd9230031503f75a91beeafb8f1d96f08081278c6c96e74d357f6301e1fc",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/Math.sol",
+      "expected": "0x59dbc1b53ab6574064b429a50941e79909ff3a7dcbb2e6751af2ad4ced339dfb",
+      "actual": "0x59dbc1b53ab6574064b429a50941e79909ff3a7dcbb2e6751af2ad4ced339dfb",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/Panic.sol",
+      "expected": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "actual": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/SafeCast.sol",
+      "expected": "0xff9ea583785b83681f2f9fb4126f016b4827f2d57186442502e774cc3c2f39c1",
+      "actual": "0xff9ea583785b83681f2f9fb4126f016b4827f2d57186442502e774cc3c2f39c1",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/SafeCastLib.sol",
+      "expected": "0xa31d9ea5dc8c5666429d6adff23aa21a983d215261be333027de0043dd13088d",
+      "actual": "0xa31d9ea5dc8c5666429d6adff23aa21a983d215261be333027de0043dd13088d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/SafeERC20.sol",
+      "expected": "0x952a27339881b81420c525ad856971cf6bb14eaf0e1ccc5f374a9d29f52c681b",
+      "actual": "0x952a27339881b81420c525ad856971cf6bb14eaf0e1ccc5f374a9d29f52c681b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/ShortStrings.sol",
+      "expected": "0x73e35d254e10e817e049e1d874946e5af1b4f0baabf199eaaee56cba9f682bac",
+      "actual": "0x73e35d254e10e817e049e1d874946e5af1b4f0baabf199eaaee56cba9f682bac",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/UInt256.sol",
+      "expected": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "actual": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/collections/BetterArrays.sol",
+      "expected": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "actual": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol",
+      "expected": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "actual": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/collections/sets/Bytes4SetRepo.sol",
+      "expected": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "actual": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol",
+      "expected": "0x723368ed28c7f421784c3aebebcb0b1703d9009dc616a72425fd4f297bae3f7a",
+      "actual": "0x723368ed28c7f421784c3aebebcb0b1703d9009dc616a72425fd4f297bae3f7a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationDFPkg",
+      "path": "lib/crane/contracts/utils/cryptography/hash/MessageHashUtils.sol",
+      "expected": "0x2213cc63b46b88a0ecd55224452aaffd575dbf90beeb377d3df8d5b47e16356d",
+      "actual": "0x2213cc63b46b88a0ecd55224452aaffd575dbf90beeb377d3df8d5b47e16356d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/fee/collector/IFeeCollectorManager.sol",
+      "expected": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "actual": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/fee/collector/IFeeCollectorSingleTokenPush.sol",
+      "expected": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "actual": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol",
+      "expected": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "actual": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+      "expected": "0xc8d9e0e326801ecb5848a12d16fb712b33d38cd045371304bfb234cad2bab073",
+      "actual": "0xc8d9e0e326801ecb5848a12d16fb712b33d38cd045371304bfb234cad2bab073",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "expected": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "actual": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IBasicVault.sol",
+      "expected": "0xf4c9fe3326e1e121f5f2eeff13dc5e3536d405e91a481653e99906fa82f03935",
+      "actual": "0xf4c9fe3326e1e121f5f2eeff13dc5e3536d405e91a481653e99906fa82f03935",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IDETFNFTVault.sol",
+      "expected": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "actual": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IDETFStandardizedYield.sol",
+      "expected": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "actual": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IFeeCollectorManager.sol",
+      "expected": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "actual": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IFeeCollectorSingleTokenPush.sol",
+      "expected": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "actual": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IRebasingClaimToken.sol",
+      "expected": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "actual": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IStakedDETF.sol",
+      "expected": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "actual": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IStandardExchange.sol",
+      "expected": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "actual": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "expected": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "actual": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IStandardVault.sol",
+      "expected": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "actual": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IStandardVaultPkg.sol",
+      "expected": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "actual": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IVaultFeeOracleQuery.sol",
+      "expected": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "actual": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IVaultRegistryDeployment.sol",
+      "expected": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "actual": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IVaultRegistryEvents.sol",
+      "expected": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "actual": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/IVaultRegistryVaultPackageQuery.sol",
+      "expected": "0x1e098867e9ed4255764dc312f1db312716dfd58f08a3b68d2dc6f6fd4ab7fb5a",
+      "actual": "0x1e098867e9ed4255764dc312f1db312716dfd58f08a3b68d2dc6f6fd4ab7fb5a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/VaultFeeTypes.sol",
+      "expected": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "actual": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/detf/IDetf.sol",
+      "expected": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "actual": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/interfaces/proxies/IFeeCollectorProxy.sol",
+      "expected": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "actual": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/basic/IBasicVault.sol",
+      "expected": "0xc0b6df6ada52539111db6db3c926f51d878d5765f61823a3432cc5e5c0ddd021",
+      "actual": "0xc0b6df6ada52539111db6db3c926f51d878d5765f61823a3432cc5e5c0ddd021",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/DETFChildTokenMetadata.sol",
+      "expected": "0x61ba37e05cb2199eb98073aacdbed91d7f6f63b5765d4b5affe1de9bf1b5b304",
+      "actual": "0x61ba37e05cb2199eb98073aacdbed91d7f6f63b5765d4b5affe1de9bf1b5b304",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol",
+      "expected": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "actual": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol",
+      "expected": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "actual": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol",
+      "expected": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "actual": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/inventory/IDetfBondInventoryPolicy.sol",
+      "expected": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "actual": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol",
+      "expected": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "actual": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/sy/DETFSYRepo.sol",
+      "expected": "0x5caa1f986c951670d7a9079ee40541e8aad21263e0c827d799c5210304e2638c",
+      "actual": "0x5caa1f986c951670d7a9079ee40541e8aad21263e0c827d799c5210304e2638c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol",
+      "expected": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "actual": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol",
+      "expected": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "actual": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+      "expected": "0xb1f689d9c2c05bea3a2ceaa4e00038018d0d2b00e1a61678eb9a83c7df8ae59a",
+      "actual": "0xb1f689d9c2c05bea3a2ceaa4e00038018d0d2b00e1a61678eb9a83c7df8ae59a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "expected": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "actual": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol",
+      "expected": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "actual": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "expected": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "actual": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "expected": "0xf72952d452fac37fcfd0e909389e1eae53a64a47e2ac880f010421b866db5ee2",
+      "actual": "0xf72952d452fac37fcfd0e909389e1eae53a64a47e2ac880f010421b866db5ee2",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "expected": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "actual": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+      "expected": "0x4ab2a1e9a305a02123785e8d7f6e73aa67835b0a150928311f311c874f4a5c49",
+      "actual": "0x4ab2a1e9a305a02123785e8d7f6e73aa67835b0a150928311f311c874f4a5c49",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "expected": "0xb67eb202daa993c13797bd2d24990b147507c66920244a748e6db003bd78cffc",
+      "actual": "0xb67eb202daa993c13797bd2d24990b147507c66920244a748e6db003bd78cffc",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "expected": "0x4a8e7380dac59c608daf332760d5e57ab6b5ba4d85c399d9ffcc081cd791cdd7",
+      "actual": "0x4a8e7380dac59c608daf332760d5e57ab6b5ba4d85c399d9ffcc081cd791cdd7",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "expected": "0x67468ed4d7ddb966004c8d9652c438c7a7b267f8f28d36611407cc5f8a802de6",
+      "actual": "0x67468ed4d7ddb966004c8d9652c438c7a7b267f8f28d36611407cc5f8a802de6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "contracts/vaults/standard/StandardVaultRepo.sol",
+      "expected": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "actual": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/GeneralErrors.sol",
+      "expected": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "actual": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/access/ERC8023/IMultiStepOwnable.sol",
+      "expected": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "actual": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol",
+      "expected": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "actual": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/constants/Constants.sol",
+      "expected": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "actual": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/external/solady/utils/LibSort.sol",
+      "expected": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "actual": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/factories/diamondPkg/IDiamondFactoryPackage.sol",
+      "expected": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "actual": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/factories/diamondPkg/IFacet.sol",
+      "expected": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "actual": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/BetterIERC20.sol",
+      "expected": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "actual": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IDiamond.sol",
+      "expected": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "actual": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IDiamondFactoryPackage.sol",
+      "expected": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "actual": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IDiamondLoupe.sol",
+      "expected": "0xf76ae28d1dc0d2c733d17917ac2605d2394858dde68b1439248f39691d21b1e0",
+      "actual": "0xf76ae28d1dc0d2c733d17917ac2605d2394858dde68b1439248f39691d21b1e0",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol",
+      "expected": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "actual": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC165.sol",
+      "expected": "0x820f72b2179f2008ba6af46a19ebbbdfd48a9d561a64ec3d849975e6b30dfdba",
+      "actual": "0x820f72b2179f2008ba6af46a19ebbbdfd48a9d561a64ec3d849975e6b30dfdba",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20.sol",
+      "expected": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "actual": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Errors.sol",
+      "expected": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "actual": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Events.sol",
+      "expected": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "actual": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Metadata.sol",
+      "expected": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "actual": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20MintBurn.sol",
+      "expected": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "actual": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC20Permit.sol",
+      "expected": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "actual": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC5267.sol",
+      "expected": "0xf7e0a2ca4b40c8bf24934d8c05c13aa0e6b34399560ad5746094b5808d6ad2d8",
+      "actual": "0xf7e0a2ca4b40c8bf24934d8c05c13aa0e6b34399560ad5746094b5808d6ad2d8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC721.sol",
+      "expected": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "actual": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IERC721Events.sol",
+      "expected": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "actual": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IFacet.sol",
+      "expected": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "actual": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IMultiStepOwnable.sol",
+      "expected": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "actual": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IPostDeployAccountHook.sol",
+      "expected": "0xb1a447fc2eeb4dc533bb4278c9e92458565893000d7c8597a71f096eeb67891e",
+      "actual": "0xb1a447fc2eeb4dc533bb4278c9e92458565893000d7c8597a71f096eeb67891e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeErrors.sol",
+      "expected": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "actual": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeIn.sol",
+      "expected": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "actual": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeOut.sol",
+      "expected": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "actual": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/introspection/ERC165/IERC165.sol",
+      "expected": "0xf1ac930ce8516a0aaf27de84a1328e78cbb90ea0baf773ca30bc0559722288ec",
+      "actual": "0xf1ac930ce8516a0aaf27de84a1328e78cbb90ea0baf773ca30bc0559722288ec",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/introspection/ERC2535/IDiamond.sol",
+      "expected": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "actual": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol",
+      "expected": "0x454d0c476a65e5127dc068c3737de4d3a3235dce17bf8ba9d7f26a79e1bd5240",
+      "actual": "0x454d0c476a65e5127dc068c3737de4d3a3235dce17bf8ba9d7f26a79e1bd5240",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/ERC20Repo.sol",
+      "expected": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "actual": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20.sol",
+      "expected": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "actual": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Errors.sol",
+      "expected": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "actual": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Events.sol",
+      "expected": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "actual": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Metadata.sol",
+      "expected": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "actual": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Permit.sol",
+      "expected": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "actual": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721.sol",
+      "expected": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "actual": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721Events.sol",
+      "expected": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "actual": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/Address.sol",
+      "expected": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "actual": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/BetterAddress.sol",
+      "expected": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "actual": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/BetterEfficientHashLib.sol",
+      "expected": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "actual": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/Bytecode.sol",
+      "expected": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "actual": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/Bytes32.sol",
+      "expected": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "actual": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/Panic.sol",
+      "expected": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "actual": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/ShortStrings.sol",
+      "expected": "0x73e35d254e10e817e049e1d874946e5af1b4f0baabf199eaaee56cba9f682bac",
+      "actual": "0x73e35d254e10e817e049e1d874946e5af1b4f0baabf199eaaee56cba9f682bac",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/UInt256.sol",
+      "expected": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "actual": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/collections/BetterArrays.sol",
+      "expected": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "actual": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol",
+      "expected": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "actual": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/collections/sets/Bytes4SetRepo.sol",
+      "expected": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "actual": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol",
+      "expected": "0x723368ed28c7f421784c3aebebcb0b1703d9009dc616a72425fd4f297bae3f7a",
+      "actual": "0x723368ed28c7f421784c3aebebcb0b1703d9009dc616a72425fd4f297bae3f7a",
+      "match": true
+    },
+    {
+      "artifact": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "lib/crane/contracts/utils/cryptography/hash/MessageHashUtils.sol",
+      "expected": "0x2213cc63b46b88a0ecd55224452aaffd575dbf90beeb377d3df8d5b47e16356d",
+      "actual": "0x2213cc63b46b88a0ecd55224452aaffd575dbf90beeb377d3df8d5b47e16356d",
+      "match": true
+    }
+  ],
+  "artifactChecks": [
+    {
+      "name": "UniswapV4DetfMigrationDFPkg",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "creationHash": "0xbaba9e590564c5fe2510f895740f0807c9fd968dd422db587868411ddadfbd2f",
+      "expected": "0xbaba9e590564c5fe2510f895740f0807c9fd968dd422db587868411ddadfbd2f",
+      "creationMatch": true,
+      "runtimeObjectHash": "0x0c8fb85a54f67c13cc168fc9c9b37f8259c3784dfde3c678a0c26644e7c85b2c",
+      "runtimeMatches": true,
+      "metadataMatch": true
+    },
+    {
+      "name": "UniswapV4DetfMigrationSYDFPkg",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/out/UniswapV4DetfMigrationSYDFPkg.sol/UniswapV4DetfMigrationSYDFPkg.json",
+      "creationHash": "0x16c4cd4ac0a4960340b9d3b50f04f99a6e96d508b49dfb1afec5bb414b8815c6",
+      "expected": "0x16c4cd4ac0a4960340b9d3b50f04f99a6e96d508b49dfb1afec5bb414b8815c6",
+      "creationMatch": true,
+      "runtimeObjectHash": "0xd3fed94c1fc302af15214ed9b8d000ee2620fc8d3311577b485f02c6e05ce6c1",
+      "runtimeMatches": true,
+      "metadataMatch": true
+    }
+  ],
+  "runtimeChecks": [
+    {
+      "name": "UniswapV4DetfMigrationDFPkg",
+      "address": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+      "code": "0x3460e5575f3560e01c806306fdde031461097f5780630f47cd36146106535780632ea808261461376757806336abf3dc1461376757806352ef6b2c146109f157806365d375b314610aeb5780636a4d3f121461099957806370068fcf1461103157806370299b1914610107578063870d483814610f2857806387c3adb314610d065780638bda137c146103db578063991d55de146106c0578063a4b3ad3514610a66578063a908923514610eca578063abc8b34614610950578063b48c80d0146103c1578063d82be56e14610b89578063f45469e714610a1e578063f4efa66f146109a6575b5f5ffd5b3d5f5f3e3d5ffd5b5f52565b90910181900390f35b50505b91900390565b6103406040526024361060e55761019f5b6004356004810190600436031081360360a0111760e55761034060c081016040528180612fc2903580830192360310823603906102c082101760e5576040516102e081016040528335808501602090930390811060e557823592602001603f8401601f19168481106136e057612d215b6040519182018281108160401c176136e057604052565b6137745b610f645b73642fa76f2f7a6b97ec0822d67a785379a92df3478030909192565b906102b85b6040516020016020810160208252835161022052602084015160408501516060860151956080015160a084016102405260a0845261022051516102605260206102205101516102805260406102205101516102a05260606102205101516102c05260806102205101516102e05260a06102205101516103005260c061022051015161032052614cab6102205b80808080808060e08151015161010090915101516101209091925101516101409091929351015161016090919293945101516101809091929394955101516101a0909192939495965101516101c090919293949596975101515b9091929394959697565b73aa66038ae217b246f5bf7537104342672e56fed863968cbade60e01b82846103085b604051938452600484016040810192815260406020820152615411845b51601f8101601f19166020909192565b5f91905f6020945af11560e9573d60201160e5575f518060a01c60e55773e68f9de49c682fdb3f5b4b302f896da93da7bee7638a6486845f528160205260205f6024601c845afa1560e9573d60201160e5575f518060a01c60e55790930361371f57633f58dd6d5f52806020525f5f6024601c865afa1560e9576138ed5b6154385b3d8080603f6040519301601f19168301604052825291565b8351909360200120835190936020012090920361371f575b5f5260205ff35b736ff385f9043aca8252f2630c601660eba6218c5a6103ba565b6024361060e5576103ea610118565b73642fa76f2f7a6b97ec0822d67a785379a92df347300361371f57736ff385f9043aca8252f2630c601660eba6218c5a5a60405163992baed460e01b81526004016020810160208252845160a05260208501516040860151606087015196613a255b939291906080015160a0840160805260a0846154e791905b5260a0515160c052602060a051015160e052604060a051015161014052606060a051015161016052565b909201610200608051016001841161366757929092526080518203610220608051015281906104db5b8151808452602084018160061b8101935b6020015f831161350b5750505091900390565b01610240608051016001831161366757919091526080518103610260608051015280916105066104b7565b016102806080510160018311613667579190915260805181036102a0608051015280916105316104b7565b019460601b60601c602087015250508160408501529660601b60601c6060840152509460601b60601c906080015290920360048101906020016040519081016101408101604052935f6101409486949392f11560e9573d6101401160e5576106335b604051610140810160405282518060a01c60e55781526020830151602082015260408301518060a01c60e557604082015260608301518060a01c60e557606082015260808301518060a01c60e557608082015260a08301518060a01c60e55760a082015260c08301518060a01c60e55760c082015260e083015160e08201526101008301516101008201529161012001516001811160e557610120830152565b60c081015160601b60601c9060a0015160601b60601c5f5260205260405ff35b6102006040527375170821c0f42c76871925b807e4b5f1d3d18c2373758be53e89c90bb594bfd5963458910685bc67ee73aa66038ae217b246f5bf7537104342672e56fed8736ff385f9043aca8252f2630c601660eba6218c5a926080529060a05260c05260e052608080f35b6024361060e5576106cf610118565b60405161028081018060405260c036833760c0613b015b929190820160e0368237606081016060905260606080820152606060a0820152606060c0820152909192565b9092016102006080510160018411613667579290925260805182036102206080510152819061073f6104b7565b016102406080510160018311613667579190915260805181036102606080510152809161076a6104b7565b016102806080510160018311613667579190915260805181036102a0608051015280916107956104b7565b019460601b60601c60208a015250508160408801529760601b60601c6060870152509560601b60601c9093608001529190930360048101906020016040519081016040525f93945f93fa1560e957613b115b61544361038a565b6080850190815260a0870195919690956108805b90518083019284031082840360e0111760e55760405160e0810160405282518060a01c60e557815260208301518060a01c60e557602082015260408301516001811160e55760408201526060830151808401602081015f1960c01c9283108782111760e55790613b80905b515b603f8101601f1916818110612dbd565b60a08401908152613b925b604051806020818101925291565b01828103809360c0015280946108c95b61545261575f565b81518084526020840180936020010360fe82156157d9565b9093018281039260a00192909252508151602083015160408401516060850151608086015160a087015196613bf45b9695949392919060c0015160e087019560601b60601c87529360601b60601c6020870152911515604086015260e06060860161573d615767565b01818103809260c0015280926109466108a9565b9091018290039091f35b60205f52613bfd601b60205b527a556e69737761705634446574664d6967726174696f6e4446506b6760281b90565b60a0604052610ea75b613c0d5b6040516040810160405290565b6359fb297160e01b6103ba565b608060c08101604052606081016109bb610988565b6109ca5b610240613302610188565b819092526359fb297160e01b60808401529160a001819052613c3a61088b565b9092010390f35b6080604052610a055b6101e0613145610188565b604051602081016020825b52809260f55b61547761575f565b6080604052610a2b610988565b610a336109bf565b610a3b6109fa565b604051613c425b9392919060608101606082526156b5856102f8565b90920181810360408301610a10565b6080604052610a775b6133f06109fa565b613c5961088b565b81518387038252805160208201519160400151606089019160601b60601c89526020890160028411613667579290925296604001606090528690610ac55b61549c61575f565b90950160019093039460200190602001909492945b5f8411610a7f575050505080910390f35b608060408101604052610afc610a6f565b610b046109bf565b826020019183528152613c7261088b565b8151838803825280516020820151916040015160608a019160601b60601c8a5260208a0160028411613667579290925297604001606090528790610b57610abd565b90960160019093039560200190602001909592955b5f8411610b155750505050838303809460200152829060f5610abd565b6102c06040526024361060e5576004610bcc5b90356004810190602436031060e557613c97905b803590602001603f8201601f19168281106136e05b9091929394565b610c3c5b6020820182518082016020821260e557825180840192108282039060a082101760e55760405160a08101604052835180850192108284036102c0111760e5576040516102c081016040528251808401602081015f1960c01c9283108782111760e55790613ca09061086e565b5f815160400152613ce761088b565b90920161020060805101600184116136675792909252608051820361022060805101528190610c786104b7565b0161024060805101600183116136675791909152608051810361026060805101528091610ca36104b7565b016102806080510160018311613667579190915260805181036102a060805101528091610cce6104b7565b019460601b60601c602087015250508160408501529460601b60601c6060840152509260601b60601c906080015280910390206103ba565b6103606040526024361060e5576004610d1d610b9c565b73aa66038ae217b246f5bf7537104342672e56fed8330361366e5780610d41610bd0565b80516040015160601b60601c610d725b811561373757813b1561373757613d375b5f639d63848a5f526004601c5f93565b805160608101511515906040015160601b60601c610dbb5b63fe884e285f5260205f6004601c855afa1560e9573d60201160e5575f518060011c60e55715159092036136aa5750565b80610df35b5f1960601c826020015181161561371f5760608301518116801561371f57926080015116801561371f5790911461371f57565b610ea55b73642fa76f2f7a6b97ec0822d67a785379a92df3476040516060810146825282602083015260606040830152845161010052602085015160408601516060870151608088015160a085016101205260a0855261010051516101405260206101005101516101605260406101005101516101805260606101005101516101a05260806101005101516101c05260a06101005101516101e05260c061010051015161020052614d27610100610254565b505b8051601f8101601f19169060208301015f90526020909103602081529060400190f35b6102c060405260043560a01c604436101760e5576024610ee8610b9c565b613e756101a3565b5f91906020935afa1560e9573d60201160e5575f518060a01c60e5570361371f57610f19610bd0565b610f21610dc0565b60016103ba565b6102c06040526024361060e5576004610f3f610b9c565b80610f48610bd0565b613e865b73e68f9de49c682fdb3f5b4b302f896da93da7bee780335b0361371f909192565b8351909360200120835190936020012090920361371f5780610f8d610dc0565b805173aa66038ae217b246f5bf7537104342672e56fed8610fac6109bf565b7375170821c0f42c76871925b807e4b5f1d3d18c2373758be53e89c90bb594bfd5963458910685bc67ee936359fb297160e01b919390610ff960408201805160601b60601c611b0b610d51565b6040810151602082015160601b60601c614e765b7f2e2d67950d3817acf742f79fb1f1c80a58f46cc8f831e8646ac38137c4ebc92a90565b61034060405260043560a01c602436101760e55760043580300361117d5773642fa76f2f7a6b97ec0822d67a785379a92df347330361371f576311941b885f5260205f6004601c5f305af11560e9573d60201160e5575f5160a01c60e55763dde448b05f5260205f6004601c5f305af11560e9573d60201160e5575f5160a01c60e557613ec35b6152905b7f6a40c2012c75ef67e5ada2dacdd8a209ad315d778fa4a6d4cc07b5ee01b2112e90565b602081019051600b8101613f9090610870565b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6611c6111385b81546707fffffffffffffe81116136e0576001810160051b612c35610188565b9290919061117560405160e081016040526112a65b614e865b7f484ee2a81338741147e266b0dbc8ff150631b44c9166311973ff2a9840345d5690565b6140a36110b8565b61415f6101a3565b612ce8576001820180548060401c6136e0576001810190825f5260205f200180547fffffffffffffffffffffffff00000000000000000000000000000000000000001686179055809155925f52906020528160405f20559050565b8060051b84016020015160601b60601c8361120b5b82826111855b915f5260205260405f2054151590565b6001015b835181106111e05750915050565b918252916112335793505060ff19168260200152565b935f52905060205f205f5b82811061124a57505050565b808201548160051b86016020015260010161123e565b918252916112775792505060ff1916816020015290565b925f52905060205f205f5b828110611290575050505b90565b808201548160051b850160200152600101611282565b614174905b60208101905160035b8101603f8101601f19168181106136e0909192939495565b614231906112ab565b6020915f915f8a5af11560e9573d60201160e5575f518060a01c60e55760019091526112ff61114d565b614262905b602081019051600a6112b4565b6142b5905b60208101905160046112b4565b905f915f602094965af11560e9573d60201160e5575f518060a01c60e557614f215b7f0c241053e7d05846e47352f76ea935819259d314029db8c85c8f21d05454ccab90565b808201518160051c850155602001611cbc565b8193602001515f198360200360031b1b9060019092031716175b92509050565b8060051b8401602001515f1960e01b16805f528360205260405f2054611416576001840180548060401c6136e05760018101825f528160031c60205f20019160071660051b63ffffffff811b83549019168560e01c90911b17909155809155905f5260405f20555b6001015b8351811061139c5750915050565b50611404565b8060051b8301602001516142df5b60f15b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610590565b61434a61142a565b8060051b8301602001516143645b60f15b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610490565b614388611467565b50505b8061500361146a565b50505b80614f5061142d565b6114f45782826114bc6111f5565b915f5260020160205260405f209182547fffffffffffffffffffffffff00000000000000000000000000000000000000001617909155565b92505050565b80516002811060088211176137375791505f5f6115ad565b5a83518210156115cc578160051b8401602001805160601b60601c63292121775f5260205260205f6024601c8b86fa1560e9573d60201160e5575f518060a01c60e55780156115e05785518410156115cc57815160601b60601c146115ed57805160601b60601c6328d1f54b5f5260205260205f6024601c8b5afa1560e9573d60201160e5575f518060a01c60e557156115c25750505b6001015b83811061151257506001036137415750509050565b9351909110613694575b60325b602052634e487b715b5f526024601cfd5b50505090600101906115a9565b50506115a9565b805191505f5f5b83811061163b57506001036136be575050638da5cb5b5f5260205f6004601c855afa1560e9573d60201160e5575f518060a01c60e5579092036136b45750565b8060051b83016020015160601b60601c8714909101906001016115fb565b8060051b8201602001511561374b576001015b8481106116595750509060a0015151801561168a5790910361374b57565b509050565b903682378181528451155f5b8381106116ab5750509050611396565b5f826116fb5787518210156115cc578160051b8801602001515b806116df575086518210156115cc578160051b8701602001515b8483815111156115cc578360051b01602001525060010161169b565b5f6116c5565b90505f5f5b82518110611719575050505b9350505050565b8060051b83016020015160601b60601c8681146118375763292121775f5260208181525f6024601c895afa1560e9573d60201160e5575f518060a01c60e557801561374157817f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd661136117886111f5565b61500a5b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6611590565b87518310156115cc578260051b808901602001518a518510156115cc57908a0160200151915f527f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610660205260405f20557f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610760205260405f205590600101905b600101611706565b5061182f565b90505f5b8151811061185257505b5092505050565b8060051b82016020015160601b60601c8581146118bd5763292121775f5260208181525f6024601c885afa1560e9573d60201160e5575f518060a01c60e5578082896118a25b82826114ae6111fb565b9081036118b357505b600101611841565b80876118ab611898565b506118ab565b8060051b840160200151805160601b60601c906020015160601b60601c81156136c85780156136c857848214613755578061501261178c565b156137555780821461196d57818161192963697222335f525f5f6004601c855afa1560e9576143a2610386565b15613755576143aa5b604051608081016040526389d6191260e01b8152600481019091565b6136d257908661195c611898565b6001015b835181106118c35761184b565b6143e6611932565b6150225b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6612290565b5f9015611a6e57835f527f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6611a60205260405f205473ffffffffffffffffffffffffffffffffffffffff1683145b5f8561506d5b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6611e90565b5f9015611a7457955f527f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6612060205260405f205460601b60601c9094145b90611a7e5715613755575b505050506001015b818110611975575050565b5f6119e9565b945094505f611a50565b50611a5b565b815f5260205f2081015460601b60601c805f526002850160205260405f205460601b60601c9086611ab3611898565b600101615258565b9250509080515f5b818110611ad35750505090505f90565b8060051b83016020015173ffffffffffffffffffffffffffffffffffffffff168503611b03575050509050600190565b600101611ac3565b60608301511515815160601b60601c611b22610d8a565b30815160601b60601c611b3661441e610d62565b8051614435610d62565b80516001810390156137295785611b6360808201518051840361374b575f61166c565b6080850160a08601518151611b9281516001810180156136e0578060051b9060fb1c6136e0578061168f610188565b60208701518751615075611151565b7f484ee2a81338741147e266b0dbc8ff150631b44c9166311973ff2a9840345d57611c2e5b815480600116805f03607f17906001149160011c1681816020111461373057602085019451601f820160051c601f82018281106136e05760051c602083109081150293831090941615612cdd5782612c69875f5260205f2082015b838310612ced5750915050565b6150c45b7f484ee2a81338741147e266b0dbc8ff150631b44c9166311973ff2a9840345d5890565b7f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e50557f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e5383611ccd5b8151602081108061137c5750801981038455925f526020805f2092015f5b84811061136957505091505060ff90565b7f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e51558351809460200120807f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4e5592519020807f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4f55467f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4c5560c0820160405290602001917f8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f83526020830152604082015246606082015230608082015260a090207f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4b55506150ff5b7f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4d90565b90368237945084529091925f5b845180821061223c57865160601b60601c83518210156115cc57915060051b820160200152604051602001806020808252018083611e41610a16565b010361444790610870565b967ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf35560c085015160e086015181670e92596fd62900000382150290910181670d2f13f7789f0000038215029091018082111561574b576101008701518067016345785d8a0000038115020160405160e081018060405285516101208b015160601b60601c895160601b60601c84528c60208501528160408501528d6060850152608084019f909f52508e60a08301528d60c083015290611f2e6151755b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610090565b60608101604052838152826020820152604001819052827f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610855817f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd66109557f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610a556101608701516101808801516101a08901516101408a01517f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610f611fed611bc6565b917f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd66110612017611bc6565b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd66111612040611bc6565b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd66112612069611bc6565b6101c08701805160018111613667576102008901805160018111613667576102408b01805160018111613667576102808d01805160018111613667576151bb5b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6611790565b9051600181116136675760011461214b576151f05b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6611890565b969a5097925097929550929850516001811161366757600114612153576152055b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6611b90565b6152166120e2565b615227612127565b9151600181116136675760011461217d57915160601b60601c306152366119ef565b61523f6119ef565b91505b905160018111613667576001146121f7576152675b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6612190565b61527761219d565b92505b917fb966c325d1ff0a634641c57b660e4a79a271ae623dcedd55b261de6381d4c3fa6122105f61120f565b926102a0015161527f61219d565b6121cc615289611979565b5f526020527f9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe162260405fa1565b508060051b8086016020015160601b60601c83518310156115cc5790830160200152600101611e05565b818152828803821160e5576144c15b929190602081018284825e825f03601f169192013690379091565b818152828803821160e5576144e8612275565b8181528160051b9183890360051c1060e557602081019290925e608083015260a061452a5b959493929190840151808501602081019183108783111760e5612a02565b8181528160051b9183890360051c1060e557602081019290925e60a083015260c084015160c083015260e084015160e08301526101008401516101008301526101208401518060a01c60e55761012083015261014061453d6122c8565b818152828803821160e55761455a612275565b818152828803821160e55761457f612275565b818152828803821160e5576145a4612275565b818152828803821160e5576145d0612275565b81815282880360061c821160e5575f5b5f83116125ca57506101e085015250506102008401516001811160e5576102008301526102206146056122c8565b81815282880360061c821160e5575f5b5f83116125c2575061022085015250506102408401516001811160e55761024083015261026061461f6122c8565b81815282880360061c821160e5575f5b5f83116125ba575061026085015250506102808401516001811160e5576102808301526102a0840151938401906020820194118585111760e557614629905b516707fffffffffffffe81116136e0909192565b8181528490950360061c811160e5575f5b5f82116125b2575050836102a0820152815260208401518060a01c60e5576020820190815260408501516040830190815260608601518060a01c60e5576060840190815295608001518060a01c60e55760808401908152985190962061473d61088b565b9092016102006101c051016001841161366757929092526101c05182036102206101c051015281906125136104b7565b016102406101c051016001831161366757919091526101c05181036102606101c051015280916125416104b7565b016102806101c051016001831161366757919091526101c05181036102a06101c0510152809161256f6104b7565b019a60601b60601c602087015250508760408501529960601b60601c60608401529860601b60601c8092608001528890960390972090940361371f575050509150565b6147b361098c565b6147ec61098c565b61482f61098c565b61484e61098c565b909201610200610120510160018411613667579290925261012051820361022061012051015281906126026104b7565b01610240610120510160018311613667579190915261012051810361026061012051015280916126306104b7565b0161028061012051016001831161366757919091526101205181036102a0610120510152809161265e6104b7565b019560601b60601c602088015250508260408601529060601b60601c606085015260601b60601c80936080015250829003909120736ff385f9043aca8252f2630c601660eba6218c5a6040516101808101604052634fcc059460e01b8152826004820152604081019160246101409284925afa1560e9573d6101401160e5576126e5610593565b610120810151156136e757602081015182036136e757805160601b60601c84036136e757604081015160601b60601c73e68f9de49c682fdb3f5b4b302f896da93da7bee7966127326101c8565b6333a41d7060e01b91956127446102db565b905f91602093985afa1560e9573d60201160e5575f518060a01c60e5579092036136e7575050565b612774610bd0565b61277c610df7565b604081015160601b60601c30036137055760608101600285015460601b60601c815160601b60601c036137055760808201805160601b60601c600387015460601b60601c9081036137055760a08401805160601b60601c895460601b60601c9081036137055760c08601805160601b60601c9a6001015460601b60601c9a8b036137055760405160e081016040526148755b6306fdde035b5f525f5b5f6004601c30610bc5565b6148a7906112ab565b6148bc906112ab565b8f601c01612841611118565b993087526020870152604086015f815260608701948552608087019283528160a088015260c087019a909a52508461287b5b6148ce61088b565b8d60e001916101405260206101208152915191805101519020036136fa57736ff385f9043aca8252f2630c601660eba6218c5a5a97866303eead6760e01b916129315b6040519384529260040160408101918152604060208201528251602084015160408501516060860151608087015160a0880151976148f25b979695949392919060c0015160e088019560601b60601c88529360601b60601c6020880152911515604087015260e0606087016156a7615767565b823b1560e5575f92998a5f939291fa1560e95760019098525061490361280e565b61493390611304565b61494790611316565b9061014052610120602052976101000151602051602001519098209097036136f557956303eead6760e01b919a6129996128be565b905f915f939b5afa1560e9575060405160a08101604052825160601b60601c8152815160601b60601c60208201526149506110b8565b60400151612c10576149d65b9291908251604051610100810160405263e082f1d460e01b81526020810191600460e09284925b909192939495969798565b51612c105760205f6024601c8551636352211e5f525f85525afa1560e9573d60201160e5575f518060a01c60e5578251905f1960601c821603612c0d57636352211e5f526020600181525f6024601c845afa1560e957503d60201160e5575f518060a01c60e5578103612c10579051636352211e5f526020600281525f6024601c845afa1560e957503d60201160e5575f518060a01c60e55793600e015460601b60601c8091038115020160601b60601c909203612c285763705caed95f5260205f6004601c875afa1560e9573d60201160e5575f518060a01c60e557825160601b60601c03612c285792505050565b8060051b8601805160601b60601c308114612c1b57815160601b60601c15612c1b575f5b838110612bf257505060205f6004601c84516307b101f95f525afa1560e9573d60201160e5575f518060081c60e557612c1357506001015b60058110612afd575060205f6004601c73aa66038ae217b246f5bf7537104342672e56fed863017e7e585f525afa1560e9573d60201160e5575f518060a01c60e55760205f6004601c8651638a91f8bc5f525afa1560e9573d60201160e5575f518060a01c60e5573003612c105760205f6004601c86516318160ddd5f525afa1560e9573d60201160e5575f51612c10576149796129db565b8060051b89015160601b60601c8214612c2f57600101612b21565b92915b50505b5160601b60601c5b602052634a460c006115d8565b9091612c10565b90612c1b565b818152925f5260205f205f5b828110612c4d57505050565b8082015460601b60601c8160051b860160200152600101612c41565b90505b90612cc657801981038355915f5260205f208260051c5f5b818110612cb3575092601f168015612ce5578360051b909401519360200360031b5f19901b9093169190920155565b8060051b86015181840155600101612c84565b92515f198460200360031b1b169280019092179055565b509050612c6c565b50505b915050565b5f81559160010191600101611c21565b828152813603831160e5576020810183838237830136935f03601f16919390375090565b848152813603851160e557602081019491909437918152602084013580850190831060e5576149eb90610bb0565b828152813603831160e557614a045b9291906020810183838237835f03601f169193013690375090565b918282828252360360051c821160e5576020019060051b919037608082015260a084013580850190831060e557614a42905b8035906020016707fffffffffffffe82115b6136e090919293565b918282828252360360051c821160e5576020019060051b91903760a082015260c084013560c082015260e084013560e08201526101008401356101008201526101208401358060a01c60e55761012082015261014084013580850190831060e557614a5290610bb0565b828152813603831160e557614a64612d5e565b828152813603831160e557614a8b612d5e565b828152813603831160e557614ab2612d5e565b828152813603831160e557614ae0612d5e565b82815281360360061c831160e5575f5b5f8411612fba57506101e084015250506102008401356001811160e55761020082015261022084013580850190831060e557614b1190612dab565b82815281360360061c831160e5575f5b5f8411612fb2575061022084015250506102408401356001811160e55761024082015261026084013580850190831060e557614b2190612dab565b82815281360360061c831160e5575f5b5f8411612faa575061026084015250506102808401356001811160e5576102808201526102a0840135808501921060e5578135916020016707fffffffffffffe83116136e0576001830160051b612f77610188565b83815281360360061c841160e5575f5b5f8511612fa257506102a0830152506102c081019390935250565b614b3161098c565b614b6c61098c565b614bab61098c565b614bca61098c565b815260208201358060a01c60e55760208201526040820135604082015260608201358060a01c60e557606082015260808201358060a01c60e55760808201528160a0820152905090565b818152828803821160e557614bfc612275565b818152828803821160e557614c26612275565b81815282880360051c821160e5575f5b5f83116130ba575060a0850152505060c0840151938401906020820194118585111760e557614c369061245a565b8181528490950360051c811160e5575f5b5f82116130955750508360c0820152611396565b84518060a01c60e55760018260051b8801602001930392526001019360200193613081565b83518060a01c60e55760018260051b8401602001940393526001019260200192613042565b81815284909203811160e557602082018185825e815f03601f1691013690379150565b8181528490920360051c811160e5575f5b5f82116131205750509150565b84518060a01c60e55760018260051b8501602001930392526001019360200193613113565b600e8152732f0c891b4e9a1c9833dd3f7814d1a76f684797e96101c082015273d1d56864ab234ff18cb7279362e50a2b7960bb5961016082015273cd29f772d1c9dbdbafdb0e54504160a5a977c0e8610180820152730a69db3b30b7cb13eaff786832e062d157630bb26101a082015273ecd6e45d2938a6d434a8a051201853706f84619e6020820152735816d71d52c79844388bcbeadb13f26d52f031ee604082015273d5641a39250e0a4bc648e490ac5efa8cc0fd8de06060820152734022629690473e24fc5cf641694a6feb8a4516af608082015273ddd1e0cde46b5c90cd1b93b91352a7dc00c2400960a0820152604051610140810160405260a0810173b084b225aa4395b47cc7affd375b8f56fc26083f815273046402db2a88b54da34dec0fdd0f9ae549b43cc060c08301527377be20724af3f142979fc53af037b5738df07d3a60e083015273c6b7b81dfd59e97337bbca6f5e7d6b3baa772453610100830152738f06dd279099a5d11ac504dec681c851f1abb223909161012001525f5b600581106132d757505090565b8060051b82015160601b60601c6005820184518110156115cc5760051b8401602001526001016132ca565b60118152636bd6067b60e01b61022082015263150b7a0260e01b610200820152634c60d07c60e01b6101a082015263053bb2a960e01b6101c082015263438e409660e01b6101e08201526336372b0760e01b602082015263a219a02560e01b6040820152639d8ff7da60e01b60608201526384b0196e60e01b6080820152635a9c181460e01b60a082015263d5cbfb2160e01b60c08201526359fb297160e01b60e0820152632c5102bb60e01b610100820152633415fed360e01b610120820152633b2b753c60e01b61014082015263da345f7660e01b610160820152630910d5ea60e01b61018082015290565b80516001810180156136e0578060051b9060fb1c6136e05780613411610188565b903682378181525f5b8281106134df575090505f5b825181106134345750905090565b6040516060810160405283518210156115cc578160051b808501602001515f1960601c811663574a4cff5f525f5f6004601c855afa1560e957614c566107e7565b8181528290930360051c811160e55793505f9192935b5f81116134ba575050509083525f6020840152604083015283518310156115cc57830160200152600101613426565b81518060201b60e55760018481019460051b860160200193602001920392529061348b565b604051606081016040525f81525f6020820152606060408201528160051b83016020015260010161341a565b8051805160601b60601c835291602001916020015160601b60601c825290602001600190920391906104c8565b909201610200610240510160018411613667579290925261024051820361022061024051015281906135686104b7565b0161024080510160018311613667579190915261024051810361026061024051015280916135946104b7565b0161028061024051016001831161366757919091526102405181036102a061024051015280916135c26104b7565b019460601b60601c602087015250508160408501529560601b60601c6060840152509360601b60601c9060800152909103614c7d90610870565b01818103809260c0015280936136106108a9565b9092015b03806020016040519250820160405260040191565b01828103809360c00152809361363d6108a9565b909201919091613614565b01818103809260c00152809461365c6108a9565b909301819003925090565b60216115cf565b3360205263824c60c36115d8565b63f92ee8a95b5f526004601cfd5b630dc149f0613682565b50505160601b60601c60205263dc552fb46115d8565b63f6edfdf5613682565b63c21aabcf613682565b63e5912368613682565b63d92e233d613682565b50602052636d696b386115d8565b60416115cf565b5060205263458afed06115d8565b505050505b505050505050612c1b565b736ff385f9043aca8252f2630c601660eba6218c5a612c1b565b63c926c529613682565b60116115cf565b60226115cf565b639c9d8823613682565b63b56ce555613682565b639ca188ef613682565b63c601aaf3613682565b614c8d61088b565b608060405261375f6109bf565b57816101c3610dc0565b61024051016001851161366757939093526102405184036101e06102405101528390916135386104b7565b6102405187036101a061024061377e5b999897969594939291905101526156d1866102f8565b6102405189036101806102406137a95b9b9a999897969594939291905101526156f1886102f8565b610300510182820192915e6103205160c06102405101528f60e06102405101528e6101006102405101529c60601b60601c610120610240510152610240518d036101406102406154c1615794565b6102e0510182820192915e61024080518203905160a001526137f7906103005b515160208183820193529060051b92565b6102805101908301925e614d546102406102c0816102a05b5f1960601c9051166040909151015251151560609091510152565b6102605101908301925e61024080518203905160200152613876906102805b6154e791905b5151601f8101601f1916602083015f8285015282909352602090919293565b6103a25b816020019151828160201360e55701825192830160208101935f1960c01c108285111760e5576139209061086e565b576130df610188565b579390935260805184036101e0608051015283909161048e6104b7565b6139295b9c9b9a999897969594939291900361016060805101526156638a6102f8565b6139465b9f9e9d9c9b9a999897969594939291906080518103608080510152610100515180825260051b906020016020610100510182820192915e608051810360a06080510152610120515180825260051b906020016020610120510182820192915e6101805160c060805101528f60e060805101528e61010060805101529c60601b60601c61012060805101526080518d036101406080615690615794565b613969905b6080518103608051602001526154ed9060e06138ce565b613a095b60a0808080516080015161010052510151610120525160c0015161018052614d4860a0610254565b579390935260805184036101e060805101528390916107126104b7565b613a5161394a565b613a6e61396d565b613a7690613a0e565b809260a00152736ff385f9043aca8252f2630c601660eba6218c5a5a73642fa76f2f7a6b97ec0822d67a785379a92df3476356a8ee3560e01b8452926004016040810193815260406020820152855160a052602086015160408701516060880151976080015160a0870160805260a0876155079190610464565b60808301526101a0613a876106e6565b8260201360e557908051908101921082820360c0111760e55760405160c081016040528251815260208301518060a01c60e5576020820190815260408401518060a01c60e5576040830190815260608501518060a01c60e55760608401908152608086018686916107ef610803565b5761300c610188565b956108996108a9565b94519351925196519551915160c086019486529260601b60601c60208601529560601b60601c60408501529360601b60601c606084015260c060808401528351602085015160408601516060870151608088015160a089015198613b896128f6565b936109326108a9565b60405260605ff35b602082015290565b601b81613c05919061095c565b6359fb297160e01b602082015280840390604001528281926109ea610abd565b613c1a610a42565b8084036020820152839092610a575b61550f61575f565b8251808252906020018160051b81019360200181610ada565b9251915160408401604085528351808252906020018160051b81019460200181610b6c565b57612cfd610188565b57612266610188565b579390935260805184036101e06080510152839091610c4b6104b7565b613ca961394a565b613cc661396d565b613cce90613a0e565b613cd6613a29565b825160a05260208301516040840151606085015194613cdf61044c565b6114fa5b816020019151828160201360e55701825192830160208101935f1960c01c108285111760e557613d469061245a565b855afa1560e957613d04610386565b576001810160051b613102610188565b61012051016001851161366757939093526101205184036101e06101205101528390916125d26104b7565b6101205187036101a0610120613d566137b9565b610120518903610180610120613d816137df565b6101e0510182820192915e6102005160c06101205101528f60e06101205101528e6101006101205101529c60601b60601c61012080510152610120518d03610140610120615534615794565b6101c0510182820192915e61012080518203905160a00152613da9906101e0613865565b6101605101908301925e614d6d6101206101a08161018061388e565b6101405101908301925e61012080518203905160200152613e19906101606138c8565b57600435803b61371f5791836333a41d7060e01b91610ef06102db565b57613e58610f4c565b610f6d6138f1565b5761554a6101a7565b6110e06138f1565b5afa1560e957613e8f610386565b5afa1560e9573d60201160e5575f518060a01c60e557613e9761280e565b61371f5773918b025c58621b1e893685acbc110c02a737b34f5a61034060808101604052613ea55b63705caed95f526020612818565b5afa1560e9573d60201160e5575f518060a01c60e5577f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd661196110f3611118565b5afa1560e9573d60201160e5575f518060a01c60e557907ff7ee25291272130a477d0848c7283b225fc09f378cc097b31bcc456a8a3eb5e45f5fa3736ff385f9043aca8252f2630c601660eba6218c5a613ef9613eeb565b576040519081016040528181528284602083015e9182016020016a205359205265776172647360a81b905281016020015f9052604051604081018060405260038252626d525460e81b602083015230875260208701958652604087019283526060870191825263724cb62660e01b81526004810160208101602082529751965193519251608089019760601b60601c89529360601b60601c6020890152608060408901526155a9836102f8565b57601f8181018060051c91191660200161121d610188565b5afa1560e9573d60201160e5575f518060a01c60e55703612c1b5730615350611345565b5afa1560e9573d60201160e5575f518060a01c60e55703612c1b5760205f6004601c61537e611345565b6360f96a8f5f5260205f6004601c845afa1560e9573d60201160e5575f518060a01c60e5573003612c1b5763e1e6b8985f5260205f6004601c845afa1560e9573d60201160e5575f518060a01c60e557614079613eeb565b61276c6138f1565b57638a6486845f528260205260205f6024601c845afa1560e957503d60201160e5575f518060a01c60e5570361371f5763ba5b83ec5f5260205f6004601c5f855af11560e9573d60201160e5575f5160011c60e55760016103ba565b57614103610f4c565b6112cc5b614eae611151565b576141685b93929190604051908101604052818152625359205b60e81b60208201526023810192919390925e9081016020015f905290565b57601f8181018060051c911916602001611260610188565b308352856020840152604083015f815260608401928352608084019182528760a08501528860c0850152636ae1222e60e01b846112d55b6040519283529160040160208101602082528251602084015160408501516060860151608087015160a08801519761424f6108f8565b576141c45b939291906040519081016040528181526253592d61418e565b946135fc6108a9565b925261131161416c565b576142585b9493929190604051908101604052818152695359205374616b65642060b01b6020820152602a5b810192919390925e9081016020015f905291565b52636ae1222e60e01b90916113236141fb565b576142a25b94939291906040519081016040528181526353592d7360e01b6020820152602461428e565b60205f208201556001015b81811061141c575050505f7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610b55608082015160601b60601c614fe25b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610c90565b5f60205f208201556001018181105b6114515750506114a5565b60205f208201556001015b8181106114595750505060608201518051614ff261142d565b5f60205f208201556001018181105b61148e575050611499565b611abb613d08565b838152670de0b6b3a76400006020820152604001829052604081606481855afa1560e9573d60401160e5575115613755575b818761194e6111fb565b828152670de0b6b3a76400006020820152604001829052604090606481845afa1560e9573d603f106143dc575f5ffd5b6115f4613d08565b855afa1560e957614416610386565b611b40613d08565b845afa1560e95761442d905b50610386565b57604051908101604052818152602001206154005b7ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf190565b611701613d08565b855afa1560e957614480610386565b61183d613d08565b855afa1560e957614497610386565b57612290610188565b576144ae9061086e565b83525060206144b76122c8565b576001810160051b6122a3610188565b576144ce9061245a565b60208401525060408401518060a01c60e557604083015260608401516001811160e557606083015260806144de6122c8565b576001810160051b6122e6610188565b5761451a9061245a565b57612343610188565b576145349061086e565b57612356610188565b576145479061086e565b610140840152506101606145506122c8565b57612369610188565b5761456c9061086e565b610160840152506101806145756122c8565b5761237c610188565b576145919061086e565b610180840152506101a061459a6122c8565b576001810160051b61238f610188565b576145b69061245a565b6101a0840152506101c08401516001811160e5576101c08301526101e06145c66122c8565b576001810160051b6123cd610188565b576145f59061245a565b576001810160051b61240b610188565b5761460f9061245a565b576001810160051b61246e610188565b6101c051016001851161366757939093526101c05184036101e06101c05101528390916124e36104b7565b6101c05187036101a06101c06146396137b9565b6101c05189036101806101c06146646137df565b610280510182820192915e6102a05160c06101c05101528f60e06101c05101528e6101006101c05101529c60601b60601c6101206101c05101526101c0518d036101406101c06155d2615794565b610260510182820192915e6101c080518203905160a0015261468c90610280613865565b6102005101908301925e614d866101c06102408161022061388e565b6101e05101908301925e6101c0805182039051602001526146fe906102006138c8565b84516101a052925197519651995160a084016101c05260a084526101a051516101e05260206101a05101516102005260406101a05101516102205260606101a05101516102405260806101a05101516102605260a06101a05101516102805260c06101a05101516102a052614db46101a0610254565b85518060a01c60e557815260208601518060a01c60e55760208201528160051b870160200152600190910393604001939060010161247f565b84518060a01c60e557815260208501518060a01c60e55761241b5b95949392919060208201528160051b830160200152600190920392604001915b600101909193565b84518060a01c60e557815260208501518060a01c60e5576123dd614807565b84518060a01c60e557815260208501518060a01c60e55761239f614807565b6128236138f1565b5afa1560e95761486d610386565b61282c6138f1565b5afa1560e957614883610386565b61488b5b6395d89b41612814565b57614899614179565b60198f01612835611118565b576148b0614236565b956136486108a9565b8351602085015160408601516060870151608088015160a0890151986148c56108f8565b946136296108a9565b6129526138f1565b5afa1560e9576148fb610386565b61295b6138f1565b5afa1560e957614911610386565b9152505061491961489d565b57614927614267565b955280612964612873565b5761493c6142ba565b6040820152965160601b60601c6060880152915160601b60601c60808701525f92509091612b59565b5afa1560e9573d60e01160e5576129cf5b60405160e08101604052825181526020830151602082015260408301516040820152606083015160608201526080830151608082015260a083015160a08201529160c0015160c0830152565b5afa1560e9573d60e01160e557612a0d61498a565b57612d4f610188565b576001820160051b612d79610188565b602082015260408401358060a01c60e557604082015260608401356001811160e5576060820152608084013580850190831060e5576149f490612dab565b576001820160051b612dc6610188565b57612e30610188565b57612e43610188565b61014082015261016084013580850190831060e557614a5b90610bb0565b57612e56610188565b61016082015261018084013580850190831060e557614a8290610bb0565b57612e69610188565b6101808201526101a084013580850190831060e557614aa990610bb0565b576001820160051b612e7c610188565b6101a08201526101c08401356001811160e5576101c08201526101e084013580850190831060e557614ad090612dab565b576001820160051b612ec7610188565b576001820160051b612f12610188565b83358060a01c60e557815260208401358060a01c60e55760208201528160051b83016020015260019094039160400193600101939193612f87565b83358060a01c60e557815260208401358060a01c60e557612f225b95949392919060208201528160051b83016020015260019093039160400192614827565b83358060a01c60e557815260208401358060a01c60e557612ed7614b87565b83358060a01c60e557815260208401358060a01c60e557612e8c614b87565b5761301f610188565b57614be99061086e565b6060840152506080614bf26122c8565b576001810160051b613032610188565b57614c0c9061245a565b60808401525060a0614c1c6122c8565b576001810160051b613070610188565b576001810160051b613475610188565b9160201360e557805190810160208101915f1960c01c108383111760e557614c469061245a565b5760405190810160405290815290565b809260f5613c51565b6102c061024051526102606138a991906138c8565b614c966102406102205b80808080806101e08151015161020090915101516102209091925101516102409091929351015161026090919293945101516102809091929394955101516102a0909192939495965101516102c0909192939495969751016102ae565b6102c06101205152610140613e3591906138c8565b614d12610120610100614cb5565b6102c06080515260c06155e891906138ce565b614d35608060a0614cb5565b61024080518203905160800152613845906102e0613865565b61012080518203905160800152613df5906101c0613865565b6101c0805182039051608001526146da90610260613865565b6102c06101c051526101e061471a91906138c8565b614d9f6101c06101a0614cb5565b55005b545f1960a01b1617614dc25b7f6a40c2012c75ef67e5ada2dacdd8a209ad315d778fa4a6d4cc07b5ee01b2112d90565b556080015160601b60601c614dc5614dd1565b545f1960601c60081b19169060081b17614df55b7f6a40c2012c75ef67e5ada2dacdd8a209ad315d778fa4a6d4cc07b5ee01b2112c90565b557f2e2d67950d3817acf742f79fb1f1c80a58f46cc8f831e8646ac38137c4ebc92c55606081015160601b60601c614e08614e1c565b545f1960a01b1617614e4061100d565b9061403d825b546001811660018114905f03607f178260011c16602081108214613730610bc5565b90906001016141ac81614e8c565b55827ffe072295862994c12c7a9f46cfb34caad01659fc04b4e1054bc6d7c7d57636765f5fa3611712565b545f1960a01b168117614ebc5b7f0c241053e7d05846e47352f76ea935819259d314029db8c85c8f21d05454ccac90565b55614ee7614ef4565b545f1960601c811661367c57831561367c57811561367c5781841461367c575f1960a01b168317614f18611345565b555f6142ea565b55565b545f1960a01b1617614f575b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610e90565b559060c0015160601b60601c614f5a614f66565b545f1960a01b1617614f8a5b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610d90565b5560a082015160601b60601c614f9e614faa565b545f1960a01b1617614fce614326565b5481811180156114a2578290614359565b555f61436f565b6117b06111f5565b6118fc6111fb565b61199d6111fb565b5f5260205f2081015460601b60601c805f527f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6612360205260405f205460601b60601c5f8261501a6120e2565b611a136111fb565b611ba1611bc6565b55865160405160408101806040526001825260208201603160f81b81527f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e5284611c56611c9e565b5460ff191660091761507d611c32565b5582516001018015613729576001810180156136e0578060051b9060fb1c6136e05780611df8610188565b545f1960a01b1630176150d4611dd4565b548181118015611496578290614397565b556040820151805161511061146a565b545f1960a01b16176151215b7f47b8b244205342fe60952a3818b06961be07c4675f65f18dc84073d2ffd6610190565b55602082015160601b60601c61513161513d565b548060081c60601b60601c61368a57825160601b60601c905f1960a81b169060081b17615161611f0a565b559551885160601b60601c309d929d906120cd614488610d62565b5460ff191690961761ff0019169360081b90931762ff000019169060101b1763ff00000019169360181b9093176151a06120a9565b30875160601b60601c6121065b61449f610d62565b30855160601b60601c61215b6151fd565b6101e0890151306121065b5f611960565b6102208801513061215b615221565b916121886151fd565b61026087015130612185615221565b6121c15b600182015f5b81548110611a84575050915050565b61524e6120e2565b6121c9615252565b61526f6119ef565b9030612205615221565b545f611a63565b5460601b60601c90565b5460081c60601b60601c61371f57638a6486845f523060205260205f6024601c855afa1560e9573d60201160e5575f518060a01c60e5570361371f57633f58dd6d5f52306020525f5f6024601c845afa1560e957613e7e90614441565b5560601b60601c613f38613eeb565b545f1960a01b1617806152f76110bc565b610f2173e68f9de49c682fdb3f5b4b302f896da93da7bee7633f58dd6d5f52306020525f5f6024601c845afa1560e9576140fb90614441565b615317611f0a565b546376d5de855f525afa1560e9573d60201160e5575f518060a01c60e557614055613eeb565b546376d5de855f525afa1560e9573d60201160e5575f518060a01c60e5573003612c1b5760205f6004601c615358614ef4565b55987ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf255987ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf4611e4c5f611408565b545f1960a01b1689176153b161445c565b85015f82870152829095528401946020019091935e91038281602001016040526004019190565b815f602083013e9091565b602001815f823e818101909192565b575b83815f1960601c9101511660018560200193039452839193615454575050610101565b575b83815f1960601c9101511660018560200193039452839193615479575050610101565b575b83815f1960e01b910151166001856020019303945283919361549e575050610101565b61024080518c03905161016001526137cf5b9a9998979695949392919061570d8a6102f8565b90919293565b60e05101908301925e61128d60806101608161014061388e565b613a7e613a29565b575b83815f1960e01b9101511660018560200193039452839193615511575050610101565b61012080518c0390516101600152613d956154d3565b1461371f57303b61371f5761529a614e1c565b84015f82860152829094528301936020019091925e9390036004810190602001840160405290955f602094915f9497f11560e9573d60201160e5575f518060a01c60e5576153066110bc565b89015f828b01528290995293602001909388019391975e86820380976060015261555d836102f8565b6101c080518c03905161016001526146786154d3565b60c05101908301925e5b909192939495969798999a9b9c9d9e9f565b89015f828b01528290995296602001909688019691975e6101c06080510160018511613667909192939495969798999a565b8b015f828d015282909b529860200190988a019891995e60805187036101a06080510152615604866102f8565b8d015f828f015282909d529a602001909a8c019a919b5e60805189036101806080510152615636886102f8565b6080518b6155f2565b83820360a085015281929394565b8483036080866156996157e1565b83015f8285015282909352956020019582019590915e90919293565b89015f828b01528290995296602001909688019691975e6101c0906157d9565b8b015f828d015282909b529860200190988a019891995e6102ae565b8d015f828f015282909d529a602001909a8c019a919b5e90919293949596979899565b82820360a0840152819293565b8383036080856157306157e1565b9060205260405263768f1ae75f526044601cfd5b9291906108b1565b959493929190528051601f8101601f1916602086015f82880152829096529160200190918501945e909192565b9f9e9d9c9b9a999897969594939291905101528b51601f8101601f191660208f018f82015f905282909f529c602001909c8e019c919d5e909192939495969798999a9b565b919293949596565b95949392919001528051601f8101601f1916602085015f82870152829095529160200190918401935e909156fea264697066735822122012233dbc32d63477c1b09de440aa59e556e6f86d64a60f48f57693328393ca4965736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+      "hash": "0x24a81cae1507f3000951d34b8e872e90d46047fabb58125aa1b52909302069c2",
+      "bytes": 22620,
+      "normalizedMatches": true,
+      "expectedHash": "0x24a81cae1507f3000951d34b8e872e90d46047fabb58125aa1b52909302069c2"
+    },
+    {
+      "name": "UniswapV4DetfMigrationSYDFPkg",
+      "address": "0x6ff385F9043Aca8252F2630c601660EbA6218C5a",
+      "code": "0x3460fa575f3560e01c806303eead671461155757806306fdde0314610ccb5780632ea8082614612eb457806336abf3dc14612eb45780634fcc05941461011b57806352ef6b2c14610d9157806356a8ee3514610a085780636445124e1460fe57806365d375b314610eb45780636a4d3f1214610cea5780636ae1222e14610b3757806370068fcf1461153c578063870d48381461108357806387c3adb314610fb6578063992baed414610226578063a4b3ad3514610e2b578063a908923514611025578063abc8b34614610c9a578063ac8c016d14610205578063d82be56e14610f6e578063f45469e714610dc6578063f4efa66f14610cf9575b5f5ffd5b73e68f9de49c682fdb3f5b4b302f896da93da7bee75b5f5260205ff35b3660241160fa57604060046103008252355f525f5f602052206101406101525b6040519182018281108160401c17612e6b57604052565b5f1960601c825481168083526001840154806020850152600285015483168060408601526003860154841680606087015260048701548516806080880152600588015486168060a089015260068901549096168060c089015260078901548060e08a015260088a0154806101008b0152996009015460ff1680996101200152956080529360a0529160c05260e05261010052916101205290610140526101605290610180525b15156101a0526101406080f35b6024361060fa576004355f52600160205260405f205460601b60601c610114565b6104a06040526024361060fa5760046102ac5b90356004810190600436031081360360a0111760fa576104a060c08101604052818061212e903580830192360310823603906102c082101760fa576040516102e081016040528335808501602090930390811060fa57823592602001603f8401601f1916848110612e6b57611df761013b565b612f175b6145375b736ff385f9043aca8252f2630c601660eba6218c5a8030909192565b73e68f9de49c682fdb3f5b4b302f896da93da7bee76333a41d7060e01b856103b95b604051602001602081016020825283516101c052602084015160408501516060860151956080015160a084016101e05260a084526101c051516102005260206101c05101516102205260406101c05101516102405260606101c05101516102605260806101c05101516102805260a06101c05101516102a05260c06101c05101516102c0526143c561016061014061012061010060e05b6101c0510151906101c051015190916101c05101519091926101c0510151909192936101c05101515b9091929394565b336103eb5b6040519384526004840160408101928152604060208201526136b4845b51601f8101601f19166020909192565b6020915f91845afa156145e3573d60201160fa575f518060a01c60fa579433466105275b6040516060810161026052918252826020830152606060408301528351602085015160408601516060870151966080015160a0610260515283516102805260208401516102a05260408401516102c05260608401516102e05260808401516103005260a08401516103205260c0840151610340529260e0018051602082015160408301516060840151608085015160a086015160c087015160e08801516101008901516101208a01516101408b01516101608c01516101808d01516101a08e01519d6101c001516102c060a06102605101526102805151601f81016103606102605101601f19821601610260516102805161332c5b6102a0516102c0516102e05161030051610320516103405b515f5b919293949596565b2082518103612e575760208301515f1960601c9081168703612e5757863b612e5757608084018051805183168903612e575760a086018051805185168b03612e5757602083015185166060890180518716918203612e575760208301518716909103612e57579260400151612e57576040015115612e5757845f525f60205260405f206101406105b561013b565b81548616808252600183015460208301908152600284015488166040840181815260038601548a166060860190815260048701548b166080870190815260058801548c1660a0880190815260068901548d1660c0890190815260078a015460e08a0190815260088b01546101008b019081529a6009015460ff1699610120018a8152996109c657505050505050612e6157505050509660ff19166001176002556103609560400151831690518316825161071e5b6040516020016136db5b92919060208101602082528351602085015160408601516060870151608088015160a08901519860c0015160e087019560601b60601c87529360601b60601c6020870152911515604086015260e060608601528051601f8101601f1916602086015f82880152829096529160200190918501945e8383036080856145d09594939291905b01528051601f8101601f1916602085015f82870152829095529160200190918401935e9091565b6333a41d7060e01b908a6107306103be565b6020915f91895afa156145e3573d60201160fa575f518060a01c60fa578851610757610669565b6333a41d7060e01b919a6107696103be565b905f91602093985afa156145e3573d60201160fa575f518060a01c60fa5782516107985b6040516136e3610673565b2088516107a361078d565b203389526020890187815260408a019c8d5260608a0194855260808a0198895260a08a018c815260c08b0185815260e08c018581526101008d019485526101208d015f815296909e14612e5757935f52600160205260405f20548816612e575782515f5260405f20548816612e5757885f525f60205260405f208b51815481185f1960a01b1618815582516001820155600281018f51815481185f1960a01b16189055600381018751815481185f1960a01b16189055600481018b51815481185f1960a01b16189055600581018251815481185f1960a01b168118909155600682018651815481185f1960a01b161890558e5180836007015585516008840155916009018751815490811860ff161890558916905f52600160205260405f209081545f1960a01b161790558351881683515f5260405f209081545f1960a01b16179055865161091f5b73aa66038ae217b246f5bf7537104342672e56fed8736ff385f9043aca8252f2630c601660eba6218c5a92611a4d610669565b8151891603612e57578b516109326108ec565b8451891603612e575795518651881661094e5b826127ea610669565b99518251871661095c610945565b60018352955f525f60205260405f20600901805460ff1916600117905560025460ff191660025596518416608052965160a0529751821660c0529651811660e0529151821661010052945181166101205290511661014052905161016052905161018052516101f8565b97608052955160a05292518c1660c05290518b1660e052518a1661010052518916610120525051909616610140529451610160525161018052505050516101f8565b6104a060405260043560a01c604436101760fa576024610a26610239565b600435610a795b60208301515f1960601c908116604051610280810160405260c036823760c08161307b91905b0160e0368237606081016060905260606080820152606060a0820152606060c082015290565b6137215b604051806020818101925291565b01838103809460c001528096610abe5b61453c9291905b815180845260208401809360200103612ba18215919293949596565b909501838103809460a00152855160208701516040880151606089015160808a015160a08b01519a60c0015160e087019588168752969093166020860152901515604085015260e06060856137d65b9594939291906145df9594939291906106f7565b909501858103809660c001528091610d89610a9b565b6104a06040526024361060fa576004610bca5b9035600481019060043603108136039060e082101760fa576104a0610100810160405282358060a01c60fa57815260208301358060a01c60fa57602082015260408301356001811160fa5760408201526060830135808401602090930390811060fa57823592602001603f8401601f1916848110612e6b57611cbd61013b565b736ff385f9043aca8252f2630c601660eba6218c5a3003612e575760025460ff16612e615780610bf8610669565b610c915b81611a815b6020820191518083016020821260fa57928051908101911081840360e0111760fa5760405160e0810160405281518060a01c60fa57815260208201518060a01c60fa57602082015260408201516001811160fa5760408201526060820151808301602081015f1960c01c9283108782111760fa5790516137e7905b603f8101601f19168181105b612e6b90919293565b506101146108ec565b60205f52601d6020526143dc5b7f556e69737761705634446574664d6967726174696f6e53594446506b6700000090565b60a060405261100d5b60405160408101604052601d81526143e4610ca7565b5f610114565b90910181900390f35b608060c08101604052606081526060604082015260608101610d19610cd4565b610d6e5b73306be37febb704cbb482c36c0c65a7f03e415c7b632ea808265f525f5f6004601c845afa156145e3576137f0905b505b3d603f8101601f1916604051908101604052818152815f602083013e9091565b60a0846080019401918352815f85525261386a610a7d565b90935b018390039092f35b6104a0604052610db05b6138835b6040516104a0818103908210020190565b805160051b5b6020909103602081529060400190f35b6104a0604052610dd4610cd4565b610ddc610d1d565b610de4610d9b565b6040518381606080825201613890915b51601f8101601f1916602083015f8285015282909352909192565b90920181810360408301528092610cf05b614561929190610aa2565b6104a0604052610e3d5b612711610d9b565b6138b3610a7d565b81518387038252805160208201519160400151606089019160601b60601c89526020890160028411612de2579290925296604001606090528690610e8e5b614586929190610aa2565b90950160019093039460200190602001909492945b5f8411610e45575050505080910390f35b6104a060808101604052606081526060602082015260408101610ed5610e35565b610edd610d1d565b908252916060019182526138cc610a7d565b9092018290039091f35b8151838903825280516020820151916040015160608b019160601b60601c8b5260208b0160028411612de2579290925298604001606090528890610f3b610e83565b90970160019093039660200190602001909692965b5f8411610ef957505050508284038093602001528390610eef610e83565b60806040526024361060fa576004610fae5b90356004810190602436031060fa576138f1905b803590602001603f8201601f1916825b8110612e6b6103b2565b61390d610a7d565b60a06040526024361060fa576004610fcc610f80565b73e68f9de49c682fdb3f5b4b302f896da93da7bee73003612e575773aa66038ae217b246f5bf7537104342672e56fed83303612e57578061100b610bfc565b505b8051601f8101601f19169060208301015f9052610db6565b608060405260043560a01c604436101760fa576024611042610f80565b61392b5b6110b56102b4565b8103612e5757638a6486845f5261394f81611646565b8251909260200120825190926020012090915b03612e57576001610114565b60806040526024361060fa576004611099610f80565b6139b75b73e68f9de49c682fdb3f5b4b302f896da93da7bee780335b03612e57909192565b3003612e5757613a075b6144f95b7fc93d07d5217b291430311731683f979cf71e2e294bfaf74ba7fad362a156262490565b82516020840120815190916020012003612e57575061110d610c01565b60608101608082015181517f484ee2a81338741147e266b0dbc8ff150631b44c9166311973ff2a9840345d566111a55b815480600116805f03607f17906001149160011c16818160201114612e5057602085019451601f820160051c601f8201828110612e6b5760051c602083109081150293831090941615611c795782611c05875f5260205f2082015b838310611c895750915050565b7f484ee2a81338741147e266b0dbc8ff150631b44c9166311973ff2a9840345d576111ce61113d565b6144325b7f484ee2a81338741147e266b0dbc8ff150631b44c9166311973ff2a9840345d5890565b7f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e50557f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e538361126d5b815160208110806117495750801981038455925f526020805f2092015f5b84811061173657505091505060ff90565b7f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e51558351809460200120807f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4e5592519020807f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4f55467f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4c5560c0820160405260a0825290602001917f8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f83526020830152604082015246606082015230608082015260a090207f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4b555061444d5b7f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e4d90565b604036823760018152815160601b60601c602082015273aa66038ae217b246f5bf7537104342672e56fed86113cf610d1d565b613a1c610a7d565b0103909220906144ad5b7ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf190565b7ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf355805160601b60601c60208201805160601b60601c6040840180516114635760a08501515b8151611497579460c00151925090915b613a276110c8565b60a08501518261144b5b82516001018015612e7257600181018015612e6b578060051b9060fb1c612e6b5780611ae461013b565b9460c0015180935160601b60601c6114ad61146d565b9493929461145b565b916144bd5b7fc93d07d5217b291430311731683f979cf71e2e294bfaf74ba7fad362a156262b90565b916144c55b7fc93d07d5217b291430311731683f979cf71e2e294bfaf74ba7fad362a156262990565b906144d96114bb565b5115156144e45b7fc93d07d5217b291430311731683f979cf71e2e294bfaf74ba7fad362a156262590565b608060405260043560a01c602436101760fa57613a74611046565b6104a060405260043560a01c604436101760fa576024611575610b4a565b600435611580610945565b005b8060051b8401602001805160601b60601c8015612df757815160601b60601c3014612df757505160601b60601c836115ff5b825f528160205260405f2054611c84576001820180548060401c612e6b576001810190825f5260205f200180545f1960a01b1686179055809155925f52906020528160405f20559050565b6001016144cb565b8051600281106008821117612e795791505f5f61167e565b5a835182101561165d578160051b8401602001613aa1815b5160601b60601c63292121775f525b6020525f6024601c602093565b9351909110612e0e575b60325b602052634e487b715b5f526024601cfd5b50505090600101905b6001015b83811061161f5750600103612e045750509050565b505061167a565b805191505f5f5b8381106116e25750600103612e2e575050638da5cb5b5f5260205f6004601c855afa156145e3573d60201160fa575f518060a01c60fa57909203612e245750565b8060051b83016020015160601b60601c8714909101906001016116a1565b8060051b82016020015115612e83576001015b8481106117005750509060a0015151801561173157909103612e8357565b509050565b808201518160051c85015560200161125c565b8193602001515f198360200360031b1b9060019092031716175b92509050565b8060051b8401602001515f1960e01b16805f528360205260405f20546117e3576001840180548060401c612e6b5760018101825f528160031c60205f20019160071660051b63ffffffff811b83549019168560e01c90911b17909155809155905f5260405f20555b6001015b835181106117695750915050565b506117d1565b936001146118c2578351808060ff1c612e725701806001018060fb1c612e6b5760051b8061181561013b565b9036823790815294505f5f959192939495611a2a565b8060051b8701602001805160601b60601c8714611a2457613aed81611637565b865181101561165d578060051b87016020015160601b60601c825160601b60601c036118ba5750505b6001015b60018111611a3c578060051b82015f5b85811061184b5750508060051b82015160601b60601c60018501865186101561165d579460051b860160200152611874565b600101611888565b8451600181018015612e6b578060051b9060fb1c612e6b57806118e361013b565b903682379081525f5b865181106118fe575091509150611763565b8060051b80880160200151805160601b60601c906020015160601b60601c8115612e38578015612e3857878214612e8d575f5b8951811015612e8d578060051b8a01602001805160601b60601c8a14611a4357613b4890611637565b80515f5b81811015612e8d578060051b83016020015160601b60601c85036119ed57505050604051608081016040526389d6191260e01b815260048101838152670de0b6b3a76400006020820152604001829052604081606481855afa156145e3573d60401160fa575115612e8d57505b5f5b8381106119fd5750835183101561165d57908301602001526001016118ec565b60010161195e565b613bd0610d9f565b845181101561165d578060051b85016020015160601b60601c8214612e42576001016119cd565b505b6001015b8651811061182b575081529350915050565b5050611a26565b505b600101611931565b63968cbade60e01b9193611a5f6103be565b905f915f602094955af1156145e3573d60201160fa575f518060a01c60fa5790565b8251602084012090611a9161078d565b208103612e5757736ff385f9043aca8252f2630c601660eba6218c5a63ac8c016d5f5290613c1590611646565b905f91602093955afa156145e3573d60201160fa575f518060a01c60fa578203612e5757565b903682379081528260208201525f925090915b83518110611b0457509150565b8060051b84016020015160601b60601c90600101825181101561165d57818160051b8401602001529050611af7565b903682379081525f1960601c835181168060208401526040850160019051819015611bef57956020015183168192811415829015611bfc57816040870152905060025b5f5b89518110611b8c5750855250505050611763565b8060051b8a016020015f5b838110611bc2575051861660018301885184101561165d579260051b8801602001525b600101611b78565b885181101561165d578060051b89016020015188168251891603611be7575050611bba565b600101611b97565b9150945060018080611b76565b90506001611b76565b90505b90611c6257801981038355915f5260205f208260051c5f5b818110611c4f575092601f168015611c81578360051b909401519360200360031b5f19901b9093169190920155565b8060051b86015181840155600101611c20565b92515f198460200360031b1b169280019092179055565b509050611c08565b50505b915050565b5f81559160010191600101611198565b828152813603831160fa576020810183838237830136935f03601f16919390375090565b848152813603851160fa576020810185838237855f03601f169195013690375083838360600152806080013582811160fa5701613c5b90610f94565b828152813603831160fa57613c745b9291906020810183838237835f03601f169193013690375090565b8281528260051b82360360051c841160fa579215611dec578282019550815f91929690939495965b803590921791602001818110611d4b57505060a01c60fa575b60208101929190923760a083015260c0830135808401911060fa57613c90905b8035906020016707fffffffffffffe8211610c88565b8281528260051b82360360051c841160fa579215611dd257818381015f915b803590921791602001818110611db957505060a01c60fa575b60208101929190923760c08201528160e05b820152905090565b945090919293611d64565b848152813603851160fa57602081019491909437918152602084013580850190831060fa57613ca090610f94565b828152813603831160fa57613cb9611d08565b918282828252360360051c821160fa576020019060051b919037608082015260a084013580850190831060fa57613cf790611d84565b918282828252360360051c821160fa576020019060051b91903760a082015260c084013560c082015260e084013560e08201526101008401356101008201526101208401358060a01c60fa5761012082015261014084013580850190831060fa57613d0790610f94565b828152813603831160fa57613d19611d08565b828152813603831160fa57613d40611d08565b828152813603831160fa57613d67611d08565b828152813603831160fa57613d95611d08565b82815281360360061c831160fa575f5b5f841161210557506101e084015250506102008401356001811160fa5761020082015261022084013580850190831060fa57613dc690611d84565b82815281360360061c831160fa575f5b5f84116120dc575061022084015250506102408401356001811160fa5761024082015261026084013580850190831060fa57613dd690611d84565b82815281360360061c831160fa575f5b5f8411612090575061026084015250506102808401356001811160fa576102808201526102a0840135808501921060fa578135916020016707fffffffffffffe8311612e6b576001830160051b61201f61013b565b83815281360360061c841160fa575f5b5f851161204b57506102a0830152506102c05b81019390935250565b6040516040810160405283358060a01c60fa57815260208401358060a01c60fa5760208201528160051b8301602001526001909403916040019360010193919361202f565b6040516040810160405283358060a01c60fa57815260208401358060a01c60fa57611fca5b95949392919060208201528160051b83016020015260019093039160400192600101909193565b6040516040810160405283358060a01c60fa57815260208401358060a01c60fa57611f7f6120b5565b6040516040810160405283358060a01c60fa57815260208401358060a01c60fa57611f346120b5565b815260208201358060a01c60fa5760208201526040820135604082015260608201358060a01c60fa57606082015260808201358060a01c60fa5760808201528160a0611de4565b81815284909203811160fa57602082018185825e815f03601f1691013690379150565b8181528490920360051c811160fa575f5b5f82116121b65750509150565b84518060a01c60fa5760018260051b85016020019303925260010193602001936121a9565b818152828803821160fa57602081018284825e825f03601f169192013690376060840152506080830151808401602081019183108783111760fa5751613de690610c7c565b818152828803821160fa57602081018284825e825f03601f1691920136903760808401525060a0830151808401602081019183108783111760fa57516707fffffffffffffe8111612e6b576001810160051b61227a61013b565b81815282880360051c821160fa575f5b5f8311612314575060a0850152505060c0830151928301906020820193118584111760fa57516707fffffffffffffe8111612e6b576001810160051b6122ce61013b565b8181528390950360051c811160fa575f5b5f82116122ef57505060c0612042565b83518060a01c60fa5760018260051b88016020019303925260010192602001926122df565b83518060a01c60fa5760018260051b840160200194039352600101926020019261228a565b8181528490920360051c811160fa575f5b5f82116123575750509150565b84518060201b60fa5760018260051b850160200193039252600101936020019361234a565b20855273e68f9de49c682fdb3f5b4b302f896da93da7bee78a61239d6102f2565b6333a41d7060e01b919a6123af6103be565b6020915f918c5afa156145e3573d60201160fa575f518060a01c60fa5760208601908152995160408101805189166124018115612e7957813b15612e7957613df75b5f639d63848a5f526004601c5f93565b80516060830151151563fe884e285f5260205f6004601c855afa156145e3573d60201160fa575f518060011c60fa57151503612e9757508b51891681518a1661244b613e0f6123f1565b8051613e276123f1565b51600181039015612e725783612477608082015180518403612e83575f611713565b505a935189166040516080810160405261018084015184518151156124c757505b6101a08501516020860180518251613e4f57806020019051613ea99060055b8101603f8101601f191681610fa4565b806020019051613eec9060056124b7565b905f918e6020949efa156145e3573d60201160fa575f518060a01c60fa57604085019081525a9651831660405160c08101604052835185169251851661014089015189518151613f0c57806020019051613f389060066124b7565b6020939b5f939bfa156145e3573d60201160fa575f518060a01c60fa576060820190815284518816895189166101c085015160018111612de2576101e0860151929091906125835b613f496123f1565b945188168951891661020085015160018111612de257610220860151929091906125ab61257b565b6140bc610d9f565b60038152735816d71d52c79844388bcbeadb13f26d52f031ee602082015273d5641a39250e0a4bc648e490ac5efa8cc0fd8de0604082015273306be37febb704cbb482c36c0c65a7f03e415c7b606082015290565b805160060160068110612e7257600181018015612e6b578060051b9060fb1c612e6b578061263461013b565b903682379081526336372b0760e01b602082015263a219a02560e01b6040820152639d8ff7da60e01b60608201526384b0196e60e01b6080820152637336391860e01b60a082015263d5cbfb2160e01b60c082015260065f93509091926126cc565b8060051b84016020015f5b8381106126dc5750515f1960e01b1660018301845184101561165d579260051b8401602001525b6001015b8351811061269657508152905090565b845181101561165d578060051b8501602001515f1960e01b1682515f1960e01b16036127095750506126c8565b6001016126a1565b8051600181018015612e6b578060051b9060fb1c612e6b578061273261013b565b903682378181525f5b8281106127be575090505f5b825181106127555750905090565b60405160608101604052835182101561165d578160051b808501602001515f1960601c811663574a4cff5f525f5f6004601c855afa156145e3576140df610d4e565b918552505f6020850152604084015250835183101561165d57830160200152600101612747565b604051606081016040525f81525f6020820152606060408201528160051b83016020015260010161273b565b806127f3610bfc565b8303612e575773e68f9de49c682fdb3f5b4b302f896da93da7bee7638a6486845f5261411284611646565b82519092602001208251909260200120909103612e5757506376d5de855f5260205f6004601c855afa156145e3573d60201160fa575f518060a01c60fa5760408401516128bd57835b5160601b60601c03612e575763313ce5675f5260205f6004601c855afa156145e3573d60201160fa575f518060081c60fa57600903612e57576306fdde035f525f5f6004601c855afa156145e35761438c610d4e565b60208401612867565b8051906020012060608501518051906020012003612e5757506395d89b415f525f5f6004601c855afa156145e357614133610d4e565b8051906020012060808501518051906020012003612e5757506318160ddd5f5260205f6004601c855afa156145e3573d60201160fa575f51612e5757637a2cd6fb5f5260205f6004601c855afa156145e3573d60201160fa575f51612e57576307b101f95f5260205f6004601c855afa156145e3573d60201160fa575f518060081c60fa57612e575763213cae635f525f5f6004601c855afa156145e35761413b610d4e565b614143905b6040518060208082520190918193565b909101819003902060a0850151856129f55b825160028101908110612e7257600181018015612e6b578060051b9060fb1c612e6b5780611b3361013b565b61414b906129a7565b909101819003902003612e57575063071bc3c95f525f5f6004601c855afa156145e357614153610d4e565b61415b906129a7565b909101819003902060c085015185612a486129c9565b614163906129a7565b909101819003902003612e575750604051602081018060405263a40bee5060e01b8252606082600481875afa156145e3573d60601160fa5781518060011c60fa5790518060a01c60fa5791604001518060081c60fa5790612e5757935160601b60601c14159260091415909217612e575763cdffacc65f5261416b63ba5b83ec60e01b611646565b5f5b81518110612b1c575050612aed610d1d565b5f5b81518110612afc57505050565b8060051b8201602001515f1960e01b166301ffc9a75f5261418f90611646565b8060051b82016020015f5b835183101561165d5781516040018051518210612b4957505050600101612adb565b5a9051805183101561165d578260051b01602001515f1960e01b1663cdffacc65f526141b490611646565b8051805160601b60601c835291602001916020015160601b60601c82529060200160019092039190612bf2565b50505b91900390565b926101e052919093016102006101e0510160018511612de257939093526101e05183036102206101e05101526101e051839091612c055b8151808452602084018160061b8101935b6020015f8311612b745750505091900390565b906101e0529091016102406101e0510160018311612de257919091526101e05181036102606101e05101526101e051819092612c3f612be1565b916101e052016102806101e0510160018311612de257919091526101e05181036102a06101e05101528091612c72612be1565b01958116602088015260408701949094525050958116606084015290941690608001529091036141ec90610c7c565b01818103809260c001528094612cb5610a9b565b909301036141fc90610c7c565b92610260529190930160018411612de257836102a061026051015260a06102605101810360a06102605101610220015261026051819092612d01612be1565b91610260520160a061026051016102400160018511612de25793909352505060a06102605101810360a06102605101610260015261026051819092612d44612be1565b91610260520160a061026051016102800160018711612de2579590955260a06102605101850360a061026051016102a0015261026051859091612d85612be1565b906102605290930194831660206102605101525050816040610260510152968716606061026051015250941660806102605101528190930391509091565b01818103809260c001528094612dd7610a9b565b909301819003925090565b6021611660565b63f92ee8a95b5f526004601cfd5b6020526334ac5046611669565b63b56ce555612def565b50505160601b60601c60205263dc552fb4611669565b63c21aabcf612def565b63e5912368612def565b63d92e233d612def565b50602052636d696b38611669565b6022611660565b63cc6e6586612def565b63da21e5ea612def565b6041611660565b6011611660565b639c9d8823612def565b639ca188ef612def565b63c601aaf3612def565b63f6edfdf5612def565b63c926c529612def565b61420b906129a7565b6080604052612eab610d1d565b336020525afa156145e3573d60201160fa575f518060011c60fa5715612e575763b48c80d05f5260205f6004601c335afa156145e3573d60201160fa575f518060a01c60fa578203612e575782336102d0610a2d565b156040516101408101604052366101409137612e575760025460ff8116612e6157612ec15b60205f6024601c73aa66038ae217b246f5bf7537104342672e56fed8639e46b4b65f526103b2565b8d6020525afa156145e3573d60201160fa575f518060011c60fa5715612e575789894661237c61040f565b5773aa66038ae217b246f5bf7537104342672e56fed8928303612e5757612f64612f3c565b60a083019081529215612ea157606087015184168015612ea157608088015185168015612ea15714612ea15760405160a08101604052630f47cd3660e01b8152602081016080816004848b5afa156145e3573d60801160fa576040516080810160405290518060a01c60fa57815260408201518060a01c60fa576020820190815260608301518060a01c60fa5780604084015292608001518060a01c60fa57806060840152612f8f905b736ff385f9043aca8252f2630c601660eba6218c5a03612e579091565b81608001908152612fb46101a083610a53565b975261032052610300526102e0526102c0526102a0526102605261034052610260516102a0516102c0516102e05161030051610320516103405189909a5261032052610300526102e0526102c0526102a05261026052926103405260206102a0510190601f19168301925e5f1960601c806102c0511660e06102605101526102e051151561010061026051015260a0610260510182036101206102605101526103005151610260516103005161032051610340518487526103405261032052610300526102605260051b916020016020610300510183820193915e60a061026051018203610140610260510152610320515161026051610320516103405183865261034052610320526102605260051b916020016020610320510183820193915e610340516101606102605101528f6101806102605101528e6101a06102605101529c8d166101c061026051015260a0610260510181036101e06102605101528b51601f810160208301601f19821684015f61026051915280610260528390945292610260529c6020019c601f191682019c90915e60a061026051018b036102006102605101528951601f810160208d01601f1982168e015f610260519152806102605283909e529c610260529a602001909a601f19168c019a919b5e60a0610260510189036102206102605101528751601f810160208b01601f1982168c015f610260519152806102605283909c529a61026052986020019098601f19168a019891995e60a0610260510187036102406102605101528551601f810160208901601f1982168a015f610260519152806102605283909a529861026052966020019096601f191688019691975e60018411612de257836102608051015260a06102605101850361028061026051015261026051859093612cc2612be1565b985261032052610300526102e0526102c0526102a052610280526102605261034052816103606102605101526020610280510190601f19166103806102605101016103806102605101929190925e60a06102605101810360c06102605101526102a05151601f810160208301601f19821684016102605161308e610504565b8a01818b015f6101e0519152806101e05283909b52996101e05297602001909789019791985e6101c06101e0510160018611612de257949094526101e05185036101e0805101526101e051859093612baa612be1565b8c01818d015f6101e0519152806101e05283909d529b6101e0529960200190998b0199919a5e6101e05188036101a06101e05101526133ab876103db565b8e01818f015f6101e0519152806101e05283909f529d6101e0529b602001909b8d019b919c5e6101e0518a036101806101e0510152613401896103db565b6102e05101816102e051016101e0515f6102e05192526101e0526102e0526101e051836102e051526101e0529d602001908e019d5e6101e0518c036101606101e051015261343f8b6103db565b97526102a052610280526102605261024052610220526101e0526102c0526101e051610220516102405161026051610280516102a0516102c05189909a526102a052610280526102605261024052610220526101e052926102c05260206102205101908301925e5f1960601c80610240511660406101e051015261026051151560606101e05101526101e051820360806101e051015261028051516101e051610280516102a0516102c0518487526102c0526102a052610280526101e05260051b916020016020610280510183820193915e6101e051820360a06101e05101526102a051516101e0516102a0516102c0518386526102c0526102a0526101e05260051b9160200160206102a051018382016102e052929192905e6102c05160c06101e05101528f60e06101e05101528e6101006101e05101529c8d166101206101e05101526101e0516102e051036101406101e051015261347d8c6103db565b83018184016101e0516134ca5b610220516102405161026051610280516102a0516102c061051c565b98526102a05261028052610260526102405261022052610200526101e0526102c0528290935260206102005101908301925e6101e051810360206101e051015261362a610220516103db565b83018184016101e05161020051613653613637565b85015f82870152829095528401946020019091935e91038281602001016040526004019190565b612ca1610a9b565b612dc3610a9b565b84820360a0860152819097610a8b610a9b565b86015f82880152829096529160200190918501945e8583036080876136eb610b0d565b825160208401516040850151606086015160808701519660a0015160c086019486525f1960601c938416602087015291831660408601528216606085015260c06080850152855160208701516040880151606089015160808a015160a08b01519a60c0015160e0890195881689529387166020890152911515604088015260e060608801526136fe816103db565b84015f82860152829094529160200190918301925e81810360a08301528096610b21610a9b565b82820360808401526137af816103db565b576121db61013b565b6126085b816020019151828160201360fa57016138285b929190825192830160208101935f1960c01c108285111760fa909192939495565b57516707fffffffffffffe8111612e6b576001810160051b61233961013b565b82019660200190915e8260208501528385038094604001528490610d86610e83565b9251935191516060840160608552856138489190610df4565b60405260806125b361013b565b82019560200190915e8084036020820152839092610e0f5b6145ab929190610aa2565b8251808252906020018160051b81019360200181610ea3565b9151925160408301604084528451808252906020018160051b81019560200181610f50565b57611c9961013b565b82019360200190915e8091039020610114565b826138fa9190610df4565b57600435803b612e57578361104e610bfc565b5761391861109d565b6110645b816020019151828160201360fa5701613999613807565b855afa156145e3573d60201160fa575f518060a01c60fa57909203612e5757633f58dd6d5f52906020525f5f6024601c845afa156145e35761393490610d4c565b5761217561013b565b575161399090610c7c565b612e5757303b612e5757826110be610bfc565b576139a46102b0565b6110f0613938565b855afa156145e3573d60201160fa575f518060a01c60fa5703612e5757633f58dd6d5f52306020525f5f6024601c845afa156145e3576139c090610d4c565b16612e5757638a6486845f526139c830611646565b8082956113d7610e20565b8116612de9578415612de9575f1960a01b16841761452e6110cc565b845afa156145e357503d60201160fa575f518060a01c60fa57611077565b57638a6486845f52613a43600435611646565b57613a6161109d565b8b5afa156145e3573d60201160fa575f518060a01c60fa571561165357505061167a565b8b86fa156145e3573d60201160fa575f518060a01c60fa57801561167157855184101561165d57815160601b60601c1461169357805160601b60601c6328d1f54b5f52613a7d90611646565b895afa156145e3573d60201160fa575f518060a01c60fa5760405160408101604052895184101561165d57915160601b60601c825260208201525f611878565b61195a5b816020019151828160201360fa5701613bb0613807565b8b5afa156145e3573d60201160fa575f518060a01c60fa578203611a4557508082146119f55763697222335f525f5f6004601c845afa156145e357613b2d5b6040516104a081810390821002013d603f8101601f19168201604052808252602082015f903e90565b57516707fffffffffffffe8111612e6b576001810160051b61219861013b565b608081016040526389d6191260e01b815260048101828152670de0b6b3a764000060208201526040018290526064816040935afa156145e3573d603f106119cb575f5ffd5b845afa156145e3573d60201160fa575f518060a01c60fa578015612e575773e68f9de49c682fdb3f5b4b302f896da93da7bee7936333a41d7060e01b9192611abe6103be565b57611cf961013b565b576001820160051b611d2361013b565b608083015260a084013580850190821060fa57613c6490611d84565b576001820160051b611d9a61013b565b57611e2561013b565b576001820160051b611e3861013b565b602082015260408401358060a01c60fa57604082015260608401356001811160fa576060820152608084013580850190831060fa57613ca990611d84565b576001820160051b611e6e61013b565b57611ed861013b565b57611eeb61013b565b61014082015261016084013580850190831060fa57613d1090610f94565b57611efe61013b565b61016082015261018084013580850190831060fa57613d3790610f94565b57611f1161013b565b6101808201526101a084013580850190831060fa57613d5e90610f94565b576001820160051b611f2461013b565b6101a08201526101c08401356001811160fa576101c08201526101e084013580850190831060fa57613d8590611d84565b576001820160051b611f6f61013b565b576001820160051b611fba61013b565b5761222061013b565b611607613b31565b855afa156145e357613def610d4e565b61169a613b31565b855afa156145e357613e07610d4e565b612455613b31565b845afa156145e357613e1f90610d4c565b642d424f4e4460d81b905281016020015f90529050915b50999b9a96989e9d9f9c9094919395979c8051821683518316958552602085019687526040850190815260608501958652604051602001602081016020825295519751915196516080870160808852896142659190610df4565b57613e385b939291906040519081016040528181528284602083015e91820160200190919293565b6420426f6e6460d81b905281016020015f9052915050612498565b57613ed1613eae565b6520436c61696d60d01b905281016020015f905291505b50929596999d5092939990969761016081015182518151614292578060200190516143149060026124b7565b57613ef5613eae565b6117e9613b31565b855afa156145e357613f41613b87565b576040519081016040528181526353592d7360e01b60208201526024810192919390925e9081016020015f90529688528160208901526001604089015260608801969290965250608086015260a08501528160c085015292909252905090565b57604051908101604052818152695359205374616b65642060b01b6020820152602a810192919390925e9081016020015f905292516020810190516004613f5991906124b7565b576040519081016040528181526253592d60e81b60208201526023810192919390925e9081016020015f90529284528160208501525f604085015260608401525060808201528660a08201528160c082015290975260405160e081016040529851881690519097169151602081019051600a613fb991906124b7565b576040519081016040528181526253592060e81b60208201526023810192919390925e9081016020015f90528851602081019051600361400091906124b7565b60e081016040528a518a1683518b168651602081019051600361407c91906124b7565b6127976137f4565b61281e613938565b57633f58dd6d5f52836020525f5f6024601c845afa156145e3576140e790610d4c565b845afa156145e3573d60201160fa575f518060a01c60fa576140ef9061305e565b6128fc613938565b6129a2613b31565b6129b7610e20565b6129fe610e20565b612a29613b31565b612a32610e20565b612a51610e20565b845afa156145e3573d60201160fa575f518060a01c60fa57612e5757612ad9610e35565b865afa156145e3573d60201160fa575f518060011c60fa5715612e5757600101612aef565b8985fa156145e357503d60201160fa575f518060a01c60fa57845184101561165d5782515160601b60601c03612e5757600101612b27565b5760405190810160405290815290565b57604051935083016040528252565b610cf06138a8565b576040519081016040529081526333a41d7060e01b91956124d86103be565b8b015f828d015282909b528a01936020019091995e95831660408601529582168094606001529390940361421390610c7c565b82019a60200190915e8689036020880152614232836103db565b61495260f01b905281016020015f905291505b509690999b9c9d9e9f94929597919a805182165f5260205f209383526020830194855260408301958652606083019687526080830197885260a08301938452604051602001602081016020825293519551965197519851945160c0850196841685529683166020850152968216604084015260c06060840152614364886103db565b5761427f613eae565b576040519081016040529081526333a41d7060e01b91936125336103be565b89015f828b0152829099528801936020019091975e60a0019290925291900361431d90610c7c565b87015f828901528290975298602001909886019891955e818703608083015261433c836103db565b6128c6613938565b6101e0516102c0806101e051520161369f610200516103db565b6143946102a0610280610260610240610220610389565b6143ae6102006101e06101c06101a0610180610389565b60405260605ff35b602082015290565b555160405160408101806040526001825260208201603160f81b81527f85c097128801add0c142fa627436f108d08c7d9d90def16e084ceeea05593e52846111f661123e565b5460ff19166009176143ec6111d2565b55604061139c61013b565b545f1960a01b163017614442611378565b555f7ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf255907ff196a8f3b6efc87838043f7f788eaf8123a5dd3900a9199cadb7ab628554abf46114055f6117d5565b545f1960a01b161761445e6113e1565b6114df6115b4565b6115085b5f5b835181106115825750915050565b6115116144c9565b55005b5460ff60a01b19169060a01b176144e1611518565b545f1960601c9091565b6114b66115b4565b55826145036114e4565b545f1960a01b1690921760ff60a01b191661450b611518565b55614515611518565b149091565b575b83815f1960601c910151166001856020019303945283919361453e575050612ba4565b575b83815f1960601c9101511660018560200193039452839193614563575050612ba4565b575b83815f1960e01b9101511660018560200193039452839193614588575050612ba4565b575b83815f1960e01b91015116600185602001930394528391936145ad575050612ba4565b8282038360a00152948161051f565b9091565b3d5f5f3e3d5ffdfea2646970667358221220a8456195ed4134a7ca9cfdbb1dbfee7f98cc9dea597336ab93f61e4bf6cc570465736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b",
+      "hash": "0x1cd623d5f4fbb2a72aa4325c55d8b6420d6bca3fd4a3a3b43abd83dd15a5a612",
+      "bytes": 17977,
+      "normalizedMatches": true,
+      "expectedHash": "0x1cd623d5f4fbb2a72aa4325c55d8b6420d6bca3fd4a3a3b43abd83dd15a5a612"
+    }
+  ],
+  "sharedRuntimeChecks": [
+    {
+      "address": "0xaa66038ae217b246f5bf7537104342672e56fed8",
+      "codeHash": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "role": "registry",
+      "actual": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "match": true
+    },
+    {
+      "address": "0x8a46938130169b0cf558bcfec89991a92f2324c5",
+      "codeHash": "0x615d0edb68e477e436cabda8e66faae68e3b03a2aa569e9c05af810e71518a8b",
+      "role": "facet",
+      "actual": "0x615d0edb68e477e436cabda8e66faae68e3b03a2aa569e9c05af810e71518a8b",
+      "match": true
+    },
+    {
+      "address": "0xf4494590abdd98f643794d155a8ed2e8af4f9a0f",
+      "codeHash": "0xe0b3837895469a427f844521f3041183e921ab25bd0464b03aa39c50db65a04c",
+      "role": "facet",
+      "actual": "0xe0b3837895469a427f844521f3041183e921ab25bd0464b03aa39c50db65a04c",
+      "match": true
+    },
+    {
+      "address": "0x001777cd7993390a12ad544d9836d73dfe78bb4a",
+      "codeHash": "0xedd12dcfc4e750c70fcc3f4a968b7297dd407e84825b427666aad294a740c81f",
+      "role": "facet",
+      "actual": "0xedd12dcfc4e750c70fcc3f4a968b7297dd407e84825b427666aad294a740c81f",
+      "match": true
+    },
+    {
+      "address": "0x2f0c891b4e9a1c9833dd3f7814d1a76f684797e9",
+      "codeHash": "0xaaf2fd3eb176808eb5d75442e3e1539f6ecc3520e2a150d6bfb13d5748f3401a",
+      "role": "facet",
+      "actual": "0xaaf2fd3eb176808eb5d75442e3e1539f6ecc3520e2a150d6bfb13d5748f3401a",
+      "match": true
+    },
+    {
+      "address": "0xecd6e45d2938a6d434a8a051201853706f84619e",
+      "codeHash": "0xd2c38526c9f982688af35f64fac7c89092b49def2231fad5d5b63d4f6d2bc05f",
+      "role": "facet",
+      "actual": "0xd2c38526c9f982688af35f64fac7c89092b49def2231fad5d5b63d4f6d2bc05f",
+      "match": true
+    },
+    {
+      "address": "0x5816d71d52c79844388bcbeadb13f26d52f031ee",
+      "codeHash": "0x76102a311a187629400430f9521318e69cda4c20e538815a5cd8c509aed4b8ec",
+      "role": "facet",
+      "actual": "0x76102a311a187629400430f9521318e69cda4c20e538815a5cd8c509aed4b8ec",
+      "match": true
+    },
+    {
+      "address": "0xd5641a39250e0a4bc648e490ac5efa8cc0fd8de0",
+      "codeHash": "0xd2c5869b775231df8f2aff82ae2f4ea6679858e10ebc09f92d9b33cb3930706d",
+      "role": "facet",
+      "actual": "0xd2c5869b775231df8f2aff82ae2f4ea6679858e10ebc09f92d9b33cb3930706d",
+      "match": true
+    },
+    {
+      "address": "0x4022629690473e24fc5cf641694a6feb8a4516af",
+      "codeHash": "0x3dec918b5cc2dd0d25d2e5aefddc2b5ddc67bf767149fd9f1e05cfa2d61c40cd",
+      "role": "facet",
+      "actual": "0x3dec918b5cc2dd0d25d2e5aefddc2b5ddc67bf767149fd9f1e05cfa2d61c40cd",
+      "match": true
+    },
+    {
+      "address": "0xddd1e0cde46b5c90cd1b93b91352a7dc00c24009",
+      "codeHash": "0x63c551bb61182cad1d91df952d5b978f16731912994d8051f4b5784d9be91b1b",
+      "role": "facet",
+      "actual": "0x63c551bb61182cad1d91df952d5b978f16731912994d8051f4b5784d9be91b1b",
+      "match": true
+    },
+    {
+      "address": "0xb084b225aa4395b47cc7affd375b8f56fc26083f",
+      "codeHash": "0x3add1989311792ab0c2cc2d01bdea8c651f233f97d2ad99c81025589bbbdbc78",
+      "role": "facet",
+      "actual": "0x3add1989311792ab0c2cc2d01bdea8c651f233f97d2ad99c81025589bbbdbc78",
+      "match": true
+    },
+    {
+      "address": "0x046402db2a88b54da34dec0fdd0f9ae549b43cc0",
+      "codeHash": "0x9ad4ad730c9079b8496dd2304aca582d9bd914b1ae207708137dd1f6d2721536",
+      "role": "facet",
+      "actual": "0x9ad4ad730c9079b8496dd2304aca582d9bd914b1ae207708137dd1f6d2721536",
+      "match": true
+    },
+    {
+      "address": "0x77be20724af3f142979fc53af037b5738df07d3a",
+      "codeHash": "0x2c3f5fec654cbaee12dc7309155f1b0242fdfac3c2e17d15027d3adf4b269d20",
+      "role": "facet",
+      "actual": "0x2c3f5fec654cbaee12dc7309155f1b0242fdfac3c2e17d15027d3adf4b269d20",
+      "match": true
+    },
+    {
+      "address": "0xc6b7b81dfd59e97337bbca6f5e7d6b3baa772453",
+      "codeHash": "0x7b63e4615ff9e921bee504fded3116752575b52722fa7f30e2197e584ed7573b",
+      "role": "facet",
+      "actual": "0x7b63e4615ff9e921bee504fded3116752575b52722fa7f30e2197e584ed7573b",
+      "match": true
+    },
+    {
+      "address": "0x8f06dd279099a5d11ac504dec681c851f1abb223",
+      "codeHash": "0xbe5e2ef0a98529ce510269555dfdb4ed50560c6f639541946ef6e98191ac931f",
+      "role": "facet",
+      "actual": "0xbe5e2ef0a98529ce510269555dfdb4ed50560c6f639541946ef6e98191ac931f",
+      "match": true
+    },
+    {
+      "address": "0xd1d56864ab234ff18cb7279362e50a2b7960bb59",
+      "codeHash": "0x03022f12407c5f848da7a9e3d1722a0976dd2b52e5c066643b8a314c9ea7d2bc",
+      "role": "facet",
+      "actual": "0x03022f12407c5f848da7a9e3d1722a0976dd2b52e5c066643b8a314c9ea7d2bc",
+      "match": true
+    },
+    {
+      "address": "0xcd29f772d1c9dbdbafdb0e54504160a5a977c0e8",
+      "codeHash": "0xba9b4787b4ed0822aa291fe95e8aa50a4491852be5d3e867062be3ae87364ec9",
+      "role": "facet",
+      "actual": "0xba9b4787b4ed0822aa291fe95e8aa50a4491852be5d3e867062be3ae87364ec9",
+      "match": true
+    },
+    {
+      "address": "0x0a69db3b30b7cb13eaff786832e062d157630bb2",
+      "codeHash": "0x838f64c062dd61a725ddc045e4991cb0fe9a236e9a87d567a82527dcde395510",
+      "role": "facet",
+      "actual": "0x838f64c062dd61a725ddc045e4991cb0fe9a236e9a87d567a82527dcde395510",
+      "match": true
+    }
+  ],
+  "sourcePreservation": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "before": "875f3848177ee974c3d754359c6a7e373e8a5d3bb176d153a830040fd635f9a7",
+      "after": "875f3848177ee974c3d754359c6a7e373e8a5d3bb176d153a830040fd635f9a7",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "before": "f51c7de94362d1a0f82c749a6e9681ca7083d713e10adbebd3362ca7ba378add",
+      "after": "f51c7de94362d1a0f82c749a6e9681ca7083d713e10adbebd3362ca7ba378add",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "before": "fedc082e2c02df8482caaa335b100bac23c93a38b8d8f24b600b549734dee85d",
+      "after": "fedc082e2c02df8482caaa335b100bac23c93a38b8d8f24b600b549734dee85d",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "before": "ba5ee14db60b2099d2bd157f3d0ded09338a04b773489bc545d98b178db2f9a2",
+      "after": "ba5ee14db60b2099d2bd157f3d0ded09338a04b773489bc545d98b178db2f9a2",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "before": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd",
+      "after": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd",
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "before": "707c62ecc97bd588df857f38b1463c0d4e29893c436a9e64c5d135831ea36827",
+      "after": "707c62ecc97bd588df857f38b1463c0d4e29893c436a9e64c5d135831ea36827",
+      "match": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "before": "a756cde236a1ddd38827a87bb738e79b9ace11569d3d51b41d49501f97d77046",
+      "after": "a756cde236a1ddd38827a87bb738e79b9ace11569d3d51b41d49501f97d77046",
+      "match": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol",
+      "before": "dbe2c9476fd6840ddeb5da28d5dbd2e2d8281f02cc261f6e22cdffb70b802d69",
+      "after": "dbe2c9476fd6840ddeb5da28d5dbd2e2d8281f02cc261f6e22cdffb70b802d69",
+      "match": true
+    }
+  ],
+  "historicalPreservation": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+      "after": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/rehearsal/report.md",
+      "sha256": "1eb22188bf731a122beada8c1ed69ef845380c2b2a8acbe4672544416bfe3e69",
+      "after": "1eb22188bf731a122beada8c1ed69ef845380c2b2a8acbe4672544416bfe3e69",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/report.md",
+      "sha256": "e0741ca43ea6ee2d9da07149f36c765cdcac77f89752f3f5a86518e1f43a2232",
+      "after": "e0741ca43ea6ee2d9da07149f36c765cdcac77f89752f3f5a86518e1f43a2232",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/report.md",
+      "sha256": "c3a1b60b8f9cbbf8edfde2b79c669f6aea3cdf9916a433fad78bd445316ecf2c",
+      "after": "c3a1b60b8f9cbbf8edfde2b79c669f6aea3cdf9916a433fad78bd445316ecf2c",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/correction-verification/report.md",
+      "sha256": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+      "after": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/commit/verification.md",
+      "sha256": "ff8ab4583c38b1f5da8975e04d1a24321866105b8af64c16d10882e8661c1a31",
+      "after": "ff8ab4583c38b1f5da8975e04d1a24321866105b8af64c16d10882e8661c1a31",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/implementation/chain-gas-limits.log",
+      "sha256": "8c6e29f6470180b1f429f737586a6048b121a1200029d3bc9759eb50af04485f",
+      "after": "8c6e29f6470180b1f429f737586a6048b121a1200029d3bc9759eb50af04485f",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/diagnosis/report.md",
+      "sha256": "1f685c1b0f74ac5c300c42df1963afb45bfe33544967765153bd37a29ed2a6dd",
+      "after": "1f685c1b0f74ac5c300c42df1963afb45bfe33544967765153bd37a29ed2a6dd",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/design-verification/report.md",
+      "sha256": "d970d92967d68b3a29705edaeb14d660115ededcae1fa4cb487183c4740faa6b",
+      "after": "d970d92967d68b3a29705edaeb14d660115ededcae1fa4cb487183c4740faa6b",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/report.md",
+      "sha256": "56267d57bf367338c6a633a1f296986bb63fd5c5f289f0c960f26ae4e78409b9",
+      "after": "56267d57bf367338c6a633a1f296986bb63fd5c5f289f0c960f26ae4e78409b9",
+      "match": true
+    }
+  ],
+  "packageCreationBindings": [
+    {
+      "transaction": "0xa128610fe28aea317052e9f2abf3db06d1d3de88bed531cc4e1309fd9b6412d9",
+      "creationHash": "0x16c4cd4ac0a4960340b9d3b50f04f99a6e96d508b49dfb1afec5bb414b8815c6",
+      "constructorArguments": "0x0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de0000000000000000000000000306be37febb704cbb482c36c0c65a7f03e415c7b000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000e68f9de49c682fdb3f5b4b302f896da93da7bee7",
+      "salt": "0x9014f713374ffee6e8ecccfb5a3215bd28b718413234e249c60a81587c2440a1"
+    },
+    {
+      "transaction": "0x2e08a57db70658213423a0f0e5735e7db5c560d1163ad9bf24b4781b5db9a248",
+      "creationHash": "0xbaba9e590564c5fe2510f895740f0807c9fd968dd422db587868411ddadfbd2f",
+      "constructorArguments": "0x000000000000000000000000ecd6e45d2938a6d434a8a051201853706f84619e0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de00000000000000000000000004022629690473e24fc5cf641694a6feb8a4516af000000000000000000000000ddd1e0cde46b5c90cd1b93b91352a7dc00c24009000000000000000000000000b084b225aa4395b47cc7affd375b8f56fc26083f000000000000000000000000046402db2a88b54da34dec0fdd0f9ae549b43cc000000000000000000000000077be20724af3f142979fc53af037b5738df07d3a000000000000000000000000c6b7b81dfd59e97337bbca6f5e7d6b3baa7724530000000000000000000000008f06dd279099a5d11ac504dec681c851f1abb223000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed800000000000000000000000075170821c0f42c76871925b807e4b5f1d3d18c23000000000000000000000000758be53e89c90bb594bfd5963458910685bc67ee0000000000000000000000006ff385f9043aca8252f2630c601660eba6218c5a000000000000000000000000d1d56864ab234ff18cb7279362e50a2b7960bb59000000000000000000000000cd29f772d1c9dbdbafdb0e54504160a5a977c0e80000000000000000000000000a69db3b30b7cb13eaff786832e062d157630bb20000000000000000000000002f0c891b4e9a1c9833dd3f7814d1a76f684797e9000000000000000000000000918b025c58621b1e893685acbc110c02a737b34f",
+      "salt": "0x711562de3fe3706d315ee32a253a30d300a613a59a65fad125117f294b066431"
+    }
+  ],
+  "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+  "immutableReferences": [
+    {
+      "name": "UniswapV4DetfMigrationDFPkg",
+      "refs": {
+        "12497": [
+          {
+            "start": 12727,
+            "length": 20
+          }
+        ],
+        "12498": [
+          {
+            "start": 12753,
+            "length": 20
+          }
+        ],
+        "12499": [
+          {
+            "start": 12779,
+            "length": 20
+          }
+        ],
+        "12500": [
+          {
+            "start": 12805,
+            "length": 20
+          }
+        ],
+        "12501": [
+          {
+            "start": 12831,
+            "length": 20
+          }
+        ],
+        "12502": [
+          {
+            "start": 12872,
+            "length": 20
+          }
+        ],
+        "12503": [
+          {
+            "start": 12895,
+            "length": 20
+          }
+        ],
+        "12504": [
+          {
+            "start": 12921,
+            "length": 20
+          }
+        ],
+        "12505": [
+          {
+            "start": 12947,
+            "length": 20
+          }
+        ],
+        "12506": [
+          {
+            "start": 12974,
+            "length": 20
+          }
+        ],
+        "12507": [
+          {
+            "start": 1669,
+            "length": 20
+          },
+          {
+            "start": 3985,
+            "length": 20
+          },
+          {
+            "start": 11115,
+            "length": 20
+          }
+        ],
+        "12508": [
+          {
+            "start": 698,
+            "length": 20
+          },
+          {
+            "start": 3359,
+            "length": 20
+          }
+        ],
+        "12509": [
+          {
+            "start": 1627,
+            "length": 20
+          },
+          {
+            "start": 4014,
+            "length": 20
+          }
+        ],
+        "12510": [
+          {
+            "start": 1648,
+            "length": 20
+          },
+          {
+            "start": 4035,
+            "length": 20
+          }
+        ],
+        "12511": [
+          {
+            "start": 963,
+            "length": 20
+          },
+          {
+            "start": 1031,
+            "length": 20
+          },
+          {
+            "start": 1690,
+            "length": 20
+          },
+          {
+            "start": 9876,
+            "length": 20
+          },
+          {
+            "start": 10395,
+            "length": 20
+          },
+          {
+            "start": 14087,
+            "length": 20
+          },
+          {
+            "start": 14991,
+            "length": 20
+          },
+          {
+            "start": 16245,
+            "length": 20
+          }
+        ],
+        "12512": [
+          {
+            "start": 807,
+            "length": 20
+          },
+          {
+            "start": 3918,
+            "length": 20
+          },
+          {
+            "start": 10006,
+            "length": 20
+          },
+          {
+            "start": 21276,
+            "length": 20
+          }
+        ],
+        "12513": [
+          {
+            "start": 12646,
+            "length": 20
+          }
+        ],
+        "12514": [
+          {
+            "start": 12673,
+            "length": 20
+          }
+        ],
+        "12515": [
+          {
+            "start": 12700,
+            "length": 20
+          }
+        ],
+        "12516": [
+          {
+            "start": 12619,
+            "length": 20
+          }
+        ],
+        "12517": [
+          {
+            "start": 16073,
+            "length": 20
+          }
+        ],
+        "12518": [
+          {
+            "start": 425,
+            "length": 20
+          },
+          {
+            "start": 1004,
+            "length": 20
+          },
+          {
+            "start": 3577,
+            "length": 20
+          },
+          {
+            "start": 4177,
+            "length": 20
+          },
+          {
+            "start": 15013,
+            "length": 20
+          }
+        ]
+      }
+    },
+    {
+      "name": "UniswapV4DetfMigrationSYDFPkg",
+      "refs": {
+        "12527": [
+          {
+            "start": 9657,
+            "length": 20
+          }
+        ],
+        "12528": [
+          {
+            "start": 9683,
+            "length": 20
+          }
+        ],
+        "12529": [
+          {
+            "start": 3359,
+            "length": 20
+          },
+          {
+            "start": 9709,
+            "length": 20
+          }
+        ],
+        "12530": [
+          {
+            "start": 5044,
+            "length": 20
+          },
+          {
+            "start": 12178,
+            "length": 20
+          }
+        ],
+        "12531": [
+          {
+            "start": 2286,
+            "length": 20
+          },
+          {
+            "start": 4073,
+            "length": 20
+          },
+          {
+            "start": 12101,
+            "length": 20
+          }
+        ],
+        "12532": [
+          {
+            "start": 256,
+            "length": 20
+          },
+          {
+            "start": 722,
+            "length": 20
+          },
+          {
+            "start": 4046,
+            "length": 20
+          },
+          {
+            "start": 4255,
+            "length": 20
+          },
+          {
+            "start": 9089,
+            "length": 20
+          },
+          {
+            "start": 10235,
+            "length": 20
+          },
+          {
+            "start": 15413,
+            "length": 20
+          }
+        ],
+        "12533": [
+          {
+            "start": 694,
+            "length": 20
+          },
+          {
+            "start": 2307,
+            "length": 20
+          },
+          {
+            "start": 3020,
+            "length": 20
+          },
+          {
+            "start": 6810,
+            "length": 20
+          },
+          {
+            "start": 12384,
+            "length": 20
+          }
+        ]
+      }
+    }
+  ],
+  "retainedTestProvenance": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/core-02.log",
+      "sha256": "d378f32467017a2ac5317b03617a5d217e5fddeb549a2edbf564f3adfd21430c",
+      "passes": 9,
+      "terminal": [
+        "Compiler run successful!",
+        "Compiler run successful!",
+        "Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 479.07ms (138.90ms CPU time)",
+        "Ran 1 test suite in 480.29ms (479.07ms CPU time): 9 tests passed, 0 failed, 0 skipped (9 total tests)"
+      ],
+      "failedLogLines": 0,
+      "distinctFailedTests": 0
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/gas-spec-03.log",
+      "sha256": "dc51ae03ef5ca27e2c422b6f47615b8349d6624154efc4b3b5405d37af345d09",
+      "passes": 1,
+      "terminal": [
+        "No files changed, compilation skipped",
+        "Compiler run successful!",
+        "[FAIL: bounded final parent] test_twoDistinctPreparedParentsFitBoundedCalls() (gas: 61784994)",
+        "Suite result: FAILED. 1 passed; 1 failed; 0 skipped; finished in 353.89ms (32.09ms CPU time)",
+        "Ran 1 test suite in 33.39s (353.89ms CPU time): 1 tests passed, 1 failed, 0 skipped (2 total tests)",
+        "[FAIL: bounded final parent] test_twoDistinctPreparedParentsFitBoundedCalls() (gas: 61784994)"
+      ],
+      "failedLogLines": 2,
+      "distinctFailedTests": 1
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/witness-build-04.log",
+      "sha256": "67a8a8c21b4a4e698b902babad5e0bc84f64349b437d6903bbe69af1054464f5",
+      "passes": 0,
+      "terminal": [
+        "No files changed, compilation skipped"
+      ],
+      "failedLogLines": 0,
+      "distinctFailedTests": 0
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/spec-current-11.log",
+      "sha256": "983e8fd3dd4299823154227ce4aeecdf6e59a8f65214b9d55d2b3691507d8caa",
+      "passes": 97,
+      "terminal": [
+        "Compiler run successful!",
+        "Compiler run successful with warnings:",
+        "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 363.51ms (15.82ms CPU time)",
+        "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 369.72ms (18.44ms CPU time)",
+        "Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 394.46ms (4.99ms CPU time)",
+        "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 396.78ms (9.96ms CPU time)",
+        "Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 401.41ms (5.77ms CPU time)",
+        "[FAIL: bounded final parent] test_twoDistinctPreparedParentsFitBoundedCalls() (gas: 61784994)",
+        "Suite result: FAILED. 1 passed; 1 failed; 0 skipped; finished in 420.08ms (29.28ms CPU time)",
+        "Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 450.70ms (64.04ms CPU time)",
+        "Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 491.13ms (23.36ms CPU time)",
+        "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 514.07ms (116.96ms CPU time)",
+        "Suite result: ok. 14 passed; 0 failed; 0 skipped; finished in 620.78ms (175.97ms CPU time)",
+        "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 623.06ms (177.73ms CPU time)",
+        "Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 784.76ms (112.13ms CPU time)",
+        "Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 784.10ms (23.66ms CPU time)",
+        "Suite result: ok. 15 passed; 0 failed; 0 skipped; finished in 784.48ms (555.71ms CPU time)",
+        "Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 784.33ms (101.08ms CPU time)",
+        "Suite result: ok. 14 passed; 0 failed; 0 skipped; finished in 948.45ms (1.80s CPU time)",
+        "Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 1.02s (831.71ms CPU time)",
+        "Ran 17 test suites in 1.02s (10.15s CPU time): 97 tests passed, 1 failed, 0 skipped (98 total tests)",
+        "[FAIL: bounded final parent] test_twoDistinctPreparedParentsFitBoundedCalls() (gas: 61784994)"
+      ],
+      "failedLogLines": 2,
+      "distinctFailedTests": 1
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/fork-current-12.log",
+      "sha256": "69980562a8211c0cc997ad8d6496d155ea84ac07c58c4ce1ea0120a4184172d7",
+      "passes": 39,
+      "terminal": [
+        "Compiler run successful with warnings:",
+        "Compiler run successful!",
+        "Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 840.82ms (94.69ms CPU time)",
+        "Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 1.50s (37.58ms CPU time)",
+        "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 781.64ms (95.37ms CPU time)",
+        "Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 1.37s (23.50ms CPU time)",
+        "Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 610.90ms (14.63ms CPU time)",
+        "Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 1.63s (374.42ms CPU time)",
+        "Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 646.76ms (44.89ms CPU time)",
+        "Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 1.26s (26.61ms CPU time)",
+        "Ran 8 test suites in 5.76s (8.64s CPU time): 39 tests passed, 0 failed, 0 skipped (39 total tests)"
+      ],
+      "failedLogLines": 0,
+      "distinctFailedTests": 0
+    }
+  ],
+  "retainedExecutionCommands": [
+    {
+      "id": "mon_TWVHRPPR46PEMC40",
+      "exit": 0,
+      "log": "core-02.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol -- -vvv"
+    },
+    {
+      "id": "mon_78ST1R6MF2E63YKB",
+      "exit": 1,
+      "log": "gas-spec-03.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vvvv"
+    },
+    {
+      "id": "mon_T0HNV4N5QQVP5T4F",
+      "exit": 0,
+      "log": "witness-build-04.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py build contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --consumer scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol"
+    },
+    {
+      "id": "mon_65AB4PMH6QTSTCC3",
+      "exit": 1,
+      "log": "spec-current-11.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv"
+    },
+    {
+      "id": "mon_7RVJM7E34QCC8H1M",
+      "exit": 0,
+      "log": "fork-current-12.log",
+      "command": "FOUNDRY_PROFILE=fork PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv",
+      "shell": "Existing archive credentials inherited from /bin/zsh -lic; no resolved URL retained."
+    }
+  ],
+  "limits": {
+    "historicalMaxTransactionGas": 32000000,
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/implementation/chain-gas-limits.log",
+    "liveLimitQueried": false
+  },
+  "historicalOperator": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/rehearsal",
+    "rehearsal": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494",
+    "gas": [
+      {
+        "transactionHash": "0xbc2ffc265391562244269342481d3d072e17e8fcec09e9f8d4938f69b10ee5ed",
+        "gasUsed": "42985843",
+        "effectiveGasPrice": "8",
+        "localFeeWei": "343886744"
+      }
+    ],
+    "deploy": [
+      {
+        "directory": "journal-deploy",
+        "id": "73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d",
+        "stage": "deploy",
+        "method": "deployVault",
+        "nonce": "2115",
+        "transactionHash": "0xbc2ffc265391562244269342481d3d072e17e8fcec09e9f8d4938f69b10ee5ed",
+        "blockNumber": "108944889",
+        "gasUsed": "42985843",
+        "effectiveGasPrice": "8",
+        "gasLimit": "67771942",
+        "state": {
+          "owner": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "owner:[]": "[\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\"]"
+        },
+        "events": [
+          {
+            "name": "ThresholdsConfigured",
+            "values": [
+              "1050000000000000000",
+              "950000000000000000"
+            ]
+          },
+          {
+            "name": "ReserveBondNftWired",
+            "values": [
+              "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+              "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "name": "ReserveClaimWired",
+            "values": [
+              "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+              "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+            ]
+          },
+          {
+            "name": "MigrationSyRewardTokenWired",
+            "values": [
+              "0xe44e17379970147fa85E3491ec2860F06F454F27",
+              "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "baselineReceiptCheck": [
+    {
+      "hash": "0x38fa30f5d5e746a7e19a780e35862cc0767835d2db0b89b11882e179c6200451",
+      "status": "0x0",
+      "gasUsed": "0x1bbb607"
+    },
+    {
+      "hash": "0x1766cd703d2b21c6e3534769bc513989f7d24cc29cac2a18c930a1b8eba77805",
+      "status": "0x1",
+      "gasUsed": "0x28fe973"
+    }
+  ],
+  "qualification": "No new build or suite was run. Current source/artifact/runtime bindings and preserved producer artifact-first Solar logs accompany new independent bounded RPC execution. The bounded gas regression remains failed."
+}

@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "date": "2026-11-12",
+  "subject": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source",
+  "verdict": "bounded admitted-proposal",
+  "operationalIntake": "not ready",
+  "algorithm": "SHA-256 of complete raw UTF-8 bytes; relative POSIX paths sorted; seal.json alone self-excluded",
+  "files": [
+    {
+      "path": "failed-attempts.md",
+      "bytes": 1391,
+      "sha256": "772a2099a78216049705db4d510310d358a4717ca50658ff724f607a014a267d",
+      "mode": 420
+    },
+    {
+      "path": "method.md",
+      "bytes": 7273,
+      "sha256": "cdf33ee02b9866d231308dcba4da47c324082068337ba2280d71c88e3c055c0a",
+      "mode": 420
+    },
+    {
+      "path": "probe/eval-method.md",
+      "bytes": 10599,
+      "sha256": "4886c683187a3dc1911dce9aef5601e17e5145bc66e3d3510ec1f273098097e9",
+      "mode": 420
+    },
+    {
+      "path": "raw/admission.json",
+      "bytes": 9696,
+      "sha256": "0f21aa8727688c422fed0728e607b8711c07f3a1104913e06bf3426caa47dadb",
+      "mode": 420
+    },
+    {
+      "path": "raw/audit.json",
+      "bytes": 14406,
+      "sha256": "863d9b5a3e669c4f1eb6b29cc9071afca7cd8ca7becb2b986595c098a5e51137",
+      "mode": 420
+    },
+    {
+      "path": "raw/cleanup.json",
+      "bytes": 9244,
+      "sha256": "198eed0d6690d45ee62c22cfe0d965b1f01b4cfb62833d4036e17ad605b0eeab",
+      "mode": 420
+    },
+    {
+      "path": "raw/historical-reconciliation.json",
+      "bytes": 2910,
+      "sha256": "4519849199e54acf1af5b38aad39d75112dab4d107de35cdba8a1310ed94b394",
+      "mode": 420
+    },
+    {
+      "path": "raw/observations.json",
+      "bytes": 33299,
+      "sha256": "27e7556a04dd8b37e5b639f13c61882d10a1030b11f3f6825d4e2fa9818e82c8",
+      "mode": 420
+    },
+    {
+      "path": "raw/source-identities.json",
+      "bytes": 370968,
+      "sha256": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "mode": 420
+    },
+    {
+      "path": "raw/transactions.json",
+      "bytes": 434474,
+      "sha256": "7fbd9f89040dfb853ff4b48acd3899da5b93f90d0539d39826e772f3f6534d3d",
+      "mode": 420
+    },
+    {
+      "path": "raw/wire.json",
+      "bytes": 1127847,
+      "sha256": "32d4aa03972f95da0efc365d1ca51e915294e1088e73aaf5f062b4e1cd284f27",
+      "mode": 420
+    },
+    {
+      "path": "report.md",
+      "bytes": 23223,
+      "sha256": "be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+      "mode": 420
+    }
+  ],
+  "validation": {
+    "savedFreshWireExchanges": 530,
+    "savedFreshTransactions": 11,
+    "realSignatures": 9,
+    "impersonatedDonorTransactions": 2,
+    "successfulClaims": 5,
+    "economicSnapshotReferences": 17,
+    "economicFieldsMatched": 323,
+    "producerWireExchanges": 574,
+    "producerRealSignatures": 9,
+    "producerMembersAndModes": [
+      {
+        "path": "contract.md",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "method.md",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/cleanup.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/input-preservation.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/observations.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/offline-audit.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/reconciliation.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/source-identities.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/transactions.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "raw/wire.json",
+        "mode": 420,
+        "unchanged": true
+      },
+      {
+        "path": "report.md",
+        "mode": 420,
+        "unchanged": true
+      }
+    ],
+    "originalInputReferencesUnchanged": 22,
+    "diagnostics": "Biome not installed; JSON parsed and independently audited",
+    "sourceWitnessRuns": 1,
+    "buildsOrSuiteReplays": 0
+  },
+  "cleanup": "raw/cleanup.json",
+  "boundary": "Source-only complete-original uncredited subset; no operational allocations, implementation authorization or full raw-category closure."
+}

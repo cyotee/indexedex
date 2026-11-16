@@ -1,0 +1,19 @@
+{
+  "bondNftVault": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+  "chainId": 4663,
+  "claimVault": "0x0000000000000000000000000000000000000000",
+  "configHash": "0x711c124542accd49211e09a778a8cbfe85a840b39af68df2b87efa6c7a396579",
+  "custodyVault": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+  "indexedexManager": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+  "isReserveLive": true,
+  "liquidityVault": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+  "migrationTarget": "0x0000000000000000000000000000000000000000",
+  "phase": 0,
+  "protocolDetf": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+  "rebasingClaimToken": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+  "receiptVerified": false,
+  "reserveHook": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+  "reserveRemaining": "164918773245602919993967737",
+  "stakingSY": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+  "tokenStaking": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+}

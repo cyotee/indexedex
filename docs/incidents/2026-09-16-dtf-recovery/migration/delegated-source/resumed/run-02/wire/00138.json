@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":138,\"method\":\"anvil_stopImpersonatingAccount\",\"params\":[\"0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3\"]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":138,\"result\":null}",
+  "httpStatus": 200,
+  "raw": true
+}

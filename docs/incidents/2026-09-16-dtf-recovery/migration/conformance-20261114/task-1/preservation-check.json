@@ -1,0 +1,98 @@
+{
+  "baseline_status_lines": 60270,
+  "final_status_lines": 60322,
+  "baseline_owned_lines_excluded": 1,
+  "final_owned_lines_excluded": 13,
+  "tracked_diff_files": [
+    "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"
+  ],
+  "tracked_diff_only_p": true,
+  "baseline_status_sha256": "23dc9cf3be365c2389106b1330398dc532773c9dcdd355f0f0419ad07aed0039",
+  "final_status_sha256": "a03a7d5e6faa574e61b5a534d3b18904b774a5deb4aaab4a0ec9b85e385f39a3",
+  "dependency_observation": {
+    "node_modules_is_symlink": true,
+    "node_modules_target": "/Users/cyotee/Projects/indexedex/node_modules",
+    "lib_crane_is_symlink": false,
+    "lib_crane_entries": [
+      ".agents",
+      ".cartographer",
+      ".claude",
+      ".codex",
+      ".cspell",
+      ".env.example",
+      ".gitbook.yaml",
+      ".github",
+      ".gitignore",
+      ".gitmodules",
+      ".grok",
+      ".sisyphus",
+      ".vscode",
+      "AGENTS.md",
+      "CHANGELOG.md",
+      "CLAUDE.md",
+      "CONTRIBUTING.md",
+      "LICENSE",
+      "NOTICE.md",
+      "README.md",
+      "SECURITY.md",
+      "book.toml",
+      "broadcast",
+      "certora",
+      "contracts",
+      "crane.code-workspace",
+      "cspell.config.yaml",
+      "design.yaml",
+      "docs",
+      "foundry.lock",
+      "foundry.toml",
+      "hardhat.config.js",
+      "hardhat.config.ts",
+      "images",
+      "lib",
+      "licenses",
+      "opencode.json",
+      "output",
+      "package-lock.json",
+      "package.json",
+      "remappings.txt",
+      "reports",
+      "scripts",
+      "skills-lock.json",
+      "slither.config.json",
+      "snapshots",
+      "src",
+      "test",
+      "theme",
+      "tmp",
+      "tsconfig.json",
+      "utils",
+      "yarn.lock"
+    ],
+    "dependencies_edited_by_task": false
+  },
+  "owned_paths_excluded": [
+    "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/",
+    ".omo/ulw-execute/dtf-conformance/task-1-done.json"
+  ],
+  "cleanup": {
+    "temporary_resources_created": [],
+    "background_processes_or_monitors_started": [],
+    "resources_requiring_teardown": [],
+    "evidence_retained_intentionally": true
+  },
+  "raw_status_delta_contains_concurrent_tasks": true,
+  "outside_task_1_2_3_status_preserved": true,
+  "external_concurrent_changes": {
+    "added_counts_by_owner": {
+      "task-3": 2,
+      "task-2": 126
+    },
+    "removed_counts_by_owner": {
+      "task-2": 88
+    },
+    "artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json",
+    "changes_read_edited_or_reverted_by_task_1": false
+  },
+  "external_delta_artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json"
+}

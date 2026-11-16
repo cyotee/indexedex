@@ -1,0 +1,177 @@
+{
+  "type": "DoneClaim",
+  "task": 6,
+  "title": "Close evidenced source and recovery behavior gaps",
+  "tier": "HEAVY",
+  "status": "complete",
+  "completedAt": "2026-11-15T03:32:36.891Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "summary": "Retained the authenticated reserved-ID and fixed recovery rules. Added a real pinned-source initialized-role witness that rejects earlier IDs 0, 1 and 2 at configuration and Stage 2 surrender. No authenticated mismatch required a production change. Fresh prescribed K run and all-category manual comparison passed.",
+  "changedFiles": [
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/inspection.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/preflight.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/fork-qa-1.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/worktree-before-qa.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/worktree-after.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/source-results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/rollback-and-custody.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/manual-qa.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/preservation.json",
+    ".omo/ulw-execute/dtf-conformance/task-6-done.json"
+  ],
+  "productionFilesChanged": [],
+  "tests": [
+    {
+      "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "rawLog": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/fork-qa-1.log",
+      "rawSha256": "ec59e2ca0e0f6c936b848ed226571e303cd9a37a7d9fc674b22c3eeca7cee238",
+      "commandEchoedBeforeHelper": true,
+      "commandRawLine": 7,
+      "compiler": "--use solar through forge-artifacts.py",
+      "buildCompiledFiles": 892,
+      "testCompiledFiles": 32,
+      "artifactReuse": "Warm cache retained; actual compilation occurred before tests.",
+      "exitCode": 0,
+      "suites": 30,
+      "passed": 182,
+      "failed": 0,
+      "skipped": 0,
+      "reruns": 0,
+      "monitor": "mon_XYZW4WXJSETGCX5A"
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --check -- test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "exitCode": 0,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/worktree-after.log"
+    }
+  ],
+  "failureQA": {
+    "status": "PASS",
+    "cases": [
+      {
+        "category": "wrong-wallet",
+        "suite": "MigrationOriginalWalletTest",
+        "test": "test_weightedStageOneRejectsThenOriginalWalletAdmission",
+        "rawLine": 7152
+      },
+      {
+        "category": "unconfigured",
+        "suite": "MigrationOriginalWalletTest",
+        "test": "test_missingConfigurationRejectsActualApprovedOwnersBeforeAndAfterActivation",
+        "rawLine": 7150
+      },
+      {
+        "category": "Stage-1",
+        "suite": "MigrationOriginalWalletTest",
+        "test": "test_earlierStageOneRejectsThenOriginalWalletAdmission",
+        "rawLine": 7149
+      },
+      {
+        "category": "source-identity",
+        "suite": "MigrationLegacySourcesTest",
+        "test": "test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions",
+        "rawLine": 7125
+      },
+      {
+        "category": "reserved-source-roles",
+        "suite": "MigrationOriginalWalletTest",
+        "test": "test_earlierInitializedReservedRolesRejectConfigurationAndSurrender",
+        "rawLine": 7148
+      },
+      {
+        "category": "second-bond-failure",
+        "suite": "MigrationNftLifecycleTest",
+        "test": "test_secondContributionReceiverFailureRollsBackBothBondsAndWholeNft",
+        "rawLine": 7141
+      },
+      {
+        "category": "principal-race",
+        "suite": "MigrationLegacySourcesTest",
+        "test": "test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum",
+        "rawLine": 7122
+      },
+      {
+        "category": "wrapper-overlap",
+        "suite": "MigrationSourceUnitsInvariantTest",
+        "test": "invariant_exactOriginalUnitsCustodyAndFreshEscrow",
+        "rawLine": 7231
+      },
+      {
+        "category": "zero-credit",
+        "suite": "MigrationWeightedLiquidTest",
+        "test": "test_zeroCreditDustRejectsWithoutConfiscation",
+        "rawLine": 7799
+      },
+      {
+        "category": "unauthorized-exit",
+        "suite": "MigrationLegacyLpExitTest",
+        "test": "test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake",
+        "rawLine": 7102
+      },
+      {
+        "category": "middle-batch-failure",
+        "suite": "MigrationRecoveryWeightedTest",
+        "test": "test_failedMiddleBatchRollsBackClaimAndSmallerRetrySucceeds",
+        "rawLine": 7212
+      },
+      {
+        "category": "committed-earlier-stage",
+        "suite": "MigrationRecoveryAccrualRollbackTest",
+        "test": "test_laterSelectedFailureRevertsAccrualAndDonationButPreservesCommittedClaim",
+        "rawLine": 7166
+      },
+      {
+        "category": "TokenStaking-preparation-rollback",
+        "suite": "MigrationClaimedSyTest",
+        "test": "test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight",
+        "rawLine": 7816
+      }
+    ],
+    "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/rollback-and-custody.log",
+    "qualification": "Labelled verbatim case and counter excerpt citing raw log lines; exact rollback assertions are source-bound in source-results.json."
+  },
+  "manualQA": {
+    "status": "PASS",
+    "requiredCategories": 14,
+    "coveredCategories": 14,
+    "sourceResults": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/source-results.json",
+    "details": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/manual-qa.json",
+    "reservedIds": "Earlier 0/1/2 remain reserved/non-qualifying from exact task-3 source facts; existing eligibility guards retained.",
+    "principalAndCustody": "Repeated weighted and earlier reward-only harvests after maturity and prior harvest passed, with retained principal/NFT custody and protected budgets.",
+    "tokenStaking": "Complete/remainder preparation and split measured SY remain one original; late Migration failure does not restore already consumed raw source weight.",
+    "externalAuthority": "Local conditional source enablement/feeTo fixtures do not grant Migration external governance. E-P permanent custody remains exact-source-specific.",
+    "blockers": []
+  },
+  "cleanup": {
+    "delegated": false,
+    "commits": false,
+    "publicTransactions": false,
+    "pricingFilesEdited": false,
+    "task5FilesEdited": false,
+    "PEdited": false,
+    "sourceIndexesEdited": false,
+    "guardReplaced": false,
+    "historicalLogScan": false,
+    "providerSwitch": false,
+    "refusedTraceRetried": false,
+    "dependencyInstallsSucceeded": false,
+    "buildsKilled": false,
+    "cacheDeleted": false,
+    "temporaryCodeRemaining": false,
+    "priorTasksPreserved": true,
+    "bindingsUnchanged": 104,
+    "savedPreQaAndFinalStatusIdentical": true,
+    "preservationEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/preservation.json"
+  },
+  "risks": [
+    "Behavior fixtures disclose synthetic original allocations and local source authority simulations; no operational financial allocation is inferred or approved.",
+    "Existing Solar/compiler/lint/config/deprecated-cheatcode warnings remain. Forge automatic dependency initialization attempts all failed immediately against populated Crane; no dependency installation succeeded.",
+    "Biome JSON LSP is unavailable; no install was attempted. Solidity compile and required fork suite succeeded.",
+    "Exact funding/recovery expressions are assertion-backed with source and raw passing-case locators; un-emitted local scalars are not fabricated. Raw emitted source-unit quantities and residues are included separately.",
+    "Supplemental reserved mint receipt remains unavailable as disclosed by task 3; role classification uses authenticated initialization and pinned source state."
+  ],
+  "unmetAcceptanceItems": []
+}

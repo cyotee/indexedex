@@ -1,0 +1,101 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {Vm} from "forge-std/Vm.sol";
+import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
+
+import {IRebasingAwareERC4626DFPkg} from
+    "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626DFPkg.sol";
+
+library RebasingAwareERC4626_Component_FactoryService {
+    using BetterEfficientHashLib for bytes;
+    Vm constant vm = Vm(VM_ADDRESS);
+
+    function releaseSalt(string memory componentName)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return abi.encode(componentName)._hash();
+    }
+
+    function deployRebasingAwareERC4626Facet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        bytes memory code =
+            ArtifactCreationCode.creationCode("RebasingAwareERC4626Facet.sol:RebasingAwareERC4626Facet");
+        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareERC4626Facet"));
+        vm.label(address(instance), "RebasingAwareERC4626Facet");
+    }
+
+    function deployRebasingAwareStandardExchangeFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        bytes memory code = ArtifactCreationCode.creationCode(
+            "RebasingAwareStandardExchangeFacet.sol:RebasingAwareStandardExchangeFacet"
+        );
+        instance =
+            create3Factory.deployFacet(code, releaseSalt("RebasingAwareStandardExchangeFacet"));
+        vm.label(address(instance), "RebasingAwareStandardExchangeFacet");
+    }
+
+    function deployRebasingAwareStandardYieldFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        bytes memory code = ArtifactCreationCode.creationCode(
+            "RebasingAwareStandardYieldFacet.sol:RebasingAwareStandardYieldFacet"
+        );
+        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareStandardYieldFacet"));
+        vm.label(address(instance), "RebasingAwareStandardYieldFacet");
+    }
+
+    function deployRebasingAwareVaultMetadataFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        bytes memory code = ArtifactCreationCode.creationCode(
+            "RebasingAwareVaultMetadataFacet.sol:RebasingAwareVaultMetadataFacet"
+        );
+        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareVaultMetadataFacet"));
+        vm.label(address(instance), "RebasingAwareVaultMetadataFacet");
+    }
+
+    function deployRebasingAwareStandardExchangeQuoteFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        bytes memory code = ArtifactCreationCode.creationCode(
+            "RebasingAwareStandardExchangeQuoteFacet.sol:RebasingAwareStandardExchangeQuoteFacet"
+        );
+        instance = create3Factory.deployFacet(
+            code, releaseSalt("RebasingAwareStandardExchangeQuoteFacet")
+        );
+        vm.label(address(instance), "RebasingAwareStandardExchangeQuoteFacet");
+    }
+
+    function deployRebasingAwareERC4626DFPkg(
+        IIndexedexManagerProxy indexedexManager,
+        IRebasingAwareERC4626DFPkg.PkgInit memory pkgInit
+    ) internal returns (IRebasingAwareERC4626DFPkg instance) {
+        bytes memory code =
+            ArtifactCreationCode.creationCode("RebasingAwareERC4626DFPkg.sol:RebasingAwareERC4626DFPkg");
+        bytes memory args = abi.encode(pkgInit);
+        instance = IRebasingAwareERC4626DFPkg(
+            IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+                code, args, releaseSalt("RebasingAwareERC4626DFPkg")
+            )
+        );
+        vm.label(address(instance), "RebasingAwareERC4626DFPkg");
+    }
+}

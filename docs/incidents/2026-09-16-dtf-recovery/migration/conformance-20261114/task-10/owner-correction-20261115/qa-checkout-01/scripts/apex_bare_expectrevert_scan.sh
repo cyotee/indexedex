@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# APEX R2.4: reject unqualified revert expectations in the hook/FullSpread suites
+# and APEX-labelled regression files across every production family.
+# Usage: scripts/apex_bare_expectrevert_scan.sh [--check]
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+python3 - "$@" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+if sys.argv[1:] not in ([], ["--check"]):
+    raise SystemExit("usage: apex_bare_expectrevert_scan.sh [--check]")
+roots = (
+    Path("test/foundry/spec/hooks/uniswap/v4/standardExchange"),
+    Path("test/foundry/spec/vaults/standard/exchange/protocols/uniswap"),
+    Path("test/foundry/spec/vaults/standard/erc4626"),
+    Path("test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue"),
+    Path("test/foundry/spec/protocols/staking/rebasingVault"),
+    Path("test/foundry/spec/protocol/staking/rocket-pool"),
+    Path("test/foundry/spec/protocol/staking/lido"),
+    Path("test/foundry/spec/protocol/staking/etherfi"),
+    Path("test/foundry/spec/protocol/lending/aave/v3.6"),
+    Path("test/foundry/spec/protocol/lending/aave/cross-version"),
+    Path("test/foundry/spec/protocol/dexes/uniswap/v2"),
+    Path("test/foundry/spec/protocol/dexes/camelot/v2"),
+    Path("test/foundry/spec/protocol/dexes/aerodrome/v1"),
+    Path("test/foundry/spec/protocols/dexes/aerodrome/slipstream"),
+    Path("test/foundry/spec/protocol/dexes/balancer/v3"),
+    Path("test/foundry/spec/protocols/dexes/balancer/v3"),
+    Path("test/foundry/spec/vaults/detf"),
+)
+custody = (
+    Path("test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Adversarial.t.sol"),
+    Path("test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Fuzz.t.sol"),
+)
+paths = {p for root in roots for p in root.rglob("*.sol")}
+paths.update(path for path in custody if path.is_file())
+for p in Path("test/foundry/spec").rglob("*.sol"):
+    if re.search(r"(?<![A-Za-z0-9])APEX(?:\b|[_0-9])", p.read_text(), re.IGNORECASE):
+        paths.add(p)
+# Remove comments and literals without shifting source line numbers.
+noncode = re.compile(r'//[^\n]*|/\*[\s\S]*?\*/|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
+bare = re.compile(r"\bvm\s*\.\s*expectRevert\s*\(\s*\)")
+sites = []
+for p in sorted(paths):
+    source = p.read_text()
+    code = noncode.sub(
+        lambda m: re.sub(r"[^\n]", "x" if m.group()[0] in "\"'" else " ", m.group()), source
+    )
+    for m in bare.finditer(code):
+        line = code.count("\n", 0, m.start()) + 1
+        sites.append(f"{p}:{line}: {source.splitlines()[line - 1].strip()}")
+output = Path("docs/audits/apex-2026-09-17-evidence/bare-expectrevert.txt")
+output.parent.mkdir(parents=True, exist_ok=True)
+output.write_text("".join(f"{site}\n" for site in sites))
+if sites:
+    print("\n".join(sites))
+print(f"APEX R2.4: {len(sites)} bare expectations in {len(paths)} files")
+if "--check" in sys.argv and sites:
+    raise SystemExit(1)
+PY

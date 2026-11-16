@@ -84,7 +84,7 @@ abstract contract MigrationLegacyHandler is Test, IERC721Receiver {
         baseBacking = IERC20(address(m_)).balanceOf(address(receipt));
         baseBondGons = receipt.gonsOf(address(bonds));
         k = receipt.stakingState().gonsPerUnit;
-        frozen = keccak256(abi.encode(m_.migrationSnapshot()));
+        frozen = keccak256(abi.encode(m_.migrationWeightedPricing()));
         // The base donates exactly 1 DTF before genesis, without selecting it for
         // bootstrap. All other initial DTF is the paid reserve's spendable residual,
         // not recovery inventory or an unsolicited/protected donation.
@@ -279,7 +279,7 @@ abstract contract MigrationLegacyHandler is Test, IERC721Receiver {
         assertEq(IERC20(address(parent)).balanceOf(address(receipt)), baseBacking + issued);
         assertEq(receipt.stakingState().gonsPerUnit, k);
         assertEq(receipt.gonsOf(address(bonds)), baseBondGons + newGons);
-        assertEq(keccak256(abi.encode(parent.migrationSnapshot())), frozen);
+        assertEq(keccak256(abi.encode(parent.migrationWeightedPricing())), frozen);
         for (uint256 i_; i_ < funded.length; ++i_) {
             Funded memory f_ = funded[i_];
             if (f_.retired) {

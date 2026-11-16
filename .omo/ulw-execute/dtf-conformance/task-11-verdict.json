@@ -1,0 +1,165 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 11,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-11-done.json",
+  "claim_binding": {
+    "bytes": 11316,
+    "sha256": "1145910001463fce554ed877b6fd42f1e1b4986b74336eed14c8850b613c3d49",
+    "size_changed": false,
+    "subsequent_complete_read_unchanged": true
+  },
+  "summary": "Test counts, all 51 measured operation rows, 299 retained signed records, and four construction receipts are supported. Confirmation fails because complete gas-negative witnesses are outside the command-bearing raw log, and historical gas-policy/header evidence lacks the required raw command provenance. No product defect is established.",
+  "findings": [
+    {
+      "id": "H1",
+      "classification": "harness",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-signed-final/raw.log:57",
+      "cause_location": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts:236-242",
+      "observation": "The accepting log has exact argv and exit 0 but prints only boundary, failedHash, and savedNonce. It omits the underfunded signed limit, failed receipt/status, rollback state hashes, and oversized saved-intent gas and validation counters.",
+      "corroboration": "gas-negatives.json contains a status-0 receipt, empty logs, matching before/after hashes, and a rejected 32000001-gas saved intent with unchanged nonce and zero validation signing/sends. Anvil logs corroborate the failed transaction but lack exact command and exit evidence.",
+      "raw_log_census": {
+        "logs_read": 30,
+        "rollback_hash_occurrences": 0,
+        "oversized_decimal_gas_occurrences": 0,
+        "underfunded_raw_signed_bytes_occurrences": 0
+      },
+      "requested_change": "Preserve original evidence and bind complete negative witnesses to exact command and exit evidence using provenance-backed supplemental records or a separately authorized capture. Do not invent missing stdout."
+    },
+    {
+      "id": "H2",
+      "classification": "harness",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/implementation/chain-gas-limits.log:1-18",
+      "related_location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/batch-limits.md:3-9",
+      "observation": "The cited historical policy log records the pin, numeric outputs and labeled exit-0 statuses, but no command, method signature or called address. The header gas limit 0x4000000000000 exists in the bound diagnosis JSON but not in any task-11 raw log.",
+      "corroboration": "Both the historical raw-log hash and diagnosis JSON hash match their recorded bindings. These verify saved bytes, not missing originating command evidence.",
+      "requested_change": "Recover and bind original command-bearing policy/header evidence, or obtain a separately authorized capture at the same historical pin. Keep local permissive settings distinct from target policy."
+    }
+  ],
+  "checks": {
+    "forge_artifacts_gas_log": {
+      "result": "pass",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-forge-2/raw.log",
+      "argv_before_helper_output": true,
+      "solar_commands_present": true,
+      "exit_code": 0,
+      "individually_counted_passes": 14,
+      "summary_passes": 14,
+      "failed": 0,
+      "skipped": 0,
+      "references": ["1-3", "3859-3878", "3925-3927"]
+    },
+    "signed_envelopes": {
+      "result": "pass-with-branch-qualification",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-signed-final/raw.log",
+      "exact_bun_argv_present": true,
+      "exit_code": 0,
+      "raw_operation_records": 46,
+      "raw_recovery_records": 5,
+      "total_samples": 51,
+      "countable_signed_json_records": 299,
+      "distinct_transaction_hashes": 298,
+      "rlp_decoded_gas_limit": "32000000",
+      "rlp_decoded_chain_id": "4663",
+      "signed_record_validation_issues": 0,
+      "signature_recovery_or_transaction_hash_recomputation_performed": false,
+      "four_construction_receipts_in_raw_log": true,
+      "distinct_parents": 2,
+      "distinct_calldata_owners": 2,
+      "construction_gas_used": ["19746754", "29860062", "19595874", "29298754"],
+      "qualification": "The 299 JSON entries contain signed bytes and receipts, not only an aggregate claim. Recovery snapshot branches include one repeated hash and do not constitute 299 distinct surviving final-chain transactions."
+    },
+    "gas_negatives": {
+      "result": "needs-fix",
+      "boundary_raw_log_pass": true,
+      "selected": 64,
+      "simulation_gas": "32000000",
+      "signing_calls": 0,
+      "sending_calls": 0,
+      "nonce_before": "0x87e",
+      "nonce_after": "0x87e",
+      "underfunded_receipt_and_rollback_corroborated_in_json": true,
+      "saved_intent_rejection_corroborated_in_json": true,
+      "complete_negative_details_in_command_bearing_raw_log": false,
+      "finding": "H1"
+    },
+    "batch_limits": {
+      "result": "table-pass-policy-needs-fix",
+      "rows_compared": 51,
+      "raw_row_mismatches": 0,
+      "all_sample_estimates_and_actual_gas_within_ceiling": true,
+      "all_sample_three_halves_estimate_envelopes_fit": true,
+      "raw_historical_policy_command_present": false,
+      "header_limit_in_task_11_raw_log": false,
+      "finding": "H2"
+    },
+    "other_pass_counts": {
+      "result": "pass",
+      "operator_tests": {
+        "raw_log": "attempt-execution-1/raw.log",
+        "passes": 11,
+        "exit_code": 0,
+        "exact_argv_present": true
+      },
+      "recovery_fork_tests": {
+        "raw_log": "attempt-recovery-fork-1/raw.log",
+        "passes": 1,
+        "exit_code": 0,
+        "exact_argv_present": true
+      },
+      "strict_types": {
+        "raw_log": "attempt-types-final/raw.log",
+        "exit_code": 0,
+        "exact_argv_present": true
+      }
+    },
+    "scope_and_preservation": {
+      "result": "pass-with-local-provenance-limit",
+      "initial_baseline_sources": 217,
+      "unchanged_baseline_sources": 214,
+      "changed_existing_sources": [
+        "scripts/recovery/dtf-migration/execution.test.ts",
+        "scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasResumedQA.s.sol",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+      ],
+      "current_sources_changed_since_accepting_signed_run": [],
+      "witness_pin_retune_found": false,
+      "public_send_found_in_inspected_path": false,
+      "task_10_lifecycle_complete": false,
+      "invented_task_10_lifecycle_found": false,
+      "qualification": "Saved source manifests and a local loopback execution path were inspected; no fresh RPC or independent network audit was performed."
+    }
+  },
+  "adversarial": {
+    "misleading_success_output": "Retained synthetic success text has exit 7 and is rejected. Aggregate audit success does not close H1 or H2.",
+    "stale_state": "Accepting signed-run source hashes match current bytes; the untrusted claim was fully reread unchanged. Saved authenticated-reference rejection was inspected without rerun.",
+    "dirty_worktree": "Read-only prefixed Git status exited 0. Baseline comparisons show only the three permitted existing source changes; no unrelated content was modified by this verifier.",
+    "generated_or_cached_artifacts": "Saved copied-ABI mutation rejection, Solar compilation output, generation command/exit, and current source fingerprints were inspected. No fresh rebuild or complete runtime-byte proof is claimed.",
+    "hung_flaky_cancel_interruptions": "Not applicable: this verifier reran no execution. The producer's synthetic hung-child probe is historical evidence only."
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/verification/report.md",
+  "report_binding": {
+    "bytes": 12871,
+    "sha256": "d7612428575e4c5ba506ca5758b549634540f4f4b29b7482ef49289938680c10"
+  },
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/verification/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-11-verdict.json"
+  ],
+  "limits": [
+    "No Forge, bun CLI, RPC, tests, installs, commits, public transactions or delegation were performed.",
+    "Product files and task-11-done.json were not edited.",
+    "Historical snapshots and source manifests were checked locally, not reauthenticated against a network.",
+    "Task 10 remains incomplete; no mixed-book, NFT-three or missing lifecycle rehearsal is certified.",
+    "The verdict is the final written artifact; no implementation or public action is authorized."
+  ]
+}

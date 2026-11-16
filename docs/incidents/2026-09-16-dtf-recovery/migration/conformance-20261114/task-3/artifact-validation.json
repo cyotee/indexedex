@@ -1,0 +1,915 @@
+{
+  "version": 1,
+  "method": "In-kernel JSON parse, typed field/reference consistency and exact raw-byte binding; no shell process exit code applies.",
+  "result": "pass",
+  "jsonFiles": [
+    {
+      "path": "integrity-inputs-and-results.json",
+      "parse": "pass"
+    },
+    {
+      "path": "runtime-hash-checks.json",
+      "parse": "pass"
+    },
+    {
+      "path": "initial-blocked-claim.json",
+      "parse": "pass"
+    },
+    {
+      "path": "manual-qa.json",
+      "parse": "pass"
+    },
+    {
+      "path": "source-observations.json",
+      "parse": "pass"
+    },
+    {
+      "path": "commands.json",
+      "parse": "pass"
+    },
+    {
+      "path": "source-preservation.json",
+      "parse": "pass"
+    },
+    {
+      "path": "adversarial-results.json",
+      "parse": "pass"
+    },
+    {
+      "path": "baseline-source-manifest.json",
+      "parse": "pass"
+    },
+    {
+      "path": "recovery-authority.json",
+      "parse": "pass"
+    }
+  ],
+  "requiredSourceRows": 14,
+  "reservedIds": 3,
+  "routes": 118,
+  "routeChecks": [
+    {
+      "category": "weighted-nft",
+      "selector": "0x6352211e",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x46f96023",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0xae648e90",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x095ea7b3",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x081812fc",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0xa22cb465",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0xe985e9c5",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x23b872dd",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x42842e0e",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/8/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0xf400c743",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/9/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x6c7b69cb",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/10/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x084c59ae",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/11/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x8a91f8bc",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/12/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-nft",
+      "selector": "0x5fcbd285",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "abiPointer": "/sources/0/routes/13/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0xeb02c301",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0x0f3767df",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0x42842e0e",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0x23b872dd",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0x6352211e",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0xe985e9c5",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0x081812fc",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0xa22cb465",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0x095ea7b3",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/8/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0x6c7b69cb",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "abiPointer": "/sources/1/routes/9/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-nft",
+      "selector": "0xb63a9ea9",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/1/routes/10/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-liquid",
+      "selector": "0x313ce567",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "abiPointer": "/sources/2/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-liquid",
+      "selector": "0x70a08231",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "abiPointer": "/sources/2/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-liquid",
+      "selector": "0x095ea7b3",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "abiPointer": "/sources/2/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-liquid",
+      "selector": "0x23b872dd",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "abiPointer": "/sources/2/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-liquid",
+      "selector": "0x89d61912",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "abiPointer": "/sources/2/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-liquid",
+      "selector": "0xd02d3063",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "abiPointer": "/sources/2/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0xd02d3063",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/3/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0xcaaf4702",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/3/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0xd7cb29d0",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/3/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0x313ce567",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/3/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0x70a08231",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/3/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0x095ea7b3",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/3/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0x23b872dd",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/3/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-liquid",
+      "selector": "0xd02d3063",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/3/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0x313ce567",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0x8a91f8bc",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0x79a67521",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0xe082f1d4",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0x70a08231",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0x095ea7b3",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0x23b872dd",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0xd02d3063",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "abiPointer": "/sources/4/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-receipt",
+      "selector": "0x0910d5ea",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "abiPointer": "/sources/4/routes/8/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x70a08231",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0xa9059cbb",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0xdd62ed3e",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x095ea7b3",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x23b872dd",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x313ce567",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0xf5eb42dc",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x3a98ef39",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x540385a3",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/8/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x8a91f8bc",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/9/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0xcf77880f",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/10/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0xc6e6f592",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/11/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0x2fbc6fea",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "abiPointer": "/sources/5/routes/12/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0xbfe55606",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/5/routes/13/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-receipt",
+      "selector": "0xb63a9ea9",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "abiPointer": "/sources/5/routes/14/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x313ce567",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x76d5de85",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x3ba0b9a9",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x071bc3c9",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x70a08231",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x095ea7b3",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x23b872dd",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0xcbe52ae3",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-sy",
+      "selector": "0x769f8e5d",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "abiPointer": "/sources/6/routes/8/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x38d52e0f",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x313ce567",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x18160ddd",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x01e1d114",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x4cdad506",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0xba087652",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x70a08231",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x23b872dd",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "claim-vault",
+      "selector": "0x095ea7b3",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "abiPointer": "/sources/7/routes/8/abi",
+      "pass": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "selector": "0x70a08231",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "abiPointer": "/sources/8/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "selector": "0xa9059cbb",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "abiPointer": "/sources/8/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "selector": "0x23b872dd",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "abiPointer": "/sources/8/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "selector": "0x095ea7b3",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "abiPointer": "/sources/8/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "selector": "0xba087652",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "abiPointer": "/sources/8/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "selector": "0x70a08231",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "abiPointer": "/sources/9/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "selector": "0xa9059cbb",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "abiPointer": "/sources/9/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "selector": "0x23b872dd",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "abiPointer": "/sources/9/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "selector": "0x095ea7b3",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "abiPointer": "/sources/9/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "selector": "0xd02d3063",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "abiPointer": "/sources/9/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-se",
+      "selector": "0x70a08231",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "abiPointer": "/sources/10/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-se",
+      "selector": "0xa9059cbb",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "abiPointer": "/sources/10/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-se",
+      "selector": "0x23b872dd",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "abiPointer": "/sources/10/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-se",
+      "selector": "0x095ea7b3",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "abiPointer": "/sources/10/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-se",
+      "selector": "0xd02d3063",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "abiPointer": "/sources/10/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-lp",
+      "selector": "0x70a08231",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "abiPointer": "/sources/11/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-lp",
+      "selector": "0xa9059cbb",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "abiPointer": "/sources/11/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-lp",
+      "selector": "0x23b872dd",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "abiPointer": "/sources/11/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-lp",
+      "selector": "0x095ea7b3",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "abiPointer": "/sources/11/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "weighted-lp",
+      "selector": "0xd02d3063",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "abiPointer": "/sources/11/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0x70a08231",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0xa9059cbb",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0x23b872dd",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0x095ea7b3",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0xd02d3063",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0xff9a34c0",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0x84eb9bce",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "earlier-lp",
+      "selector": "0x50a7e68e",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "abiPointer": "/sources/12/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0x70a08231",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/0/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0x18160ddd",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/1/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0xab518e6e",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/2/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0xb1c9fe6e",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/3/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0xcc447fba",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/4/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0xa224dcb7",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/5/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0xbcb8e5a5",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/6/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0x095ea7b3",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/7/abi",
+      "pass": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "selector": "0x23b872dd",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "abiPointer": "/sources/13/routes/8/abi",
+      "pass": true
+    }
+  ],
+  "allRuntimeChecksPassed": true,
+  "rawArchivesPreserved": true,
+  "baselineSourceTestBackup": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-MigrationLegacySources.t.sol.txt",
+    "bytes": 13761,
+    "sha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac",
+    "byteIdenticalToOriginal": true
+  },
+  "gateBindings": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/ready.json",
+      "bytes": 1853,
+      "sha256": "23f9602d0e6c746218334c47a2662b5f494f3012358b50efcb18267fee7811f3"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/crane-ready.json",
+      "bytes": 5841,
+      "sha256": "f70b0f21c468af0a3d930e35243a0d3a48923512c56f920eab4a1cdceb70d349"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-2-verdict.json",
+      "bytes": 16958,
+      "sha256": "7d6ad2c16462bab3ed03be1cdb79a69a9f5b35fd85de051380de4cfe3433e046"
+    }
+  ],
+  "verifiedTask2Claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-2-done.json",
+    "bytes": 82490,
+    "sha256": "46590145e455f3befb2ad026170a4a79a0b42aaa5d5418e3b9567182572cc50a"
+  },
+  "diagnostics": {
+    "gitDiffCheck": "worktree-final.log: DIFF_CHECK_EXIT 0",
+    "productionDiff": "worktree-final.log: PRODUCTION_DIFF_EXIT 0, no production diff output",
+    "sourceCompiler": "Actual final exact source suite passed 13/13 with Solar; source warnings remain logged.",
+    "biome": "Configured JSON LSP unavailable; no install attempted."
+  },
+  "scope": "This is deliverable integrity/manual QA, not a synthetic product regression test or a new recovery census."
+}

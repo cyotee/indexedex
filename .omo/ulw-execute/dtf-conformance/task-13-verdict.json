@@ -1,0 +1,142 @@
+{
+  "task": 13,
+  "date": "2026-11-15",
+  "verdict": "needs-fix",
+  "failure_class": "product",
+  "confirmed": false,
+  "task_completed": false,
+  "verification_completed": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/verification/report.md",
+    "bytes": 12723,
+    "sha256": "7557626a3066d680ce8348c9c21ba26597f692a9f5e792cef7133d5d8c69c78e"
+  },
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-13-done.json",
+    "bytes": 8737,
+    "sha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd",
+    "status": "incomplete",
+    "completed": false,
+    "size_change_observed": false,
+    "modified": false,
+    "unmet_items_match": "The operator failure and missing task 10/task 12 lifecycle match the records; the claim miscopies the expected witness pin and omits strict raw-log provenance defects."
+  },
+  "checks": {
+    "build": {
+      "observed_argv": ["forge", "build", "--use", "solar"],
+      "exit_code": 0,
+      "compiled_files": 3237,
+      "raw_log": "hermetic-r2/03.log",
+      "raw_sha256": "69a0397fb59237bef3756c1d3ccadae93eaafc1a09b05fe36d5a2754a9e99145",
+      "qualification": "Exact argv and exit are in the command sidecar and recorder provenance, not together in the numbered raw log."
+    },
+    "hermetic": {
+      "observed_argv": ["forge", "test", "--use", "solar", "-vv", "--no-match-path", "**/fork/**", "--no-match-contract", "Fork"],
+      "exit_code": 0,
+      "passed": 28641,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 2691,
+      "raw_log": "hermetic-r2/04.log",
+      "raw_summary_line": 64138,
+      "raw_sha256": "9ee62a42b7fcf2fb1a64bf7d04753238c6710f378f4b077faadb07e5efca5e79",
+      "independently_aggregated_raw_cases": true,
+      "ordinary_detf": {"suites": 559, "passed": 9560, "failed": 0, "skipped": 0},
+      "ordinary_weighted_named_subset": {"suites": 103, "passed": 2272, "failed": 0, "skipped": 0},
+      "ordinary_common": {"suites": 30, "passed": 372, "failed": 0, "skipped": 0},
+      "both_required_paths_selected": true,
+      "qualification": "Exact argv and exit are in the command sidecar and recorder provenance; the full raw log supplies actual cases and totals."
+    },
+    "fork": {
+      "observed_argv": ["python3", "scripts/forge-artifacts.py", "test", "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol", "--test-root", "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration", "--", "-j", "1", "--compute-units-per-second", "10", "--rpc-timeout", "120", "-vv"],
+      "exit_code": 0,
+      "passed": 183,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 30,
+      "current_k_files": 26,
+      "missing_k_files": 0,
+      "raw_log": "fork/03.log",
+      "raw_summary_line": 5677,
+      "raw_sha256": "e0862260e4e33003e9e6cb430ca93e4c95475e222b171144f54fac18a23d995d",
+      "qualification": "Raw log prints inner Forge invocations. Exact outer artifact-helper argv and exit are in the sidecar and recorder provenance."
+    },
+    "operator_typecheck": {
+      "observed_argv": ["/bin/zsh", "-c", "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts"],
+      "exit_code": 0,
+      "evidence": "operator-r2/03.log.command.json",
+      "qualification": "Shell command captured; expanded child argv and an invocation header in raw stdout are absent. Case counts do not apply to typechecking."
+    },
+    "operator": {
+      "observed_argv": ["/bin/zsh", "-c", "bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts"],
+      "exit_code": 1,
+      "passed": 240,
+      "failed": 1,
+      "total": 241,
+      "files": 21,
+      "recorder_completed": false,
+      "raw_log": "operator-r2/04.log",
+      "raw_sha256": "ea428eaeadc993624ed88ca301bd4beb1a5871ef207ddbdcd0f330c2aba33861",
+      "failure": "fixed witness pin matches the concrete compiled router used by the rehearsal",
+      "location": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:92",
+      "expected_pin": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actual_compiled_hash": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "pin_retuned": false,
+      "preexisting_failure_independently_established": true,
+      "qualification": "Exact shell invocation and code 1 are in the sidecar; raw log contains the assertion and totals. No passing subset is confirmation."
+    },
+    "helper_typecheck": {
+      "reported_command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "reported_exit_code": 0,
+      "raw_stdout_bytes": 0,
+      "exact_argv_in_raw_log": false,
+      "qualification": "Invocation is only in invocation-inventory.json; helper-typecheck.exit.log contains HELPER_TYPECHECK_EXIT=0 without argv. Strict raw-log acceptance is not met."
+    }
+  },
+  "additional_findings": [
+    {
+      "failure_class": "harness",
+      "issue": "Missing complete task 10 rehearsal and dependent task 12 real current-chain lifecycle proofs.",
+      "qualification": "The saved blocker concerns binding eligible donor evidence through the authority bundle, not proof that no funded DTF holder exists."
+    },
+    {
+      "failure_class": "harness",
+      "issue": "Strict raw-log argv/exit evidence is incomplete, especially the separately reported helper typecheck."
+    },
+    {
+      "failure_class": "harness",
+      "issue": "Claim expectedPin omits f653 from the actual expected hash.",
+      "claim_value": "0x4ae06bcb278766df6529bcd60e05453fee6c8536b9f18d2a4d0dac8fd899"
+    }
+  ],
+  "other_repair_assessment": {
+    "demonstrated_other_repair_can_make_operator_green": false,
+    "reason": "With current bytecode and the unchanged fixed pin, the direct hash equality fails independently of task 10. No unrelated repair or rehearsal can change that result.",
+    "limit": "A genuinely reproducible approved-bytecode build matching the existing pin is a possible investigation direction, but no such recipe is established. Artifact forgery, test weakening and pin retuning are not repairs. A green equality test still would not supply absent rehearsal receipts."
+  },
+  "adversarial": {
+    "misleading_success_output": "Raw case blocks were independently aggregated; the failed operator exit and missing lifecycle prevent confirmation. Success markers and summary JSON alone were not accepted.",
+    "stale_state": "16405 regular-file hashes and four symlink target strings match source-final; all 16409 before/final entries agree. All 63 indexed evidence hashes match. Claim remained 8737 bytes.",
+    "dirty_worktree": "Extensive existing tracked and untracked changes observed through read-only Git. No staging, cleanup or revert. Content manifests bind the checked tree rather than HEAD.",
+    "generated_or_cached_artifacts": "Current witness artifact and metadata match the recorded audit and current Solidity source; independently computed deployed hash reproduces the failure. No basis established for dismissing it as stale.",
+    "hung_flaky_cancel_interruptions": "Not applicable: no commands under verification were rerun."
+  },
+  "restrictions": {
+    "implementation_performed": false,
+    "delegated": false,
+    "forge_rerun": false,
+    "bun_cli_rerun": false,
+    "recorder_rerun": false,
+    "rpc_performed": false,
+    "installs_performed": false,
+    "commits_created": false,
+    "public_transactions_sent": false,
+    "task10_lifecycle_invented": false,
+    "tests_weakened_or_skipped_by_verifier": false,
+    "product_files_edited": false,
+    "claim_edited": false,
+    "verdict_written_last": true
+  }
+}

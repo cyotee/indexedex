@@ -59,7 +59,7 @@ abstract contract MigrationWeightedReceiptForkBase is MigrationRecoveryDonationF
 
     function _configureWs(address wallet_, uint256 q_) internal returns (uint256 c_) {
         vm.prank(migrationOwner);
-        allocation.configureWeightedReceiptEntitlements(_wsInputs(wallet_, q_));
+        allocation.configureWeightedReceiptEntitlements(_wsInputs(wallet_, q_), pricingId);
         return migration.weightedReceiptEntitlement(WS_ORIGIN).credit;
     }
 

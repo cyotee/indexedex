@@ -1,0 +1,38 @@
+
+scripts/recovery/dtf-migration/receipt.test.ts:
+(pass) complete wire collection authenticates and associates each known reference [46.46ms]
+(pass) collection stops before named requests on wrong-chain [11.92ms]
+(pass) collection stops before named requests on malformed-chain [10.35ms]
+(pass) wrong canonical anchor blocks every named collection [10.43ms]
+(pass) partial null failure stays explicit while unaffected transaction completes [19.69ms]
+(pass) partial missing failure stays explicit while unaffected transaction completes [18.43ms]
+(pass) partial rpc error failure stays explicit while unaffected transaction completes [15.90ms]
+(pass) partial wrong id failure stays explicit while unaffected transaction completes [15.11ms]
+(pass) partial wrong version failure stays explicit while unaffected transaction completes [16.07ms]
+(pass) partial malformed quantity failure stays explicit while unaffected transaction completes [16.04ms]
+(pass) contradictory association identifies transaction-hash [0.06ms]
+(pass) contradictory association identifies block-hash [0.05ms]
+(pass) contradictory association identifies block-number [0.01ms]
+(pass) contradictory association identifies transaction-index
+(pass) contradictory association identifies receipt-endpoints
+(pass) contradictory association identifies block-membership
+(pass) contradictory association identifies canonical-header
+(pass) contradictory association identifies after-anchor
+(pass) contradictory association identifies transaction-reverted
+(pass) every log identity and strict ordering are verified [0.15ms]
+(pass) distinct references to one transaction deduplicate requests without losing rows [4.86ms]
+(pass) credential-bearing wire errors retain sanitized bytes and never claim raw capture [3.44ms]
+(pass) fresh exclusive publication refuses an existing directory before network requests [5.33ms]
+(pass) CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs [0.91ms]
+
+scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:
+(pass) source purchase basis is independently required in addition to the mint [5.07ms]
+(pass) routed input stays separate and cannot be attributed as a direct contribution [5.07ms]
+(pass) a shared transaction never assigns its entire direct inputs to each original [4.61ms]
+(pass) wrong mint recipient is a conflict even with matching direct payment [3.90ms]
+(pass) indirect calls retain calldata and never receive direct claim decoding [3.89ms]
+(pass) receipt archive format cannot enter preparation, validation or execution loaders [0.36ms]
+
+ 30 pass
+ 0 fail
+Ran 30 tests across 2 files. [387.00ms]

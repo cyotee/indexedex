@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-11",
+  "baselineRun": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794375924619",
+  "baselineCliExit": 0,
+  "coverageGap": {
+    "status": "failed coverage assertion before correction",
+    "selectedRecipients": 2,
+    "unsettledAfterFirstMinedIssuance": 1,
+    "error": "reordering needs at least two unsettled issuance rows",
+    "reason": "Reversing one unsettled row is the identity permutation, so the first run did not prove reordered remaining issuance."
+  },
+  "sourceBefore": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 4678,
+      "sha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 5727,
+      "sha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 3945,
+      "sha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/quotes.ts",
+      "bytes": 6780,
+      "sha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-domain.ts",
+      "bytes": 6109,
+      "sha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "bytes": 5615,
+      "sha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/payloads.ts",
+      "bytes": 7199,
+      "sha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-plan.ts",
+      "bytes": 4601,
+      "sha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 7497,
+      "sha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "bytes": 7872,
+      "sha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-schema.ts",
+      "bytes": 4758,
+      "sha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "bytes": 8426,
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution.test.ts",
+      "bytes": 4509,
+      "sha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "bytes": 2857,
+      "sha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/preparation.test.ts",
+      "bytes": 11077,
+      "sha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearse.ts",
+      "bytes": 15292,
+      "sha256": "a1b7b7826323cd002ec2e1e39b6aa46af5e35e0fc9aeaa0e112f8291bf72d0ac"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution.ts",
+      "bytes": 11179,
+      "sha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/journal.ts",
+      "bytes": 4792,
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 10759,
+      "sha256": "d388935f43619caa17d924e549230acf026308ace2bf18a6b712a88f6c2d54c0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "bytes": 4243,
+      "sha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-state.ts",
+      "bytes": 12385,
+      "sha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "bytes": 18115,
+      "sha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "bytes": 7418,
+      "sha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "bytes": 3706,
+      "sha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c"
+    }
+  ],
+  "checks": {
+    "monitor": "mon_VQH73RJ3H4HFHD7E",
+    "session": "bash_5",
+    "exitCode": 0,
+    "command": "./node_modules/.bin/tsc --noEmit --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --module NodeNext --moduleResolution NodeNext --target ES2022 --types node scripts/recovery/dtf-migration/*.ts && bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts",
+    "bun": "1.4.2 (50a8a8387)",
+    "passed": 50,
+    "failed": 0,
+    "newUnitTests": 0,
+    "regressionOwner": "actual pinned rehearse CLI; no RPC/receipt mocks",
+    "lsp": {
+      "files": [
+        "rehearse.ts",
+        "rehearsal-data.ts",
+        "rehearsal-proof.ts"
+      ],
+      "status": "No diagnostics found",
+      "severity": "error"
+    }
+  }
+}

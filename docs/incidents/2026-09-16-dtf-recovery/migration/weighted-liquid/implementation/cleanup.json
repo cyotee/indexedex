@@ -1,0 +1,16 @@
+{
+  "version": "weighted-liquid-cleanup-v1",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+  "ownedNodesStarted": 0,
+  "ownedImpersonationsStarted": 0,
+  "port18563Listener": "absent (lsof -nP -iTCP:18563 -sTCP:LISTEN returned no rows)",
+  "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints",
+  "checkpointState": "absent",
+  "buildAndTestProcesses": "all completed; monitor exit notifications received",
+  "warmArtifacts": "retained in assigned worktree, not copied to main because runtime acceptance is blocked",
+  "dependencySymlink": "preserved, not edited",
+  "gitDiffCheckExit": 0,
+  "commits": 0,
+  "merges": 0,
+  "publicTransactions": 0
+}

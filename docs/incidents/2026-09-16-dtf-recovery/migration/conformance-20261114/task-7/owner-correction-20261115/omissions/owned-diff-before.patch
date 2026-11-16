@@ -1,0 +1,142 @@
+diff --git a/scripts/recovery/dtf-migration/claim-vault.test.ts b/scripts/recovery/dtf-migration/claim-vault.test.ts
+index 0900d108..04b34ddb 100644
+--- a/scripts/recovery/dtf-migration/claim-vault.test.ts
++++ b/scripts/recovery/dtf-migration/claim-vault.test.ts
+@@ -67,14 +67,14 @@ test("direct claim-vault complete configuration hash agrees with Solidity and ty
+     assert.ok(parameter?.arrayChildren);
+     assert.ok(stageParameter);
+     assert.equal(parameter.format("full"), stageParameter.format("full"));
+-    const encoded = allocation.encodeFunctionData("configureClaimVaultEntitlements", [[original]]);
++    const encoded = allocation.encodeFunctionData("configureClaimVaultEntitlements", [[original], f.input.domain.bookId]);
+     const decoded = allocation.decodeFunctionData("configureClaimVaultEntitlements", encoded)[0][0];
+     assert.equal(decoded.originalWallet.toLowerCase(), original.originalWallet);
+     assert.equal(decoded.originalUnits, 10n ** 19n);
+     assert.equal(decoded.originalId, original.originalId);
+     assert.equal(configurationId(f.input.domain, original), keccak256(AbiCoder.defaultAbiCoder().encode(
+       ["uint256", "address", "bytes32", parameter.arrayChildren],
+-      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.snapshotId, original])));
++      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.bookId, original])));
+     for (const correction of [{ originalWallet: a(99) }, { originalUnits: "4" }, { originalEth: "101" }, { evidenceId: h(900) }]) {
+       assert.notEqual(configurationId(f.input.domain, { ...original, ...correction }), configurationId(f.input.domain, original));
+     }
+diff --git a/scripts/recovery/dtf-migration/dtf-custody-se.test.ts b/scripts/recovery/dtf-migration/dtf-custody-se.test.ts
+index 29d53e57..f51d2e18 100644
+--- a/scripts/recovery/dtf-migration/dtf-custody-se.test.ts
++++ b/scripts/recovery/dtf-migration/dtf-custody-se.test.ts
+@@ -67,14 +67,14 @@ test("W-SD complete configuration hash agrees with Solidity and typed stage ABI
+     assert.ok(parameter?.arrayChildren);
+     assert.ok(stageParameter);
+     assert.equal(parameter.format("full"), stageParameter.format("full"));
+-    const encoded = allocation.encodeFunctionData("configureDtfCustodySeEntitlements", [[original]]);
++    const encoded = allocation.encodeFunctionData("configureDtfCustodySeEntitlements", [[original], f.input.domain.bookId]);
+     const decoded = allocation.decodeFunctionData("configureDtfCustodySeEntitlements", encoded)[0][0];
+     assert.equal(decoded.originalWallet.toLowerCase(), original.originalWallet);
+     assert.equal(decoded.originalUnits, 10n ** 28n);
+     assert.equal(decoded.originalId, original.originalId);
+     assert.equal(configurationId(f.input.domain, original), keccak256(AbiCoder.defaultAbiCoder().encode(
+       ["uint256", "address", "bytes32", parameter.arrayChildren],
+-      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.snapshotId, original])));
++      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.bookId, original])));
+     for (const correction of [{ originalWallet: a(99) }, { originalUnits: "4" }, { originalEth: "101" }, { evidenceId: h(900) }]) {
+       assert.notEqual(configurationId(f.input.domain, { ...original, ...correction }), configurationId(f.input.domain, original));
+     }
+diff --git a/scripts/recovery/dtf-migration/weighted-liquid.test.ts b/scripts/recovery/dtf-migration/weighted-liquid.test.ts
+index f422f377..ddc14339 100644
+--- a/scripts/recovery/dtf-migration/weighted-liquid.test.ts
++++ b/scripts/recovery/dtf-migration/weighted-liquid.test.ts
+@@ -67,14 +67,14 @@ test("W-L complete configuration hash agrees with Solidity and typed stage ABI i
+     assert.ok(parameter?.arrayChildren);
+     assert.ok(stageParameter);
+     assert.equal(parameter.format("full"), stageParameter.format("full"));
+-    const encoded = allocation.encodeFunctionData("configureWeightedLiquidEntitlements", [[original]]);
++    const encoded = allocation.encodeFunctionData("configureWeightedLiquidEntitlements", [[original], f.input.domain.bookId]);
+     const decoded = allocation.decodeFunctionData("configureWeightedLiquidEntitlements", encoded)[0][0];
+     assert.equal(decoded.originalWallet.toLowerCase(), original.originalWallet);
+     assert.equal(decoded.originalUnits, 3n);
+     assert.equal(decoded.originalId, original.originalId);
+     assert.equal(configurationId(f.input.domain, original), keccak256(AbiCoder.defaultAbiCoder().encode(
+       ["uint256", "address", "bytes32", parameter.arrayChildren],
+-      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.snapshotId, original])));
++      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.bookId, original])));
+     for (const correction of [{ originalWallet: a(99) }, { originalUnits: "4" }, { originalEth: "101" }, { evidenceId: h(900) }]) {
+       assert.notEqual(configurationId(f.input.domain, { ...original, ...correction }), configurationId(f.input.domain, original));
+     }
+diff --git a/scripts/recovery/dtf-migration/weighted-sy.test.ts b/scripts/recovery/dtf-migration/weighted-sy.test.ts
+index 5f61ccca..2ac007ab 100644
+--- a/scripts/recovery/dtf-migration/weighted-sy.test.ts
++++ b/scripts/recovery/dtf-migration/weighted-sy.test.ts
+@@ -13,12 +13,12 @@ import { claimedSyEvidenceId } from "./claimed-sy.js";
+ import { canonical, fingerprint, validateProvenance } from "./provenance.js";
+ 
+ function completeCertificate(original: { readonly originalId: string; readonly originalWallet: string;
+-  readonly originalEth: string; readonly originalDtf: string }) {
++  readonly originalEth: string; readonly originalDtf: string }, bookId: string) {
+   return claimedSyCertificate.parse({
+     kind: "complete-original-token-staking", chainId: "4663",
+     source: "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+     vault: "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0", sy: weightedSySource,
+-    snapshotCapture: { transactionHash: h(2300), blockNumber: "90", blockHash: h(90) },
++    pricingSet: { bookId, transactionHash: h(2300), blockNumber: "90", blockHash: h(90) },
+     review: { ...original, authority: "synthetic explicit review, not a historical allocation",
+       eligibleWeight: "10013", priorDeliveredCredit: "0", contributionsKnown: true,
+       eligiblePrincipalOnly: true, rewardsExcluded: true, aliasesReconciled: true,
+@@ -38,7 +38,7 @@ test("claimed SY uses every complete original component and exact measured split
+     const row = f.input.weightedSy[0];
+     assert.ok(row);
+     const { originalId, originalWallet, originalEth, originalDtf } = row.original;
+-    const certificate = completeCertificate({ originalId, originalWallet, originalEth, originalDtf });
++    const certificate = completeCertificate({ originalId, originalWallet, originalEth, originalDtf }, f.input.domain.bookId);
+     const inputFor = (c: ClaimedSyCertificate) => ({ ...f.input, weightedSy: [{
+       ...row, claimedOrigin: c,
+       original: { ...row.original, evidenceId: claimedSyEvidenceId(f.input.domain, row.original, c) },
+@@ -82,7 +82,7 @@ test("claimed SY rejects unknown delivery and missing original review rather tha
+     const row = f.input.weightedSy[0];
+     assert.ok(row);
+     const { originalId, originalWallet, originalEth, originalDtf } = row.original;
+-    const certificate = completeCertificate({ originalId, originalWallet, originalEth, originalDtf });
++    const certificate = completeCertificate({ originalId, originalWallet, originalEth, originalDtf }, f.input.domain.bookId);
+     for (const change of [{ priorDeliveredCredit: "1" }, { priorDeliveredCredit: "unknown" },
+       { contributionsKnown: false }, { rewardsExcluded: false }, { aliasesReconciled: false },
+       { competingRepresentationsExcluded: false }, { eligiblePrincipalOnly: false }]) {
+@@ -103,13 +103,13 @@ test("missing claimed-origin certificate cannot use its reviewed evidence as ord
+     const row = f.input.weightedSy[0];
+     assert.ok(row);
+     const { originalId, originalWallet, originalEth, originalDtf } = row.original;
+-    const claimedOrigin = completeCertificate({ originalId, originalWallet, originalEth, originalDtf });
++    const claimedOrigin = completeCertificate({ originalId, originalWallet, originalEth, originalDtf }, f.input.domain.bookId);
+     const original = { ...row.original, evidenceId: claimedSyEvidenceId(f.input.domain, row.original, claimedOrigin) };
+     const raw = canonical({ ...JSON.parse(await readFile(f.evidencePath, "utf8")), claimed: { original, claimedOrigin } });
+     await writeFile(f.evidencePath, raw);
+     const input = preparationInput.parse({ ...f.input,
+       sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(raw), bytes: String(Buffer.byteLength(raw)) } : s),
+-      weightedSy: [{ original, claimedOrigin, proof: { sourceId: "proof", pointer: "/claimed" } }],
++      weightedSy: [{ pricing: row.pricing, original, claimedOrigin, proof: { sourceId: "proof", pointer: "/claimed" } }],
+     });
+     await validateProvenance(input);
+     const claimed = input.weightedSy[0];
+@@ -123,7 +123,7 @@ test("missing claimed-origin certificate cannot use its reviewed evidence as ord
+       ...ordinaryFallback, proof: { ...ordinaryFallback.proof, pointer: "/originals/4" },
+       original: row.original,
+     }] }), /ordinary SY fallback forbidden/);
+-    await assert.rejects(prepareDomain(input), /RPC\/ABI acquisition failed/);
++    await assert.rejects(prepareDomain(input), { code: "PROVENANCE", reason: "AUTHENTICATION" });
+     assert.ok(f.methods.includes("eth_getTransactionReceipt"));
+   } finally { await f.close(); }
+ });
+@@ -188,14 +188,14 @@ test("W-Y complete configuration hash agrees with Solidity and typed stage ABI i
+     assert.ok(parameter?.arrayChildren);
+     assert.ok(stageParameter);
+     assert.equal(parameter.format("full"), stageParameter.format("full"));
+-    const encoded = allocation.encodeFunctionData("configureWeightedSyEntitlements", [[original]]);
++    const encoded = allocation.encodeFunctionData("configureWeightedSyEntitlements", [[original], f.input.domain.bookId]);
+     const decoded = allocation.decodeFunctionData("configureWeightedSyEntitlements", encoded)[0][0];
+     assert.equal(decoded.originalWallet.toLowerCase(), original.originalWallet);
+     assert.equal(decoded.originalUnits, 3n);
+     assert.equal(decoded.originalId, original.originalId);
+     assert.equal(configurationId(f.input.domain, original), keccak256(AbiCoder.defaultAbiCoder().encode(
+       ["uint256", "address", "bytes32", parameter.arrayChildren],
+-      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.snapshotId, original])));
++      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.bookId, original])));
+     for (const correction of [{ originalWallet: a(99) }, { originalUnits: "4" }, { originalEth: "101" }, { evidenceId: h(900) }]) {
+       assert.notEqual(configurationId(f.input.domain, { ...original, ...correction }), configurationId(f.input.domain, original));
+     }

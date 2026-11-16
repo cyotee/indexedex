@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"InvalidPositionRange","inputs":[{"name":"lower","type":"int24","internalType":"int24"},{"name":"upper","type":"int24","internalType":"int24"}]}],"id":2557}

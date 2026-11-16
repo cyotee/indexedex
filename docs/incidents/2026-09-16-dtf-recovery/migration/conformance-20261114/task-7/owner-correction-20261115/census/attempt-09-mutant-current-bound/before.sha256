@@ -1,0 +1,11 @@
+275fe916918cce72a5c262b38af0d074a50da394e8453975544ce4ef9a047698  scripts/recovery/dtf-migration/claimed-sy.ts
+9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759  scripts/recovery/dtf-migration/quotes.ts
+0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855  scripts/recovery/dtf-migration/preparation.ts
+2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca  scripts/recovery/dtf-migration/execution-domain.ts
+20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844  scripts/recovery/dtf-migration/preparation.fixture.ts
+76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9  scripts/recovery/dtf-migration/preparation.test.ts
+b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd  scripts/recovery/dtf-migration/execution.test.ts
+d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405  scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts
+1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83  scripts/recovery/dtf-migration/execution.fixture.ts
+5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5  docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts
+255da4dc46bf5f9cbc6cf6aa5362038110bde0d343d19d8d8c9ba306eccb6a60  docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts

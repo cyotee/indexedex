@@ -1,0 +1,8 @@
+{
+  "aerodromeFactory": "0x72D428a98F0C172262DFB53C46A826FCb065e0D8",
+  "aerodromeFactoryRegistry": "0xcd02bbbC98eeC2CEDeb9Adfc5fE013D53b2AdD2F",
+  "aerodromePkg": "0xf8D40A707F2f8320d78ff8442f690cE14aB63786",
+  "aerodromePoolImplementation": "0x51B02Fc3E63FAb0f398492B5ea72935CD95b013D",
+  "aerodromeRouter": "0x645E84bA3331F78F9536490E8b12F4E5b21f9115",
+  "weth": "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9"
+}

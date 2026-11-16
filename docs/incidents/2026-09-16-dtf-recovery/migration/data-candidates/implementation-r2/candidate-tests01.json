@@ -1,0 +1,14 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+  "executable": "bun",
+  "args": [
+    "test",
+    "--timeout",
+    "15000",
+    "./scripts/recovery/dtf-migration/candidates.test.ts"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/candidate-tests01.stdout",
+  "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/candidate-tests01.stderr"
+}

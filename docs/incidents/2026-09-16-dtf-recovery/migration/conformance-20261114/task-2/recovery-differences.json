@@ -1,0 +1,233 @@
+[
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+    "path": "source-manifest.json",
+    "difference": "semantic",
+    "sha256": "9ed551c594bc5c9c5caddadc6f44400ec7d97c2d2010fbd127e039895256912e",
+    "destinationSha256": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/73f1e7319565c676/source-manifest.json",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+    "path": "source-route-matrix.md",
+    "difference": "semantic",
+    "sha256": "29f92a10eaebd029c4dfb26a33c497f9d2d65b740fa1fa999c1aaf10be3b9a2a",
+    "destinationSha256": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/73f1e7319565c676/source-route-matrix.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "47e85944e8bb2190ad1151b5e644d303bc4b33aed151a306d320826a5829296d",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/9b11db4739ba0bf2/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/d23a44ff98e50588/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "848e6c2be0d0a1599b158ffb30c7f451355d4721c586f792f43e15cab97b87f2",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/3dd14f2141ba1d09/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/08760aecc485d0f0/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "373f16fe2eac76a293b3daaf801689582361cd704bc1d50740cac61c235ab1f1",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/556aba706a3e3358/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "47e85944e8bb2190ad1151b5e644d303bc4b33aed151a306d320826a5829296d",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1162aa46b13ff151/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "373f16fe2eac76a293b3daaf801689582361cd704bc1d50740cac61c235ab1f1",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/025fb901c119bc08/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/28441d0116c5bc1f/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/218cd5386d22e84e/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "8a528053067d253f438c63ee201d3caa56638854a6fa255703cb525e3c0c4e81",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/0cbb7734fc78718d/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "2a3bb5bced966dbfb379aeaad989258c2ad005b1edee8353ba744d3694bb4b57",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/d5f683cf4dfea633/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "99882274820084b11f0fc1d5222a7556609d57f5a7606aab3a6e21d3c1fba5d9",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/0af2cef70a88059c/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "819dedd9d4d7ffd43d929874f68ae1d0edc5087f548cf8fc4f68944bea842778",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/de5b932aefb0a91f/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "65d7261ebc6688bdb4b43ff3506f01f7ade2015a5e07bbe6bdd2a4051325827c",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/6c0fe74f0ab2b67e/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "65d7261ebc6688bdb4b43ff3506f01f7ade2015a5e07bbe6bdd2a4051325827c",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1825e77a2f98057e/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "93ab7605126ad397b97a1f7180f04066a92306d0aca2704ff5c1d371ea90594f",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/6c2442714f09f06e/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "93ab7605126ad397b97a1f7180f04066a92306d0aca2704ff5c1d371ea90594f",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1fb0f6fd0c07ce8b/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "93ab7605126ad397b97a1f7180f04066a92306d0aca2704ff5c1d371ea90594f",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/bc5698a56cf2c5bb/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "17de09426527dfa2987b9b21324fa3d803e50feafa527e2eb11127787c5f6f65",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/8a57a109c32d5342/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime/rehearsal-1794528918776/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "path": "portable-operator/implementation/runtime/rehearsal-1794528918776/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "status": "symlink-preserved-without-traversal",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/implementation/runtime/rehearsal-1794528918776/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime-r2/rehearsal-1794529288578/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "path": "portable-operator/implementation/runtime-r2/rehearsal-1794529288578/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "status": "symlink-preserved-without-traversal",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/implementation/runtime-r2/rehearsal-1794529288578/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime-r3/rehearsal-1794529844525/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "path": "portable-operator/implementation/runtime-r3/rehearsal-1794529844525/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "status": "symlink-preserved-without-traversal",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/implementation/runtime-r3/rehearsal-1794529844525/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/runtime/rehearsal-1794531335684/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "path": "portable-operator/verification-r2/runtime/rehearsal-1794531335684/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+    "status": "symlink-preserved-without-traversal",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/verification-r2/runtime/rehearsal-1794531335684/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "3e757d019f9769e25db54c1350fba54e4ed22397bd194a177150925a7b21c575",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/66e0bd1e3e6ffd56/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  },
+  {
+    "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "path": "operator-runbook.md",
+    "difference": "semantic",
+    "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c",
+    "destinationSha256": "de8aaf4b9a795612e6816c058b3382e3a8aa8d3f305734fd4ee39a02f9c17e54",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/b915f0248c81b8fa/operator-runbook.md",
+    "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+  }
+]

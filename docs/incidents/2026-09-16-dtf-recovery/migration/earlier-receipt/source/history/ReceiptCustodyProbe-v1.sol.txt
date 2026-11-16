@@ -1,0 +1,94 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+import {Math} from "@crane/contracts/utils/Math.sol";
+
+interface IEarlierReceiptProbe {
+    function redemptionRate() external view returns (uint256);
+    function sharesOf(address) external view returns (uint256);
+    function balanceOf(address) external view returns (uint256);
+    function totalShares() external view returns (uint256);
+    function transferFrom(address, address, uint256) external returns (bool);
+}
+
+/// @notice Disposable source-measurement witness, NOT Migration or a bond implementation.
+/// Synthetic Q/C values exercise arithmetic only; they authorize no historical award.
+contract ReceiptCustodyProbe {
+    IEarlierReceiptProbe constant RECEIPT =
+        IEarlierReceiptProbe(0x4AC89aD061A531FA62ddceED53520C2750113b01);
+    uint256 constant SCALE = 1e9;
+    uint256 constant UNIT = 1e27;
+    address public immutable wallet;
+    uint256 public immutable originalUnits;
+    uint256 public immutable originalCredit;
+    uint256 public remainingUnits;
+    uint256 public remainingCredit;
+    uint256 public bookedInternal;
+    uint256 public delivered;
+
+    struct Observation {
+        uint256 rate;
+        uint256 walletShares;
+        uint256 custodyShares;
+        uint256 walletBalance;
+        uint256 custodyBalance;
+        uint256 totalShares;
+    }
+
+    error InvalidInput();
+    error MeasurementFailed();
+    error DeliberateLateFailure();
+    event Pulled(uint256 displayInput, uint256 rate, uint256 internalUnits, uint256 credit);
+
+    constructor(address wallet_, uint256 units_, uint256 credit_) {
+        wallet = wallet_;
+        originalUnits = remainingUnits = units_;
+        originalCredit = remainingCredit = credit_;
+    }
+
+    function observe() public view returns (Observation memory o_) {
+        o_.rate = RECEIPT.redemptionRate();
+        o_.walletShares = RECEIPT.sharesOf(wallet);
+        o_.custodyShares = RECEIPT.sharesOf(address(this));
+        o_.walletBalance = RECEIPT.balanceOf(wallet);
+        o_.custodyBalance = RECEIPT.balanceOf(address(this));
+        o_.totalShares = RECEIPT.totalShares();
+    }
+
+    function pull(uint256 displayInput_, bool failLate_) external {
+        if (msg.sender != wallet || displayInput_ == 0) revert InvalidInput();
+        Observation memory before_ = observe();
+        if (before_.rate == 0) revert InvalidInput();
+        uint256 q_ = Math.mulDiv(displayInput_, UNIT, before_.rate);
+        uint256 Q_ = remainingUnits;
+        uint256 C_ = remainingCredit;
+        if (q_ == 0 || q_ > Q_) revert InvalidInput();
+        uint256 credit_ = q_ == Q_ ? C_ : Math.mulDiv(C_, q_, Q_);
+        if (credit_ == 0) revert InvalidInput();
+        if (!RECEIPT.transferFrom(wallet, address(this), displayInput_)) revert MeasurementFailed();
+        Observation memory after_ = observe();
+        if (after_.rate != before_.rate || after_.totalShares != before_.totalShares
+            || after_.walletShares > before_.walletShares || after_.custodyShares < before_.custodyShares
+            || after_.walletBalance > before_.walletBalance || after_.custodyBalance < before_.custodyBalance) {
+            revert MeasurementFailed();
+        }
+        _checkFloorDelta(before_.walletShares - after_.walletShares, q_ / SCALE, q_ % SCALE);
+        _checkFloorDelta(after_.custodyShares - before_.custodyShares, q_ / SCALE, q_ % SCALE);
+        uint256 displayFloor_ = Math.mulDiv(q_, before_.rate, UNIT);
+        uint256 displayRemainder_ = mulmod(q_, before_.rate, UNIT);
+        _checkFloorDelta(before_.walletBalance - after_.walletBalance, displayFloor_, displayRemainder_);
+        _checkFloorDelta(after_.custodyBalance - before_.custodyBalance, displayFloor_, displayRemainder_);
+        remainingUnits = Q_ - q_;
+        remainingCredit = C_ - credit_;
+        bookedInternal += q_;
+        delivered += credit_;
+        // This is deliberately after source custody AND local accounting, not a source revert.
+        if (failLate_) revert DeliberateLateFailure();
+        emit Pulled(displayInput_, before_.rate, q_, credit_);
+    }
+
+    function _checkFloorDelta(uint256 delta_, uint256 floor_, uint256 remainder_) private pure {
+        if (delta_ != floor_ && (remainder_ == 0 || delta_ != floor_ + 1)) revert MeasurementFailed();
+    }
+}
+

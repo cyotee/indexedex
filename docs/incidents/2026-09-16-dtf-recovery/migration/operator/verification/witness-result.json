@@ -1,0 +1,25 @@
+{
+  "evidence": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/execution/rehearsal-1794377054937",
+  "fullTask9": "open",
+  "status": "bounded-rehearsal-complete",
+  "negatives": [
+    {
+      "name": "synthetic-public-mode",
+      "code": 1,
+      "error": {
+        "error": "DOMAIN",
+        "message": "fresh chain/proxy/snapshot confirmations required"
+      }
+    },
+    {
+      "name": "wrong-instance",
+      "code": 1,
+      "error": {
+        "error": "DOMAIN",
+        "message": "explicit exact local identity required"
+      }
+    }
+  ],
+  "publicSigningKeyLoaded": false,
+  "independence": "Fresh actual CLI and Anvil; only evidence destination differs from fixed invocation."
+}

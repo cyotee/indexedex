@@ -1,0 +1,454 @@
+{
+  "type": "DoneClaim",
+  "task": "final-additive-bounded-partial-closeout",
+  "status": "ADDITIVE-PARTIAL-CLOSEOUT-RECORDED",
+  "recordedAt": "2026-11-15T20:12:02.302Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "additive_inclusion_complete": true,
+  "prior_preservation_complete": true,
+  "ready_for_independent_file_only_confirmation": true,
+  "full_goal_met": false,
+  "task15_full_acceptance": false,
+  "strict_delivery_completed": false,
+  "release_readiness": false,
+  "blocked_acceptance_requeued": false,
+  "goal_or_plan_closed": false,
+  "plan_state_observed": {
+    "confirmed": 15,
+    "known_unmet": 5,
+    "open": 0,
+    "knownUnmetTasks": [
+      10,
+      12,
+      13,
+      14,
+      15
+    ],
+    "meaning": "Four final review confirmations apply only to truthful bounded partial scope."
+  },
+  "baseline": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+    "sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+    "actualAfterRunSha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+    "unchanged": true,
+    "entries": 123368,
+    "exteriorCatalog": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/task-owned-files.json",
+      "sha256": "f8381d105ec4bef621ae7a622cf7fcdbd6cab594cc4f35bca17aac3c9e8e256e",
+      "entries": 311
+    },
+    "baselineFilesEdited": false
+  },
+  "inventory": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/inventory.json",
+    "sha256": "7474dc623a03f30b60e0b9619bab4003e5130b2151412769542c3932fc2a15e4",
+    "bytes": 33684268,
+    "entries": 123387,
+    "types": {
+      "directory": 25129,
+      "file": 98092,
+      "symlink": 166
+    },
+    "format": "Existing Audit-schema inventory with actual additive bookkeeping entries.",
+    "rawRecorderInventory": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/recorder-inventory.json",
+      "sha256": "72956c5efea705e292d17842b1ec959d2252781c721289357986acf18e22ec51",
+      "entries": 123373
+    },
+    "parent": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/recorder-inventory.json",
+      "sha256": "72956c5efea705e292d17842b1ec959d2252781c721289357986acf18e22ec51"
+    },
+    "generatedAuditRecords": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/inventory.json",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/ulw-execute/dtf-conformance/owner-correction-20261115/final-closeout-done.json"
+    ],
+    "allNewOwnedArtifactsBound": true,
+    "unboundOwnFiles": []
+  },
+  "required_recorder": {
+    "argv": [
+      "bun",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "delivery",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "started": "2026-11-15T20:05:59.757Z",
+    "finished": "2026-11-15T20:06:33.063Z",
+    "actualExit": 1,
+    "signal": null,
+    "recorderSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+    "versions": {
+      "node": "26.3.0",
+      "bun": "1.4.2",
+      "boringssl": "41bf9b59c2ebf277a7aa427e1ecad5cc80dd4d4f",
+      "openssl": "1.1.0",
+      "llhttp": "9.3.0",
+      "libarchive": "ded82291ab41d5e355831b96b0e1ff49e24d8939",
+      "mimalloc": "6a64e1ba7f5b2130d4efccb67ec87fd0003f0f6a",
+      "picohttpparser": "066d2b1e9ab820703db0837a7255d92d30f0c9f5",
+      "uwebsockets": "50a8a838737a8f0e226d1c115788aa18192a2f18",
+      "webkit": "2e2aa2290fac856d6f451ceacb58f7f5b44dd057",
+      "zig": "04e7f6ac1e009525bc00934f20199c68f04e0a24",
+      "zlib": "12731092979c6d07f42da27da673a9f6c7b13586",
+      "tinycc": "05f0fafaa3be31e31d7b4b5c17dc60f62c991171",
+      "lolhtml": "725ce499aa9b71e38b7a2d0a9fbb6d7294a4079e",
+      "ares": "c7a3138dcfe3bb0eaaf10c0c24c36dc66dc790ab",
+      "libdeflate": "c8c56a20f8f621e6a966b716b31f1dedab6a41e3",
+      "usockets": "50a8a838737a8f0e226d1c115788aa18192a2f18",
+      "lshpack": "8905c024b6d052f083a3d11d0a169b3c2735c8a1",
+      "zstd": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+      "v8": "14.6.202.34-node.20",
+      "uv": "1.48.0",
+      "napi": "10",
+      "icu": "78.1",
+      "unicode": "17.0",
+      "sqlite": "3.51.0",
+      "modules": "147"
+    },
+    "argvNul": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/argv.nul",
+    "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/result.json",
+    "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/stdout.log",
+    "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/stderr.log",
+    "captureDriver": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/capture-driver.json",
+    "runs": 1,
+    "retriedForInheritedFailure": false
+  },
+  "authentic_receipt": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/delivery.json",
+    "completed": false,
+    "failures": 340,
+    "failureClasses": {
+      "different retained bytes/type; unresolved divergence": 4,
+      "unresolved symlink in delivered tree": 166,
+      "different bytes/type": 4,
+      "unresolved new symlink": 166
+    },
+    "inheritedFailureSetUnchanged": true,
+    "symlinks": 166,
+    "retainedByteDifferences": [
+      "recovery-route-disposition.md",
+      "resumed-integration/verify-bounded-deployments.ts",
+      "source-manifest.json",
+      "source-route-matrix.md"
+    ],
+    "counting": "Two messages per symlink and two checks per retained-byte difference.",
+    "strictFailurePreserved": true
+  },
+  "comparison": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/preservation-comparison.json",
+    "priorEntriesCompared": 123368,
+    "missing": [],
+    "changed": [],
+    "baselineIdentityVectorSha256": "ecd9c75bae3386989da9517f1308396e370ea31f7beddf716c6298c0655c6d6d",
+    "currentProjectionIdentityVectorSha256": "ecd9c75bae3386989da9517f1308396e370ea31f7beddf716c6298c0655c6d6d",
+    "retainedSourceArrayUnchanged": true,
+    "rawScanAdditions": [
+      {
+        "path": "conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+        "sha256": "3e585a1be4d948804af6e6b97a474087b02360bb1c8492b8a93c4dbe8cae2345",
+        "size": 37865,
+        "type": "file"
+      },
+      {
+        "path": "conformance-20261114/final/owner-correction-20261115/F2-quality.md",
+        "sha256": "c9b789771418e99bd6c022bcc6baa89f70194ebdeb60eb7d1dfa52c6c7b919c6",
+        "size": 14571,
+        "type": "file"
+      },
+      {
+        "path": "conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+        "sha256": "2b50cdc1e6eee7acb7c1b6a1391163df85901459f4121e0f15c4a853af00e49f",
+        "size": 15031,
+        "type": "file"
+      },
+      {
+        "path": "conformance-20261114/final/owner-correction-20261115/F4-fidelity.md",
+        "sha256": "5bd252cd84dadcec427565c6fbefebe4d8b9b99a0bc9bbec959f6b9a8f5bae58",
+        "size": 21379,
+        "type": "file"
+      },
+      {
+        "path": "conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+        "sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+        "size": 33680555,
+        "type": "file"
+      }
+    ],
+    "allRawScanAdditionsAreRealFiles": true,
+    "reportsMatchVerdicts": true,
+    "bothHelpers": [
+      {
+        "path": "resumed-integration/record-verification.ts",
+        "baseline": {
+          "path": "resumed-integration/record-verification.ts",
+          "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+          "size": 20293,
+          "type": "file"
+        },
+        "current": {
+          "path": "resumed-integration/record-verification.ts",
+          "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+          "size": 20293,
+          "type": "file"
+        },
+        "unchanged": true
+      },
+      {
+        "path": "resumed-integration/verify-bounded-deployments.ts",
+        "baseline": {
+          "path": "resumed-integration/verify-bounded-deployments.ts",
+          "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+          "size": 18846,
+          "type": "file"
+        },
+        "current": {
+          "path": "resumed-integration/verify-bounded-deployments.ts",
+          "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+          "size": 18846,
+          "type": "file"
+        },
+        "unchanged": true
+      }
+    ],
+    "secondFullTreeRehash": false
+  },
+  "final_reviews": [
+    {
+      "id": "F1",
+      "report": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+        "sha256": "3e585a1be4d948804af6e6b97a474087b02360bb1c8492b8a93c4dbe8cae2345",
+        "bytes": 37865
+      },
+      "verdictFile": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F1-verdict.json",
+        "sha256": "e01453a302b67c724be3520ad9aa84b6392acaf0d08b7f1d1242d09f406d50fc",
+        "bytes": 11119
+      },
+      "verdict": "confirmed",
+      "fullGoalMet": false,
+      "reportBindingMatches": true
+    },
+    {
+      "id": "F2",
+      "report": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F2-quality.md",
+        "sha256": "c9b789771418e99bd6c022bcc6baa89f70194ebdeb60eb7d1dfa52c6c7b919c6",
+        "bytes": 14571
+      },
+      "verdictFile": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F2-verdict.json",
+        "sha256": "42bea1c53565374693cea85fba6a80ce4f03499ff9c257c9ab836d22c8658bf5",
+        "bytes": 9141
+      },
+      "verdict": "confirmed",
+      "fullGoalMet": false,
+      "reportBindingMatches": true
+    },
+    {
+      "id": "F3",
+      "report": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+        "sha256": "2b50cdc1e6eee7acb7c1b6a1391163df85901459f4121e0f15c4a853af00e49f",
+        "bytes": 15031
+      },
+      "verdictFile": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F3-verdict.json",
+        "sha256": "4aafdc2029348c89ad1af48c6133a52bcb39ac6c060670e1581cbc3d37b96fa3",
+        "bytes": 15435
+      },
+      "verdict": "confirmed",
+      "fullGoalMet": false,
+      "reportBindingMatches": true
+    },
+    {
+      "id": "F4",
+      "report": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F4-fidelity.md",
+        "sha256": "5bd252cd84dadcec427565c6fbefebe4d8b9b99a0bc9bbec959f6b9a8f5bae58",
+        "bytes": 21379
+      },
+      "verdictFile": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F4-verdict.json",
+        "sha256": "85184bee222917a67ce910523c955cfce67607536fcb5ffa18107d9550580b8e",
+        "bytes": 14633
+      },
+      "verdict": "confirmed",
+      "fullGoalMet": false,
+      "reportBindingMatches": true
+    }
+  ],
+  "exterior_control_coverage": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/exterior-control-catalog.json",
+    "observations": 85,
+    "allFourVerdictsCaptured": true,
+    "exactRawVerdictBytesRetained": true,
+    "updatedControls": [
+      {
+        "path": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+        "sha256": "8fb126d9793f6cf659fc2e603c32e023027296534c11bae333735707d3564355",
+        "bytes": 137782,
+        "baselineSha256": "efda25688a867c89d9854c9f3d92b6779a0537dc968b6281aa2fd8f88c7af23a",
+        "disposition": "updated-live-control-observation",
+        "historicalFrozenPreimageClaim": false
+      }
+    ],
+    "newControls": [
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F1-verdict.json",
+        "sha256": "e01453a302b67c724be3520ad9aa84b6392acaf0d08b7f1d1242d09f406d50fc",
+        "bytes": 11119,
+        "baselineSha256": null,
+        "disposition": "new-final-control-evidence",
+        "historicalFrozenPreimageClaim": false
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F2-verdict.json",
+        "sha256": "42bea1c53565374693cea85fba6a80ce4f03499ff9c257c9ab836d22c8658bf5",
+        "bytes": 9141,
+        "baselineSha256": null,
+        "disposition": "new-final-control-evidence",
+        "historicalFrozenPreimageClaim": false
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F3-verdict.json",
+        "sha256": "4aafdc2029348c89ad1af48c6133a52bcb39ac6c060670e1581cbc3d37b96fa3",
+        "bytes": 15435,
+        "baselineSha256": null,
+        "disposition": "new-final-control-evidence",
+        "historicalFrozenPreimageClaim": false
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F4-verdict.json",
+        "sha256": "85184bee222917a67ce910523c955cfce67607536fcb5ffa18107d9550580b8e",
+        "bytes": 14633,
+        "baselineSha256": null,
+        "disposition": "new-final-control-evidence",
+        "historicalFrozenPreimageClaim": false
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/partial-boundary-done.json",
+        "sha256": "ba5fbf826937e7961d3c6994622a0e1c3362790c600d8c30f505e7233c826dd4",
+        "bytes": 40461,
+        "baselineSha256": null,
+        "disposition": "new-final-control-evidence",
+        "historicalFrozenPreimageClaim": false
+      }
+    ],
+    "oldSnapshotOverwritten": false,
+    "updatedPlanNotAnOldFrozenPreimage": true,
+    "exteriorSourceScope": "Original exterior source identities remain in the untouched baseline catalog. This closeout adds observed controls and verdict bytes, not a new source or environment audit."
+  },
+  "publication": {
+    "argv": [
+      "bun",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/publish-additive.mjs"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "actualExit": 0,
+    "monitor": "mon_M2BD140B3FKNFTJJ",
+    "rawSummary": "FINAL_ADDITIVE_PUBLISHED entries=123387 recorderExit=1 failures=340",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/publication.json",
+    "approach": "Preserved actual raw recorder inventory and added hashes only for new owned bookkeeping outputs; authentic delivery.json unchanged."
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/inclusion-preservation.md",
+  "artifacts": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/capture-driver.json",
+      "sha256": "50335f6efba838abc5881a8da5db676e4968ce67059d76512664f27d024fa313",
+      "bytes": 3488
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/argv.nul",
+      "sha256": "3ca35ab41f142e92eb8f4b226b0e1325a15d7f10f5b02a2c443fd17607715cea",
+      "bytes": 342
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/result.json",
+      "sha256": "2b0ec60139be54cbb523e68194e30fdf58b2aaf1fb67a120e67b12d085629b14",
+      "bytes": 1737
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/stderr.log",
+      "sha256": "f96b089fd11e461cea93e4a0226f161e47290ecd18f380e20f026ea2be2af5be",
+      "bytes": 80842
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/command/stdout.log",
+      "sha256": "66b82d3e47f5afc7e07cf07e9023d22e01400ae441800295cc537808b10c2bd0",
+      "bytes": 44
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/delivery.json",
+      "sha256": "898bc40388a9831cf3a23201ddf25e4798a40decfc1ef9a721d957edd2bec6a2",
+      "bytes": 78031
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/exterior-control-catalog.json",
+      "sha256": "a72776c9586872db556e5bd77211f32437f2bfdc5d5f91e43cd8f8cf8c0373f1",
+      "bytes": 1845657
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/inclusion-preservation.md",
+      "sha256": "3658e2fb2373441216730d9fc707683440210b5d5de5b5c913e6377e065fd353",
+      "bytes": 2869
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/inventory.json",
+      "sha256": "7474dc623a03f30b60e0b9619bab4003e5130b2151412769542c3932fc2a15e4",
+      "bytes": 33684268
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/preservation-comparison.json",
+      "sha256": "51c705182b65e7ad4544781bec749fd9687975d53a707dd43958818a98af35f8",
+      "bytes": 7442
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/publication.json",
+      "sha256": "5b43e61f4e3e0bed9128731cd052ab20905c8f32bc0c93f91a962712e76dea6e",
+      "bytes": 4064
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/publish-additive.mjs",
+      "sha256": "14521e64110f632fa5768d6ba0fc7af1d8cb199f5600b51a87de477ca38039bd",
+      "bytes": 4198
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/recorder-inventory.json",
+      "sha256": "72956c5efea705e292d17842b1ec959d2252781c721289357986acf18e22ec51",
+      "bytes": 33681497
+    }
+  ],
+  "cleanup": {
+    "allOwnedFiniteBookkeepingProcessesFinished": true,
+    "pendingProcesses": [],
+    "pendingMonitors": [],
+    "runtimeOrEnvironmentCreated": false,
+    "cleanupCampaign": false,
+    "unknownResourcesTouched": false
+  },
+  "met": [
+    "Executed the exact unchanged required delivery argv once against the real frozen baseline.",
+    "Preserved real exit 1, raw stdout/stderr, authentic completed:false receipt and all inherited failures.",
+    "Proved zero changed/missing prior migration entries and identical retained-source arrays from the one required run.",
+    "Bound all four actual reports to their confirmed verdict hashes and exact exterior verdict bytes.",
+    "Preserved both helpers, prior attempts, old boundary records and original source/control snapshots.",
+    "Separately captured changed live plan state: 15 confirmed rows, five known gaps and zero open rows.",
+    "Published usable additive inventory including every actual new bookkeeping artifact, with only inventory/final-receipt self-reference exceptions."
+  ],
+  "unmet": [
+    "Strict delivery remains failed over 166 retained symlinks and four retained-byte differences.",
+    "Full task-10 lifecycle and dependent tasks 12-15 remain unmet; final bounded confirmations do not close them."
+  ],
+  "limitations": [
+    "No new product, contract, runtime or broad QA; no new source/helper/test edits or public RPC.",
+    "No unrelated 16GB second-signature rehash; comparisons reuse the actual required changed-input recorder inventory.",
+    "Historical helper provenance remains 28/29 and unverified rehearsal ownership remains unchanged.",
+    "Parent-owned independent file-only confirmation is still separate from this producer claim.",
+    "No whole-goal success, readiness release, source migration, install, commit, merge, delegation or plan/goal closure."
+  ],
+  "written_last": true
+}

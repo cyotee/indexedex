@@ -1,0 +1,8 @@
+{
+  "chainId": 4663,
+  "notes": "SE shares -> WETH; optional for CP fee-DETF",
+  "rateProviderPkg": "0xAF6A43D5c2345ffF016D64A094FE901353DBE774",
+  "rp_se_rich_weth": "0xf7ffbF0c70c66f23ab42D33759b53816FC27FcDD",
+  "uniV3Se_rich": "0xC79D214AF075EC5EBC01fE78a6A63206f3D6aC78",
+  "weth": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73"
+}

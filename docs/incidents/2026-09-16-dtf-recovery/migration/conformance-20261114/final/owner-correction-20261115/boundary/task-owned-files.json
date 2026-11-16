@@ -1,0 +1,3335 @@
+{
+  "version": 1,
+  "scope": "Current task-owned code/tests/scripts, outer incident documents and actual control observations outside the migration-tree recorder scope.",
+  "capturedAt": "2026-11-15T19:28:31.952Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "algorithm": "SHA-256 of raw file bytes; symlinks hash raw link text and are not traversed.",
+  "selection": [
+    "All current migration-family contracts, operator scripts, Foundry recovery scripts and migration spec/fork tests.",
+    "Every dirty source/support path in read-only Git discovery, without dropping deleted paths.",
+    "Every dirty outer-document path outside the migration recorder root.",
+    "All original and renewed dtf-conformance claims/verdicts and current plan/draft/control identity files.",
+    "Environment roots are disclosed separately rather than recursively attributed as authored source."
+  ],
+  "entries": [
+    {
+      "path": ".omo/drafts/dtf-migration-conformance-remediation-20261114.md",
+      "kind": "file",
+      "rawSha256": "f29a927f37e3cc9c71502aca58bc474ecd219568f0050fefd5f76f69a6ccb1d2",
+      "bytes": 27412,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/drafts/hyperplan-dtf-conformance-insights-20261114.md",
+      "kind": "file",
+      "rawSha256": "e608f3c3f3e40c66a57413927830be7e6ef588578443e19fff5865e384bdbccb",
+      "bytes": 15273,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/drafts/hyperplan-weighted-migration-insights-20261114.md",
+      "kind": "file",
+      "rawSha256": "e315508274a823faa3eacf284169cae74b9147be5f309598fdd0f4c1397b1fc5",
+      "bytes": 14885,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+      "kind": "file",
+      "rawSha256": "efda25688a867c89d9854c9f3d92b6779a0537dc968b6281aa2fd8f88c7af23a",
+      "bytes": 136978,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/F1-verdict.json",
+      "kind": "file",
+      "rawSha256": "243629c1d2933f10377c1ea78a38a36cf7953849bc315426ae22672ab462bc4e",
+      "bytes": 4414,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/F2-verdict.json",
+      "kind": "file",
+      "rawSha256": "1629f96c3b6c5c377e31466f4685713d7c5ed77988aa6d5337ea30968c0993d2",
+      "bytes": 5890,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/F3-verdict.json",
+      "kind": "file",
+      "rawSha256": "4ce40283dcf995913e1765f0166b8d99242ca1ebcd46b25a4e2b6bcc44dc37bb",
+      "bytes": 3884,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/F4-verdict.json",
+      "kind": "file",
+      "rawSha256": "e29cea84d3a96bea67cf24277c597ee2732d5216a86cbe77b43e224f31cc2a13",
+      "bytes": 5532,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/bootstrap.md",
+      "kind": "file",
+      "rawSha256": "c9cea8d5702a2455c44c0df9c3736f7c269adf5469258b50012cb2697a3dcd16",
+      "bytes": 4208,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/crane-ready.json",
+      "kind": "file",
+      "rawSha256": "f70b0f21c468af0a3d930e35243a0d3a48923512c56f920eab4a1cdceb70d349",
+      "bytes": 5841,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/bounded-final-review-brief.md",
+      "kind": "file",
+      "rawSha256": "29f1cc19ab7ddaf74222cde9e718ba40b2b9f1aaa95fea3b9405434a7ba9734f",
+      "bytes": 6511,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/census-done.json",
+      "kind": "file",
+      "rawSha256": "2ce914c1daf31bb1b42e47015b6c4dbf3dcd1719e22a4120b46914e5f911c9f0",
+      "bytes": 6508,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/census-verdict.json",
+      "kind": "file",
+      "rawSha256": "feb9a40c103039c4cf3d169af8d668abaaf50d1bfb30d17731ef531c265d1849",
+      "bytes": 3673,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/configure-fault-done.json",
+      "kind": "file",
+      "rawSha256": "74075cdbd3d84f6adf3129d4787c234122d8c8f861db3b5cec7e936d77cd9b3f",
+      "bytes": 7510,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/configure-fault-verdict.json",
+      "kind": "file",
+      "rawSha256": "94b162f56eac019a8fb83eccd138a07d0614e4b42370cea2b54afdd02416c62d",
+      "bytes": 3242,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-done.json",
+      "kind": "file",
+      "rawSha256": "65fca422038e5c893799ba76ffbe8087d27c7bbdf3202ee7913229e6f1d98108",
+      "bytes": 6058,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-verdict.json",
+      "kind": "file",
+      "rawSha256": "964f1ccf406f0ad1ff2e91b413b6f1091735e8679c74e0759e694f5b3ed90dab",
+      "bytes": 6791,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/integration-done.json",
+      "kind": "file",
+      "rawSha256": "81cc9bb373a6d39fa770ed2a6550dc31f9e2d48cf2c6f5a8717e67fa535fda4b",
+      "bytes": 63061,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-integration-done.json",
+      "kind": "file",
+      "rawSha256": "8ed3a2fd9a1929fe0961fa4716d3654ff6953454d0ae29e0936dcfbba11d73c8",
+      "bytes": 136273,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-repairs-verdict.json",
+      "kind": "file",
+      "rawSha256": "2aaa161c9d6cf2e65ff95e0af63a1010b10d3a045f4e4955dcae53b031798f8b",
+      "bytes": 8276,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-done.json",
+      "kind": "file",
+      "rawSha256": "9a7f56e36558e7215d01ef1fc2f6286c8f668f14ed7700a7a2fe0a638804ad75",
+      "bytes": 13514,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-verdict.json",
+      "kind": "file",
+      "rawSha256": "122035701ff9bc85c1230f3acc9b4e83baa88ad6f399f0220585a057973fba12",
+      "bytes": 3907,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/omissions-done.json",
+      "kind": "file",
+      "rawSha256": "ecb1909e9e6470b5c155629889183a41eb68dc2d12f4e57f1f4bcd4396a2098f",
+      "bytes": 6622,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/omissions-verdict.json",
+      "kind": "file",
+      "rawSha256": "2a3063f389375f54478ea97410b0afd93881f2caa1ea9edd38c45967452f237f",
+      "bytes": 3455,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/operator-repairs-integration-done.json",
+      "kind": "file",
+      "rawSha256": "34b549b9fc82cbf70dacab65ec3d125dcc4219f3991fb18613c3bb9b68be5fda",
+      "bytes": 72683,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/operator-repairs-verdict.json",
+      "kind": "file",
+      "rawSha256": "8efc924e43dc248f335b739cf3acd524b51c7bc845fa1ae6ee691a3b55eec596",
+      "bytes": 5030,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/pin-done.json",
+      "kind": "file",
+      "rawSha256": "ff846de50dea059872e6310d1e3d0a36212b44e24b82abc3639c605f90025a7d",
+      "bytes": 4175,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/pin-verdict.json",
+      "kind": "file",
+      "rawSha256": "0081242ea05ee0e4d91139d356582b6903925cc2e813054acd4408be7470da39",
+      "bytes": 4034,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-done.json",
+      "kind": "file",
+      "rawSha256": "12fa20751a1c7eb9faec567572c3d2f98ffb700e615437ac30302f29e69caee5",
+      "bytes": 7387,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-verdict.json",
+      "kind": "file",
+      "rawSha256": "602c101fa60359e05d331af1ba77cfb042973530cc36bc938fb6b50b74710f31",
+      "bytes": 8142,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-fixture-done.json",
+      "kind": "file",
+      "rawSha256": "01a7814895ecf34e90396f19a2fc66cfc168f043a73a94428fade71db0392406",
+      "bytes": 82370,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/run.md",
+      "kind": "file",
+      "rawSha256": "8e2bc1c68ec92b3431f0345850e4a3390e3520bcad570ea7ff0a958cdf159e0c",
+      "bytes": 2675,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/setter-repair-done.json",
+      "kind": "file",
+      "rawSha256": "1f262d80d659e7da0fa4768c66c908efb9f192ee96795aedf581c4b3372d1dab",
+      "bytes": 6099,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/setter-repair-verdict.json",
+      "kind": "file",
+      "rawSha256": "1ea2a81393fe150fe167d183b22f6d0319a835e8eb4b6f93ebcfc397b56660dd",
+      "bytes": 2837,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-10-done.json",
+      "kind": "file",
+      "rawSha256": "f2eb4c3859fd5a93a51cff82395b7db80055e7d1798a9eea9dfc521342eb2084",
+      "bytes": 25079,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-10-issuance-repair-ready.json",
+      "kind": "file",
+      "rawSha256": "a9679236380a20369381cbfaa80c14f4ca81f6e2cb7972ddf02f0337162064da",
+      "bytes": 1693,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-10-operator-repairs-ready.json",
+      "kind": "file",
+      "rawSha256": "1655f4228f24380091b3e2b7c01eb7d504f08c70b6a2b422de7cf2f950289cb4",
+      "bytes": 1287,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-10-verdict.json",
+      "kind": "file",
+      "rawSha256": "054b6bae9d62850255f8128e70fa2031c06a057776ffa3eb1dd8595e3e9ac1d6",
+      "bytes": 17821,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-16-done.json",
+      "kind": "file",
+      "rawSha256": "2a65715371d594ab2d5d97de98f5ca0333a952cf44c0330d4587f2b0e4306575",
+      "bytes": 12392,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-16-verdict.json",
+      "kind": "file",
+      "rawSha256": "d9d63669c96ed9358b118d97c6ebe55df7a0278f4a4f5e0890b818070903e430",
+      "bytes": 7586,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-7-verdict.json",
+      "kind": "file",
+      "rawSha256": "2631f74d8733ab1d4dd0ad86b5dcb858055942d88fd17a23eee939aa8ac6c97a",
+      "bytes": 5655,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/ready-symlink-attempt.json",
+      "kind": "file",
+      "rawSha256": "e6043fc75e0b4f6dadc601339743a1492a41aaa77c6015e949329a19035a5a6d",
+      "bytes": 4425,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/ready.json",
+      "kind": "file",
+      "rawSha256": "23f9602d0e6c746218334c47a2662b5f494f3012358b50efcb18267fee7811f3",
+      "bytes": 1853,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-1-done.json",
+      "kind": "file",
+      "rawSha256": "1d48925840b3056d0618e12453a607461c53343f61ba4bbed1fa1fa4850e08e5",
+      "bytes": 8272,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-1-verdict.json",
+      "kind": "file",
+      "rawSha256": "573533d358485d8108055649e3baf9c90e01f0ed209618e7b392cbd720d73a71",
+      "bytes": 8792,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-10-done.json",
+      "kind": "file",
+      "rawSha256": "35d5bc731fefe52d3d9573a046555d1ad690ff8f09113fb89fa4f087a515b4e1",
+      "bytes": 11168,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-10-verdict-r2.json",
+      "kind": "file",
+      "rawSha256": "1674d6fe8dc721b0be9b43a3f6e02d5741ad8a8cae6d6eaae4919203637177c4",
+      "bytes": 5034,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-10-verdict.json",
+      "kind": "file",
+      "rawSha256": "ce8af7b335ca3ae1aab53e96dd39d3368a777996d382aad31ea0659b5ffc5c64",
+      "bytes": 6334,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-11-done-attempt-1.json",
+      "kind": "file",
+      "rawSha256": "1145910001463fce554ed877b6fd42f1e1b4986b74336eed14c8850b613c3d49",
+      "bytes": 11316,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-11-done.json",
+      "kind": "file",
+      "rawSha256": "5b6981a70a64ab2c2ff104727d575a3ff32b85b392077f93c8642df687ed6300",
+      "bytes": 16970,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-11-verdict-r2.json",
+      "kind": "file",
+      "rawSha256": "75b03357fdb586aadf9153e1fd5ca4ccfe9879b85836dae8d4d2eafdcf017787",
+      "bytes": 10057,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-11-verdict.json",
+      "kind": "file",
+      "rawSha256": "2c5a2a9a0a275f04deb41954ec7aa4d62ec89b766ea9f87d4cec0358b27bb34c",
+      "bytes": 9164,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-12-done.json",
+      "kind": "file",
+      "rawSha256": "1fe73c59140cd288a6b08241a4622765515fa597e329b99dceb0772e78616216",
+      "bytes": 8489,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-12-verdict.json",
+      "kind": "file",
+      "rawSha256": "8050bd9a46df7f984c944f1629c58c86c4c5bb9a20c7ebc5a21fb36e450ebf65",
+      "bytes": 8472,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-13-done-attempt-1.json",
+      "kind": "file",
+      "rawSha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd",
+      "bytes": 8737,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-13-done.json",
+      "kind": "file",
+      "rawSha256": "eef2ab8973d415c07fad4aa0f8fea9f317b69b5a5b08918749f5489bd9378cc7",
+      "bytes": 13660,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-13-verdict-r2.json",
+      "kind": "file",
+      "rawSha256": "dd1294d15c3a6950a200acb8a717e308dfe94a3d818e3e02c1d51caeaa4430ad",
+      "bytes": 5357,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-13-verdict.json",
+      "kind": "file",
+      "rawSha256": "3cbd144b91439f9f0e2b4c7e7360ffd87e4a97b35195bcea37b4ffef195b1b71",
+      "bytes": 8393,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-2-done.json",
+      "kind": "file",
+      "rawSha256": "46590145e455f3befb2ad026170a4a79a0b42aaa5d5418e3b9567182572cc50a",
+      "bytes": 82490,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-2-verdict.json",
+      "kind": "file",
+      "rawSha256": "7d6ad2c16462bab3ed03be1cdb79a69a9f5b35fd85de051380de4cfe3433e046",
+      "bytes": 16958,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-3-done.json",
+      "kind": "file",
+      "rawSha256": "5d50fc0b157e2e1a968c5cb3d8a85752eb10a0bc6a00371159f3a71a7fd04ea4",
+      "bytes": 37375,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-3-handoff.md",
+      "kind": "file",
+      "rawSha256": "738b3f231866f2f8c8e8407bd0adc1aa32ae0bbaf2a8913bf13bc06684ea1f53",
+      "bytes": 19145,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-3-verdict-r2.json",
+      "kind": "file",
+      "rawSha256": "2190857e9b392e2256c23d687c02a4bb8b9ecca35d27877c264e1fae62c179eb",
+      "bytes": 17288,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-3-verdict.json",
+      "kind": "file",
+      "rawSha256": "f07f9bf8b3d2bef6eee6e2a14bf6d4752267a2c68699956f2e188bb6b7c8649e",
+      "bytes": 9058,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-4-done.json",
+      "kind": "file",
+      "rawSha256": "bce786e05c53e9563a930ac35c2970fb7a652f57d89b5001be946cf5b9815f24",
+      "bytes": 18038,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-4-repair-done.json",
+      "kind": "file",
+      "rawSha256": "c143005e3c4379b697a4e7a29420276702fc7e2c28c545a2f73ca616c4e6f22a",
+      "bytes": 6264,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-4-verdict-r2.json",
+      "kind": "file",
+      "rawSha256": "88c1721505d634f610a224c6406fc1cc6923943bd2a36e9673fbb1b5d1381207",
+      "bytes": 12058,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-4-verdict.json",
+      "kind": "file",
+      "rawSha256": "dff421d3a4b9fd5011c1d2e67752ca4c158d73c30e47cbbde67236c05893b5cb",
+      "bytes": 20153,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-5-done.json",
+      "kind": "file",
+      "rawSha256": "f4b2bebf3626b05a59dfe63724c9b0ec94ff0bec4bbbb1ff3601141cec27b591",
+      "bytes": 5639,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-5-verdict.json",
+      "kind": "file",
+      "rawSha256": "3d1b67664975f1bb1d2c86d95e39d1292ffa9e48a595164775baa664e77dabf9",
+      "bytes": 7960,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-6-done.json",
+      "kind": "file",
+      "rawSha256": "f9bb159af48de755f1657b55869665501d7d6ac3ce4cfae6ce06ce2cef12e340",
+      "bytes": 9081,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-6-verdict.json",
+      "kind": "file",
+      "rawSha256": "3566abf7197278adf4c964bdb67cc9de3aa2c14f3dcfb8be7f12a0eac733b552",
+      "bytes": 10069,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-7-done.json",
+      "kind": "file",
+      "rawSha256": "2512f11047e582a39a8a0e790284f5a232b973caa2bb01e4decd2d350a8211ff",
+      "bytes": 23154,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-7-verdict-r2.json",
+      "kind": "file",
+      "rawSha256": "67d49fcdc7ab3b4c7623fa943b44b47b62cad6635a0cda3b746d54001ef4598b",
+      "bytes": 8618,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-7-verdict.json",
+      "kind": "file",
+      "rawSha256": "6a35a7210d3b9fd95f01a6b1ff460285f03da39f73e4085c92a3cdb6c4226718",
+      "bytes": 6034,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-8-done.json",
+      "kind": "file",
+      "rawSha256": "860a56075800b59e82109c9765eeeb407881f4827eaf0ca2533092bec03f56f4",
+      "bytes": 10797,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-8-verdict.json",
+      "kind": "file",
+      "rawSha256": "559faab330feec9e0e288893d5faa27b31be266c9e81efe693b548498581104e",
+      "bytes": 7202,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-9-done.json",
+      "kind": "file",
+      "rawSha256": "27d55081a0c9e4df084f492c62b7cc9ff0d008374e1ab542b0e130eedfedf904",
+      "bytes": 5277,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-9-verdict-r2.json",
+      "kind": "file",
+      "rawSha256": "3ba77cfb2603f0d30171b9a3ebece106969a90e27510c73c20daa277985b22f5",
+      "bytes": 5917,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-9-verdict.json",
+      "kind": "file",
+      "rawSha256": "60f9aff75787015655de72b1bbe67291dfc7abe0dee93a3ae344a31f76d276d3",
+      "bytes": 8745,
+      "status": "observed-control-or-historical-claim",
+      "ownership": "orchestration/evidence control",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "kind": "file",
+      "rawSha256": "0727d187dcdeed9ab09331551ede6ffcfeca715215b7661e5ed7167210e49c42",
+      "bytes": 24608,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "kind": "file",
+      "rawSha256": "99380ffff76132e19dcfdf2d2051280523331ee85d54678b7e45e98647575cb4",
+      "bytes": 10573,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol",
+      "kind": "file",
+      "rawSha256": "eeda26cf81f610e6f78a0b9930ac91cca520b91d8eaca7334487c664937445cc",
+      "bytes": 3763,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "kind": "file",
+      "rawSha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2",
+      "bytes": 1262,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "kind": "file",
+      "rawSha256": "514fb54a14f0fde6d43622694d167f0c36528ae647de85823d8b6ba96881a920",
+      "bytes": 25265,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+      "kind": "file",
+      "rawSha256": "c4945faa5e9a3bae8eedd5d3a45ea617a3091d0005a630b447c628c13de81ee8",
+      "bytes": 4253,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "kind": "file",
+      "rawSha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67",
+      "bytes": 1653,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "kind": "file",
+      "rawSha256": "cae8158660b7ca37e353407aaa466e722dac88ff086aec1367818bb5b094a44d",
+      "bytes": 19824,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "kind": "file",
+      "rawSha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b",
+      "bytes": 22464,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+      "kind": "file",
+      "rawSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "bytes": 4727,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "kind": "missing",
+      "rawSha256": null,
+      "status": "absent-deleted-task-path",
+      "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+      "kind": "file",
+      "rawSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "bytes": 6067,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+      "kind": "file",
+      "rawSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "bytes": 6679,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "kind": "file",
+      "rawSha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f",
+      "bytes": 6813,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "kind": "file",
+      "rawSha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c",
+      "bytes": 2913,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "kind": "file",
+      "rawSha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db",
+      "bytes": 2023,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "kind": "file",
+      "rawSha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d",
+      "bytes": 27213,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "kind": "file",
+      "rawSha256": "294492b0045f05ef4106d203ba78e55aa534099218f006cb80de44576421d373",
+      "bytes": 5536,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+      "kind": "missing",
+      "rawSha256": null,
+      "status": "absent-deleted-task-path",
+      "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "kind": "missing",
+      "rawSha256": null,
+      "status": "absent-deleted-task-path",
+      "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+      "kind": "file",
+      "rawSha256": "9a1b6d52be1dd6b478e4b4b97bf2428db11f759ab9a758f0f04c2f6138224862",
+      "bytes": 2686,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookTarget.sol",
+      "kind": "file",
+      "rawSha256": "e5d34dd8726b31faba071a8b6c264e85a903ef4f6ca8c729f4a26332a78b0e29",
+      "bytes": 22719,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+      "kind": "file",
+      "rawSha256": "8c3b5ee20863a8fdf05f23808c6258d78f59e0bea5402f36a7e7632672053a05",
+      "bytes": 8655,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+      "kind": "file",
+      "rawSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "bytes": 1660,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "kind": "file",
+      "rawSha256": "a2695d87fda6ba7424c30674b15f6a200c251e4584544a0a07a18668a5e1b4d9",
+      "bytes": 3251,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "kind": "file",
+      "rawSha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53",
+      "bytes": 1899,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+      "kind": "file",
+      "rawSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "bytes": 1399,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+      "kind": "file",
+      "rawSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "bytes": 2050,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+      "kind": "file",
+      "rawSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "bytes": 977,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+      "kind": "file",
+      "rawSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "bytes": 1369,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+      "kind": "file",
+      "rawSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "bytes": 3457,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "kind": "file",
+      "rawSha256": "3f60c4c5ab04d54dd94ccd71d5bb3e35d144a49394b12a6af3e3e22ccbdc8883",
+      "bytes": 6321,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+      "kind": "file",
+      "rawSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "bytes": 5958,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+      "kind": "file",
+      "rawSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "bytes": 4476,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+      "kind": "file",
+      "rawSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "bytes": 1097,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+      "kind": "file",
+      "rawSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "bytes": 26707,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "kind": "file",
+      "rawSha256": "5ef058fa8b316182dbf139d263db4330d4b5648f21cd45a3d5c2581ae5967eb4",
+      "bytes": 40460,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "kind": "file",
+      "rawSha256": "d26a5e76c703774a2a6a7a455f73a1689c0d299851d249c1c2c9c2b8c8385b90",
+      "bytes": 4178,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "kind": "file",
+      "rawSha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347",
+      "bytes": 5069,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "kind": "missing",
+      "rawSha256": null,
+      "status": "absent-deleted-task-path",
+      "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol",
+      "kind": "file",
+      "rawSha256": "d71c777d4a685b17c6e5231970c7b458cedd1501cbfff65dd404f04c887cdb54",
+      "bytes": 1492,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol",
+      "kind": "file",
+      "rawSha256": "fe5e61c3dbe69a22d51536325b4257c8052cfcf119462b90a92137711368d0a5",
+      "bytes": 3219,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "kind": "file",
+      "rawSha256": "4aac3dad7bf6b051994deac97cec3331a4c059259d9fa6db961d6498b201aeca",
+      "bytes": 16634,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "kind": "file",
+      "rawSha256": "529d3f830cddafc5ee7329a82ef4cf595713acb10897f094ee1c8fac3fb3ae8a",
+      "bytes": 9901,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "kind": "file",
+      "rawSha256": "b3aa57ad63e737467395f99f2ff9b3b9e1faf8c9fe05c4174a7aec4a44ebe0b2",
+      "bytes": 19693,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "kind": "file",
+      "rawSha256": "0dc03589b65477f0d89b022acf516bde4d335eb2d822c7ac7ae1aae0ab1b9aa9",
+      "bytes": 10896,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "kind": "file",
+      "rawSha256": "774475bdcb0f48b4da8aad3d95e3731b8a6c4edd8e4a265e5a512932e4daff80",
+      "bytes": 12761,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "kind": "file",
+      "rawSha256": "fe4b2eba13557e311ec824f723a442a78bdbb46eb0bb4f18f90a484959240703",
+      "bytes": 14496,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "kind": "file",
+      "rawSha256": "585a26a81505ab6e43f6d860ee3d023b6f97e4aed0525f4e370d4d45e73731dc",
+      "bytes": 14230,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "kind": "file",
+      "rawSha256": "d908281791e911bcdaf72cc742a58dc825e3949bb489c4143f7e8406d21ff2c4",
+      "bytes": 1532,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "kind": "file",
+      "rawSha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22",
+      "bytes": 12678,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "kind": "file",
+      "rawSha256": "994d79aaf449a15066dc86cfc13e9153856be2ad53a256b5b1345fe53003e578",
+      "bytes": 6500,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol",
+      "kind": "file",
+      "rawSha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395",
+      "bytes": 1102,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "kind": "file",
+      "rawSha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800",
+      "bytes": 3602,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "kind": "file",
+      "rawSha256": "98e01a423cf543c09386fb205c796944c124251f462fbe1de5ca0d333936f045",
+      "bytes": 4315,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "kind": "file",
+      "rawSha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45",
+      "bytes": 28343,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+      "kind": "file",
+      "rawSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "bytes": 1774,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "kind": "file",
+      "rawSha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a",
+      "bytes": 2059,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "kind": "file",
+      "rawSha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e",
+      "bytes": 28400,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+      "kind": "file",
+      "rawSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "bytes": 3675,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+      "kind": "file",
+      "rawSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "bytes": 842,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+      "kind": "file",
+      "rawSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "bytes": 16545,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "kind": "file",
+      "rawSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "bytes": 3548,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+      "kind": "file",
+      "rawSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "bytes": 5584,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+      "kind": "file",
+      "rawSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "bytes": 2725,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+      "kind": "file",
+      "rawSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "bytes": 1638,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+      "kind": "file",
+      "rawSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "bytes": 6334,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/forge-artifacts.py",
+      "kind": "file",
+      "rawSha256": "922f5ff16788ca5971738fb4214d1a53806ee45864829906206872c2f3f90045",
+      "bytes": 24757,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationClaimWitness.sol",
+      "kind": "file",
+      "rawSha256": "4ea3713f408eef07d9f862a915df747e61b3fe72a3f788bfcb217da73f497f5f",
+      "bytes": 1800,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "kind": "file",
+      "rawSha256": "b1fdc282c3d476a34048b992004cdcf05913ee8ac1b6960e5c7da78763805c83",
+      "bytes": 23591,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationDelegatedReceiverFixture.sol",
+      "kind": "file",
+      "rawSha256": "44a3c24dcee9f0f37b0dcaa2c317c63a24ea03f3f8199cff6fe07b6098c15b07",
+      "bytes": 2539,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasResumedQA.s.sol",
+      "kind": "file",
+      "rawSha256": "88939d5bf72426cbd13ae9224e32486513bfd671a84d5e6b5c216e7ea3d2b0c7",
+      "bytes": 7087,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationIndirectClaimFixture.sol",
+      "kind": "file",
+      "rawSha256": "c1c65383f1b747cffa1af47928cfbff55b85ef16f8a127afc50dbbb7684e8240",
+      "bytes": 538,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+      "kind": "file",
+      "rawSha256": "fed50d0473f8630f0f1be9275d80b78308c2c6c843248da68bfc4d09379196e3",
+      "bytes": 22976,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "kind": "file",
+      "rawSha256": "1118fe12dc84e21a6ba788a4b1ee6620bf865c93a6c4be0f76b5917cc314206c",
+      "bytes": 7610,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Solar artifact build and genuine environment deployment producer evidence only.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "kind": "file",
+      "rawSha256": "e0d17ccb9bcd0c943a6c0ad5ae597da3f16225d7ca4bced1b1de37eccc1bfe3e",
+      "bytes": 11655,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "kind": "file",
+      "rawSha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+      "bytes": 8321,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "kind": "file",
+      "rawSha256": "01505bf4ca5fbb81d7466ec6cfe7e8b9382a949c8a6cd9a072973dba1ad62282",
+      "bytes": 1793,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "kind": "file",
+      "rawSha256": "6fdc999ed41fa75b694f0efdb43c3f59a0e46c01d2338d10709ca5ecffb4911e",
+      "bytes": 34081,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "kind": "file",
+      "rawSha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+      "bytes": 9123,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "kind": "file",
+      "rawSha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "bytes": 6757,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "kind": "file",
+      "rawSha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+      "bytes": 6421,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "kind": "file",
+      "rawSha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+      "bytes": 11872,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "kind": "file",
+      "rawSha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "bytes": 7120,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "kind": "file",
+      "rawSha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+      "bytes": 5443,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "kind": "file",
+      "rawSha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+      "bytes": 8096,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "kind": "file",
+      "rawSha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+      "bytes": 9086,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "kind": "file",
+      "rawSha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+      "bytes": 3399,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "kind": "file",
+      "rawSha256": "75aeece9077d5e4030344fc06d24ec11054f66a861574908cba0d5c306da4bc8",
+      "bytes": 5412,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+      "kind": "file",
+      "rawSha256": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+      "bytes": 10369,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+      "kind": "file",
+      "rawSha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+      "bytes": 2346,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "kind": "file",
+      "rawSha256": "3b262fb7ab7b7b29457b60ebda0bcf8c9c8b33802e8621186b0262cb8f6f0595",
+      "bytes": 3806,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+      "kind": "file",
+      "rawSha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+      "bytes": 2929,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "kind": "file",
+      "rawSha256": "5d89132aaa379ecd04f5bd1b7ada7fa4db9ec24957935ebd0f09187da19a61df",
+      "bytes": 5140,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "kind": "file",
+      "rawSha256": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+      "bytes": 5522,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "kind": "file",
+      "rawSha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+      "bytes": 8114,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "kind": "file",
+      "rawSha256": "0804827556835e51d00fa553d3f99cd027263ed7042d501cdff088d46f02d011",
+      "bytes": 13446,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/core-local-qa-guard.sh",
+      "kind": "file",
+      "rawSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "bytes": 1579,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "kind": "file",
+      "rawSha256": "6e5aebb5c965959823441f8dd8d346e86166ed2901b8eedd70c0ba9f4c7e979c",
+      "bytes": 5404,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "kind": "file",
+      "rawSha256": "7c652f7d60f1f4109bfb8988fa19f959192a302aeac4682d5d9f732e3833ec4a",
+      "bytes": 9330,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "kind": "file",
+      "rawSha256": "daab8beeb5428aefd8e97f134638f02dab2d0d3044c2363ef3179c97eb2d8f97",
+      "bytes": 6682,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-deployment.ts",
+      "kind": "file",
+      "rawSha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+      "bytes": 4485,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "kind": "file",
+      "rawSha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "bytes": 15178,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "kind": "file",
+      "rawSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "bytes": 15624,
+      "status": "independently-confirmed-operator-repair-only",
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "kind": "file",
+      "rawSha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61",
+      "bytes": 11414,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "kind": "file",
+      "rawSha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+      "bytes": 6855,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "kind": "file",
+      "rawSha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+      "bytes": 12513,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "kind": "file",
+      "rawSha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912",
+      "bytes": 5380,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "kind": "file",
+      "rawSha256": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+      "bytes": 22933,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "kind": "file",
+      "rawSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "bytes": 30326,
+      "status": "independently-confirmed-operator-repair-only",
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.fixture.ts",
+      "kind": "file",
+      "rawSha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+      "bytes": 13686,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "kind": "file",
+      "rawSha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+      "bytes": 20619,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "kind": "file",
+      "rawSha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "bytes": 19008,
+      "status": "independently-confirmed-operator-repair-only",
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "kind": "file",
+      "rawSha256": "5016194f2904a251077dbd265e21c7a253d4f2aa59ee7c2364e363e0b3af09f2",
+      "bytes": 6823,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "kind": "file",
+      "rawSha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+      "bytes": 8522,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "kind": "file",
+      "rawSha256": "caabc9a7604339920c25487c4af6dd7577cb12df4d4edb9abc6cdbf863f2bda4",
+      "bytes": 10063,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "kind": "file",
+      "rawSha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3",
+      "bytes": 17608,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "kind": "file",
+      "rawSha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+      "bytes": 16042,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "kind": "file",
+      "rawSha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+      "bytes": 15126,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "kind": "file",
+      "rawSha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+      "bytes": 21123,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/pricing-local-qa.sh",
+      "kind": "file",
+      "rawSha256": "29de90e5b906195447f7fab8ca9f64f5430d6341687ce5142c9314e9aff17f76",
+      "bytes": 919,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "kind": "file",
+      "rawSha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2",
+      "bytes": 7181,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "kind": "file",
+      "rawSha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+      "bytes": 19500,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "kind": "file",
+      "rawSha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+      "bytes": 3491,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "kind": "file",
+      "rawSha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+      "bytes": 8738,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "kind": "file",
+      "rawSha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+      "bytes": 5724,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "kind": "file",
+      "rawSha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+      "bytes": 9271,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "kind": "file",
+      "rawSha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+      "bytes": 10148,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "kind": "file",
+      "rawSha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+      "bytes": 6178,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "kind": "file",
+      "rawSha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+      "bytes": 8477,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "kind": "file",
+      "rawSha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+      "bytes": 9645,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "kind": "file",
+      "rawSha256": "9ebf5c44cf38381da213f3c3ee6b633b9cbac93e3c111f59b8fd3fd147bea286",
+      "bytes": 14625,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "kind": "file",
+      "rawSha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "bytes": 4636,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "kind": "file",
+      "rawSha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+      "bytes": 6745,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "kind": "file",
+      "rawSha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+      "bytes": 20029,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+      "kind": "file",
+      "rawSha256": "f6b85235915eb23d2f22a736f6af5616e58d68f1ea4b64c68c80d183495c6958",
+      "bytes": 7861,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "kind": "file",
+      "rawSha256": "d5c78110ab49ca60919579358ff52adeea351d0a7dd5796382afd36fa8e71950",
+      "bytes": 7916,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+      "kind": "file",
+      "rawSha256": "6d0c7195f8603df8c2b4d8111c479fc87aa99a5a05cff51c4827c0c57060e09b",
+      "bytes": 8392,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "kind": "file",
+      "rawSha256": "134a65e6ec14bb01eb9dd620f83e7a2f38df8a98689879eb9b7e08d6e266abe9",
+      "bytes": 13869,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+      "kind": "file",
+      "rawSha256": "1c277d81758444791a2fcf2d0b9e871b86a4113bd5290f28d313eabc0af2f8e3",
+      "bytes": 3925,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "kind": "file",
+      "rawSha256": "7971fe65ec2a25d8b5bebe1b1203a6955ef89f3bf73e046e0652c81e3cf78a25",
+      "bytes": 10185,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "kind": "file",
+      "rawSha256": "14607d15bf59bf8a660a9339d28f710e309c3d6c53969fe3b6733bfb08971615",
+      "bytes": 14491,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "kind": "file",
+      "rawSha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "bytes": 31166,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "mixed; verified pricing-ABI binding plus unverified rehearsal changes",
+      "verifiedScope": "Generated pricing-ABI binding independently confirmed; broader task-10 fixture changes are not independently lifecycle verified.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "kind": "file",
+      "rawSha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+      "bytes": 19046,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "kind": "file",
+      "rawSha256": "031179dad9816047f5972006f3720eed9517840b24674fb6ca45ef0afb562c67",
+      "bytes": 13370,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "kind": "file",
+      "rawSha256": "ad822ba0cd573e615ec09433e30047ac0f426ac0d5fe4e40fd80cdc2c290fcfe",
+      "bytes": 12829,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "kind": "file",
+      "rawSha256": "c625d384632c459a4d40a1fe434096635b86b172ad867ceb5b3d35cbd228d9b5",
+      "bytes": 13875,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "kind": "file",
+      "rawSha256": "50960d918b03d2c0a517ef498dba4ea601aefdc439fe39e425c2c6e156b04b30",
+      "bytes": 9538,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "kind": "file",
+      "rawSha256": "4adf63cf79fcf192aa31ec8b5e194e71b3729992d6484bf5661c9f2120da0048",
+      "bytes": 11915,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+      "kind": "file",
+      "rawSha256": "0d8afc388603c7a5929540a4823a67bf4fdae4c6e78c943d33d9f889820f585b",
+      "bytes": 17437,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "kind": "file",
+      "rawSha256": "0c6c5f27baabeb61898aef7f2b74bdf3ee444f577ca6beff19af9bdf003ae628",
+      "bytes": 11342,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "kind": "file",
+      "rawSha256": "b96d81ec174e1cf0830d44e42c057ab397501e54f567762520817af3ff8d0f94",
+      "bytes": 7556,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "kind": "file",
+      "rawSha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "bytes": 2869,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "kind": "file",
+      "rawSha256": "29451c33fca5ace782a657ab942efbc6e235b94f7838ebd2881df72463e620f7",
+      "bytes": 16710,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "kind": "file",
+      "rawSha256": "15ff421c881fba204e0b8178e6992155493a97f3d89999282caae64810325962",
+      "bytes": 14462,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "kind": "file",
+      "rawSha256": "33865e649a1ef7774230f8729438cfc684920f5195efb56a23255255a5dd597d",
+      "bytes": 18499,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "kind": "file",
+      "rawSha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+      "bytes": 6048,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "kind": "file",
+      "rawSha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "bytes": 15737,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "kind": "file",
+      "rawSha256": "a0f9a4b18e12baaf714a9ce9f1e66e7ee80dec0b810bf5f473b2a69a7d80c26f",
+      "bytes": 22057,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "kind": "file",
+      "rawSha256": "0095635f033fde52cb4d3349333d7d61ee2c0916a09f3de0319e8c9897e18265",
+      "bytes": 51113,
+      "status": "unverified-rehearsal-WIP",
+      "ownership": "task-10 rehearsal executor",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "bindingMatches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "kind": "file",
+      "rawSha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+      "bytes": 4079,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "kind": "file",
+      "rawSha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+      "bytes": 13749,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "kind": "file",
+      "rawSha256": "c2af2343c48f106e1fe77d2892896c98a42ffddf80333d0dbceea805dfc604e1",
+      "bytes": 5435,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "kind": "file",
+      "rawSha256": "83a04df23bd0ea7b9e99cfabe8e0a5dfa49873a2e94ec21f400c6640bfd40e16",
+      "bytes": 6799,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "kind": "file",
+      "rawSha256": "7ab5b5e1218c7ae89de49169930ca0394cd99221f95b44f65e2db655aeadbba8",
+      "bytes": 13080,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "Migration-family source/script or changed support tooling; retained without new behavior acceptance.",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "kind": "file",
+      "rawSha256": "0c1faed22ed05e358bb533e55aaba83c018816872e57f9e213aaf741e539f97a",
+      "bytes": 12060,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "kind": "file",
+      "rawSha256": "763fdeecdd610b4fba9bc464224c4c58c21ec87df4e1605a4c781e4724fac2d4",
+      "bytes": 5548,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "kind": "file",
+      "rawSha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc",
+      "bytes": 3688,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+      "kind": "file",
+      "rawSha256": "ae5a9d259c6499b728608ba5e563c199610fecdac9157611899cb1690f83f6dc",
+      "bytes": 12204,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol",
+      "kind": "file",
+      "rawSha256": "54b1b102e71a6fee2791347357b55779452827d599d13a9244eeea94da9cebdf",
+      "bytes": 5449,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+      "kind": "file",
+      "rawSha256": "1fee951417d32719ff05785f7ad6dd5442fd14b3075e324e4175d7ef644f7803",
+      "bytes": 23223,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+      "kind": "file",
+      "rawSha256": "3e113ac8751b9976673193e5a42e9aa112e6d7afe72716f7dcbe72b0a1892223",
+      "bytes": 21829,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+      "kind": "file",
+      "rawSha256": "9050d0d3b75b5d663974c6fc9598e06c9941fed6fcbb2adffe4165096a172bf7",
+      "bytes": 39920,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "kind": "file",
+      "rawSha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4",
+      "bytes": 6911,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+      "kind": "file",
+      "rawSha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14",
+      "bytes": 9749,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "kind": "file",
+      "rawSha256": "0270a0067ac8f822048231b4045100e09f2cf1f8aeb0b6f454bc961dcb5e6794",
+      "bytes": 14172,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "kind": "file",
+      "rawSha256": "a4a002aeccde30b197b6eeea3ff61334865b30127c3301b73813a7e41047d15d",
+      "bytes": 13516,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "kind": "file",
+      "rawSha256": "e44c0984c65dc36cfda02c4829295a915042420409d5715905b3e9b331add69e",
+      "bytes": 22619,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "kind": "file",
+      "rawSha256": "5c5589e571fe33948f53fc98143f9584ae6814b3d4e6834346864a6956655ab1",
+      "bytes": 11579,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol",
+      "kind": "file",
+      "rawSha256": "5cbf23c014a59eca21a0559d234e8fece1b1b54b7fce198573d7bbeda07d6a54",
+      "bytes": 10175,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol",
+      "kind": "file",
+      "rawSha256": "9924864974c40195532228d12a126edc78ba1b76a70b7baf91f7a4697161daeb",
+      "bytes": 4128,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "kind": "file",
+      "rawSha256": "7f26c2686a9f787e8e95d81ea128644ffd40f91807b486d280edd74996baa122",
+      "bytes": 12095,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "kind": "file",
+      "rawSha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433",
+      "bytes": 19455,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+      "kind": "file",
+      "rawSha256": "0d3f74b8b8be5d09615e9daf1ed5c33832fc3d92b54b75601930516b319d60c9",
+      "bytes": 11377,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+      "kind": "file",
+      "rawSha256": "3e0bacae12cd81a6557b293ec9a5e51a9ef416043e651078bba1d42784a3e475",
+      "bytes": 8162,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryForkBase.sol",
+      "kind": "file",
+      "rawSha256": "eb234fe3d03c5c32d5abebfee3b6f0ea9d4efe2a66cdbc6e40399654b6824d81",
+      "bytes": 5896,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+      "kind": "file",
+      "rawSha256": "288e45f67fb5cbba47dd51cd9ea34fc9b99fea5e970946dc7b13567fe0ae59ea",
+      "bytes": 9678,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+      "kind": "file",
+      "rawSha256": "d93c0760bd6c5b03392b5339edbf140a2ab4150ea4f09809fba488f891a55d88",
+      "bytes": 11091,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+      "kind": "file",
+      "rawSha256": "87c01551d85ab0f72f5eb63df9c12785bfb1936ec2241b7a313571174c521b15",
+      "bytes": 7457,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+      "kind": "file",
+      "rawSha256": "d8d5b24f9869acdd21225d6a11396802065aae6ef6533bf3dab5ac7a0583c333",
+      "bytes": 9161,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+      "kind": "file",
+      "rawSha256": "329d958033171d69bd97f87e9da4fdacc14b3ff2d8729d621a4704bbc185abaf",
+      "bytes": 17769,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+      "kind": "file",
+      "rawSha256": "7042db6fc57c3c75b46776031253c10d8b0c8a5c149a794d979cc6ef53a137e7",
+      "bytes": 11352,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptForkBase.sol",
+      "kind": "file",
+      "rawSha256": "909139dbffcfbd56dd8efc297b4c49a2a698170c090da7ca648d5be78b07e78e",
+      "bytes": 6016,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "kind": "file",
+      "rawSha256": "56eea3a9c99c4236c13dd0187f18a4877aa79f45becdb540cdfe6ecd470cc45b",
+      "bytes": 26923,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "kind": "file",
+      "rawSha256": "807573ffcd3b6d50bb8fd283d82db43b284879789721f37f370391c5de70510e",
+      "bytes": 14737,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "kind": "file",
+      "rawSha256": "7c504d5bfca9d3c258832d740aa5343e45b1fc380b8f02697ecb314da2e8a015",
+      "bytes": 3896,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+      "kind": "file",
+      "rawSha256": "446e3237541b9b459527f1841056f5618d4709b77646ef129c816178648c820a",
+      "bytes": 9155,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "10fe9dc9c7d63b212b31850c3ae566c221c690f3f7c42920d43860c008b30ef1",
+      "bytes": 16499,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimedSyConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "8fdb0670b367482ba2f63d72633ca48b304f605f61c0fa2c99da1b816d69bb18",
+      "bytes": 13528,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "kind": "file",
+      "rawSha256": "c66586fe461d8d0bd009e5ac3bbcd130bd188a6958e00d64fdd86781ab917fb4",
+      "bytes": 14114,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "kind": "file",
+      "rawSha256": "7afef2c9dbd38bdf6538fb9dbe71bda7810c942ced7b16de335c67155733ba42",
+      "bytes": 34726,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "4663668562f33f0dcd5e5642d70dc20987a9da89d9df4daa96a3957d7a10e77f",
+      "bytes": 15412,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquidConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "01c08856f004a76b4cdec83b964839f522cfed905d2b96af739390228eff7715",
+      "bytes": 12975,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceiptConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "7eb74e3d69ea6bfb6b746d6be43dbd1efea5bb3b35d96baa2d4b6ea38c6d34a4",
+      "bytes": 12962,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+      "kind": "file",
+      "rawSha256": "cf8c83025d4b01200d7b7aa31732db5071347a4c590dfe348a1aedafc6880546",
+      "bytes": 16055,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+      "kind": "file",
+      "rawSha256": "b6290e2d78cac3a21c349262ac32bd977d7132d7657ac546e8d9f0edb85cb743",
+      "bytes": 10633,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLpConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "6158b8415104a80ad7fedc721a1a10ea21e38784725b47bf262dcdac3e1c3e1f",
+      "bytes": 16988,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "kind": "file",
+      "rawSha256": "9e0928461d4ce6e2c06e7d0982ac2720ee54147454e6e4c36888a38b3c33eb7c",
+      "bytes": 9653,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "a9adaad00246cb546c2b7c38c4c89ca436fb976a77f0fd09d6937c49e601e468",
+      "bytes": 19374,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOperationGas.t.sol",
+      "kind": "file",
+      "rawSha256": "9a298cf66fb82876c00aaf5d1e80483f0841d0b53f6140bdb6cbfc8a8bcf1b5e",
+      "bytes": 791,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol",
+      "kind": "file",
+      "rawSha256": "97331292af6ab2a747f9483380856310563b4e5d9d23147a98606cc71f22f375",
+      "bytes": 7770,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+      "kind": "file",
+      "rawSha256": "c6e4428fd48147bdfe1f4fb01c168c0bf4938293484f24753dbd12c35b4c0c14",
+      "bytes": 10814,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+      "kind": "file",
+      "rawSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "bytes": 13612,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol",
+      "kind": "file",
+      "rawSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "bytes": 1220,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+      "kind": "file",
+      "rawSha256": "056de212fc18170e502fc4b33e40478c5de70273a87d67c4a78af209ac027bb3",
+      "bytes": 6093,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "kind": "file",
+      "rawSha256": "eb13a7019ec5a35493ff08e0e0581d2ca3a364f3109ee97d9c00a4372fe81e9a",
+      "bytes": 12219,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+      "kind": "file",
+      "rawSha256": "06db89fec3d1f2fc007dd8008f970980f5fa9fec6b86606fc2d268bb7de38535",
+      "bytes": 6455,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "kind": "file",
+      "rawSha256": "787e3b0dd904e89a2b7b036ba5e92cad54abe6f84f8222b2b3ec61a83ae4d0ab",
+      "bytes": 10993,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "8ddaff01ab54866999c90abcb80733cfc9b6edba3116600eca4847fa02178554",
+      "bytes": 11818,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedPricing.t.sol",
+      "kind": "file",
+      "rawSha256": "9802c74b54545ce70779c9320148fccf05d6eeab63f0a29000edb6208e673439",
+      "bytes": 31719,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "7f0f2004edab98fc0ed38fc93c2b6ca08755e9333440770a3eff19e8654e0727",
+      "bytes": 13662,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+      "kind": "file",
+      "rawSha256": "abc1675708d3f85e270a8947cded92dcef9be4fd79467a1bca044755dc3d7bae",
+      "bytes": 13988,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+      "kind": "file",
+      "rawSha256": "fab8a71fe1e72a656f0937301f2301050e81535b5f03b721a4cda4c5dd20023a",
+      "bytes": 21692,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "kind": "file",
+      "rawSha256": "d7709beabbb24fa3884eee84c4c7229e27ce0725229169b7fe9b4a423ecd4e98",
+      "bytes": 6650,
+      "status": "task-owned-source-retained-bounded-scope",
+      "ownership": "task-owned family or touched supporting path; no new acceptance",
+      "verifiedScope": "No new QA; consult confirmed task evidence and freshness limits.",
+      "bindingMatches": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "kind": "file",
+      "rawSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "bytes": 98213,
+      "status": "task-owned-outer-incident-document",
+      "ownership": "Dirty incident/document path outside recorder migration root; retained with actual raw hash.",
+      "verifiedScope": "No new behavior or documentation acceptance."
+    },
+    {
+      "path": "package.json",
+      "kind": "file",
+      "rawSha256": "a3d0d97074012a183156abf0134370f1f8bc69b2e69aeaa7babebbd0644a651d",
+      "bytes": 3138,
+      "status": "environment-identity-not-new-authored-task-source"
+    },
+    {
+      "path": "bun.lock",
+      "kind": "file",
+      "rawSha256": "25c47a2ce63eef951a283eea0132611e3d6d78f40f4737fbad5f5eab7c931740",
+      "bytes": 247642,
+      "status": "environment-identity-not-new-authored-task-source"
+    },
+    {
+      "path": "foundry.toml",
+      "kind": "file",
+      "rawSha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "bytes": 3814,
+      "status": "environment-identity-not-new-authored-task-source"
+    },
+    {
+      "path": "remappings.txt",
+      "kind": "file",
+      "rawSha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "bytes": 520,
+      "status": "environment-identity-not-new-authored-task-source"
+    },
+    {
+      "path": "node_modules",
+      "kind": "symlink",
+      "link": "/Users/cyotee/Projects/indexedex/node_modules",
+      "rawSha256": "c8ce23751ae468dd00158f2465a4c8ced85fb4811e0f46af46d458d9b79bc861",
+      "bytes": 45,
+      "status": "environment-or-vendor-link-not-traversed"
+    },
+    {
+      "path": "lib/crane",
+      "kind": "directory",
+      "rawSha256": null,
+      "status": "existing-vendor-directory-not-recursively-classified-as-authored-work",
+      "disposition": "Root preserved; historical dependency capture remains in task-13 source manifests. Not an omitted authored task source."
+    }
+  ],
+  "planRows": [
+    {
+      "id": "1",
+      "mark": "x",
+      "title": "Reconcile original requirements with approved manual pricing."
+    },
+    {
+      "id": "2",
+      "mark": "x",
+      "title": "Recover every retained artifact and verification program."
+    },
+    {
+      "id": "3",
+      "mark": "x",
+      "title": "Complete authenticated source and recovery evidence indexes."
+    },
+    {
+      "id": "4",
+      "mark": "x",
+      "title": "Replace capture with exact manual Weighted pricing."
+    },
+    {
+      "id": "5",
+      "mark": "x",
+      "title": "Require separate contributions for weighted NFT three."
+    },
+    {
+      "id": "6",
+      "mark": "x",
+      "title": "Close evidenced source and recovery behavior gaps."
+    },
+    {
+      "id": "7",
+      "mark": "x",
+      "title": "Implement book-aware preparation and mixed-record reconciliation."
+    },
+    {
+      "id": "16",
+      "mark": "x",
+      "title": "Carry authenticated donor evidence through bundles."
+    },
+    {
+      "id": "8",
+      "mark": "x",
+      "title": "Deliver substantive adversarial fixtures and invariants."
+    },
+    {
+      "id": "9",
+      "mark": "x",
+      "title": "Author substantive surrender and package evidence records."
+    },
+    {
+      "id": "10",
+      "mark": "~",
+      "title": "Rehearse mixed pricing and both NFT-three bonds."
+    },
+    {
+      "id": "11",
+      "mark": "x",
+      "title": "Measure admitted batches and signed gas envelopes."
+    },
+    {
+      "id": "12",
+      "mark": "~",
+      "title": "Preserve portable bundles and exact journal provenance."
+    },
+    {
+      "id": "13",
+      "mark": "~",
+      "title": "Run final-tree contract and operator verification."
+    },
+    {
+      "id": "14",
+      "mark": "~",
+      "title": "Complete traceability and reconcile current operator documentation."
+    },
+    {
+      "id": "15",
+      "mark": "~",
+      "title": "Audit complete delivery and preserve unrelated workspace work."
+    },
+    {
+      "id": "F1",
+      "mark": " ",
+      "title": "Plan compliance audit"
+    },
+    {
+      "id": "F2",
+      "mark": " ",
+      "title": "Code quality review"
+    },
+    {
+      "id": "F3",
+      "mark": " ",
+      "title": "Real manual QA"
+    },
+    {
+      "id": "F4",
+      "mark": " ",
+      "title": "Ideal-state fidelity"
+    }
+  ],
+  "knownUnmetTasks": [
+    10,
+    12,
+    13,
+    14,
+    15
+  ],
+  "verifiedRows": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "16",
+    "8",
+    "9",
+    "11"
+  ],
+  "wipPaths": [
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "0095635f033fde52cb4d3349333d7d61ee2c0916a09f3de0319e8c9897e18265",
+      "bytes": 51113,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "bytes": 31166,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Generated pricing-ABI binding independently confirmed; broader task-10 fixture changes are not independently lifecycle verified.",
+      "mixedOwnership": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "29451c33fca5ace782a657ab942efbc6e235b94f7838ebd2881df72463e620f7",
+      "bytes": 16710,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "sha256": "15ff421c881fba204e0b8178e6992155493a97f3d89999282caae64810325962",
+      "bytes": 14462,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "sha256": "9ebf5c44cf38381da213f3c3ee6b633b9cbac93e3c111f59b8fd3fd147bea286",
+      "bytes": 14625,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+      "sha256": "0d8afc388603c7a5929540a4823a67bf4fdae4c6e78c943d33d9f889820f585b",
+      "bytes": 17437,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "sha256": "0c6c5f27baabeb61898aef7f2b74bdf3ee444f577ca6beff19af9bdf003ae628",
+      "bytes": 11342,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "031179dad9816047f5972006f3720eed9517840b24674fb6ca45ef0afb562c67",
+      "bytes": 13370,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "sha256": "d5c78110ab49ca60919579358ff52adeea351d0a7dd5796382afd36fa8e71950",
+      "bytes": 7916,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "sha256": "1118fe12dc84e21a6ba788a4b1ee6620bf865c93a6c4be0f76b5917cc314206c",
+      "bytes": 7610,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Solar artifact build and genuine environment deployment producer evidence only.",
+      "mixedOwnership": false
+    }
+  ],
+  "settledRepairBindings": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "admittedSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "matchesAdmitted": true,
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "admittedSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "matchesAdmitted": true,
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "admittedSha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "matchesAdmitted": true,
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+    }
+  ],
+  "limits": [
+    "These actual raw identities are bookkeeping, not repeated test execution or full final-conformance acceptance.",
+    "Live orchestration control can change after observation; the saved control bytes are a dated observation, never a fabricated historical source preimage.",
+    "The recorder checks the migration directory; exterior task-source hashes must be read in this companion catalog by reviewers."
+  ],
+  "generatedAuditSelfReference": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/partial-boundary-done.json"
+  ]
+}

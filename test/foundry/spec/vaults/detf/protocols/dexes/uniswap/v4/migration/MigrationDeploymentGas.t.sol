@@ -410,7 +410,7 @@ contract MigrationDeploymentGasTest is TestBase_UniswapV4DetfMigration {
         _reject(address(diamondPackageFactory), abi.encodeWithSignature("initAccount(address,bytes)", address(migrationPkg), abi.encode(args_)));
         _reject(detf, abi.encodeCall(IPostDeployAccountHook.postDeploy, ()));
         _reject(detf, abi.encodeCall(IDiamondFactoryPackage.initAccount, (abi.encode(args_))));
-        bytes4[16] memory removed_ = [Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
+        bytes4[16] memory removed_ = [Allocation.bootstrapMigrationReserve.selector, Allocation.setMigrationWeightedPricing.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.configureNftEntitlements.selector, Allocation.activateMigration.selector,
             Allocation.configureWeightedSyEntitlements.selector, Allocation.configureDtfCustodySeEntitlements.selector,

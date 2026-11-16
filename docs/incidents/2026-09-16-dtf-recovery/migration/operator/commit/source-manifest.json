@@ -1,0 +1,489 @@
+{
+  "schema": "dtf-operator-source-commit-v1",
+  "date": "2026-11-11",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+  "branch": "work/dtf-migration-phase-08-operator",
+  "parent": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "pathCount": 26,
+  "paths": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "mode": "100644",
+      "acceptedSha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+      "currentSha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+      "bytes": 15480,
+      "provenance": [
+        "verification/evidence.json#/preservedInputs/20",
+        "rehearsal/source-evidence-bindings.json#/runbook"
+      ],
+      "expectedGitBlob": "029e927840f6839966bd84667751d222e640a45f"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "mode": "100644",
+      "acceptedSha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "currentSha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "bytes": 18115,
+      "provenance": [
+        "verification/evidence.json#/finalSources/22",
+        "verification/baseline.json#/sources/22",
+        "rehearsal/source-evidence-bindings.json#/sources/22"
+      ],
+      "expectedGitBlob": "3fb4fa98b2140192ddd4fc08a8f4292bd9ed926b"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "mode": "100644",
+      "acceptedSha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "currentSha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "bytes": 7418,
+      "provenance": [
+        "verification/evidence.json#/finalSources/23",
+        "verification/baseline.json#/sources/23",
+        "rehearsal/source-evidence-bindings.json#/sources/23"
+      ],
+      "expectedGitBlob": "dbc45f00db1ee86f55f3475489a25162b47e6ffa"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "mode": "100644",
+      "acceptedSha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "currentSha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "bytes": 3706,
+      "provenance": [
+        "verification/evidence.json#/finalSources/24",
+        "verification/baseline.json#/sources/24",
+        "rehearsal/source-evidence-bindings.json#/sources/24"
+      ],
+      "expectedGitBlob": "bfaa8ea69e708ae06d4ed167a794f803eb3bc70f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "mode": "100644",
+      "acceptedSha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "currentSha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "bytes": 7497,
+      "provenance": [
+        "verification/evidence.json#/finalSources/8",
+        "verification/baseline.json#/sources/8",
+        "rehearsal/source-evidence-bindings.json#/sources/8"
+      ],
+      "expectedGitBlob": "29227c55e4e2f272433a44dd349aeb6bd403cb5d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "mode": "100644",
+      "acceptedSha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "currentSha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "bytes": 6109,
+      "provenance": [
+        "verification/evidence.json#/finalSources/4",
+        "verification/baseline.json#/sources/4",
+        "rehearsal/source-evidence-bindings.json#/sources/4"
+      ],
+      "expectedGitBlob": "937b59e520efc283e9f39a6587d09dd25f57f3c6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "mode": "100644",
+      "acceptedSha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "currentSha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "bytes": 4601,
+      "provenance": [
+        "verification/evidence.json#/finalSources/7",
+        "verification/baseline.json#/sources/7",
+        "rehearsal/source-evidence-bindings.json#/sources/7"
+      ],
+      "expectedGitBlob": "5665652f2ff51578dd0a0dc305f335947d7affff"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "mode": "100644",
+      "acceptedSha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "currentSha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "bytes": 8426,
+      "provenance": [
+        "verification/evidence.json#/finalSources/11",
+        "verification/baseline.json#/sources/11",
+        "rehearsal/source-evidence-bindings.json#/sources/11"
+      ],
+      "expectedGitBlob": "7fb6f90438e08fb10f9d8d77ceb03172ac0027a1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "mode": "100644",
+      "acceptedSha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "currentSha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "bytes": 4758,
+      "provenance": [
+        "verification/evidence.json#/finalSources/10",
+        "verification/baseline.json#/sources/10",
+        "rehearsal/source-evidence-bindings.json#/sources/10"
+      ],
+      "expectedGitBlob": "86f27679c96c3046c49c00733ed58f636fa36e68"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "mode": "100644",
+      "acceptedSha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "currentSha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "bytes": 12385,
+      "provenance": [
+        "verification/evidence.json#/finalSources/20",
+        "verification/baseline.json#/sources/20",
+        "rehearsal/source-evidence-bindings.json#/sources/20"
+      ],
+      "expectedGitBlob": "9950b3879562a3e54ca676b91ea8e07473b32b0b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "mode": "100644",
+      "acceptedSha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "currentSha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "bytes": 4509,
+      "provenance": [
+        "verification/evidence.json#/finalSources/12",
+        "verification/baseline.json#/sources/12",
+        "rehearsal/source-evidence-bindings.json#/sources/12"
+      ],
+      "expectedGitBlob": "3621773e11a1c080aa6b261f48e05fc795dd8767"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "mode": "100644",
+      "acceptedSha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "currentSha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "bytes": 11179,
+      "provenance": [
+        "verification/evidence.json#/finalSources/16",
+        "verification/baseline.json#/sources/16",
+        "rehearsal/source-evidence-bindings.json#/sources/16"
+      ],
+      "expectedGitBlob": "2ce759db3840046ccd9a7d2a66bd7d86dee9b058"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "mode": "100644",
+      "acceptedSha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "currentSha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "bytes": 4792,
+      "provenance": [
+        "verification/evidence.json#/finalSources/17",
+        "verification/baseline.json#/sources/17",
+        "rehearsal/source-evidence-bindings.json#/sources/17"
+      ],
+      "expectedGitBlob": "3e5fb35d883a17cbb9b22ae5da7a567b2b728dde"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "mode": "100644",
+      "acceptedSha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "currentSha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "bytes": 7199,
+      "provenance": [
+        "verification/evidence.json#/finalSources/6",
+        "verification/baseline.json#/sources/6",
+        "rehearsal/source-evidence-bindings.json#/sources/6"
+      ],
+      "expectedGitBlob": "8e44261705b20c964c2a6aeb021d8f448e3e7f8f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "mode": "100644",
+      "acceptedSha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "currentSha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "bytes": 7872,
+      "provenance": [
+        "verification/evidence.json#/finalSources/9",
+        "verification/baseline.json#/sources/9",
+        "rehearsal/source-evidence-bindings.json#/sources/9"
+      ],
+      "expectedGitBlob": "1464966e876d8536a67a04c517094b329d22dbb7"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "mode": "100644",
+      "acceptedSha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "currentSha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "bytes": 11077,
+      "provenance": [
+        "verification/evidence.json#/finalSources/14",
+        "verification/baseline.json#/sources/14",
+        "rehearsal/source-evidence-bindings.json#/sources/14"
+      ],
+      "expectedGitBlob": "eacded58a83aa7eba9e53780db21115f86efa764"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "mode": "100644",
+      "acceptedSha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "currentSha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "bytes": 5727,
+      "provenance": [
+        "verification/evidence.json#/finalSources/1",
+        "verification/baseline.json#/sources/1",
+        "rehearsal/source-evidence-bindings.json#/sources/1"
+      ],
+      "expectedGitBlob": "1ba3a1ae0425a5e2a954ba0d323dd2f1f9e6368c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "mode": "100644",
+      "acceptedSha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "currentSha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "bytes": 3945,
+      "provenance": [
+        "verification/evidence.json#/finalSources/2",
+        "verification/baseline.json#/sources/2",
+        "rehearsal/source-evidence-bindings.json#/sources/2"
+      ],
+      "expectedGitBlob": "0bf608119a0ac12c3c2a5dab85332ea963eb44fc"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "mode": "100644",
+      "acceptedSha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "currentSha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "bytes": 6780,
+      "provenance": [
+        "verification/evidence.json#/finalSources/3",
+        "verification/baseline.json#/sources/3",
+        "rehearsal/source-evidence-bindings.json#/sources/3"
+      ],
+      "expectedGitBlob": "72c9462e54d5e878eb8a5b45468f3eaf7512f398"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "mode": "100644",
+      "acceptedSha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "currentSha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "bytes": 4243,
+      "provenance": [
+        "verification/evidence.json#/finalSources/19",
+        "verification/baseline.json#/sources/19",
+        "rehearsal/source-evidence-bindings.json#/sources/19"
+      ],
+      "expectedGitBlob": "ccfb8d3f9f64ae0d55aeb48ed016230850ce13eb"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "mode": "100644",
+      "acceptedSha256": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "currentSha256": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "bytes": 10806,
+      "provenance": [
+        "verification/evidence.json#/finalSources/18",
+        "verification/baseline.json#/sources/18",
+        "rehearsal/source-evidence-bindings.json#/sources/18"
+      ],
+      "expectedGitBlob": "7d60598bfb3b33df6daaedc7a6d607eb3f71a8db"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "mode": "100644",
+      "acceptedSha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "currentSha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "bytes": 2857,
+      "provenance": [
+        "verification/evidence.json#/finalSources/13",
+        "verification/baseline.json#/sources/13",
+        "rehearsal/source-evidence-bindings.json#/sources/13"
+      ],
+      "expectedGitBlob": "380d2f6fb37b7eb7ba68d5e889a3ffd1d2977721"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "mode": "100644",
+      "acceptedSha256": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "currentSha256": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "bytes": 5109,
+      "provenance": [
+        "verification/evidence.json#/finalSources/21",
+        "verification/baseline.json#/sources/21",
+        "rehearsal/source-evidence-bindings.json#/sources/21"
+      ],
+      "expectedGitBlob": "7eed588aaa7c371260b5386bab55961ea11d250d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "mode": "100644",
+      "acceptedSha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "currentSha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "bytes": 5615,
+      "provenance": [
+        "verification/evidence.json#/finalSources/5",
+        "verification/baseline.json#/sources/5",
+        "rehearsal/source-evidence-bindings.json#/sources/5"
+      ],
+      "expectedGitBlob": "a63a7df43dfd5068950332bd2ad739cfa3aaccb1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "mode": "100644",
+      "acceptedSha256": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "currentSha256": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "bytes": 16643,
+      "provenance": [
+        "verification/evidence.json#/finalSources/15",
+        "verification/baseline.json#/sources/15",
+        "rehearsal/source-evidence-bindings.json#/sources/15"
+      ],
+      "expectedGitBlob": "6ca97734699365a00d1f0bc65c3a083794750335"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "mode": "100644",
+      "acceptedSha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "currentSha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "bytes": 4678,
+      "provenance": [
+        "verification/evidence.json#/finalSources/0",
+        "verification/baseline.json#/sources/0",
+        "rehearsal/source-evidence-bindings.json#/sources/0"
+      ],
+      "expectedGitBlob": "ca7525de9f401bcefad06f276aec5d4eb265ca4f"
+    }
+  ],
+  "verification": {
+    "report": "../verification/report.md",
+    "evidence": "../verification/evidence.json",
+    "baseline": "../verification/baseline.json",
+    "acceptedScriptChecks": {
+      "monitor": "mon_W0BCYQ782PVXHW3R",
+      "exit": 0,
+      "tests": 50,
+      "failed": 0,
+      "strictTypes": true,
+      "witnessLspErrors": 0
+    },
+    "acceptedReceiptCounts": {
+      "infrastructure": 220,
+      "operator": 33,
+      "fixture": 11,
+      "total": 264
+    },
+    "duplicateSuitesRun": false,
+    "artifactIdentities": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+        "sha256": "f0e9450eead4647d5917c1f9272aa148f1383dda7fdcdda1b257750cfecc4f83",
+        "creation": "0xf9a8cc0c49ddc52cd96274b7354c089f66462f33243654970986e0d844a426c3",
+        "runtime": "0x9af2487766db6cda2c85c8029ef698b7ee7a021d1cf21aa45588fc1da616dba5",
+        "match": true,
+        "after": "f0e9450eead4647d5917c1f9272aa148f1383dda7fdcdda1b257750cfecc4f83"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+        "sha256": "e4434ba8f5a0ad0e327c204e545121445848f3b9267a5de2b42f74c7bfbf391b",
+        "creation": "0xb5c728e1d786308228f9d92388fc5483226229b9207f27d36dbde5f8f0ef1c02",
+        "runtime": "0xaaf2fd3eb176808eb5d75442e3e1539f6ecc3520e2a150d6bfb13d5748f3401a",
+        "match": true,
+        "after": "e4434ba8f5a0ad0e327c204e545121445848f3b9267a5de2b42f74c7bfbf391b"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+        "sha256": "d15bf21cdd1b60a1404fd5a09b5c87902c2ff78435656a33707b15b2edfc59a0",
+        "creation": "0xd6cb5920e3be7cbed3f882c1ffead506f7fb4df28bac39d73562f592d6c69d83",
+        "runtime": "0x828916102195798b272d44d03527cdca3cac0a164c17e4a4e1d4e41db51a1747",
+        "match": true,
+        "after": "d15bf21cdd1b60a1404fd5a09b5c87902c2ff78435656a33707b15b2edfc59a0"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+        "sha256": "d2155f97a52da5e99cad7d0a9c98f17844554262a9a6a0c9d0a4bb361892dbf4",
+        "creation": "0x42b2a20528abb4f8d1353d1c8a0df35b8228b3fa6bc6bdd8d1be036321f25982",
+        "runtime": "0x7e11203432a30e80a367ae4849363be7a0f0acc33a39decd5368b7c79b0b3f63",
+        "match": true,
+        "after": "d2155f97a52da5e99cad7d0a9c98f17844554262a9a6a0c9d0a4bb361892dbf4"
+      }
+    ],
+    "compilerSourceComparisons": 226,
+    "meaning": "Source SHA-256 is raw current file identity; artifact SHA-256 is envelope only; creation/runtime Keccak identify executable objects, not immutable-populated deployed runtime."
+  },
+  "preservationBaseline": {
+    "path": "preservation-baseline.json",
+    "sha256": "73df7e2ba07d6901f85f8107b282263ea85b6aa5cc6408ed2856a2c00c9541a2",
+    "details": {
+      "schema": "dtf-operator-delivery-preservation-v1",
+      "date": "2026-11-11",
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+      "parent": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "branch": "work/dtf-migration-phase-08-operator",
+      "initialStagedPaths": [],
+      "index": {
+        "path": "index-before.txt",
+        "sha256": "14b1c6e410f5b9fc72ca26410eccc5ab711e6f9f7a92f915428d0afacbd9b113",
+        "records": 12981,
+        "serialization": "LC-independent Unicode sorted Git ls-files --stage records, newline terminated"
+      },
+      "protectedRefs": {
+        "path": "refs-before.txt",
+        "sha256": "2970336f915261b7e4b56eba2896cf4fb8b894a1c5991a4b6a7861ef237b3cba",
+        "serialization": "Git for-each-ref refname/objectname, newline terminated; excludes only owned branch"
+      },
+      "worktree": {
+        "path": "worktree-before.jsonl",
+        "sha256": "6bfe81f9e585989af28b24efbcabd4c11ee7536356dbae00479c4e0dc251f714",
+        "entries": 22187,
+        "serialization": "sorted relative paths; compact sort_keys JSON per line, final newline",
+        "sha256Files": 14195,
+        "statOnlyFiles": 7838,
+        "symlinks": 154,
+        "excluded": [
+          ".git administrative entry",
+          "docs/incidents/2026-09-16-dtf-recovery/migration/operator/commit/**"
+        ],
+        "statOnlyRoots": [
+          ".next",
+          "broadcast",
+          "cache",
+          "cache_forge",
+          "out"
+        ],
+        "limits": "Does not hash every cache/artifact/broadcast byte; links are lstat/readlink only, targets are not traversed. Four accepted executable artifacts separately SHA-256/Keccak checked."
+      }
+    }
+  },
+  "safetyReview": {
+    "urlLiterals": [
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "line": 89,
+        "text": "process.env[envName] = `http://127.0.0.1:${listener.port}`;"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+        "line": 164,
+        "text": "process.env[envName] = \"https://example.invalid\";"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "line": 29,
+        "text": "this.endpoint = new URL(`http://127.0.0.1:${port}`);"
+      }
+    ],
+    "knownDevelopmentKeys": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "line": 9,
+        "classification": "public Anvil development key"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution.test.ts",
+        "line": 34,
+        "classification": "public Anvil development key"
+      }
+    ],
+    "resolvedPrivateEndpoints": 0,
+    "productionSigningMaterial": 0,
+    "method": "Read all candidate files completely; inspect URL literals and signer selection; only the documented public Anvil key is embedded."
+  },
+  "scope": "Only 22 TypeScript sources/tests/fixture, 3 Foundry scripts including narrow private-to-internal visibility change, and operator runbook. Reports, runtime evidence and delivery artifacts remain uncommitted. No source/test/doc edits by delivery.",
+  "openGates": [
+    "Deployment 42985843 gas exceeds historical 32000000 limit; phase09 remains separate",
+    "Full original task9",
+    "Ten blocked categories and E1/E2/SB-E1-E4 gates",
+    "Operational funding/allocation provenance",
+    "Public deployment and release"
+  ]
+}

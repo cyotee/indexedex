@@ -1,0 +1,340 @@
+{
+  "revision": "weir-import-plan-final-r2",
+  "planSha256": "118bfa0875fcc382760a5b8cb5bd76566aaf0744e9ad182ba038ace7196dff90",
+  "prdRevision": "weir-import-prd-owner-clarifications-20261029",
+  "prdSha256": "c9316907a22d3ea0c2568aed74053a8911812fc1a6c424d162cb805e3ab4a551",
+  "rewrites": [
+    {
+      "file": "W",
+      "frozen": "@openzeppelin/contracts/access/Ownable2Step.sol",
+      "selected": "@crane/contracts/external/openzeppelin-contracts-v5/access/Ownable2Step.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "@openzeppelin/contracts/utils/Pausable.sol",
+      "selected": "@crane/contracts/external/openzeppelin-contracts-v5/utils/Pausable.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+      "selected": "@crane/contracts/external/openzeppelin-contracts-v5/utils/ReentrancyGuard.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/interfaces/IPoolManager.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/libraries/StateLibrary.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/libraries/TickMath.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/libraries/FullMath.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/libraries/FixedPoint96.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint96.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/libraries/FixedPoint128.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint128.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/types/PoolKey.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/types/PoolId.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/types/Currency.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "v4-core/src/types/BalanceDelta.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "./base/WeirBase.sol",
+      "selected": "./base/WeirBase.sol",
+      "count": 1
+    },
+    {
+      "file": "W",
+      "frozen": "./libraries/LiquidityAmounts.sol",
+      "selected": "./libraries/LiquidityAmounts.sol",
+      "count": 1
+    },
+    {
+      "file": "B",
+      "frozen": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+      "selected": "@crane/contracts/external/openzeppelin-contracts-v5/token/ERC20/IERC20.sol",
+      "count": 1
+    },
+    {
+      "file": "B",
+      "frozen": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+      "selected": "@crane/contracts/external/openzeppelin-contracts-v5/token/ERC20/utils/SafeERC20.sol",
+      "count": 1
+    },
+    {
+      "file": "B",
+      "frozen": "v4-core/src/interfaces/IPoolManager.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol",
+      "count": 1
+    },
+    {
+      "file": "B",
+      "frozen": "v4-core/src/interfaces/callback/IUnlockCallback.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol",
+      "count": 1
+    },
+    {
+      "file": "B",
+      "frozen": "v4-core/src/types/Currency.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol",
+      "count": 1
+    },
+    {
+      "file": "L",
+      "frozen": "v4-core/src/libraries/FullMath.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol",
+      "count": 1
+    },
+    {
+      "file": "L",
+      "frozen": "v4-core/src/libraries/FixedPoint96.sol",
+      "selected": "@crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint96.sol",
+      "count": 1
+    }
+  ],
+  "addedImport": {
+    "file": "W",
+    "after": "import {BalanceDelta} from \"@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol\";",
+    "line": "import {ModifyLiquidityParams, SwapParams} from \"@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol\";"
+  },
+  "qualifications": [
+    {
+      "file": "W",
+      "frozen": "IPoolManager.ModifyLiquidityParams",
+      "selected": "ModifyLiquidityParams",
+      "count": 4,
+      "frozenLines": [
+        264,
+        292,
+        323,
+        349
+      ]
+    },
+    {
+      "file": "W",
+      "frozen": "IPoolManager.SwapParams",
+      "selected": "SwapParams",
+      "count": 1,
+      "frozenLines": [
+        397
+      ]
+    }
+  ],
+  "internalTypeQualifications": [
+    "IPoolManager.ModifyLiquidityParams",
+    "IPoolManager.SwapParams"
+  ],
+  "hashes": {
+    "WeirVaults": {
+      "frozenSha256": "23de61301729d2950ba110e15cdce5e383fc4e5aacb0b906ee845390bd0e0180",
+      "adjustedSha256": "de30fefa21f59d70ef2a890e0b2b19fba179d3f7644c7bdd477c20e290bb2487"
+    },
+    "WeirBase": {
+      "frozenSha256": "f14c1ef0fe9913f0d99e872f108ab3d7b84f44050d449d2b72049ad20a08b498",
+      "adjustedSha256": "dd3940d3bed673a11e4cc7524578b940fa70fecfc652bf51a6a133b209d59e16"
+    },
+    "LiquidityAmounts": {
+      "frozenSha256": "f482702fecb1b6dc5c82b9ad918a4f991ce5b8c4d0c1144b448c25fbaad3093d",
+      "adjustedSha256": "1767ea348e039a66396258246be9f3f6a1f4b70bd979909fdcb144b25ca67092"
+    }
+  },
+  "wi06": [
+    {
+      "file": "W",
+      "diagnostic": "Compiler error (/solidity/libsolidity/codegen/LValue.cpp:54): Stack too deep at contracts/protocols/strategy/weir/WeirVaults.sol:342:45 TickMath.getSqrtPriceAtTick(v.tickLower), inside _compound getLiquidityForAmounts. solc 0.8.35, optimizer on, optimizer_runs 1, via_ir false. Reported by python3 scripts/forge-artifacts.py build of the three domain files.",
+      "kind": "internal memory struct around existing temporaries",
+      "preserves": [
+        "ABI",
+        "storage",
+        "inheritance",
+        "checked order",
+        "casts",
+        "calls",
+        "fees",
+        "events",
+        "errors",
+        "notices"
+      ],
+      "old": "    /// @dev Harvest fees, take the performance fee, re-add the rest plus idle dust as liquidity.\n    /// Leaves this contract's PoolManager balance at zero.\n    function _compound(Vault storage v, PoolId id, bytes memory hookData) internal {\n        v.lastCompound = uint64(block.timestamp);\n        if (v.liquidity == 0) return;\n        (BalanceDelta fees,) = poolManager.modifyLiquidity(\n            v.key, ModifyLiquidityParams(v.tickLower, v.tickUpper, 0, bytes32(0)), hookData\n        );\n        uint256 f0 = fees.amount0() > 0 ? uint128(fees.amount0()) : 0;\n        uint256 f1 = fees.amount1() > 0 ? uint128(fees.amount1()) : 0;\n        uint256 cut0 = (f0 * perfFeeBps) / BPS;\n        uint256 cut1 = (f1 * perfFeeBps) / BPS;\n        _take(v.key.currency0, treasury, cut0);\n        _take(v.key.currency1, treasury, cut1);\n\n        uint256 r0 = f0 - cut0 + v.idle0;\n        uint256 r1 = f1 - cut1 + v.idle1;\n        int256 net0 = int256(f0 - cut0);\n        int256 net1 = int256(f1 - cut1);\n        uint128 liq;\n        if (r0 > 2 || r1 > 2) {\n            (uint160 sqrtP,,,) = poolManager.getSlot0(id);\n            liq = LiquidityAmounts.getLiquidityForAmounts(\n                sqrtP,\n                TickMath.getSqrtPriceAtTick(v.tickLower),\n                TickMath.getSqrtPriceAtTick(v.tickUpper),\n                r0 > 2 ? r0 - 2 : 0,\n                r1 > 2 ? r1 - 2 : 0\n            );\n        }\n        if (liq > 0) {\n            (BalanceDelta d,) = poolManager.modifyLiquidity(\n                v.key, ModifyLiquidityParams(v.tickLower, v.tickUpper, int256(uint256(liq)), bytes32(0)), hookData\n            );\n            v.liquidity += liq;\n            net0 += d.amount0();\n            net1 += d.amount1();\n        }\n        // Positive net = fee credit left over -> hold it here as idle. Negative = idle was used -> pay it in.\n        v.idle0 = uint256(int256(v.idle0) + net0);\n        v.idle1 = uint256(int256(v.idle1) + net1);\n        _settle(v.key.currency0, net0, address(this));\n        _settle(v.key.currency1, net1, address(this));\n        if (f0 > 0 || f1 > 0) emit Compounded(id, f0, f1, liq);\n    }\n\n",
+      "new": "    struct CompoundFrame {\n        uint256 f0;\n        uint256 f1;\n        uint256 cut0;\n        uint256 cut1;\n        uint256 r0;\n        uint256 r1;\n        int256 net0;\n        int256 net1;\n        uint128 liq;\n    }\n\n    /// @dev Harvest fees, take the performance fee, re-add the rest plus idle dust as liquidity.\n    /// Leaves this contract's PoolManager balance at zero.\n    function _compound(Vault storage v, PoolId id, bytes memory hookData) internal {\n        v.lastCompound = uint64(block.timestamp);\n        if (v.liquidity == 0) return;\n        (BalanceDelta fees,) = poolManager.modifyLiquidity(\n            v.key, ModifyLiquidityParams(v.tickLower, v.tickUpper, 0, bytes32(0)), hookData\n        );\n        CompoundFrame memory frame;\n        frame.f0 = fees.amount0() > 0 ? uint128(fees.amount0()) : 0;\n        frame.f1 = fees.amount1() > 0 ? uint128(fees.amount1()) : 0;\n        frame.cut0 = (frame.f0 * perfFeeBps) / BPS;\n        frame.cut1 = (frame.f1 * perfFeeBps) / BPS;\n        _take(v.key.currency0, treasury, frame.cut0);\n        _take(v.key.currency1, treasury, frame.cut1);\n\n        frame.r0 = frame.f0 - frame.cut0 + v.idle0;\n        frame.r1 = frame.f1 - frame.cut1 + v.idle1;\n        frame.net0 = int256(frame.f0 - frame.cut0);\n        frame.net1 = int256(frame.f1 - frame.cut1);\n        if (frame.r0 > 2 || frame.r1 > 2) {\n            (uint160 sqrtP,,,) = poolManager.getSlot0(id);\n            frame.liq = LiquidityAmounts.getLiquidityForAmounts(\n                sqrtP,\n                TickMath.getSqrtPriceAtTick(v.tickLower),\n                TickMath.getSqrtPriceAtTick(v.tickUpper),\n                frame.r0 > 2 ? frame.r0 - 2 : 0,\n                frame.r1 > 2 ? frame.r1 - 2 : 0\n            );\n        }\n        if (frame.liq > 0) {\n            (BalanceDelta d,) = poolManager.modifyLiquidity(\n                v.key, ModifyLiquidityParams(v.tickLower, v.tickUpper, int256(uint256(frame.liq)), bytes32(0)), hookData\n            );\n            v.liquidity += frame.liq;\n            frame.net0 += d.amount0();\n            frame.net1 += d.amount1();\n        }\n        // Positive net = fee credit left over -> hold it here as idle. Negative = idle was used -> pay it in.\n        v.idle0 = uint256(int256(v.idle0) + frame.net0);\n        v.idle1 = uint256(int256(v.idle1) + frame.net1);\n        _settle(v.key.currency0, frame.net0, address(this));\n        _settle(v.key.currency1, frame.net1, address(this));\n        if (frame.f0 > 0 || frame.f1 > 0) emit Compounded(id, frame.f0, frame.f1, frame.liq);\n    }\n\n"
+    },
+    {
+      "file": "W",
+      "diagnostic": "Compiler error (/solidity/libsolidity/codegen/LValue.cpp:54): Stack too deep at contracts/protocols/strategy/weir/WeirVaults.sol:265:42 v.tickLower inside _deposit modifyLiquidity. solc 0.8.35, optimizer on, optimizer_runs 1, via_ir false.",
+      "kind": "internal memory struct and lexical scope around existing temporaries",
+      "preserves": [
+        "ABI",
+        "storage",
+        "inheritance",
+        "checked order",
+        "casts",
+        "calls",
+        "fees",
+        "events",
+        "errors",
+        "notices"
+      ],
+      "old": "    function _deposit(Vault storage v, DepositParams memory p, address depositor) internal returns (bytes memory) {\n        int256 net0;\n        int256 net1;\n        uint256 a0 = p.amount0;\n        uint256 a1 = p.amount1;\n        if (p.zap) (net0, net1, a0, a1) = _balance(v.key, a0, a1, p.hookData);\n\n        (uint160 sqrtP,,,) = poolManager.getSlot0(v.key.toId());\n        uint128 liq = LiquidityAmounts.getLiquidityForAmounts(\n            sqrtP,\n            TickMath.getSqrtPriceAtTick(v.tickLower),\n            TickMath.getSqrtPriceAtTick(v.tickUpper),\n            a0 > 2 ? a0 - 2 : 0,\n            a1 > 2 ? a1 - 2 : 0\n        );\n        uint256 shares;\n        if (v.totalShares == 0) {\n            if (liq <= MIN_SHARES) revert ZeroShares();\n            shares = liq - MIN_SHARES;\n            v.totalShares = MIN_SHARES; // never redeemable: blocks share-price inflation\n        } else {\n            shares = (uint256(liq) * v.totalShares) / v.liquidity;\n        }\n        if (shares == 0) revert ZeroShares();\n\n        (BalanceDelta d,) = poolManager.modifyLiquidity(\n            v.key, ModifyLiquidityParams(v.tickLower, v.tickUpper, int256(uint256(liq)), bytes32(0)), p.hookData\n        );\n        v.liquidity += liq;\n        v.totalShares += shares;\n        net0 += d.amount0();\n        net1 += d.amount1();\n\n        // Pay what is owed from the depositor's funds held here; credits go straight back to them.\n        (uint256 used0, uint256 used1) = (net0 < 0 ? uint256(-net0) : 0, net1 < 0 ? uint256(-net1) : 0);\n        _settle(v.key.currency0, net0, depositor);\n        _settle(v.key.currency1, net1, depositor);\n        return abi.encode(shares, used0, used1);\n    }\n\n",
+      "new": "    struct DepositFrame {\n        int256 net0;\n        int256 net1;\n        uint256 a0;\n        uint256 a1;\n        uint128 liq;\n        uint256 shares;\n    }\n\n    function _deposit(Vault storage v, DepositParams memory p, address depositor) internal returns (bytes memory) {\n        DepositFrame memory frame;\n        frame.a0 = p.amount0;\n        frame.a1 = p.amount1;\n        if (p.zap) (frame.net0, frame.net1, frame.a0, frame.a1) = _balance(v.key, frame.a0, frame.a1, p.hookData);\n\n        {\n            (uint160 sqrtP,,,) = poolManager.getSlot0(v.key.toId());\n            frame.liq = LiquidityAmounts.getLiquidityForAmounts(\n                sqrtP,\n                TickMath.getSqrtPriceAtTick(v.tickLower),\n                TickMath.getSqrtPriceAtTick(v.tickUpper),\n                frame.a0 > 2 ? frame.a0 - 2 : 0,\n                frame.a1 > 2 ? frame.a1 - 2 : 0\n            );\n        }\n        if (v.totalShares == 0) {\n            if (frame.liq <= MIN_SHARES) revert ZeroShares();\n            frame.shares = frame.liq - MIN_SHARES;\n            v.totalShares = MIN_SHARES; // never redeemable: blocks share-price inflation\n        } else {\n            frame.shares = (uint256(frame.liq) * v.totalShares) / v.liquidity;\n        }\n        if (frame.shares == 0) revert ZeroShares();\n\n        (BalanceDelta d,) = poolManager.modifyLiquidity(\n            v.key, ModifyLiquidityParams(v.tickLower, v.tickUpper, int256(uint256(frame.liq)), bytes32(0)), p.hookData\n        );\n        v.liquidity += frame.liq;\n        v.totalShares += frame.shares;\n        frame.net0 += d.amount0();\n        frame.net1 += d.amount1();\n\n        // Pay what is owed from the depositor's funds held here; credits go straight back to them.\n        (uint256 used0, uint256 used1) = (frame.net0 < 0 ? uint256(-frame.net0) : 0, frame.net1 < 0 ? uint256(-frame.net1) : 0);\n        _settle(v.key.currency0, frame.net0, depositor);\n        _settle(v.key.currency1, frame.net1, depositor);\n        return abi.encode(frame.shares, used0, used1);\n    }\n\n"
+    }
+  ],
+  "compilerTarget": {
+    "solc": "0.8.35",
+    "optimizer": true,
+    "optimizer_runs": 1,
+    "via_ir": false
+  },
+  "expectedStorage": [
+    {
+      "slot": 0,
+      "offset": 0,
+      "label": "Ownable._owner",
+      "type": "address"
+    },
+    {
+      "slot": 1,
+      "offset": 0,
+      "label": "Ownable2Step._pendingOwner",
+      "type": "address"
+    },
+    {
+      "slot": 1,
+      "offset": 20,
+      "label": "Pausable._paused",
+      "type": "bool"
+    },
+    {
+      "slot": 2,
+      "offset": 0,
+      "label": "ReentrancyGuard._status",
+      "type": "uint256"
+    },
+    {
+      "slot": 3,
+      "offset": 0,
+      "label": "treasury",
+      "type": "address"
+    },
+    {
+      "slot": 3,
+      "offset": 20,
+      "label": "perfFeeBps",
+      "type": "uint16"
+    },
+    {
+      "slot": 4,
+      "offset": 0,
+      "label": "_vaults",
+      "type": "mapping"
+    },
+    {
+      "slot": 5,
+      "offset": 0,
+      "label": "sharesOf",
+      "type": "mapping"
+    },
+    {
+      "slot": 6,
+      "offset": 0,
+      "label": "allVaults",
+      "type": "array"
+    }
+  ],
+  "compilerPropagatedErrors": [
+    "InvalidTick"
+  ],
+  "compilerPropagatedNote": "solc 0.8.35 lists TickMath.InvalidTick(int24) in the contract ABI. The frozen 0.8.26 viaIR metadata omitted it. It is not one of the 18 Weir-declared errors and was not added by a WI-06 edit.",
+  "expectedVaultMembers": [
+    {
+      "label": "key",
+      "slot": 0,
+      "offset": 0
+    },
+    {
+      "label": "tickLower",
+      "slot": 3,
+      "offset": 0
+    },
+    {
+      "label": "tickUpper",
+      "slot": 3,
+      "offset": 3
+    },
+    {
+      "label": "liquidity",
+      "slot": 3,
+      "offset": 6
+    },
+    {
+      "label": "totalShares",
+      "slot": 4,
+      "offset": 0
+    },
+    {
+      "label": "idle0",
+      "slot": 5,
+      "offset": 0
+    },
+    {
+      "label": "idle1",
+      "slot": 6,
+      "offset": 0
+    },
+    {
+      "label": "lastCompound",
+      "slot": 7,
+      "offset": 0
+    },
+    {
+      "label": "exists",
+      "slot": 7,
+      "offset": 8
+    }
+  ],
+  "storagePackingNote": "Address plus bool pack across the Ownable2Step/Pausable boundary. Address plus uint16 pack for treasury and perfFeeBps. uint256 _status starts a new slot. The immutable manager is not a slot. WI-06 memory structs add no storage variables."
+}

@@ -1,0 +1,98 @@
+{
+  "status": "recorded; overall acceptance blocked",
+  "malformedInput": {
+    "result": "pass",
+    "evidence": [
+      "happy-acceptance.log",
+      "dependent-acceptance.log"
+    ],
+    "coverage": [
+      "non-native integers and unknown fields",
+      "wrong chain/proxy/book and altered source bytes",
+      "missing or combined weighted NFT 3 mode before transport",
+      "v1 execution rejected at schema boundary"
+    ]
+  },
+  "staleState": {
+    "result": "pass",
+    "coverage": [
+      "unsent A under B",
+      "changed fresh quote",
+      "historical domainHash changed with recomputed surrounding FileRefs",
+      "stale journal domain",
+      "duplicate batch",
+      "wrong nonce and gas metadata",
+      "second active checkpoint under one operator root",
+      "same-block transaction order and log contents",
+      "B current configuration versus immutable A issuance principal",
+      "NFT consumed per-component credit floors"
+    ],
+    "evidence": "happy-acceptance.log"
+  },
+  "dirtyWorktree": {
+    "result": "preserved",
+    "baseline": "git-status-before.log",
+    "final": "git-status-after.log",
+    "ownedChanges": "source-inventory.json",
+    "note": "Preserved task-entry edits from tasks 1-6 and concurrent markdown work. No git history operation, blanket staging, reset, checkout, or source-index write."
+  },
+  "misleadingSuccess": {
+    "result": "not reported as complete",
+    "requiredHelperExitCode": 2,
+    "requiredBun": {
+      "passed": 54,
+      "failed": 0
+    },
+    "dependent": {
+      "passed": 162,
+      "failed": 1
+    },
+    "expectedMutationFailure": {
+      "passed": 0,
+      "failed": 1,
+      "reason": "Missing expected rejection after removing only the historical domain-hash condition"
+    },
+    "note": "The required helper command did not pass. The alternative real script did. Those are distinct receipts."
+  },
+  "generatedArtifacts": {
+    "result": "source-qualified with explicit blocker",
+    "sourceCount": 585,
+    "sourceMismatches": 0,
+    "evidence": "rehearsal-source-bindings.json",
+    "witnessPin": {
+      "id": "B2",
+      "status": "blocked",
+      "requirement": "Existing claimed-SY fixed witness runtime identity agrees with freshly compiled artifact",
+      "test": "fixed witness pin matches the concrete compiled router used by the rehearsal",
+      "testLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:89-92",
+      "pinLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.ts:11",
+      "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "pinUnchangedFromHead": true,
+      "evidence": "dependent-acceptance.log",
+      "disposition": "Preserved the source pin and the failing assertion. No artifact substitution, expected-value update, skip, or installation."
+    },
+    "note": "The first PATH selected an older Forge and failed; the existing nightly was selected without installation. No stale artifact substituted and no expected runtime hash rewritten."
+  },
+  "hungCommands": {
+    "result": "completed or failed explicitly",
+    "note": "Every long command used a monitor subscription; Solar builds had no silence deadline and were never killed. Bun test timeout remained 15000 ms. No poll loop, sleep, retry-to-green, or delegated watcher was introduced."
+  },
+  "notApplicable": {
+    "flakyTests": "No timing sleeps, reruns-to-green, or flaky behavior introduced.",
+    "cancellation": "No cancellation scenario introduced or tested.",
+    "repeatedInterruptions": "Existing local fault flag was preserved; no new crash/kill scenario was introduced or executed.",
+    "untrustedExternalText": "No external text supplied implementation authority; local JSON tampering is covered above."
+  },
+  "diagnostics": {
+    "strictTypecheck": "types-acceptance.log, exit 0",
+    "diffCheck": {
+      "command": "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' diff --check -- scripts/recovery/dtf-migration scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "exitCode": 0
+    },
+    "editor": "Several Native LSP requests timed out; the full strict TypeScript command passed. JSON Biome LSP is unavailable; no install attempted and evidence is JSON-serialized."
+  }
+}

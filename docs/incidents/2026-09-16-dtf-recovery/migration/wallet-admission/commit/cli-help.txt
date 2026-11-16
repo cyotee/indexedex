@@ -1,0 +1,21 @@
+1.4.2
+Bounded Migration operator
+  bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
+  bun scripts/recovery/dtf-migration/cli.ts validate --manifest <file>
+  bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
+  bun scripts/recovery/dtf-migration/cli.ts resume --manifest <file> --checkpoint <directory>
+
+prepare reads caller-pinned evidence and the actual immutable snapshot.
+validate rereads evidence, code identities, snapshot and independent ETH/DTF quotes.
+RPC comes only from the manifest's rpcEnv environment variable. No signer is loaded.
+All integers are decimal strings. Inputs are full replacements, not deltas.
+Unsupported categories fail closed. Synthetic datasets are loopback-only.
+Stages: deploy, fund, capture, configure, independent-issue, verify, activate, harvest.
+Every stage and resume defaults to read-only validation; no signer is loaded.
+Local execution: --execute-local --instance-id <exact observed Anvil instance ID>.
+Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
+  --confirm-snapshot <id> --signer-key-env <selected environment variable name>.
+--reverse reorders only independent unsettled configuration/issuance rows.
+--fault-after-mined is restricted to synthetic-local interruption rehearsal.
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+    --fork-block 108944663 --port 18562 --checkpoint <directory> --evidence <directory>

@@ -14,6 +14,8 @@ contract MigrationSourceUnitsInvariantTest is TestBase_MigrationSourceUnits {
     function afterInvariant() public {
         handler.assertAll();
         for (uint256 i_; i_ < 10; ++i_) {
+            assertGt(handler.surrenderSuccesses(i_), 0, "each source must actually surrender");
+            assertGt(handler.fundingRollbacks(i_), 0, "each source must reach late funded-child failure");
             emit log_named_address("source-unit counter address", handler.source(i_));
             emit log_named_uint("source successful surrenders", handler.surrenderSuccesses(i_));
             emit log_named_uint("source exact rejected operations", handler.rejectionCounts(i_));
@@ -24,6 +26,8 @@ contract MigrationSourceUnitsInvariantTest is TestBase_MigrationSourceUnits {
         }
         emit log_named_uint("canonical competing enrollment rejections", handler.enrollmentRejections());
         emit log_named_uint("successful admitted recovery stages", handler.recoveries());
+        assertGt(handler.recoveries(), 0, "real harvest stages required");
+        assertGt(handler.batchRollbacks(), 0, "whole harvest rollback required");
         emit log_named_uint("late whole recovery batch rollbacks", handler.batchRollbacks());
         emit log_named_uint("whole position principal paid", handler.principalPaid());
         emit log_named_uint("real source and bond transfers", handler.transfers());

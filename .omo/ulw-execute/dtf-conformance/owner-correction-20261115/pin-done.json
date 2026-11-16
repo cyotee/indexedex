@@ -1,0 +1,59 @@
+{
+  "status": "lane_complete",
+  "changed_files": [
+    "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/baseline.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/verification.md"
+  ],
+  "tests": {
+    "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "observed_exit": 0,
+    "passed": 3,
+    "failed": 0,
+    "raw_output": "bun test v1.4.2 (50a8a8387)\n\nscripts/recovery/dtf-migration/claimed-sy-witness.test.ts:\n✓ transaction-local books enforce each conservation leg and excluded floors [1.46ms]\n✓ RPC trace decoder requires complete ordered static observations around the original wallet [12.08ms]\n✓ caught inner failure is rejected even when the outer witness succeeds [2.20ms]\n\n 3 pass\n 0 fail\nRan 3 tests across 1 file. [69.00ms]\n\nOBSERVED_EXIT=0"
+  },
+  "manual_qa": {
+    "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts",
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "observed_exit": 0,
+    "classification": "offline operator proof; not an EVM execution",
+    "valid_trace": "passed witnessedClaimBooks and checkClaimEffects with before/after books",
+    "tampered_call_order": "rejected with WITNESS_SHAPE",
+    "caught_inner_failure": "rejected with TRACE_FAILED",
+    "artifact_or_pin_loaded": false,
+    "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/verification.md"
+  },
+  "cleanup": {
+    "temporary_resources": "none created",
+    "artifacts_or_caches_deleted": false,
+    "unrelated_worktree_files": "preserved"
+  },
+  "risks": [
+    "The full operator suite and Forge checks remain parent-owned until sibling lanes converge.",
+    "Task 7 F2-01 and F2-02 lanes are outside this pin-removal assignment and remain unverified here.",
+    "Fresh language-server diagnostics timed out after three seconds; initial evidence-script type diagnostics were fixed, and the final focused test and manual proof passed."
+  ],
+  "met": [
+    "Removed claimWitnessCodeHash and its operator and rehearsal runtime comparisons without adding a replacement identity gate.",
+    "Removed the rejected artifact-pin test and its unused imports.",
+    "Preserved the observation router, transaction and trace authentication, fixed source and delegate checks, and economic conservation checks.",
+    "Focused witness tests passed 3/3 and offline trace proof passed.",
+    "Narrow diff inspection and git diff --check completed cleanly."
+  ],
+  "unmet": [
+    "This claim does not assert completion of full plan task 7 or any broader conformance task.",
+    "Full operator-suite integration, F2 lane verification, and parent-owned checks remain outstanding."
+  ],
+  "source_sha256": {
+    "scripts/recovery/dtf-migration/claimed-sy-witness.ts": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+    "scripts/recovery/dtf-migration/claimed-sy-member.ts": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts": "7971fe65ec2a25d8b5bebe1b1203a6955ef89f3bf73e046e0652c81e3cf78a25",
+    "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts": "5d89132aaa379ecd04f5bd1b7ada7fa4db9ec24957935ebd0f09187da19a61df",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts": "f9892aa3417ab15f112f2c68171f61e4ea5b1f226e18439bf55ce03f9c83b05d"
+  }
+}

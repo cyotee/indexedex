@@ -1,0 +1,21 @@
+{
+  "result": "bounded-local-source-proof",
+  "full": {
+    "wallet": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+    "w0": "10013000000000000000017",
+    "q0": "18077396",
+    "weightFloor": "7000000000000000000",
+    "syFloor": "100"
+  },
+  "split": {
+    "wallet": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+    "w0": "10013000000000000000017",
+    "q0": "18077396",
+    "weightFloor": "7000000000000000000",
+    "syFloor": "101"
+  },
+  "operations": 15,
+  "historicalTraceRetried": false,
+  "migrationAward": false,
+  "pendingImpersonations": false
+}

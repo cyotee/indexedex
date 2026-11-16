@@ -1,0 +1,69 @@
+{
+  "scope": "Read-only E-S source-gap follow-up from retained phase20 evidence; no new RPC or custody proof",
+  "source": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+  "pin": {
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "parentHash": "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+    "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+    "miner": "0xa4b000000000000000000073657175656e636572",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+    "transactionsRoot": "0x33c7e74b2b83169ffe7ccc0d196e7389b7edcf9da4b2aec25c442f450a5db7ab",
+    "receiptsRoot": "0xed4030c56b19861b12d407133d34d67e86eb659431133713cbdc126ba9f35a17",
+    "logsBloom": "0x00000000000000200000000000000000000000000004000000000000000000000000000000000000000080000000000000000000000020000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000",
+    "difficulty": "0x1",
+    "number": "0x67e5d17",
+    "gasLimit": "0x4000000000000",
+    "gasUsed": "0x7cbe",
+    "timestamp": "0x6aeff5b5",
+    "extraData": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+    "mixHash": "0x0000000000000ea500000000019256ab000000000000003d0000000000000000",
+    "nonce": "0x0000000000069efe",
+    "baseFeePerGas": "0x13134d0",
+    "size": "0x34d",
+    "uncles": [],
+    "transactions": [
+      "0x3b092c0a635bf7308445d38cd9e4057f66ac9673c4988feafbe6b59be795c5a7",
+      "0xa0827ff9299145bc2c8be17e3f803c4e1aa21cf6d0295104d4d06946a1ea815c"
+    ],
+    "l1BlockNumber": "0x19256ab",
+    "sendCount": "0xea5",
+    "sendRoot": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c"
+  },
+  "retainedEvidence": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding-verification/runtime.json",
+  "totalSupply": "240208335094234316503663860544238124591",
+  "knownInfrastructureBalances": [
+    {
+      "holder": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "balance": "240208335094234316501642770343998622608"
+    },
+    {
+      "holder": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "balance": "0"
+    },
+    {
+      "holder": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "balance": "0"
+    },
+    {
+      "holder": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "balance": "0"
+    },
+    {
+      "holder": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "balance": "0"
+    }
+  ],
+  "checkedCollectorBalance": "0",
+  "checkedCollectorOwnerPersonalBalance": "0",
+  "sourceOwnerBinding": "selector absent",
+  "remainingSupplyOutsideThoseHolders": "2021090200239501983",
+  "unit": "native18 E-S shares",
+  "finding": "The checked LP holder does not exhaust the retained total supply. The residual is not an identified ordinary-wallet holding or eligible exposure, and could belong to other infrastructure or locked/burn balances. No absence proof follows.",
+  "alreadyCheckedFailures": [
+    "Direct source mint/exit is disabled at the pin.",
+    "Physical earlier-LP withdrawSeShares rejects ordinary custody with NotOwner.",
+    "Known collector and its EOA owner hold zero E-S."
+  ],
+  "nextBoundedEvidence": "Identify unaccounted holders or an actual public/source-authorized acquisition using source metadata and concrete recorded addresses; do not rerun known failed paths or infer EOA ownership from the remainder.",
+  "unchanged": "No old report, source, dataset, runtime, provider or held09 state changed. Current E-S remains unsupported pending positive source proof or complete reviewed absence."
+}

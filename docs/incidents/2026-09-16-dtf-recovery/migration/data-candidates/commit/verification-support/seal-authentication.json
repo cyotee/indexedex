@@ -1,0 +1,4465 @@
+{
+  "sealAudit": [
+    {
+      "directory": "implementation",
+      "sealIdentity": {
+        "bytes": 346,
+        "sha256": "fe9d0e574ea654a1e8fc7ce565dd159c82115030b194c7b3198796b06c8a9dea"
+      },
+      "manifestIdentity": {
+        "bytes": 916,
+        "sha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1"
+      },
+      "checks": [
+        {
+          "source": "seal.manifest",
+          "path": "manifest.json",
+          "expected": {
+            "bytes": 916,
+            "sha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1"
+          },
+          "actual": {
+            "bytes": 916,
+            "sha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "binding-audit.json",
+          "expected": {
+            "bytes": 13354,
+            "sha256": "47828b37707de3e9f55c3d3d9d421d58d205d445d8299a769924d806974bd3e1"
+          },
+          "actual": {
+            "bytes": 13354,
+            "sha256": "47828b37707de3e9f55c3d3d9d421d58d205d445d8299a769924d806974bd3e1"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-manifest.json",
+          "expected": {
+            "bytes": 3179,
+            "sha256": "ef45e54769c7eb4bdf409e2263cb1926a236023e9f7503ed817bcfe9ecbeace6"
+          },
+          "actual": {
+            "bytes": 3179,
+            "sha256": "ef45e54769c7eb4bdf409e2263cb1926a236023e9f7503ed817bcfe9ecbeace6"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "report.md",
+          "expected": {
+            "bytes": 5795,
+            "sha256": "61da0dfcfc164c81bc1ab45baec3b7df3e3b2c6f8ff2a85155e46d67f833fb59"
+          },
+          "actual": {
+            "bytes": 5795,
+            "sha256": "61da0dfcfc164c81bc1ab45baec3b7df3e3b2c6f8ff2a85155e46d67f833fb59"
+          },
+          "match": true
+        }
+      ]
+    },
+    {
+      "directory": "verification",
+      "sealIdentity": {
+        "bytes": 678,
+        "sha256": "d1be625e746c52436524cd82a8ab6f54455a1c42a113ea165b0c59f4e0dd982d"
+      },
+      "manifestIdentity": {
+        "bytes": 2619,
+        "sha256": "40441ced6c053e02c92ce130d5d65b04f76844b7d8a6b4720842563f2f7cd54c"
+      },
+      "checks": [
+        {
+          "source": "seal.report",
+          "path": "report.md",
+          "expected": {
+            "bytes": 17476,
+            "sha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2"
+          },
+          "actual": {
+            "bytes": 17476,
+            "sha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2"
+          },
+          "match": true
+        },
+        {
+          "source": "seal.manifest",
+          "path": "manifest.json",
+          "expected": {
+            "bytes": 2619,
+            "sha256": "40441ced6c053e02c92ce130d5d65b04f76844b7d8a6b4720842563f2f7cd54c"
+          },
+          "actual": {
+            "bytes": 2619,
+            "sha256": "40441ced6c053e02c92ce130d5d65b04f76844b7d8a6b4720842563f2f7cd54c"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "report.md",
+          "expected": {
+            "bytes": 17476,
+            "sha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2"
+          },
+          "actual": {
+            "bytes": 17476,
+            "sha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "binding-audit.json",
+          "expected": {
+            "bytes": 19253,
+            "sha256": "beda25ec68114ee60293971b7d3b7dac01bedeb072c2e359b98f4ead3fb185ef"
+          },
+          "actual": {
+            "bytes": 19253,
+            "sha256": "beda25ec68114ee60293971b7d3b7dac01bedeb072c2e359b98f4ead3fb185ef"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "producer-audit.json",
+          "expected": {
+            "bytes": 11336,
+            "sha256": "bb100471d1b45efa50f2339c64365f8e719825ca94ddf7a8ceaa0826f7bf3d29"
+          },
+          "actual": {
+            "bytes": 11336,
+            "sha256": "bb100471d1b45efa50f2339c64365f8e719825ca94ddf7a8ceaa0826f7bf3d29"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "unchanged-inputs.json",
+          "expected": {
+            "bytes": 38214,
+            "sha256": "cb334e39dac5ff6c93e4d56c80587d06df1f2ca07d08fc3e0823d94bd6fe1d27"
+          },
+          "actual": {
+            "bytes": 38214,
+            "sha256": "cb334e39dac5ff6c93e4d56c80587d06df1f2ca07d08fc3e0823d94bd6fe1d27"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-manifest.json",
+          "expected": {
+            "bytes": 17476,
+            "sha256": "398e82175b52fe3fdd444681f7e27c6070ac0c4734dcc23aa994ff64834f0f64"
+          },
+          "actual": {
+            "bytes": 17476,
+            "sha256": "398e82175b52fe3fdd444681f7e27c6070ac0c4734dcc23aa994ff64834f0f64"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "coverage.json",
+          "expected": {
+            "bytes": 6580,
+            "sha256": "e914c5d6a48fa20d21d48043716ac1e92a5eee420c79f80cb747cac53f21e30a"
+          },
+          "actual": {
+            "bytes": 6580,
+            "sha256": "e914c5d6a48fa20d21d48043716ac1e92a5eee420c79f80cb747cac53f21e30a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "commands.md",
+          "expected": {
+            "bytes": 8827,
+            "sha256": "5ab79ac41efb1053f48561ff0186aff5917a06fc005ce46b229f1ab30c4936ef"
+          },
+          "actual": {
+            "bytes": 8827,
+            "sha256": "5ab79ac41efb1053f48561ff0186aff5917a06fc005ce46b229f1ab30c4936ef"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-final-screen.txt",
+          "expected": {
+            "bytes": 2834,
+            "sha256": "45bed206aae1e973b887d210454263a557e7fc537d94c623b2cec96d64db6687"
+          },
+          "actual": {
+            "bytes": 2834,
+            "sha256": "45bed206aae1e973b887d210454263a557e7fc537d94c623b2cec96d64db6687"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "cli-boundary.log",
+          "expected": {
+            "bytes": 7579,
+            "sha256": "8ee076ce8f90b13fd7a6d39f0a602a54e52178f89cb3fefc51377ff8f8c61f9f"
+          },
+          "actual": {
+            "bytes": 7579,
+            "sha256": "8ee076ce8f90b13fd7a6d39f0a602a54e52178f89cb3fefc51377ff8f8c61f9f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "cleanup.json",
+          "expected": {
+            "bytes": 5109,
+            "sha256": "350fb1d5e7569dad43e8f2c9b508f5db4a23c2951144409389b3190ad7cfb8da"
+          },
+          "actual": {
+            "bytes": 5109,
+            "sha256": "350fb1d5e7569dad43e8f2c9b508f5db4a23c2951144409389b3190ad7cfb8da"
+          },
+          "match": true
+        }
+      ]
+    },
+    {
+      "directory": "implementation-r2",
+      "sealIdentity": {
+        "bytes": 828,
+        "sha256": "1d6e06d99d12727803020b27c13492f66820781969108107fb43a7eaf9e39ccc"
+      },
+      "manifestIdentity": {
+        "bytes": 37014,
+        "sha256": "2722d54910c9609e28497deb4fee2586f2bed578d9a621189fdb5570cc14b3db"
+      },
+      "checks": [
+        {
+          "source": "seal.manifest",
+          "path": "manifest.json",
+          "expected": {
+            "bytes": 37014,
+            "sha256": "2722d54910c9609e28497deb4fee2586f2bed578d9a621189fdb5570cc14b3db"
+          },
+          "actual": {
+            "bytes": 37014,
+            "sha256": "2722d54910c9609e28497deb4fee2586f2bed578d9a621189fdb5570cc14b3db"
+          },
+          "match": true
+        },
+        {
+          "source": "seal.report",
+          "path": "report.md",
+          "expected": {
+            "bytes": 19047,
+            "sha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa"
+          },
+          "actual": {
+            "bytes": 19047,
+            "sha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa"
+          },
+          "match": true
+        },
+        {
+          "source": "seal.canonicalCandidates",
+          "path": "proof02/full-a/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt01.json",
+          "expected": {
+            "bytes": 963,
+            "sha256": "a48ce35d23e6f4c214b26ba6693c815977a425c1101e2c3d353bfc01d22f096b"
+          },
+          "actual": {
+            "bytes": 963,
+            "sha256": "a48ce35d23e6f4c214b26ba6693c815977a425c1101e2c3d353bfc01d22f096b"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt01.stderr",
+          "expected": {
+            "bytes": 76,
+            "sha256": "8d5be7de7a8a10b303df114fabd826209240017c91f8850b5bf2fa019d4a5de5"
+          },
+          "actual": {
+            "bytes": 76,
+            "sha256": "8d5be7de7a8a10b303df114fabd826209240017c91f8850b5bf2fa019d4a5de5"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt01.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt02.json",
+          "expected": {
+            "bytes": 963,
+            "sha256": "f8e1a8a9b246d070bbf2505abf2c19136b2e74eeae74aedc1218509ff88d2b6a"
+          },
+          "actual": {
+            "bytes": 963,
+            "sha256": "f8e1a8a9b246d070bbf2505abf2c19136b2e74eeae74aedc1218509ff88d2b6a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt02.stderr",
+          "expected": {
+            "bytes": 115,
+            "sha256": "aa3855ff4604a03f63da907e227623007b0664232b52d03d94bb073acc9034cd"
+          },
+          "actual": {
+            "bytes": 115,
+            "sha256": "aa3855ff4604a03f63da907e227623007b0664232b52d03d94bb073acc9034cd"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt02.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt03.json",
+          "expected": {
+            "bytes": 963,
+            "sha256": "e1ef747087c720db43c20092d694a490182b1a0672c4691c940954982537bb07"
+          },
+          "actual": {
+            "bytes": 963,
+            "sha256": "e1ef747087c720db43c20092d694a490182b1a0672c4691c940954982537bb07"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt03.stderr",
+          "expected": {
+            "bytes": 115,
+            "sha256": "aa3855ff4604a03f63da907e227623007b0664232b52d03d94bb073acc9034cd"
+          },
+          "actual": {
+            "bytes": 115,
+            "sha256": "aa3855ff4604a03f63da907e227623007b0664232b52d03d94bb073acc9034cd"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt03.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt04-output/candidates.json",
+          "expected": {
+            "bytes": 15994200,
+            "sha256": "193fcc0b45e683446ae2664f7aca7b0718cd175a85cf5d5f34753b93dba8b5f8"
+          },
+          "actual": {
+            "bytes": 15994200,
+            "sha256": "193fcc0b45e683446ae2664f7aca7b0718cd175a85cf5d5f34753b93dba8b5f8"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt04.json",
+          "expected": {
+            "bytes": 963,
+            "sha256": "6b3c97439ffb70515c8ad03bf7042922830a3a5f3c4190be844ce01e5a977bb0"
+          },
+          "actual": {
+            "bytes": 963,
+            "sha256": "6b3c97439ffb70515c8ad03bf7042922830a3a5f3c4190be844ce01e5a977bb0"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt04.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "attempt04.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "ac711337799cf8b1dc217dd2d8e8b1cb80d09e7b2aee151dad56e00ea9247ff6"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "ac711337799cf8b1dc217dd2d8e8b1cb80d09e7b2aee151dad56e00ea9247ff6"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "authorities/ENTITLEMENT_LEDGER_PROVENANCE.md",
+          "expected": {
+            "bytes": 41316,
+            "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+          },
+          "actual": {
+            "bytes": 41316,
+            "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "authorities/MIGRATION_DETF_DRAFT_PRD.md",
+          "expected": {
+            "bytes": 108022,
+            "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+          },
+          "actual": {
+            "bytes": 108022,
+            "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "authorities/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+          "expected": {
+            "bytes": 79305,
+            "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+          },
+          "actual": {
+            "bytes": 79305,
+            "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "authorities/phase27-data-candidates-brief.md",
+          "expected": {
+            "bytes": 8437,
+            "sha256": "9c69ab0f288e7fe806d6be7c4909a5455b26b42cda536c7d3d6fe3976bc88b54"
+          },
+          "actual": {
+            "bytes": 8437,
+            "sha256": "9c69ab0f288e7fe806d6be7c4909a5455b26b42cda536c7d3d6fe3976bc88b54"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "authorities/recovery.json",
+          "expected": {
+            "bytes": 30781,
+            "sha256": "8ad79a2331b022698d73de0e00cdb1a01ee97a9b282b637a36981c071cdfb699"
+          },
+          "actual": {
+            "bytes": 30781,
+            "sha256": "8ad79a2331b022698d73de0e00cdb1a01ee97a9b282b637a36981c071cdfb699"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "authorities/requirements-coverage-0856a5c5.md",
+          "expected": {
+            "bytes": 57366,
+            "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4"
+          },
+          "actual": {
+            "bytes": 57366,
+            "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "authorities/validation.json",
+          "expected": {
+            "bytes": 8926,
+            "sha256": "964302815216202a986ed851b0418e22a3abc2a85764294f2a923c59ab9d0c9f"
+          },
+          "actual": {
+            "bytes": 8926,
+            "sha256": "964302815216202a986ed851b0418e22a3abc2a85764294f2a923c59ab9d0c9f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "bun-version.json",
+          "expected": {
+            "bytes": 565,
+            "sha256": "bd5c24245a2a9ea55c28121a49af90a8a7297df302ea422aa1c4f69571771b2a"
+          },
+          "actual": {
+            "bytes": 565,
+            "sha256": "bd5c24245a2a9ea55c28121a49af90a8a7297df302ea422aa1c4f69571771b2a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "bun-version.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "bun-version.stdout",
+          "expected": {
+            "bytes": 6,
+            "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee"
+          },
+          "actual": {
+            "bytes": 6,
+            "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "candidate-tests01.json",
+          "expected": {
+            "bytes": 661,
+            "sha256": "17cfae5a4f260726d8cce4265fd84297c21bb803b63dd36b93300dea2e93259f"
+          },
+          "actual": {
+            "bytes": 661,
+            "sha256": "17cfae5a4f260726d8cce4265fd84297c21bb803b63dd36b93300dea2e93259f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "candidate-tests01.stderr",
+          "expected": {
+            "bytes": 3365,
+            "sha256": "e5a1540d8b4a821e699f96221da8e37bd499adf5f04e5865305b47a072bc1616"
+          },
+          "actual": {
+            "bytes": 3365,
+            "sha256": "e5a1540d8b4a821e699f96221da8e37bd499adf5f04e5865305b47a072bc1616"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "candidate-tests01.stdout",
+          "expected": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "actual": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "candidate-tests02.json",
+          "expected": {
+            "bytes": 729,
+            "sha256": "94dd1cafefa3788b12034b32e06c4c3bdc2eda09600807de15dbed0c4cbf4016"
+          },
+          "actual": {
+            "bytes": 729,
+            "sha256": "94dd1cafefa3788b12034b32e06c4c3bdc2eda09600807de15dbed0c4cbf4016"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "candidate-tests02.stderr",
+          "expected": {
+            "bytes": 2028,
+            "sha256": "11b63dbb51fc0006e8e477ba9b399dd7fbe558c64e031eb7d727e1e5085fd6bb"
+          },
+          "actual": {
+            "bytes": 2028,
+            "sha256": "11b63dbb51fc0006e8e477ba9b399dd7fbe558c64e031eb7d727e1e5085fd6bb"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "candidate-tests02.stdout",
+          "expected": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "actual": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "cleanup.json",
+          "expected": {
+            "bytes": 1115,
+            "sha256": "86fa9eaaf5a94d9471151f072d2bc59c213e66ceafff391e6da2465c57c5bfe4"
+          },
+          "actual": {
+            "bytes": 1115,
+            "sha256": "86fa9eaaf5a94d9471151f072d2bc59c213e66ceafff391e6da2465c57c5bfe4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "command-index.json",
+          "expected": {
+            "bytes": 60214,
+            "sha256": "5bd81c4b929bab9c8b17d5ad937df2569bbc7e9dae65df842ad75fa11ee4e1ff"
+          },
+          "actual": {
+            "bytes": 60214,
+            "sha256": "5bd81c4b929bab9c8b17d5ad937df2569bbc7e9dae65df842ad75fa11ee4e1ff"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "debug01.json",
+          "expected": {
+            "bytes": 927,
+            "sha256": "b551855ab736b598c89723fd3c0dec63b8543e217f80775e8be1d2dda7f03339"
+          },
+          "actual": {
+            "bytes": 927,
+            "sha256": "b551855ab736b598c89723fd3c0dec63b8543e217f80775e8be1d2dda7f03339"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "debug01.stderr",
+          "expected": {
+            "bytes": 1151,
+            "sha256": "d6b3bc19ba51e74b1d2d6827a9c93f1569431167dd811f455f245e45413f81d7"
+          },
+          "actual": {
+            "bytes": 1151,
+            "sha256": "d6b3bc19ba51e74b1d2d6827a9c93f1569431167dd811f455f245e45413f81d7"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "debug01.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "executed-source01/candidate-inventory.test.ts.txt",
+          "expected": {
+            "bytes": 6307,
+            "sha256": "6b96a5d999ad5bc8c790ed022e3aa38ef1bf28fe9a4634063f3b8aa2b0b6a56d"
+          },
+          "actual": {
+            "bytes": 6307,
+            "sha256": "6b96a5d999ad5bc8c790ed022e3aa38ef1bf28fe9a4634063f3b8aa2b0b6a56d"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "executed-source01/candidate-inventory.ts.txt",
+          "expected": {
+            "bytes": 11304,
+            "sha256": "258f162a54c21d24646367714fa3702ed6468cf92223ac204a800df4231fbf24"
+          },
+          "actual": {
+            "bytes": 11304,
+            "sha256": "258f162a54c21d24646367714fa3702ed6468cf92223ac204a800df4231fbf24"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-branch-final.json",
+          "expected": {
+            "bytes": 692,
+            "sha256": "210a216c3a467b3edc365a759ff509c6e7cab48a51f8ae6cda248059a23f4a84"
+          },
+          "actual": {
+            "bytes": 692,
+            "sha256": "210a216c3a467b3edc365a759ff509c6e7cab48a51f8ae6cda248059a23f4a84"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-branch-final.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-branch-final.stdout",
+          "expected": {
+            "bytes": 44,
+            "sha256": "cecb98ad46e0ffdc794fd2ed1586735bc85b6a85f2975de2dd7538f2da98ea31"
+          },
+          "actual": {
+            "bytes": 44,
+            "sha256": "cecb98ad46e0ffdc794fd2ed1586735bc85b6a85f2975de2dd7538f2da98ea31"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-check-final.json",
+          "expected": {
+            "bytes": 712,
+            "sha256": "b3bc015b0720ce2492c9282f7cade0bb22153ca87cca00f1e09fb4265d2ad18c"
+          },
+          "actual": {
+            "bytes": 712,
+            "sha256": "b3bc015b0720ce2492c9282f7cade0bb22153ca87cca00f1e09fb4265d2ad18c"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-check-final.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-check-final.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff-final.json",
+          "expected": {
+            "bytes": 695,
+            "sha256": "fb7ccf26b28782fe5df9cb19bf98d672e8f8d0df5b9edd29b3781588e8787cc0"
+          },
+          "actual": {
+            "bytes": 695,
+            "sha256": "fb7ccf26b28782fe5df9cb19bf98d672e8f8d0df5b9edd29b3781588e8787cc0"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff-final.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff-final.stdout",
+          "expected": {
+            "bytes": 7305,
+            "sha256": "c597121b25fc9d62b66cdece555c35957615fb70eee6888ca6e251f282b92158"
+          },
+          "actual": {
+            "bytes": 7305,
+            "sha256": "c597121b25fc9d62b66cdece555c35957615fb70eee6888ca6e251f282b92158"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-head-final.json",
+          "expected": {
+            "bytes": 681,
+            "sha256": "7e7decf19ae554958699a343e77e2e6e7f6afd54283f5fd16eddc1156c31c535"
+          },
+          "actual": {
+            "bytes": 681,
+            "sha256": "7e7decf19ae554958699a343e77e2e6e7f6afd54283f5fd16eddc1156c31c535"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-head-final.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-head-final.stdout",
+          "expected": {
+            "bytes": 41,
+            "sha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401"
+          },
+          "actual": {
+            "bytes": 41,
+            "sha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-staged-final.json",
+          "expected": {
+            "bytes": 715,
+            "sha256": "19571101dbd96f0e139aba413f011d1139ca3844370f1a2e01ffc999656b8032"
+          },
+          "actual": {
+            "bytes": 715,
+            "sha256": "19571101dbd96f0e139aba413f011d1139ca3844370f1a2e01ffc999656b8032"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-staged-final.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-staged-final.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-status-final.json",
+          "expected": {
+            "bytes": 745,
+            "sha256": "2dd9f87abf47a97b1465a39177bbbe9b515a945a59ed59dd62882a9d5fd87678"
+          },
+          "actual": {
+            "bytes": 745,
+            "sha256": "2dd9f87abf47a97b1465a39177bbbe9b515a945a59ed59dd62882a9d5fd87678"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-status-final.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-status-final.stdout",
+          "expected": {
+            "bytes": 24184,
+            "sha256": "0187229a5750a1cd94d9056a5af65e6f0065e0d44c2a19e2d387271b70d4cb29"
+          },
+          "actual": {
+            "bytes": 24184,
+            "sha256": "0187229a5750a1cd94d9056a5af65e6f0065e0d44c2a19e2d387271b70d4cb29"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "mutation01.json",
+          "expected": {
+            "bytes": 715,
+            "sha256": "81240d8ea59b213a1f9f69431d9c9e9ce38d8a8f85e4ced934d9139da9a9b299"
+          },
+          "actual": {
+            "bytes": 715,
+            "sha256": "81240d8ea59b213a1f9f69431d9c9e9ce38d8a8f85e4ced934d9139da9a9b299"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "mutation01.stderr",
+          "expected": {
+            "bytes": 6752,
+            "sha256": "d749eaa57dd5a7277f579aa20ff7da1967d04300579a23a0931b7d350c7d55c6"
+          },
+          "actual": {
+            "bytes": 6752,
+            "sha256": "d749eaa57dd5a7277f579aa20ff7da1967d04300579a23a0931b7d350c7d55c6"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "mutation01.stdout",
+          "expected": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "actual": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests-final.json",
+          "expected": {
+            "bytes": 1406,
+            "sha256": "3de4130932070b3b17423f87bbf683c4332f34482830ed1b01df4c8c06cf0f4c"
+          },
+          "actual": {
+            "bytes": 1406,
+            "sha256": "3de4130932070b3b17423f87bbf683c4332f34482830ed1b01df4c8c06cf0f4c"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests-final.stderr",
+          "expected": {
+            "bytes": 13527,
+            "sha256": "75515f0a27a213158d908964cebe4e9150647dbeb81d6b21aed5ea50ae1dd175"
+          },
+          "actual": {
+            "bytes": 13527,
+            "sha256": "75515f0a27a213158d908964cebe4e9150647dbeb81d6b21aed5ea50ae1dd175"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests-final.stdout",
+          "expected": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "actual": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests-final02.json",
+          "expected": {
+            "bytes": 1410,
+            "sha256": "3ebef31f10d040e33401f51c9a4e1c87a2e7c187f997bbf552f3710cf3b93529"
+          },
+          "actual": {
+            "bytes": 1410,
+            "sha256": "3ebef31f10d040e33401f51c9a4e1c87a2e7c187f997bbf552f3710cf3b93529"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests-final02.stderr",
+          "expected": {
+            "bytes": 13517,
+            "sha256": "8a188d4ff487a5a9f333a7a6abeb506d8b36b2d5eb220458182cc8cb139c6bcf"
+          },
+          "actual": {
+            "bytes": 13517,
+            "sha256": "8a188d4ff487a5a9f333a7a6abeb506d8b36b2d5eb220458182cc8cb139c6bcf"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests-final02.stdout",
+          "expected": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "actual": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "preservation-audit.json",
+          "expected": {
+            "bytes": 20862,
+            "sha256": "a20c5beb2fe1b009ec9435890481b5ee986e7c88cf8e3f4d53b7533b788aee1a"
+          },
+          "actual": {
+            "bytes": 20862,
+            "sha256": "a20c5beb2fe1b009ec9435890481b5ee986e7c88cf8e3f4d53b7533b788aee1a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01-command.json",
+          "expected": {
+            "bytes": 1301,
+            "sha256": "92588a00be5ce67493c06824c366e6d5ec42b13f87e9dcc9f2051ca7858c1645"
+          },
+          "actual": {
+            "bytes": 1301,
+            "sha256": "92588a00be5ce67493c06824c366e6d5ec42b13f87e9dcc9f2051ca7858c1645"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01-command.stdout",
+          "expected": {
+            "bytes": 1591,
+            "sha256": "260cbb29ab38a1f09174b6d3beb0882ac2216acd6f3aad91559d38b642125c15"
+          },
+          "actual": {
+            "bytes": 1591,
+            "sha256": "260cbb29ab38a1f09174b6d3beb0882ac2216acd6f3aad91559d38b642125c15"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/execution-negative.json",
+          "expected": {
+            "bytes": 1173,
+            "sha256": "9601505e3bf5af97ceb756087b90ba4aef50f6e0e0d6ad3fd6a9fe4ae6794e18"
+          },
+          "actual": {
+            "bytes": 1173,
+            "sha256": "9601505e3bf5af97ceb756087b90ba4aef50f6e0e0d6ad3fd6a9fe4ae6794e18"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/execution-negative.stderr",
+          "expected": {
+            "bytes": 2232,
+            "sha256": "587f6e5d09b9ca4dede185791308e3d30c1e87bab4a8c757fc41efd6ccc9de0a"
+          },
+          "actual": {
+            "bytes": 2232,
+            "sha256": "587f6e5d09b9ca4dede185791308e3d30c1e87bab4a8c757fc41efd6ccc9de0a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/execution-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-a-command.json",
+          "expected": {
+            "bytes": 1097,
+            "sha256": "09b77c3320ed8fc185a31ea91f621ef0c7c18fa07cee5ec1825cc164d75243ac"
+          },
+          "actual": {
+            "bytes": 1097,
+            "sha256": "09b77c3320ed8fc185a31ea91f621ef0c7c18fa07cee5ec1825cc164d75243ac"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-a-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-a-command.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "9a2437549f413d9f7e67fec9f047c65c0fcf66078e57662bb1125213d6192550"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "9a2437549f413d9f7e67fec9f047c65c0fcf66078e57662bb1125213d6192550"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-a/candidates.json",
+          "expected": {
+            "bytes": 16325019,
+            "sha256": "ee0b648825b46404cba4e8702c76f783aadf428eb08e9aad67f1fe1dc6cba28e"
+          },
+          "actual": {
+            "bytes": 16325019,
+            "sha256": "ee0b648825b46404cba4e8702c76f783aadf428eb08e9aad67f1fe1dc6cba28e"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-b-command.json",
+          "expected": {
+            "bytes": 1097,
+            "sha256": "10436e31d74badb3af51c500a688fa08ec0933009299563abed7ffcc48891d31"
+          },
+          "actual": {
+            "bytes": 1097,
+            "sha256": "10436e31d74badb3af51c500a688fa08ec0933009299563abed7ffcc48891d31"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-b-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-b-command.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "9a2437549f413d9f7e67fec9f047c65c0fcf66078e57662bb1125213d6192550"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "9a2437549f413d9f7e67fec9f047c65c0fcf66078e57662bb1125213d6192550"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-b/candidates.json",
+          "expected": {
+            "bytes": 16325019,
+            "sha256": "ee0b648825b46404cba4e8702c76f783aadf428eb08e9aad67f1fe1dc6cba28e"
+          },
+          "actual": {
+            "bytes": 16325019,
+            "sha256": "ee0b648825b46404cba4e8702c76f783aadf428eb08e9aad67f1fe1dc6cba28e"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-data-proof.json",
+          "expected": {
+            "bytes": 17329,
+            "sha256": "3ad9acae0a65020ae4114bfb1172d4b61829a3602fa6633565071a311bcc2f64"
+          },
+          "actual": {
+            "bytes": 17329,
+            "sha256": "3ad9acae0a65020ae4114bfb1172d4b61829a3602fa6633565071a311bcc2f64"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-relocated-command.json",
+          "expected": {
+            "bytes": 1298,
+            "sha256": "3c0c0a358f91dd83a33d077908d54503ac1121ed8ea91884550955063731c382"
+          },
+          "actual": {
+            "bytes": 1298,
+            "sha256": "3c0c0a358f91dd83a33d077908d54503ac1121ed8ea91884550955063731c382"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-relocated-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-relocated-command.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "9a2437549f413d9f7e67fec9f047c65c0fcf66078e57662bb1125213d6192550"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "9a2437549f413d9f7e67fec9f047c65c0fcf66078e57662bb1125213d6192550"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/full-relocated/candidates.json",
+          "expected": {
+            "bytes": 16325019,
+            "sha256": "ee0b648825b46404cba4e8702c76f783aadf428eb08e9aad67f1fe1dc6cba28e"
+          },
+          "actual": {
+            "bytes": 16325019,
+            "sha256": "ee0b648825b46404cba4e8702c76f783aadf428eb08e9aad67f1fe1dc6cba28e"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/prepare-negative.json",
+          "expected": {
+            "bytes": 1161,
+            "sha256": "fa81238c0dc8035dde54687454b43ee9def4a1a7b403a4aef68d4c44490886b8"
+          },
+          "actual": {
+            "bytes": 1161,
+            "sha256": "fa81238c0dc8035dde54687454b43ee9def4a1a7b403a4aef68d4c44490886b8"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/prepare-negative.stderr",
+          "expected": {
+            "bytes": 48795,
+            "sha256": "d16c7c67cbc5b0f2e27ec2a54f9e0d8d1b8ec03b0aff5135bc1cbd94af27fd3f"
+          },
+          "actual": {
+            "bytes": 48795,
+            "sha256": "d16c7c67cbc5b0f2e27ec2a54f9e0d8d1b8ec03b0aff5135bc1cbd94af27fd3f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/prepare-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/primary-negative.json",
+          "expected": {
+            "bytes": 1054,
+            "sha256": "96afe5d619f61c9579d8d697537b3368b0bf0ff11b1a11af6322f3d2cdaddc26"
+          },
+          "actual": {
+            "bytes": 1054,
+            "sha256": "96afe5d619f61c9579d8d697537b3368b0bf0ff11b1a11af6322f3d2cdaddc26"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/primary-negative.stderr",
+          "expected": {
+            "bytes": 96,
+            "sha256": "bd8b6fe3805cc9325d187b51534ad9d7549a499b62ceab1dde41983932f9dd30"
+          },
+          "actual": {
+            "bytes": 96,
+            "sha256": "bd8b6fe3805cc9325d187b51534ad9d7549a499b62ceab1dde41983932f9dd30"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/primary-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-identities.json",
+          "expected": {
+            "bytes": 4314,
+            "sha256": "7c39d8d9229930f7cb81f64c5a84f79745cfa94f676325c302ce2efbb9c762a4"
+          },
+          "actual": {
+            "bytes": 4314,
+            "sha256": "7c39d8d9229930f7cb81f64c5a84f79745cfa94f676325c302ce2efbb9c762a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+          "expected": {
+            "bytes": 186222,
+            "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+          },
+          "actual": {
+            "bytes": 186222,
+            "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+          "expected": {
+            "bytes": 41120,
+            "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+          },
+          "actual": {
+            "bytes": 41120,
+            "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+          "expected": {
+            "bytes": 24558,
+            "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+          },
+          "actual": {
+            "bytes": 24558,
+            "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/snapshot.json",
+          "expected": {
+            "bytes": 3055,
+            "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+          },
+          "actual": {
+            "bytes": 3055,
+            "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/stakers.csv",
+          "expected": {
+            "bytes": 10515,
+            "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+          },
+          "actual": {
+            "bytes": 10515,
+            "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+          "expected": {
+            "bytes": 1432,
+            "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+          },
+          "actual": {
+            "bytes": 1432,
+            "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/CUSTODY_AND_HARVEST.md",
+          "expected": {
+            "bytes": 7357,
+            "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+          },
+          "actual": {
+            "bytes": 7357,
+            "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/LOSS_AND_RECOVERY_LEDGER.md",
+          "expected": {
+            "bytes": 15308,
+            "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+          },
+          "actual": {
+            "bytes": 15308,
+            "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/account-ledger.csv",
+          "expected": {
+            "bytes": 285464,
+            "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+          },
+          "actual": {
+            "bytes": 285464,
+            "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/conversions.csv",
+          "expected": {
+            "bytes": 91676,
+            "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+          },
+          "actual": {
+            "bytes": 91676,
+            "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/custody-inventory.csv",
+          "expected": {
+            "bytes": 139535,
+            "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+          },
+          "actual": {
+            "bytes": 139535,
+            "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/all-index-events.csv",
+          "expected": {
+            "bytes": 141460,
+            "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+          },
+          "actual": {
+            "bytes": 141460,
+            "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/bond-accounting.csv",
+          "expected": {
+            "bytes": 18666,
+            "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+          },
+          "actual": {
+            "bytes": 18666,
+            "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-bonds.csv",
+          "expected": {
+            "bytes": 3709,
+            "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+          },
+          "actual": {
+            "bytes": 3709,
+            "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-wallets.csv",
+          "expected": {
+            "bytes": 2542,
+            "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+          },
+          "actual": {
+            "bytes": 2542,
+            "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/index-events.csv",
+          "expected": {
+            "bytes": 111333,
+            "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+          },
+          "actual": {
+            "bytes": 111333,
+            "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/post-incident-bond-claims.csv",
+          "expected": {
+            "bytes": 3012,
+            "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+          },
+          "actual": {
+            "bytes": 3012,
+            "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/transfers.csv",
+          "expected": {
+            "bytes": 4535122,
+            "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+          },
+          "actual": {
+            "bytes": 4535122,
+            "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-bonds.csv",
+          "expected": {
+            "bytes": 12283,
+            "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+          },
+          "actual": {
+            "bytes": 12283,
+            "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-candidates.csv",
+          "expected": {
+            "bytes": 83558,
+            "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+          },
+          "actual": {
+            "bytes": 83558,
+            "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/exceptions.csv",
+          "expected": {
+            "bytes": 3404,
+            "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+          },
+          "actual": {
+            "bytes": 3404,
+            "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/held-exclusions.csv",
+          "expected": {
+            "bytes": 188644,
+            "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+          },
+          "actual": {
+            "bytes": 188644,
+            "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/manifest.json",
+          "expected": {
+            "bytes": 3209,
+            "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+          },
+          "actual": {
+            "bytes": 3209,
+            "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/observed-recoveries.csv",
+          "expected": {
+            "bytes": 30839,
+            "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+          },
+          "actual": {
+            "bytes": 30839,
+            "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/positions.csv",
+          "expected": {
+            "bytes": 123221,
+            "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+          },
+          "actual": {
+            "bytes": 123221,
+            "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/reconciliation.json",
+          "expected": {
+            "bytes": 1798,
+            "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+          },
+          "actual": {
+            "bytes": 1798,
+            "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/rounding.csv",
+          "expected": {
+            "bytes": 327,
+            "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+          },
+          "actual": {
+            "bytes": 327,
+            "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/sources.json",
+          "expected": {
+            "bytes": 5502,
+            "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+          },
+          "actual": {
+            "bytes": 5502,
+            "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/recovery-check.json",
+          "expected": {
+            "bytes": 8085,
+            "sha256": "d40d6d319a754015ef83cd49c7fee264a2eb9d3ad1ee8d11f150d4217bd48e9a"
+          },
+          "actual": {
+            "bytes": 8085,
+            "sha256": "d40d6d319a754015ef83cd49c7fee264a2eb9d3ad1ee8d11f150d4217bd48e9a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/unresolved-review.json",
+          "expected": {
+            "bytes": 397198,
+            "sha256": "48b43b8568aa740074455f1b93c2bcf386e20719a6de9d1ec02556b08c944824"
+          },
+          "actual": {
+            "bytes": 397198,
+            "sha256": "48b43b8568aa740074455f1b93c2bcf386e20719a6de9d1ec02556b08c944824"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/validate-negative.json",
+          "expected": {
+            "bytes": 961,
+            "sha256": "d43c677f0af3b2f7f3d2a5a0630f5dc181c320c2cbce651af424ea3a0e725cc7"
+          },
+          "actual": {
+            "bytes": 961,
+            "sha256": "d43c677f0af3b2f7f3d2a5a0630f5dc181c320c2cbce651af424ea3a0e725cc7"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/validate-negative.stderr",
+          "expected": {
+            "bytes": 1266,
+            "sha256": "b75356ec730ef02a73addac2143e875caf1554864a82cf75cd1d3f39ab356141"
+          },
+          "actual": {
+            "bytes": 1266,
+            "sha256": "b75356ec730ef02a73addac2143e875caf1554864a82cf75cd1d3f39ab356141"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof01/validate-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02-command.json",
+          "expected": {
+            "bytes": 1301,
+            "sha256": "fb33ca3cc2952fc4883ce30c4707e9b23bca56f23f2a90e9724a13f250848c61"
+          },
+          "actual": {
+            "bytes": 1301,
+            "sha256": "fb33ca3cc2952fc4883ce30c4707e9b23bca56f23f2a90e9724a13f250848c61"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02-command.stdout",
+          "expected": {
+            "bytes": 1591,
+            "sha256": "f74395dedbe7d6cf8acb5518f27b1036070b5f28d9f5e275c9508fd83c3ecab2"
+          },
+          "actual": {
+            "bytes": 1591,
+            "sha256": "f74395dedbe7d6cf8acb5518f27b1036070b5f28d9f5e275c9508fd83c3ecab2"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/execution-negative.json",
+          "expected": {
+            "bytes": 1173,
+            "sha256": "65cb588de9e08a504c847eb13fa7e4b2476b30245e9c03a33161a3f192a1683a"
+          },
+          "actual": {
+            "bytes": 1173,
+            "sha256": "65cb588de9e08a504c847eb13fa7e4b2476b30245e9c03a33161a3f192a1683a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/execution-negative.stderr",
+          "expected": {
+            "bytes": 2232,
+            "sha256": "587f6e5d09b9ca4dede185791308e3d30c1e87bab4a8c757fc41efd6ccc9de0a"
+          },
+          "actual": {
+            "bytes": 2232,
+            "sha256": "587f6e5d09b9ca4dede185791308e3d30c1e87bab4a8c757fc41efd6ccc9de0a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/execution-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-a-command.json",
+          "expected": {
+            "bytes": 1097,
+            "sha256": "b98ef8ac85b7891d1176ef4f51d41124c839a924402dea5b1c8b27784148545f"
+          },
+          "actual": {
+            "bytes": 1097,
+            "sha256": "b98ef8ac85b7891d1176ef4f51d41124c839a924402dea5b1c8b27784148545f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-a-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-a-command.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-a/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-b-command.json",
+          "expected": {
+            "bytes": 1097,
+            "sha256": "730f94c34160c1dbe206211fd477ece39ccc9023cca0e41eb88b3f17659ea3e0"
+          },
+          "actual": {
+            "bytes": 1097,
+            "sha256": "730f94c34160c1dbe206211fd477ece39ccc9023cca0e41eb88b3f17659ea3e0"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-b-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-b-command.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-b/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-data-proof.json",
+          "expected": {
+            "bytes": 17329,
+            "sha256": "fe7c9b621817a2dfc1812b521d35099832d434648e9c3e97863cc1d7591fae9d"
+          },
+          "actual": {
+            "bytes": 17329,
+            "sha256": "fe7c9b621817a2dfc1812b521d35099832d434648e9c3e97863cc1d7591fae9d"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-relocated-command.json",
+          "expected": {
+            "bytes": 1298,
+            "sha256": "324ee16b3d1bfcbf944cb09468a26e88149fe9c5cbf5c7e591bf26fe15fda4b3"
+          },
+          "actual": {
+            "bytes": 1298,
+            "sha256": "324ee16b3d1bfcbf944cb09468a26e88149fe9c5cbf5c7e591bf26fe15fda4b3"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-relocated-command.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-relocated-command.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/full-relocated/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/prepare-negative.json",
+          "expected": {
+            "bytes": 1161,
+            "sha256": "e37060e6b09a15cf50a59fc4570744e91b2c7d8f00a6837f9f4b320c96b536bf"
+          },
+          "actual": {
+            "bytes": 1161,
+            "sha256": "e37060e6b09a15cf50a59fc4570744e91b2c7d8f00a6837f9f4b320c96b536bf"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/prepare-negative.stderr",
+          "expected": {
+            "bytes": 48795,
+            "sha256": "d16c7c67cbc5b0f2e27ec2a54f9e0d8d1b8ec03b0aff5135bc1cbd94af27fd3f"
+          },
+          "actual": {
+            "bytes": 48795,
+            "sha256": "d16c7c67cbc5b0f2e27ec2a54f9e0d8d1b8ec03b0aff5135bc1cbd94af27fd3f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/prepare-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/primary-negative.json",
+          "expected": {
+            "bytes": 1054,
+            "sha256": "38ce51cb6048b3f2e8177d27b3c72dc8f798496ffee3e31b2d7f2a19f14bb707"
+          },
+          "actual": {
+            "bytes": 1054,
+            "sha256": "38ce51cb6048b3f2e8177d27b3c72dc8f798496ffee3e31b2d7f2a19f14bb707"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/primary-negative.stderr",
+          "expected": {
+            "bytes": 96,
+            "sha256": "bd8b6fe3805cc9325d187b51534ad9d7549a499b62ceab1dde41983932f9dd30"
+          },
+          "actual": {
+            "bytes": 96,
+            "sha256": "bd8b6fe3805cc9325d187b51534ad9d7549a499b62ceab1dde41983932f9dd30"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/primary-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-identities.json",
+          "expected": {
+            "bytes": 4314,
+            "sha256": "7c39d8d9229930f7cb81f64c5a84f79745cfa94f676325c302ce2efbb9c762a4"
+          },
+          "actual": {
+            "bytes": 4314,
+            "sha256": "7c39d8d9229930f7cb81f64c5a84f79745cfa94f676325c302ce2efbb9c762a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+          "expected": {
+            "bytes": 186222,
+            "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+          },
+          "actual": {
+            "bytes": 186222,
+            "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+          "expected": {
+            "bytes": 41120,
+            "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+          },
+          "actual": {
+            "bytes": 41120,
+            "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+          "expected": {
+            "bytes": 24558,
+            "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+          },
+          "actual": {
+            "bytes": 24558,
+            "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/snapshot.json",
+          "expected": {
+            "bytes": 3055,
+            "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+          },
+          "actual": {
+            "bytes": 3055,
+            "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/stakers.csv",
+          "expected": {
+            "bytes": 10515,
+            "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+          },
+          "actual": {
+            "bytes": 10515,
+            "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+          "expected": {
+            "bytes": 1432,
+            "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+          },
+          "actual": {
+            "bytes": 1432,
+            "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/CUSTODY_AND_HARVEST.md",
+          "expected": {
+            "bytes": 7357,
+            "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+          },
+          "actual": {
+            "bytes": 7357,
+            "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/LOSS_AND_RECOVERY_LEDGER.md",
+          "expected": {
+            "bytes": 15308,
+            "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+          },
+          "actual": {
+            "bytes": 15308,
+            "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/account-ledger.csv",
+          "expected": {
+            "bytes": 285464,
+            "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+          },
+          "actual": {
+            "bytes": 285464,
+            "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/conversions.csv",
+          "expected": {
+            "bytes": 91676,
+            "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+          },
+          "actual": {
+            "bytes": 91676,
+            "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/custody-inventory.csv",
+          "expected": {
+            "bytes": 139535,
+            "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+          },
+          "actual": {
+            "bytes": 139535,
+            "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/all-index-events.csv",
+          "expected": {
+            "bytes": 141460,
+            "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+          },
+          "actual": {
+            "bytes": 141460,
+            "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/bond-accounting.csv",
+          "expected": {
+            "bytes": 18666,
+            "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+          },
+          "actual": {
+            "bytes": 18666,
+            "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-bonds.csv",
+          "expected": {
+            "bytes": 3709,
+            "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+          },
+          "actual": {
+            "bytes": 3709,
+            "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-wallets.csv",
+          "expected": {
+            "bytes": 2542,
+            "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+          },
+          "actual": {
+            "bytes": 2542,
+            "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/index-events.csv",
+          "expected": {
+            "bytes": 111333,
+            "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+          },
+          "actual": {
+            "bytes": 111333,
+            "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/post-incident-bond-claims.csv",
+          "expected": {
+            "bytes": 3012,
+            "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+          },
+          "actual": {
+            "bytes": 3012,
+            "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/transfers.csv",
+          "expected": {
+            "bytes": 4535122,
+            "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+          },
+          "actual": {
+            "bytes": 4535122,
+            "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-bonds.csv",
+          "expected": {
+            "bytes": 12283,
+            "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+          },
+          "actual": {
+            "bytes": 12283,
+            "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-candidates.csv",
+          "expected": {
+            "bytes": 83558,
+            "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+          },
+          "actual": {
+            "bytes": 83558,
+            "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/exceptions.csv",
+          "expected": {
+            "bytes": 3404,
+            "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+          },
+          "actual": {
+            "bytes": 3404,
+            "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/held-exclusions.csv",
+          "expected": {
+            "bytes": 188644,
+            "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+          },
+          "actual": {
+            "bytes": 188644,
+            "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/manifest.json",
+          "expected": {
+            "bytes": 3209,
+            "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+          },
+          "actual": {
+            "bytes": 3209,
+            "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/observed-recoveries.csv",
+          "expected": {
+            "bytes": 30839,
+            "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+          },
+          "actual": {
+            "bytes": 30839,
+            "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/positions.csv",
+          "expected": {
+            "bytes": 123221,
+            "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+          },
+          "actual": {
+            "bytes": 123221,
+            "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/reconciliation.json",
+          "expected": {
+            "bytes": 1798,
+            "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+          },
+          "actual": {
+            "bytes": 1798,
+            "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/rounding.csv",
+          "expected": {
+            "bytes": 327,
+            "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+          },
+          "actual": {
+            "bytes": 327,
+            "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/sources.json",
+          "expected": {
+            "bytes": 5502,
+            "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+          },
+          "actual": {
+            "bytes": 5502,
+            "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/recovery-check.json",
+          "expected": {
+            "bytes": 8085,
+            "sha256": "d40d6d319a754015ef83cd49c7fee264a2eb9d3ad1ee8d11f150d4217bd48e9a"
+          },
+          "actual": {
+            "bytes": 8085,
+            "sha256": "d40d6d319a754015ef83cd49c7fee264a2eb9d3ad1ee8d11f150d4217bd48e9a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/unresolved-review.json",
+          "expected": {
+            "bytes": 397198,
+            "sha256": "48b43b8568aa740074455f1b93c2bcf386e20719a6de9d1ec02556b08c944824"
+          },
+          "actual": {
+            "bytes": 397198,
+            "sha256": "48b43b8568aa740074455f1b93c2bcf386e20719a6de9d1ec02556b08c944824"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/validate-negative.json",
+          "expected": {
+            "bytes": 961,
+            "sha256": "d32b9ce3b16a9f3ab4e81e24c87a17caff196a88c07fced837b6a253b54c90ea"
+          },
+          "actual": {
+            "bytes": 961,
+            "sha256": "d32b9ce3b16a9f3ab4e81e24c87a17caff196a88c07fced837b6a253b54c90ea"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/validate-negative.stderr",
+          "expected": {
+            "bytes": 1266,
+            "sha256": "b75356ec730ef02a73addac2143e875caf1554864a82cf75cd1d3f39ab356141"
+          },
+          "actual": {
+            "bytes": 1266,
+            "sha256": "b75356ec730ef02a73addac2143e875caf1554864a82cf75cd1d3f39ab356141"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "proof02/validate-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "prove-executed01.ts.txt",
+          "expected": {
+            "bytes": 11930,
+            "sha256": "8214c78205fe3ca6f4baa1e71c7028e84290ff1b41010961c269d6df94b0a016"
+          },
+          "actual": {
+            "bytes": 11930,
+            "sha256": "8214c78205fe3ca6f4baa1e71c7028e84290ff1b41010961c269d6df94b0a016"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "prove.ts",
+          "expected": {
+            "bytes": 12027,
+            "sha256": "42ab58d41888e483018c86c8688437435b9e5269aa3fe19d7b5935a4e70d282b"
+          },
+          "actual": {
+            "bytes": 12027,
+            "sha256": "42ab58d41888e483018c86c8688437435b9e5269aa3fe19d7b5935a4e70d282b"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "report.md",
+          "expected": {
+            "bytes": 19047,
+            "sha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa"
+          },
+          "actual": {
+            "bytes": 19047,
+            "sha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "run.ts",
+          "expected": {
+            "bytes": 1286,
+            "sha256": "89ea2e060088a8f0e0931d229a5a109f975f2f64ef1de1416b56c51543e14286"
+          },
+          "actual": {
+            "bytes": 1286,
+            "sha256": "89ea2e060088a8f0e0931d229a5a109f975f2f64ef1de1416b56c51543e14286"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-audit.json",
+          "expected": {
+            "bytes": 1141,
+            "sha256": "37fb17186ccbda0d4893a74e2911f33156e8ef44ee39a114e9dd6947e9882dfa"
+          },
+          "actual": {
+            "bytes": 1141,
+            "sha256": "37fb17186ccbda0d4893a74e2911f33156e8ef44ee39a114e9dd6947e9882dfa"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-audit.stderr",
+          "expected": {
+            "bytes": 220,
+            "sha256": "b659528f503eb5c86e720eff32012e16c84d7284e1044fb38f6bc62ade600b47"
+          },
+          "actual": {
+            "bytes": 220,
+            "sha256": "b659528f503eb5c86e720eff32012e16c84d7284e1044fb38f6bc62ade600b47"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-audit.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-diff.json",
+          "expected": {
+            "bytes": 813,
+            "sha256": "94cbd2d828603f5c70c33539e149e2d125c36cebef954cff7322a63b8b07b318"
+          },
+          "actual": {
+            "bytes": 813,
+            "sha256": "94cbd2d828603f5c70c33539e149e2d125c36cebef954cff7322a63b8b07b318"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-diff.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-diff.stdout",
+          "expected": {
+            "bytes": 7305,
+            "sha256": "c597121b25fc9d62b66cdece555c35957615fb70eee6888ca6e251f282b92158"
+          },
+          "actual": {
+            "bytes": 7305,
+            "sha256": "c597121b25fc9d62b66cdece555c35957615fb70eee6888ca6e251f282b92158"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-manifest.json",
+          "expected": {
+            "bytes": 17093,
+            "sha256": "e7d20a6edbb7897cf13c43b41fe225d944e99bccec931d06e3c63e7b93324ebe"
+          },
+          "actual": {
+            "bytes": 17093,
+            "sha256": "e7d20a6edbb7897cf13c43b41fe225d944e99bccec931d06e3c63e7b93324ebe"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "test-junk.json",
+          "expected": {
+            "bytes": 779,
+            "sha256": "b527f1e3eb69e4322647922442bd29c40a4dca3be5d4fed2a6f12fc341f92bfd"
+          },
+          "actual": {
+            "bytes": 779,
+            "sha256": "b527f1e3eb69e4322647922442bd29c40a4dca3be5d4fed2a6f12fc341f92bfd"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "test-junk.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "test-junk.stdout",
+          "expected": {
+            "bytes": 29,
+            "sha256": "3a02d691d753194a7279cf8d19883a77addb2373a4e59585a1188f151fa77986"
+          },
+          "actual": {
+            "bytes": 29,
+            "sha256": "3a02d691d753194a7279cf8d19883a77addb2373a4e59585a1188f151fa77986"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final.json",
+          "expected": {
+            "bytes": 4813,
+            "sha256": "7e003c1537742fa95cb0dbc5877e6450842792ac50da850b1ae22e94062abf82"
+          },
+          "actual": {
+            "bytes": 4813,
+            "sha256": "7e003c1537742fa95cb0dbc5877e6450842792ac50da850b1ae22e94062abf82"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final.stdout",
+          "expected": {
+            "bytes": 1536,
+            "sha256": "9c05a454120b57ea8360534f437307e5817a463c130aa01063218c12b13e84da"
+          },
+          "actual": {
+            "bytes": 1536,
+            "sha256": "9c05a454120b57ea8360534f437307e5817a463c130aa01063218c12b13e84da"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final02.json",
+          "expected": {
+            "bytes": 4817,
+            "sha256": "c8e2e1a86bcde5d1b02f2fc68e8eac5bfc3fd5eff31ecdd8b33e16dd23beddae"
+          },
+          "actual": {
+            "bytes": 4817,
+            "sha256": "c8e2e1a86bcde5d1b02f2fc68e8eac5bfc3fd5eff31ecdd8b33e16dd23beddae"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final02.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final02.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final03.json",
+          "expected": {
+            "bytes": 4817,
+            "sha256": "d3576481300184b6ba7d15b3a3049452fd5939fae34c2ea6a087bc072b64615f"
+          },
+          "actual": {
+            "bytes": 4817,
+            "sha256": "d3576481300184b6ba7d15b3a3049452fd5939fae34c2ea6a087bc072b64615f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final03.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types-final03.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types01.json",
+          "expected": {
+            "bytes": 4278,
+            "sha256": "8e3c921ad07c6989509061932353843b99eccd774f842415bf40a69c2098beb1"
+          },
+          "actual": {
+            "bytes": 4278,
+            "sha256": "8e3c921ad07c6989509061932353843b99eccd774f842415bf40a69c2098beb1"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types01.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types01.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        }
+      ]
+    },
+    {
+      "directory": "verification-r2",
+      "sealIdentity": {
+        "bytes": 1747,
+        "sha256": "5f5561a432309399331c3b2f95f9cabd50c2d65acd22b1de7d90edc7571996b8"
+      },
+      "manifestIdentity": {
+        "bytes": 17767,
+        "sha256": "34d3c438937d1dc0f1c42bc861bb3331deeabd36480e40a84458a535819ff892"
+      },
+      "checks": [
+        {
+          "source": "seal.manifest",
+          "path": "manifest.json",
+          "expected": {
+            "bytes": 17767,
+            "sha256": "34d3c438937d1dc0f1c42bc861bb3331deeabd36480e40a84458a535819ff892"
+          },
+          "actual": {
+            "bytes": 17767,
+            "sha256": "34d3c438937d1dc0f1c42bc861bb3331deeabd36480e40a84458a535819ff892"
+          },
+          "match": true
+        },
+        {
+          "source": "seal.report",
+          "path": "report.md",
+          "expected": {
+            "bytes": 25267,
+            "sha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5"
+          },
+          "actual": {
+            "bytes": 25267,
+            "sha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5"
+          },
+          "match": true
+        },
+        {
+          "source": "seal.sourceManifest",
+          "path": "source-manifest.json",
+          "expected": {
+            "bytes": 12911,
+            "sha256": "f3f8f2df3a7eb9ec3f67ad6b3b72490eb8a8b3787e4c6ff9baf29d02ef8dc13c"
+          },
+          "actual": {
+            "bytes": 12911,
+            "sha256": "f3f8f2df3a7eb9ec3f67ad6b3b72490eb8a8b3787e4c6ff9baf29d02ef8dc13c"
+          },
+          "match": true
+        },
+        {
+          "source": "seal.cleanup",
+          "path": "cleanup.json",
+          "expected": {
+            "bytes": 1432,
+            "sha256": "ffece87bacdfed8505903b1be0b3eed999c86814176737d54654916c0bc15b9d"
+          },
+          "actual": {
+            "bytes": 1432,
+            "sha256": "ffece87bacdfed8505903b1be0b3eed999c86814176737d54654916c0bc15b9d"
+          },
+          "match": true
+        },
+        {
+          "source": "seal.canonicalCandidate",
+          "path": "full-a/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "bun-version.json",
+          "expected": {
+            "bytes": 561,
+            "sha256": "080c3aab9dc29b8e6bc1c2dce90c79494570a04abac8f6511f67fcc49cc15314"
+          },
+          "actual": {
+            "bytes": 561,
+            "sha256": "080c3aab9dc29b8e6bc1c2dce90c79494570a04abac8f6511f67fcc49cc15314"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "bun-version.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "bun-version.stdout",
+          "expected": {
+            "bytes": 6,
+            "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee"
+          },
+          "actual": {
+            "bytes": 6,
+            "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "category-oracle.json",
+          "expected": {
+            "bytes": 3251,
+            "sha256": "80a78165608b5da121f7fa057f87b71300e836628a7a6c2a392ba36450503075"
+          },
+          "actual": {
+            "bytes": 3251,
+            "sha256": "80a78165608b5da121f7fa057f87b71300e836628a7a6c2a392ba36450503075"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "cleanup.json",
+          "expected": {
+            "bytes": 1432,
+            "sha256": "ffece87bacdfed8505903b1be0b3eed999c86814176737d54654916c0bc15b9d"
+          },
+          "actual": {
+            "bytes": 1432,
+            "sha256": "ffece87bacdfed8505903b1be0b3eed999c86814176737d54654916c0bc15b9d"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "commands.json",
+          "expected": {
+            "bytes": 25668,
+            "sha256": "c331c5392894a3b14933080473eca3bda847b55188fec0272d606e21fae4c74e"
+          },
+          "actual": {
+            "bytes": 25668,
+            "sha256": "c331c5392894a3b14933080473eca3bda847b55188fec0272d606e21fae4c74e"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-a.json",
+          "expected": {
+            "bytes": 945,
+            "sha256": "856325182cd4426cbfbf858ae0e08c8ac387cff3eb963b8fec2bd1cd3a9bf40f"
+          },
+          "actual": {
+            "bytes": 945,
+            "sha256": "856325182cd4426cbfbf858ae0e08c8ac387cff3eb963b8fec2bd1cd3a9bf40f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-a.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-a.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-b.json",
+          "expected": {
+            "bytes": 1020,
+            "sha256": "e52c0ba09e70b25779b981576504c056974be77d094be6ea36069f32e18a7756"
+          },
+          "actual": {
+            "bytes": 1020,
+            "sha256": "e52c0ba09e70b25779b981576504c056974be77d094be6ea36069f32e18a7756"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-b.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-b.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-relocated.json",
+          "expected": {
+            "bytes": 1191,
+            "sha256": "5829d103579f8dffc475f722c66627010ca9295372ad38fc394c38551e9a2e61"
+          },
+          "actual": {
+            "bytes": 1191,
+            "sha256": "5829d103579f8dffc475f722c66627010ca9295372ad38fc394c38551e9a2e61"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-relocated.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "derive-relocated.stdout",
+          "expected": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "actual": {
+            "bytes": 155,
+            "sha256": "12be4e33ea8d8df1236d764562b4da8ce9d3c98276fbcdf3f8d4fc155d8413a4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "execute-negative.json",
+          "expected": {
+            "bytes": 1173,
+            "sha256": "8aace8d93cd0912d6256ee0a65113422b41765936b2a380b9a57a83cfcc281fc"
+          },
+          "actual": {
+            "bytes": 1173,
+            "sha256": "8aace8d93cd0912d6256ee0a65113422b41765936b2a380b9a57a83cfcc281fc"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "execute-negative.stderr",
+          "expected": {
+            "bytes": 2232,
+            "sha256": "587f6e5d09b9ca4dede185791308e3d30c1e87bab4a8c757fc41efd6ccc9de0a"
+          },
+          "actual": {
+            "bytes": 2232,
+            "sha256": "587f6e5d09b9ca4dede185791308e3d30c1e87bab4a8c757fc41efd6ccc9de0a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "execute-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "full-a/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "full-b/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "full-relocated/candidates.json",
+          "expected": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "actual": {
+            "bytes": 16570240,
+            "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-branch.json",
+          "expected": {
+            "bytes": 676,
+            "sha256": "131ad5f65d301a0b89c5cec8358607ecc79b687e59409e440e74effe26e64d3f"
+          },
+          "actual": {
+            "bytes": 676,
+            "sha256": "131ad5f65d301a0b89c5cec8358607ecc79b687e59409e440e74effe26e64d3f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-branch.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-branch.stdout",
+          "expected": {
+            "bytes": 44,
+            "sha256": "cecb98ad46e0ffdc794fd2ed1586735bc85b6a85f2975de2dd7538f2da98ea31"
+          },
+          "actual": {
+            "bytes": 44,
+            "sha256": "cecb98ad46e0ffdc794fd2ed1586735bc85b6a85f2975de2dd7538f2da98ea31"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff-check.json",
+          "expected": {
+            "bytes": 706,
+            "sha256": "505579e12262de3c65e24d69c7b62140ea79e976c80aed15237be7039cffd667"
+          },
+          "actual": {
+            "bytes": 706,
+            "sha256": "505579e12262de3c65e24d69c7b62140ea79e976c80aed15237be7039cffd667"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff-check.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff-check.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff.json",
+          "expected": {
+            "bytes": 679,
+            "sha256": "f4f412f2e654c4524817e191652ed92d4c9b70b6f055ebea8fe64fe14d77d5af"
+          },
+          "actual": {
+            "bytes": 679,
+            "sha256": "f4f412f2e654c4524817e191652ed92d4c9b70b6f055ebea8fe64fe14d77d5af"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-diff.stdout",
+          "expected": {
+            "bytes": 7305,
+            "sha256": "c597121b25fc9d62b66cdece555c35957615fb70eee6888ca6e251f282b92158"
+          },
+          "actual": {
+            "bytes": 7305,
+            "sha256": "c597121b25fc9d62b66cdece555c35957615fb70eee6888ca6e251f282b92158"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-head.json",
+          "expected": {
+            "bytes": 665,
+            "sha256": "a584ff2ca95b27725cfba119db2a93cc86b2e8ff1db1505ae9738dcad196ee13"
+          },
+          "actual": {
+            "bytes": 665,
+            "sha256": "a584ff2ca95b27725cfba119db2a93cc86b2e8ff1db1505ae9738dcad196ee13"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-head.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-head.stdout",
+          "expected": {
+            "bytes": 41,
+            "sha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401"
+          },
+          "actual": {
+            "bytes": 41,
+            "sha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-staged.json",
+          "expected": {
+            "bytes": 699,
+            "sha256": "8515579868d2198e8f918c82197fc8a36e7f7a7038ca58f481f6fc7fa30c866b"
+          },
+          "actual": {
+            "bytes": 699,
+            "sha256": "8515579868d2198e8f918c82197fc8a36e7f7a7038ca58f481f6fc7fa30c866b"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-staged.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-staged.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-status.json",
+          "expected": {
+            "bytes": 700,
+            "sha256": "3419956419267de1dae34aff2040614f3a487a3b2cf7b98955f1dc009eb89215"
+          },
+          "actual": {
+            "bytes": 700,
+            "sha256": "3419956419267de1dae34aff2040614f3a487a3b2cf7b98955f1dc009eb89215"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-status.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "git-status.stdout",
+          "expected": {
+            "bytes": 623,
+            "sha256": "30d419100a3ff55971b2ddcbf5f5da18d854099f72986628a9769ae101a2c402"
+          },
+          "actual": {
+            "bytes": 623,
+            "sha256": "30d419100a3ff55971b2ddcbf5f5da18d854099f72986628a9769ae101a2c402"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent-executed01.py.txt",
+          "expected": {
+            "bytes": 12645,
+            "sha256": "c5b8540f4939613403475408bc9b8596ee22e5ac3b683c49937f7e0eee661622"
+          },
+          "actual": {
+            "bytes": 12645,
+            "sha256": "c5b8540f4939613403475408bc9b8596ee22e5ac3b683c49937f7e0eee661622"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent-proof.json",
+          "expected": {
+            "bytes": 895313,
+            "sha256": "c21ce1cd33820fda177775cb84cf89e4846b2e4c38b7b282e31119457eb954cb"
+          },
+          "actual": {
+            "bytes": 895313,
+            "sha256": "c21ce1cd33820fda177775cb84cf89e4846b2e4c38b7b282e31119457eb954cb"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent.json",
+          "expected": {
+            "bytes": 1234,
+            "sha256": "89d54521fdeadf8befb2015356fdb07a908e4eadb424597e0f8cdc8d21eddc78"
+          },
+          "actual": {
+            "bytes": 1234,
+            "sha256": "89d54521fdeadf8befb2015356fdb07a908e4eadb424597e0f8cdc8d21eddc78"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent.py",
+          "expected": {
+            "bytes": 12669,
+            "sha256": "77766ff94e722b9388881f02150093cb198427ade0c3367b4c77c3455ca5b087"
+          },
+          "actual": {
+            "bytes": 12669,
+            "sha256": "77766ff94e722b9388881f02150093cb198427ade0c3367b4c77c3455ca5b087"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent.stderr",
+          "expected": {
+            "bytes": 457,
+            "sha256": "e99cadf087a96b84a088fd2502a6f2d81bd2ab4ab193146482b02589ef22bcf5"
+          },
+          "actual": {
+            "bytes": 457,
+            "sha256": "e99cadf087a96b84a088fd2502a6f2d81bd2ab4ab193146482b02589ef22bcf5"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent02.json",
+          "expected": {
+            "bytes": 1238,
+            "sha256": "fa216b1cff198fa878372b95fb065504be2bf8497dc9b39d765b6ed3d1601a8d"
+          },
+          "actual": {
+            "bytes": 1238,
+            "sha256": "fa216b1cff198fa878372b95fb065504be2bf8497dc9b39d765b6ed3d1601a8d"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent02.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "independent02.stdout",
+          "expected": {
+            "bytes": 2018,
+            "sha256": "91160a879d2fa770a340e499ed493c200376a045e009ac2337c83a09a64d7d20"
+          },
+          "actual": {
+            "bytes": 2018,
+            "sha256": "91160a879d2fa770a340e499ed493c200376a045e009ac2337c83a09a64d7d20"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "intake.json",
+          "expected": {
+            "bytes": 46616,
+            "sha256": "99a9090e89063000d3c5ebd7ca7d814074cda5ff29cfa5e79c4eb52ada708cc1"
+          },
+          "actual": {
+            "bytes": 46616,
+            "sha256": "99a9090e89063000d3c5ebd7ca7d814074cda5ff29cfa5e79c4eb52ada708cc1"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests.json",
+          "expected": {
+            "bytes": 1390,
+            "sha256": "8c318b889f27a055ee4e57603d9d961d7fcb5482b11d5eafbca6985771cc7c8e"
+          },
+          "actual": {
+            "bytes": 1390,
+            "sha256": "8c318b889f27a055ee4e57603d9d961d7fcb5482b11d5eafbca6985771cc7c8e"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests.stderr",
+          "expected": {
+            "bytes": 13524,
+            "sha256": "7c0bd6ca79e34cfafad5a0425a088447eeb86803f7679da8f5ed177bc6821dcd"
+          },
+          "actual": {
+            "bytes": 13524,
+            "sha256": "7c0bd6ca79e34cfafad5a0425a088447eeb86803f7679da8f5ed177bc6821dcd"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "operator-tests.stdout",
+          "expected": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "actual": {
+            "bytes": 28,
+            "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "prepare-negative.json",
+          "expected": {
+            "bytes": 1167,
+            "sha256": "61cd73b9730c4308848084a12a1bd4e05c05e826969da51ea80f4fc1d51ee93f"
+          },
+          "actual": {
+            "bytes": 1167,
+            "sha256": "61cd73b9730c4308848084a12a1bd4e05c05e826969da51ea80f4fc1d51ee93f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "prepare-negative.stderr",
+          "expected": {
+            "bytes": 48795,
+            "sha256": "d16c7c67cbc5b0f2e27ec2a54f9e0d8d1b8ec03b0aff5135bc1cbd94af27fd3f"
+          },
+          "actual": {
+            "bytes": 48795,
+            "sha256": "d16c7c67cbc5b0f2e27ec2a54f9e0d8d1b8ec03b0aff5135bc1cbd94af27fd3f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "prepare-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "preservation.json",
+          "expected": {
+            "bytes": 63875,
+            "sha256": "f8a4415d0e245eb2f7ceaf24a8718ca59014b2a1a7409baa0961ede34bc86f43"
+          },
+          "actual": {
+            "bytes": 63875,
+            "sha256": "f8a4415d0e245eb2f7ceaf24a8718ca59014b2a1a7409baa0961ede34bc86f43"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "primary-negative.json",
+          "expected": {
+            "bytes": 1070,
+            "sha256": "ac27b6295e3f1e1eb774ccaf1ff7ae1138d7e05e8a532b574acc0edb9cfb6e9f"
+          },
+          "actual": {
+            "bytes": 1070,
+            "sha256": "ac27b6295e3f1e1eb774ccaf1ff7ae1138d7e05e8a532b574acc0edb9cfb6e9f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "primary-negative.stderr",
+          "expected": {
+            "bytes": 96,
+            "sha256": "bd8b6fe3805cc9325d187b51534ad9d7549a499b62ceab1dde41983932f9dd30"
+          },
+          "actual": {
+            "bytes": 96,
+            "sha256": "bd8b6fe3805cc9325d187b51534ad9d7549a499b62ceab1dde41983932f9dd30"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "primary-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "python-version.json",
+          "expected": {
+            "bytes": 571,
+            "sha256": "2cd427666c895b4fd7a64bb0c0963c978dd5f5e4f20e96fb1951e1866c512ac7"
+          },
+          "actual": {
+            "bytes": 571,
+            "sha256": "2cd427666c895b4fd7a64bb0c0963c978dd5f5e4f20e96fb1951e1866c512ac7"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "python-version.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "python-version.stdout",
+          "expected": {
+            "bytes": 14,
+            "sha256": "b01b5da7ac6a0ecc5ff1aee7998c4ad10df616dc53585c5e44d3c6b916cfaf11"
+          },
+          "actual": {
+            "bytes": 14,
+            "sha256": "b01b5da7ac6a0ecc5ff1aee7998c4ad10df616dc53585c5e44d3c6b916cfaf11"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "record.ts",
+          "expected": {
+            "bytes": 1228,
+            "sha256": "4126966922abb7f2c4495a60096f080d4bd2887def6a0372ee04891f6e2645c6"
+          },
+          "actual": {
+            "bytes": 1228,
+            "sha256": "4126966922abb7f2c4495a60096f080d4bd2887def6a0372ee04891f6e2645c6"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relations-proof.json",
+          "expected": {
+            "bytes": 180377,
+            "sha256": "c2c826def167436d1fb411786dc9a9cbdc757314e3f7d5bae0045fdc5fca3b39"
+          },
+          "actual": {
+            "bytes": 180377,
+            "sha256": "c2c826def167436d1fb411786dc9a9cbdc757314e3f7d5bae0045fdc5fca3b39"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relations.json",
+          "expected": {
+            "bytes": 1226,
+            "sha256": "df1973c35eea825127ea7a6f0d3a568b8b0e6ab5a2a6ddd09abe53e5e23b15a8"
+          },
+          "actual": {
+            "bytes": 1226,
+            "sha256": "df1973c35eea825127ea7a6f0d3a568b8b0e6ab5a2a6ddd09abe53e5e23b15a8"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relations.py",
+          "expected": {
+            "bytes": 10707,
+            "sha256": "6b6115f7112a150793616ba2e1b2082dc631b2981194ff5cd9094c6b08292c4a"
+          },
+          "actual": {
+            "bytes": 10707,
+            "sha256": "6b6115f7112a150793616ba2e1b2082dc631b2981194ff5cd9094c6b08292c4a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relations.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relations.stdout",
+          "expected": {
+            "bytes": 85,
+            "sha256": "8709c2a9ae721765056fe9e58730c33523f192b56c757942d980b0517bdd3b6b"
+          },
+          "actual": {
+            "bytes": 85,
+            "sha256": "8709c2a9ae721765056fe9e58730c33523f192b56c757942d980b0517bdd3b6b"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+          "expected": {
+            "bytes": 186222,
+            "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+          },
+          "actual": {
+            "bytes": 186222,
+            "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+          "expected": {
+            "bytes": 41120,
+            "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+          },
+          "actual": {
+            "bytes": 41120,
+            "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+          "expected": {
+            "bytes": 24558,
+            "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+          },
+          "actual": {
+            "bytes": 24558,
+            "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-pre-exploit/snapshot.json",
+          "expected": {
+            "bytes": 3055,
+            "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+          },
+          "actual": {
+            "bytes": 3055,
+            "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-pre-exploit/stakers.csv",
+          "expected": {
+            "bytes": 10515,
+            "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+          },
+          "actual": {
+            "bytes": 10515,
+            "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+          "expected": {
+            "bytes": 1432,
+            "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+          },
+          "actual": {
+            "bytes": 1432,
+            "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/CUSTODY_AND_HARVEST.md",
+          "expected": {
+            "bytes": 7357,
+            "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+          },
+          "actual": {
+            "bytes": 7357,
+            "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/LOSS_AND_RECOVERY_LEDGER.md",
+          "expected": {
+            "bytes": 15308,
+            "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+          },
+          "actual": {
+            "bytes": 15308,
+            "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/account-ledger.csv",
+          "expected": {
+            "bytes": 285464,
+            "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+          },
+          "actual": {
+            "bytes": 285464,
+            "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/conversions.csv",
+          "expected": {
+            "bytes": 91676,
+            "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+          },
+          "actual": {
+            "bytes": 91676,
+            "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/custody-inventory.csv",
+          "expected": {
+            "bytes": 139535,
+            "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+          },
+          "actual": {
+            "bytes": 139535,
+            "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/all-index-events.csv",
+          "expected": {
+            "bytes": 141460,
+            "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+          },
+          "actual": {
+            "bytes": 141460,
+            "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/bond-accounting.csv",
+          "expected": {
+            "bytes": 18666,
+            "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+          },
+          "actual": {
+            "bytes": 18666,
+            "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/earlier-cp-bonds.csv",
+          "expected": {
+            "bytes": 3709,
+            "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+          },
+          "actual": {
+            "bytes": 3709,
+            "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/earlier-cp-wallets.csv",
+          "expected": {
+            "bytes": 2542,
+            "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+          },
+          "actual": {
+            "bytes": 2542,
+            "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/index-events.csv",
+          "expected": {
+            "bytes": 111333,
+            "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+          },
+          "actual": {
+            "bytes": 111333,
+            "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/post-incident-bond-claims.csv",
+          "expected": {
+            "bytes": 3012,
+            "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+          },
+          "actual": {
+            "bytes": 3012,
+            "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/transfers.csv",
+          "expected": {
+            "bytes": 4535122,
+            "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+          },
+          "actual": {
+            "bytes": 4535122,
+            "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/weighted-bonds.csv",
+          "expected": {
+            "bytes": 12283,
+            "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+          },
+          "actual": {
+            "bytes": 12283,
+            "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/evidence/weighted-candidates.csv",
+          "expected": {
+            "bytes": 83558,
+            "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+          },
+          "actual": {
+            "bytes": 83558,
+            "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/exceptions.csv",
+          "expected": {
+            "bytes": 3404,
+            "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+          },
+          "actual": {
+            "bytes": 3404,
+            "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/held-exclusions.csv",
+          "expected": {
+            "bytes": 188644,
+            "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+          },
+          "actual": {
+            "bytes": 188644,
+            "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/manifest.json",
+          "expected": {
+            "bytes": 3209,
+            "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+          },
+          "actual": {
+            "bytes": 3209,
+            "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/observed-recoveries.csv",
+          "expected": {
+            "bytes": 30839,
+            "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+          },
+          "actual": {
+            "bytes": 30839,
+            "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/positions.csv",
+          "expected": {
+            "bytes": 123221,
+            "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+          },
+          "actual": {
+            "bytes": 123221,
+            "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/reconciliation.json",
+          "expected": {
+            "bytes": 1798,
+            "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+          },
+          "actual": {
+            "bytes": 1798,
+            "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/rounding.csv",
+          "expected": {
+            "bytes": 327,
+            "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+          },
+          "actual": {
+            "bytes": 327,
+            "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "relocated-root/2026-09-16-dtf-recovery/sources.json",
+          "expected": {
+            "bytes": 5502,
+            "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+          },
+          "actual": {
+            "bytes": 5502,
+            "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "report.md",
+          "expected": {
+            "bytes": 25267,
+            "sha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5"
+          },
+          "actual": {
+            "bytes": 25267,
+            "sha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "source-manifest.json",
+          "expected": {
+            "bytes": 12911,
+            "sha256": "f3f8f2df3a7eb9ec3f67ad6b3b72490eb8a8b3787e4c6ff9baf29d02ef8dc13c"
+          },
+          "actual": {
+            "bytes": 12911,
+            "sha256": "f3f8f2df3a7eb9ec3f67ad6b3b72490eb8a8b3787e4c6ff9baf29d02ef8dc13c"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "totals-and-unresolved-review.json",
+          "expected": {
+            "bytes": 24147,
+            "sha256": "0b30cc408eb69a9d4980ff2226133f3c77677ec33176cb22a7f6f6bb96c9a6b4"
+          },
+          "actual": {
+            "bytes": 24147,
+            "sha256": "0b30cc408eb69a9d4980ff2226133f3c77677ec33176cb22a7f6f6bb96c9a6b4"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types.json",
+          "expected": {
+            "bytes": 4624,
+            "sha256": "97445602c2cfda34db195d36bdc551b3b28be365315fba016a4514c83b68861d"
+          },
+          "actual": {
+            "bytes": 4624,
+            "sha256": "97445602c2cfda34db195d36bdc551b3b28be365315fba016a4514c83b68861d"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types.stderr",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "types.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "validate-negative.json",
+          "expected": {
+            "bytes": 977,
+            "sha256": "af32cad2cabd4e698cecd432793e7d6acf792ef7bca604d6532bc948046dcad7"
+          },
+          "actual": {
+            "bytes": 977,
+            "sha256": "af32cad2cabd4e698cecd432793e7d6acf792ef7bca604d6532bc948046dcad7"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "validate-negative.stderr",
+          "expected": {
+            "bytes": 1266,
+            "sha256": "b75356ec730ef02a73addac2143e875caf1554864a82cf75cd1d3f39ab356141"
+          },
+          "actual": {
+            "bytes": 1266,
+            "sha256": "b75356ec730ef02a73addac2143e875caf1554864a82cf75cd1d3f39ab356141"
+          },
+          "match": true
+        },
+        {
+          "source": "manifest.files",
+          "path": "validate-negative.stdout",
+          "expected": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "actual": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "match": true
+        }
+      ]
+    }
+  ],
+  "crossSeal": [
+    {
+      "directory": "verification",
+      "path": "../implementation/seal.json",
+      "expected": {
+        "bytes": 346,
+        "sha256": "fe9d0e574ea654a1e8fc7ce565dd159c82115030b194c7b3198796b06c8a9dea"
+      },
+      "actual": {
+        "bytes": 346,
+        "sha256": "fe9d0e574ea654a1e8fc7ce565dd159c82115030b194c7b3198796b06c8a9dea"
+      },
+      "match": true
+    },
+    {
+      "directory": "verification-r2",
+      "path": "../implementation-r2/seal.json",
+      "expected": {
+        "bytes": 828,
+        "sha256": "1d6e06d99d12727803020b27c13492f66820781969108107fb43a7eaf9e39ccc"
+      },
+      "actual": {
+        "bytes": 828,
+        "sha256": "1d6e06d99d12727803020b27c13492f66820781969108107fb43a7eaf9e39ccc"
+      },
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,695 @@
+{
+  "version": "weighted-principal-observation-reconciliation-v1",
+  "status": "REVIEW-ONLY",
+  "currentProof": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/proof.json",
+    "sha256": "27b315377d0123500b8ad855caabbc77a540c1745b77158193a1d1f9c23e702f"
+  },
+  "result": "All41 available current claimed-principal counters equal their frozen recorded values. The two absent positions keep current counters unknown. This does not prove complete reward or native recovery history.",
+  "claimReceiptCoverage": {
+    "namedReferences": 23,
+    "distinctTransactions": 23,
+    "alreadyArchived": 7,
+    "missingDistinctTransactions": 16
+  },
+  "limits": [
+    "Conversion principal fields are retained table observations, not independently authenticated claim splits in this worksheet.",
+    "Legacy principal/reward claims are not migration compensation deductions.",
+    "No E0/D0, origin disjointness, current descendant custody, eligibility or C0 is approved."
+  ],
+  "rows": [
+    {
+      "locator": "evidence/weighted-bonds.csv#row=2",
+      "tokenId": "3",
+      "historicalPrincipal": "3772281649",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "3772281649",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=3",
+      "tokenId": "4",
+      "historicalPrincipal": "281387179",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "281387179",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0x98c198c8c25946098971110ac701ac1891036d573232db84788f7c3f665d19cf"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=4",
+      "tokenId": "5",
+      "historicalPrincipal": "462445599",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "462445599",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=5",
+      "tokenId": "6",
+      "historicalPrincipal": "740825635",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "740825635",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0x25bcdec5ebd3f1a1b5223f30c7a4a5be7b1c7b732fa7fb36a8a2cbdc45e803bc"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=6",
+      "tokenId": "7",
+      "historicalPrincipal": "1200103129",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1200103129",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0x8af05d894ccb05f0a57eb5bea4838f3267726b41033609a1007ea744a5f406ff"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=7",
+      "tokenId": "8",
+      "historicalPrincipal": "1937763154",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1937763154",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0x1db62f8a403bb8e6c1e2ff44853a105cfd033d8fc70902e51795bb483b9bf3ed"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=8",
+      "tokenId": "9",
+      "historicalPrincipal": "3147607863",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "3147607863",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0xeea4d604f7178e4caa89c36898574e34ebb484404985ab12662670c96e9b51f5"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=9",
+      "tokenId": "10",
+      "historicalPrincipal": "5077481904",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "5077481904",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0x5e92e5978d3c22ec6e00fb9bc2feeb6a251fd9ccc2e3274f7be7c96ab6470d19"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=10",
+      "tokenId": "11",
+      "historicalPrincipal": "44048877",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "44048877",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=11",
+      "tokenId": "12",
+      "historicalPrincipal": "1455956506",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1455956506",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=12",
+      "tokenId": "13",
+      "historicalPrincipal": "1915",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1915",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=13",
+      "tokenId": "14",
+      "historicalPrincipal": "191603",
+      "frozenClaimedPrincipal": "5286",
+      "observedClaimedPrincipal": "5286",
+      "observedRemaining": "186317",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0x6168c6e2a65335b24d93f294064207d50b41931cd738aaab9c1b868a27f1a8c1",
+        "0x1878ba4049d26b08a81843edbeb2a936edbd8e8d8be9dfb2ec26531ef0b580d4"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=14",
+      "tokenId": "15",
+      "historicalPrincipal": "1915",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1915",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=15",
+      "tokenId": "16",
+      "historicalPrincipal": "153080136",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "153080136",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=16",
+      "tokenId": "17",
+      "historicalPrincipal": "179696",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "179696",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=17",
+      "tokenId": "18",
+      "historicalPrincipal": "49053117",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "49053117",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=18",
+      "tokenId": "19",
+      "historicalPrincipal": "133006119",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "133006119",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=19",
+      "tokenId": "20",
+      "historicalPrincipal": "266266893",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "266266893",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=20",
+      "tokenId": "21",
+      "historicalPrincipal": "17650489",
+      "frozenClaimedPrincipal": "703431",
+      "observedClaimedPrincipal": "703431",
+      "observedRemaining": "16947058",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0xb973e4523b957f950800308b0327eab13782f54309bec9ffb5a5ed3d8c0fe076",
+        "0x0db6934c05928ca3f3a88b0c6be21071dcae4f873dda3f6992dea75b4b670954",
+        "0x08c32381c229242054fbb3b1f5e66cbae181e678b9c5b4b0cb37a42854f8e029"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=21",
+      "tokenId": "22",
+      "historicalPrincipal": "1288034730",
+      "frozenClaimedPrincipal": "42869890",
+      "observedClaimedPrincipal": "42869890",
+      "observedRemaining": "1245164840",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0xb76c35b8cbcf976712dac07d1816b2df06fb5258b6bd844ae9352d02c0d37077",
+        "0x2a94d0afa94e43d4d261baf0bb4c37e0d98d32051aa924a2ddfa3320867fb572",
+        "0x6997764082b1c00f01956a7c576c9aeb1f9c47e4f0356327e22b0f520f0c1578"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=22",
+      "tokenId": "23",
+      "historicalPrincipal": "252865083",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "252865083",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=23",
+      "tokenId": "24",
+      "historicalPrincipal": "1300890757",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1300890757",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0x9f1ed965eeaa9c52248ce937443ba29ff34f5a350c8b1915d1132e6459719d0f"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=24",
+      "tokenId": "25",
+      "historicalPrincipal": "53274997",
+      "frozenClaimedPrincipal": "53274997",
+      "observedClaimedPrincipal": null,
+      "observedRemaining": null,
+      "state": "absent-at-pin-after-proved-historical-mint",
+      "recordedConversionPrincipal": "53274997",
+      "claimTransactions": [
+        "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83"
+      ],
+      "frozenEqualsObserved": null
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=25",
+      "tokenId": "26",
+      "historicalPrincipal": "56299",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "56299",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=26",
+      "tokenId": "27",
+      "historicalPrincipal": "3302546215",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "3302546215",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=27",
+      "tokenId": "28",
+      "historicalPrincipal": "3726336268",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "3726336268",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=28",
+      "tokenId": "29",
+      "historicalPrincipal": "1777911406",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1777911406",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=29",
+      "tokenId": "30",
+      "historicalPrincipal": "457125470",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "457125470",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=30",
+      "tokenId": "31",
+      "historicalPrincipal": "4031493805",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "4031493805",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=31",
+      "tokenId": "32",
+      "historicalPrincipal": "54436459",
+      "frozenClaimedPrincipal": "8071216",
+      "observedClaimedPrincipal": "8071216",
+      "observedRemaining": "46365243",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "8071216",
+      "claimTransactions": [
+        "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=32",
+      "tokenId": "33",
+      "historicalPrincipal": "13798634863",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "13798634863",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=33",
+      "tokenId": "34",
+      "historicalPrincipal": "59081498",
+      "frozenClaimedPrincipal": "7942358",
+      "observedClaimedPrincipal": "7942358",
+      "observedRemaining": "51139140",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "7942358",
+      "claimTransactions": [
+        "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=34",
+      "tokenId": "35",
+      "historicalPrincipal": "182228084",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "182228084",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=35",
+      "tokenId": "36",
+      "historicalPrincipal": "1642192630",
+      "frozenClaimedPrincipal": "3247321",
+      "observedClaimedPrincipal": "3247321",
+      "observedRemaining": "1638945309",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [
+        "0xf7325a1194157d76db83360914d405799cb041165bd63522a5f8f6be0ebd7f0a"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=36",
+      "tokenId": "37",
+      "historicalPrincipal": "51168348039",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "51168348039",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=37",
+      "tokenId": "38",
+      "historicalPrincipal": "28366285153",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "28366285153",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=38",
+      "tokenId": "39",
+      "historicalPrincipal": "73833949104",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "73833949104",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=39",
+      "tokenId": "40",
+      "historicalPrincipal": "15681307429",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "15681307429",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=40",
+      "tokenId": "41",
+      "historicalPrincipal": "746187269",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "746187269",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=41",
+      "tokenId": "42",
+      "historicalPrincipal": "5129740381",
+      "frozenClaimedPrincipal": "5129740381",
+      "observedClaimedPrincipal": null,
+      "observedRemaining": null,
+      "state": "absent-at-pin-after-proved-historical-mint",
+      "recordedConversionPrincipal": "5129740381",
+      "claimTransactions": [
+        "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04"
+      ],
+      "frozenEqualsObserved": null
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=42",
+      "tokenId": "43",
+      "historicalPrincipal": "1564401756",
+      "frozenClaimedPrincipal": "0",
+      "observedClaimedPrincipal": "0",
+      "observedRemaining": "1564401756",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "0",
+      "claimTransactions": [],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=43",
+      "tokenId": "44",
+      "historicalPrincipal": "81035885",
+      "frozenClaimedPrincipal": "73745125",
+      "observedClaimedPrincipal": "73745125",
+      "observedRemaining": "7290760",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "73745125",
+      "claimTransactions": [
+        "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd"
+      ],
+      "frozenEqualsObserved": true
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=44",
+      "tokenId": "45",
+      "historicalPrincipal": "12596732131",
+      "frozenClaimedPrincipal": "11460965662",
+      "observedClaimedPrincipal": "11460965662",
+      "observedRemaining": "1135766469",
+      "state": "present-at-pin",
+      "recordedConversionPrincipal": "11460965662",
+      "claimTransactions": [
+        "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52",
+        "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289"
+      ],
+      "frozenEqualsObserved": true
+    }
+  ],
+  "claimReferences": [
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=13",
+      "tx": "0x6168c6e2a65335b24d93f294064207d50b41931cd738aaab9c1b868a27f1a8c1",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=13",
+      "tx": "0x1878ba4049d26b08a81843edbeb2a936edbd8e8d8be9dfb2ec26531ef0b580d4",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=20",
+      "tx": "0xb973e4523b957f950800308b0327eab13782f54309bec9ffb5a5ed3d8c0fe076",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=20",
+      "tx": "0x0db6934c05928ca3f3a88b0c6be21071dcae4f873dda3f6992dea75b4b670954",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=20",
+      "tx": "0x08c32381c229242054fbb3b1f5e66cbae181e678b9c5b4b0cb37a42854f8e029",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=21",
+      "tx": "0xb76c35b8cbcf976712dac07d1816b2df06fb5258b6bd844ae9352d02c0d37077",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=21",
+      "tx": "0x2a94d0afa94e43d4d261baf0bb4c37e0d98d32051aa924a2ddfa3320867fb572",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=21",
+      "tx": "0x6997764082b1c00f01956a7c576c9aeb1f9c47e4f0356327e22b0f520f0c1578",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=23",
+      "tx": "0x9f1ed965eeaa9c52248ce937443ba29ff34f5a350c8b1915d1132e6459719d0f",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=24",
+      "tx": "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83",
+      "presentInArchive": true
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=3",
+      "tx": "0x98c198c8c25946098971110ac701ac1891036d573232db84788f7c3f665d19cf",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=31",
+      "tx": "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b",
+      "presentInArchive": true
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=33",
+      "tx": "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f",
+      "presentInArchive": true
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=35",
+      "tx": "0xf7325a1194157d76db83360914d405799cb041165bd63522a5f8f6be0ebd7f0a",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=41",
+      "tx": "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04",
+      "presentInArchive": true
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=43",
+      "tx": "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd",
+      "presentInArchive": true
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=44",
+      "tx": "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52",
+      "presentInArchive": true
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=44",
+      "tx": "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289",
+      "presentInArchive": true
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=5",
+      "tx": "0x25bcdec5ebd3f1a1b5223f30c7a4a5be7b1c7b732fa7fb36a8a2cbdc45e803bc",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=6",
+      "tx": "0x8af05d894ccb05f0a57eb5bea4838f3267726b41033609a1007ea744a5f406ff",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=7",
+      "tx": "0x1db62f8a403bb8e6c1e2ff44853a105cfd033d8fc70902e51795bb483b9bf3ed",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=8",
+      "tx": "0xeea4d604f7178e4caa89c36898574e34ebb484404985ab12662670c96e9b51f5",
+      "presentInArchive": false
+    },
+    {
+      "nftLocator": "evidence/weighted-bonds.csv#row=9",
+      "tx": "0x5e92e5978d3c22ec6e00fb9bc2feeb6a251fd9ccc2e3274f7be7c96ab6470d19",
+      "presentInArchive": false
+    }
+  ]
+}

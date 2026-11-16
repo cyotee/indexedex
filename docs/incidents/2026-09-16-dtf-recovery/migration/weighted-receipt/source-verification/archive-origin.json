@@ -1,0 +1,32 @@
+{
+  "originalArchive": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+    "bytes": 6447942,
+    "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+  },
+  "retainedArchive": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/retained-source.json",
+    "bytes": 1892710,
+    "sha256": "5318d63fd34e8be5391805041b86465fef0db0fbd9db5346cb179cc8303aeb3a"
+  },
+  "entries": [
+    {
+      "address": "0x4886f86cd0dfff8b8a836f858925ed4de3a2b291",
+      "equalsOriginalArchiveEntry": true,
+      "match": "exact_match",
+      "runtimeMatch": "exact_match"
+    },
+    {
+      "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "equalsOriginalArchiveEntry": true,
+      "match": "exact_match",
+      "runtimeMatch": "exact_match"
+    },
+    {
+      "address": "0xb7581fe833a2b2380dd786b345d61ffb734d36eb",
+      "equalsOriginalArchiveEntry": true,
+      "match": "exact_match",
+      "runtimeMatch": "exact_match"
+    }
+  ]
+}

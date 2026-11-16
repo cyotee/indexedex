@@ -1,0 +1,24 @@
+{
+  "label": "independent-reconciliation",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "argv": [
+    "python3",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/independent-reconcile.py"
+  ],
+  "literal": "'python3' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/independent-reconcile.py'",
+  "binaryPassObservable": "exit 0 and INDEPENDENT_RECONCILIATION PASS with exact integer comparisons",
+  "started": "2026-11-10T12:54:53.502Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf",
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf",
+    "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf/cache"
+  },
+  "credentialPresent": true
+}

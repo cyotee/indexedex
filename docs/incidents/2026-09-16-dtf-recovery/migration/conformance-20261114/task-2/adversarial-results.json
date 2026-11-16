@@ -1,0 +1,57 @@
+{
+  "stale_state": {
+    "applicable": true,
+    "result": "pass",
+    "evidence": "inventory-negative-r2/stale-source.log; delivery returned 1 and named stale source inventory after the source bytes changed."
+  },
+  "dirty_worktree": {
+    "applicable": true,
+    "result": "pass",
+    "evidence": "verification/status-final.log, verification/diff-check.log, recovery.json initialDestination; unrelated untracked plan/state files retained, existing operator-runbook.md and quote-evidence.md raw hashes unchanged; no staging or cleanup outside owned resources."
+  },
+  "misleading_success_output": {
+    "applicable": true,
+    "result": "pass",
+    "evidence": "misleading-success/destination/success.log contains VERIFICATION_COMPLETE, completed:true and 0 fail; delivery.log and delivery/delivery.json still report missing required.bin, completed:false, exit 1. The first extended helper is archived and differs from final only by unused import/type removal."
+  },
+  "malformed_input": {
+    "applicable": true,
+    "result": "pass",
+    "evidence": "inventory-negative-r2/malformed-input.log; malformed JSON manifest shape returned 1 without creating malformed-output."
+  },
+  "symlink_boundaries": {
+    "applicable": true,
+    "result": "pass",
+    "evidence": "inventory-negative-r2/negative-delivery.log and symlink-root.log; outward link unresolved, root link refused; before/after fixture snapshots unchanged; historical symlinks retained as link-text bytes with source-qualified destinations."
+  },
+  "generated_artifacts": {
+    "applicable": true,
+    "result": "pass",
+    "evidence": "inventory-fixture-r2/delivery/inventory.json contains new-generated.json with SHA-256 derived independently from supplied bytes. Real final delivery must append all newer task artifacts and exempt only its own inventory/receipt self-hashes."
+  },
+  "flaky_tests": {
+    "applicable": true,
+    "result": "pass",
+    "evidence": "inventory-negative/results.json and inventory-negative-r2/results.json have identical nine-command expected exit vectors across fresh fixture directories; no network, timers, sleeps, shared ports or random fixtures."
+  },
+  "prompt_injection": {
+    "applicable": false,
+    "reason": "No prompt construction or execution of archived text is introduced. Evidence contents are treated as raw bytes or schema-parsed metadata, never executable instructions."
+  },
+  "cancel_resume": {
+    "applicable": false,
+    "reason": "New inventory and delivery operations are one-shot, read-only validations with exclusive output directories, not resumable transactions. Retained network/operator resume modes are unchanged and not invoked."
+  },
+  "hung_or_long_commands": {
+    "applicable": false,
+    "reason": "No external network or compiler-long command was invoked. Local scans and TypeScript checks ran under completion monitors and exited normally; no silence-based cancellation occurred."
+  },
+  "repeated_interruptions": {
+    "applicable": false,
+    "reason": "No interrupt/resume protocol or mid-operation interruption is part of task 2. No live journal or historical execution was replayed."
+  },
+  "external_source_identity": {
+    "applicable": false,
+    "reason": "Authenticating current on-chain sources belongs to task 3. Task 2 binds retained bytes and actual checkout HEADs without asserting current source eligibility."
+  }
+}

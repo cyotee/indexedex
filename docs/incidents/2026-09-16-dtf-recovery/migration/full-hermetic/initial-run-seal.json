@@ -1,0 +1,68 @@
+{
+  "base": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca",
+  "scope": "Completed initial full default hermetic gate and sole in-scope stale-test diagnosis;not the corrected run",
+  "buildExit": 0,
+  "runtimeArtifactsExit": 0,
+  "testExit": 1,
+  "counts": {
+    "passed": 28575,
+    "failed": 1,
+    "skipped": 0,
+    "total": 28576,
+    "suites": 2687
+  },
+  "members": [
+    {
+      "path": "forge-version.log",
+      "bytes": 163,
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc"
+    },
+    {
+      "path": "build.log",
+      "bytes": 4288091,
+      "sha256": "27622889892823759778b371ea411079503dd6181fda31d9bff954541fe21cfa"
+    },
+    {
+      "path": "runtime-artifacts.log",
+      "bytes": 680598,
+      "sha256": "d2c171486b0548a98dc798aaba97e021582efb8a15617adc1ff93d25b4be1caf"
+    },
+    {
+      "path": "tests.log",
+      "bytes": 9213506,
+      "sha256": "90e37cc56b7441e156c38ac8460af96e984ede7b960752bf82f3fb43afe5944b"
+    },
+    {
+      "path": "run-gate.sh",
+      "bytes": 1719,
+      "sha256": "79a01f23e8ae79d95dcb27941d162e7de66212e29c4b974b86055dd736735c54"
+    },
+    {
+      "path": "launch-command.txt",
+      "bytes": 442,
+      "sha256": "a035e2c2db0244329a43369cb4c056be69394042e134611a4395545dab807ed6"
+    },
+    {
+      "path": "RUN.md",
+      "bytes": 1258,
+      "sha256": "388e528a3157e03016f1b86e8fe2e50ac1d474298c52c212c28a0ecc49c426be"
+    },
+    {
+      "path": "metadata-failure-diagnosis.md",
+      "bytes": 1877,
+      "sha256": "3bf5043b136d7aa89e5d36b3188b2bedfd7b0a65aefdb4697721206fcedea2ce"
+    },
+    {
+      "path": "metadata-change-history.txt",
+      "bytes": 396,
+      "sha256": "a5c07f44dc0151d31bcb3b6fcc65707e82b29e1cc787afd6158c9ef2a7f1bf46"
+    },
+    {
+      "path": "initial-failure-and-fix.json",
+      "bytes": 1235,
+      "sha256": "331df6176da706a881636d26b0f25e11572d81fdefbaadf39b6131878fd4a144"
+    }
+  ],
+  "exclusion": "initial-run-seal.json itself;post-fix files are separate",
+  "limits": "Retains actual failed result,not a pass or whole-source/dependency raw archive. No current-run log overwritten."
+}

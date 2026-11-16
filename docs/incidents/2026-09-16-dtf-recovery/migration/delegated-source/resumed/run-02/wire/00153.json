@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":153,\"method\":\"anvil_impersonateAccount\",\"params\":[\"0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3\"]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":153,\"result\":null}",
+  "httpStatus": 200,
+  "raw": true
+}

@@ -1,0 +1,888 @@
+{
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/earlier-cp/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 43842,
+    "anvil": "anvil Version: 1.9.0-Homebrew\nCommit SHA: 6056c5845d34205a83cf7108042adb137325c9df\nBuild Timestamp: 2026-11-02T18:15:17.000000000Z (1793643317)\nBuild Profile: release\n"
+  },
+  "historical": {
+    "block": "0x67e5d17",
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "verdict": "PASS"
+  },
+  "execution": {
+    "label": "requested-historical",
+    "block": {
+      "baseFeePerGas": "0x13134d0",
+      "difficulty": "0x1",
+      "extraData": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+      "gasLimit": "0x4000000000000",
+      "gasUsed": "0x7cbe",
+      "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "l1BlockNumber": "0x19256ab",
+      "logsBloom": "0x00000000000000200000000000000000000000000004000000000000000000000000000000000000000080000000000000000000000020000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000",
+      "miner": "0xa4b000000000000000000073657175656e636572",
+      "mixHash": "0x0000000000000ea500000000019256ab000000000000003d0000000000000000",
+      "nonce": "0x0000000000069efe",
+      "number": "0x67e5d17",
+      "parentHash": "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+      "receiptsRoot": "0xed4030c56b19861b12d407133d34d67e86eb659431133713cbdc126ba9f35a17",
+      "sendCount": "0xea5",
+      "sendRoot": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+      "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+      "size": "0x34d",
+      "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+      "timestamp": "0x6aeff5b5",
+      "transactions": [
+        "0x3b092c0a635bf7308445d38cd9e4057f66ac9673c4988feafbe6b59be795c5a7",
+        "0xa0827ff9299145bc2c8be17e3f803c4e1aa21cf6d0295104d4d06946a1ea815c"
+      ],
+      "transactionsRoot": "0x33c7e74b2b83169ffe7ccc0d196e7389b7edcf9da4b2aec25c442f450a5db7ab",
+      "uncles": []
+    },
+    "freshFallback": false
+  },
+  "units": {
+    "lpToken": "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+    "pairToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+    "rewardToken": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+    "detfDecimals": 18,
+    "receiptDecimals": 18,
+    "lpDecimals": 18,
+    "dtfDecimals": 18,
+    "wethDecimals": 18,
+    "lpCustody": "107516722668090845797720021675152213",
+    "receiptRateAsset": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+    "redemptionRate": "2197",
+    "receiptTotalShares": "26345106194913509598392145360059647",
+    "receiptTotalSupply": "57898677945502333609"
+  },
+  "fixture": {
+    "id": "4",
+    "owner": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+    "position": {
+      "originalShares": "2281854312954086546",
+      "effectiveShares": "2283136213569959131",
+      "bonusMultiplier": "1000561780219094285",
+      "unlockTime": "1788261679",
+      "rewardDebt": "12649110640673"
+    },
+    "originalShares": "2281854312954086546",
+    "pendingRewards": "309005608995105",
+    "lpAssets": "2281854312954086546"
+  },
+  "checks": [
+    {
+      "name": "source-runtime-authentication",
+      "verdict": "UNPROVEN"
+    },
+    {
+      "name": "original-contributions-and-NewLock",
+      "verdict": "PASS"
+    },
+    {
+      "name": "18-decimal-units",
+      "verdict": "PASS"
+    },
+    {
+      "name": "stale-identity-rejected",
+      "verdict": "PASS"
+    },
+    {
+      "name": "wrong-owner-transfer-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "wrong-owner-claim-redirection-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "approved-operator-claim-redirection-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "failed-safe-transfer-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "nft-custody-and-reward-claim",
+      "verdict": "PASS"
+    },
+    {
+      "name": "custodied-nft-to-receipt-and-consumed-identity",
+      "verdict": "PASS"
+    },
+    {
+      "name": "failed-mature-close-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "custodied-nft-mature-withdrawal",
+      "verdict": "FAIL",
+      "error": "Mature close reverted: 0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "name": "nonexistent-position-withdrawal-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "wrong-owner-mature-close-redirection",
+      "verdict": "UNPROVEN",
+      "error": "Close rejected by 0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7; verify rejection reason, not an ownership PASS"
+    },
+    {
+      "name": "zero-principal-standing-position-rejected",
+      "verdict": "PASS"
+    },
+    {
+      "name": "locked-NFT-custody-retains-lock-and-principal",
+      "verdict": "PASS"
+    },
+    {
+      "name": "liquid-DETF-custody",
+      "verdict": "PASS"
+    },
+    {
+      "name": "receipt-custody-and-conversions",
+      "verdict": "PASS"
+    },
+    {
+      "name": "failed-receipt-redemption-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "receipt-custody-conversions-and-redemption",
+      "verdict": "FAIL",
+      "error": "Receipt-to-DETF reverted: 0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "name": "zero-receipt-redemption-rollback",
+      "verdict": "PASS"
+    },
+    {
+      "name": "direct-receipt-to-pair-redemption",
+      "verdict": "UNPROVEN",
+      "error": "Direct receipt redemption reverted atomically: 0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "name": "case-isolation-restored",
+      "verdict": "PASS"
+    },
+    {
+      "name": "migration-credit-and-fixed-donation-destination",
+      "verdict": "UNPROVEN"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "3",
+      "matches": true,
+      "lock": {
+        "tokenId": "3",
+        "recipient": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "shares": "562524912595035608166",
+        "bonusMultiplier": "1500000000000000000",
+        "unlockTime": "1803205295"
+      },
+      "directDtf": "0",
+      "directWeth": "2000000000000000000",
+      "routedDtf": "1778859964387451305574664",
+      "reserveSettlementDtf": "0"
+    },
+    {
+      "id": "4",
+      "matches": true,
+      "lock": {
+        "tokenId": "4",
+        "recipient": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "shares": "2281854312954086546",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679"
+      },
+      "directDtf": "7215852540309913726431",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "3703818"
+    },
+    {
+      "id": "5",
+      "matches": true,
+      "lock": {
+        "tokenId": "5",
+        "recipient": "0xfAD14E74911353728b9Bbfd9f0566827790c16C2",
+        "shares": "4733571557235944381",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790249586"
+      },
+      "directDtf": "14939945008882434692090",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "5679593238886465"
+    },
+    {
+      "id": "6",
+      "matches": true,
+      "lock": {
+        "tokenId": "6",
+        "recipient": "0xD3d58fDD70B33143052DE127bE8700fa37825E96",
+        "shares": "17499787460727814908",
+        "bonusMultiplier": "1001264005492962142",
+        "unlockTime": "1788535559"
+      },
+      "directDtf": "55026060195080703684401",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "62816193844203301"
+    },
+    {
+      "id": "7",
+      "matches": true,
+      "lock": {
+        "tokenId": "7",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "101771406718761253180",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787759729"
+      },
+      "directDtf": "320000000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "327306939002799687"
+    },
+    {
+      "id": "8",
+      "matches": true,
+      "lock": {
+        "tokenId": "8",
+        "recipient": "0x73c121D572E065c8B6FA6aCeC6B40DefFB62E1dF",
+        "shares": "3177276484339682675",
+        "bonusMultiplier": "1500000000000000000",
+        "unlockTime": "1803230928"
+      },
+      "directDtf": "10000000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "10210351169511441"
+    },
+    {
+      "id": "9",
+      "matches": true,
+      "lock": {
+        "tokenId": "9",
+        "recipient": "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+        "shares": "26355776123062198039",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787797897"
+      },
+      "directDtf": "0",
+      "directWeth": "100000000000000",
+      "routedDtf": "41454674363068691516",
+      "reserveSettlementDtf": "41220182501921"
+    },
+    {
+      "id": "10",
+      "matches": true,
+      "lock": {
+        "tokenId": "10",
+        "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "shares": "635830119561554894104",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787824066"
+      },
+      "directDtf": "1000000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "2848"
+    },
+    {
+      "id": "11",
+      "matches": true,
+      "lock": {
+        "tokenId": "11",
+        "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "shares": "63710177980044045505074",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790330314"
+      },
+      "directDtf": "100000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "3"
+    },
+    {
+      "id": "12",
+      "matches": true,
+      "lock": {
+        "tokenId": "12",
+        "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "shares": "47848240999749918187208884",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787825624"
+      },
+      "directDtf": "75081277576132719227716",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "2"
+    },
+    {
+      "id": "13",
+      "matches": true,
+      "lock": {
+        "tokenId": "13",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "14076427465745415752889694594",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790332861"
+      },
+      "directDtf": "22000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "5212466"
+    },
+    {
+      "id": "14",
+      "matches": true,
+      "lock": {
+        "tokenId": "14",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "63994795678617495504331915305",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790332934"
+      },
+      "directDtf": "100000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1390591"
+    },
+    {
+      "id": "15",
+      "matches": true,
+      "lock": {
+        "tokenId": "15",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "384036613756141320755161221429",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790333485"
+      },
+      "directDtf": "600000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1444477"
+    },
+    {
+      "id": "16",
+      "matches": true,
+      "lock": {
+        "tokenId": "16",
+        "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+        "shares": "682214153247983854950221048859993",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790345310"
+      },
+      "directDtf": "1063674247110000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1"
+    },
+    {
+      "id": "17",
+      "matches": true,
+      "lock": {
+        "tokenId": "17",
+        "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+        "shares": "75379755917867944374016634265685128",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787840867"
+      },
+      "directDtf": "117496434189960639589934",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1"
+    },
+    {
+      "id": "18",
+      "matches": true,
+      "lock": {
+        "tokenId": "18",
+        "recipient": "0x24E447B7407A304b024a5A57D7638f4cb6D5d0Fb",
+        "shares": "900849466801106375326463227667169",
+        "bonusMultiplier": "1050000000000000000",
+        "unlockTime": "1790443692"
+      },
+      "directDtf": "1000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "16837633828346"
+    }
+  ],
+  "transactions": [
+    {
+      "name": "transferFrom",
+      "from": "0x100000000000000000000000000000000000bad1",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "0x100000000000000000000000000000000000bad1",
+        "4"
+      ],
+      "hash": "0x59b7b5232b062475a6dd2bc427c0d73f7d6ae10a86ea098c92423cbf9e559625",
+      "status": "0x0",
+      "output": "0x177e802f000000000000000000000000100000000000000000000000000000000000bad10000000000000000000000000000000000000000000000000000000000000004"
+    },
+    {
+      "name": "claimRewards",
+      "from": "0x100000000000000000000000000000000000bad1",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "4",
+        "0x100000000000000000000000000000000000bad1"
+      ],
+      "hash": "0x8d64b0da937c77d7c73a105c1ce0e05f58f0edab923ef293ac702d8fb867b859",
+      "status": "0x0",
+      "output": "0x82b47157000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad1"
+    },
+    {
+      "name": "approve",
+      "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "0x100000000000000000000000000000000000bad1",
+        "4"
+      ],
+      "hash": "0xbdc32f3ff31638665079b77beaf50a6e41055eb8f4e4f67c7a5d28d7b16d4811",
+      "status": "0x1"
+    },
+    {
+      "name": "claimRewards",
+      "from": "0x100000000000000000000000000000000000bad1",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "4",
+        "0x100000000000000000000000000000000000bad1"
+      ],
+      "hash": "0x8d64b0da937c77d7c73a105c1ce0e05f58f0edab923ef293ac702d8fb867b859",
+      "status": "0x0",
+      "output": "0x82b47157000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad1"
+    },
+    {
+      "name": "safeTransferFrom",
+      "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "0x69A470758A14176C86927Ee080f9419D30c49480",
+        "4"
+      ],
+      "hash": "0xc9aef14f6f8caba0b2bb65a13a447c4d72f08e8a4b5c913772b4353a977ee978",
+      "status": "0x0",
+      "output": "0x64a0ae9200000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+    },
+    {
+      "name": "transferFrom",
+      "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "0x100000000000000000000000000000000000c001",
+        "4"
+      ],
+      "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+      "status": "0x1"
+    },
+    {
+      "name": "claimRewards",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "4",
+        "0x100000000000000000000000000000000000c001"
+      ],
+      "hash": "0x5dfa0bfd67a8a62b6db4867245de7a3e2332195d97a75219bc0b6dd6e9ca1d45",
+      "status": "0x1",
+      "output": "0x00000000000000000000000000000000000000000000000000011909f98ec921"
+    },
+    {
+      "name": "claimRewards",
+      "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "4",
+        "0x230f95db9644C5b3608bA676D18426d03e435B1D"
+      ],
+      "hash": "0xae8827549547faabae5a83fc8dff270129b3d25d359126e1bcec0d0f0ac7b228",
+      "status": "0x0",
+      "output": "0x82b47157000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d"
+    },
+    {
+      "name": "transferFrom",
+      "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "0x100000000000000000000000000000000000c001",
+        "4"
+      ],
+      "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+      "status": "0x1"
+    },
+    {
+      "name": "sellPositionToDetfNft",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "4",
+        "0x100000000000000000000000000000000000c001"
+      ],
+      "hash": "0x3d54621af7e5dff968aed64f3639d0222170d962ead7c80339f39a33ede46042",
+      "status": "0x1",
+      "output": "0x0000000000000000000000000000000000000000000000001faac66868d24492"
+    },
+    {
+      "name": "sellPositionToDetfNft",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "4",
+        "0x100000000000000000000000000000000000c001"
+      ],
+      "hash": "0xd4c3859e30426144370b839ba50c646758e67b786e4e5a1e9c0302719a4e2626",
+      "status": "0x0",
+      "output": "0x82b471570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001"
+    },
+    {
+      "name": "transferFrom",
+      "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "0x100000000000000000000000000000000000c001",
+        "4"
+      ],
+      "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+      "status": "0x1"
+    },
+    {
+      "name": "closeBondMature",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "4",
+        [
+          "0",
+          "0"
+        ],
+        "0x100000000000000000000000000000000000c001",
+        "18446744073709551615"
+      ],
+      "hash": "0x61fb08ec01b576756fa25ae3ab9631613f140471c843576a2eac3774a7ff37a1",
+      "status": "0x0",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "name": "closeBondMature",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "999999",
+        [
+          "0",
+          "0"
+        ],
+        "0x100000000000000000000000000000000000c001",
+        "18446744073709551615"
+      ],
+      "hash": "0x794214f20823212cc840e0bca77d7d0679251dac91326bb69ff792414c4a84a2",
+      "status": "0x0",
+      "output": "0x1f2a2005"
+    },
+    {
+      "name": "closeBondMature",
+      "from": "0x100000000000000000000000000000000000bad1",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "4",
+        [
+          "0",
+          "0"
+        ],
+        "0x100000000000000000000000000000000000bad1",
+        "18446744073709551615"
+      ],
+      "hash": "0xbecb8677c003a5a4a58dfbc511237973681cb0250ba6a78fc6928ce1a03ab528",
+      "status": "0x0",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "name": "closeBondMature",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "1",
+        [
+          "0",
+          "0"
+        ],
+        "0x100000000000000000000000000000000000c001",
+        "18446744073709551615"
+      ],
+      "hash": "0xf40c99a046f86976902a85a674dd7401f5eaec2afe24eb453db3e16b1b43f2a8",
+      "status": "0x0",
+      "output": "0x8848bd470000000000000000000000000000000000000000000000000000000000000001"
+    },
+    {
+      "name": "transferFrom",
+      "from": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "args": [
+        "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "0x100000000000000000000000000000000000c001",
+        "3"
+      ],
+      "hash": "0x3e722c66a2030af0181fc0fcd4195abff50f3bd832c9b0bbb91c5179910f9056",
+      "status": "0x1"
+    },
+    {
+      "name": "sellPositionToDetfNft",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "3",
+        "0x100000000000000000000000000000000000c001"
+      ],
+      "hash": "0xddaf9a56d8cc5830a56551bd3aa26511e90bad5b7c59fa26f1c58ad5c4e922b8",
+      "status": "0x0",
+      "output": "0x11b4a773000000000000000000000000000000000000000000000000000000006b7abaaf"
+    },
+    {
+      "name": "transfer",
+      "from": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "0x100000000000000000000000000000000000c001",
+        "1000000000000000000"
+      ],
+      "hash": "0xb93cca719623ffb0014880437a5eabe5def921684a8d19fa3d6860e24b676f46",
+      "status": "0x1",
+      "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+    },
+    {
+      "name": "transfer",
+      "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "args": [
+        "0x100000000000000000000000000000000000c001",
+        "1000000000000000000"
+      ],
+      "hash": "0xd68774706044a88abb5a8455f466371da0244623dc5795b034aea8e26dcfbbd6",
+      "status": "0x1",
+      "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+    },
+    {
+      "name": "redeemClaim",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "999999999999999999",
+        "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "0",
+        "0x100000000000000000000000000000000000c001",
+        "18446744073709551615"
+      ],
+      "hash": "0xe4359e06c585390d0c6e33cfb105c2384f58c4f9b44d75e1e0c566a2a97109e9",
+      "status": "0x0",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "name": "redeemClaim",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "args": [
+        "0",
+        "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "0",
+        "0x100000000000000000000000000000000000c001",
+        "18446744073709551615"
+      ],
+      "hash": "0xe71cc2f8a616117f81c47b72c71e79d5956d2f5977fc0810157cee5d90a67003",
+      "status": "0x0",
+      "output": "0x1f2a2005"
+    },
+    {
+      "name": "transfer",
+      "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "args": [
+        "0x100000000000000000000000000000000000c001",
+        "1000000000000000000"
+      ],
+      "hash": "0xd68774706044a88abb5a8455f466371da0244623dc5795b034aea8e26dcfbbd6",
+      "status": "0x1",
+      "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+    },
+    {
+      "name": "redeem",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "args": [
+        "999999999999999999",
+        "0x100000000000000000000000000000000000c001",
+        false
+      ],
+      "hash": "0x22fb95c8bfd0b3f7c58faa20f4672371f4740ffb8a3276cccb3ff2a731880a0d",
+      "status": "0x0",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+    }
+  ],
+  "receiptCustody": {
+    "amount": "1000000000000000000",
+    "shares": "455166135639508420573509330905780",
+    "roundTrip": "999999999999999999",
+    "held": "999999999999999999",
+    "recoveryShares": "455166135639508420573509330905780"
+  },
+  "rewards": {
+    "before": "0",
+    "after": "309005608995105",
+    "principalBefore": "2281854312954086546",
+    "principalAfter": "2281854312954086546"
+  },
+  "sale": {
+    "before": {
+      "owner": "0x100000000000000000000000000000000000C001",
+      "position": {
+        "originalShares": "2281854312954086546",
+        "effectiveShares": "2283136213569959131",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679",
+        "rewardDebt": "12649110640673"
+      },
+      "approved": "0x0000000000000000000000000000000000000000",
+      "ownerDetf": "0",
+      "recoveryDetf": "0",
+      "attackerDetf": "0",
+      "nftDetf": "1744781936146519239557001703942",
+      "lpCustody": "107516722668090845797720021675152213",
+      "recoveryPair": "0",
+      "recoveryReceipt": "0",
+      "recoveryReceiptShares": "0",
+      "receiptTotalShares": "26345106194913509598392145360059647",
+      "receiptSupply": "57898677945502333609"
+    },
+    "after": {
+      "owner": "0x0000000000000000000000000000000000000000",
+      "position": {
+        "originalShares": "0",
+        "effectiveShares": "0",
+        "bonusMultiplier": "0",
+        "unlockTime": "0",
+        "rewardDebt": "0"
+      },
+      "approved": "0x0000000000000000000000000000000000000000",
+      "ownerDetf": "0",
+      "recoveryDetf": "309005608995105",
+      "attackerDetf": "0",
+      "nftDetf": "1744781936146518930551392708837",
+      "lpCustody": "107516722668090845797720021675152213",
+      "recoveryPair": "0",
+      "recoveryReceipt": "4322",
+      "recoveryReceiptShares": "1967558883021387942",
+      "receiptTotalShares": "26345106194913511565951028381447589",
+      "receiptSupply": "57898677945502337219"
+    }
+  },
+  "close": {
+    "before": {
+      "owner": "0x100000000000000000000000000000000000C001",
+      "position": {
+        "originalShares": "2281854312954086546",
+        "effectiveShares": "2283136213569959131",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679",
+        "rewardDebt": "12649110640673"
+      },
+      "approved": "0x0000000000000000000000000000000000000000",
+      "ownerDetf": "0",
+      "recoveryDetf": "0",
+      "attackerDetf": "0",
+      "nftDetf": "1744781936146519239557001703942",
+      "lpCustody": "107516722668090845797720021675152213",
+      "recoveryPair": "0",
+      "recoveryReceipt": "0",
+      "recoveryReceiptShares": "0",
+      "receiptTotalShares": "26345106194913509598392145360059647",
+      "receiptSupply": "57898677945502333609"
+    },
+    "after": {
+      "owner": "0x100000000000000000000000000000000000C001",
+      "position": {
+        "originalShares": "2281854312954086546",
+        "effectiveShares": "2283136213569959131",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679",
+        "rewardDebt": "12649110640673"
+      },
+      "approved": "0x0000000000000000000000000000000000000000",
+      "ownerDetf": "0",
+      "recoveryDetf": "0",
+      "attackerDetf": "0",
+      "nftDetf": "1744781936146519239557001703942",
+      "lpCustody": "107516722668090845797720021675152213",
+      "recoveryPair": "0",
+      "recoveryReceipt": "0",
+      "recoveryReceiptShares": "0",
+      "receiptTotalShares": "26345106194913509598392145360059647",
+      "receiptSupply": "57898677945502333609"
+    }
+  },
+  "cleanup": {
+    "snapshotReverted": true,
+    "exit": [
+      0,
+      null
+    ],
+    "endpointClosed": true,
+    "endpointReadback": "Unable to connect. Is the computer able to access the url?",
+    "runRootRemoved": true
+  },
+  "resources": [
+    {
+      "pid": 43955,
+      "port": 56817,
+      "endpoint": "http://127.0.0.1:56817",
+      "binary": "/opt/homebrew/bin/anvil",
+      "args": [
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "56817",
+        "--chain-id",
+        "4663",
+        "--fork-url",
+        "https://robinhood-mainnet.g.alchemy.com/v2/[REDACTED]",
+        "--fork-block-number",
+        "108944663",
+        "--no-storage-caching",
+        "--cache-path",
+        "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/earlier-cp.KhLfPU/anvil",
+        "--no-fork-node-info",
+        "--fork-state-by-number",
+        "--compute-units-per-second",
+        "25",
+        "--retries",
+        "2",
+        "--fork-retry-backoff",
+        "1000",
+        "--timeout",
+        "45000",
+        "--accounts",
+        "0",
+        "--hardfork",
+        "cancun"
+      ]
+    }
+  ],
+  "overall": "UNPROVEN"
+}

@@ -1,0 +1,24 @@
+{
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+      "size": 9896,
+      "sha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "size": 8528,
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "size": 79305,
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "size": 108022,
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+    }
+  ]
+}

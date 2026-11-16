@@ -1,0 +1,2020 @@
+{
+  "type": "DoneClaim",
+  "task": "task-10-issuance-empty-census-combined-qa",
+  "status": "complete-qa-only",
+  "completedAt": "2026-11-15T17:12:46.116Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "branch": "work/dtf-conformance-20261115-wave-1",
+  "head": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+  "scope": "Affected combined QA only after both new repair writers finished; independent combined acceptance pending.",
+  "claimsRead": [
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-done.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-done.json"
+  ],
+  "issuanceVerdictRead": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-verdict.json",
+  "environment": {
+    "environment-bun-path": {
+      "stdout": "/opt/homebrew/bin/bun",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-bun-version": {
+      "stdout": "1.4.2",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-bun-revision": {
+      "stdout": "1.4.2+50a8a8387",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-ts-version": {
+      "stdout": "Version 5.9.2",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-platform": {
+      "stdout": "Darwin Mac.lan 25.6.0 Darwin Kernel Version 25.6.0: Sat Jul 11 15:27:04 PDT 2026; root:xnu-12377.161.13~4/RELEASE_ARM64_T6050 arm64",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "git-branch": {
+      "stdout": "work/dtf-conformance-20261115-wave-1",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "git-head": {
+      "stdout": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+      "stderr": "",
+      "exitCode": 0
+    }
+  },
+  "exactRuns": [
+    {
+      "name": "01-tests",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/bundle.test.ts",
+        "./scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "./scripts/recovery/dtf-migration/candidates.test.ts",
+        "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts",
+        "./scripts/recovery/dtf-migration/execution.test.ts",
+        "./scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "./scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "./scripts/recovery/dtf-migration/preparation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt.test.ts",
+        "./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T17:07:06Z",
+      "finished": "2026-11-15T17:08:38Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.stderr.log",
+      "operatorCommand": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts"
+    },
+    {
+      "name": "02-operator-types",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "scripts/recovery/dtf-migration/bundle-files.ts",
+        "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/bundle.ts",
+        "scripts/recovery/dtf-migration/candidate-input.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "scripts/recovery/dtf-migration/candidates.test.ts",
+        "scripts/recovery/dtf-migration/candidates.ts",
+        "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "scripts/recovery/dtf-migration/execution-domain.ts",
+        "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "scripts/recovery/dtf-migration/execution-plan.ts",
+        "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "scripts/recovery/dtf-migration/execution-schema.ts",
+        "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "scripts/recovery/dtf-migration/execution-state.ts",
+        "scripts/recovery/dtf-migration/execution.fixture.ts",
+        "scripts/recovery/dtf-migration/execution.test.ts",
+        "scripts/recovery/dtf-migration/execution.ts",
+        "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "scripts/recovery/dtf-migration/journal.ts",
+        "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "scripts/recovery/dtf-migration/payloads.ts",
+        "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "scripts/recovery/dtf-migration/preparation.test.ts",
+        "scripts/recovery/dtf-migration/preparation.ts",
+        "scripts/recovery/dtf-migration/provenance.ts",
+        "scripts/recovery/dtf-migration/quotes.ts",
+        "scripts/recovery/dtf-migration/receipt-association.ts",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "scripts/recovery/dtf-migration/receipt-input.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "scripts/recovery/dtf-migration/receipt.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+        "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "scripts/recovery/dtf-migration/rehearse.ts",
+        "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "scripts/recovery/dtf-migration/schema.ts",
+        "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T17:08:38Z",
+      "finished": "2026-11-15T17:08:40Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.stderr.log",
+      "operatorCommand": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts"
+    },
+    {
+      "name": "03-helper-types",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T17:08:40Z",
+      "finished": "2026-11-15T17:08:41Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.stderr.log",
+      "operatorCommand": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+    },
+    {
+      "name": "manual-issuance-current/04-manual",
+      "argv": [
+        "bun",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance/manual-issuance.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T17:08:41Z",
+      "finished": "2026-11-15T17:08:42Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.stderr.log",
+      "operatorCommand": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance/manual-issuance.ts"
+    }
+  ],
+  "testResult": {
+    "passed": 305,
+    "failed": 0,
+    "files": 21,
+    "reportedDuration": "92.31s",
+    "selectedTests": [
+      "scripts/recovery/dtf-migration/bundle.test.ts",
+      "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "scripts/recovery/dtf-migration/candidates.test.ts",
+      "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "scripts/recovery/dtf-migration/execution.test.ts",
+      "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "scripts/recovery/dtf-migration/preparation.test.ts",
+      "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "scripts/recovery/dtf-migration/receipt.test.ts",
+      "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+    ],
+    "observedTests": [
+      "scripts/recovery/dtf-migration/bundle.test.ts",
+      "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "scripts/recovery/dtf-migration/candidates.test.ts",
+      "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "scripts/recovery/dtf-migration/execution.test.ts",
+      "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "scripts/recovery/dtf-migration/preparation.test.ts",
+      "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "scripts/recovery/dtf-migration/receipt.test.ts",
+      "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+    ],
+    "allSelectedObserved": true,
+    "operatorTypecheckFiles": 87
+  },
+  "requiredFailures": [],
+  "fullSuiteAndCompilersRanOnce": true,
+  "manualDecision": {
+    "issuance": {
+      "rerun": true,
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance/manual-issuance.ts",
+      "outputDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current",
+      "reason": "The proof calls issuanceContext -> loadExecution -> validateManifest through the changed execution-domain.ts. The retained issuance ledger pins state/test and artifacts, not the complete prior executed domain implementation; executed-code equivalence cannot be established from those bindings. Run once against the settled combined tree.",
+      "observedPath": "actualIssuance authenticates saved canonical receipt/event facts. The positive builds a new prepared fixture, loads a newly signed synthetic domain, and invokes canonicalReceipt/captureCompletion. It does not reconstruct historical getter state.",
+      "censusBranchQualification": "The new verifyEmptyCensus body is not directly called by the issuance positive; the rerun resolves the unpinned imported-loader provenance limit, not an assertion that this census branch affected issuance."
+    },
+    "emptyCensus": {
+      "rerun": false,
+      "reason": "Retain exact manual-qStpyA proof and attempt-10-final-manual command receipt; all captured original bindings match and current lane source hashes are recorded. Shared tests run once on the combined tree."
+    },
+    "unverifiedNeighbor": "verifyConfiguration suffix selection remains an unverified adjacent observation for independent review; no change, reproducer or pass claim is added."
+  },
+  "manualEvidence": {
+    "retainedBindings": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/retained-manual-bindings.json",
+    "currentIssuanceResult": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/result.json",
+    "currentIssuanceOutput": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.stdout.log",
+    "issuanceManualExit": 0,
+    "actualFactsMatchRetained": true,
+    "actualTransactionHash": "0xa41931626451a9242220fcb3c253b9275e8d697beb1a7fd860afcc6fd2ebdc68",
+    "actualReceiptSha256": "1e05a886203d090dfa235589da6a98c5c130b5e00afc7be5d9c636b80eabebd9",
+    "syntheticPositive": {
+      "kind": "new-synthetic-source-bound-context",
+      "domainHash": "05a5f37dc7c2851134b5a0a9066b1adb8fe73e3c4a89d59785e5bb4589d873b4",
+      "transactionHash": "0xb5577401fdc6f2f38bef13e2da0b124530873b99d0b6e35e0088f1b5bb91c85e",
+      "sources": [
+        {
+          "id": "deployment",
+          "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-oSOwLT/deployment.json",
+          "sha256": "4ab2ca89aa40b0570d7cd4623c0710c22fc6699a4fa6f041af919b9ce9a5a019",
+          "bytes": "1376",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic canonical deployment transport"
+          }
+        },
+        {
+          "id": "proof",
+          "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-oSOwLT/evidence.json",
+          "sha256": "261a4c204848bbfde38c61636d32d38a2245cdf9023eee6271486eacb424df2c",
+          "bytes": "4507",
+          "provenance": {
+            "kind": "file",
+            "authority": "Synthetic wire fixture; not an approved historical allocation"
+          }
+        },
+        {
+          "id": "abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+          "sha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+          "bytes": "365399",
+          "provenance": {
+            "kind": "file",
+            "authority": "Warm artifact from accepted source base421072a7"
+          }
+        },
+        {
+          "id": "migration-abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+          "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+          "bytes": "302108",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic-local rehearsal; not approved historical allocation"
+          }
+        },
+        {
+          "id": "allocation-abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+          "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+          "bytes": "123210",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic-local rehearsal; not approved historical allocation"
+          }
+        },
+        {
+          "id": "recovery-abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+          "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+          "bytes": "60558",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic-local rehearsal; not approved historical allocation"
+          }
+        },
+        {
+          "id": "package-abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+          "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+          "bytes": "128972",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic-local rehearsal; not approved historical allocation"
+          }
+        },
+        {
+          "id": "sy-package-abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+          "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+          "bytes": "124637",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic-local rehearsal; not approved historical allocation"
+          }
+        },
+        {
+          "id": "issuance-bond-abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationBondNFTVault.sol/IUniswapV4DetfMigrationBondNFTVault.json",
+          "sha256": "31fbf5fc84b62118230c2aadcc567b47c105bbbf37ed8704bc7f0cb212b0eee4",
+          "bytes": "128349",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic-local rehearsal; not approved historical allocation"
+          }
+        },
+        {
+          "id": "issuance-staking-abi",
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IStakedDETF.sol/IStakedDETF.json",
+          "sha256": "a7b56c8856c58cd0c0b46789bb25858b25cc07d5e908be86d7778c9328821587",
+          "bytes": "87548",
+          "provenance": {
+            "kind": "file",
+            "authority": "synthetic-local rehearsal; not approved historical allocation"
+          }
+        }
+      ],
+      "limit": "Fixture signatures, addresses, quantities and getter replies are synthetic; actual ERC721/event shapes use generated artifacts. No Anvil transaction."
+    },
+    "syntheticAccepted": {
+      "kind": "production-after",
+      "status": "accepted",
+      "state": {
+        "independentIssuance:[\"0x0000000000000000000000000000000000000014\"]": "[\"[\\\"true\\\",\\\"0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05\\\",\\\"9007199254740993133\\\",\\\"3\\\",\\\"2000\\\"]\"]",
+        "bondNftVault:[]": "[\"0x000000000000000000000000000000000000001e\"]",
+        "rebasingClaimToken:[]": "[\"0x000000000000000000000000000000000000001f\"]",
+        "bond:3": "[\"9007199254740993133\",\"0\",\"900719925474099313300\",\"2000\",\"7776000\"]"
+      }
+    },
+    "independentCorruptedCopyRejections": 25,
+    "stalePrincipalRejected": true,
+    "statusZeroRejected": true,
+    "fullHistoricalGetterProof": false,
+    "newAnvilProof": false,
+    "emptyCensusCommand": {
+      "name": "attempt-10-final-manual",
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": [
+        "{\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA\",\"outcomes\":28,\"status\":\"PASS\"}"
+      ]
+    },
+    "emptyCensusResult": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/result.json",
+    "emptyCensusOutcomes": 28,
+    "emptyCensusOriginalBindings": 41,
+    "emptyCensusBindingsMatch": true,
+    "emptyCensusContractCalls": 0,
+    "emptyCensusNonceRequests": 0,
+    "emptyCensusSends": 0,
+    "emptyCensusRerun": false
+  },
+  "inputIdentity": {
+    "issuanceActual": {
+      "transactionHash": "0xa41931626451a9242220fcb3c253b9275e8d697beb1a7fd860afcc6fd2ebdc68",
+      "chainId": "4663",
+      "proxy": "0x14501775250f84ea2547cb913ff111448ae64641",
+      "purpose": "synthetic-local",
+      "signer": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "bookId": "0x2697dec969958d2e897490eb0122f76fedaa1eef06f1d53ba82bd6c228b93d15",
+      "preparedManifest": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/materialized-b/prepared/manifest.json",
+      "intentDomainHash": "d94078f655dd1888faf7c5a47c2f18978ce61b2e13ae435475ca1af182fa88cf",
+      "stage": "independent-issue",
+      "method": "issueIndependentAllocations"
+    },
+    "censusActual": {
+      "chainId": "4663",
+      "proxy": "0xa10fb7436b216df934cfafaca5fddcc7bb9c2902",
+      "purpose": "synthetic-local",
+      "pricing": null,
+      "preparedManifest": null,
+      "domainHash": "be76538efae814c63f22d9c99fd6878734da1e3b76d135df3b3c7fdf02428289",
+      "deployment": {
+        "blockHash": "0x1c9527ca7946ab25b4f5204a486dc5fff948f953d854cc537877dc864240f1af",
+        "blockNumber": "0x67e5e5d",
+        "initialization": [
+          {
+            "address": "0xa10fb7436b216df934cfafaca5fddcc7bb9c2902",
+            "blockHash": "0x1c9527ca7946ab25b4f5204a486dc5fff948f953d854cc537877dc864240f1af",
+            "blockNumber": "0x67e5e5d",
+            "blockTimestamp": "0x6aeff6fb",
+            "data": "0x0000000000000000000000000000000000000000000000000e92596fd62900000000000000000000000000000000000000000000000000000d2f13f7789f0000",
+            "logIndex": "0x1",
+            "removed": false,
+            "topics": [
+              "0x9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe1622"
+            ],
+            "transactionHash": "0x4098d83a9911e1173fa3a091c227701fd2ff1488f35aa403b902fc3626e9c258",
+            "transactionIndex": "0x0"
+          }
+        ],
+        "logCount": 152,
+        "transactionHash": "0x4098d83a9911e1173fa3a091c227701fd2ff1488f35aa403b902fc3626e9c258"
+      }
+    },
+    "newIssuance": "The manual replay will emit a separate source-bound synthetic domain; it is not a historical getter-state reconstruction."
+  },
+  "sourceFreshness": {
+    "before": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-before.json",
+    "after": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json",
+    "files": 113,
+    "changedSources": [],
+    "sourceAdded": [],
+    "sourceRemoved": [],
+    "currentManualImports": [
+      {
+        "entry": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance/manual-issuance.ts",
+        "files": 28,
+        "matches": true
+      },
+      {
+        "entry": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+        "files": 28,
+        "matches": true
+      }
+    ],
+    "protectedEvidenceFiles": 456,
+    "protectedChanges": [],
+    "originalRecords": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/journal-issue/45d11109c06929c65a7b95c0cf6aab8e5b17c0de5210986a11e8cb2b1c9609d0.canonical-chain.json",
+        "sha256": "1e05a886203d090dfa235589da6a98c5c130b5e00afc7be5d9c636b80eabebd9",
+        "bytes": 39832,
+        "expectedSha256": "1e05a886203d090dfa235589da6a98c5c130b5e00afc7be5d9c636b80eabebd9",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/28-resume-diagnostic.json",
+        "sha256": "31f09da7ed01fa1cf0c4985eb1bfbe53d80f55ce57b10d3479f9339d9372091e",
+        "bytes": 1517,
+        "expectedSha256": "31f09da7ed01fa1cf0c4985eb1bfbe53d80f55ce57b10d3479f9339d9372091e",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/journal-issue/domain.json",
+        "sha256": "fe236c0897e683f89f0ea0df18512febc5a42c9c4a6400adea2584f11c675ba2",
+        "bytes": 29528,
+        "expectedSha256": "fe236c0897e683f89f0ea0df18512febc5a42c9c4a6400adea2584f11c675ba2",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/journal-issue/45d11109c06929c65a7b95c0cf6aab8e5b17c0de5210986a11e8cb2b1c9609d0.intent.json",
+        "sha256": "b3354bb973d2431e25f4991ce394239786ef80ce8512c67116689790295da705",
+        "bytes": 1320,
+        "expectedSha256": "b3354bb973d2431e25f4991ce394239786ef80ce8512c67116689790295da705",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-empty-census-blocker.json",
+        "sha256": "06d00236e66221e5e4fdaedaca0e7aa4560821543dd79e3c99965dc6a32a9621",
+        "bytes": 2565,
+        "expectedSha256": "06d00236e66221e5e4fdaedaca0e7aa4560821543dd79e3c99965dc6a32a9621",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/unset-owner-execution.json",
+        "sha256": "7017e049d6a7a51c77e78184c76fda1e965a187d01571a16f91520c4c65bf9ba",
+        "bytes": 24060,
+        "expectedSha256": "7017e049d6a7a51c77e78184c76fda1e965a187d01571a16f91520c4c65bf9ba",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/deployment-receipt.json",
+        "sha256": "d8ed0e7b7df06109ead1a2144f74c196fa932030f14f2de6b22e0394a5fecdf4",
+        "bytes": 131966,
+        "expectedSha256": "d8ed0e7b7df06109ead1a2144f74c196fa932030f14f2de6b22e0394a5fecdf4",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/journal-deploy/17918fb30b629655bba3525c0d075970ad103105dd38d80270271398bdf9d238.canonical-chain.json",
+        "sha256": "20c6a7a7ad687762958a1d94593a5591f00c2d5349cc82fbc1acbf42746953f8",
+        "bytes": 738916,
+        "expectedSha256": "20c6a7a7ad687762958a1d94593a5591f00c2d5349cc82fbc1acbf42746953f8",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/journal-owner-bond/domain.json",
+        "sha256": "f3d725d54e6f9583d837e7d32f06f5aae5347196e630e420f60081dfb620b16a",
+        "bytes": 24112,
+        "expectedSha256": "f3d725d54e6f9583d837e7d32f06f5aae5347196e630e420f60081dfb620b16a",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/journal-deploy/domain.json",
+        "sha256": "0292f70aebeebbf370cebefe589898389dedfcbbadc09eab8a8a5dbdc72ca2c7",
+        "bytes": 25765,
+        "expectedSha256": "0292f70aebeebbf370cebefe589898389dedfcbbadc09eab8a8a5dbdc72ca2c7",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+        "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "bytes": 302108,
+        "expectedSha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+        "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "bytes": 123210,
+        "expectedSha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationWeightedPricing.sol/IUniswapV4DetfMigrationWeightedPricing.json",
+        "sha256": "bc27f132877882a81b5d89f7ecb2637eb4b04fa685ad42430930e595cd181bbd",
+        "bytes": 40196,
+        "expectedSha256": "bc27f132877882a81b5d89f7ecb2637eb4b04fa685ad42430930e595cd181bbd",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+        "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "bytes": 60558,
+        "expectedSha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+        "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "bytes": 128972,
+        "expectedSha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+        "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "bytes": 124637,
+        "expectedSha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/environment.json",
+        "sha256": "1a73169cc02ef695003cc66109db022c7c4eb3122ab6471476521e554597746b",
+        "bytes": 4139,
+        "expectedSha256": "1a73169cc02ef695003cc66109db022c7c4eb3122ab6471476521e554597746b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/claim-vault-acquisition.json",
+        "sha256": "f71443729452ba282631c3d45784563c38a52299149f153b765e7d2d595265e1",
+        "bytes": 31499,
+        "expectedSha256": "f71443729452ba282631c3d45784563c38a52299149f153b765e7d2d595265e1",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/dtf-custody-se-acquisition.json",
+        "sha256": "476cb9150dac8b138d4a1cc5ee128652f385c443a3bac66b1b38f0e78d2caa7e",
+        "bytes": 48519,
+        "expectedSha256": "476cb9150dac8b138d4a1cc5ee128652f385c443a3bac66b1b38f0e78d2caa7e",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/weighted-receipt-acquisition.json",
+        "sha256": "b6d1237e6fc1b01fe4c2aa5ac01c5c7f692750b8f9924481edb09723b5ef2ffa",
+        "bytes": 82747,
+        "expectedSha256": "b6d1237e6fc1b01fe4c2aa5ac01c5c7f692750b8f9924481edb09723b5ef2ffa",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/earlier-liquid-acquisition.json",
+        "sha256": "db38f7b3f88cb8324ae7b25a05d06387199af40629f83631ff9ffc627aa0e5d1",
+        "bytes": 27979,
+        "expectedSha256": "db38f7b3f88cb8324ae7b25a05d06387199af40629f83631ff9ffc627aa0e5d1",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/held-se-lp-acquisition.json",
+        "sha256": "6c7be8dc451a2ade1922f95ef4c63544395423ceb204f90e1ba4018309fc991f",
+        "bytes": 173754,
+        "expectedSha256": "6c7be8dc451a2ade1922f95ef4c63544395423ceb204f90e1ba4018309fc991f",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/earlier-receipt-acquisition.json",
+        "sha256": "592b4f1ea3eb589b0415ff3d3e1b5b439d5ab91e3aa20edb1fb0d1bbb47c7c36",
+        "bytes": 166268,
+        "expectedSha256": "592b4f1ea3eb589b0415ff3d3e1b5b439d5ab91e3aa20edb1fb0d1bbb47c7c36",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+        "sha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+        "bytes": 7542,
+        "expectedSha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+        "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+        "bytes": 1047506,
+        "expectedSha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+        "sha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+        "bytes": 9896,
+        "expectedSha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+        "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+        "bytes": 7330,
+        "expectedSha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+        "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+        "bytes": 8528,
+        "expectedSha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "bytes": 98213,
+        "expectedSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+        "sha256": "1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+        "bytes": 112028,
+        "expectedSha256": "1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+        "sha256": "6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+        "bytes": 5693,
+        "expectedSha256": "6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+        "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+        "bytes": 18779,
+        "expectedSha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+        "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+        "bytes": 15387,
+        "expectedSha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+        "sha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+        "bytes": 22508,
+        "expectedSha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+        "sha256": "86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+        "bytes": 20560,
+        "expectedSha256": "86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+        "sha256": "86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+        "bytes": 12969,
+        "expectedSha256": "86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+        "sha256": "e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+        "bytes": 20874,
+        "expectedSha256": "e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+        "sha256": "6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+        "bytes": 9176,
+        "expectedSha256": "6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+        "sha256": "330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+        "bytes": 18766,
+        "expectedSha256": "330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+        "sha256": "c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+        "bytes": 26504,
+        "expectedSha256": "c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+        "sha256": "436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+        "bytes": 10950,
+        "expectedSha256": "436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+        "sha256": "a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+        "bytes": 20357,
+        "expectedSha256": "a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+        "sha256": "3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+        "bytes": 9905,
+        "expectedSha256": "3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+        "sha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+        "bytes": 17571,
+        "expectedSha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/data/be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+        "sha256": "be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+        "bytes": 23223,
+        "expectedSha256": "be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+        "matches": true
+      }
+    ],
+    "originalIssuanceSources": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "bytes": 302108,
+        "expectedSha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "bytes": 123210,
+        "expectedSha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/bc27f132877882a81b5d89f7ecb2637eb4b04fa685ad42430930e595cd181bbd",
+        "sha256": "bc27f132877882a81b5d89f7ecb2637eb4b04fa685ad42430930e595cd181bbd",
+        "bytes": 40196,
+        "expectedSha256": "bc27f132877882a81b5d89f7ecb2637eb4b04fa685ad42430930e595cd181bbd",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "bytes": 60558,
+        "expectedSha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "bytes": 128972,
+        "expectedSha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "bytes": 124637,
+        "expectedSha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/c8144dff851e187bbd51c4def470c04c3de4fce87cdc3b3136ba7611b6ae6e02",
+        "sha256": "c8144dff851e187bbd51c4def470c04c3de4fce87cdc3b3136ba7611b6ae6e02",
+        "bytes": 4139,
+        "expectedSha256": "c8144dff851e187bbd51c4def470c04c3de4fce87cdc3b3136ba7611b6ae6e02",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/e46640b8d5294494bd82a381229576a4f5bb570d714cca7df6bfbca4373f07cf",
+        "sha256": "e46640b8d5294494bd82a381229576a4f5bb570d714cca7df6bfbca4373f07cf",
+        "bytes": 31499,
+        "expectedSha256": "e46640b8d5294494bd82a381229576a4f5bb570d714cca7df6bfbca4373f07cf",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/1e7f064ff9770fb61a51315bf9fc1d0319a7996b0d4bba8a7a9cf37f9b0e57f0",
+        "sha256": "1e7f064ff9770fb61a51315bf9fc1d0319a7996b0d4bba8a7a9cf37f9b0e57f0",
+        "bytes": 48519,
+        "expectedSha256": "1e7f064ff9770fb61a51315bf9fc1d0319a7996b0d4bba8a7a9cf37f9b0e57f0",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/b6d1237e6fc1b01fe4c2aa5ac01c5c7f692750b8f9924481edb09723b5ef2ffa",
+        "sha256": "b6d1237e6fc1b01fe4c2aa5ac01c5c7f692750b8f9924481edb09723b5ef2ffa",
+        "bytes": 82747,
+        "expectedSha256": "b6d1237e6fc1b01fe4c2aa5ac01c5c7f692750b8f9924481edb09723b5ef2ffa",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/a45afe951349596e827b36ca607995c0f02eef5fc5f365263fab9417978a3d8f",
+        "sha256": "a45afe951349596e827b36ca607995c0f02eef5fc5f365263fab9417978a3d8f",
+        "bytes": 27979,
+        "expectedSha256": "a45afe951349596e827b36ca607995c0f02eef5fc5f365263fab9417978a3d8f",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/73780dabde0fd18f3461518e7a1f5c052a5bbc0505fa06ebf00ad43ddc03107e",
+        "sha256": "73780dabde0fd18f3461518e7a1f5c052a5bbc0505fa06ebf00ad43ddc03107e",
+        "bytes": 173754,
+        "expectedSha256": "73780dabde0fd18f3461518e7a1f5c052a5bbc0505fa06ebf00ad43ddc03107e",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/592b4f1ea3eb589b0415ff3d3e1b5b439d5ab91e3aa20edb1fb0d1bbb47c7c36",
+        "sha256": "592b4f1ea3eb589b0415ff3d3e1b5b439d5ab91e3aa20edb1fb0d1bbb47c7c36",
+        "bytes": 166268,
+        "expectedSha256": "592b4f1ea3eb589b0415ff3d3e1b5b439d5ab91e3aa20edb1fb0d1bbb47c7c36",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+        "sha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+        "bytes": 7542,
+        "expectedSha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+        "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+        "bytes": 1047506,
+        "expectedSha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+        "sha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+        "bytes": 9896,
+        "expectedSha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+        "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+        "bytes": 7330,
+        "expectedSha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+        "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+        "bytes": 8528,
+        "expectedSha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "bytes": 98213,
+        "expectedSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+        "sha256": "1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+        "bytes": 112028,
+        "expectedSha256": "1fa4bdd93f77b7c812a3bec9dfbbba705416d283cee0810e2780566293679139",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+        "sha256": "6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+        "bytes": 5693,
+        "expectedSha256": "6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+        "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+        "bytes": 18779,
+        "expectedSha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+        "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+        "bytes": 15387,
+        "expectedSha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+        "sha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+        "bytes": 22508,
+        "expectedSha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+        "sha256": "86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+        "bytes": 20560,
+        "expectedSha256": "86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+        "sha256": "86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+        "bytes": 12969,
+        "expectedSha256": "86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+        "sha256": "e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+        "bytes": 20874,
+        "expectedSha256": "e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+        "sha256": "6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+        "bytes": 9176,
+        "expectedSha256": "6a2573ea1694baf06fc6aaf2527a005c5637b195ae6722639fa80017a5f579e1",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+        "sha256": "330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+        "bytes": 18766,
+        "expectedSha256": "330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+        "sha256": "c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+        "bytes": 26504,
+        "expectedSha256": "c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+        "sha256": "436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+        "bytes": 10950,
+        "expectedSha256": "436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+        "sha256": "a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+        "bytes": 20357,
+        "expectedSha256": "a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+        "sha256": "3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+        "bytes": 9905,
+        "expectedSha256": "3d2316476ad9115f79fb7055a2b24016ee18af5c47ccaa9e661a27768d57dfe3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+        "sha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+        "bytes": 17571,
+        "expectedSha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+        "sha256": "be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+        "bytes": 23223,
+        "expectedSha256": "be8f520ad99ad3db5757e5452440a5113ad7aeefe62d9adbe9dd88724961cd6b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/relocation-configuration/location-b/data/8658f86cbb8b8e029886bece9882980339e08c367c6cb27770f0335e3e1fbc1a",
+        "sha256": "8658f86cbb8b8e029886bece9882980339e08c367c6cb27770f0335e3e1fbc1a",
+        "bytes": 131902,
+        "expectedSha256": "8658f86cbb8b8e029886bece9882980339e08c367c6cb27770f0335e3e1fbc1a",
+        "matches": true
+      }
+    ],
+    "previousClaimsVerdictsAndIntegrationRecordsPreserved": true
+  },
+  "narrowDiagnostics": {
+    "comparisons": [
+      {
+        "kind": "status",
+        "beforeSha256": "4def8fbccbb3cf742965975d14ec408534548f8e21deb8668e8bc2bcafafd072",
+        "afterSha256": "4def8fbccbb3cf742965975d14ec408534548f8e21deb8668e8bc2bcafafd072",
+        "unchanged": true,
+        "bytes": 107
+      },
+      {
+        "kind": "diff",
+        "beforeSha256": "39aece3bc1a3c2302c5d02f0b45c8bef50e3eee087fb5455914baa875d97ee9c",
+        "afterSha256": "39aece3bc1a3c2302c5d02f0b45c8bef50e3eee087fb5455914baa875d97ee9c",
+        "unchanged": true,
+        "bytes": 63644
+      },
+      {
+        "kind": "staged",
+        "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "afterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "unchanged": true,
+        "bytes": 0
+      }
+    ],
+    "whitespace": [
+      {
+        "when": "before",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "when": "after",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "cleanup": {
+    "monitor": "mon_3PQEANVD0SJ92DSV",
+    "session": "bash_1",
+    "completion": "ISSUANCE_CENSUS_COMPLETE exit=0; watcher completed (exit code 0)",
+    "pendingProcesses": [],
+    "priorTempDirectories": [
+      "dtf-prepare-test-6ABTvq",
+      "dtf-prepare-test-sSyY0e"
+    ],
+    "afterTempDirectories": [
+      "dtf-prepare-test-6ABTvq",
+      "dtf-prepare-test-sSyY0e"
+    ],
+    "newTempDirectories": [],
+    "removedPriorTempDirectories": [],
+    "resourceDisposition": "Recorder and child commands completed naturally. The existing issuance fixture closes its RPC provider and loopback server and removes its temporary fixture directory in finally. No new dtf-prefixed directory remained; prior unknown checkpoint directories were preserved.",
+    "retainedNewEvidenceDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current",
+    "cleanupDeletionsPerformedByQA": false,
+    "anvilStarted": false,
+    "forgeStarted": false,
+    "installedPackages": false,
+    "delegated": false,
+    "committed": false,
+    "productOrTestsEdited": false,
+    "parentReadinessWritten": false
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/report.md",
+  "results": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/results.json",
+  "unverifiedNeighbor": {
+    "path": "scripts/recovery/dtf-migration/execution-state.ts",
+    "function": "verifyConfiguration",
+    "classification": "Unverified adjacent suffix-selection observation supplied by the census producer. No reproduction, new pass claim, source edit or acceptance decision in this QA; independent reviewer owns assessment."
+  },
+  "met": [
+    "Read issuance and empty-census claims and the confirmed issuance verdict.",
+    "Created a new issuance-census-integration evidence root while preserving all earlier integration records.",
+    "Ran the full test glob once: 305 pass, zero fail across all 21 selected files.",
+    "Ran both exact strict TypeScript commands once: 87 operator files and both delivered helpers; both exit zero with empty diagnostics.",
+    "Captured shell-expanded argv, cwd, versions, raw streams, actual exits and before/after source manifests.",
+    "Inspected the changed domain module and the issuance manual executed path; reran the existing issuance manual once because prior executed-loader equivalence was not established.",
+    "Stored that manual rerun under a fresh noclobber log directory; original actual facts match retained evidence and the positive is explicitly synthetic.",
+    "Verified the 28-outcome settled census proof and its 41 immutable source bindings without recreating it.",
+    "All 113 captured source/input files and 456 protected evidence files remained unchanged; original receipts, manifests, signed domains and sources are preserved.",
+    "Recorded actual malformed/stale negatives, dirty worktree and misleading-success boundaries, natural resource cleanup and explicit unverified limits.",
+    "No product/test edits, installation, commit, delegation, Forge, Anvil, readiness marker or plan closure."
+  ],
+  "unmet": [],
+  "unverifiedLimits": [
+    "The verifyConfiguration neighboring suffix-selection observation remains explicitly unverified; the independent reviewer assesses admission and acceptance.",
+    "Saved actual issuance receipt/event facts do not supply full historical getter state. Positive completion uses a new explicitly synthetic context.",
+    "The retained census proof is synthetic loopback transport replaying exact saved deployment facts and separately injected compensation probes, not a live chain census.",
+    "No fresh Anvil/Forge proof, owner-bond execution, activation or task-10/whole-plan completion.",
+    "Current dependency/configuration fingerprints are captured; historical recursive third-party module bytes are not exhaustively pinned.",
+    "Narrow tracked git checks do not cover the untracked domain/state test files; those have actual source hashes, passing tests and strict compiler evidence.",
+    "No repeated signature run, retry or flake-rate claim."
+  ],
+  "independentCombinedAcceptancePending": true,
+  "neighborAccepted": false,
+  "wholePlanComplete": false,
+  "task10Complete": false,
+  "readinessMarkerWritten": false,
+  "planCheckboxesChanged": false,
+  "deliveryInventory": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.argv.nul",
+      "sha256": "d4567f10b58595b1ac8f0355c76526033cf59a2557a606b09dcc1b7331abdd2d",
+      "bytes": 1199
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.command.txt",
+      "sha256": "80ce0567e4363449c924fb71910f473e1aa867e843e1a369e5203598a3c61ad5",
+      "bytes": 1200
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.finished.txt",
+      "sha256": "1bfde768e38f9203bf9be45f1b11ca6560c796e3be66ed0f9fb11980dae0a36e",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.stderr.log",
+      "sha256": "d6164745ed003941883899e9b72d886319df282b6f59ef668d3ac5778673da8c",
+      "bytes": 31715
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/01-tests.stdout.log",
+      "sha256": "da1171b264e93e28a4c512f0f63ec1d848a50a41ea1b0da8b4ed29cdd27642ef",
+      "bytes": 3492
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.argv.nul",
+      "sha256": "7bca625d3c93d4639207075a0ab1cc02341448aaf7ff252342be873f19df1cee",
+      "bytes": 4839
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.command.txt",
+      "sha256": "911bab9857ce78401ddd62e8a19930d0defe0be660afe96cd9061edcdaf5d6e1",
+      "bytes": 4840
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.finished.txt",
+      "sha256": "9cbc87d763a069adf7bf869931100eb9c72e739be8c2372a997645b317b686d9",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.started.txt",
+      "sha256": "1bfde768e38f9203bf9be45f1b11ca6560c796e3be66ed0f9fb11980dae0a36e",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/02-operator-types.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.argv.nul",
+      "sha256": "7e537ae342043173dad39318e61b02ea786e9984b9317088173f05b132842b0c",
+      "bytes": 411
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.command.txt",
+      "sha256": "0555e5328bd3e79e9003367d831eecdf7eab58018f5e6dab20c370497ef4ecf1",
+      "bytes": 412
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.finished.txt",
+      "sha256": "016bf0daa3c75694ac2c6964f8dcc6ac4500d3b84fd504d73ce0d4446e82846f",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.started.txt",
+      "sha256": "9cbc87d763a069adf7bf869931100eb9c72e739be8c2372a997645b317b686d9",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/03-helper-types.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/cleanup.json",
+      "sha256": "08a64bcde8696dfd1c61a695b40d588fd808971f22905593e67c77b1cc876c23",
+      "bytes": 1170
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.argv.nul",
+      "sha256": "56441c521e2438f7e6c28d90adae2459abb8e05d347055626bd205901b1dfd8c",
+      "bytes": 28
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.command.txt",
+      "sha256": "8ffa7a5a6493d1c021644771b9c00d425eb359e40dc768bafdc681e98c85fb07",
+      "bytes": 31
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-path.stdout.log",
+      "sha256": "b8852309b79933c7e655033693bdd9a0089dd7a64135b0a900a3fa717d1d9916",
+      "bytes": 22
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.argv.nul",
+      "sha256": "74dfd4090835c6e694d7f7373b750aa0ffd367bb4f42c97cb5d8db061d3387eb",
+      "bytes": 15
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.command.txt",
+      "sha256": "b6ce41cea50761ec55c77eac61cfc3aab653c297bcba7328fbf43e608e5081ad",
+      "bytes": 16
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-revision.stdout.log",
+      "sha256": "43c92ee3266e71a3576a0c901180eceb18343004b4074f3363702ab3a6efec10",
+      "bytes": 16
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.argv.nul",
+      "sha256": "196fb6f2e8ca9c28fcb314f1a77974ab4c4cbc3e5dd69fedbc50512f24658a28",
+      "bytes": 14
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.command.txt",
+      "sha256": "a52b57d3b6521e053640e9f292cb91fbad5c06b760cd5d62b55a7dfd16817310",
+      "bytes": 15
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-bun-version.stdout.log",
+      "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
+      "bytes": 6
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.argv.nul",
+      "sha256": "06e9a8a38ed9c71dfa8b8c2c9bbd50c77e4fbc29170a71f54c818bb501a719ef",
+      "bytes": 9
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.command.txt",
+      "sha256": "7446db204d3d648102e0a7c6a1927ef99f31badcdd585a5cebf3b488a06809ff",
+      "bytes": 10
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-platform.stdout.log",
+      "sha256": "3e404aa34d884f075f31f3c022f9ba603db607883507709595c29fba1ddc7db3",
+      "bytes": 132
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.argv.nul",
+      "sha256": "cc7407ae7a51948907af531ae19aa090a636f71e26f41e62b5bb82dd8511e165",
+      "bytes": 46
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.command.txt",
+      "sha256": "66649645b9646f6d102789d898a051e359371b1aadf337937122e32d03d59d4d",
+      "bytes": 47
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/environment-ts-version.stdout.log",
+      "sha256": "4c7ae79542506418b516a1a9f6e91321e9464f88a2130bfa070aca57929b2eb5",
+      "bytes": 14
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.argv.nul",
+      "sha256": "7cd742db4ea91b0b6fd401ad5bae4cd56f7f1e3e397301eb2027021f0ef6cc9b",
+      "bytes": 43
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.command.txt",
+      "sha256": "400cc68b96dce706535d30369c906759979d92a367416e26b391a1ec8ce468d3",
+      "bytes": 44
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-branch.stdout.log",
+      "sha256": "f147a0710c775170603d4a14d1f6c38c72bf2f2dba7f94c3d63c27f06fd59796",
+      "bytes": 37
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.argv.nul",
+      "sha256": "4002c75805952d4c96b2f1fdcce477da3350baab0caed034c36cb3fcf447fcbe",
+      "bytes": 36
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.command.txt",
+      "sha256": "629da79e139c364205b1f5ce8f76da3b0ae1bf47d1ec3f034dfc94f551e80cda",
+      "bytes": 37
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-head.stdout.log",
+      "sha256": "cf63813c67ceae627e20977fb3ec617e9777ae48726e97a79a58b02fbfe8b027",
+      "bytes": 41
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.argv.nul",
+      "sha256": "223fcc3fe95b5278ace46ce6f4e0df0f9f65e912cf6393225e4f729a11d43de1",
+      "bytes": 249
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.command.txt",
+      "sha256": "ffd8399b79726440990182f5548f195443b2eda41170348a1423a5914139aa9e",
+      "bytes": 250
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.finished.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.started.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-after.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.argv.nul",
+      "sha256": "223fcc3fe95b5278ace46ce6f4e0df0f9f65e912cf6393225e4f729a11d43de1",
+      "bytes": 249
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.command.txt",
+      "sha256": "ffd8399b79726440990182f5548f195443b2eda41170348a1423a5914139aa9e",
+      "bytes": 250
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-check-before.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.argv.nul",
+      "sha256": "afdde1e0c103571fd79c80c469359404a3bf29916f0e60b720ee9c40c2e7f5f3",
+      "bytes": 261
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.command.txt",
+      "sha256": "280ec936d860d5ed9a241bcad20f0a545368df407ca8fe6589a9e650b60a0f9f",
+      "bytes": 262
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.finished.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.started.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-after.stdout.log",
+      "sha256": "39aece3bc1a3c2302c5d02f0b45c8bef50e3eee087fb5455914baa875d97ee9c",
+      "bytes": 63644
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.argv.nul",
+      "sha256": "afdde1e0c103571fd79c80c469359404a3bf29916f0e60b720ee9c40c2e7f5f3",
+      "bytes": 261
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.command.txt",
+      "sha256": "280ec936d860d5ed9a241bcad20f0a545368df407ca8fe6589a9e650b60a0f9f",
+      "bytes": 262
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-diff-before.stdout.log",
+      "sha256": "39aece3bc1a3c2302c5d02f0b45c8bef50e3eee087fb5455914baa875d97ee9c",
+      "bytes": 63644
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.argv.nul",
+      "sha256": "0da6a42abe4b030c5a0b4d983ee2a5e6f6e74f0939a5c09136b07bf92d125e9e",
+      "bytes": 270
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.command.txt",
+      "sha256": "e9a7f64094ff9bdd68ac2ccb513a343e8f8e6995078bf6ecdf90614de6632d7f",
+      "bytes": 271
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.finished.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.started.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-after.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.argv.nul",
+      "sha256": "0da6a42abe4b030c5a0b4d983ee2a5e6f6e74f0939a5c09136b07bf92d125e9e",
+      "bytes": 270
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.command.txt",
+      "sha256": "e9a7f64094ff9bdd68ac2ccb513a343e8f8e6995078bf6ecdf90614de6632d7f",
+      "bytes": 271
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-staged-before.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.argv.nul",
+      "sha256": "5ed34cf8bda0fe9b06ac421e63f0ac8b3dfd360542afa24798725f060e0d89a2",
+      "bytes": 272
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.command.txt",
+      "sha256": "39479c6b3f98cf2ca0ea166fc8109ce8e68227c9c346e689432121eae9821be8",
+      "bytes": 273
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.finished.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.started.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-after.stdout.log",
+      "sha256": "4def8fbccbb3cf742965975d14ec408534548f8e21deb8668e8bc2bcafafd072",
+      "bytes": 107
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.argv.nul",
+      "sha256": "5ed34cf8bda0fe9b06ac421e63f0ac8b3dfd360542afa24798725f060e0d89a2",
+      "bytes": 272
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.command.txt",
+      "sha256": "39479c6b3f98cf2ca0ea166fc8109ce8e68227c9c346e689432121eae9821be8",
+      "bytes": 273
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.finished.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.started.txt",
+      "sha256": "d75c20e7b1c26561bea899f393631c363a12cc350089704532fca1528c77eca2",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/git-owned-status-before.stdout.log",
+      "sha256": "4def8fbccbb3cf742965975d14ec408534548f8e21deb8668e8bc2bcafafd072",
+      "bytes": 107
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.argv.nul",
+      "sha256": "e168e19c18c038c6b23bcb46b32a9ba6096cabed305da1233a9c6eeb267c585e",
+      "bytes": 153
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.command.txt",
+      "sha256": "ed50df704ae9535435d375e8a8e9f26e23b4aeea1f95ace3287e968111d993cf",
+      "bytes": 154
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.finished.txt",
+      "sha256": "9359db5e769b06e1109da0fa3962c7630e4d7598db831701ff0cb94e46a209e3",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.started.txt",
+      "sha256": "016bf0daa3c75694ac2c6964f8dcc6ac4500d3b84fd504d73ce0d4446e82846f",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/04-manual.stdout.log",
+      "sha256": "26c12abfc49356e823ca89d904ba417557ac7ef291a733fc8a7529ae444ce6a7",
+      "bytes": 8637
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current/result.json",
+      "sha256": "57118e3404f5d841c66be954898f4ab807d06390bf74aee84df639e12f074a51",
+      "bytes": 16624
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/overall.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/report.md",
+      "sha256": "362964f0f164b622427f79d9de24b1a83d79a513d0a18438e0801ec8c2e12ff2",
+      "bytes": 10261
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/results.json",
+      "sha256": "2dae48541066241e37450bfd0ae360ad5f981dec490edf00bcb2ca8099dce579",
+      "bytes": 67012
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/retained-manual-bindings.json",
+      "sha256": "4e3608da51934183874f97e1b1513ac99b3874a2a137d50e4155550954d24fe3",
+      "bytes": 75525
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/run-checks.sh",
+      "sha256": "a5d5c4a4f8b14013cc1849e2154e07514a5808c3eec3d36419377950986398a6",
+      "bytes": 3462
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json",
+      "sha256": "a55761a11e0135cacf089a8117238fe370c48fc188d088be3956b9df3a258ccc",
+      "bytes": 65619
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-before.json",
+      "sha256": "739bac73483cd16401ca96044ec9788747012276878342a79bbcfec355de6b33",
+      "bytes": 246744
+    }
+  ],
+  "writtenLast": true,
+  "selfReference": "This final claim is not recursively self-hashed."
+}

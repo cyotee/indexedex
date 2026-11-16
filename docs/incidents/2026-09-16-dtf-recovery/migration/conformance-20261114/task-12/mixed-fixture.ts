@@ -1,0 +1,248 @@
+// Extends task 7's synthetic wire fixture. No EVM, task 10 receipt, or allocation.
+import assert from "node:assert/strict";
+import { readFile, realpath, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { AbiCoder, Interface, Wallet, keccak256 } from "ethers";
+import { executionFixture, a, h } from "../../../../../../scripts/recovery/dtf-migration/preparation.fixture.js";
+import { assemble, normalize, validateManifest } from "../../../../../../scripts/recovery/dtf-migration/preparation.js";
+import { canonical, fingerprint } from "../../../../../../scripts/recovery/dtf-migration/provenance.js";
+import { acceptedContext, authenticateHistory, compensationEventTopics, loadExecution, loupeAbi, registryAbi } from "../../../../../../scripts/recovery/dtf-migration/execution-domain.js";
+import type { ExecutionDomain } from "../../../../../../scripts/recovery/dtf-migration/execution-domain.js";
+import { intent, packageArguments } from "../../../../../../scripts/recovery/dtf-migration/execution-schema.js";
+import { plan } from "../../../../../../scripts/recovery/dtf-migration/execution-plan.js";
+import type { FileRef } from "../../../../../../scripts/recovery/dtf-migration/schema.js";
+
+export async function reference(path: string): Promise<FileRef> {
+  const raw = await readFile(path);
+  return { path, sha256: fingerprint(raw), bytes: String(raw.length) };
+}
+
+export async function mixedFixture() {
+  const original = await executionFixture();
+  const f = { ...original, root: await realpath(original.root) };
+  try {
+    const migration = f.domain.abis.migration;
+    const save = async (name: string, value: unknown) => {
+      const path = join(f.root, name);
+      const json: unknown = JSON.parse(JSON.stringify(value, (_key, item: unknown) => typeof item === "bigint" ? String(item) : item));
+      await writeFile(path, canonical(json), { flag: "wx" });
+      return reference(path);
+    };
+    const output = migration.getFunction("migrationWeightedPricing")?.outputs[0];
+    const inputs = output?.components?.find((p) => p.name === "inputs");
+    assert.ok(output && inputs);
+    const bookA = migration.decodeFunctionResult("migrationWeightedPricing", f.changes.book)[0].toObject(true);
+    const next = { ...bookA, id: h(0), inputs: { ...bookA.inputs, swapFeeWad: BigInt(bookA.inputs.swapFeeWad) + 1n } };
+    const bookIdB = keccak256(AbiCoder.defaultAbiCoder().encode(["string", output],
+      ["IndexedEx.manual-weighted-original-credit", next]));
+    const encodedB = migration.encodeFunctionResult("migrationWeightedPricing", [{ ...next, id: bookIdB }]);
+    const books = [
+      await save("book-a.json", f.input.books[0]),
+      await save("inputs-a.json", bookA.inputs),
+      await save("book-b.json", { bookId: bookIdB, encodedBook: encodedB,
+        observationBlockNumber: "105", observationBlockHash: h(105), setTransactionHash: h(904) }),
+      await save("inputs-b.json", next.inputs),
+    ];
+    const sources = [...f.domain.manifest.sources, ...books.map((ref, i) => ({
+      ...ref, id: `fixture-document-${i}`, provenance: { kind: "file" as const,
+        authority: "Task 7 derived synthetic wire fixture, not historical chain evidence" },
+    }))];
+    const independent = f.input.independent[0];
+    const sy = f.input.weightedSy[0];
+    assert.ok(independent && sy);
+    const inputA = normalize({ ...f.input, sources, nfts: [], weightedLiquid: [], dtfCustodySe: [],
+      claimVault: [], weightedReceipt: [], earlierReceipt: [], earlierLiquid: [], heldSeLp: [],
+      exposures: f.input.exposures.filter((r) => r.category === "independent" || r.category === "weighted-sy") });
+    const preparedA = assemble(inputA, f.domain.prepared.quoteEvidence);
+    const preparedARef = await save("prepared-a.json", preparedA);
+    const executionARef = await save("execution-a.json", { ...f.domain.manifest, sources, preparedManifest: preparedARef.path });
+    const domainA = await loadExecution(executionARef.path);
+    const journalARef = await save("journal-a.json", domainA.domain);
+    const rowA = preparedA.payloads.configure.independent[0];
+    const syA = preparedA.payloads.configure.weightedSy[0];
+    assert.ok(rowA && syA);
+    const read = (abi: Interface, method: string, args: readonly unknown[], values: readonly unknown[], tag?: string) =>
+      f.changes.reads.set(abi.encodeFunctionData(method, args) + (tag ? "@" + tag : ""), abi.encodeFunctionResult(method, values));
+    const log = (abi: Interface, name: string, values: readonly unknown[], emitter: string,
+      block: number, tx: string, index = 0) => {
+      const event = abi.getEvent(name);
+      assert.ok(event);
+      return { ...abi.encodeEventLog(event, [...values]), address: emitter, blockHash: h(block),
+        blockNumber: `0x${block.toString(16)}`, transactionHash: tx, transactionIndex: "0x0", logIndex: `0x${index.toString(16)}` };
+    };
+    const storedIndependent = (row: typeof rowA) => ({ configurationId: row.configurationId,
+      evidenceId: row.input.evidenceId, totalCredit: row.quotedCredit,
+      entitlements: row.input.entitlements.map((original) => ({ original, credit: row.quotedCredit })) });
+    read(migration, "independentAllocation", [rowA.input.recipient], [storedIndependent(rowA)], "0x65");
+    read(migration, "weightedSyEntitlement", [syA.input.originalId], [{
+      configured: true, original: syA.input, configurationId: syA.configurationId, credit: syA.quotedCredit,
+    }]);
+    read(migration, "weightedSySurrender", [syA.input.originalId], [{
+      consumedUnits: 0n, deliveredCredit: 0n, remainingUnits: syA.input.originalUnits, remainingCredit: syA.quotedCredit,
+    }]);
+    read(migration, "claimedSyWeights", [syA.input.originalId], [0n, 0n]);
+    const bond = a(30);
+    const staking = a(31);
+    const principal = BigInt(rowA.quotedCredit);
+    const gons = principal * 100n;
+    const bondAbi = new Interface([
+      "function ownerOf(uint256) view returns(address)",
+      "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+      "function isMigrationPosition(uint256) view returns(bool)", "function attributedBondGons() view returns(uint256)",
+      "event MigrationPositionCreated(uint256 indexed tokenId,address indexed recipient,uint256 principal,uint256 start,uint256 unlockTime)",
+      "event Transfer(address indexed from,address indexed to,uint256 indexed tokenId)",
+      "event BondClaimed(uint256 indexed tokenId,address indexed recipient,uint256 principal,uint256 rewards)",
+    ]);
+    const stakingAbi = new Interface([
+      "event Staked(address indexed payer,address indexed recipient,uint256 detfAmount,uint256 gons)",
+      "function gonsOf(address) view returns(uint256)",
+      "function stakingState() view returns((uint256 totalGons,uint256 gonsPerUnit,uint256 accountedBacking,uint256 allocationDust,uint256 stakingDust,uint256 feeWeight,uint256 creatorWeight))",
+      "function balanceOf(address) view returns(uint256)", "function totalSupply() view returns(uint256)",
+    ]);
+    read(migration, "independentIssuance", [rowA.input.recipient], [{
+      issued: true, configurationId: rowA.configurationId, credit: principal, bondTokenId: 3n, issuedAt: 2000n,
+    }]);
+    read(migration, "bondNftVault", [], [bond]);
+    read(migration, "rebasingClaimToken", [], [staking]);
+    read(bondAbi, "ownerOf", [3n], [rowA.input.recipient]);
+    read(bondAbi, "positionOf", [3n], [[principal, 0n, gons, 2000n, 7776000n]]);
+    read(bondAbi, "isMigrationPosition", [3n], [true]);
+    read(bondAbi, "attributedBondGons", [], [gons]);
+    read(stakingAbi, "stakingState", [], [[gons, 100n, principal, 0n, 0n, 0n, 0n]]);
+    read(stakingAbi, "gonsOf", [bond], [gons]);
+    read(stakingAbi, "balanceOf", [staking], [principal]);
+    read(stakingAbi, "totalSupply", [], [principal]);
+    read(registryAbi, "vaultsOfPackage", [f.domain.manifest.package], [[f.input.domain.proxy]]);
+    read(loupeAbi, "facets", [], [[[a(13), []]]]);
+    read(new Interface(["function facetCuts() view returns((address facetAddress,uint8 action,bytes4[] functionSelectors)[])"]),
+      "facetCuts", [], [[]]);
+    const wallet = new Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
+    const signed = async (domain: ExecutionDomain, stage: "configure" | "independent-issue",
+      method: string, nonce: number, block: number) => {
+      const operation = plan(domain, stage).find((o) => o.method === method);
+      assert.ok(operation);
+      const raw = await wallet.signTransaction({ chainId: 4663n, nonce, to: operation.transaction.to,
+        value: 0n, data: operation.transaction.data, gasLimit: 500000n, gasPrice: 2n, type: 0 });
+      const record = intent.parse({ version: "dtf-operator-intent-v2", ...operation,
+        domainHash: fingerprint(canonical(domain.domain)), nonce: String(nonce), startBlock: "100",
+        gasLimit: "500000", gasPrice: "2", signedTransaction: raw, transactionHash: keccak256(raw) });
+      const ref = await save(`intent-${nonce}.json`, record);
+      const tag = `0x${block.toString(16)}`;
+      f.changes.blocks.set(tag, { number: tag, hash: h(block), parentHash: h(block - 1), transactions: [record.transactionHash] });
+      f.changes.transactions.set(record.transactionHash, { hash: record.transactionHash,
+        from: record.transaction.from, to: record.transaction.to, input: record.transaction.data, value: "0x0",
+        nonce: `0x${nonce.toString(16)}`, gas: "0x7a120", gasPrice: "0x2", chainId: "0x1237",
+        blockHash: h(block), transactionIndex: "0x0" });
+      return { ref, record, block };
+    };
+    const configureA = await signed(domainA, "configure", "configureIndependentAllocations", 7, 101);
+    const configureSy = await signed(domainA, "configure", "configureWeightedSyEntitlements", 8, 102);
+    const issueA = await signed(domainA, "independent-issue", "issueIndependentAllocations", 9, 103);
+    const configurationLogs = [
+      log(migration, "IndependentAllocationConfigured", [rowA.input.recipient, rowA.configurationId,
+        rowA.input.evidenceId, rowA.quotedCredit], f.input.domain.proxy, 101, configureA.record.transactionHash),
+      log(migration, "WeightedSyEntitlementConfigured", [syA.input.originalId, syA.configurationId,
+        syA.input.originalWallet, syA.input.originalUnits, syA.quotedCredit], f.input.domain.proxy, 102, configureSy.record.transactionHash),
+    ];
+    const register = (tx: typeof configureA, logs: readonly ReturnType<typeof log>[]) => {
+      f.changes.receipts.set(tx.record.transactionHash, { transactionHash: tx.record.transactionHash,
+        blockHash: h(tx.block), blockNumber: `0x${tx.block.toString(16)}`, transactionIndex: "0x0",
+        from: tx.record.transaction.from, to: tx.record.transaction.to, status: "0x1", logs });
+      f.changes.logs.set(h(tx.block), logs);
+    };
+    register(configureA, configurationLogs.slice(0, 1));
+    register(configureSy, configurationLogs.slice(1));
+    register(issueA, [
+      log(stakingAbi, "Staked", [bond, bond, principal, gons], staking, 103, issueA.record.transactionHash),
+      log(bondAbi, "MigrationPositionCreated", [3n, rowA.input.recipient, principal, 2000n, 7778000n],
+        bond, 103, issueA.record.transactionHash, 1),
+      log(migration, "IndependentAllocationIssued", [rowA.input.recipient, rowA.configurationId, 3n, principal, 2000n],
+        f.input.domain.proxy, 103, issueA.record.transactionHash, 2),
+    ]);
+    const accepted = async (tx: typeof configureA, id: string, manifest: FileRef, executionManifest: FileRef,
+      journalDomain: FileRef, current = inputA, stage: "configure" | "independent-issue" = "configure") => {
+      const base = { manifest, executionManifest, journalDomain, configurationId: id, intent: tx.ref, completion: null };
+      const proof = await authenticateHistory(await acceptedContext(base, current, new Set(), undefined, stage));
+      return { ...base, completion: await save(`receipt-${tx.record.nonce}.json`, proof) };
+    };
+    const acceptedA = await accepted(configureA, rowA.configurationId, preparedARef, executionARef, journalARef);
+    const acceptedSy = await accepted(configureSy, syA.configurationId, preparedARef, executionARef, journalARef);
+    const issuedA = await accepted(issueA, rowA.configurationId, preparedARef, executionARef, journalARef, inputA, "independent-issue");
+    const setter = new Interface([`function setMigrationWeightedPricing(${inputs.format("full")}) returns(bytes32)`,
+      "event MigrationWeightedPricingSet(bytes32 indexed bookId)"]);
+    const setterLog = log(setter, "MigrationWeightedPricingSet", [bookIdB], f.input.domain.proxy, 104, h(904));
+    f.changes.blocks.set("0x68", { number: "0x68", hash: h(104), parentHash: h(103), transactions: [h(904)] });
+    f.changes.receipts.set(h(904), { transactionHash: h(904), blockHash: h(104), blockNumber: "0x68", transactionIndex: "0x0",
+      from: a(20), to: f.input.domain.proxy, status: "0x1", logs: [setterLog] });
+    f.changes.transactions.set(h(904), { hash: h(904), to: f.input.domain.proxy,
+      input: setter.encodeFunctionData("setMigrationWeightedPricing", [next.inputs]), blockHash: h(104), transactionIndex: "0x0" });
+    f.changes.logs.set(h(104), [setterLog]);
+    read(migration, "migrationWeightedPricing", [], [bookA], "0x64");
+    f.changes.book = encodedB;
+    const bookBRef = books[2];
+    assert.ok(bookBRef);
+    const inputB = normalize({ ...inputA,
+      domain: { ...inputA.domain, bookId: bookIdB, blockNumber: "105", blockHash: h(105) },
+      books: [...inputA.books, JSON.parse((await readFile(bookBRef.path)).toString())],
+      independent: [{ ...independent, pricing: { kind: "load", bookId: bookIdB, replaces: acceptedA } }],
+      weightedSy: [{ ...sy, pricing: { kind: "retain", bookId: inputA.domain.bookId, accepted: acceptedSy } }],
+      issuedHistory: [{ recipient: rowA.input.recipient, configuration: acceptedA,
+        issuancePreparedManifest: preparedARef, issuanceExecutionManifest: executionARef, issuanceJournalDomain: journalARef,
+        issuanceIntent: issueA.ref, issuanceCompletion: issuedA.completion }],
+    });
+    const quotesB = { ...preparedA.quoteEvidence, book: encodedB, bookId: bookIdB, blockHash: h(105),
+      quotes: [...preparedA.quoteEvidence.quotes, ...preparedA.quoteEvidence.quotes.map((q) => ({ ...q, bookId: bookIdB }))] };
+    const preparedB = assemble(inputB, quotesB);
+    const preparedBRef = await save("prepared-b.json", preparedB);
+    const executionBRef = await save("execution-b.json", { ...f.domain.manifest, sources,
+      bookId: bookIdB, preparedManifest: preparedBRef.path });
+    const domainB = await loadExecution(executionBRef.path);
+    const journalBRef = await save("journal-b.json", domainB.domain);
+    const rowB = preparedB.payloads.configure.independent[0];
+    assert.ok(rowB);
+    read(migration, "independentAllocation", [rowB.input.recipient], [storedIndependent(rowB)]);
+    const configureB = await signed(domainB, "configure", "configureIndependentAllocations", 10, 106);
+    const logB = log(migration, "IndependentAllocationConfigured", [rowB.input.recipient, rowB.configurationId,
+      rowB.input.evidenceId, rowB.quotedCredit], f.input.domain.proxy, 106, configureB.record.transactionHash);
+    configurationLogs.push(logB);
+    register(configureB, [logB]);
+    const acceptedB = await accepted(configureB, rowB.configurationId, preparedBRef, executionBRef, journalBRef, inputB);
+    const finalInput = normalize({ ...inputB,
+      independent: [{ ...independent, pricing: { kind: "retain", bookId: bookIdB, accepted: acceptedB } }],
+    });
+    const finalPrepared = assemble(finalInput, quotesB);
+    const finalPreparedRef = await save("prepared-mixed.json", finalPrepared);
+    await validateManifest(finalPreparedRef.path);
+    // Complete the existing synthetic deployment receipt's transaction context.
+    // These are wire inputs, not a claim that a vault was deployed by this test.
+    const deployment = packageArguments.parse({
+      baseArgs: { name: "Fixture DETF", symbol: "DETF", hook: a(40), ownerOnlyLiquidity: false,
+        creationPairPerDetfWad: ["1", "1"], openingPairPerDetfWad: ["1", "1"],
+        mintThreshold: "0", burnThreshold: "0", expansionClosureRatePerYearWad: "0", creator: a(0),
+        claimName: "Fixture claim", claimSymbol: "sDETF", bondName: "Fixture bond", bondSymbol: "bDETF",
+        mintRouteMode: "0", mintRoutes: [], burnRouteMode: "0", burnRoutes: [],
+        bondRouteMode: "0", bondRoutes: [], donateRouteMode: "0", donateRoutes: [] },
+      owner: a(20), ownershipBufferPeriod: "0", weth: a(14), originalDtf: a(15),
+    });
+    const deploymentSource = sources.find((s) => s.id === "deployment");
+    assert.ok(deploymentSource);
+    f.changes.transactions.set(h(901), { hash: h(901), to: f.domain.manifest.package,
+      input: f.domain.abis.pkg.encodeFunctionData("deployVault", [deployment]),
+      blockHash: h(90), transactionIndex: "0x0" });
+    const manifest = await save("execution-mixed.json", { ...domainB.manifest, preparedManifest: finalPreparedRef.path,
+      deployment, deploymentReceipt: await reference(deploymentSource.path) });
+    const topics = compensationEventTopics(migration, "configuration");
+    f.changes.logs.set(canonical({ address: f.input.domain.proxy, fromBlock: "0x5a", toBlock: "latest", topics: [topics] }), configurationLogs);
+    f.changes.blocks.set("latest", { number: "0x6b", hash: h(107), parentHash: h(106), transactions: [] });
+    // Any accidental price reacquisition during validate/materialize must fail.
+    const preview = new Interface(["function previewOriginalCredit(uint256,uint256) view returns(uint256)"]);
+    for (const q of quotesB.quotes) for (const args of [[q.originalEth, q.originalDtf], [q.originalEth, "0"], ["0", q.originalDtf]]) {
+      f.changes.reads.set(preview.encodeFunctionData("previewOriginalCredit", args), "0x");
+    }
+    return { ...f, manifestPath: manifest.path, finalPrepared, acceptedA, acceptedB, acceptedSy, issuedA,
+      books, executionARef, journalARef, configureA, configureB, issueA, save, read };
+  } catch (error) {
+    await f.close();
+    throw error;
+  }
+}

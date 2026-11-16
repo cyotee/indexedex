@@ -1,0 +1,22 @@
+{
+  "type": "ParentRepairReadiness",
+  "status": "confirmed-repairs-ready",
+  "task": 10,
+  "session_id": "senpi:01a1dcee-c2ea-7593-9217-2b5ea930352f",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "verifier": "st_01a1dfe6",
+  "verdict": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/operator-repairs-verdict.json",
+  "lane_verdicts": [
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/setter-repair-verdict.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/configure-fault-verdict.json"
+  ],
+  "operator_tests": { "passed": 280, "failed": 0, "exit": 0 },
+  "operator_types_exit": 0,
+  "helper_types_exit": 0,
+  "required_execution": "Materialize current verified source in the owned QA workspace and create a fresh manifest and journal with the generated pricing-event ABI binding. Resume the complete task-10 real Anvil scenarios.",
+  "history_rule": "Do not append bindings to or rewrite an old signed manifest, journal domain, intent or receipt. Preserve all earlier attempts.",
+  "rehearsal_data_ownership": "Returned to st_01a1dfb6 after the setter repair writer finished",
+  "fresh_anvil_lifecycle_verified": false,
+  "task_10_complete": false,
+  "public_transactions_authorized": false
+}

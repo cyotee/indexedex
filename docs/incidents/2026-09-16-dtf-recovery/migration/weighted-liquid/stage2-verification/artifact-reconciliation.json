@@ -1,0 +1,250 @@
+{
+  "sourceFiles": 39,
+  "sourceMismatches": [],
+  "artifactJsonRewritten": [
+    {
+      "path": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "expected": "4d462651ab4c3ce3f47a9a748dbcae9e806cb3031ffe76fbb62a055cb4a9fad6",
+      "actual": "2a28cf7d3fa89a4129d23c7f5b9bd961349750ff77ae1c4bfbcf7f35c7be89d0",
+      "match": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "expected": "d8087a629c89d7dbeac4754d2f8eba1ec7a3598762fc1e576a6961150e62e028",
+      "actual": "ba379d1f90dc9f83870ff1a1d2a8039156b1b4747dcf7c60fc6e18cec026e3b7",
+      "match": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "expected": "c416612a0cdc03aa83fab23f7f6c16d92b48143c8f26fc5bbc31a40f37bb05e6",
+      "actual": "685a4171afdade62c119baf41174b7e0aa004bc4794f3deabb274db394b4089f",
+      "match": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "expected": "1b5a783b4e0001f0e45a2ca61f0457936248c8b632a9757dc6139e0d05062b2c",
+      "actual": "42a86fd69148672a8cb21ec7445a48a96b377a9e90f258e90f424bb9362caf9f",
+      "match": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "expected": "d40118f6a331cfb5fa25b71be0b22083f523312fa3f6f4d9bdb05f9034ac8590",
+      "actual": "2975d484cb41d596590c5d43a08b383d0163c0cb49584e5d224323793aa04296",
+      "match": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultFacet.sol/UniswapV4DetfMigrationBondNFTVaultFacet.json",
+      "expected": "a54d6b53c33c936c5777d3270b9a709d544a2093dce80d2b9292014606a37d89",
+      "actual": "7f21037840e2c748f332561a6a027ab5c37e1c1a55072a2a62da704506ffa9f6",
+      "match": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFFacet.sol/UniswapV4DetfMigrationStakedDETFFacet.json",
+      "expected": "f901439f532fa3a1e8333de78cc5f2f5441d78fb29b8ebae575c65f88e4ad687",
+      "actual": "4974ae0c6358f38f0bbe1a5763ef295074f350b032fd6f0e245728e378458284",
+      "match": false
+    },
+    {
+      "path": "out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+      "expected": "60493a07ba82629d2eb036196c17f9dc9282eb89b3a975c1638747454454d51f",
+      "actual": "195f8545fb1a6fa90a2cbec6861ad87d1564dc6876d776724f2731fbff68d36d",
+      "match": false
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationTest.json",
+      "expected": "31874d17fbe72002af2f0309594886d7782b105831a43646c3c9304cab678e38",
+      "actual": "bcda5781b25d6bb510a737eea416e669b6c2ac23797e8952833b34798a390622",
+      "match": false
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationForkBase.json",
+      "expected": "143e0b4a6d477c8551597633accc66ed860335ab946a3b16f495a562e22cc2c5",
+      "actual": "4fdd0651369ebcf3d29fd292c8be8ea8b3d4b10dc0d820aeee1f85c3716abb16",
+      "match": false
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/RecoveryHostileRate.json",
+      "expected": "118ac0f914db2f15b8bb35e0cc8280550fa0a650d28a35e60e3c69005b115a02",
+      "actual": "56aae265a05de56707fb685b0d0dcc6fd6c5ab6b495319e8c0808e1db0329eb6",
+      "match": false
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/MigrationWeightedLiquidTest.json",
+      "expected": "e7a78b6b8dff7488c24ed4fb261763e85150110a51382d07e3bd08afce717043",
+      "actual": "e251be0e86441650a5e6c174487f0b35080c57da7808859ffb34b4473a4dbc8a",
+      "match": false
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/WeightedLiquidReceiver.json",
+      "expected": "af55984d50f2c8a544907afc3d64022fff28a875ac998adbaf98536f48ad4afc",
+      "actual": "6ba85c02de113353a4222690e0fc5722ac97919b56ae5f380cec0b2b68bc2bb7",
+      "match": false
+    }
+  ],
+  "admissionAllHashesMatched": true,
+  "afterRebuildMetadataSources": 636,
+  "metadataMismatches": [],
+  "testArtifactSourceChecks": [
+    {
+      "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "expected": "0xb4e54755d993f939f6f6032d081ccd6790dd38519db7ac054eacdff323225514",
+      "metadata": "0xb4e54755d993f939f6f6032d081ccd6790dd38519db7ac054eacdff323225514",
+      "actual": "0xb4e54755d993f939f6f6032d081ccd6790dd38519db7ac054eacdff323225514",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftHolder.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "expected": "0xd55fe8a96fc19df5bfddf04cb3acc3bd39d4e9c804e4bab46b7802ca2455c51b",
+      "metadata": "0xd55fe8a96fc19df5bfddf04cb3acc3bd39d4e9c804e4bab46b7802ca2455c51b",
+      "actual": "0xd55fe8a96fc19df5bfddf04cb3acc3bd39d4e9c804e4bab46b7802ca2455c51b",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "expected": "0xd55fe8a96fc19df5bfddf04cb3acc3bd39d4e9c804e4bab46b7802ca2455c51b",
+      "metadata": "0xd55fe8a96fc19df5bfddf04cb3acc3bd39d4e9c804e4bab46b7802ca2455c51b",
+      "actual": "0xd55fe8a96fc19df5bfddf04cb3acc3bd39d4e9c804e4bab46b7802ca2455c51b",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationOriginalWallet.t.sol/MigrationOriginalWalletTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "expected": "0x899c616dad43b8cbe60dea0df9ada4bb075216d831452fa2b7f6bbb5ee0b8eee",
+      "metadata": "0x899c616dad43b8cbe60dea0df9ada4bb075216d831452fa2b7f6bbb5ee0b8eee",
+      "actual": "0x899c616dad43b8cbe60dea0df9ada4bb075216d831452fa2b7f6bbb5ee0b8eee",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "expected": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "metadata": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "actual": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationForkBase.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "expected": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "metadata": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "actual": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationRecoveryDonation.t.sol/RecoveryHostileRate.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "expected": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "metadata": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "actual": "0xf7a2581268ebdf14c333e7936f32675d9c474cfe5e7740a3bafd067d63e35999",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationRecoveryEarlier.t.sol/MigrationRecoveryEarlierTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+      "expected": "0x856f87a57efbb145e49e1073bea5644185c529d608f6f8037aa372d7be53bf30",
+      "metadata": "0x856f87a57efbb145e49e1073bea5644185c529d608f6f8037aa372d7be53bf30",
+      "actual": "0x856f87a57efbb145e49e1073bea5644185c529d608f6f8037aa372d7be53bf30",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationRecoveryGas.t.sol/MigrationRecoveryGasTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+      "expected": "0x63b804a67ce79a764b5134f618f9bddf1a6859d5d3026b853e877cea29e5edea",
+      "metadata": "0x63b804a67ce79a764b5134f618f9bddf1a6859d5d3026b853e877cea29e5edea",
+      "actual": "0x63b804a67ce79a764b5134f618f9bddf1a6859d5d3026b853e877cea29e5edea",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationRecoveryWeighted.t.sol/MigrationRecoveryWeightedTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+      "expected": "0x6c88b39dbc5493db2c7dbfa50e5a2c9b60068fa4dbe17b535a7aedf4e6630415",
+      "metadata": "0x6c88b39dbc5493db2c7dbfa50e5a2c9b60068fa4dbe17b535a7aedf4e6630415",
+      "actual": "0x6c88b39dbc5493db2c7dbfa50e5a2c9b60068fa4dbe17b535a7aedf4e6630415",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "expected": "0xcc540646a2d9a55c3b36e1eec81db15129eb446636307bae83f6936a73b4e71d",
+      "metadata": "0xcc540646a2d9a55c3b36e1eec81db15129eb446636307bae83f6936a73b4e71d",
+      "actual": "0xcc540646a2d9a55c3b36e1eec81db15129eb446636307bae83f6936a73b4e71d",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "expected": "0xb5563a7d41a0c656e2c010e036a0d54d96ceecb2009caa4572fd8b705bbc1723",
+      "metadata": "0xb5563a7d41a0c656e2c010e036a0d54d96ceecb2009caa4572fd8b705bbc1723",
+      "actual": "0xb5563a7d41a0c656e2c010e036a0d54d96ceecb2009caa4572fd8b705bbc1723",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "expected": "0x584e56a021ecf469e8a5e328fa260e9cc0a52e80ba45312ab5d65ea494a47e92",
+      "metadata": "0x584e56a021ecf469e8a5e328fa260e9cc0a52e80ba45312ab5d65ea494a47e92",
+      "actual": "0x584e56a021ecf469e8a5e328fa260e9cc0a52e80ba45312ab5d65ea494a47e92",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationWeightedLiquid.t.sol/MigrationWeightedLiquidTest.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+      "expected": "0x0f4f4b9b14c1ff464e0b61194dd8c255429003924ec50aae560bba85836a9f49",
+      "metadata": "0x0f4f4b9b14c1ff464e0b61194dd8c255429003924ec50aae560bba85836a9f49",
+      "actual": "0x0f4f4b9b14c1ff464e0b61194dd8c255429003924ec50aae560bba85836a9f49",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationWeightedLiquid.t.sol/WeightedLiquidReceiver.json",
+      "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+      "expected": "0x0f4f4b9b14c1ff464e0b61194dd8c255429003924ec50aae560bba85836a9f49",
+      "metadata": "0x0f4f4b9b14c1ff464e0b61194dd8c255429003924ec50aae560bba85836a9f49",
+      "actual": "0x0f4f4b9b14c1ff464e0b61194dd8c255429003924ec50aae560bba85836a9f49",
+      "match": true
+    },
+    {
+      "artifact": "out/MigrationWeightedLiquidConfiguration.t.sol/MigrationWeightedLiquidConfigurationTest.json",
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+      "expected": "0xa483e23e6cea175e91414377ad2bc0ff4acde3e95210010962100579394fc5eb",
+      "metadata": "0xa483e23e6cea175e91414377ad2bc0ff4acde3e95210010962100579394fc5eb",
+      "actual": "0xa483e23e6cea175e91414377ad2bc0ff4acde3e95210010962100579394fc5eb",
+      "match": true
+    }
+  ],
+  "producerAndIndependentRuntimeMatches": [
+    {
+      "address": "0x0a69db3b30b7cb13eaff786832e062d157630bb2",
+      "artifact": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xf8cc608fb1269f46fcf368d5d30a5a3234b9c2e7c3ea408df886b780a507ef68"
+    },
+    {
+      "address": "0xcd29f772d1c9dbdbafdb0e54504160a5a977c0e8",
+      "artifact": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xa3d43bb6328c9ae47a95afa2845235c97f235045e7518f7d8d6642ce700febe2"
+    },
+    {
+      "address": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+      "artifact": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0x7c970009268015b229ed977b83a3104fc65679cf92fd540e40441d934b12f1de"
+    },
+    {
+      "address": "0x2f0c891b4e9a1c9833dd3f7814d1a76f684797e9",
+      "artifact": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xb632ce74ecb444335db79f7bddd4463edd448725000b259f586ffa4bac6ff90b"
+    },
+    {
+      "address": "0xb084b225aa4395b47cc7affd375b8f56fc26083f",
+      "artifact": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xc061aa636c86664f207e7786b0efbe0b6858f69f6cdc11228e797134712d58b2"
+    }
+  ],
+  "qualification": "Rebuilds changed raw artifact JSON hashes. No claim that every post-run artifact JSON equals its admitted raw hash. Current source hashes, compiled metadata inputs, and the five independently captured runtime bytes reconcile; producer seal and source snapshots remain untouched."
+}

@@ -102,7 +102,7 @@ contract MigrationWeightedReceiptTest is MigrationWeightedReceiptForkBase {
             oldReceipt.stakingState().gonsPerUnit);
         Migration.WeightedReceiptEntitlementInput[] memory a_ = _wsInputs(wsWallet, acquiredGons);
         vm.prank(migrationOwner);
-        (bool restored_,) = detf.call(abi.encodeCall(Allocation.configureWeightedReceiptEntitlements, (a_)));
+        (bool restored_,) = detf.call(abi.encodeCall(Allocation.configureWeightedReceiptEntitlements, (a_, pricingId)));
         assertFalse(restored_);
         _surrenderWs(100);
     }

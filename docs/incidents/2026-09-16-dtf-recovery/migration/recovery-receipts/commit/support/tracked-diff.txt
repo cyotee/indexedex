@@ -1,0 +1,418 @@
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+index 1737b863..161da97c 100644
+--- a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -1,5 +1,29 @@
+ # Bounded Migration operator runbook
+ 
++## Finite conversion and recovery receipt selection
++
++Add `--selection conversions-and-recoveries` to `collect-receipts` to select
++every authenticated row in `conversions.csv` and `observed-recoveries.csv`.
++Omitting selection preserves the existing purchase/claim collector. No execution
++command accepts selection. The same five read methods, provider, anchor, exclusive
++output and safe raw capture rules below apply. Do not replay the old purchase
++archive separately. Counts and request hashes derive from complete bound rows.
++
++Every selected row retains its original fields and logical locator. Recovery
++matching requires exact transaction, log index, asset, recipient, integer amount
++and declared block. Conversion matching requires exact output asset, recipient,
++amount and declared block; zero/multiple matches and shared transactions stay
++explicit. Blank amounts stay unknown, never zero. Candidate transfers and exact
++matches are retained individually, never allocated transaction totals.
++
++These are reviewed observations only. Keep token/native units separate. Labels
++such as `is_external_recovery=false`, `deduct_from_R=false` or blank `R_eth`
++are historical fields, not proof of zero compensation or approved deductions.
++Matching gross output is not net contribution, current control, transferred
++entitlement, principal/reward attribution, W0/Q0 or source admission. This
++selection does not relax direct-EOA claim admission. The NON-ISSUABLE archive
++remains rejected by operational intake and does not close old candidate unknowns.
++
+ ## Finite named receipt evidence
+ 
+ ```sh
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+index a747e8e8..8d2e9126 100644
+--- a/scripts/recovery/dtf-migration/cli.ts
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -11,9 +11,11 @@ import { exportBundle } from "./bundle.js";
+ import { materializeBundle } from "./bundle-materialize.js";
+ import { deriveCandidateFile } from "./candidates.js";
+ import { collectReceiptFile } from "./receipt-evidence.js";
++import { receiptSelection } from "./receipt-input.js";
+ 
+ export const help = `Bounded Migration operator
+   bun scripts/recovery/dtf-migration/cli.ts collect-receipts --input <complete-historical-tree> --output <new-directory> --rpc-alias robinhood_mainnet_alchemy
++    [--selection conversions-and-recoveries] (default: purchases-and-claims)
+   bun scripts/recovery/dtf-migration/cli.ts derive-candidates --input <complete-historical-tree> --output <new-directory>
+   bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
+   bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
+@@ -75,7 +77,7 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
+ export async function main(args: readonly string[]): Promise<void> {
+   const { values, positionals, tokens } = parseArgs({
+     args: [...args], allowPositionals: true, strict: true, tokens: true,
+-    options: { input: { type: "string" }, output: { type: "string" },
++    options: { input: { type: "string" }, output: { type: "string" }, selection: { type: "string" },
+       manifest: { type: "string" }, bundle: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
+       "execute-local": { type: "boolean" }, "instance-id": { type: "string" },
+       broadcast: { type: "boolean" }, "confirm-chain": { type: "string" },
+@@ -85,6 +87,9 @@ export async function main(args: readonly string[]): Promise<void> {
+       "fork-block": { type: "string" }, port: { type: "string" }, evidence: { type: "string" } },
+   });
+   const suppliedOptions = tokens.filter((token) => token.kind === "option").map((token) => token.name);
++  if (values.selection !== undefined && positionals[0] !== "collect-receipts") {
++    throw new PreparationError("INPUT", "selection requires collect-receipts");
++  }
+   if (new Set(suppliedOptions).size !== suppliedOptions.length) {
+     throw new PreparationError("INPUT", "duplicate options are not accepted");
+   }
+@@ -100,10 +105,11 @@ export async function main(args: readonly string[]): Promise<void> {
+   switch (positionals[0]) {
+     case "collect-receipts": {
+       if (!values.input || !values.output || !values["rpc-alias"]
+-        || suppliedOptions.some((name) => !["input", "output", "rpc-alias"].includes(name))) {
++        || suppliedOptions.some((name) => !["input", "output", "rpc-alias", "selection"].includes(name))) {
+         throw new PreparationError("INPUT", "collect-receipts requires only input, output and existing rpc-alias");
+       }
+-      const archive = await collectReceiptFile(values.input, values.output, values["rpc-alias"]);
++      const selection = receiptSelection.parse(values.selection ?? "purchases-and-claims");
++      const archive = await collectReceiptFile(values.input, values.output, values["rpc-alias"], selection);
+       console.log(JSON.stringify({ command: "collect-receipts", authenticated: archive.authenticated,
+         references: archive.references, distinctTransactions: archive.distinctTransactions,
+         completeAssociations: archive.completeAssociations, referenceConflicts: archive.referenceConflicts }));
+diff --git a/scripts/recovery/dtf-migration/receipt-evidence.ts b/scripts/recovery/dtf-migration/receipt-evidence.ts
+index 05cbdb06..d8527260 100644
+--- a/scripts/recovery/dtf-migration/receipt-evidence.ts
++++ b/scripts/recovery/dtf-migration/receipt-evidence.ts
+@@ -8,6 +8,7 @@ import { PreparationError } from "./schema.js";
+ import { ANCHOR, associationConflicts, block, quantity, receipt, transaction } from "./receipt-association.js";
+ import type { Associated, Transaction, Receipt } from "./receipt-association.js";
+ import { archiveVersion, receiptReferences, receiptRequests } from "./receipt-input.js";
++import type { ReceiptSelection } from "./receipt-input.js";
+ import { ReceiptRpc } from "./receipt-rpc.js";
+ import { reconcileReference } from "./receipt-reconciliation.js";
+ 
+@@ -30,10 +31,12 @@ export type CollectionResult = {
+   readonly transactionObservation: Transaction | null; readonly receiptObservation: Receipt | null;
+ };
+ 
++// Keep the existing positional API and optional selection for default callers.
+ // Also used with a local wire transport by offline tests; the CLI never accepts a URL.
+-export async function collectReceipts(inputRoot: string, output: string, rpc: ReceiptRpc) {
++export async function collectReceipts(inputRoot: string, output: string, rpc: ReceiptRpc,
++  selection: ReceiptSelection = "purchases-and-claims") {
+   const input = await loadCandidateInput(inputRoot);
+-  const refs = receiptReferences(input), requests = receiptRequests(refs);
++  const refs = receiptReferences(input, selection), requests = receiptRequests(refs);
+   const outputDirectory = resolve(output);
+   await mkdir(outputDirectory, { recursive: false });
+   await mkdir(join(outputDirectory, "http"));
+@@ -47,7 +50,8 @@ export async function collectReceipts(inputRoot: string, output: string, rpc: Re
+     identities: [...input.bytes].map(([path, bytes]) => ({ path, bytes: bytes.byteLength, sha256: fingerprint(bytes) })),
+     qualification: "hash-authenticated recovered historical bodies, not located original captures",
+   });
+-  await save("references.json", { refs, requests });
++  await save("references.json", { refs, requests,
++    ...(selection === "conversions-and-recoveries" ? { selection } : {}) });
+   const chain = await rpc.read("eth_chainId", [], quantity);
+   const anchor = await rpc.read("eth_getBlockByNumber", [`0x${BigInt(ANCHOR.number).toString(16)}`, false], block);
+   const authenticated = chain.kind === "success" && BigInt(chain.value) === 4663n && anchor.kind === "success"
+@@ -97,13 +101,17 @@ export async function collectReceipts(inputRoot: string, output: string, rpc: Re
+   const reconciliation = refs.map((ref) => {
+     const result = results.find((r) => r.tx === ref.tx);
+     if (!result?.observed) return { locator: ref.row.locator, tx: ref.tx, kind: ref.kind,
+-      historicalFields: ref.row.fields, conflicts: result?.conflicts ?? ["missing-transaction"], observation: null };
++      historicalFields: ref.row.fields, conflicts: result?.conflicts ?? ["missing-transaction"], observation: null,
++      ...(selection === "conversions-and-recoveries" ? { status: "reviewed-observations-only",
++        priorCompensation: null, compensationDeduction: null, currentCustody: null,
++        qualifications: ["unavailable-not-zero", "no-eligibility-or-source-admission"] } : {}) };
+     const reconciled = reconcileReference(ref, result.observed, result.references.length);
+     return { ...reconciled, conflicts: [...new Set([...result.conflicts, ...reconciled.conflicts])] };
+   });
+   const reconciliationIdentity = await save("reconciliation.json", reconciliation);
+   const http = await save("http-manifest.json", [...rpc.captures].sort((a, b) => a.id - b.id));
+   const index = { version: archiveVersion.value, status: "NON-ISSUABLE-RECEIPT-OBSERVATIONS",
++    ...(selection === "conversions-and-recoveries" ? { selection } : {}),
+     provider: "robinhood_mainnet_alchemy", chainId: "4663", anchor: ANCHOR, authenticated,
+     inputs, http, reconciliation: reconciliationIdentity, results,
+     references: refs.length, distinctTransactions: requests.length,
+@@ -116,9 +124,10 @@ export async function collectReceipts(inputRoot: string, output: string, rpc: Re
+   await save("archive.json", index);
+   return index;
+ }
+-export async function collectReceiptFile(input: string, output: string, alias: string) {
++export async function collectReceiptFile(input: string, output: string, alias: string,
++  selection: ReceiptSelection = "purchases-and-claims") {
+   // Authenticate before resolving credentials; offline input errors never access RPC.
+-  receiptReferences(await loadCandidateInput(input));
++  receiptReferences(await loadCandidateInput(input), selection);
+   const endpoint = await configuredEndpoint(alias);
+-  return collectReceipts(input, output, new ReceiptRpc(endpoint, join(resolve(output), "http")));
++  return collectReceipts(input, output, new ReceiptRpc(endpoint, join(resolve(output), "http")), selection);
+ }
+diff --git a/scripts/recovery/dtf-migration/receipt-input.ts b/scripts/recovery/dtf-migration/receipt-input.ts
+index 0d155bb8..033cf0dc 100644
+--- a/scripts/recovery/dtf-migration/receipt-input.ts
++++ b/scripts/recovery/dtf-migration/receipt-input.ts
+@@ -1,5 +1,5 @@
+ import { z } from "zod";
+-import { field, integer, table, unique, candidateError } from "./candidate-input.js";
++import { field, integer, optionalInteger, table, unique, candidateError } from "./candidate-input.js";
+ import type { CandidateInput, TableRow } from "./candidate-input.js";
+ import { deriveNfts, legacy } from "./candidate-nfts.js";
+ import type { NftObservation } from "./candidate-nfts.js";
+@@ -9,16 +9,45 @@ import { hash } from "./schema.js";
+ export const claimSource = "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00";
+ export const sy = "0xb55604cf4dcdabb362078e106d20f98512391edf";
+ export const earlier = "0xaf0e1967c8f755c747615c5427108bc549ca1122";
++export const receiptSelection = z.enum(["purchases-and-claims", "conversions-and-recoveries"]);
++export type ReceiptSelection = z.infer<typeof receiptSelection>;
+ export type ReceiptReference =
+   | { readonly kind: "nft"; readonly row: TableRow; readonly tx: string; readonly nft: NftObservation;
+       readonly expectedTransfers: readonly TableRow[] }
+   | { readonly kind: "claim"; readonly row: TableRow; readonly tx: string; readonly recipient: string;
+       readonly principal: string; readonly output: string; readonly expectedBlock: string;
++      readonly expectedTransfers: readonly TableRow[] }
++  | { readonly kind: "conversion" | "recovery"; readonly row: TableRow; readonly tx: string;
++      readonly recipient: string; readonly asset: string; readonly amount: string | null;
++      readonly decimals: string; readonly expectedBlock: string; readonly logIndex: string | null;
+       readonly expectedTransfers: readonly TableRow[] };
+ 
+-export function receiptReferences(input: CandidateInput): readonly ReceiptReference[] {
++export function receiptReferences(input: CandidateInput, selection: ReceiptSelection = "purchases-and-claims"): readonly ReceiptReference[] {
+   if (input.sources.chainId !== 4663 || String(input.sources.evidenceCutoff.block) !== ANCHOR.number
+     || input.sources.evidenceCutoff.hash.toLowerCase() !== ANCHOR.hash) candidateError("receipt input cutoff differs");
++  receiptSelection.parse(selection);
++  if (selection === "conversions-and-recoveries") {
++    const transfers = table(input, "evidence/transfers.csv");
++    return (["conversions.csv", "observed-recoveries.csv"] as const).flatMap((path) => {
++      const rows = table(input, path), recovery = path === "observed-recoveries.csv";
++      unique(rows, recovery ? "recovery_id" : "conversion_id");
++      return rows.map((row): ReceiptReference => {
++        const tx = hash.parse(field(row, "tx")), recipient = rpcAddress.parse(field(row, "recipient"));
++        const asset = rpcAddress.parse(field(row, recovery ? "asset" : "output_asset"));
++        const decimals = integer(field(row, recovery ? "decimals" : "output_decimals"));
++        if (BigInt(decimals) > 255n) candidateError(`invalid token decimals: ${row.locator}`);
++        const expectedBlock = integer(field(row, "block"));
++        if (BigInt(expectedBlock) > BigInt(ANCHOR.number)) candidateError(`declared block after anchor: ${row.locator}`);
++        const logIndex = recovery ? integer(field(row, "log_index")) : null;
++        return { kind: recovery ? "recovery" : "conversion", row, tx, recipient, asset, decimals,
++          amount: optionalInteger(field(row, recovery ? "observed_amount_raw" : "output_raw")),
++          expectedBlock, logIndex,
++          expectedTransfers: transfers.filter((r) => field(r, "tx").toLowerCase() === tx
++            && field(r, "asset").toLowerCase() === asset && field(r, "to").toLowerCase() === recipient
++            && (logIndex === null || field(r, "log_index") === logIndex)) };
++      });
++    }).sort((a, b) => a.row.locator.localeCompare(b.row.locator));
++  }
+   for (const [id, path] of [["S008", "evidence/weighted-bonds.csv"], ["S009", "evidence/earlier-cp-bonds.csv"]] as const) {
+     if (input.sources.sources.find((s) => s.id === id)?.path !== path) candidateError(`receipt source path differs: ${id}`);
+   }
+diff --git a/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts b/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts
+index 3ba48a4b..ae9ddd94 100644
+--- a/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts
++++ b/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts
+@@ -7,7 +7,7 @@ import { id } from "ethers";
+ import { loadCandidateInput } from "./candidate-input.js";
+ import { receiptReferences, legacy } from "./receipt-input.js";
+ import { reconcileReference } from "./receipt-reconciliation.js";
+-import { inputFixture, purchaseTx, purchaseReceipt, purchaseBlock, wallet } from "./receipt.fixture.js";
++import { inputFixture, purchaseTx, purchaseReceipt, purchaseBlock, wallet, claimTx, claimReceipt } from "./receipt.fixture.js";
+ import { preparationInput } from "./schema.js";
+ import { preparedEnvelope } from "./bundle.js";
+ import { executionManifest } from "./execution-schema.js";
+@@ -79,3 +79,74 @@ test("receipt archive format cannot enter preparation, validation or execution l
+   const archive = { version: "dtf-finite-receipt-evidence-v1", status: "NON-ISSUABLE-RECEIPT-OBSERVATIONS" };
+   for (const schema of [preparationInput, preparedEnvelope, executionManifest]) assert.equal(schema.safeParse(archive).success, false);
+ });
++async function outputReferences() {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-output-"));
++  try {
++    return receiptReferences(await loadCandidateInput(await inputFixture(parent)), "conversions-and-recoveries");
++  } finally { await rm(parent, { recursive: true }); }
++}
++test("conversion reconciliation preserves exact native output and blank historical principal", async () => {
++  const ref = (await outputReferences()).find((r) => r.kind === "conversion" && r.tx === purchaseTx.hash);
++  assert.ok(ref);
++  const result = reconcileReference(ref, observation, 1);
++  assert.ok("expectedOutput" in result);
++  assert.equal(result.expectedOutput.amount, "12");
++  assert.equal(result.expectedOutput.decimals, "18");
++  assert.equal(result.historicalFields["principal_raw"], "");
++  assert.equal(result.outputs.length, 1);
++  assert.deepEqual(result.conflicts, []);
++  assert.equal(result.compensationDeduction, null);
++});
++test("conversion ambiguity retains individual matches and never assigns aggregate output", async () => {
++  const ref = (await outputReferences()).find((r) => r.kind === "conversion" && r.tx === purchaseTx.hash);
++  assert.ok(ref);
++  const output = purchaseReceipt.logs[1]; assert.ok(output);
++  const result = reconcileReference(ref, { ...observation,
++    receipt: { ...purchaseReceipt, logs: [...purchaseReceipt.logs, { ...output, logIndex: "0x4" }] } }, 2);
++  assert.ok("outputs" in result);
++  assert.equal(result.outputs.length, 2);
++  assert.ok(result.conflicts.includes("ambiguous-exact-output"));
++  assert.ok(result.conflicts.includes("shared-transaction-output-attribution-unresolved"));
++});
++test("unknown output remains null and missing rather than matching a zero transfer", async () => {
++  const ref = (await outputReferences()).find((r) => r.kind === "conversion");
++  assert.ok(ref && ref.kind === "conversion");
++  const result = reconcileReference({ ...ref, amount: null }, observation, 1);
++  assert.ok("expectedOutput" in result);
++  assert.equal(result.expectedOutput.amount, null);
++  assert.equal(result.outputs.length, 0);
++  assert.ok(result.conflicts.includes("unknown-output-amount"));
++});
++for (const [label, change] of [
++  ["asset", { asset: legacy.dtf }], ["recipient", { recipient: legacy.weighted }],
++  ["amount", { amount: "10" }], ["index", { logIndex: "2" }],
++  ["block", { expectedBlock: "12" }],
++] as const) test(`recovery matching requires the exact declared ${label}`, async () => {
++  const ref = (await outputReferences()).find((r) => r.kind === "recovery");
++  assert.ok(ref && ref.kind === "recovery");
++  const b = { ...purchaseBlock, hash: claimTx.blockHash, number: "0xb", transactions: [claimTx.hash] };
++  const result = reconcileReference({ ...ref, ...change }, {
++    transaction: claimTx, receipt: claimReceipt, byHash: b, byNumber: b,
++  }, 1);
++  assert.ok(result.conflicts.includes(label === "block" ? "declared-output-block" : "missing-exact-output"));
++});
++test("conversion canonical contradiction remains a conflict with a matching output", async () => {
++  const ref = (await outputReferences()).find((r) => r.kind === "conversion" && r.tx === purchaseTx.hash);
++  assert.ok(ref);
++  const result = reconcileReference(ref, { ...observation, byNumber: { ...purchaseBlock, hash: claimTx.blockHash } }, 1);
++  assert.ok(result.conflicts.includes("block-hash"));
++});
++test("selection parses native integers and rejects declared blocks beyond the anchor", async () => {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-output-schema-"));
++  try {
++    const input = await loadCandidateInput(await inputFixture(parent));
++    const raw = input.bytes.get("observed-recoveries.csv"); assert.ok(raw);
++    const text = new TextDecoder().decode(raw);
++    for (const [from, to] of [['"9","11"', '"9.5","11"'], ['"9","11"', '"-9","11"'],
++      ['"9","11"', '"9","108944664"'], ['"9","9","11"', '"256","9","11"']]) {
++      assert.ok(from && to && text.includes(from));
++      const bytes = new Map(input.bytes).set("observed-recoveries.csv", new TextEncoder().encode(text.replace(from, to)));
++      assert.throws(() => receiptReferences({ ...input, bytes }, "conversions-and-recoveries"));
++    }
++  } finally { await rm(parent, { recursive: true }); }
++});
+diff --git a/scripts/recovery/dtf-migration/receipt-reconciliation.ts b/scripts/recovery/dtf-migration/receipt-reconciliation.ts
+index defd60ad..2387be57 100644
+--- a/scripts/recovery/dtf-migration/receipt-reconciliation.ts
++++ b/scripts/recovery/dtf-migration/receipt-reconciliation.ts
+@@ -66,6 +66,27 @@ export function reconcileReference(ref: ReceiptReference, observed: Associated,
+   const base = { locator: ref.row.locator, kind: ref.kind, tx: ref.tx, historicalFields: ref.row.fields,
+     transactionContext, savedTransferLocators: ref.expectedTransfers.map((r) => r.locator) };
+   switch (ref.kind) {
++    case "conversion":
++    case "recovery": {
++      const candidates = decoded.filter((t) => t.amount !== null && t.address === ref.asset && t.to === ref.recipient);
++      const outputs = candidates.filter((t) => ref.amount !== null && t.amount === ref.amount
++        && (ref.logIndex === null || t.logIndex === ref.logIndex));
++      if (ref.amount === null) conflicts.push("unknown-output-amount");
++      if (outputs.length === 0) conflicts.push("missing-exact-output");
++      if (outputs.length > 1) conflicts.push("ambiguous-exact-output");
++      if (transactionContext.block !== ref.expectedBlock) conflicts.push("declared-output-block");
++      if (sharedReferences > 1) conflicts.push("shared-transaction-output-attribution-unresolved");
++      return { ...base, conflicts, candidates, outputs,
++        expectedOutput: { asset: ref.asset, recipient: ref.recipient, amount: ref.amount,
++          decimals: ref.decimals, block: ref.expectedBlock, logIndex: ref.logIndex },
++        status: "reviewed-observations-only",
++        priorCompensation: null, compensationDeduction: null, currentCustody: null,
++        qualifications: ["native-token-units-not-ETH-C0-or-current-value",
++          "internal-conversion-label-not-compensation-status", "gross-output-not-net-contribution",
++          "principal-rewards-and-transaction-totals-not-allocated",
++          "prior-compensation-unknown-not-zero", "no-entitlement-transfer-or-current-control-proved",
++          "known-output-only-not-full-W0-or-Q0", "no-eligibility-or-source-admission"] };
++    }
+     case "nft": {
+       const n = ref.nft, target = n.collection === legacy.weightedNft ? legacy.weighted : earlier;
+       const mints = decoded.filter((t) => t.address === n.collection && t.from === legacy.zero);
+diff --git a/scripts/recovery/dtf-migration/receipt.fixture.ts b/scripts/recovery/dtf-migration/receipt.fixture.ts
+index 2032aba6..89bdfc93 100644
+--- a/scripts/recovery/dtf-migration/receipt.fixture.ts
++++ b/scripts/recovery/dtf-migration/receipt.fixture.ts
+@@ -8,6 +8,7 @@ import { z } from "zod";
+ import { canonical, fingerprint } from "./provenance.js";
+ import { ANCHOR, block, receipt, transaction } from "./receipt-association.js";
+ import { claimSource, legacy, sy } from "./receipt-input.js";
++import type { ReceiptSelection } from "./receipt-input.js";
+ import { ReceiptRpc } from "./receipt-rpc.js";
+ import { collectReceipts } from "./receipt-evidence.js";
+ 
+@@ -35,12 +36,12 @@ export const purchaseReceipt = receipt.parse({ ...commonLog, from: wallet, to: l
+ const claimCommon = { blockHash: claimBlockHash, blockNumber: "0xb", transactionIndex: "0x0", transactionHash: claimHash, removed: false };
+ export const claimTx = { ...purchaseTx, ...claimCommon, hash: claimHash, to: claimSource,
+   input: `${id("withdrawClaim(uint256)").slice(0, 10)}${word("5")}` };
+-export const claimReceipt = { ...purchaseReceipt, ...claimCommon, to: claimSource, logs: [
++export const claimReceipt = receipt.parse({ ...purchaseReceipt, ...claimCommon, to: claimSource, logs: [
+   { ...claimCommon, address: sy, logIndex: "0x1", data: `0x${word("9")}`,
+     topics: [transferTopic, addressTopic(`0x${"2".repeat(40)}`), addressTopic(wallet)] },
+   { ...claimCommon, address: claimSource, logIndex: "0x2", data: `0x${word("5")}${word("9")}`,
+     topics: [id("ClaimWithdrawn(address,uint256,uint256)"), addressTopic(wallet)] },
+-] };
++] });
+ const csv = (header: readonly string[], rows: readonly (readonly string[])[]) =>
+   [header, ...rows].map((r) => r.map((v) => `"${v}"`).join(",")).join("\n") + "\n";
+ export async function inputFixture(parent: string) {
+@@ -58,6 +59,10 @@ export async function inputFixture(parent: string) {
+     ["../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv", csv(["tx", "category", "bond_token_id", "dtf_wei", "payer", "bond_recipient"], [[txHash, "bond", "3", "12", wallet, wallet]])],
+     ["conversions.csv", csv(["conversion_id", "kind", "recipient", "principal_raw", "output_raw", "output_asset", "output_decimals", "block", "tx"], [
+       ["claim", "legacy_weight_to_sy", wallet, "5", "9", sy, "9", "11", claimHash],
++      ["conversion", "detf_to_sdetf", legacy.weighted, "", "12", legacy.dtf, "18", "10", txHash],
++    ])],
++    ["observed-recoveries.csv", csv(["recovery_id", "recipient", "asset", "decimals", "observed_amount_raw", "block", "tx", "log_index", "R_eth", "deduct_from_R"], [
++      ["recovery", wallet, sy, "9", "9", "11", claimHash, "1", "", "false"],
+     ])],
+   ]);
+   const binding = (text: string) => ({ bytes: Buffer.byteLength(text), sha256: fingerprint(text) });
+@@ -103,14 +108,15 @@ export async function wireFixture(respond: (q: WireRequest) => unknown) {
+     const closed = once(server, "close"); server.close(); await closed;
+   } };
+ }
+-export async function collectionFixture(respond: (q: WireRequest) => unknown = fixtureResponse) {
++export async function collectionFixture(respond: (q: WireRequest) => unknown = fixtureResponse,
++  selection: ReceiptSelection = "purchases-and-claims") {
+   const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-receipts-"));
+   const root = await inputFixture(parent);
+   const server = await wireFixture(respond);
+   const output = join(parent, "archive");
+   try {
+     const rpc = new ReceiptRpc(server.url, join(output, "http"));
+-    const archive = await collectReceipts(root, output, rpc);
++    const archive = await collectReceipts(root, output, rpc, selection);
+     return { archive, captures: rpc.captures };
+   } finally { await server.close(); await rm(parent, { recursive: true }); }
+ }
+diff --git a/scripts/recovery/dtf-migration/receipt.test.ts b/scripts/recovery/dtf-migration/receipt.test.ts
+index 1a7aac03..598a0721 100644
+--- a/scripts/recovery/dtf-migration/receipt.test.ts
++++ b/scripts/recovery/dtf-migration/receipt.test.ts
+@@ -118,3 +118,26 @@ test("CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs
+       "--rpc-alias", "robinhood_mainnet_alchemy", ...extra]));
+   }
+ });
++test("explicit conversion selection collects complete tables without purchasing references", async () => {
++  const { archive, captures } = await collectionFixture(fixtureResponse, "conversions-and-recoveries");
++  assert.equal(archive.references, 3);
++  assert.equal(archive.distinctTransactions, 2);
++  assert.equal(archive.completeAssociations, 2);
++  assert.deepEqual(archive.results.flatMap((r) => r.references).sort(), [
++    "conversions.csv#row=2", "conversions.csv#row=3", "observed-recoveries.csv#row=2",
++  ]);
++  assert.equal(captures.filter((c) => c.method === "eth_getTransactionByHash").length, 2);
++});
++test("conversion selection retains every row unavailable on anchor failure", async () => {
++  const { archive, captures } = await collectionFixture((q) => q.method === "eth_chainId"
++    ? { jsonrpc: "2.0", id: q.id, result: "0x1" } : fixtureResponse(q), "conversions-and-recoveries");
++  assert.equal(archive.authenticated, false);
++  assert.equal(archive.references, 3);
++  assert.equal(archive.completeAssociations, 0);
++  assert.deepEqual(captures.map((c) => c.method), ["eth_chainId", "eth_getBlockByNumber"]);
++});
++test("selection rejects unknown values and cannot leak into execution commands", async () => {
++  await assert.rejects(main(["collect-receipts", "--input", "absent", "--output", "new",
++    "--rpc-alias", "robinhood_mainnet_alchemy", "--selection", "all"]), /Invalid enum/);
++  await assert.rejects(main(["activate", "--selection", "conversions-and-recoveries"]), /selection requires/);
++});

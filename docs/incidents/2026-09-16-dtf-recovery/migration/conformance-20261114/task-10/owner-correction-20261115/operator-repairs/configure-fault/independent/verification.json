@@ -1,0 +1,957 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "scope": "Configure fault-after-mined CLI interruption repair in execution.ts and execution.test.ts only; excludes task 10, shared gate and fresh real lifecycle",
+  "confidence": "high",
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "matches": true,
+      "bytes": 19008
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+      "matches": true,
+      "bytes": 20619
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/transport.fixture.ts",
+      "sha256": "8e01a4513b0e46b5a57dcbe406f1b51073a1c36d765c19c0a64c9944d5b33994",
+      "matches": true,
+      "bytes": 13916
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-fault.ts",
+      "sha256": "3bca8de7bdacd6e90f650dc15f42ef07229936dca694ae8b670d343f4b873c0c",
+      "matches": true,
+      "bytes": 6884
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "matches": true,
+      "bytes": 19008
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+      "matches": true,
+      "bytes": 20619
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+      "matches": true,
+      "bytes": 14667
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67",
+      "matches": true,
+      "bytes": 29608
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "sha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+      "matches": true,
+      "bytes": 12513
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+      "matches": true,
+      "bytes": 6855
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+      "matches": true,
+      "bytes": 8522
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution.fixture.ts",
+      "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+      "matches": true,
+      "bytes": 13686
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+      "matches": true,
+      "bytes": 16042
+    }
+  ],
+  "evidence": {
+    "rawFiles": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-07-test-junk.log",
+        "sha256": "18bc8619c125c110dec15f7a40238435df12b9ead20acbe624270be2c489d82e",
+        "bytes": 892
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-06-manual.log",
+        "sha256": "fcbe08942c638f06c9cf3a5f4a7d3cd24a46e2007bab1eebb6b13be959f88c17",
+        "bytes": 2525
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-11-whitespace.log",
+        "sha256": "a8a61c95496756206af58e3c0c0a38e61cb7582a47fe1653f35bfedbd988ae50",
+        "bytes": 842
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-10-no-excuse.log",
+        "sha256": "bffd4e161818db2160c93a9673771827c004795030d22ce128b859fcc4b0f85c",
+        "bytes": 1437
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-04-configure-matrix.log",
+        "sha256": "bb502b9d7c64205c56e55ec04f5e17ed418ef2ccdad8a968d0ea91cfddb4ad6f",
+        "bytes": 1797
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-08-scope.log",
+        "sha256": "72527b8b5ae207607d4987412cddbf86d5dea9e8e615a5e366da99bcda502a8e",
+        "bytes": 1563
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-09-manual.log",
+        "sha256": "66e6d33a1881fb7700d13ee319d3d1d77d10e7843326d4fbff42d2938dac7b9e",
+        "bytes": 1983
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-05-owned-suite.log",
+        "sha256": "0f501a01b4a01ebdccf2e7fbc738a9a6d12084b364dd823fede4788a9057c6e2",
+        "bytes": 5093
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-02-regression-red.log",
+        "sha256": "29be1feb64f2b5d8d48efb3d5fe71c2272dcdc6cef24f7a284ed6b9d88aa4dc4",
+        "bytes": 3928
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-01-baseline.log",
+        "sha256": "9ccc26afb987b0f6c0d068f431968496c99f7df339bb2097ef44b3a4c5687149",
+        "bytes": 3134
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/attempt-03-configure-matrix.log",
+        "sha256": "44e1810e1c01322bb475ce291debd5406cdce35bb8145b3c2759516ea30aa6b1",
+        "bytes": 5073
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/malformed-receipt-commands.json",
+        "sha256": "a3f25e5d613e994890430919205c7d6a25c4e187a8759922d33140a8074cfde4",
+        "bytes": 1290
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-requests.json",
+        "sha256": "415d8c2c283d778b197a93bd498c7c5e75d45ac0264e3591e14c354c82ab1e41",
+        "bytes": 17240
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/source-fingerprints.json",
+        "sha256": "514559910b9931899dce5d7455c383ddaf0932f58b04014552a5451327d83ba2",
+        "bytes": 1959
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-interrupted-journal.json",
+        "sha256": "0cbe0bd0f64f5e9a72b9bb680d25525fb1179fb53bbf4b67854655cb7e9e5e41",
+        "bytes": 5624
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-canonical-receipt.json",
+        "sha256": "bb15ea3b38fbb55165fdab136eaddaef78e70017012459af54b9926f3859bf74",
+        "bytes": 1003
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-resumed-completions.json",
+        "sha256": "f8274c4e9df0eca1954435abe26516220e4f6126706059aa63c7418738898e2f",
+        "bytes": 3953
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/result.json",
+        "sha256": "aa2bf9f19790c4e7066b1ecb5e6671d66b450d324fda1c2b31d831eaf40cfedf",
+        "bytes": 1093
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-stale-latest-state.json",
+        "sha256": "aa42789c3fc5bdf1bcd197ce51ae41dfc68886a673635a34bd72ba0fefbc1b11",
+        "bytes": 833
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/simulation-commands.json",
+        "sha256": "a7a3784a3c27967ad25d87da0b8b99f5d206e4e7819c157153eb91dbd80f959d",
+        "bytes": 525
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/wrong-hash-requests.json",
+        "sha256": "c6273a94b67cc5dca981de42ee469df6707071bb3b139b5c99443748ed490b14",
+        "bytes": 11944
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-canonical-receipt.json",
+        "sha256": "c15295f17ac394cf4ef0be452b62d3ceb50cad8aab9ac68dbd29ef288f8e3a72",
+        "bytes": 1136
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-cli-1.log",
+        "sha256": "85d6f3c00c1c6a493c08a6e867d01aa9e3ef5cc4eb7e8f79947307a32db8b3f1",
+        "bytes": 135
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-cli-2.log",
+        "sha256": "898617e19523a352f210e9f5c51a8d4e2e388da65d7953d233dfcd3e0e811f4b",
+        "bytes": 2066
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-cli-3.log",
+        "sha256": "898617e19523a352f210e9f5c51a8d4e2e388da65d7953d233dfcd3e0e811f4b",
+        "bytes": 2066
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-cli-2.log",
+        "sha256": "89cdef125091e1efbb2a9908ecd60f84a662163a78308e76d1971f3fd780ada9",
+        "bytes": 2157
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-cli-commands.json",
+        "sha256": "362907774104e325b186321581cee69719b2c492f7839ca7faaf30bfeb4cbff1",
+        "bytes": 6382
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/malformed-intent-commands.json",
+        "sha256": "1afb8ecc17deecaff8aeb66985074bc27a4a07badeaaf93da713378d16716e70",
+        "bytes": 1227
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-cli-3.log",
+        "sha256": "89cdef125091e1efbb2a9908ecd60f84a662163a78308e76d1971f3fd780ada9",
+        "bytes": 2157
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-cli-1.log",
+        "sha256": "6f2fa48671325e79c2dfe9c4ae6495cad2a446d5f5bb50d64d52d569c8781a76",
+        "bytes": 135
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-cleanup.json",
+        "sha256": "b09952632791178db9b69409d7710782511a42591f2bcfca542bdca1a99d98a7",
+        "bytes": 153
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-stale-latest-state.json",
+        "sha256": "9007e16aa641efad44dba2edcc5ba1397f9b83d6376dc1be1a87ce43408be7b0",
+        "bytes": 833
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-requests.json",
+        "sha256": "dd9fb35a28c29d5b9c3529e62bd19da0b69fbd9a9ef036d3d48a5131885b406f",
+        "bytes": 19770
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-intent.json",
+        "sha256": "28bcc72b54d3ccd8041f7f1ce3160eb76660541c09aa25c836124b556ff13941",
+        "bytes": 2206
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/malformed-intent-requests.json",
+        "sha256": "44e4ad2cd9d953bacf85a6179c5da84e5164cd64abd68b37f7b2f05a23a52b48",
+        "bytes": 11751
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-interrupted-journal.json",
+        "sha256": "ae97d4ccfcb44143bb8d86d508c5f0ce67492669977f42e2aab2ce49bf90688f",
+        "bytes": 5624
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/malformed-receipt-requests.json",
+        "sha256": "0848b3c970be2faddbfe120c40d235a57a73786c507da13b4f5f61fe1ebfdd30",
+        "bytes": 11878
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/simulation-requests.json",
+        "sha256": "9a1605719ea92fdc7d7bc2cd81acad0cd295734f1e97eb43969d906accae602c",
+        "bytes": 3714
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/wrong-hash-commands.json",
+        "sha256": "69f2899705c2223c387766525389c75025027b2d5cbee2d868a77f29fb6a9f50",
+        "bytes": 1250
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-resumed-completions.json",
+        "sha256": "6a77f88f009c4a96b89ad768c1bc38e0184db20fb66cf9bf5e5b313635e5e08d",
+        "bytes": 4135
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-intent.json",
+        "sha256": "71fa377894c5a3ab00f4985c21adbb1134d17b7694f04092d040ac8b497b9cbb",
+        "bytes": 2329
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/nft-components-cleanup.json",
+        "sha256": "977e3cd44308ca6101933e68a5a4af5b542bea11b13c0ca289270bf40d3d19ef",
+        "bytes": 153
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/independent-cli-commands.json",
+        "sha256": "c3edc4f784c679c082088a459a831508c93945fb2f70ed448009cd94a2bfe84c",
+        "bytes": 6388
+      }
+    ],
+    "originalProductionSha256": "735ac6fd772b4ddbb1c57ad476145082d5654066c3ac68015e10672820edbd15",
+    "originalTestSha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+    "producerTranscript": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1dfd8/sessions/st_01a1dfd8/2026-11-15T15-33-41.800Z_b361903c-456d-428a-a73e-fb78808ca8ff.jsonl",
+    "monitorLaunches": [
+      {
+        "i": 44,
+        "id": "d8a3f925",
+        "code": "const capture = (name,command) => `cd '${root}' && { printf '%s\\\\n' 'COMMAND: ${command}'; bun --version; shasum -a 256 scripts/recovery/dtf-migration/execution{,.test}.ts scripts/recovery/dtf-migration/execution-{domain,state}.ts; ${command}; code=$?; printf 'EXIT: %s\\\\n' \"$code\"; exit \"$code\"; } 2>&1 | tee '${ev}/${name}.log'; exit ` + '${PIPESTATUS[0]}'; print(await tool.monitor({description:'Owned execution baseline',command:capture('attempt-01-baseline','bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts'),filter:'EXIT:|pass|fail|error:'})); print((await tool.bash({command:`cd '${root}' && GIT_MASTER=1 git status --short && GIT_MASTER=1 git diff -- scripts/recovery/dtf-migration/execution.ts scripts/recovery/dtf-migration/execution.test.ts`,run_in_background:true})).text);"
+      },
+      {
+        "i": 83,
+        "id": "8be87cfa",
+        "code": "print(await tool.monitor({description:'Regression before production repair',command:capture('attempt-02-regression-red',`bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts -t 'mined independent configure'`),filter:'EXIT:|pass|fail|error:|AssertionError'})); print(await tool.lsp_diagnostics({filePath:`${root}/${ev}/transport.fixture.ts`,severity:'error'}));"
+      },
+      {
+        "i": 104,
+        "id": "cc3f0950",
+        "code": "print(await tool.monitor({description:'Configure interruption regression matrix',command:capture('attempt-03-configure-matrix',`bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts -t 'mined .* configure'`),filter:'EXIT:|pass|fail|error:|AssertionError'}));"
+      },
+      {
+        "i": 128,
+        "id": "51f0b26a",
+        "code": "const q = s=>`'${s.replaceAll(\"'\", \"'\\\\''\")}'`; const capture2=(name,command)=>`cd ${q(root)} && { printf '%s\\\\n' ${q('COMMAND: '+command)}; bun --version; shasum -a 256 scripts/recovery/dtf-migration/execution{,.test}.ts scripts/recovery/dtf-migration/execution-{domain,state}.ts ${q(ev+'/transport.fixture.ts')}; ${command}; code=$?; printf 'EXIT: %s\\\\n' \"$code\"; exit \"$code\"; } 2>&1 | tee ${q(ev+'/'+name+'.log')}; exit `+'${PIPESTATUS[0]}'; print(await tool.monitor({description:'Corrected fixture regression matrix',command:capture2('attempt-04-configure-matrix',`bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts -t 'mined .* configure'`),filter:'EXIT:|pass|fail|error:|AssertionError'})); print(await tool.lsp_diagnostics({filePath:`${root}/scripts/recovery/dtf-migration/execution.ts`,severity:'error'})); print(await tool.lsp_diagnostics({filePath:`${root}/scripts/recovery/dtf-migration/execution.test.ts`,severity:'error'}));"
+      },
+      {
+        "i": 155,
+        "id": "05c7c649",
+        "code": "print(await tool.monitor({description:'Required owned execution suite',command:capture2('attempt-05-owned-suite','bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts'),filter:'EXIT:|pass|fail|error:|AssertionError'})); for(const p of ['scripts/recovery/dtf-migration/execution.test.ts',ev+'/transport.fixture.ts',ev+'/manual-fault.ts']) print(await tool.lsp_diagnostics({filePath:`${root}/${p}`,severity:'error'}));"
+      },
+      {
+        "i": 193,
+        "id": "53b23737",
+        "code": "print(await tool.monitor({description:'Required manual CLI transport QA',command:capture2('attempt-06-manual',`bun ${ev}/manual-fault.ts`),filter:'EXIT:|\"state\"|error:|AssertionError'})); print(await tool.monitor({description:'Owned test junk audit',command:capture2('attempt-07-test-junk','bun /Users/cyotee/.omo/binary-runtime/5.1.70/plugin/skills/programming/scripts/typescript/check-test-junk.ts scripts/recovery/dtf-migration/execution.test.ts'),filter:'EXIT:|finding|error|OK|passed'}));"
+      },
+      {
+        "i": 207,
+        "id": "078f83d0",
+        "code": "print(await tool.monitor({description:'Owned scope and whitespace evidence',command:capture2('attempt-08-scope',`GIT_MASTER=1 git status --short -- scripts/recovery/dtf-migration/execution.ts scripts/recovery/dtf-migration/execution.test.ts; GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/execution.ts scripts/recovery/dtf-migration/execution.test.ts; shasum -a 256 ${ev}/manual-fault.ts; awk '!/^[[:space:]]*$/ && !/^[[:space:]]*(\\\\/\\\\/|#|--)/' scripts/recovery/dtf-migration/execution.ts | wc -l`),filter:'EXIT:|error:|warning:'})); print(await tool.lsp_diagnostics({filePath:`${root}/scripts/recovery/dtf-migration/execution.test.ts`,severity:'error'})); print(await tool.lsp_diagnostics({filePath:`${root}/${ev}/transport.fixture.ts`,severity:'error'}));"
+      },
+      {
+        "i": 225,
+        "id": "d215df28",
+        "code": "print(await tool.monitor({description:'Corrected required manual QA',command:capture2('attempt-09-manual',`bun ${ev}/manual-fault.ts`),filter:'EXIT:|\"state\"|error:|AssertionError'})); print(await tool.monitor({description:'No-excuse audit availability',command:capture2('attempt-10-no-excuse',`bun /Users/cyotee/.omo/binary-runtime/5.1.70/plugin/skills/programming/scripts/typescript/check-no-excuse-rules.ts scripts/recovery/dtf-migration/execution.ts scripts/recovery/dtf-migration/execution.test.ts ${ev}/transport.fixture.ts ${ev}/manual-fault.ts`),filter:'EXIT:|error:|violation|passed'}));"
+      },
+      {
+        "i": 276,
+        "id": "cc8d3156",
+        "code": "const prod=await Bun.file(`${root}/scripts/recovery/dtf-migration/execution.ts`).text(); const beforeProd=prod.replace('// allow: SIZE_OK - One ordered durable transaction state machine; this scoped repair preserves its existing boundaries.\\n','').replace('if (run.faultAfterMined && BigInt(mined.status) === 1n && (record.stage === \"configure\"\\n            || [\"prepareSyChildren\", \"donateMigrationCapital\", \"issueIndependentAllocations\", \"bond\"].includes(record.method))) {','if (run.faultAfterMined && [\"prepareSyChildren\", \"donateMigrationCapital\", \"issueIndependentAllocations\", \"bond\"].includes(record.method)) {'); const currentTest=await Bun.file(`${root}/scripts/recovery/dtf-migration/execution.test.ts`).text(); const firstFor=currentTest.indexOf('for (const kind of [\"independent\"'); const rootsAt=currentTest.indexOf('const roots: string[] = [];'); const beforeTest=(currentTest.slice(0,firstFor)+currentTest.slice(rootsAt)).replace('// allow: SIZE_OK - Existing operator contract suite stays in its owned file during the concurrent repair.\\n','').split('\\n').filter(l=>!l.startsWith('import { configurationTransport, requireInterruption }')).join('\\n').replace(/(import \\{ routes, stakingSource, stakingClaim \\}[^\\n]*\\n)\\n\\n/,'$1\\n'); const hashText=s=>new Bun.CryptoHasher('sha256').update(s).digest('hex'); print({productionReconstructedInitial:hashText(beforeProd),testReconstructedInitial:hashText(beforeTest),baselineLog:await Bun.file(`${root}/${ev}/attempt-01-baseline.log`).text()}); print(await tool.monitor({description:'Owned whitespace check without masked exit',command:capture2('attempt-11-whitespace','GIT_MASTER=1 git --no-pager diff --check -- scripts/recovery/dtf-migration/execution.ts scripts/recovery/dtf-migration/execution.test.ts'),filter:'EXIT:|error:|warning:'}));"
+      }
+    ],
+    "monitorCompletions": [
+      {
+        "id": "909a2ff6",
+        "timestamp": "2026-11-15T15:35:48.431Z",
+        "text": "<system-reminder>Monitor event(Owned execution baseline): (pass) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [3241.88ms]\n(pass) current census rejects omitted configured origins when keeping 0x000000000000000000000000000000000000000000000000000000000000012c [892.79ms]\n(pass) current census rejects omitted configured origins when keeping 0x000000000000000000000000000000000000000000000000000000000000012d [989.86ms]</system-reminder>"
+      },
+      {
+        "id": "42fe06bb",
+        "timestamp": "2026-11-15T15:35:48.431Z",
+        "text": "<system-reminder>Monitor event(Owned execution baseline): (pass) current census rejects omitted configured origins when keeping none [790.72ms]\n(pass) rehashing a historical intent and current manifest cannot change the original signed domain [1096.07ms]\n(pass) historical source authentication still rejects member tampering after Y [811.67ms]\n(pass) historical source authentication still rejects facet tampering after Y [809.28ms]\n(pass) historical source authentication still rejects economics tampering after Y [862.71ms]</system-reminder>"
+      },
+      {
+        "id": "f972cfb6",
+        "timestamp": "2026-11-15T15:36:16.557Z",
+        "text": "<system-reminder>Monitor event(Owned execution baseline): (pass) historical source authentication still rejects receipt tampering after Y [883.27ms]\n(pass) historical source authentication still rejects historical-census tampering after Y [873.66ms]\n(pass) current B verification rejects a changed retained X configuration after accepting its history [1162.38ms]\n(pass) journal refuses live concurrent writers and changed domains [7.07ms]\n(pass) durable signed intent survives reopening without acquiring another nonce [4.63ms]\n(pass) journal rejects a foreign intent rather than accepting its receipt [2.66ms]\n(pass) partial unpublished records cannot become completed operations [2.04ms]\n(pass) saved deployment intent accepts the ceiling and rejects one gas above it [4.54ms]\n(pass) funding rejects arbitrary calldata and unknown native values [0.12ms]\n(pass) paid owner purchase requires explicit positive payment and ordinary duration [7.42ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--execute-local\",\"--broadcast\"] [0.36ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"resume\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--instance-id\",\"old\"] [0.04ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"activate\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--broadcast\"] [0.04ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--target\",\"0x1111111111111111111111111111111111111111\"] [0.09ms]\n 22 pass\n 0 fail\nEXIT: 0\nwatcher completed (exit code 0)</system-reminder>"
+      },
+      {
+        "id": "62a732cc",
+        "timestamp": "2026-11-15T15:38:21.194Z",
+        "text": "<system-reminder>Monitor event(Regression before production repair): AssertionError: {\"state\":\"complete\",\"command\":\"configure\",\"mode\":\"local\",\"receipts\":[{\"intentHash\":\"13a9d79beddf80413f72e685cbd9df0312b3127d3674a3a174db8bd14234f16d\",\"receipt\":{\"transactionHash\":\"0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750\",\"blockHash\":\"0x0000000000000000000000000000000000000000000000000000000000000065\",\"blockNumber\":\"0x65\",\"from\":\"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266\",\"to\":\"0x000000000000000000000000000000000000000a\",\"status\":\"0x1\",\"transactionIndex\":\"0x0\",\"logs\":[{\"address\":\"0x000000000000000000000000000000000000000a\",\"topics\":[\"0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84\",\"0x0000000000000000000000000000000000000000000000000000000000000014\",\"0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05\"],\"data\":\"0x00000000000000000000000000000000000000000000000000000000000000cb0000000000000000000000000000000000000000000000007d0000000000046d\",\"logIndex\":\"0x0\",\"transactionHash\":\"0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750\",\"transactionIndex\":\"0x0\",\"blockHash\":\"0x0000000000000000000000000000000000000000000000000000000000000065\",\"blockNumber\":\"0x65\",\"removed\":false}]},\"state\":{\"independentAllocation:[\\\"0x0000000000000000000000000000000000000014\\\"]\":\"[\\\"0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05\\\",\\\"0x00000000000000000000000000000000000000000000000000000000000000cb\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000000000000000000c8\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"90071992547409931234\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"110\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000000000000000000c9\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"9007199254740993133\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"9007199254740993133\\\"]\"},\"events\":[{\"name\":\"IndependentAllocationConfigured\",\"values\":[\"0x0000000000000000000000000000000000000014\",\"0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05\",\"0x00000000000000000000000000000000000000000000000000000000000000cb\",\"9007199254740993133\"]}]}],\"fullTask9\":\"open\"}\n(fail) mined independent configure interrupts before completion and resumes the original receipt exactly once [297.32ms]\n 0 pass\n 1 fail\nEXIT: 1\nwatcher exited_1 (exit code 1)</system-reminder>"
+      },
+      {
+        "id": "160debe4",
+        "timestamp": "2026-11-15T15:39:33.615Z",
+        "text": "<system-reminder>Monitor event(Configure interruption regression matrix): (pass) mined independent configure interrupts before completion and resumes the original receipt exactly once [642.49ms]\nerror: unhandled fixture read 0x000000000000000000000000000000000000000a:0x431dbd2d000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e0000000000000000000000000000000000000000000000000000000000000003\n(fail) mined nft-components configure interrupts before completion and resumes the original receipt exactly once [253.93ms]\n(fail) mined nft configure interrupts before completion and resumes the original receipt exactly once [72.86ms]\n(pass) mined weightedLiquid configure interrupts before completion and resumes the original receipt exactly once [644.41ms]\n(pass) mined weightedSy configure interrupts before completion and resumes the original receipt exactly once [635.16ms]</system-reminder>"
+      },
+      {
+        "id": "1b7b2529",
+        "timestamp": "2026-11-15T15:39:33.616Z",
+        "text": "<system-reminder>Monitor event(Configure interruption regression matrix): (pass) mined dtfCustodySe configure interrupts before completion and resumes the original receipt exactly once [615.75ms]\nerror: unhandled fixture read 0x000000000000000000000000000000000000000a:0x0378c85200000000000000000000000000000000000000000000000000000000000000d9\n(fail) mined claimVault configure interrupts before completion and resumes the original receipt exactly once [230.81ms]\n 4 pass\n 3 fail\nEXIT: 1\nwatcher exited_1 (exit code 1)</system-reminder>"
+      },
+      {
+        "id": "b298d5bf",
+        "timestamp": "2026-11-15T15:41:03.210Z",
+        "text": "<system-reminder>Monitor event(Corrected fixture regression matrix): (pass) mined independent configure interrupts before completion and resumes the original receipt exactly once [643.77ms]\n(pass) mined nft-components configure interrupts before completion and resumes the original receipt exactly once [656.04ms]\n(pass) mined nft configure interrupts before completion and resumes the original receipt exactly once [645.05ms]\n(pass) mined weightedLiquid configure interrupts before completion and resumes the original receipt exactly once [624.21ms]</system-reminder>"
+      },
+      {
+        "id": "ab9142a7",
+        "timestamp": "2026-11-15T15:41:03.211Z",
+        "text": "<system-reminder>Monitor event(Corrected fixture regression matrix): (pass) mined weightedSy configure interrupts before completion and resumes the original receipt exactly once [640.73ms]\n(pass) mined dtfCustodySe configure interrupts before completion and resumes the original receipt exactly once [619.09ms]\n(pass) mined claimVault configure interrupts before completion and resumes the original receipt exactly once [617.83ms]\n 7 pass\n 0 fail\nEXIT: 0\nwatcher completed (exit code 0)</system-reminder>"
+      },
+      {
+        "id": "cefdd397",
+        "timestamp": "2026-11-15T15:42:45.578Z",
+        "text": "<system-reminder>Monitor event(Required owned execution suite): (pass) mined independent configure interrupts before completion and resumes the original receipt exactly once [661.41ms]\n(pass) mined nft-components configure interrupts before completion and resumes the original receipt exactly once [666.67ms]\n(pass) mined nft configure interrupts before completion and resumes the original receipt exactly once [801.64ms]</system-reminder>"
+      },
+      {
+        "id": "58646c62",
+        "timestamp": "2026-11-15T15:43:08.104Z",
+        "text": "<system-reminder>Monitor event(Required owned execution suite): (pass) mined weightedLiquid configure interrupts before completion and resumes the original receipt exactly once [631.96ms]\n(pass) mined weightedSy configure interrupts before completion and resumes the original receipt exactly once [646.81ms]\n(pass) mined dtfCustodySe configure interrupts before completion and resumes the original receipt exactly once [618.50ms]\n(pass) mined claimVault configure interrupts before completion and resumes the original receipt exactly once [630.96ms]\n(pass) interrupted configure rejects missing recovery without another nonce or send [411.35ms]\n(pass) interrupted configure rejects wrong-hash recovery without another nonce or send [398.06ms]\n(pass) interrupted configure rejects malformed recovery without another nonce or send [404.41ms]\n(pass) interrupted configure rejects reverted recovery without another nonce or send [428.08ms]\n(pass) interrupted configure rejects wrong-nonce recovery without another nonce or send [410.29ms]\n(pass) interrupted configure rejects wrong-state recovery without another nonce or send [419.29ms]\n(pass) interrupted configure rejects malformed-intent recovery without another nonce or send [404.93ms]</system-reminder>"
+      },
+      {
+        "id": "fb548a92",
+        "timestamp": "2026-11-15T15:43:08.104Z",
+        "text": "<system-reminder>Monitor event(Required owned execution suite): (pass) reverted configure rejects rather than claiming a successful mined interruption [254.94ms]\n(pass) configure fault injection rejects simulation and operational context without signing [363.36ms]\n(pass) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [3269.55ms]\n(pass) current census rejects omitted configured origins when keeping 0x000000000000000000000000000000000000000000000000000000000000012c [1059.53ms]</system-reminder>"
+      },
+      {
+        "id": "f0d43a1a",
+        "timestamp": "2026-11-15T15:43:08.104Z",
+        "text": "<system-reminder>Monitor event(Required owned execution suite): (pass) current census rejects omitted configured origins when keeping 0x000000000000000000000000000000000000000000000000000000000000012d [1115.24ms]\n(pass) current census rejects omitted configured origins when keeping none [908.55ms]\n(pass) rehashing a historical intent and current manifest cannot change the original signed domain [1194.70ms]\n(pass) historical source authentication still rejects member tampering after Y [876.37ms]\n(pass) historical source authentication still rejects facet tampering after Y [884.00ms]</system-reminder>"
+      },
+      {
+        "id": "b8f100ac",
+        "timestamp": "2026-11-15T15:43:08.105Z",
+        "text": "<system-reminder>Monitor event(Required owned execution suite): (pass) historical source authentication still rejects economics tampering after Y [951.33ms]\n(pass) historical source authentication still rejects receipt tampering after Y [955.23ms]\n(pass) historical source authentication still rejects historical-census tampering after Y [971.08ms]\n(pass) current B verification rejects a changed retained X configuration after accepting its history [1368.12ms]\n(pass) journal refuses live concurrent writers and changed domains [7.52ms]\n(pass) durable signed intent survives reopening without acquiring another nonce [6.26ms]\n(pass) journal rejects a foreign intent rather than accepting its receipt [3.27ms]\n(pass) partial unpublished records cannot become completed operations [2.63ms]\n(pass) saved deployment intent accepts the ceiling and rejects one gas above it [6.34ms]\n(pass) funding rejects arbitrary calldata and unknown native values [0.20ms]\n(pass) paid owner purchase requires explicit positive payment and ordinary duration [6.11ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--execute-local\",\"--broadcast\"] [0.61ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"resume\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--instance-id\",\"old\"] [0.19ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"activate\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--broadcast\"] [0.16ms]\n(pass) CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--target\",\"0x1111111111111111111111111111111111111111\"] [0.09ms]\n 38 pass\n 0 fail\nEXIT: 0\nwatcher completed (exit code 0)</system-reminder>"
+      },
+      {
+        "id": "71d392d5",
+        "timestamp": "2026-11-15T15:43:43.454Z",
+        "text": "<system-reminder>Monitor event(Owned test junk audit): check-test-junk: no findings\nEXIT: 0\nwatcher completed (exit code 0)\nMonitor event(Required manual CLI transport QA): EXIT: 1\nwatcher exited_1 (exit code 1)</system-reminder>"
+      },
+      {
+        "id": "2b5776d9",
+        "timestamp": "2026-11-15T15:43:43.454Z",
+        "text": "<system-reminder>Monitor event(Owned scope and whitespace evidence): EXIT: 0\nwatcher completed (exit code 0)</system-reminder>"
+      },
+      {
+        "id": "d1f4f2fe",
+        "timestamp": "2026-11-15T15:44:52.335Z",
+        "text": "<system-reminder>Monitor event(No-excuse audit availability): error: cannot resolve \"typescript\" from the caller project (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1). Install it in the project being checked (e.g. `bun add -d typescript`) and re-run.\nEXIT: 2\nwatcher exited_2 (exit code 2)</system-reminder>"
+      },
+      {
+        "id": "ce978ac1",
+        "timestamp": "2026-11-15T15:44:52.336Z",
+        "text": "<system-reminder>Monitor event(Corrected required manual QA): {\"state\":\"pass\",\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y\",\"results\":[{\"kind\":\"independent\",\"state\":\"pass\",\"originalHash\":\"0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750\",\"nonce\":\"7\",\"sends\":1,\"nonceRequests\":2,\"repeatedResumes\":2,\"completionFiles\":1},{\"kind\":\"nft-components\",\"state\":\"pass\",\"originalHash\":\"0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd\",\"nonce\":\"7\",\"sends\":1,\"nonceRequests\":2,\"repeatedResumes\":2,\"completionFiles\":1},{\"mutation\":\"wrong-hash\",\"state\":\"rejected\",\"counts\":{\"sends\":1,\"nonces\":2,\"signed\":1},\"completionFiles\":0},{\"mutation\":\"malformed-receipt\",\"state\":\"rejected\",\"counts\":{\"sends\":1,\"nonces\":2,\"signed\":1},\"completionFiles\":0},{\"mutation\":\"malformed-intent\",\"state\":\"rejected\",\"counts\":{\"sends\":1,\"nonces\":2,\"signed\":1},\"completionFiles\":0},{\"mutation\":\"simulation\",\"state\":\"rejected\",\"counts\":{\"sends\":0,\"nonces\":0,\"signed\":0},\"completionFiles\":0}]}\nEXIT: 0\nwatcher completed (exit code 0)</system-reminder>"
+      },
+      {
+        "id": "03d4231d",
+        "timestamp": "2026-11-15T15:48:08.592Z",
+        "text": "<system-reminder>Monitor event(Owned whitespace check without masked exit): EXIT: 0\nwatcher completed (exit code 0)</system-reminder>"
+      }
+    ],
+    "manual": [
+      {
+        "kind": "independent",
+        "method": "configureIndependentAllocations",
+        "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+        "nonce": "7",
+        "signedHashMatches": true,
+        "domainHashMatches": true,
+        "completionMatches": true,
+        "identicalCompletions": true,
+        "commandOutcomes": [
+          {
+            "command": "configure",
+            "code": 137,
+            "signal": "SIGKILL",
+            "result": {
+              "fault": "mined-before-checkpoint",
+              "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+              "nonce": "7"
+            }
+          },
+          {
+            "command": "resume",
+            "code": 0,
+            "signal": null,
+            "result": {
+              "state": "complete",
+              "command": "configure",
+              "mode": "local",
+              "receipts": [
+                {
+                  "intentHash": "71fa377894c5a3ab00f4985c21adbb1134d17b7694f04092d040ac8b497b9cbb",
+                  "receipt": {
+                    "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+                    "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                    "blockNumber": "0x65",
+                    "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+                    "to": "0x000000000000000000000000000000000000000a",
+                    "status": "0x1",
+                    "transactionIndex": "0x0",
+                    "logs": [
+                      {
+                        "address": "0x000000000000000000000000000000000000000a",
+                        "topics": [
+                          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+                          "0x0000000000000000000000000000000000000000000000000000000000000014",
+                          "0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05"
+                        ],
+                        "data": "0x00000000000000000000000000000000000000000000000000000000000000cb0000000000000000000000000000000000000000000000007d0000000000046d",
+                        "logIndex": "0x0",
+                        "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+                        "transactionIndex": "0x0",
+                        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                        "blockNumber": "0x65",
+                        "removed": false
+                      }
+                    ]
+                  },
+                  "state": {
+                    "independentAllocation:[\"0x0000000000000000000000000000000000000014\"]": "[\"0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05\",\"0x00000000000000000000000000000000000000000000000000000000000000cb\",\"[\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000000000000000000c8\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"90071992547409931234\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"110\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000000000000000000c9\\\\\\\\\\\\\\\"]\\\\\\\",\\\\\\\"9007199254740993133\\\\\\\"]\\\"]\",\"9007199254740993133\"]"
+                  },
+                  "events": [
+                    {
+                      "name": "IndependentAllocationConfigured",
+                      "values": [
+                        "0x0000000000000000000000000000000000000014",
+                        "0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05",
+                        "0x00000000000000000000000000000000000000000000000000000000000000cb",
+                        "9007199254740993133"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "fullTask9": "open"
+            }
+          },
+          {
+            "command": "resume",
+            "code": 0,
+            "signal": null,
+            "result": {
+              "state": "complete",
+              "command": "configure",
+              "mode": "local",
+              "receipts": [
+                {
+                  "intentHash": "71fa377894c5a3ab00f4985c21adbb1134d17b7694f04092d040ac8b497b9cbb",
+                  "receipt": {
+                    "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+                    "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                    "blockNumber": "0x65",
+                    "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+                    "to": "0x000000000000000000000000000000000000000a",
+                    "status": "0x1",
+                    "transactionIndex": "0x0",
+                    "logs": [
+                      {
+                        "address": "0x000000000000000000000000000000000000000a",
+                        "topics": [
+                          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+                          "0x0000000000000000000000000000000000000000000000000000000000000014",
+                          "0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05"
+                        ],
+                        "data": "0x00000000000000000000000000000000000000000000000000000000000000cb0000000000000000000000000000000000000000000000007d0000000000046d",
+                        "logIndex": "0x0",
+                        "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+                        "transactionIndex": "0x0",
+                        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                        "blockNumber": "0x65",
+                        "removed": false
+                      }
+                    ]
+                  },
+                  "state": {
+                    "independentAllocation:[\"0x0000000000000000000000000000000000000014\"]": "[\"0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05\",\"0x00000000000000000000000000000000000000000000000000000000000000cb\",\"[\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000000000000000000c8\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"90071992547409931234\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"110\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000000000000000000c9\\\\\\\\\\\\\\\"]\\\\\\\",\\\\\\\"9007199254740993133\\\\\\\"]\\\"]\",\"9007199254740993133\"]"
+                  },
+                  "events": [
+                    {
+                      "name": "IndependentAllocationConfigured",
+                      "values": [
+                        "0x0000000000000000000000000000000000000014",
+                        "0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05",
+                        "0x00000000000000000000000000000000000000000000000000000000000000cb",
+                        "9007199254740993133"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "fullTask9": "open"
+            }
+          }
+        ],
+        "importantRequests": [
+          {
+            "index": 43,
+            "method": "eth_getTransactionCount",
+            "params": [
+              "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+              "pending"
+            ]
+          },
+          {
+            "index": 44,
+            "method": "eth_getTransactionCount",
+            "params": [
+              "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+              "latest"
+            ]
+          },
+          {
+            "index": 49,
+            "method": "eth_sendRawTransaction",
+            "params": [
+              "signed raw bytes hash 0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750"
+            ]
+          }
+        ],
+        "sendIndex": 49,
+        "allNonceQueriesBeforeSend": true,
+        "rootAbsent": true
+      },
+      {
+        "kind": "nft-components",
+        "method": "configureNftContributionEntitlements",
+        "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+        "nonce": "7",
+        "signedHashMatches": true,
+        "domainHashMatches": true,
+        "completionMatches": true,
+        "identicalCompletions": true,
+        "commandOutcomes": [
+          {
+            "command": "configure",
+            "code": 137,
+            "signal": "SIGKILL",
+            "result": {
+              "fault": "mined-before-checkpoint",
+              "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+              "nonce": "7"
+            }
+          },
+          {
+            "command": "resume",
+            "code": 0,
+            "signal": null,
+            "result": {
+              "state": "complete",
+              "command": "configure",
+              "mode": "local",
+              "receipts": [
+                {
+                  "intentHash": "28bcc72b54d3ccd8041f7f1ce3160eb76660541c09aa25c836124b556ff13941",
+                  "receipt": {
+                    "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+                    "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                    "blockNumber": "0x65",
+                    "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+                    "to": "0x000000000000000000000000000000000000000a",
+                    "status": "0x1",
+                    "transactionIndex": "0x0",
+                    "logs": [
+                      {
+                        "address": "0x000000000000000000000000000000000000000a",
+                        "topics": [
+                          "0x286c5cc5454dd5423791286ff6d0889b2f1a236b36653c8362d3f45c7a83a3b6",
+                          "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+                          "0x0000000000000000000000000000000000000000000000000000000000000003",
+                          "0x88f5b8282980f2a3922bc79cd5f5c5263e655f8ff9db3b7b8f368aea698000bb"
+                        ],
+                        "data": "0x000000000000000000000000000000000000000000000000000000000000001527c79c0f93bdf5dc582d36015943fb901be63bc4c3ed29be51b9147ff8773e21000000000000000000000000000000000000000000000001c9d5a01cc5b7535d",
+                        "logIndex": "0x0",
+                        "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+                        "transactionIndex": "0x0",
+                        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                        "blockNumber": "0x65",
+                        "removed": false
+                      }
+                    ]
+                  },
+                  "state": {
+                    "nftEntitlement:[\"0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e\",\"3\"]": "[\"[\\\"0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e\\\",\\\"3\\\",\\\"0x0000000000000000000000000000000000000015\\\",\\\"100\\\",\\\"999999000000000\\\",\\\"362893857600000000000\\\",\\\"0x00000000000000000000000000000000000000000000000000000000000000ca\\\",\\\"true\\\"]\",\"0x88f5b8282980f2a3922bc79cd5f5c5263e655f8ff9db3b7b8f368aea698000bb\",\"0x27c79c0f93bdf5dc582d36015943fb901be63bc4c3ed29be51b9147ff8773e21\",\"32990450690809090909\"]"
+                  },
+                  "events": [
+                    {
+                      "name": "NftEntitlementConfigured",
+                      "values": [
+                        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+                        "3",
+                        "0x88f5b8282980f2a3922bc79cd5f5c5263e655f8ff9db3b7b8f368aea698000bb",
+                        "0x0000000000000000000000000000000000000015",
+                        "0x27c79c0f93bdf5dc582d36015943fb901be63bc4c3ed29be51b9147ff8773e21",
+                        "32990450690809090909"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "fullTask9": "open"
+            }
+          },
+          {
+            "command": "resume",
+            "code": 0,
+            "signal": null,
+            "result": {
+              "state": "complete",
+              "command": "configure",
+              "mode": "local",
+              "receipts": [
+                {
+                  "intentHash": "28bcc72b54d3ccd8041f7f1ce3160eb76660541c09aa25c836124b556ff13941",
+                  "receipt": {
+                    "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+                    "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                    "blockNumber": "0x65",
+                    "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+                    "to": "0x000000000000000000000000000000000000000a",
+                    "status": "0x1",
+                    "transactionIndex": "0x0",
+                    "logs": [
+                      {
+                        "address": "0x000000000000000000000000000000000000000a",
+                        "topics": [
+                          "0x286c5cc5454dd5423791286ff6d0889b2f1a236b36653c8362d3f45c7a83a3b6",
+                          "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+                          "0x0000000000000000000000000000000000000000000000000000000000000003",
+                          "0x88f5b8282980f2a3922bc79cd5f5c5263e655f8ff9db3b7b8f368aea698000bb"
+                        ],
+                        "data": "0x000000000000000000000000000000000000000000000000000000000000001527c79c0f93bdf5dc582d36015943fb901be63bc4c3ed29be51b9147ff8773e21000000000000000000000000000000000000000000000001c9d5a01cc5b7535d",
+                        "logIndex": "0x0",
+                        "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+                        "transactionIndex": "0x0",
+                        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+                        "blockNumber": "0x65",
+                        "removed": false
+                      }
+                    ]
+                  },
+                  "state": {
+                    "nftEntitlement:[\"0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e\",\"3\"]": "[\"[\\\"0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e\\\",\\\"3\\\",\\\"0x0000000000000000000000000000000000000015\\\",\\\"100\\\",\\\"999999000000000\\\",\\\"362893857600000000000\\\",\\\"0x00000000000000000000000000000000000000000000000000000000000000ca\\\",\\\"true\\\"]\",\"0x88f5b8282980f2a3922bc79cd5f5c5263e655f8ff9db3b7b8f368aea698000bb\",\"0x27c79c0f93bdf5dc582d36015943fb901be63bc4c3ed29be51b9147ff8773e21\",\"32990450690809090909\"]"
+                  },
+                  "events": [
+                    {
+                      "name": "NftEntitlementConfigured",
+                      "values": [
+                        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+                        "3",
+                        "0x88f5b8282980f2a3922bc79cd5f5c5263e655f8ff9db3b7b8f368aea698000bb",
+                        "0x0000000000000000000000000000000000000015",
+                        "0x27c79c0f93bdf5dc582d36015943fb901be63bc4c3ed29be51b9147ff8773e21",
+                        "32990450690809090909"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "fullTask9": "open"
+            }
+          }
+        ],
+        "importantRequests": [
+          {
+            "index": 44,
+            "method": "eth_getTransactionCount",
+            "params": [
+              "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+              "pending"
+            ]
+          },
+          {
+            "index": 45,
+            "method": "eth_getTransactionCount",
+            "params": [
+              "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+              "latest"
+            ]
+          },
+          {
+            "index": 50,
+            "method": "eth_sendRawTransaction",
+            "params": [
+              "signed raw bytes hash 0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd"
+            ]
+          }
+        ],
+        "sendIndex": 50,
+        "allNonceQueriesBeforeSend": true,
+        "rootAbsent": true
+      }
+    ],
+    "manualNegatives": [
+      {
+        "case": "wrong-hash",
+        "outcomes": [
+          {
+            "command": "configure",
+            "code": 137,
+            "signal": "SIGKILL",
+            "output": {
+              "fault": "mined-before-checkpoint",
+              "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+              "nonce": "7"
+            }
+          },
+          {
+            "command": "resume",
+            "code": 1,
+            "signal": null,
+            "output": {
+              "error": "AMBIGUOUS",
+              "message": "receipt is not canonical or transaction order differs"
+            }
+          }
+        ],
+        "sends": 1,
+        "nonceQueries": 2
+      },
+      {
+        "case": "malformed-receipt",
+        "outcomes": [
+          {
+            "command": "configure",
+            "code": 137,
+            "signal": "SIGKILL",
+            "output": {
+              "fault": "mined-before-checkpoint",
+              "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+              "nonce": "7"
+            }
+          },
+          {
+            "command": "resume",
+            "code": 1,
+            "signal": null,
+            "output": {
+              "error": "INPUT",
+              "issues": [
+                {
+                  "validation": "regex",
+                  "code": "invalid_string",
+                  "message": "Invalid",
+                  "path": [
+                    "status"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "sends": 1,
+        "nonceQueries": 2
+      },
+      {
+        "case": "malformed-intent",
+        "outcomes": [
+          {
+            "command": "configure",
+            "code": 137,
+            "signal": "SIGKILL",
+            "output": {
+              "fault": "mined-before-checkpoint",
+              "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+              "nonce": "7"
+            }
+          },
+          {
+            "command": "resume",
+            "code": 1,
+            "signal": null,
+            "output": {
+              "error": "INPUT",
+              "message": "command or file acquisition failed"
+            }
+          }
+        ],
+        "sends": 1,
+        "nonceQueries": 2
+      },
+      {
+        "case": "simulation",
+        "outcomes": [
+          {
+            "command": "configure",
+            "code": 1,
+            "signal": null,
+            "output": {
+              "error": "DOMAIN",
+              "message": "fault injection is synthetic-local only"
+            }
+          }
+        ],
+        "sends": 0,
+        "nonceQueries": 0
+      }
+    ],
+    "focused": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts",
+      "exit": 0,
+      "passed": 38,
+      "failed": 0,
+      "rerunByVerifier": false
+    },
+    "manualCommand": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-fault.ts",
+    "manualExit": 0,
+    "sourceLocators": {
+      "execution.ts": [
+        {
+          "needle": "async function reconcile",
+          "line": 89
+        },
+        {
+          "needle": "if (run.faultAfterMined && (",
+          "line": 141
+        },
+        {
+          "needle": "Resolve every prior intent",
+          "line": 186
+        },
+        {
+          "needle": "if (record && await journal.completed",
+          "line": 193
+        },
+        {
+          "needle": "const nonce = await rpc.nonce",
+          "line": 223
+        },
+        {
+          "needle": "await journal.persistIntent",
+          "line": 261
+        },
+        {
+          "needle": "const mined = await watch.mined",
+          "line": 267
+        },
+        {
+          "needle": "if (run.faultAfterMined && BigInt",
+          "line": 268
+        }
+      ],
+      "execution.test.ts": [
+        {
+          "needle": "for (const kind",
+          "line": 23
+        },
+        {
+          "needle": "for (const mutation of [\"missing\"",
+          "line": 45
+        },
+        {
+          "needle": "test(\"reverted configure",
+          "line": 78
+        },
+        {
+          "needle": "test(\"configure fault injection",
+          "line": 90
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Production CLI/process evidence uses synthetic loopback fixture facts, not real Anvil/EVM execution.",
+    "Full operator suite and both strict TypeScript commands await separate integration evidence and are not accepted by this verdict.",
+    "File audit exited 2: required TypeScript API unresolved; later LSP freshness timeouts not clean.",
+    "Seven existing configure fixture categories exercised; other variants and broader lifecycle/system failure campaigns not certified.",
+    "No independent rerun or mutation performed; retained baseline regression proves sensitivity to the original missing configure branch.",
+    "Rejected witness-pin lane and old evidence untouched; no readiness or task-10 completion."
+  ],
+  "fixes": []
+}

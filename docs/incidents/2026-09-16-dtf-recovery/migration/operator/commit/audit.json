@@ -1,0 +1,216 @@
+{
+  "disposition": "confirmed",
+  "auditActor": "committing session; fresh standalone evidence-derived recheck, not a separate reviewer",
+  "separateActorAttempt": "task spawn refused: subagent nesting limit depth 2 exceeds max_depth 1; no child started",
+  "commit": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+  "parent": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "pathCount": 26,
+  "paths": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "mode": "100644",
+      "blob": "029e927840f6839966bd84667751d222e640a45f",
+      "sha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+      "match": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "mode": "100644",
+      "blob": "3fb4fa98b2140192ddd4fc08a8f4292bd9ed926b",
+      "sha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "match": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "mode": "100644",
+      "blob": "dbc45f00db1ee86f55f3475489a25162b47e6ffa",
+      "sha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "match": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "mode": "100644",
+      "blob": "bfaa8ea69e708ae06d4ed167a794f803eb3bc70f",
+      "sha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "mode": "100644",
+      "blob": "29227c55e4e2f272433a44dd349aeb6bd403cb5d",
+      "sha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "mode": "100644",
+      "blob": "937b59e520efc283e9f39a6587d09dd25f57f3c6",
+      "sha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "mode": "100644",
+      "blob": "5665652f2ff51578dd0a0dc305f335947d7affff",
+      "sha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "mode": "100644",
+      "blob": "7fb6f90438e08fb10f9d8d77ceb03172ac0027a1",
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "mode": "100644",
+      "blob": "86f27679c96c3046c49c00733ed58f636fa36e68",
+      "sha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "mode": "100644",
+      "blob": "9950b3879562a3e54ca676b91ea8e07473b32b0b",
+      "sha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "mode": "100644",
+      "blob": "3621773e11a1c080aa6b261f48e05fc795dd8767",
+      "sha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "mode": "100644",
+      "blob": "2ce759db3840046ccd9a7d2a66bd7d86dee9b058",
+      "sha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "mode": "100644",
+      "blob": "3e5fb35d883a17cbb9b22ae5da7a567b2b728dde",
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "mode": "100644",
+      "blob": "8e44261705b20c964c2a6aeb021d8f448e3e7f8f",
+      "sha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "mode": "100644",
+      "blob": "1464966e876d8536a67a04c517094b329d22dbb7",
+      "sha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "mode": "100644",
+      "blob": "eacded58a83aa7eba9e53780db21115f86efa764",
+      "sha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "mode": "100644",
+      "blob": "1ba3a1ae0425a5e2a954ba0d323dd2f1f9e6368c",
+      "sha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "mode": "100644",
+      "blob": "0bf608119a0ac12c3c2a5dab85332ea963eb44fc",
+      "sha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "mode": "100644",
+      "blob": "72c9462e54d5e878eb8a5b45468f3eaf7512f398",
+      "sha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "mode": "100644",
+      "blob": "ccfb8d3f9f64ae0d55aeb48ed016230850ce13eb",
+      "sha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "mode": "100644",
+      "blob": "7d60598bfb3b33df6daaedc7a6d607eb3f71a8db",
+      "sha256": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "mode": "100644",
+      "blob": "380d2f6fb37b7eb7ba68d5e889a3ffd1d2977721",
+      "sha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "mode": "100644",
+      "blob": "7eed588aaa7c371260b5386bab55961ea11d250d",
+      "sha256": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "mode": "100644",
+      "blob": "a63a7df43dfd5068950332bd2ad739cfa3aaccb1",
+      "sha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "mode": "100644",
+      "blob": "6ca97734699365a00d1f0bc65c3a083794750335",
+      "sha256": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "mode": "100644",
+      "blob": "ca7525de9f401bcefad06f276aec5d4eb265ca4f",
+      "sha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "match": true
+    }
+  ],
+  "coauthorTrailers": [
+    "Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>"
+  ],
+  "noncandidateIndexRecords": 12980,
+  "worktreeEntries": 22187,
+  "worktreeSha256": "6bfe81f9e585989af28b24efbcabd4c11ee7536356dbae00479c4e0dc251f714",
+  "protectedRefCount": 48,
+  "protectedRefsSha256": "2970336f915261b7e4b56eba2896cf4fb8b894a1c5991a4b6a7861ef237b3cba",
+  "sourceManifestSha256": "f891833c42230149c1a2e93c94b9425dc65cb4670ba15ff9da0d0f68707316b8",
+  "receiptSha256": "c6e02f1d88b61456d16527e9ad8b9f9776521b124f41a201f347036ab4b3a05f",
+  "runtimeVerdictSha256": "58e7410575dfa183545bf86db881a9d60cb179572202f9e8aa86f726e69acb2a",
+  "runtimeCoverage": "Prior independent bounded operator verification, 264 successful unique receipts and 50 tests/strict types; no reruns",
+  "openGates": [
+    "42985843 gas exceeds historical 32000000 limit",
+    "Full original task9",
+    "Ten blocked categories, E1/E2/SB-E1-E4",
+    "Operational funding and beneficiary provenance",
+    "E2 ancestry, earlier liquidation and missing source",
+    "Full integration/invariants and public deployment/release"
+  ],
+  "pendingOwnedRuntime": 0,
+  "port18560NoListener": true,
+  "checkpointAbsent": true,
+  "noGitWritesByAudit": true
+}

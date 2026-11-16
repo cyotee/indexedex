@@ -1,0 +1,26 @@
+{
+  "label": "witness-original",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "argv": [
+    "/opt/homebrew/bin/bun",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs",
+    "--output",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/witness-original"
+  ],
+  "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/witness-original'",
+  "binaryPassObservable": "output redirection supported; early root rejection prevents any producer overwrite",
+  "started": "2026-11-10T12:52:27.364Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK",
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK",
+    "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK/cache"
+  },
+  "credentialPresent": true
+}

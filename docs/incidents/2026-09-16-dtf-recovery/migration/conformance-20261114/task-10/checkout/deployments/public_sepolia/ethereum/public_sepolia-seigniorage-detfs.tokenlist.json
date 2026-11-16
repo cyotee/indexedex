@@ -1,0 +1,23 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0x4E70dBeAB85BE7E7Ca24f40B6b37E7e5F3F1ea58",
+    "name": "Seigniorage DETF of Pachira Vault of (TTB / TTA) via TTB/TTA",
+    "symbol": "sdetfAb",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x29eBAFd1daec09935c37f2c03Dfd57fDB82B5aA7",
+    "name": "Seigniorage DETF of Pachira Vault of (TTA / TTC) via TTA/TTC",
+    "symbol": "sdetfAc",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xF4fccf9fdc0Cd13D3A0742cD43B41ea93F5d9287",
+    "name": "Seigniorage DETF of Pachira Vault of (TTB / TTC) via TTB/TTC",
+    "symbol": "sdetfBc",
+    "decimals": 18
+  }
+]

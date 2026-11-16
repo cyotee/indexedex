@@ -1,0 +1,1036 @@
+{
+  "date": "2026-11-11",
+  "scope": "Independent phase07 bounded NFT recovery source admission; no new RPC or fork execution",
+  "base": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+  "branch": "work/dtf-migration-phase-07-recovery",
+  "pin": {
+    "chainId": 4663,
+    "l2Block": 108944663,
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071"
+  },
+  "fingerprints": {
+    "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/weighted/contract.md": "4754b0069565bd32e901ce3f3a54a546274269d4db2f83d63ac45b0e4b1be433",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/weighted/source-evidence.json": "f4b82041b6457bc2adb3fa2714281850c0d7513cb92e7a30c403b19c784a597c",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/earlier/contract.md": "d2b2ca71da9f5fd14640e2194a4ee62253c47d525fc36eeeda60bd3027ccb305",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/earlier/source-evidence.json": "e94e8da9fee0c563a94c24fd294d88e21f647bf1f8dec2b666955427a7db5897",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/report.md": "a500c793f876a416fef9d6f38b4116db17db532743541f7ab207943ff86e5de2",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md": "1f401c497df3df5cd9b8a3237e467baa0d53425a5341c818bec96c04da8c001e",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json": "f4d63fc4a35eb17e1a2246322638ed7ad8c1ca207cef43987285e55133acc6fd"
+  },
+  "checks": [
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:40",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:127",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:230",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/core/DETFFundedStakingMath.sol:28",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/core/DETFFundedStakingMath.sol:96",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:91",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:126",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:187",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:230",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol:81",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol:107",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol:147",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeTarget.sol:9",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:204",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:429",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:516",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:59",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:352",
+      "pass": true
+    },
+    {
+      "name": "weighted excerpt contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:413",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt NFT claim",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt NFT reward update",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt NFT reward transfer",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt NFT sale",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt NFT retirement",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Parent sale",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Sale lifecycle",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Parent mature close",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Parent receipt redemption",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt burn for parent",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Old DETF burn",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Old DETF exchangeIn",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt mint",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt scale",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt getters",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt direct redeem",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt redeem internals",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt secure transfer",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Receipt rate calculation",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Old DETF ERC20 transfer",
+      "pass": true
+    },
+    {
+      "name": "earlier excerpt Old DETF ERC20 balance",
+      "pass": true
+    },
+    {
+      "name": "weighted selector ownerOf(uint256) view returns (address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "weighted selector positionOf(uint256) view returns ((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x46f96023",
+      "pass": true
+    },
+    {
+      "name": "weighted selector previewClaim(uint256) view returns ((uint256 vestedPrincipal,uint256 principalRemaining,uint256 principalDue,uint256 rewardsDue))",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0xae648e90",
+      "pass": true
+    },
+    {
+      "name": "weighted selector approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "weighted selector getApproved(uint256) view returns (address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "weighted selector setApprovalForAll(address,bool)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "weighted selector isApprovedForAll(address,address) view returns (bool)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "weighted selector transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "weighted selector safeTransferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "weighted selector claimPrincipal(uint256,address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0xf400c743",
+      "pass": true
+    },
+    {
+      "name": "weighted selector claimRewards(uint256,address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x6c7b69cb",
+      "pass": true
+    },
+    {
+      "name": "weighted selector claimBond(uint256,address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x084c59ae",
+      "pass": true
+    },
+    {
+      "name": "weighted selector detf() view returns (address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x8a91f8bc",
+      "pass": true
+    },
+    {
+      "name": "weighted selector lpToken() view returns (address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E 0x5fcbd285",
+      "pass": true
+    },
+    {
+      "name": "weighted selector decimals() view returns (uint8)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0x313ce567",
+      "pass": true
+    },
+    {
+      "name": "weighted selector detf() view returns (address)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0x8a91f8bc",
+      "pass": true
+    },
+    {
+      "name": "weighted selector gonsOf(address) view returns (uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0x79a67521",
+      "pass": true
+    },
+    {
+      "name": "weighted selector stakingState() view returns ((uint256 totalGons,uint256 gonsPerUnit,uint256 accountedBacking,uint256 allocationDust,uint256 stakingDust,uint256 feeWeight,uint256 creatorWeight))",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0xe082f1d4",
+      "pass": true
+    },
+    {
+      "name": "weighted selector balanceOf(address) view returns (uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0x70a08231",
+      "pass": true
+    },
+    {
+      "name": "weighted selector approve(address,uint256) returns (bool)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "weighted selector transferFrom(address,address,uint256) returns (bool)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "weighted selector exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns (uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c 0xd02d3063",
+      "pass": true
+    },
+    {
+      "name": "weighted selector decimals() view returns (uint8)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7 0x313ce567",
+      "pass": true
+    },
+    {
+      "name": "weighted selector balanceOf(address) view returns (uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7 0x70a08231",
+      "pass": true
+    },
+    {
+      "name": "weighted selector approve(address,uint256) returns (bool)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "weighted selector transferFrom(address,address,uint256) returns (bool)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "weighted selector previewExchangeIn(address,uint256,address) view returns (uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x1d38189B5f3548bc86838061F4318DBFA2f77680",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7 0x89d61912",
+      "pass": true
+    },
+    {
+      "name": "weighted selector exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns (uint256)",
+      "pass": true
+    },
+    {
+      "name": "weighted runtime 0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "pass": true
+    },
+    {
+      "name": "weighted replay loupe 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7 0xd02d3063",
+      "pass": true
+    },
+    {
+      "name": "earlier selector claimRewards(uint256,address)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector sellPositionToDetfNft(uint256,address)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector sellPositionToDetfNft(uint256,address,address)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector retireMaturePosition(uint256,address)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector closeBondMature(uint256,uint256[],address,uint256)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector redeemClaim(uint256,address,uint256,address,uint256)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector redeem(uint256,address,bool)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector mintFromNFTSale(uint256,uint256,address)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector sharesOf(address)",
+      "pass": true
+    },
+    {
+      "name": "earlier selector VaultDisabled(address)",
+      "pass": true
+    },
+    {
+      "name": "earlier runtime 0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "pass": true
+    },
+    {
+      "name": "earlier runtime 0x8333749Cc7b1f66b5be568257d362aA749497Cf0",
+      "pass": true
+    },
+    {
+      "name": "earlier runtime 0x25E611FB63Eb904776678286EF5cbe2a931B4f9A",
+      "pass": true
+    },
+    {
+      "name": "earlier runtime 0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "pass": true
+    },
+    {
+      "name": "weighted execution body 0xde5a691cefe1830e8ff2b65f6657738b0d9b9279",
+      "pass": true
+    },
+    {
+      "name": "weighted pinned code 0xde5a691cefe1830e8ff2b65f6657738b0d9b9279",
+      "pass": true
+    },
+    {
+      "name": "weighted execution body 0x3a07364eaba092472d40f0e6788b8891a31fad4d",
+      "pass": true
+    },
+    {
+      "name": "weighted pinned code 0x3a07364eaba092472d40f0e6788b8891a31fad4d",
+      "pass": true
+    },
+    {
+      "name": "weighted execution body 0xb7581fe833a2b2380dd786b345d61ffb734d36eb",
+      "pass": true
+    },
+    {
+      "name": "weighted pinned code 0xb7581fe833a2b2380dd786b345d61ffb734d36eb",
+      "pass": true
+    },
+    {
+      "name": "weighted execution body 0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "pass": true
+    },
+    {
+      "name": "weighted pinned code 0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "pass": true
+    },
+    {
+      "name": "weighted execution body 0x1d38189b5f3548bc86838061f4318dbfa2f77680",
+      "pass": true
+    },
+    {
+      "name": "weighted pinned code 0x1d38189b5f3548bc86838061f4318dbfa2f77680",
+      "pass": true
+    },
+    {
+      "name": "weighted execution body 0x4886f86cd0dfff8b8a836f858925ed4de3a2b291",
+      "pass": true
+    },
+    {
+      "name": "weighted pinned code 0x4886f86cd0dfff8b8a836f858925ed4de3a2b291",
+      "pass": true
+    },
+    {
+      "name": "earlier onchain equality 0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "pass": true
+    },
+    {
+      "name": "earlier execution body 0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "pass": true
+    },
+    {
+      "name": "earlier onchain equality 0x8333749Cc7b1f66b5be568257d362aA749497Cf0",
+      "pass": true
+    },
+    {
+      "name": "earlier execution body 0x8333749Cc7b1f66b5be568257d362aA749497Cf0",
+      "pass": true
+    },
+    {
+      "name": "earlier onchain equality 0x25E611FB63Eb904776678286EF5cbe2a931B4f9A",
+      "pass": true
+    },
+    {
+      "name": "earlier execution body 0x25E611FB63Eb904776678286EF5cbe2a931B4f9A",
+      "pass": true
+    },
+    {
+      "name": "earlier onchain equality 0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "pass": true
+    },
+    {
+      "name": "earlier execution body 0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "pass": true
+    },
+    {
+      "name": "earlier tx envelope 6",
+      "pass": true
+    },
+    {
+      "name": "earlier tx identity 6",
+      "pass": true
+    },
+    {
+      "name": "earlier tx envelope 9",
+      "pass": true
+    },
+    {
+      "name": "earlier tx identity 9",
+      "pass": true
+    },
+    {
+      "name": "earlier tx envelope 12",
+      "pass": true
+    },
+    {
+      "name": "earlier tx identity 12",
+      "pass": true
+    },
+    {
+      "name": "earlier tx envelope 14",
+      "pass": true
+    },
+    {
+      "name": "earlier tx identity 14",
+      "pass": true
+    },
+    {
+      "name": "earlier tx envelope 20",
+      "pass": true
+    },
+    {
+      "name": "earlier tx identity 20",
+      "pass": true
+    },
+    {
+      "name": "earlier tx envelope 23",
+      "pass": true
+    },
+    {
+      "name": "earlier tx identity 23",
+      "pass": true
+    },
+    {
+      "name": "weighted mined receipt join 0",
+      "pass": true
+    },
+    {
+      "name": "weighted mined receipt join 1",
+      "pass": true
+    },
+    {
+      "name": "weighted mined receipt join 2",
+      "pass": true
+    },
+    {
+      "name": "weighted mined receipt join 3",
+      "pass": true
+    },
+    {
+      "name": "earlier disabled and rollback nftMatureClose",
+      "pass": true
+    },
+    {
+      "name": "earlier disabled and rollback wrongOwnerClose",
+      "pass": true
+    },
+    {
+      "name": "earlier disabled and rollback receiptRedemption",
+      "pass": true
+    },
+    {
+      "name": "earlier disabled and rollback directReceiptRedemption",
+      "pass": true
+    },
+    {
+      "name": "earlier reward native amount",
+      "pass": true
+    },
+    {
+      "name": "earlier sale principal native return",
+      "pass": true
+    },
+    {
+      "name": "earlier sale clears identity",
+      "pass": true
+    },
+    {
+      "name": "earlier sale LP stays",
+      "pass": true
+    },
+    {
+      "name": "earlier source binding 0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "pass": false
+    },
+    {
+      "name": "earlier source binding 0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "pass": false
+    },
+    {
+      "name": "earlier source binding 0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "pass": false
+    },
+    {
+      "name": "earlier admitted trace excludes missing facet claimRewards",
+      "pass": true
+    },
+    {
+      "name": "earlier admitted trace excludes missing facet sellPositionToDetfNft",
+      "pass": true
+    },
+    {
+      "name": "corrected earlier loupe normalization 0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "pass": true
+    },
+    {
+      "name": "corrected earlier loupe normalization 0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "pass": true
+    },
+    {
+      "name": "corrected earlier loupe normalization 0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "pass": true
+    }
+  ],
+  "summary": {
+    "assertions": 190,
+    "passed": 187,
+    "initialHarnessFailures": 3,
+    "unresolvedFailures": 0,
+    "correction": "Three direct JSON object equality checks compared enriched archive facet records with condensed source-contract records. Compare facetAddress and functionSelectors mapped to selectors. All three corrected checks pass; raw failures retained."
+  },
+  "weightedReceiptJoins": [
+    {
+      "hash": "0x40049b8b180aaf28d770b96a0b607bce5cd181b3efa5489b00cfa60db9c27cb8",
+      "status": "0x1",
+      "send": {
+        "from": "0x000000000000000000000000000000000000c057",
+        "to": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "data": "0x084c59ae0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000c057",
+        "gas": "0x1c9c380"
+      },
+      "rpcIndex": 429,
+      "receiptIndex": 431,
+      "transfers": [
+        {
+          "token": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "from": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "to": "0x000000000000000000000000000000000000c057",
+          "amount": "4308806205"
+        },
+        {
+          "token": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x0000000000000000000000000000000000000000",
+          "amount": null
+        }
+      ]
+    },
+    {
+      "hash": "0xc5fdef1e066063b549f98c2f9d4508726f3e20b6f65303f42dc0de89eebac6eb",
+      "status": "0x1",
+      "send": {
+        "from": "0x000000000000000000000000000000000000c057",
+        "to": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+        "data": "0xd02d30630000000000000000000000004fa4974a8a09660258b8edd430b51c1620ebfe5c0000000000000000000000000000000000000000000000000000000100d32a3d0000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000100d32a3d000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+        "gas": "0x1c9c380"
+      },
+      "rpcIndex": 440,
+      "receiptIndex": 442,
+      "transfers": [
+        {
+          "token": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x0000000000000000000000000000000000000000",
+          "amount": "4308806205"
+        },
+        {
+          "token": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "from": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "to": "0x000000000000000000000000000000000000c057",
+          "amount": "4308806205"
+        }
+      ]
+    },
+    {
+      "hash": "0x8e20f225db3d277f59b1950224f075c2b8ba1198d475d2308297cb283d9caffc",
+      "status": "0x1",
+      "send": {
+        "from": "0x000000000000000000000000000000000000c057",
+        "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+        "data": "0xd02d30630000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000100d32a3d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+        "gas": "0x1c9c380"
+      },
+      "rpcIndex": 448,
+      "receiptIndex": 450,
+      "transfers": [
+        {
+          "token": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "amount": "4308806205"
+        },
+        {
+          "token": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "to": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "amount": "4308806205"
+        },
+        {
+          "token": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+          "from": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "to": "0x0000000000000000000000000000000000000000",
+          "amount": "243124247632531156216230000000000"
+        },
+        {
+          "token": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "from": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+          "to": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "amount": "24312424763253115621623"
+        },
+        {
+          "token": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "from": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "amount": "24312424763253115621623"
+        },
+        {
+          "token": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "to": "0x000000000000000000000000000000000000c057",
+          "amount": "24312424763253115621623"
+        }
+      ]
+    },
+    {
+      "hash": "0xcadefebefd78638594f2c8a2434c08d6baf16e832708bc877a5387a960fafbce",
+      "status": "0x1",
+      "send": {
+        "from": "0x0000000000000000000000000000000000000a11",
+        "to": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "data": "0x084c59ae00000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000bad",
+        "gas": "0x1c9c380"
+      },
+      "rpcIndex": 477,
+      "receiptIndex": 479,
+      "transfers": [
+        {
+          "token": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "amount": "23083004250"
+        },
+        {
+          "token": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "to": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "amount": "23083004250"
+        },
+        {
+          "token": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+          "amount": "2993607764"
+        },
+        {
+          "token": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+          "amount": "6985084784"
+        },
+        {
+          "token": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "from": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "to": "0x0000000000000000000000000000000000000bad",
+          "amount": "4308806205"
+        },
+        {
+          "token": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+          "to": "0x0000000000000000000000000000000000000000",
+          "amount": null
+        }
+      ]
+    }
+  ],
+  "earlierReceiptJoins": [
+    {
+      "index": 6,
+      "hash": "0x5dfa0bfd67a8a62b6db4867245de7a3e2332195d97a75219bc0b6dd6e9ca1d45",
+      "status": "0x1",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "input": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+      "output": "0x00000000000000000000000000000000000000000000000000011909f98ec921",
+      "traceCalls": 6,
+      "missingFacetReached": false
+    },
+    {
+      "index": 9,
+      "hash": "0x3d54621af7e5dff968aed64f3639d0222170d962ead7c80339f39a33ede46042",
+      "status": "0x1",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "input": "0x6b7d927e0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+      "output": "0x0000000000000000000000000000000000000000000000001faac66868d24492",
+      "traceCalls": 149,
+      "missingFacetReached": false
+    },
+    {
+      "index": 12,
+      "hash": "0x61fb08ec01b576756fa25ae3ab9631613f140471c843576a2eac3774a7ff37a1",
+      "status": "0x0",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "input": "0x7c21289300000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7",
+      "traceCalls": 124,
+      "missingFacetReached": false
+    },
+    {
+      "index": 14,
+      "hash": "0xbecb8677c003a5a4a58dfbc511237973681cb0250ba6a78fc6928ce1a03ab528",
+      "status": "0x0",
+      "from": "0x100000000000000000000000000000000000bad1",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "input": "0x7c21289300000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000bad1000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7",
+      "traceCalls": 124,
+      "missingFacetReached": false
+    },
+    {
+      "index": 20,
+      "hash": "0xe4359e06c585390d0c6e33cfb105c2384f58c4f9b44d75e1e0c566a2a97109e9",
+      "status": "0x0",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "input": "0xbfe556060000000000000000000000000000000000000000000000000de0b6b3a763ffff000000000000000000000000af0e1967c8f755c747615c5427108bc549ca11220000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7",
+      "traceCalls": 286,
+      "missingFacetReached": false
+    },
+    {
+      "index": 23,
+      "hash": "0x22fb95c8bfd0b3f7c58faa20f4672371f4740ffb8a3276cccb3ff2a731880a0d",
+      "status": "0x0",
+      "from": "0x100000000000000000000000000000000000c001",
+      "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "input": "0x5236be400000000000000000000000000000000000000000000000000de0b6b3a763ffff000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000000",
+      "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7",
+      "traceCalls": 336,
+      "missingFacetReached": false
+    }
+  ],
+  "additionalFindings": {
+    "weightedActualConversion": "Recorded input transfers to legacy reserve rather than burns; proves swap route, not execution of every primary-burn branch.",
+    "earlierWrongOwnerClose": "Inner retireMaturePosition returns original shares and rewards to attacker-selected recipient, but enclosing transaction fails VaultDisabled; all changes roll back. Not ownership-safe and not executed theft.",
+    "earlierCompound": "Archived parent lines 24946-24969 catch compoundProtocolRewardsAtomic failure; successful sale is not proof of compound success.",
+    "weightedFractionProtection": "Native amount <= booked amount is insufficient if full account debit retires unbooked fractional gons. Require observed gons debit <= attributed recovery gons and preserve the unbooked gon floor."
+  },
+  "runtime": {
+    "newRpcRequests": 0,
+    "newForkTransactions": 0,
+    "builds": 0,
+    "testRuns": 0,
+    "ownedNodes": 0,
+    "pending": false
+  },
+  "limitations": [
+    "Historical local fork receipts, not public transactions or phase07 integrated execution.",
+    "No independent recompilation or whole transitive source audit.",
+    "Phase01 FAIL/UNPROVEN results remain unchanged."
+  ]
+}

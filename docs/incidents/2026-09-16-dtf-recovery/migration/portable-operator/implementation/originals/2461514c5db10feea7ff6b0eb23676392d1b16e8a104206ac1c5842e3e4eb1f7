@@ -1,0 +1,1 @@
+{"abi":[{"type":"receive","stateMutability":"payable"},{"type":"function","name":"KNOWN","inputs":[],"outputs":[{"name":"","type":"bytes4","internalType":"bytes4"}],"stateMutability":"view"},{"type":"error","name":"RejectedNative","inputs":[{"name":"known","type":"bytes4","internalType":"bytes4"}]}],"id":1507}

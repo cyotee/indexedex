@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"SPOKE_POOL","inputs":[],"outputs":[{"name":"","type":"address","internalType":"contract IV3SpokePool"}],"stateMutability":"view"},{"type":"error","name":"InsufficientETH","inputs":[]},{"type":"error","name":"InsufficientToken","inputs":[]},{"type":"error","name":"InvalidPortion","inputs":[]}],"id":2728}

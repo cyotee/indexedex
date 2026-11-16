@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "bun",
+    "--eval",
+    "import {readFile,writeFile,readdir,lstat,readlink} from \"node:fs/promises\";\nimport {join,relative} from \"node:path\"; import {createHash} from \"node:crypto\";\nconst d=\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary\"; const p=join(d,\"corrected-input.json\"); const b=await readFile(p); const a=JSON.parse(b.toString()); const hash=x=>createHash(\"sha256\").update(x).digest(\"hex\");\nconst m=new Map(a.destination.map(e=>[e.path,e])); const walk=async f=>{for(const n of (await readdir(f)).sort()){const x=join(f,n);const s=await lstat(x);const p=relative(a.destinationRoot,x);if(s.isDirectory()){m.set(p,{path:p,type:\"directory\",size:0,sha256:null});await walk(x);}else if(s.isSymbolicLink()){const link=await readlink(x);m.set(p,{path:p,type:\"symlink\",size:Buffer.byteLength(link),sha256:hash(link),link});}else if(s.isFile()){const raw=await readFile(x);m.set(p,{path:p,type:\"file\",size:raw.length,sha256:hash(raw)});}}}; await walk(d);\na.destination=[...m.values()].sort((x,y)=>x.path.localeCompare(y.path)); a.parentInventory={path:p,sha256:hash(b)}; a.generatedAuditRecords=[join(d,\"delivery-input.json\"),join(d,\"discovery/inventory.json\")]; a.qualification+=\" Owned bookkeeping hashes refreshed from actual completed outputs; no external-source entry, retained difference, symlink or acceptance is weakened.\";\nawait writeFile(join(d,\"delivery-input.json\"),JSON.stringify(a),{flag:\"wx\"}); console.log(\"DELIVERY_INPUT_READY entries=\"+a.destination.length);"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "started": "2026-11-15T19:40:06.517Z",
+  "finished": "2026-11-15T19:40:06.830Z",
+  "exit": 0,
+  "signal": null,
+  "stdoutBytes": 36,
+  "stderrBytes": 0
+}

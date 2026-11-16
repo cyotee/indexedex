@@ -1,0 +1,28 @@
+160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0	lib/crane
+
+.gitignore:3:node_modules	node_modules
+
+docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md: filter: unspecified
+scripts/recovery/dtf-migration/bundle-files.ts: filter: unspecified
+scripts/recovery/dtf-migration/bundle-materialize.ts: filter: unspecified
+scripts/recovery/dtf-migration/bundle.test.ts: filter: unspecified
+scripts/recovery/dtf-migration/bundle.ts: filter: unspecified
+scripts/recovery/dtf-migration/cli.ts: filter: unspecified
+scripts/recovery/dtf-migration/execution-domain.ts: filter: unspecified
+scripts/recovery/dtf-migration/execution-schema.ts: filter: unspecified
+scripts/recovery/dtf-migration/preparation.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-data.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-portable.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-process.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-recovery.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts: filter: unspecified
+scripts/recovery/dtf-migration/rehearse.ts: filter: unspecified
+scripts/recovery/dtf-migration/schema.ts: filter: unspecified

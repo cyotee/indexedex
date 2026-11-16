@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"getCreate2Address","inputs":[{"name":"contractPath","type":"string","internalType":"string"},{"name":"args","type":"bytes","internalType":"bytes"},{"name":"_salt","type":"bytes32","internalType":"bytes32"}],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"}],"id":1944}

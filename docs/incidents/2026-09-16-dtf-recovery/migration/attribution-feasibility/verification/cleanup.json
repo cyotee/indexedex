@@ -1,0 +1,244 @@
+{
+  "date": "2026-11-11",
+  "verdict": "unproven",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2",
+  "branch": "work/dtf-migration-phase-06-e2",
+  "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "preservation": {
+    "checked": 24,
+    "unchanged": true,
+    "files": [
+      {
+        "path": "anchors/commands.md",
+        "before": "48094c1e24512b1b49bf3a28c73c20731f25bb337fc9cb74da69992954713301",
+        "after": "48094c1e24512b1b49bf3a28c73c20731f25bb337fc9cb74da69992954713301",
+        "unchanged": true
+      },
+      {
+        "path": "anchors/primary-sources.json",
+        "before": "48a9a8676e262f189f96199feabb9e044c03e05790e4b37f21979f2d033508a3",
+        "after": "48a9a8676e262f189f96199feabb9e044c03e05790e4b37f21979f2d033508a3",
+        "unchanged": true
+      },
+      {
+        "path": "anchors/contract.md",
+        "before": "0da4818b6f35ae947d17949c259271d80f9d8df9e12773122049d9bee4b61356",
+        "after": "0da4818b6f35ae947d17949c259271d80f9d8df9e12773122049d9bee4b61356",
+        "unchanged": true
+      },
+      {
+        "path": "anchors/calculations.json",
+        "before": "1ce1c106afe83e66ebcf19ec5095f937c9d26b45a463b4599bc70044473ec1b4",
+        "after": "1ce1c106afe83e66ebcf19ec5095f937c9d26b45a463b4599bc70044473ec1b4",
+        "unchanged": true
+      },
+      {
+        "path": "anchors/rpc.json",
+        "before": "de29563f9ecf6ef080269ed85569afd8f62310ea5cd0672d217063713d6ca855",
+        "after": "de29563f9ecf6ef080269ed85569afd8f62310ea5cd0672d217063713d6ca855",
+        "unchanged": true
+      },
+      {
+        "path": "anchors/verification.json",
+        "before": "498474ce218dbc71acf343d0caf45ff287a6be6bfcf0971e0dd68dab5abb934f",
+        "after": "498474ce218dbc71acf343d0caf45ff287a6be6bfcf0971e0dd68dab5abb934f",
+        "unchanged": true
+      },
+      {
+        "path": "construction/evidence.json",
+        "before": "b365d0f9f0a15cf7bc5ac24fb537d85639f185f9db549079bd79d23444f9504c",
+        "after": "b365d0f9f0a15cf7bc5ac24fb537d85639f185f9db549079bd79d23444f9504c",
+        "unchanged": true
+      },
+      {
+        "path": "construction/report.md",
+        "before": "207d0673b6332e67c6e8404e97b939208f772f1e032812418103cd40244a7fba",
+        "after": "207d0673b6332e67c6e8404e97b939208f772f1e032812418103cd40244a7fba",
+        "unchanged": true
+      },
+      {
+        "path": "construction/invocations.md",
+        "before": "08defb9ec53b9e5cbfc476a215f247a746b16b8f70f6834c9b6f913ad7473763",
+        "after": "08defb9ec53b9e5cbfc476a215f247a746b16b8f70f6834c9b6f913ad7473763",
+        "unchanged": true
+      },
+      {
+        "path": "construction/verification.json",
+        "before": "e9635d898b71c1e0772d67ec7937b87a641d2c17fb514f0bfe00f4fd5575cdf1",
+        "after": "e9635d898b71c1e0772d67ec7937b87a641d2c17fb514f0bfe00f4fd5575cdf1",
+        "unchanged": true
+      },
+      {
+        "path": "freshness/runtime-evidence.json",
+        "before": "49f4a9837d4e36842be7fed26c00b2bd37faeea41961c81b6573825ca7a6caab",
+        "after": "49f4a9837d4e36842be7fed26c00b2bd37faeea41961c81b6573825ca7a6caab",
+        "unchanged": true
+      },
+      {
+        "path": "freshness/contract.md",
+        "before": "6aa5a871b6c92d8c67f5e06e34be815d30b20b06cade74d8cee83e70bb070fa6",
+        "after": "6aa5a871b6c92d8c67f5e06e34be815d30b20b06cade74d8cee83e70bb070fa6",
+        "unchanged": true
+      },
+      {
+        "path": "freshness/invocations.md",
+        "before": "42f0f2905b441f129299774aa3d1e0d8d6242ad9102572ac798876d066bc5d3d",
+        "after": "42f0f2905b441f129299774aa3d1e0d8d6242ad9102572ac798876d066bc5d3d",
+        "unchanged": true
+      },
+      {
+        "path": "freshness/verification.json",
+        "before": "07e3610ed779e82b7ec3982325c19e19de4a9c7af4b52cf18bf8d018d97e3bbb",
+        "after": "07e3610ed779e82b7ec3982325c19e19de4a9c7af4b52cf18bf8d018d97e3bbb",
+        "unchanged": true
+      },
+      {
+        "path": "freshness/protocol-sources.json",
+        "before": "da96d043fdd8462301ae263f79367ad48102211179e8ccb3faef6843b115bf99",
+        "after": "da96d043fdd8462301ae263f79367ad48102211179e8ccb3faef6843b115bf99",
+        "unchanged": true
+      },
+      {
+        "path": "freshness/witness.mjs",
+        "before": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa",
+        "after": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2-brief.md",
+        "before": "2913d1608ad4c0c2c8caaa6df996fb190334f7d007a589f4f64634e42a6b5f80",
+        "after": "2913d1608ad4c0c2c8caaa6df996fb190334f7d007a589f4f64634e42a6b5f80",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+        "before": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+        "after": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+        "before": "9c1455da9b99ba335b0c3fa9611425ed29ef796954a638dc80de21fdac27e487",
+        "after": "9c1455da9b99ba335b0c3fa9611425ed29ef796954a638dc80de21fdac27e487",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+        "before": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232",
+        "after": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+        "before": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+        "after": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+        "before": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+        "after": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-caller.json",
+        "before": "1a06f2439e9531bb42ec0adebdbf212fbdc73046ecc498fca7655dedcc1b2230",
+        "after": "1a06f2439e9531bb42ec0adebdbf212fbdc73046ecc498fca7655dedcc1b2230",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.json",
+        "before": "8752356e523adcd85af806ff044520cc76d89c12fc285a7de43a9610ccf7d702",
+        "after": "8752356e523adcd85af806ff044520cc76d89c12fc285a7de43a9610ccf7d702",
+        "unchanged": true
+      }
+    ],
+    "recheckedAfterRootClarification": true
+  },
+  "scope": {
+    "authoredFiles": [
+      "verification/audit.json",
+      "verification/report.md",
+      "verification/native-surface-scope.json",
+      "verification/invocations.md",
+      "verification/cleanup.json"
+    ],
+    "onlyVerification": true,
+    "trackedDiffEmpty": true,
+    "stagedDiffEmpty": true,
+    "gitCommand": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2 && GIT_MASTER=1 git diff --exit-code --ignore-submodules=all && GIT_MASTER=1 git diff --cached --exit-code --ignore-submodules=all && GIT_MASTER=1 git status --short --ignore-submodules=all && GIT_MASTER=1 git branch --show-current && GIT_MASTER=1 git rev-parse HEAD",
+    "gitExit": 0,
+    "gitRawOutput": "?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/\nwork/dtf-migration-phase-06-e2\n5021e8d4a62bcbddc555f580ef98f8666d993aab",
+    "links": {
+      "crane": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "nodeModules": "/Users/cyotee/Projects/indexedex/node_modules"
+    },
+    "wholeLinkedDependencyTreesHashed": false
+  },
+  "validation": {
+    "assertions": 33,
+    "assertionsPassed": 33,
+    "receiptListComparisons": 242,
+    "mutatedListsRejected": 240,
+    "unchangedControlsAccepted": 2,
+    "ownedFiles": [
+      {
+        "path": "audit.json",
+        "bytes": 62148,
+        "sha256": "6c1bf41abfb9f64385760d1a571564f2230d9429475f5827f169cb4dfc0dd04c"
+      },
+      {
+        "path": "report.md",
+        "bytes": 36165,
+        "sha256": "97fded0ed38c3ac8838173cfa33ee4b99632726051527e372e06711e6919fbb7"
+      },
+      {
+        "path": "native-surface-scope.json",
+        "bytes": 2953,
+        "sha256": "a65f6a8090298ac2c8a82b6d773b40611e4f5cd3b253996a1b2a6db91f46d31c"
+      },
+      {
+        "path": "invocations.md",
+        "bytes": 14878,
+        "sha256": "da8818854f416c00bfc9cba9276cdb9f47350eb8e535b9e4d72c9929251a393c"
+      }
+    ],
+    "jsonParse": "audit.json and native-surface-scope.json parsed successfully; cleanup.json serialized and parsed before patch",
+    "lsp": "Unavailable: biome not installed; no installation authorized or attempted",
+    "reportReview": "All six attribution obligations and every requested adversarial dimension addressed; no category, atomicity or no-trusted-update constraint relaxed",
+    "scopeClarification": {
+      "concreteAdmittedModel": "demonstrated-conflict",
+      "overallE2": "unproven",
+      "finiteNativeRegistrationFamilies": 18,
+      "reportSections": [
+        "1.1",
+        "7.1"
+      ],
+      "completeNativeHandlerRuntimeAudit": false,
+      "noUnspecifiedObservationRescue": true
+    }
+  },
+  "cleanup": {
+    "assignedUnusedPort": 18554,
+    "portCommand": "lsof -nP -iTCP:18554 -sTCP:LISTEN",
+    "portExit": 1,
+    "portOutput": "Command exited with code 1",
+    "listenersObserved": [],
+    "allocatedProcesses": [],
+    "allocatedRuntimeRoots": [],
+    "deletions": [],
+    "absent": {
+      "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/out": true,
+      "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/cache_forge": true,
+      "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/verification/runtime": true,
+      "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/runtime": true
+    }
+  },
+  "limits": [
+    "No new runtime probe, no public transaction, no compilation or test suite",
+    "No onchain E2 verifier, source-complete replay or custody/new-bond integration executed",
+    "No native Nitro mid-block/reorg, large-history recovery or gas-bound experiment",
+    "No all-EVM-state indistinguishability or universal impossibility claim",
+    "No justified minimum owner-policy relaxation; E2 and full plan remain open"
+  ]
+}

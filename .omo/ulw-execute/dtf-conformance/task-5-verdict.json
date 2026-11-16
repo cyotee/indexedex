@@ -1,0 +1,145 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 5,
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-5-done.json",
+  "independent": true,
+  "summary": "Confirmed the task 5 input-boundary behavior through source and diff inspection, named assertions, a fresh permitted test run, decoded loader fields, and preservation checks. No fixes implemented.",
+  "evidence": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/verification/report.md",
+      "result": "Independent mechanism trace, manual QA field quotation, ownership assessment, adversarial results, and limits."
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/verification/rerun.log",
+      "result": "56 pass, 0 fail, TEST_EXIT_CODE=0; monitor exit 0; Bun 1.4.2, 1.65 seconds. Inspected named assertions and actual emitted JSON."
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/happy.log",
+      "result": "Raw producer happy evidence inspected and preserved; independently reproduced."
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/rejection.log",
+      "result": "Raw producer failure evidence inspected and preserved; independently reproduced."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts:50-55",
+      "result": "Identity-specific exact-original and explicit-separate-mode guard, also applied by preparationInput refinement."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts:115-119",
+      "result": "Payload boundary rejects invalid weighted NFT 3 before quote acquisition."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts:35-59",
+      "result": "Schema normalization and full source-proof validation precede payload building and quoting; credits come from component quotes."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts:41-65",
+      "result": "Source bytes are fingerprinted and complete original tuple must match its explicit proof."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "result": "Inspected positive loader decoding, non-NFT-3 combined control, ten malformed/stale CLI cases, and missing/mismatched proof assertions. All passed independently."
+    }
+  ],
+  "repro": {
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/nft-contributions.test.ts ./scripts/recovery/dtf-migration/preparation.test.ts",
+    "exit_code": 0,
+    "expected_positive": "configureNftContributionEntitlements for weighted NFT 3 with the exact ETH-only and DTF-only originals in order; configureNftEntitlements remains for the earlier-collection combined control.",
+    "expected_negative": "Absent/false/combined mode, missing/zero component, changed original amount, and stale combined fixture reject without transport or prepared directory. CLI exits 1 with controlled INPUT/PROVENANCE failure."
+  },
+  "manual_qa": {
+    "result": "PASS",
+    "source": "Fresh task5Payload JSON emitted in verification/rerun.log, parsed without display clipping.",
+    "chainId": "4663",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "3",
+    "loader": "configureNftContributionEntitlements",
+    "separateContributions": true,
+    "decodedOriginalEth": "999999000000000",
+    "decodedOriginalDtf": "362893857600000000000",
+    "contributions": [
+      {
+        "originalEth": "999999000000000",
+        "originalDtf": "0",
+        "credit": "99999900000000"
+      },
+      {
+        "originalEth": "0",
+        "originalDtf": "362893857600000000000",
+        "credit": "32990350690909090909"
+      }
+    ],
+    "quotedCredit": "32990450690809090909",
+    "mergedOriginal": false,
+    "combinedControl": "configureNftEntitlements"
+  },
+  "adversarial": {
+    "malformed_input": {
+      "result": "PASS",
+      "observation": "Absent, false, combined, missing ETH, missing DTF, zero ETH, zero DTF, altered ETH, and altered DTF each rejected with INPUT, zero recorded transport requests, no prepared directory, empty stdout, and CLI exit 1. Missing or mismatched proof also rejected before transport. Zero-transaction claims are corroborated by rejection before planner/output and inspection of the preparation path."
+    },
+    "stale_state": {
+      "result": "PASS",
+      "observation": "Old combined NFT 3 originals 100/22 rejected with INPUT before transport and without an accepted manifest."
+    },
+    "dirty_worktree": {
+      "result": "PASS",
+      "observation": "All 4112 pre-existing fingerprinted task 1-3 and producer task 5 evidence files remained byte-identical; every initially dirty/untracked path remained in the subsequent status snapshot. Concurrent Solidity diffs were preserved. No task 5 production Solidity edit identified; inspected NFT loader differences concern concurrent pricing, and the legacy NFT difference concerns stable origin identity."
+    },
+    "misleading_success_output": {
+      "result": "PASS",
+      "observation": "Inspected assertions, complete generated loader JSON, rejection outcomes, final 56/0 test summary, TEST_EXIT_CODE=0, and independent monitor exit 0. Producer status complete was not accepted as proof."
+    },
+    "generated_or_cached_artifacts": {
+      "result": "PASS",
+      "observation": "Prepared payload was freshly generated; no cached payload was accepted as the result. Warm ABI artifacts are used for loader encoding/decoding, so this verdict does not attest their compatibility with the concurrent pricing worker's current Solidity API."
+    },
+    "hung_or_long_commands": {
+      "result": "not-applicable",
+      "reason": "The permitted Bun timeout stayed 15000 and tests completed in 1.65 seconds."
+    },
+    "flaky_tests": {
+      "result": "not-applicable",
+      "reason": "One deterministic independent test run observed, without retries."
+    },
+    "untrusted_external_text": {
+      "result": "not-applicable",
+      "reason": "Local fixtures only."
+    },
+    "cancel_resume": {
+      "result": "not-applicable",
+      "reason": "No cancellation or resume scenario."
+    },
+    "repeated_interruptions": {
+      "result": "not-applicable",
+      "reason": "No repeated interruption scenario."
+    }
+  },
+  "checks": {
+    "permitted_suites": "passed",
+    "scoped_typescript_git_diff_check": "exit 0",
+    "preserved_evidence_files": 4112,
+    "changed_or_missing_baseline_evidence_files": 0,
+    "missing_initial_dirty_or_untracked_paths": 0,
+    "source_proof_and_wallet_binding": "confirmed",
+    "non_nft_three_existing_modes": "confirmed by narrow guard and real combined-loader positive control",
+    "task_owned_solidity_changes": "none identified"
+  },
+  "findings": [],
+  "limits": [
+    "Confirms task 5 offline schema, payload preparation, and loader selection only; actual on-chain two-bond execution is outside this task.",
+    "The permitted tests use synthetic loopback transport and warm ABIs. No external RPC, signing, transaction submission, Forge, or current-source compilation was performed.",
+    "Concurrent pricing Solidity API changes were observed and preserved, not treated as task 5 defects or attested as compatible.",
+    "Local source-proof binding is confirmed; historical allocation authority is not inferred.",
+    "A shared worktree diff cannot independently prove edit authorship. Ownership assessment uses the inspected task 5 TypeScript changes, concurrent pricing diff content, and the assignment's explicit concurrency context."
+  ],
+  "forbidden_operations_performed": [],
+  "fixes_implemented": false,
+  "delegated": false
+}

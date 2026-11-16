@@ -1,0 +1,14 @@
+{
+  "port": 18548,
+  "listening": false,
+  "lsofExitCode": 1,
+  "ownedAnvilMonitor": "mon_EFJR3F56EAEM6AQT",
+  "monitorStopped": true,
+  "temporaryDirectory": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/.migration-core-tmp",
+  "temporaryDirectoryAbsent": true,
+  "ownedViewsClosed": true,
+  "warmOutPreserved": true,
+  "warmCachePreserved": true,
+  "publicBroadcast": false,
+  "commitsCreated": 0
+}

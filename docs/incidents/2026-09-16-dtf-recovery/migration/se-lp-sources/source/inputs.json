@@ -1,0 +1,82 @@
+[
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/earlier/contract.md",
+    "bytes": 42556,
+    "sha256": "4ff5266e8faba4a5eac2931af329596bedcc6ecd704932d096c36da88faa32ea"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/weighted/contract.md",
+    "bytes": 45670,
+    "sha256": "6748c44550417a8e89d655969d9c032158916345367003e4c2679c0c2490b192"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+    "bytes": 19702,
+    "sha256": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+    "bytes": 19878,
+    "sha256": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.sources.json",
+    "bytes": 411756,
+    "sha256": "026c9ab02a2fde5738b2e290d875e55d0b2ff762cae975b7a8ca0bf3454231ab"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.json",
+    "bytes": 699993,
+    "sha256": "8752356e523adcd85af806ff044520cc76d89c12fc285a7de43a9610ccf7d702"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/native-replay.json",
+    "bytes": 443904,
+    "sha256": "1753ff90de52408910cdcfb6d11be41200fb0c1cecf02fa03bea5b63ad11a36d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/native-replay.sources.json",
+    "bytes": 411190,
+    "sha256": "a2d5fb26ddac02093cbd78ad8a592ef68ad32fa7c19b262c3643e766259c1b2d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+    "bytes": 4711975,
+    "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+    "bytes": 17922,
+    "sha256": "7f523d563ca30a5d103a96a3f6dc8f860bfd06683e37cefec8eeb16b88c958c1"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+    "bytes": 21559,
+    "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "bytes": 79305,
+    "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+    "bytes": 108022,
+    "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase20-remaining-se-lp-source-brief.md",
+    "bytes": 6587,
+    "sha256": "0cdb95404ca0aa83a9e7d5ac5a76f061c1c678bd62dfeb79e901a03bbdfeb431"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/implementation/report.md",
+    "bytes": 18760,
+    "sha256": "4501cd231c4e1cf23f95d6a37190d44502d159800e8dce3d1d20fe4b48d3216d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/verification/report.md",
+    "bytes": 24282,
+    "sha256": "79d34b17e0b06b273c0350d450561650e09d312482efefd2effa01dbc7efe4bd"
+  }
+]

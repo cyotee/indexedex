@@ -1,0 +1,86 @@
+{
+  "version": "dtf-phase27-independent-verification-manifest-v1",
+  "verdict": "needs-fix",
+  "implementationStatus": "blocked-not-implemented",
+  "files": [
+    {
+      "path": "report.md",
+      "bytes": 17476,
+      "sha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2"
+    },
+    {
+      "path": "binding-audit.json",
+      "bytes": 19253,
+      "sha256": "beda25ec68114ee60293971b7d3b7dac01bedeb072c2e359b98f4ead3fb185ef"
+    },
+    {
+      "path": "producer-audit.json",
+      "bytes": 11336,
+      "sha256": "bb100471d1b45efa50f2339c64365f8e719825ca94ddf7a8ceaa0826f7bf3d29"
+    },
+    {
+      "path": "unchanged-inputs.json",
+      "bytes": 38214,
+      "sha256": "cb334e39dac5ff6c93e4d56c80587d06df1f2ca07d08fc3e0823d94bd6fe1d27"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 17476,
+      "sha256": "398e82175b52fe3fdd444681f7e27c6070ac0c4734dcc23aa994ff64834f0f64"
+    },
+    {
+      "path": "coverage.json",
+      "bytes": 6580,
+      "sha256": "e914c5d6a48fa20d21d48043716ac1e92a5eee420c79f80cb747cac53f21e30a"
+    },
+    {
+      "path": "commands.md",
+      "bytes": 8827,
+      "sha256": "5ab79ac41efb1053f48561ff0186aff5917a06fc005ce46b229f1ab30c4936ef"
+    },
+    {
+      "path": "operator-final-screen.txt",
+      "bytes": 2834,
+      "sha256": "45bed206aae1e973b887d210454263a557e7fc537d94c623b2cec96d64db6687"
+    },
+    {
+      "path": "cli-boundary.log",
+      "bytes": 7579,
+      "sha256": "8ee076ce8f90b13fd7a6d39f0a602a54e52178f89cb3fefc51377ff8f8c61f9f"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 5109,
+      "sha256": "350fb1d5e7569dad43e8f2c9b508f5db4a23c2951144409389b3190ad7cfb8da"
+    }
+  ],
+  "producerSeal": {
+    "path": "../implementation/seal.json",
+    "bytes": 346,
+    "sha256": "fe9d0e574ea654a1e8fc7ce565dd159c82115030b194c7b3198796b06c8a9dea"
+  },
+  "checks": {
+    "declaredBindings": 36,
+    "matchedBindings": 34,
+    "mismatchedBindings": 2,
+    "strictTypesExit": 0,
+    "operatorTestInvocations": 1,
+    "operatorTestsPassed": 109,
+    "operatorTestsFailed": 0,
+    "operatorTestFiles": 11,
+    "cliHelpExit": 0,
+    "blockedManifestPrepareExit": 1,
+    "blockedManifestValidateExit": 1,
+    "candidateDerivation": "not-implemented",
+    "candidateReconciliation": "blocked-not-run",
+    "candidateDeterminism": "blocked-not-run",
+    "candidateLoaderRejection": "unverified-no-document",
+    "rawAndProducerInputsUnchanged": true,
+    "operatorSourceUnchanged": true,
+    "jsonFilesParse": true,
+    "cliErrorRecordsParse": true
+  },
+  "cleanupComplete": true,
+  "pendingOperations": 0,
+  "seal": "seal.json"
+}

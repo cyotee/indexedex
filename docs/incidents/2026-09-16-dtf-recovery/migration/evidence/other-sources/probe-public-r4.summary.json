@@ -1,0 +1,4355 @@
+{
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs --summarize docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json",
+  "generated": "2026-11-10T12:01:19.527Z",
+  "input": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json",
+  "sha256": "a08bef6a8d769925e9b61560774d82d23b0dfa01f5a9e2a84856585a36c8a7b8",
+  "pin": {
+    "chainId": "0x1237",
+    "block": "110862604",
+    "hash": "0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80",
+    "stateRoot": "0x1d86ca9f4f0457092dbfc6a8aa7d341e90d94e5a5fa4eba5bfa9500065d6ac77",
+    "timestamp": "0x6af306af",
+    "rpcAlias": "robinhood_mainnet_public",
+    "label": "fresh-not-historical"
+  },
+  "runtime": {
+    "bun": "1.4.2",
+    "execPath": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 43055
+  },
+  "overall": "FAIL",
+  "cleanup": {
+    "childExit": 0,
+    "portClosed": true,
+    "portReadback": "TypeError: Unable to connect. Is the computer able to access the url?",
+    "pidAbsent": true,
+    "caches": [
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk/bun-cache",
+        "absent": true
+      },
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk/node-cache",
+        "absent": true
+      },
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk/cache",
+        "absent": true
+      }
+    ]
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk",
+    "port": 56769,
+    "local": "http://127.0.0.1:56769",
+    "childPid": 43834,
+    "args": [
+      "anvil",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "56769",
+      "--chain-id",
+      "4663",
+      "--fork-url",
+      "<rpc-alias:robinhood_mainnet_public>",
+      "--fork-block-number",
+      "110862604",
+      "--no-storage-caching",
+      "--steps-tracing"
+    ]
+  },
+  "disabled": [
+    {
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x39dbed3a2bd333467115de45665cc57f813c4571",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xf517e2cf2f6c68020b9a66f05c5a9895e6f89f68",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xe9708fa00425cff8f25eb2a0719a8ff4d56de888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xe3d8b10abe00596f67be1a498777b6cdea4dd82f",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x7c61faed6ca729663b5a96ca69339b100a7aa888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x85bd24d4aa7872dd46c5bf889cb324b72fe473f1",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x8d761531c98f9f566eb5df57d63678637b10a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xce74bc02cdf5c8faecb94a380d98ec47195a39d1",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x1ca1771d04366761a2aef7ea26f9e18bc8bb6888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xc2fbe67c474ce7ce273d31b9b3c1c57915642e28",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x25ef9b3036ac1faa5090bbfadc68b2eed0f56888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x0f585337c8c7075886c575afc14a11c8e44ba30e",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x55119a02d034d78593cf7b3359390dbbb00aa888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x40b613522bc5944330b7141e973280948124f844",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x46d949601bae5c7ae0d5792487758862fa6be888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x2094aa9a98d4255e61911d3bb250e92d3d50d26b",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x7a71c38f245cbaa5ac2776a86d1d02c0fcb0a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xbebd0e65414437a8f91e13c47e399a906d7c2935",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xb5f5040bf271def9d528dd977c7c97f13f26a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xd3b36c198c91fd0e02115782acdc3d905ac6bb76",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xbbc8d3c8cf1149c36769b4fb0d6d6f8d2d34a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x72ef4be65e356e102bb31a97d2d7b309e8c97226",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x2e97f7183597a43735fb5b052923251693a2e888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xac77646bcff9d52e99800534192e0290933f4094",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x64e0f5a5cf0f579eff0981a4fedea77964b74531",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x201d31a56c58a3489bec218c7a899d59a07a35f0",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x3e33871a8740b294a48347bffd8a5004e1578c0d",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0xabc9c5b5c8118a15a440ac59a1c74a718e65681c",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    }
+  ],
+  "sources": [
+    {
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        }
+      ]
+    },
+    {
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 19,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x517234F78A4BcAfc5F880024A3E45D49cF43b305"
+          },
+          "facetCodeHash": "0x8c1ea71d607b09b21c4e78f850647a059dc7935b6772f7cd3aeaa700a995439f"
+        }
+      ]
+    },
+    {
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 9,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        }
+      ]
+    },
+    {
+      "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+      "codeHash": "0xc95f518da431326e81a95ea4e7cba683ea02488e702604042fe57299345e2baa",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "codeHash": "0x5706be52f64875fee65a2cec0d80e47a23d8793cbe85d214b48445e2d05f5353",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bindings": []
+    },
+    {
+      "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279"
+          },
+          "facetCodeHash": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b"
+          },
+          "facetCodeHash": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279"
+          },
+          "facetCodeHash": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8"
+        }
+      ]
+    },
+    {
+      "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 9,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291"
+          },
+          "facetCodeHash": "0x1eadaa06571b1cca173491d149bab9b07d5d1b9dc83d268654e49d3179b1a460"
+        }
+      ]
+    },
+    {
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    },
+    {
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x614f204B98Ff2E6ba7C4a365CAf7A39f167924A6"
+          },
+          "facetCodeHash": "0x7c02a5793a00529350c466cf37009b6e046109bedb49379087daef548f4faacf"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x4D9976E8Fd5C6f698DF0303C6056efAff47e6f48"
+          },
+          "facetCodeHash": "0x8992feb5af0dea8274c8ad51e34c4d912c8257c217205dc0b18aa85e72d49ce5"
+        }
+      ]
+    },
+    {
+      "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 28,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0xDbcEEFf98F2388b0eFA0C0fDA2e08cdd263Ce8f5"
+          },
+          "facetCodeHash": "0x99b74f701969463d5147a782113b30bef06ef1c65f58902d410849d6d2cef616"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0xd1F06fdB8e21a4566bB1B21118f66a12Fc66c0C3"
+          },
+          "facetCodeHash": "0x575684348cb71035ed51b9cc9eb2ac5338b35b6053937927e5e91ea9e2b990b9"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0xdd1AaD6d8C312774509B7779fde018bAa014826F"
+          },
+          "facetCodeHash": "0xa68db41fe1fcac6daa4ea4f8a148d3f265d2190c34b1a3dba40eddbc14b1d5ab"
+        }
+      ]
+    },
+    {
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0xe6275c805e712f609c5DeA5b07481A4229e966F7"
+          },
+          "facetCodeHash": "0xb022d06e679e0e3ea6c8e081dc69e255d3d1f3d5363584fb0029d6aac8858565"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x1B7a7BC9044642C4e42e64f805f6400D75AD2c16"
+          },
+          "facetCodeHash": "0xe5f44175a8c16c705c2c9e5e68b2c3efe842ce694c5e585d2211947802b10d84"
+        }
+      ]
+    },
+    {
+      "address": "0x39dbed3a2bd333467115de45665cc57f813c4571",
+      "codeHash": "0x16c3d3ede897688ddff79262606f13bead398332e65001f192460fbac4e1fb85",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0xf517e2cf2f6c68020b9a66f05c5a9895e6f89f68",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0xe9708fa00425cff8f25eb2a0719a8ff4d56de888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xe3d8b10abe00596f67be1a498777b6cdea4dd82f",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x7c61faed6ca729663b5a96ca69339b100a7aa888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x85bd24d4aa7872dd46c5bf889cb324b72fe473f1",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x8d761531c98f9f566eb5df57d63678637b10a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xce74bc02cdf5c8faecb94a380d98ec47195a39d1",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x1ca1771d04366761a2aef7ea26f9e18bc8bb6888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xc2fbe67c474ce7ce273d31b9b3c1c57915642e28",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x25ef9b3036ac1faa5090bbfadc68b2eed0f56888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x0f585337c8c7075886c575afc14a11c8e44ba30e",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x55119a02d034d78593cf7b3359390dbbb00aa888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x40b613522bc5944330b7141e973280948124f844",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x46d949601bae5c7ae0d5792487758862fa6be888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x2094aa9a98d4255e61911d3bb250e92d3d50d26b",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x7a71c38f245cbaa5ac2776a86d1d02c0fcb0a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xbebd0e65414437a8f91e13c47e399a906d7c2935",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0xb5f5040bf271def9d528dd977c7c97f13f26a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xd3b36c198c91fd0e02115782acdc3d905ac6bb76",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0xbbc8d3c8cf1149c36769b4fb0d6d6f8d2d34a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x72ef4be65e356e102bb31a97d2d7b309e8c97226",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x2e97f7183597a43735fb5b052923251693a2e888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+      "codeHash": "0x864cc9ad53b338b82da1f7cab85ab0b3d5c8861acb422b6fec63cf36234f36a6",
+      "decimals": 6,
+      "bindings": []
+    },
+    {
+      "address": "0xac77646bcff9d52e99800534192e0290933f4094",
+      "codeHash": "0xd5264e891e471fbc2c5794d3c08193a9c34bdb2ca17ea991ea487505484e1e24",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0x64e0f5a5cf0f579eff0981a4fedea77964b74531",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x1EF4478F7824e4858980bC5119aaC252db6080a9"
+          },
+          "facetCodeHash": "0x854fc95ef4af8cce978a1812f8cc5a6238612d19ba5726410725f6dfcd3b9c61"
+        }
+      ]
+    },
+    {
+      "address": "0x201d31a56c58a3489bec218c7a899d59a07a35f0",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    },
+    {
+      "address": "0x3e33871a8740b294a48347bffd8a5004e1578c0d",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    },
+    {
+      "address": "0xabc9c5b5c8118a15a440ac59a1c74a718e65681c",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "name": "stale runtime identity rejected",
+      "verdict": "PASS",
+      "evidence": {
+        "observed": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+        "supplied": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "limitation": "Offchain identity guard test; Migration onchain identity enforcement is not implemented"
+      },
+      "transactions": []
+    },
+    {
+      "name": "local source runtime matches upstream pin",
+      "verdict": "PASS",
+      "evidence": {
+        "sources": 43,
+        "block": {
+          "chainId": "0x1237",
+          "block": "110862604",
+          "hash": "0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80",
+          "stateRoot": "0x1d86ca9f4f0457092dbfc6a8aa7d341e90d94e5a5fa4eba5bfa9500065d6ac77",
+          "timestamp": "0x6af306af",
+          "rpcAlias": "robinhood_mainnet_public",
+          "label": "fresh-not-historical"
+        }
+      },
+      "transactions": []
+    },
+    {
+      "name": "staking atomic source-right surrender",
+      "verdict": "PASS",
+      "evidence": {
+        "owner": "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+        "custodian": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "quantity": "64890781291192882058375",
+        "before": {
+          "owner": "64890781291192882058375",
+          "custody": "0",
+          "supply": "15338080546808403036783930"
+        },
+        "after": {
+          "owner": "0",
+          "custody": "64890781291192882058375"
+        },
+        "boundary": "Source reassignment only; no Migration credit callback is demonstrated"
+      },
+      "transactions": [
+        {
+          "kind": "custody",
+          "hash": "0x1ef021c20f3e08df3ebd722e1f9c44b180c7e913972ac33b1df11f78c9e177ae",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "staking claim extinguishment into SY custody",
+      "verdict": "PASS",
+      "evidence": {
+        "preview": {
+          "signature": "previewClaim(address,uint256) view returns (uint256)",
+          "selector": "0xbcb8e5a5",
+          "args": [
+            "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+            "64890781291192882058375"
+          ],
+          "value": "117153341"
+        },
+        "syBefore": "0",
+        "syAfter": "117153341",
+        "remaining": "0",
+        "sourceVault": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0"
+      },
+      "transactions": [
+        {
+          "kind": "harvest",
+          "hash": "0x965e7f7265aa42a3837370a5715a33232b6688f186ab1b12052abaf5826f8ce5",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "claimed position rejects second exercise",
+      "verdict": "PASS",
+      "evidence": {
+        "remaining": "0"
+      },
+      "transactions": [
+        {
+          "kind": "repeat",
+          "hash": "0xd32ab717f5ac1a934f4bf26210ba0b0686f7c0f8c5f28ab8cfe93f9a74b2bc03",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "zero claim and wrong operator cannot redirect victim",
+      "verdict": "PASS",
+      "evidence": {
+        "before": "64890781291192882058375",
+        "after": "64890781291192882058375"
+      },
+      "transactions": [
+        {
+          "kind": "zero",
+          "hash": "0x71bbf97e3bdf8adebbfb39037d2073bedc523d94d7932666db5e1a5e2d039e4b",
+          "status": "0x0"
+        },
+        {
+          "kind": "zeroClaim",
+          "hash": "0x4b7bd1c71386e7ac9b2d762e9beb4956f32a64f0d131b002a9854c2a2dd4023e",
+          "status": "0x0"
+        },
+        {
+          "kind": "attack",
+          "hash": "0x0e41d73a3b005ebc9b603851130ebb25f1c01daa4950868be2f55253be6201b8",
+          "status": "0x0"
+        },
+        {
+          "kind": "claim",
+          "hash": "0x8f211a8982180ce967d16065ea036b45483fa8c6882ed904ed3662e7376360f0",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "successful inner claim rolled back by failed outer transaction",
+      "verdict": "PASS",
+      "evidence": {
+        "trace": {
+          "failed": true,
+          "returnValue": "0x",
+          "steps": 199800,
+          "calls": [
+            {
+              "depth": 1,
+              "returned": "0x1"
+            },
+            {
+              "depth": 3,
+              "returned": "0x1"
+            },
+            {
+              "depth": 5,
+              "returned": "0x1"
+            },
+            {
+              "depth": 7,
+              "returned": "0x1"
+            },
+            {
+              "depth": 9,
+              "returned": "0x1"
+            },
+            {
+              "depth": 9,
+              "returned": "0x1"
+            },
+            {
+              "depth": 11,
+              "returned": "0x1"
+            },
+            {
+              "depth": 9,
+              "returned": "0x1"
+            }
+          ],
+          "outerCallSucceeded": true
+        },
+        "before": {
+          "weight": "64890781291192882058375",
+          "sy": "0",
+          "supply": "15338080546808403036783930",
+          "vaultShares": "276912583840862116302"
+        },
+        "after": {
+          "weight": "64890781291192882058375",
+          "sy": "0",
+          "supply": "15338080546808403036783930",
+          "vaultShares": "276912583840862116302"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "custody",
+          "hash": "0x9b5a9d1f292836c29be39b2b818e134ee6d58d6b5fa641a55c0b47e2af29f1f2",
+          "status": "0x1"
+        },
+        {
+          "kind": "tx",
+          "hash": "0xd1a08b65332b7abb00c064a45cf8b6e7a267a6b85d5a5c80145eb0d47c0aac2f",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "claim-vault shares: partial exact custody",
+      "verdict": "PASS",
+      "evidence": {
+        "token": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+        "owner": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+        "fixtureMayBeInfrastructure": true,
+        "owned": "276912583840862116302",
+        "q": "2769125838408621163",
+        "before": {
+          "owner": "276912583840862116302",
+          "custody": "0"
+        },
+        "after": {
+          "owner": "274143458002453495139",
+          "custody": "2769125838408621163"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "unauthorized",
+          "hash": "0x90edc6e2b94e9676dd0f802c77071c6c0780db4ec1f3fc3507015ad98bacb6a7",
+          "status": "0x0"
+        },
+        {
+          "kind": "approval",
+          "hash": "0x8b00fcec99e8209244e24a308e44fe107e347f2eccbb17e6d9bcd15d94da870b",
+          "status": "0x1"
+        },
+        {
+          "kind": "custody",
+          "hash": "0xbe7f546b932a9e310addec8766026e63b5e779afa21e8f0d8950a2e02951fd09",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "claim-vault shares: harvest",
+      "verdict": "PASS",
+      "evidence": {
+        "signature": "redeem(uint256,address,address)",
+        "selector": "0xba087652",
+        "outToken": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+        "outBefore": "0",
+        "outAfter": "276912584",
+        "remaining": "0",
+        "asset": {
+          "signature": "asset() view returns (address)",
+          "selector": "0x38d52e0f",
+          "args": [],
+          "value": "0xB55604CF4dcdABB362078e106D20F98512391EdF"
+        },
+        "outputs": {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 071bc3c900000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        },
+        "vaultTokens": {
+          "signature": "vaultTokens() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: ir\\\"3\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\",\"data\":\"0x23dbef4b6972223300000000000000000000000000000000000000000000000000000000\"}"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "harvest",
+          "hash": "0x1e2e5a6d0e7d855bd9328d83a7ec4555d500ee437229d83e9aeebfbea5eded9a",
+          "status": "0x1"
+        }
+      ],
+      "attempts": [
+        {
+          "signature": "redeem(uint256,address,address)",
+          "outToken": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+          "outBefore": "0",
+          "outAfter": "276912584",
+          "hash": "0x1e2e5a6d0e7d855bd9328d83a7ec4555d500ee437229d83e9aeebfbea5eded9a",
+          "status": "0x1",
+          "remaining": "0",
+          "selector": "0xba087652"
+        }
+      ]
+    },
+    {
+      "name": "claim-vault shares: failed transfer outer rollback",
+      "verdict": "PASS",
+      "evidence": {
+        "trace": {
+          "failed": true,
+          "returnValue": "0x",
+          "steps": 874,
+          "calls": [
+            {
+              "depth": 1,
+              "returned": "0x1"
+            }
+          ],
+          "outerCallSucceeded": true
+        },
+        "before": {
+          "owner": "276912583840862116302",
+          "custody": "0",
+          "allowance": "2769125838408621163"
+        },
+        "after": {
+          "owner": "276912583840862116302",
+          "custody": "0",
+          "allowance": "2769125838408621163"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "approval",
+          "hash": "0xe094d0fdd211b6b54c4ef8130bc7063651e29403c9a564e4be16a86ec72b5653",
+          "status": "0x1"
+        },
+        {
+          "kind": "tx",
+          "hash": "0xd1a08b65332b7abb00c064a45cf8b6e7a267a6b85d5a5c80145eb0d47c0aac2f",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "earlier underlying SE: partial exact custody",
+      "verdict": "PASS",
+      "evidence": {
+        "token": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+        "owner": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+        "fixtureMayBeInfrastructure": true,
+        "owned": "240208335094234316501642770343998622608",
+        "q": "2402083350942343165016427703439986226",
+        "before": {
+          "owner": "240208335094234316501642770343998622608",
+          "custody": "0"
+        },
+        "after": {
+          "owner": "237806251743291973336626342640558636382",
+          "custody": "2402083350942343165016427703439986226"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "unauthorized",
+          "hash": "0x18a883363f38c8a508e0e23deb62e32c366aca35418b4e74ee12034df38d74f1",
+          "status": "0x0"
+        },
+        {
+          "kind": "approval",
+          "hash": "0x26ccab95c16353c3dcbb464260f06c606b2417b3f8c6c28afe6f73148ad3cea0",
+          "status": "0x1"
+        },
+        {
+          "kind": "custody",
+          "hash": "0xfd0c745989a75168ea6a59ceb21654e04ea1ea66331967799bcb7af69ebb4e00",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "earlier underlying SE: harvest",
+      "verdict": "FAIL",
+      "evidence": {
+        "remaining": "2402083350942343165016427703439986226",
+        "asset": {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 38d52e0f00000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        "outputs": {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 071bc3c900000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        },
+        "vaultTokens": {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        "reason": "Every enumerated bound exact-in redemption route reverted; no unobserved route is claimed supported"
+      },
+      "transactions": [],
+      "attempts": [
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x5e8f2e641162d00586d53f861c6429fec76fd15d13790e71b8788bdd551d66b2",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7",
+          "remaining": "2402083350942343165016427703439986226",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x0eddb56715fbb4113899a1e647d153f96a9ffe5aa3856cddf648395f05960046",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7",
+          "remaining": "2402083350942343165016427703439986226",
+          "selector": "0xd02d3063"
+        }
+      ]
+    },
+    {
+      "name": "earlier underlying SE: failed transfer outer rollback",
+      "verdict": "PASS",
+      "evidence": {
+        "trace": {
+          "failed": true,
+          "returnValue": "0x",
+          "steps": 874,
+          "calls": [
+            {
+              "depth": 1,
+              "returned": "0x1"
+            }
+          ],
+          "outerCallSucceeded": true
+        },
+        "before": {
+          "owner": "240208335094234316501642770343998622608",
+          "custody": "0",
+          "allowance": "2402083350942343165016427703439986226"
+        },
+        "after": {
+          "owner": "240208335094234316501642770343998622608",
+          "custody": "0",
+          "allowance": "2402083350942343165016427703439986226"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "approval",
+          "hash": "0x164a8daf4bc930e38a1b92751180f1e96b2f251a45b6360cb6df5e1433391db7",
+          "status": "0x1"
+        },
+        {
+          "kind": "tx",
+          "hash": "0xd1a08b65332b7abb00c064a45cf8b6e7a267a6b85d5a5c80145eb0d47c0aac2f",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "earlier fungible LP: partial exact custody",
+      "verdict": "PASS",
+      "evidence": {
+        "token": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+        "owner": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+        "fixtureMayBeInfrastructure": true,
+        "owned": "107516722668090845797720021675152213",
+        "q": "1075167226680908457977200216751522",
+        "before": {
+          "owner": "107516722668090845797720021675152213",
+          "custody": "0"
+        },
+        "after": {
+          "owner": "106441555441409937339742821458400691",
+          "custody": "1075167226680908457977200216751522"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "unauthorized",
+          "hash": "0x25aa09a94f17c343bf92aace83fe5b53a93b732e63b027904112c17caf0ccb6a",
+          "status": "0x0"
+        },
+        {
+          "kind": "approval",
+          "hash": "0x4f50d5fde4d929d2e2bd4ac328567e77cdb33631900008d5a490a3bdbb1438d4",
+          "status": "0x1"
+        },
+        {
+          "kind": "custody",
+          "hash": "0x0fcb02b1bb789bc1fa8203162e55de50c71b2e5d69ff99c296eeafa29afeea0e",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "earlier fungible LP: harvest",
+      "verdict": "FAIL",
+      "evidence": {
+        "remaining": "1075167226680908457977200216751522",
+        "asset": {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 38d52e0f00000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        "outputs": {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 071bc3c900000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        },
+        "vaultTokens": {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        "reason": "Every enumerated bound exact-in redemption route reverted; no unobserved route is claimed supported"
+      },
+      "transactions": [],
+      "attempts": [
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x8efa6ab4913e919813d8f94624b8fc08ecfbeb8e72e611cc429fa4220f160cf2",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x5d5fe824",
+          "remaining": "1075167226680908457977200216751522",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x72ab92c3aefc4c6fe3923c50d6a4397c06c00e61e68fc03c35403e28e75bc476",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x5d5fe824",
+          "remaining": "1075167226680908457977200216751522",
+          "selector": "0xd02d3063"
+        }
+      ]
+    },
+    {
+      "name": "earlier fungible LP: failed transfer outer rollback",
+      "verdict": "PASS",
+      "evidence": {
+        "trace": {
+          "failed": true,
+          "returnValue": "0x",
+          "steps": 874,
+          "calls": [
+            {
+              "depth": 1,
+              "returned": "0x1"
+            }
+          ],
+          "outerCallSucceeded": true
+        },
+        "before": {
+          "owner": "107516722668090845797720021675152213",
+          "custody": "0",
+          "allowance": "1075167226680908457977200216751522"
+        },
+        "after": {
+          "owner": "107516722668090845797720021675152213",
+          "custody": "0",
+          "allowance": "1075167226680908457977200216751522"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "approval",
+          "hash": "0x13af58af9f4c09b9f67520053be80fe574f5f21b4eb686cec446c3fc5610bc58",
+          "status": "0x1"
+        },
+        {
+          "kind": "tx",
+          "hash": "0xd1a08b65332b7abb00c064a45cf8b6e7a267a6b85d5a5c80145eb0d47c0aac2f",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "weighted WETH-leg SE: partial exact custody",
+      "verdict": "PASS",
+      "evidence": {
+        "token": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+        "owner": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+        "fixtureMayBeInfrastructure": true,
+        "owned": "2363429102804833127507538",
+        "q": "23634291028048331275075",
+        "before": {
+          "owner": "2363429102804833127507538",
+          "custody": "0"
+        },
+        "after": {
+          "owner": "2339794811776784796232463",
+          "custody": "23634291028048331275075"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "unauthorized",
+          "hash": "0xa44653d60f5b650e29ce387b947f454d7254e1655e49b092bafbb3348c0500a3",
+          "status": "0x0"
+        },
+        {
+          "kind": "approval",
+          "hash": "0xe3c41d9f79aff2977d0c0f69b04cd6f713734f40f377210093505ea2c31567c5",
+          "status": "0x1"
+        },
+        {
+          "kind": "custody",
+          "hash": "0x112f40330510d31f04eefc639ff5b8d5ca19df295e79d90819137d0c032b517e",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "weighted WETH-leg SE: harvest",
+      "verdict": "FAIL",
+      "evidence": {
+        "remaining": "23634291028048331275075",
+        "asset": {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 38d52e0f00000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        "outputs": {
+          "signature": "getTokensOut() view returns (address[])",
+          "selector": "0x071bc3c9",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        "vaultTokens": {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        "reason": "Every enumerated bound exact-in redemption route reverted; no unobserved route is claimed supported"
+      },
+      "transactions": [],
+      "attempts": [
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "outToken": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0xca8a7ac45df63716c929ab173db569170a5a03e5ae0a559cb525a3298773e90a",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x1ba84b43000000000000000000000000999dae02d22e5fee1c4508430d5196d31d631009",
+          "remaining": "23634291028048331275075",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x759ae5129a341c883cdbee1437f028231cdd3c169fa008bcce50265999cd8cba",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x1ba84b43000000000000000000000000999dae02d22e5fee1c4508430d5196d31d631009",
+          "remaining": "23634291028048331275075",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x9aed2ac33c26c19662c4982669260c661e849dbc5377c6e57a7d52356b246ee4",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x1ba84b43000000000000000000000000999dae02d22e5fee1c4508430d5196d31d631009",
+          "remaining": "23634291028048331275075",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x120267142a42cba8cb4d06d032f862150f3eb087f944c2bc10a361c18541798a",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x1ba84b43000000000000000000000000999dae02d22e5fee1c4508430d5196d31d631009",
+          "remaining": "23634291028048331275075",
+          "selector": "0xd02d3063"
+        }
+      ]
+    },
+    {
+      "name": "weighted WETH-leg SE: failed transfer outer rollback",
+      "verdict": "PASS",
+      "evidence": {
+        "trace": {
+          "failed": true,
+          "returnValue": "0x",
+          "steps": 874,
+          "calls": [
+            {
+              "depth": 1,
+              "returned": "0x1"
+            }
+          ],
+          "outerCallSucceeded": true
+        },
+        "before": {
+          "owner": "2363429102804833127507538",
+          "custody": "0",
+          "allowance": "23634291028048331275075"
+        },
+        "after": {
+          "owner": "2363429102804833127507538",
+          "custody": "0",
+          "allowance": "23634291028048331275075"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "approval",
+          "hash": "0x180ae52a58ee1998b93cf4c98273abc7c67039788f1f06cbbd843933792f4ce6",
+          "status": "0x1"
+        },
+        {
+          "kind": "tx",
+          "hash": "0xd1a08b65332b7abb00c064a45cf8b6e7a267a6b85d5a5c80145eb0d47c0aac2f",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "weighted DTF custody SE: partial exact custody",
+      "verdict": "PASS",
+      "evidence": {
+        "token": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+        "owner": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+        "fixtureMayBeInfrastructure": true,
+        "owned": "162264645901640184296798110000000000",
+        "q": "1622646459016401842967981100000000",
+        "before": {
+          "owner": "162264645901640184296798110000000000",
+          "custody": "0"
+        },
+        "after": {
+          "owner": "160641999442623782453830128900000000",
+          "custody": "1622646459016401842967981100000000"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "unauthorized",
+          "hash": "0xc5da3069738ad45d90743634ec1e2cb5dcfee6264f198e018ccaca0970419b8a",
+          "status": "0x0"
+        },
+        {
+          "kind": "approval",
+          "hash": "0xdca0187999db551f9aa4e5dd51b9afd9c74a1b80fd50848bd37b3ae41a09ee42",
+          "status": "0x1"
+        },
+        {
+          "kind": "custody",
+          "hash": "0x06e6a8f2cd0cfa63b58deb57b15145b678cb9105bd02f8add170c85404c1a947",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "weighted DTF custody SE: harvest",
+      "verdict": "PASS",
+      "evidence": {
+        "signature": "redeem(uint256,address,address)",
+        "selector": "0xba087652",
+        "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+        "outBefore": "0",
+        "outAfter": "162264645901640184296798",
+        "remaining": "0",
+        "asset": {
+          "signature": "asset() view returns (address)",
+          "selector": "0x38d52e0f",
+          "args": [],
+          "value": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+        },
+        "outputs": {
+          "signature": "getTokensOut() view returns (address[])",
+          "selector": "0x071bc3c9",
+          "args": [],
+          "value": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        "vaultTokens": {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        }
+      },
+      "transactions": [
+        {
+          "kind": "harvest",
+          "hash": "0x48badc1bb61426e016489c71021d46fa729449a01818049ef9ec43a6da1a25b7",
+          "status": "0x1"
+        }
+      ],
+      "attempts": [
+        {
+          "signature": "redeem(uint256,address,address)",
+          "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "outBefore": "0",
+          "outAfter": "162264645901640184296798",
+          "hash": "0x48badc1bb61426e016489c71021d46fa729449a01818049ef9ec43a6da1a25b7",
+          "status": "0x1",
+          "remaining": "0",
+          "selector": "0xba087652"
+        }
+      ]
+    },
+    {
+      "name": "weighted DTF custody SE: failed transfer outer rollback",
+      "verdict": "PASS",
+      "evidence": {
+        "trace": {
+          "failed": true,
+          "returnValue": "0x",
+          "steps": 874,
+          "calls": [
+            {
+              "depth": 1,
+              "returned": "0x1"
+            }
+          ],
+          "outerCallSucceeded": true
+        },
+        "before": {
+          "owner": "162264645901640184296798110000000000",
+          "custody": "0",
+          "allowance": "1622646459016401842967981100000000"
+        },
+        "after": {
+          "owner": "162264645901640184296798110000000000",
+          "custody": "0",
+          "allowance": "1622646459016401842967981100000000"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "approval",
+          "hash": "0x5839640c590a370aac6498c8745f48c65202d1228042cd8809705987833f2316",
+          "status": "0x1"
+        },
+        {
+          "kind": "tx",
+          "hash": "0xd1a08b65332b7abb00c064a45cf8b6e7a267a6b85d5a5c80145eb0d47c0aac2f",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "weighted fungible LP: partial exact custody",
+      "verdict": "PASS",
+      "evidence": {
+        "token": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+        "owner": "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+        "fixtureMayBeInfrastructure": true,
+        "owned": "1516646747724649142",
+        "q": "15166467477246491",
+        "before": {
+          "owner": "1516646747724649142",
+          "custody": "0"
+        },
+        "after": {
+          "owner": "1501480280247402651",
+          "custody": "15166467477246491"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "unauthorized",
+          "hash": "0xb63117bbe86ba8cab104331fec8a75cb575e1a2220c4353316931347bcd30e5a",
+          "status": "0x0"
+        },
+        {
+          "kind": "approval",
+          "hash": "0x6381c61d8dc968e63a8a1d69ca7d6fc88edd800cf6d8625e171ab0652567364f",
+          "status": "0x1"
+        },
+        {
+          "kind": "custody",
+          "hash": "0xe68221ceb3e9437bb0d0c8b945bb1f3221600b6fefe88f335633d93dfc781051",
+          "status": "0x1"
+        }
+      ]
+    },
+    {
+      "name": "weighted fungible LP: harvest",
+      "verdict": "FAIL",
+      "evidence": {
+        "remaining": "15166467477246491",
+        "asset": {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 38d52e0f00000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        "outputs": {
+          "signature": "getTokensOut() view returns (address[])",
+          "selector": "0x071bc3c9",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+            "0x2E9C1F705aB967c5Af59249203d7495bDabb223b"
+          ]
+        },
+        "vaultTokens": {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        "reason": "Every enumerated bound exact-in redemption route reverted; no unobserved route is claimed supported"
+      },
+      "transactions": [],
+      "attempts": [
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "outToken": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0xe405b83fbcc8ca630c34cfff3549916fb10a88f6072919cbde7f0cf8e50abe0d",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "outToken": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0xa984866921dc418a2362e1fe4bb4e48a8c8cf362dbe0e6aaa8556c7d0bac1afe",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x85d5a6615bb1de7943832a0a5736265ae9301c25bcc2e1ab3201ec9ded41c4d2",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "outToken": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x687f34247c95f569830ddb47ba8611e5544950d4200189b449c9b62668d2bc2c",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "outToken": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x000636ebe67bdcfb7c32ddb37e62112a22fa6aac8af19e511b666b68a476d51f",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x462f0a5df9c81a13ade035e4bea1dd8a22146838910a18d68ece067bf11b4a89",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x8ba096fc76c77b20778444dbcb764f4c025a878b768bf839a0fe75193218cd0b",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0x7bbdeab48542ed7d2271bb3ca53a6f24d05ef89651191d3a2b14d58f06272f0f",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0xea552d1b080028ff85e9c28d9eccfc4b7506ebeb89cb2334ad0110dc069efc38",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "outToken": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+          "outBefore": "0",
+          "outAfter": "0",
+          "hash": "0xbaf17d7ee5375142185453b985f0bb03c322ab839cbae25bfeb9adacd90772aa",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "remaining": "15166467477246491",
+          "selector": "0xd02d3063"
+        }
+      ]
+    },
+    {
+      "name": "weighted fungible LP: failed transfer outer rollback",
+      "verdict": "PASS",
+      "evidence": {
+        "trace": {
+          "failed": true,
+          "returnValue": "0x",
+          "steps": 874,
+          "calls": [
+            {
+              "depth": 1,
+              "returned": "0x1"
+            }
+          ],
+          "outerCallSucceeded": true
+        },
+        "before": {
+          "owner": "1516646747724649142",
+          "custody": "0",
+          "allowance": "15166467477246491"
+        },
+        "after": {
+          "owner": "1516646747724649142",
+          "custody": "0",
+          "allowance": "15166467477246491"
+        }
+      },
+      "transactions": [
+        {
+          "kind": "approval",
+          "hash": "0x2a047776de929de74e69606bf21eafe6e02186f16b2b0524799fd86896923681",
+          "status": "0x1"
+        },
+        {
+          "kind": "tx",
+          "hash": "0xd1a08b65332b7abb00c064a45cf8b6e7a267a6b85d5a5c80145eb0d47c0aac2f",
+          "status": "0x0"
+        }
+      ]
+    },
+    {
+      "name": "integrated atomic Migration issuance",
+      "verdict": "UNPROVEN",
+      "evidence": "Source reassign is an authentic one-transaction surrender; it has no Migration callback. No production Migration implementation is in this lane. Atomic custody plus bond/credit and authenticated attribution need separate implementation evidence.",
+      "transactions": []
+    },
+    {
+      "name": "postactivation fungible provenance",
+      "verdict": "UNPROVEN",
+      "evidence": "balanceOf and Transfer history do not themselves authenticate proportional original contribution ancestry to an immutable Migration contract.",
+      "transactions": []
+    },
+    {
+      "name": "complete exposure and source absence",
+      "verdict": "UNPROVEN",
+      "evidence": "Registry/source graph identifies candidates, not a complete authenticated historical holder census; no missing category is declared absent.",
+      "transactions": []
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "schema": "ed-independent-source-seal/1",
+  "base": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+  "custody": "admitted",
+  "conversion": "not-ready: actual disabled ES dependency",
+  "integration": "not claimed",
+  "sourceOnly": true,
+  "rootAdmissionRequiredForFutureImplementation": true,
+  "cumulativeBaseRequired": true,
+  "producerSeal": {
+    "bytes": 24067,
+    "sha256": "09eed2ec8d68fcd0089701a48961305b092dfe2c95c97180a9f4084c929c2476"
+  },
+  "producerPreservation": 73,
+  "producerMembers": 52,
+  "ownedOperationsPending": 0,
+  "monitorsCompleted": true,
+  "modificationsStoppedAtHandoff": true,
+  "members": [
+    {
+      "path": "audit.json",
+      "bytes": 247281,
+      "sha256": "2cd52f04a3da5b982c6700bbd6aabaffb48b8fd85213b6c77c9315acbb5c4976"
+    },
+    {
+      "path": "audit.ts",
+      "bytes": 12776,
+      "sha256": "eaeba2c4923aaa5a1c90108ec0ba78cda4113fbade59f1ddcf3feb71b9c51868"
+    },
+    {
+      "path": "boundary-checks.json",
+      "bytes": 5102,
+      "sha256": "4c232cd7f0beae8c91fe9d68555207e080ca79aa03d7dcb459f5ec147daecbc1"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 2959,
+      "sha256": "667a43538451e12bb214a0a1067f742fa2ee25b6337d2dc2c7bb7bab82d36ce5"
+    },
+    {
+      "path": "commands.md",
+      "bytes": 3463,
+      "sha256": "3e8e7b5e7e7438cc231e5f703072ec39de66f3d2ad7e5622570ef96b34ebadbf"
+    },
+    {
+      "path": "custody.ts",
+      "bytes": 12547,
+      "sha256": "4752c45e44fe594f8ef0518dc4d9869782b9fa997702f78e8eaa0a5c8f621bdd"
+    },
+    {
+      "path": "report.md",
+      "bytes": 20874,
+      "sha256": "e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b"
+    },
+    {
+      "path": "run-01/acquisition.json",
+      "bytes": 3967,
+      "sha256": "38577e3ca89d1b8e01664be665cd598755e27a89b9e641d96651e0507844fd8d"
+    },
+    {
+      "path": "run-01/anvil.log",
+      "bytes": 13127,
+      "sha256": "4ab11fab3840a33685ced12ddc0894b739ea85a6a6630679b4346ff0841c6368"
+    },
+    {
+      "path": "run-01/approve-empty.json",
+      "bytes": 6225,
+      "sha256": "0dea07873773cb319851f96ea44204a11b5c959eac0e78e7b586840ee79bda9f"
+    },
+    {
+      "path": "run-01/approve-exact.json",
+      "bytes": 6281,
+      "sha256": "e88fcfdef08277657c55eb22d80188de9b53a437c82bc9ae85bfe50a9daa4b97"
+    },
+    {
+      "path": "run-01/cleanup.json",
+      "bytes": 136,
+      "sha256": "f4894d2a286c2585fc1071a917142d685cc45f3b9f60b4460a562037c1b7c876"
+    },
+    {
+      "path": "run-01/clear.json",
+      "bytes": 6217,
+      "sha256": "77efd85568c8ae86b609144b6a39bdeb85f6fd3e383be7b7c747a776505c0e2a"
+    },
+    {
+      "path": "run-01/deploy.json",
+      "bytes": 13554,
+      "sha256": "b3b9827dbefe1337d871cbc07cf42256ad386f8bd07478f5db5db93efe68fa3f"
+    },
+    {
+      "path": "run-01/helper-runtime.json",
+      "bytes": 2198,
+      "sha256": "adb24f3f45ad9e5b9f1139eda2441f5371fa9543999651bd8a538db569c39931"
+    },
+    {
+      "path": "run-01/identity.json",
+      "bytes": 111857,
+      "sha256": "d9b1439ddffe4776c3d4be9dbffe275cf11da3dcbb46d9a538563188859a0ac4"
+    },
+    {
+      "path": "run-01/late.json",
+      "bytes": 8214,
+      "sha256": "672d6e336d78754ce30099abbb6903b9bfdd1d2f2ab726cae6f6636ac8a5a634"
+    },
+    {
+      "path": "run-01/missing-approval.json",
+      "bytes": 7369,
+      "sha256": "fa87c5887e92e4d46610aa8acb33c8212435312e1859ba2590d960b279b5e144"
+    },
+    {
+      "path": "run-01/missing-balance.json",
+      "bytes": 7333,
+      "sha256": "33d67844e2a62b7c12cb4c11895a2feb25182327310488ad0609e1685bb66f11"
+    },
+    {
+      "path": "run-01/partial.json",
+      "bytes": 11687,
+      "sha256": "d07f9d50cf9225ac6d6d83e7fae5a2789fa4aee5bb67b12e78d7fb623689023b"
+    },
+    {
+      "path": "run-01/result.json",
+      "bytes": 247,
+      "sha256": "a27afcba88ca8e702981fdf938761e0c30074bf250b84c82226cc8a562bb32bb"
+    },
+    {
+      "path": "run-01/terminal.json",
+      "bytes": 11650,
+      "sha256": "06d30ea303e7d6f88cd758ee85207530378b2e68352ebe248edbd4291112dd89"
+    },
+    {
+      "path": "run-01/unrelated-inventory.json",
+      "bytes": 6249,
+      "sha256": "7b8e165c5a6ad6e722f869c79fef75925c1f24098a0f6f5825fbdb55796a5aeb"
+    },
+    {
+      "path": "run-01/wrong-wallet.json",
+      "bytes": 4571,
+      "sha256": "640eeabf2e37fac6064f2ca114f62e4299763916de5e8dea7476d20c15b9fde9"
+    }
+  ]
+}

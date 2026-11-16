@@ -1,0 +1,229 @@
+{
+  "commitDirExisted": false,
+  "indexUnchanged": true,
+  "ownIndex": {
+    "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-24-stateful-invariants/index",
+    "kind": "file",
+    "mode": "100644",
+    "perm": "0o644",
+    "size": 2073604,
+    "sha256": "0aac78e6504612422343709283b720e3628f7e43a04df63575f91130d58000b0",
+    "st_mode": 33188,
+    "target": null
+  },
+  "ownHead": {
+    "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-24-stateful-invariants/HEAD",
+    "kind": "file",
+    "mode": "100644",
+    "perm": "0o644",
+    "size": 64,
+    "sha256": "55eb467bf493d97b2f10565b49be43816ab9dbabf035325d891b0b22a0dd23fe",
+    "st_mode": 33188,
+    "target": null
+  },
+  "ownRef": {
+    "path": "/Users/cyotee/Projects/indexedex/.git/refs/heads/work/dtf-migration-phase-24-stateful-invariants",
+    "kind": "file",
+    "mode": "100644",
+    "perm": "0o644",
+    "size": 41,
+    "sha256": "1fc8fc83c08ffea454b82ae5312aa8a5ba769c5cd6ee1ab2520b9f3d423526fc",
+    "st_mode": 33188,
+    "target": null
+  },
+  "inventories": [
+    {
+      "file": "docs-incidents.jsonl",
+      "entries": 138,
+      "bytes": 34216,
+      "sha256": "153beb0e0d596529504170a3a2aa9fb30c5d9c3299472b485427c5474c9d8951"
+    },
+    {
+      "file": "docs-incidents-perms.jsonl",
+      "entries": 147,
+      "bytes": 33274,
+      "sha256": "77eedebd746123f66121d96fefd6517d3ec820a72fdeb63634fd3d94ab7796ef"
+    },
+    {
+      "file": "out.jsonl",
+      "entries": 7369,
+      "bytes": 1708376,
+      "sha256": "9b38e534f50f9ad6b61beeb0b70265e85760ea9c78872ce567be8088e293e152"
+    },
+    {
+      "file": "cache_forge.jsonl",
+      "entries": 550,
+      "bytes": 149958,
+      "sha256": "d38e68c20fc40f6790a322b0b3405babd8442dd4aa417eb9b27cbd0661f4423d"
+    },
+    {
+      "file": "preservation-rows.jsonl",
+      "entries": 148,
+      "bytes": 76550,
+      "sha256": "0cd56f1d46db063c00b3f429cc338c90e134acef5c882a3351d0356212e16eef"
+    },
+    {
+      "file": "refs.jsonl",
+      "entries": 22,
+      "bytes": 5414,
+      "sha256": "4e7378319c58c834acd950516f03344bf3eeb785a5b9aab7045528c2b40f35cf"
+    }
+  ],
+  "preservationRows": 148,
+  "preservationMismatches": [],
+  "indexes": {
+    "count": 26,
+    "foreignCount": 25,
+    "ownCount": 1
+  },
+  "refs": 22,
+  "showRefBytes": 6194,
+  "showRefSha256": "f88527425af7df7cedcc0404e581fa1f360e9b33dfb5f124a1c58f7a3f7c6aba",
+  "links": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/lib/crane",
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "perm": "0o755",
+      "st_mode": 41453,
+      "size": 42,
+      "ino": 19989693,
+      "sha256": "3dcc99d9c280a1a007d6284e027f5543690bc104fd2b33cf4626f14871b963ab"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/node_modules",
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "perm": "0o755",
+      "st_mode": 41453,
+      "size": 45,
+      "ino": 19989694,
+      "sha256": "c8ce23751ae468dd00158f2465a4c8ced85fb4811e0f46af46d458d9b79bc861"
+    }
+  ],
+  "membership": {
+    "implementation": {
+      "files": 22,
+      "expectedFiles": 22,
+      "sealedMembers": 21,
+      "extra": [],
+      "missing": [],
+      "contentMismatches": [],
+      "sealSha256": "97d7df1bb3b21d7c17f272e48c73fe0e44e5a4377d7ce9318aa125e0a450c303",
+      "sealBytes": 6508,
+      "sealMode": 33188,
+      "ok": true
+    },
+    "verification": {
+      "files": 13,
+      "expectedFiles": 13,
+      "sealedMembers": 12,
+      "extra": [],
+      "missing": [],
+      "contentMismatches": [],
+      "sealSha256": "c70690725cbacb032bc90251fe0389b0343bda6d7fc4607d64656048d00ee982",
+      "sealBytes": 5609,
+      "sealMode": 33188,
+      "ok": true
+    },
+    "implementation-r2": {
+      "files": 72,
+      "expectedFiles": 72,
+      "sealedMembers": 71,
+      "extra": [],
+      "missing": [],
+      "contentMismatches": [],
+      "sealSha256": "4a03fe2325aed85208ce9ec418d194e1cd44fa220fb63180176cdcb5466a86e1",
+      "sealBytes": 13962,
+      "sealMode": 33188,
+      "ok": true
+    },
+    "verification-r2": {
+      "files": 17,
+      "expectedFiles": 17,
+      "sealedMembers": 16,
+      "extra": [],
+      "missing": [],
+      "contentMismatches": [],
+      "sealSha256": "c830c13d4585bcf99e838fb04da35f4d208b5f7638ebf7e1b42b77e778eebad7",
+      "sealBytes": 5108,
+      "sealMode": 33188,
+      "ok": true
+    }
+  },
+  "membershipBad": [],
+  "originalCarrier": {
+    "entries": 179,
+    "expected": 179,
+    "ok": true,
+    "carriers": [
+      "original-artifacts-01.json",
+      "original-artifacts-02.json",
+      "original-artifacts-03.json",
+      "original-artifacts-04.json",
+      "original-artifacts-05.json",
+      "original-artifacts-06.json",
+      "original-artifacts-07.json",
+      "original-artifacts-08.json",
+      "original-artifacts-09.json",
+      "original-artifacts-10.json",
+      "original-artifacts-11.json",
+      "original-artifacts-12.json",
+      "original-artifacts-13.json",
+      "original-artifacts-14.json",
+      "original-artifacts-15.json"
+    ]
+  },
+  "candidateCarrier": {
+    "entries": 189,
+    "expected": 189,
+    "ok": true,
+    "carriers": [
+      "candidate-artifacts-01.json",
+      "candidate-artifacts-02.json",
+      "candidate-artifacts-03.json",
+      "candidate-artifacts-04.json",
+      "candidate-artifacts-05.json",
+      "candidate-artifacts-06.json",
+      "candidate-artifacts-07.json",
+      "candidate-artifacts-08.json",
+      "candidate-artifacts-09.json",
+      "candidate-artifacts-10.json",
+      "candidate-artifacts-11.json",
+      "candidate-artifacts-12.json",
+      "candidate-artifacts-13.json",
+      "candidate-artifacts-14.json",
+      "candidate-artifacts-15.json",
+      "candidate-artifacts-16.json"
+    ]
+  },
+  "carrierBad": 0,
+  "artifactSplit": {
+    "candidateEntries": 189,
+    "currentDifferences": 6,
+    "differencePaths": [
+      "out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+      "out/MigrationNativeLedger.sol/MigrationNativeLedger.json",
+      "out/TestBase_UniswapV4DetfMigrationSnapshot.sol/IMigrationPairPreview.json",
+      "out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+      "out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotMathExposure.json",
+      "out/TestBase_UniswapV4DetfMigrationSnapshot.sol/TestBase_UniswapV4DetfMigrationSnapshot.json"
+    ],
+    "matchesExpectedSix": true,
+    "equalToCarrier": 183
+  },
+  "changedArtifactCarrier": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/changed-artifact-bytes.json",
+    "kind": "file",
+    "mode": "100644",
+    "perm": "0o644",
+    "size": 2847097,
+    "sha256": "0e7b97324e449efb09aeed18eacfec2c14c8efada53562f6d3928a99d0ba8f9f",
+    "st_mode": 33188,
+    "target": null
+  },
+  "port18574Exit": 1,
+  "interestingProcesses": [],
+  "docsFiles": 138,
+  "docsPerms": 147,
+  "outFiles": 7369,
+  "cacheFiles": 550
+}

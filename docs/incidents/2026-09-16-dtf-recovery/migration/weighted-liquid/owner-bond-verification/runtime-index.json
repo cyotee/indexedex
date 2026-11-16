@@ -1,0 +1,2665 @@
+{
+  "version": "independent-owner-bond-runtime-index-v1",
+  "run": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560",
+  "proxy": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+  "snapshotId": "0x990fc4a8d0871532186bb994b27a889c71085b7ef8e542e660bb35d887136aa4",
+  "historicalPin": {
+    "chain": 4663,
+    "block": 108944663,
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733"
+  },
+  "purchase": {
+    "administrationAfter": [
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+    ],
+    "administrationBefore": [
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+    ],
+    "blockedActivation": {
+      "block": "0x67e5e27",
+      "revert": "0xb6f84a46",
+      "transactionHash": "0xa2eb210890c6f63b1ed1b1f05df33330be4d3e2ac8d72cc9a0721a95f20fe050"
+    },
+    "bondTokenId": "6",
+    "duplicate": {
+      "block": "0x67e5e2c",
+      "revert": "0x2fd2fbf4",
+      "transactionHash": "0x9b255322c24cff8ff5d46b67f7bb5d51c2093b0f800f2901d8240d6b24bc0d61"
+    },
+    "feeFailure": {
+      "block": "0x67e5e2b",
+      "revert": "0x2fd2fbf4",
+      "transactionHash": "0x00110070ecfd66e20c657623049219ef00dfbfdcdf2abc14e80d971815e28df3"
+    },
+    "nonceAfterPurchase": "0x863",
+    "purchase": {
+      "amount": "1000000000000000000",
+      "deadline": "1794114744",
+      "duration": "7776000",
+      "token": "0x8096e26a26059c5240ab23d69157e121b28d326a"
+    },
+    "purchaseTransaction": "0x837fecf0c13c873c1860911fbb718b81f70558391989ebfe49178c2cee521417",
+    "resumedWithoutReplay": true,
+    "rewardFailure": {
+      "block": "0x67e5e2a",
+      "revert": "0x2fd2fbf4",
+      "transactionHash": "0xa110ef9d85fddc9bb0d97dd61d8a5fe4db2f68665252c5908b23ed63f898a697"
+    },
+    "snapshotUnchanged": true,
+    "synthetic": true,
+    "block": 108944937,
+    "nonce": "2146",
+    "economics": {
+      "backingAfter": "550074623",
+      "backingBefore": "1383",
+      "fundedRewards": "84489332",
+      "ownerFirstBondTokenId": "6",
+      "paid": "1000000000000000000",
+      "position": "[\"465583908\",\"0\",\"465583908000000000000000000000000000000000000\",\"1794111193\",\"7776000\"]",
+      "principal": "465583908",
+      "retainedRoleGons": "[[\"0xc02c5970bc54eb54442c421c7de43eec12481c5d\",\"30477316731258798902275473630153655920530817\"]]",
+      "stakingAfter": "[\"496062607731258798902275473630153655920530817\",\"901809661440931663891971256078279707\",\"550074623\",\"2\",\"1\",\"99212521546251759780455094726030731184106163\",\"231495883607920772821061887694071706096247714\"]",
+      "stakingBefore": "[\"1383000000000000000000000000000000000000\",\"1000000000000000000000000000000000000\",\"1383\",\"0\",\"0\",\"276600000000000000000000000000000000000\",\"645400000000000000000000000000000000000\"]"
+    },
+    "independentMath": {
+      "computedState": [
+        "496062607731258798902275473630153655920530817",
+        "901809661440931663891971256078279707",
+        "550074623",
+        "2",
+        "1",
+        "99212521546251759780455094726030731184106163",
+        "231495883607920772821061887694071706096247714"
+      ],
+      "recordedState": [
+        "496062607731258798902275473630153655920530817",
+        "901809661440931663891971256078279707",
+        "550074623",
+        "2",
+        "1",
+        "99212521546251759780455094726030731184106163",
+        "231495883607920772821061887694071706096247714"
+      ],
+      "matches": true,
+      "allocation": {
+        "staking": "50693599",
+        "fee": "10138719",
+        "creator": "23657012",
+        "dust": "2",
+        "distributed": "50693598",
+        "stakingDust": "1"
+      },
+      "paymentTransfer": {
+        "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+        "values": [
+          "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+          "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+          "1000000000000000000"
+        ],
+        "index": 0
+      },
+      "fundingEvents": [
+        {
+          "address": "0xe4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+          "name": "Staked",
+          "values": [
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "465583908",
+            "465583908000000000000000000000000000000000000"
+          ],
+          "index": 31
+        },
+        {
+          "address": "0x76d3b85be8cc91df1e66cfd3c81681795555e58c",
+          "name": "BondPurchased",
+          "values": [
+            "6",
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "465583908",
+            "1794111193",
+            "7776000"
+          ],
+          "index": 34
+        },
+        {
+          "address": "0xe4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+          "name": "RewardsFunded",
+          "values": [
+            "84489332",
+            "50693598",
+            "10138719",
+            "23657012",
+            "901809661440931663891971256078279707"
+          ],
+          "index": 44
+        }
+      ],
+      "backingIdentity": true
+    }
+  },
+  "activation": {
+    "transactionHash": "0x4c1ca5ff27913c6d844e51d20938eafe0f414af97cf52e3c0e8ff3cec78858b5",
+    "block": 108944941,
+    "gasUsed": 182796,
+    "removedSelectors": [
+      "0xec55c474",
+      "0x161d9afc",
+      "0xccff9894",
+      "0x787642e8",
+      "0xe9dc9e6d",
+      "0x12076202",
+      "0x256c417b"
+    ],
+    "state": {
+      "migrationActivated:[]": "[\"true\"]",
+      "migrationOwnerFirstBondTokenId:[]": "[\"6\"]"
+    }
+  },
+  "ordinaryDeposit": {
+    "amount": "1000000000000000000",
+    "balanceAfter": "462096413",
+    "balanceBefore": "0",
+    "block": "0x67e5e30",
+    "buyer": "0xc4c81d5c1851702d27d602aa8ff830a7689f17cc",
+    "out": "462096413",
+    "refund": "0",
+    "transactionHash": "0x4d9b92b7f8603b8ef1bc7d78096df60f690f9d7c60e7e9ab685554acb601af6a"
+  },
+  "positiveSurrenders": [
+    {
+      "name": "MigrationWeightedLiquidSurrendered",
+      "values": [
+        "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+        "0xf5361e1ead5f4cb43582b433027990569d71136ec77fd83a30dfd757f2f7b996",
+        "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+        "7075176",
+        "924869",
+        "7"
+      ],
+      "transaction": "0x7c45d4e26469268f8914e114c41b0238cd4a2665ef404d5fb1d8d58cfb040f55",
+      "block": 108944954,
+      "status": "0x1"
+    },
+    {
+      "name": "MigrationNftSurrendered",
+      "values": [
+        "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "4",
+        "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+        "0xc3cd5f423b6a078e162286e901f2f692d41db80642f068a0aac8823e931dd211",
+        "281387179",
+        "13872781",
+        "8"
+      ],
+      "transaction": "0x9f17cc27dec50f4ff3fa66dd145749470f6e6b3f7347f50c901215fe78672636",
+      "block": 108944973,
+      "status": "0x1"
+    },
+    {
+      "name": "MigrationNftSurrendered",
+      "values": [
+        "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "26",
+        "0xC379FeB4182211aBe71a34858265e4Bf5FF35e06",
+        "0x5c49bc9f66d9cfe8d0a4fb6d6b420dbfeefe69e79999160bf2751b55009c5708",
+        "56299",
+        "22233172691",
+        "9"
+      ],
+      "transaction": "0x6251a58ca870ff8cea42d7c1fab3f9093144f748664ae496baa1f0548479a7d4",
+      "block": 108944988,
+      "status": "0x1"
+    },
+    {
+      "name": "MigrationNftSurrendered",
+      "values": [
+        "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "3",
+        "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "0x0440c90151eb27d267d4553348871a4d1dbe3e69539e41ad8ce1c4604fd840eb",
+        "562524912595035608166",
+        "923391925",
+        "10"
+      ],
+      "transaction": "0x6e98f8041eec6f524702ce24a718a12ad906b23d1c787fcadeccf62580c0c04e",
+      "block": 108945000,
+      "status": "0x1"
+    },
+    {
+      "name": "MigrationNftSurrendered",
+      "values": [
+        "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "6",
+        "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+        "0x64be7c3d72f45d28cc773fcab408d2aa913cc1086ee56dfb545281b72bf5d337",
+        "740825635",
+        "36992599",
+        "11"
+      ],
+      "transaction": "0x795a10dfb35338e02e0481f6bcaaf3fd81720af0f6f490f05cf729e66ad68713",
+      "block": 108945027,
+      "status": "0x1"
+    },
+    {
+      "name": "MigrationNftSurrendered",
+      "values": [
+        "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "9",
+        "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+        "0xd2485e4ba3bf0106d5d90ee05f8a34d73ee397324598f947aa8d2d7be395212f",
+        "26355776123062198039",
+        "46243",
+        "12"
+      ],
+      "transaction": "0x44012b9a9a34b74e3334418bb957061250d0d7399968e17414d338a4a88f6a42",
+      "block": 108945039,
+      "status": "0x1"
+    },
+    {
+      "name": "MigrationWeightedLiquidSurrendered",
+      "values": [
+        "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+        "0xf5361e1ead5f4cb43582b433027990569d71136ec77fd83a30dfd757f2f7b996",
+        "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+        "14150354",
+        "1849739",
+        "13"
+      ],
+      "transaction": "0xba958362a56f8a9cebd5e9c5ca9ba17a925f41a01e5d09750837374346d4ef51",
+      "block": 108945048,
+      "status": "0x1"
+    }
+  ],
+  "resumes": [
+    {
+      "name": "donation",
+      "method": "donateMigrationCapital",
+      "transactionHash": "0x997f7a1aaf6566ef78629e4aef31ee70b6bc83dc32bd4b3c44e8ce66d61b5399",
+      "nonce": "2118",
+      "block": 108944892,
+      "completionAbsentAtInterruption": true,
+      "mined": true,
+      "signedHashMatches": true,
+      "signedNonceMatches": true,
+      "senderMatches": true,
+      "originalReceiptEqualsResumed": true,
+      "resumedHashMatches": true,
+      "resumedNonceMatches": true,
+      "journal": "journal-fund/d5c695f0fa293eafa77f70b2d3b579093f0e01f43926f99a11fbcf64321665fa.receipt.json"
+    },
+    {
+      "name": "issuance",
+      "method": "issueIndependentAllocations",
+      "transactionHash": "0x1ad4429e039e711bf8e674264ced0c8145d3f7f4c2f63109f00be6acab350d16",
+      "nonce": "2131",
+      "block": 108944905,
+      "completionAbsentAtInterruption": true,
+      "mined": true,
+      "signedHashMatches": true,
+      "signedNonceMatches": true,
+      "senderMatches": true,
+      "originalReceiptEqualsResumed": true,
+      "resumedHashMatches": true,
+      "resumedNonceMatches": true,
+      "journal": "journal-issue/4ff4f3dd6a38e838c6a440c43ebe76bd39bc8fdac3214e873d31ec2dccaebb18.receipt.json"
+    },
+    {
+      "name": "owner-bond",
+      "method": "bond",
+      "transactionHash": "0x837fecf0c13c873c1860911fbb718b81f70558391989ebfe49178c2cee521417",
+      "nonce": "2146",
+      "block": 108944937,
+      "completionAbsentAtInterruption": true,
+      "mined": true,
+      "signedHashMatches": true,
+      "signedNonceMatches": true,
+      "senderMatches": true,
+      "originalReceiptEqualsResumed": true,
+      "resumedHashMatches": true,
+      "resumedNonceMatches": true,
+      "journal": "journal-owner-bond/8bea8dd25c0a289b2474588319657833c4540a46c00e8a4114123b7025770475.receipt.json"
+    }
+  ],
+  "reorder": {
+    "actual": [
+      {
+        "bondTokenId": "3",
+        "credit": "461",
+        "nonce": "2131",
+        "recipient": "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+        "transactionHash": "0x1ad4429e039e711bf8e674264ced0c8145d3f7f4c2f63109f00be6acab350d16"
+      },
+      {
+        "bondTokenId": "4",
+        "credit": "461",
+        "nonce": "2132",
+        "recipient": "0x9586a4833970847aef259ad5bfb7aa8901ddf746",
+        "transactionHash": "0xbe789d52cfd95ee544026c9a36f4b3e84c877386e3ed5904bcf8f2d3331f56d5"
+      },
+      {
+        "bondTokenId": "5",
+        "credit": "461",
+        "nonce": "2133",
+        "recipient": "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d",
+        "transactionHash": "0xbb0065e66930fdc95a219a7aadea62aa6a366c91bd5b2bed68fd71b66fbecb6f"
+      }
+    ],
+    "expectedAfterInterruption": [
+      "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+      "0x9586a4833970847aef259ad5bfb7aa8901ddf746",
+      "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d"
+    ],
+    "originalOrder": [
+      "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+      "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d",
+      "0x9586a4833970847aef259ad5bfb7aa8901ddf746"
+    ]
+  },
+  "independentIssuance": {
+    "supplyAfter": "1000000001383",
+    "supplyBefore": "1000000000000",
+    "unclaimedBond": "0",
+    "unclaimedIssued": false
+  },
+  "negativeChecks": [
+    {
+      "file": "weighted-liquid-stage1.json",
+      "transactionHash": "0xdaf6aa0e69d9285836a93b2bfee14e501ee9fb09f871abd52b1f8b2b38ccb685",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "weighted-liquid-stage1.json",
+      "transactionHash": "0x41c9be2bfa2056133e0ed3ac4d46969f2f0d503c688769b4202c91fd8a89192d",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "weighted-liquid-partial.json",
+      "transactionHash": "0x0da6636b87eaf3fccf958baee4c9d3ecd0b9dffba517fde711885fed2c0b7617",
+      "expectedError": "InvalidWeightedLiquidEntitlement",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-partial.json",
+      "transactionHash": "0xe805481948622646329bfd0de639c4763a412d87cd24a8b48d5ad5a2791bb7e2",
+      "expectedError": "NotOriginalWeightedLiquidWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-partial.json",
+      "transactionHash": "0xefebe555acc7c4607d8d3576d86315f2a7692566c44377aa966a4e1a844b089c",
+      "expectedError": "NoTargetFor",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-partial.json",
+      "transactionHash": "0x5ce166d7d1682d48573f46c235ffad48ce288002b00f8b5067e3bb9bd63871e9",
+      "expectedError": "NoTargetFor",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-final.json",
+      "transactionHash": "0x88e1f9590f8c66ba9034e57a6c157a196648fa5f69c5ef9146f1d7708a2597ff",
+      "expectedError": "InvalidWeightedLiquidEntitlement",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-final.json",
+      "transactionHash": "0x6e357664a5d7aa5d848f0d031b058ffe78cf6c4e51d424cad21678163dd4215a",
+      "expectedError": "NotOriginalWeightedLiquidWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-final.json",
+      "transactionHash": "0xbcf8faf835300fa3fb5ca06173cbe54e895ef9fda57990e0778c11da7e9d0628",
+      "expectedError": "NoTargetFor",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-final.json",
+      "transactionHash": "0x9e638bed004ec2b7da374813cd9b43db0d433636b3250cbcbe8262432a2f9b6f",
+      "expectedError": "NoTargetFor",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "weighted-liquid-final.json",
+      "transactionHash": "0x8cf0bec016e7ff196ac6c33f26e5db1ecb25b053f02648fbceba657af1e383e0",
+      "expectedError": "InvalidWeightedLiquidQuantity",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-before-activation.json",
+      "transactionHash": "0xe613fceaeed27d8632cf404c4c4282342a8f2ea5b03d609ae364a4be3d7284a7",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "admission-before-activation.json",
+      "transactionHash": "0x946b59c92f10ca3d7e7048ec83090e4d022caaddbf2459715b164cf86364a63f",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "admission-before-activation.json",
+      "transactionHash": "0x20468e2d2afebd35cf67ff7b8f5fd29acf0e88e9f170248dfe160b95d1c77915",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "admission-before-activation.json",
+      "transactionHash": "0xc2780d4b93cf88fc2002c358b106425e44fc5790cbc658c15215fdb7cb5c6d30",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "admission-before-activation.json",
+      "transactionHash": "0x60a7ca00fb5e992c5b73b45c757ec2ad43c00412014c82b98503c5f98a346783",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "admission-before-activation.json",
+      "transactionHash": "0x56f7894abf537f3b250657d54c623902bb808edbda520910f25e345cde229eb1",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "admission-before-activation.json",
+      "transactionHash": "0x80a22e80a65734018f706c0c45e6c8c00b5a1edb048239ccd0d5a2643f1e4d35",
+      "expectedError": "MigrationSurrenderClosed",
+      "statusMatches": true,
+      "beforeActivation": true
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0x4c336de988a21d0da860c5ed395753dc62bc0e17a955769205d66b8caad0e6b4",
+      "expectedError": "InvalidNftEntitlement",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0x4fb678ad4c465e00157aa8169afcb7d5da4006aaaa40395589bf3324c52d93a8",
+      "expectedError": "InvalidNftEntitlement",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xa2c842d8473d08bbae36d23dc10875659488c57caa138df50ec162179deca3ef",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xbffd5ae28a4ab7d8639b4d1988992ab719e2d61bffcb62130152296e95908f38",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0x314813c1bc3af2a78ce66eb7790c927927792da99bbe2b6d728f5c01288d4436",
+      "expectedError": "NotNftHolder",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xeb259148790d64e4dc19c6156ec7760b2f2e26ad3b1792d8203e085412681680",
+      "expectedError": "NftAlreadyConsumed",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0x78fe14a822f6323ff726cdc97221a55949917cfc359a4c27c5a71677ac10a102",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xe2e5eeb6026b5d758f05f203dbfb7ef1eee2eca3973633fbe4e9daf37693e48a",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xd7d560d20f1ca318b16d3fe587496045020e069f3b5f5b6b04fc3dce054d0e5f",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0x303a0acc06fe2b70012f64747b1168ec0847434a64f52a70d612d9d841114647",
+      "expectedError": "NotNftHolder",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0x633f881da4cb46f29d0ad3368f8d4a10fefab96ee37c2ea7f337978968939b9b",
+      "expectedError": "NftAlreadyConsumed",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xa7472a1f27258bd9f36a8b0526fd369ba3a081f11bdc52df533a932440c9d464",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xa896888fa4477da24b4898bcf3336901e3911582bfd436966371bd69adb0f18d",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0x597cad226ff56e8c21faaf5ceae84a1db089cd6b088b4094b87148fd46547967",
+      "expectedError": "NotNftHolder",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-after-activation.json",
+      "transactionHash": "0xd533f43cfb0bca14f048b6e8044990ccd2d0e3fbb60294a896c7b287653e5f0a",
+      "expectedError": "NftAlreadyConsumed",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0x3da14021ecae8bb981a50c726518f3f203d38b0b5ab270665fd37124c27b874c",
+      "expectedError": "InvalidNftEntitlement",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0x0df37c7b0708007b3c36caffd143d28475f3639f53f201c254000ed238b7b8c3",
+      "expectedError": "InvalidNftEntitlement",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0xd95eab60d67ae3d07a5f34fca2a888f9a51b24c6c7289e7a5b0db45c94929e8b",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0x962b1c1051104b829a833030d45e2340e28627e917ca44ae3144d039ec8d144e",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0x100752ef0ac3a77409875fe9144d00a47a9a8c06c675680eb3a1d62c5e90c9a6",
+      "expectedError": "NotNftHolder",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0xa158fde7bc80c41a70b434b9f9032aef47434487e6523b71a5d2f351ec0625c2",
+      "expectedError": "NftAlreadyConsumed",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0x09f3bccd078b9f46b6cd5bab2416673c57ec9ac50a3813d1adbb5a1958823013",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0x0e8d83acb28e8ef9e3437629b11ff78b79e04f0faebc8fac42df95dce32ad69e",
+      "expectedError": "NotOriginalNftWallet",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0xe6753743ad7d2ad96319b89d533918b1eaa34ccd3eef2f4d1b72bd6ff789cc19",
+      "expectedError": "NotNftHolder",
+      "statusMatches": true,
+      "beforeActivation": false
+    },
+    {
+      "file": "admission-late-activation.json",
+      "transactionHash": "0x84c36b367cffe3a499863f08b822bfe89e35600ae0a715e8a15004742f56e12e",
+      "expectedError": "NftAlreadyConsumed",
+      "statusMatches": true,
+      "beforeActivation": false
+    }
+  ],
+  "ownerNegChecks": [
+    {
+      "kind": "blockedActivation",
+      "block": "0x67e5e27",
+      "revert": "0xb6f84a46",
+      "transactionHash": "0xa2eb210890c6f63b1ed1b1f05df33330be4d3e2ac8d72cc9a0721a95f20fe050",
+      "actualStatus": "0x0"
+    },
+    {
+      "kind": "rewardFailure",
+      "block": "0x67e5e2a",
+      "revert": "0x2fd2fbf4",
+      "transactionHash": "0xa110ef9d85fddc9bb0d97dd61d8a5fe4db2f68665252c5908b23ed63f898a697",
+      "actualStatus": "0x0"
+    },
+    {
+      "kind": "feeFailure",
+      "block": "0x67e5e2b",
+      "revert": "0x2fd2fbf4",
+      "transactionHash": "0x00110070ecfd66e20c657623049219ef00dfbfdcdf2abc14e80d971815e28df3",
+      "actualStatus": "0x0"
+    },
+    {
+      "kind": "duplicate",
+      "block": "0x67e5e2c",
+      "revert": "0x2fd2fbf4",
+      "transactionHash": "0x9b255322c24cff8ff5d46b67f7bb5d51c2093b0f800f2901d8240d6b24bc0d61",
+      "actualStatus": "0x0"
+    }
+  ],
+  "allOperatorReceipts": [
+    {
+      "path": "journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.receipt.json",
+      "hash": "0x0222113cc5dec105fefe0a32be50652a2f6b6d056fa6313198fd5dfb1d967c04",
+      "block": 108944917,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "WeightedLiquidEntitlementConfigured",
+          "values": [
+            "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+            "0xf5361e1ead5f4cb43582b433027990569d71136ec77fd83a30dfd757f2f7b996",
+            "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+            "21225530",
+            "2774608"
+          ]
+        }
+      ],
+      "state": {
+        "weightedLiquidEntitlement:[\"0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581\"]": "[\"[\\\"true\\\",\\\"[\\\\\\\"0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581\\\\\\\",\\\\\\\"0x082Cb14f04d9C485473dedC00d604D7e9Abca303\\\\\\\",\\\\\\\"0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7\\\\\\\",\\\\\\\"21225530\\\\\\\",\\\\\\\"6000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xa330d14ffee0cb310bc78a72e22ce40acfec46fb987023c407690f7fec37845e\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0xf5361e1ead5f4cb43582b433027990569d71136ec77fd83a30dfd757f2f7b996\\\",\\\"2774608\\\"]\"]",
+        "weightedLiquidSurrender:[\"0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581\"]": "[\"[\\\"0\\\",\\\"0\\\",\\\"21225530\\\",\\\"2774608\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "hash": "0x0cff882830a2d65980517a2959d67ad2e081fe2127f62274dd3975494c71fd3e",
+      "block": 108944911,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0xC4c81D5C1851702d27d602aA8ff830A7689F17cc",
+            "0xd44f5ddad9a4e4339ed689ae2603def323a0404869513c6541b02101fd5a4b10",
+            "0xf3f31c898a0a83f2b4143601fdff35934fe1bbd2cadec0aa476b172565f91743",
+            "461"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0xC4c81D5C1851702d27d602aA8ff830A7689F17cc\"]": "[\"[\\\"0xd44f5ddad9a4e4339ed689ae2603def323a0404869513c6541b02101fd5a4b10\\\",\\\"0xf3f31c898a0a83f2b4143601fdff35934fe1bbd2cadec0aa476b172565f91743\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x14c449b005fa20318536222a44888bc640ba1b4a9d7cdcc3efb8ab0b9b60b683\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x9ccadc10efff83311d8cad8776b8511482379dd53dede61d3f336577c55798e2\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"461\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"461\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "hash": "0x95fc67f84ae325a743b4d4ac9cf154d64e9cf003cc95e1cba7a19c7e9243feee",
+      "block": 108944913,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "9",
+            "0xd2485e4ba3bf0106d5d90ee05f8a34d73ee397324598f947aa8d2d7be395212f",
+            "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+            "0xba2629dd14fd5fd72ab18d46fb999aaee7d26a2ca93f00c7634c6a1240a421be",
+            "46243"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\",\"9\"]": "[\"[\\\"[\\\\\\\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\\\\\\\",\\\\\\\"9\\\\\\\",\\\\\\\"0x76b60dCf71dA2294f8aA034432D925D1eED8cf68\\\\\\\",\\\\\\\"26355776123062198039\\\\\\\",\\\\\\\"100000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0xd2485e4ba3bf0106d5d90ee05f8a34d73ee397324598f947aa8d2d7be395212f\\\",\\\"0xba2629dd14fd5fd72ab18d46fb999aaee7d26a2ca93f00c7634c6a1240a421be\\\",\\\"46243\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "hash": "0x7373db494a901bc80f65b849878816cfc00fc1edbe8f04f9e76282a526e5fc59",
+      "block": 108944912,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0x0440c90151eb27d267d4553348871a4d1dbe3e69539e41ad8ce1c4604fd840eb",
+            "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+            "0x7fee8068eb4ba596548dfb5c3c27eea964a83cf56433a14d410722dace68e35d",
+            "923391925"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\",\"3\"]": "[\"[\\\"[\\\\\\\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\\\\\\\",\\\\\\\"3\\\\\\\",\\\\\\\"0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED\\\\\\\",\\\\\\\"562524912595035608166\\\\\\\",\\\\\\\"2000000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0x0440c90151eb27d267d4553348871a4d1dbe3e69539e41ad8ce1c4604fd840eb\\\",\\\"0x7fee8068eb4ba596548dfb5c3c27eea964a83cf56433a14d410722dace68e35d\\\",\\\"923391925\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.receipt.json",
+      "hash": "0x79f1c879f62623b356e51af5b19687993ae01da59df849547e1eb3900b48b7b6",
+      "block": 108944909,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0xc05c56a58c0dd3dbf03b07198e1e867ee3ccb8f3e8d5c593ca9d1fa9a2126b8a",
+            "0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426",
+            "924"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D\"]": "[\"[\\\"0xc05c56a58c0dd3dbf03b07198e1e867ee3ccb8f3e8d5c593ca9d1fa9a2126b8a\\\",\\\"0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xbe22fc81e111eb0599ae5b531d63efe1ef7d3233670ef139e2197d209059ff23\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"2000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x93403b9978fa7b8267f3689109ade578fc47b5101739e4e458f086dd996b17dc\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"924\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"924\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "hash": "0x44a213e5b2c88500302e2f0d52bf3242bd01d43d3649b25ba4c7e9642580be26",
+      "block": 108944915,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "6",
+            "0x64be7c3d72f45d28cc773fcab408d2aa913cc1086ee56dfb545281b72bf5d337",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x164e6b5c8db031b257bfc67c09a84216b5f0a219425940d322b204506db3df08",
+            "36992599"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\",\"6\"]": "[\"[\\\"[\\\\\\\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\\\\\\\",\\\\\\\"6\\\\\\\",\\\\\\\"0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8\\\\\\\",\\\\\\\"740825635\\\\\\\",\\\\\\\"80000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0x64be7c3d72f45d28cc773fcab408d2aa913cc1086ee56dfb545281b72bf5d337\\\",\\\"0x164e6b5c8db031b257bfc67c09a84216b5f0a219425940d322b204506db3df08\\\",\\\"36992599\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "hash": "0x53f9c1dfcfd25a3dc4b58fed425110e6f736be17158aa3ef1cc66794e2aff3a8",
+      "block": 108944914,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "0xc3cd5f423b6a078e162286e901f2f692d41db80642f068a0aac8823e931dd211",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x3c202aaf68fc66a784cbe63bc8c8f4fdb4ba2daaabb887be628345d1aca98811",
+            "13872781"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\",\"4\"]": "[\"[\\\"[\\\\\\\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\\\\\\\",\\\\\\\"4\\\\\\\",\\\\\\\"0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8\\\\\\\",\\\\\\\"281387179\\\\\\\",\\\\\\\"30000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0xc3cd5f423b6a078e162286e901f2f692d41db80642f068a0aac8823e931dd211\\\",\\\"0x3c202aaf68fc66a784cbe63bc8c8f4fdb4ba2daaabb887be628345d1aca98811\\\",\\\"13872781\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "hash": "0x35c8135cdfa73b5a12fd5e40aacce98f60f40edd0dfff8c951c09ba220b0238c",
+      "block": 108944910,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xa447b7ba21541fbb4965c7e751d6ef80589aa6c3305434b714af7adce8244da9",
+            "0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4",
+            "461"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0x9586A4833970847aef259aD5BFB7aa8901DDf746\"]": "[\"[\\\"0xa447b7ba21541fbb4965c7e751d6ef80589aa6c3305434b714af7adce8244da9\\\",\\\"0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x245905776a6fcdb60fc2c659598f21edc3b5e1482d0a2217c30f9640e042dd41\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xe67acbe8bb95a3caa4c323b03f47c412ad7f851b0780a64e7e761c3a8e255995\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"461\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"461\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "hash": "0x660cfdf17a7857c050c9f52cd6f01ccb0755376ff45172b80f3b031dedf9c21c",
+      "block": 108944908,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0xf9d19560095bfb36c87aeaca9b25401b915d810c6ca8993e47185722619969cc",
+            "0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d",
+            "461"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584\"]": "[\"[\\\"0xf9d19560095bfb36c87aeaca9b25401b915d810c6ca8993e47185722619969cc\\\",\\\"0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x9908e4adbab4a9d8314bec96196dabfbb6be140acc41d78e717f394768ac3326\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x8b5d62ec22eb03c97e92e0859aec3bfe625c0abe70743f89f8759241ab843c91\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"461\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"461\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "hash": "0x9c1fc8a224d4c040f3653c3c36b97da58d92eba93e9ff8a10148fbf487be3b01",
+      "block": 108944916,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0x5c49bc9f66d9cfe8d0a4fb6d6b420dbfeefe69e79999160bf2751b55009c5708",
+            "0xC379FeB4182211aBe71a34858265e4Bf5FF35e06",
+            "0x412e9e175951e5aecd020819fec8e77baadbdc6238107e9624fd25baf9056b92",
+            "22233172691"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\",\"26\"]": "[\"[\\\"[\\\\\\\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\\\\\\\",\\\\\\\"26\\\\\\\",\\\\\\\"0xC379FeB4182211aBe71a34858265e4Bf5FF35e06\\\\\\\",\\\\\\\"56299\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"50000000000000000000\\\\\\\",\\\\\\\"0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0x5c49bc9f66d9cfe8d0a4fb6d6b420dbfeefe69e79999160bf2751b55009c5708\\\",\\\"0x412e9e175951e5aecd020819fec8e77baadbdc6238107e9624fd25baf9056b92\\\",\\\"22233172691\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.receipt.json",
+      "hash": "0x78479d09e968252e83fad3f99c09bfc55657b48e3d24013489de9bbaa9e306b3",
+      "block": 108944889,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "ThresholdsConfigured",
+          "values": [
+            "1050000000000000000",
+            "950000000000000000"
+          ]
+        },
+        {
+          "name": "ReserveBondNftWired",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "0",
+            "1"
+          ]
+        },
+        {
+          "name": "ReserveClaimWired",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+          ]
+        },
+        {
+          "name": "MigrationSyRewardTokenWired",
+          "values": [
+            "0xe44e17379970147fa85E3491ec2860F06F454F27",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+          ]
+        }
+      ],
+      "state": {
+        "owner": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "owner:[]": "[\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\"]"
+      }
+    },
+    {
+      "path": "journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.receipt.json",
+      "hash": "0xb0385f1898da58a5b3b29ba6af2e0cbe9983f599a23a9f27a16f70f7f428c15c",
+      "block": 108944894,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationSnapshotCaptured",
+          "values": [
+            "0x990fc4a8d0871532186bb994b27a889c71085b7ef8e542e660bb35d887136aa4",
+            "26367890"
+          ]
+        }
+      ],
+      "state": {
+        "migrationSnapshot:[]": "[\"[\\\"1\\\",\\\"4663\\\",\\\"0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0\\\",\\\"[\\\\\\\"0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0\\\\\\\",\\\\\\\"0xAa66038Ae217b246F5bF7537104342672e56fed8\\\\\\\",\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\",\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\"]\\\",\\\"26367890\\\",\\\"1794111150\\\",\\\"0x0000000000000000000000000000000000000000000000000000000000000000\\\",\\\"0x990fc4a8d0871532186bb994b27a889c71085b7ef8e542e660bb35d887136aa4\\\",\\\"0xb4Da19748373b8D4E90767B524bdeDc38448f002\\\",\\\"0x53a4cbe6e460cef626429d42efb81c4c8fd558bd2e595e1199eb5c8b1dddcf58\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d\\\\\\\\\\\\\\\"]\\\\\\\",\\\\\\\"[\\\\\\\\\\\\\\\"0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d\\\\\\\\\\\\\\\"]\\\\\\\",\\\\\\\"[\\\\\\\\\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440\\\\\\\\\\\\\\\"]\\\\\\\",\\\\\\\"[\\\\\\\\\\\\\\\"0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"[\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\",\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\"]\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\"]\\\\\\\",\\\\\\\"[\\\\\\\\\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"2\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"50000000000000000\\\",\\\"[\\\\\\\"0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8\\\\\\\",\\\\\\\"0xAa66038Ae217b246F5bF7537104342672e56fed8\\\\\\\",\\\\\\\"0xAa66038Ae217b246F5bF7537104342672e56fed8\\\\\\\",\\\\\\\"[\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000000b1a2bc2ec50000\\\\\\\\\\\\\\\"]\\\\\\\",\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xB3e3e110ccD69C3619A649Bc8BF1C76b7393b855\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"300000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"41887623136099435487\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"220079355083762985667\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000031cec9181d1ed85e\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x000000000000000000000000af4dd2b2484f25094d0c713aed1afdf386eee5f6\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0Cb961baB4Df33c08F9797086Ca1D6076EfdF0AC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"320079355083762985667\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"96757868847751733668\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1061334366846938136777\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xB33507fFfC8f37eba70a1B8bf58b72f9CC370dda\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xeabe74daa04c5a71ad11f3acfbbf2fad08805e3981c261ba727a50044dc7d017\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xDe155799F66Db238883a60c6Ea9B713Bfa709146\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xcfd76bca0a8a464e513d6917596967e20f3a2ae8c54ebb6fa31e644e56b2dc9a\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"400000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"false\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"false\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"false\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"false\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x433cd4ee5283c7760bCfcaaa33993aC2421D060c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"300000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"41887623136099435487\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"220079355083762985667\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x00000000000000000000000000000000000000000000000031cec9181d1ed85e\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x000000000000000000000000af4dd2b2484f25094d0c713aed1afdf386eee5f6\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0000000000000000000000000000000000000000000000000000000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"true\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x0Cb961baB4Df33c08F9797086Ca1D6076EfdF0AC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"320079355083762985667\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"96757868847751733668\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1061334366846938136777\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xB33507fFfC8f37eba70a1B8bf58b72f9CC370dda\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xeabe74daa04c5a71ad11f3acfbbf2fad08805e3981c261ba727a50044dc7d017\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xDe155799F66Db238883a60c6Ea9B713Bfa709146\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xcfd76bca0a8a464e513d6917596967e20f3a2ae8c54ebb6fa31e644e56b2dc9a\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\"]\\\\\\\"]\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-owner-bond/46241245c4191594650f924a819027b4165bab3e31b9d00b2f9232876374d730.receipt.json",
+      "hash": "0x3d3db12425f35e921e43d85b2c04981f43bc10735f02d10288f43952f8e0be3a",
+      "block": 108944936,
+      "status": "0x1",
+      "events": [],
+      "state": {
+        "allowance": "1000000000000000000"
+      }
+    },
+    {
+      "path": "journal-owner-bond/8bea8dd25c0a289b2474588319657833c4540a46c00e8a4114123b7025770475.receipt.json",
+      "hash": "0x837fecf0c13c873c1860911fbb718b81f70558391989ebfe49178c2cee521417",
+      "block": 108944937,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationOwnerFirstBondPurchased",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "6"
+          ]
+        }
+      ],
+      "state": {
+        "backingAfter": "550074623",
+        "backingBefore": "1383",
+        "fundedRewards": "84489332",
+        "ownerFirstBondTokenId": "6",
+        "paid": "1000000000000000000",
+        "position": "[\"465583908\",\"0\",\"465583908000000000000000000000000000000000000\",\"1794111193\",\"7776000\"]",
+        "principal": "465583908",
+        "retainedRoleGons": "[[\"0xc02c5970bc54eb54442c421c7de43eec12481c5d\",\"30477316731258798902275473630153655920530817\"]]",
+        "stakingAfter": "[\"496062607731258798902275473630153655920530817\",\"901809661440931663891971256078279707\",\"550074623\",\"2\",\"1\",\"99212521546251759780455094726030731184106163\",\"231495883607920772821061887694071706096247714\"]",
+        "stakingBefore": "[\"1383000000000000000000000000000000000000\",\"1000000000000000000000000000000000000\",\"1383\",\"0\",\"0\",\"276600000000000000000000000000000000000\",\"645400000000000000000000000000000000000\"]"
+      }
+    },
+    {
+      "path": "journal-issue/d8c221db897a13b2463be63c7bab160967c9f64bb86166c56806263b7d1c55b3.receipt.json",
+      "hash": "0xbb0065e66930fdc95a219a7aadea62aa6a366c91bd5b2bed68fd71b66fbecb6f",
+      "block": 108944907,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x3eb30e1147dcaa25471cb484930146f701800069eb776acd688417440b61930d",
+            "5",
+            "461",
+            "1794111163"
+          ]
+        }
+      ],
+      "state": {
+        "bond:5": "[\"461\",\"0\",\"461000000000000000000000000000000000000\",\"1794111163\",\"7776000\"]",
+        "bondNftVault:[]": "[\"0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C\"]",
+        "independentIssuance:[\"0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D\"]": "[\"[\\\"true\\\",\\\"0x3eb30e1147dcaa25471cb484930146f701800069eb776acd688417440b61930d\\\",\\\"461\\\",\\\"5\\\",\\\"1794111163\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-issue/4ff4f3dd6a38e838c6a440c43ebe76bd39bc8fdac3214e873d31ec2dccaebb18.receipt.json",
+      "hash": "0x1ad4429e039e711bf8e674264ced0c8145d3f7f4c2f63109f00be6acab350d16",
+      "block": 108944905,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0xf9d19560095bfb36c87aeaca9b25401b915d810c6ca8993e47185722619969cc",
+            "3",
+            "461",
+            "1794111161"
+          ]
+        }
+      ],
+      "state": {
+        "bond:3": "[\"461\",\"0\",\"461000000000000000000000000000000000000\",\"1794111161\",\"7776000\"]",
+        "bondNftVault:[]": "[\"0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C\"]",
+        "independentIssuance:[\"0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584\"]": "[\"[\\\"true\\\",\\\"0xf9d19560095bfb36c87aeaca9b25401b915d810c6ca8993e47185722619969cc\\\",\\\"461\\\",\\\"3\\\",\\\"1794111161\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-issue/a8c9b68619f41c419b9576fcbe980ef4301ab38e5b139ec3f416a27f7e5ae095.receipt.json",
+      "hash": "0xbe789d52cfd95ee544026c9a36f4b3e84c877386e3ed5904bcf8f2d3331f56d5",
+      "block": 108944906,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xa447b7ba21541fbb4965c7e751d6ef80589aa6c3305434b714af7adce8244da9",
+            "4",
+            "461",
+            "1794111162"
+          ]
+        }
+      ],
+      "state": {
+        "bond:4": "[\"461\",\"0\",\"461000000000000000000000000000000000000\",\"1794111162\",\"7776000\"]",
+        "bondNftVault:[]": "[\"0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C\"]",
+        "independentIssuance:[\"0x9586A4833970847aef259aD5BFB7aa8901DDf746\"]": "[\"[\\\"true\\\",\\\"0xa447b7ba21541fbb4965c7e751d6ef80589aa6c3305434b714af7adce8244da9\\\",\\\"461\\\",\\\"4\\\",\\\"1794111162\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-harvest-02-WeightedPrincipal/a59e0fcc061c26261ad30e2912b7eafd7ca313fb6d340ae8719d72e6d1cd29e1.receipt.json",
+      "hash": "0x856206f4a02b23f6424bd2b7f67c3ebcec13bccf59422b4c3101b61572505112",
+      "block": 108945003,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "16977",
+            "0"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "91010571773842019705755110784288320613533715",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "103954835",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "18963267719850502084",
+        "nftSurrender:[\"0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e\",\"26\"]": "[\"[\\\"true\\\",\\\"0x5c49bc9f66d9cfe8d0a4fb6d6b420dbfeefe69e79999160bf2751b55009c5708\\\",\\\"0xC379FeB4182211aBe71a34858265e4Bf5FF35e06\\\",\\\"56299\\\",\\\"56299\\\",\\\"22233172691\\\",\\\"9\\\",\\\"1794111244\\\"]\"]",
+        "recovery:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:26": "[\"16977\",\"0\",\"0\",\"false\"]"
+      }
+    },
+    {
+      "path": "journal-harvest-09-EarlierSale/c5630ef97f7b00e919f19a5f5e3f1e96c84e6232e6206fec65bddfe768a0b0bb.receipt.json",
+      "hash": "0xd07f3447cab4623a0e49e369ab96593128c04434b3603621deb1168a77998659",
+      "block": 108945012,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoverySold",
+          "values": [
+            "3",
+            "562524912595035608166",
+            "485044501927175493321",
+            "0"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "0",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "0",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "575282902984198125092",
+        "nftSurrender:[\"0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391\",\"3\"]": "[\"[\\\"true\\\",\\\"0x0440c90151eb27d267d4553348871a4d1dbe3e69539e41ad8ce1c4604fd840eb\\\",\\\"0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED\\\",\\\"562524912595035608166\\\",\\\"562524912595035608166\\\",\\\"923391925\\\",\\\"10\\\",\\\"1794111256\\\"]\"]",
+        "recovery:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:3": "[\"0\",\"124873542679524901\",\"485044501927175493321\",\"true\"]"
+      }
+    },
+    {
+      "path": "journal-harvest-08-EarlierClaim/ec24ed7ec3ed3966752a18bb09f6514d39448d0ca251010ea2a81b69d0b6d1de.receipt.json",
+      "hash": "0xc9293fa1fe43b0c7023bd500a799fb43d337cdf525176af1871f62770c7968df",
+      "block": 108945010,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0",
+            "124873542679524901"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "0",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "0",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "575282902984198125092",
+        "nftSurrender:[\"0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391\",\"3\"]": "[\"[\\\"true\\\",\\\"0x0440c90151eb27d267d4553348871a4d1dbe3e69539e41ad8ce1c4604fd840eb\\\",\\\"0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED\\\",\\\"562524912595035608166\\\",\\\"562524912595035608166\\\",\\\"923391925\\\",\\\"10\\\",\\\"1794111256\\\"]\"]",
+        "recovery:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:3": "[\"0\",\"124873542679524901\",\"0\",\"false\"]"
+      }
+    },
+    {
+      "path": "journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.receipt.json",
+      "hash": "0x1d19df09ae202f34405d3bbc3f3fdcde38170ee1239b9ef6661a294e1fe601af",
+      "block": 108944895,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "WeightedLiquidEntitlementConfigured",
+          "values": [
+            "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+            "0xd6c2854dd7a7d044591e99f126feefa69db3c6980e701d30846133e38adce1f5",
+            "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+            "21225531",
+            "4624334"
+          ]
+        }
+      ],
+      "state": {
+        "weightedLiquidEntitlement:[\"0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581\"]": "[\"[\\\"true\\\",\\\"[\\\\\\\"0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581\\\\\\\",\\\\\\\"0x082Cb14f04d9C485473dedC00d604D7e9Abca303\\\\\\\",\\\\\\\"0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7\\\\\\\",\\\\\\\"21225531\\\\\\\",\\\\\\\"10000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xa330d14ffee0cb310bc78a72e22ce40acfec46fb987023c407690f7fec37845e\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0xd6c2854dd7a7d044591e99f126feefa69db3c6980e701d30846133e38adce1f5\\\",\\\"4624334\\\"]\"]",
+        "weightedLiquidSurrender:[\"0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581\"]": "[\"[\\\"0\\\",\\\"0\\\",\\\"21225531\\\",\\\"4624334\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "hash": "0x1bc3fdc3617b69868c0a40fd828089eb8a359a3546e82ce0f57f3aec8a83cd94",
+      "block": 108944901,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0xC4c81D5C1851702d27d602aA8ff830A7689F17cc",
+            "0xd44f5ddad9a4e4339ed689ae2603def323a0404869513c6541b02101fd5a4b10",
+            "0xf3f31c898a0a83f2b4143601fdff35934fe1bbd2cadec0aa476b172565f91743",
+            "461"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0xC4c81D5C1851702d27d602aA8ff830A7689F17cc\"]": "[\"[\\\"0xd44f5ddad9a4e4339ed689ae2603def323a0404869513c6541b02101fd5a4b10\\\",\\\"0xf3f31c898a0a83f2b4143601fdff35934fe1bbd2cadec0aa476b172565f91743\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x14c449b005fa20318536222a44888bc640ba1b4a9d7cdcc3efb8ab0b9b60b683\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x9ccadc10efff83311d8cad8776b8511482379dd53dede61d3f336577c55798e2\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"461\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"461\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "hash": "0xa25b8d331bea9f85424aee457b341ed2a7508533af822a14d972e7a2ad397832",
+      "block": 108944899,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "9",
+            "0xd2485e4ba3bf0106d5d90ee05f8a34d73ee397324598f947aa8d2d7be395212f",
+            "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+            "0xba2629dd14fd5fd72ab18d46fb999aaee7d26a2ca93f00c7634c6a1240a421be",
+            "46243"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\",\"9\"]": "[\"[\\\"[\\\\\\\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\\\\\\\",\\\\\\\"9\\\\\\\",\\\\\\\"0x76b60dCf71dA2294f8aA034432D925D1eED8cf68\\\\\\\",\\\\\\\"26355776123062198039\\\\\\\",\\\\\\\"100000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0xd2485e4ba3bf0106d5d90ee05f8a34d73ee397324598f947aa8d2d7be395212f\\\",\\\"0xba2629dd14fd5fd72ab18d46fb999aaee7d26a2ca93f00c7634c6a1240a421be\\\",\\\"46243\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "hash": "0x1cd8601d8ac553b7b968d95daab5e1448f3a78c15dd9b9698484b6fafd498e5d",
+      "block": 108944900,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0x0440c90151eb27d267d4553348871a4d1dbe3e69539e41ad8ce1c4604fd840eb",
+            "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+            "0x7fee8068eb4ba596548dfb5c3c27eea964a83cf56433a14d410722dace68e35d",
+            "923391925"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\",\"3\"]": "[\"[\\\"[\\\\\\\"0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391\\\\\\\",\\\\\\\"3\\\\\\\",\\\\\\\"0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED\\\\\\\",\\\\\\\"562524912595035608166\\\\\\\",\\\\\\\"2000000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0x0440c90151eb27d267d4553348871a4d1dbe3e69539e41ad8ce1c4604fd840eb\\\",\\\"0x7fee8068eb4ba596548dfb5c3c27eea964a83cf56433a14d410722dace68e35d\\\",\\\"923391925\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "hash": "0x6a9b63aa6038d6220c7b78505edb15b8f29a1b7492f6b3e048c82218d9df390e",
+      "block": 108944897,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "6",
+            "0x64be7c3d72f45d28cc773fcab408d2aa913cc1086ee56dfb545281b72bf5d337",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x164e6b5c8db031b257bfc67c09a84216b5f0a219425940d322b204506db3df08",
+            "36992599"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\",\"6\"]": "[\"[\\\"[\\\\\\\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\\\\\\\",\\\\\\\"6\\\\\\\",\\\\\\\"0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8\\\\\\\",\\\\\\\"740825635\\\\\\\",\\\\\\\"80000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0x64be7c3d72f45d28cc773fcab408d2aa913cc1086ee56dfb545281b72bf5d337\\\",\\\"0x164e6b5c8db031b257bfc67c09a84216b5f0a219425940d322b204506db3df08\\\",\\\"36992599\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "hash": "0x3e8f63776aaad9326ddd38874d33f102cdfd57081d00bffe693bf27779ad5160",
+      "block": 108944898,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "0xc3cd5f423b6a078e162286e901f2f692d41db80642f068a0aac8823e931dd211",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x3c202aaf68fc66a784cbe63bc8c8f4fdb4ba2daaabb887be628345d1aca98811",
+            "13872781"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\",\"4\"]": "[\"[\\\"[\\\\\\\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\\\\\\\",\\\\\\\"4\\\\\\\",\\\\\\\"0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8\\\\\\\",\\\\\\\"281387179\\\\\\\",\\\\\\\"30000000000000000\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0xc3cd5f423b6a078e162286e901f2f692d41db80642f068a0aac8823e931dd211\\\",\\\"0x3c202aaf68fc66a784cbe63bc8c8f4fdb4ba2daaabb887be628345d1aca98811\\\",\\\"13872781\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "hash": "0x2c31a6ed4af3d7c3c411db7727f8a27d1bab9dd247b3903570fbbe872e6fa396",
+      "block": 108944902,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xa447b7ba21541fbb4965c7e751d6ef80589aa6c3305434b714af7adce8244da9",
+            "0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4",
+            "461"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0x9586A4833970847aef259aD5BFB7aa8901DDf746\"]": "[\"[\\\"0xa447b7ba21541fbb4965c7e751d6ef80589aa6c3305434b714af7adce8244da9\\\",\\\"0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x245905776a6fcdb60fc2c659598f21edc3b5e1482d0a2217c30f9640e042dd41\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xe67acbe8bb95a3caa4c323b03f47c412ad7f851b0780a64e7e761c3a8e255995\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"461\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"461\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "hash": "0x0dfb27b9e1ba30edff563477a687bfcdc92a42a3cb9e69d347255b1985b3c4d6",
+      "block": 108944904,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0xf9d19560095bfb36c87aeaca9b25401b915d810c6ca8993e47185722619969cc",
+            "0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d",
+            "461"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584\"]": "[\"[\\\"0xf9d19560095bfb36c87aeaca9b25401b915d810c6ca8993e47185722619969cc\\\",\\\"0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x9908e4adbab4a9d8314bec96196dabfbb6be140acc41d78e717f394768ac3326\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x8b5d62ec22eb03c97e92e0859aec3bfe625c0abe70743f89f8759241ab843c91\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"461\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"461\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.receipt.json",
+      "hash": "0x7efa4d96277df9a9132dd8b1ba53b564ee32cca402fc6c6d1f28a6728039871a",
+      "block": 108944903,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x3eb30e1147dcaa25471cb484930146f701800069eb776acd688417440b61930d",
+            "0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426",
+            "461"
+          ]
+        }
+      ],
+      "state": {
+        "independentAllocation:[\"0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D\"]": "[\"[\\\"0x3eb30e1147dcaa25471cb484930146f701800069eb776acd688417440b61930d\\\",\\\"0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426\\\",\\\"[\\\\\\\"[\\\\\\\\\\\\\\\"[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0xbe22fc81e111eb0599ae5b531d63efe1ef7d3233670ef139e2197d209059ff23\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"1000000000000\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"0x93403b9978fa7b8267f3689109ade578fc47b5101739e4e458f086dd996b17dc\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"]\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"461\\\\\\\\\\\\\\\"]\\\\\\\"]\\\",\\\"461\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "hash": "0x6d348d4c13464720436850213ef3ed22a8d74a1cfcfb874d040e1fe3019ecae7",
+      "block": 108944896,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0x5c49bc9f66d9cfe8d0a4fb6d6b420dbfeefe69e79999160bf2751b55009c5708",
+            "0xC379FeB4182211aBe71a34858265e4Bf5FF35e06",
+            "0x412e9e175951e5aecd020819fec8e77baadbdc6238107e9624fd25baf9056b92",
+            "22233172691"
+          ]
+        }
+      ],
+      "state": {
+        "nftEntitlement:[\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\",\"26\"]": "[\"[\\\"[\\\\\\\"0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E\\\\\\\",\\\\\\\"26\\\\\\\",\\\\\\\"0xC379FeB4182211aBe71a34858265e4Bf5FF35e06\\\\\\\",\\\\\\\"56299\\\\\\\",\\\\\\\"0\\\\\\\",\\\\\\\"50000000000000000000\\\\\\\",\\\\\\\"0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d\\\\\\\",\\\\\\\"true\\\\\\\"]\\\",\\\"0x5c49bc9f66d9cfe8d0a4fb6d6b420dbfeefe69e79999160bf2751b55009c5708\\\",\\\"0x412e9e175951e5aecd020819fec8e77baadbdc6238107e9624fd25baf9056b92\\\",\\\"22233172691\\\"]\"]"
+      }
+    },
+    {
+      "path": "journal-harvest-04-WeightedUnstake/4e113be2605b36d946ffca3958fd10bfa279843f91fb27ac670f9440efcea959.receipt.json",
+      "hash": "0xc192792cf9553f5e7fb79eb97c32179528f2a325ca73729eb689dbfe9e953122",
+      "block": 108945006,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryRevalued",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "103958457",
+            "103970348",
+            "91013742769120544805577300343929877375152953",
+            "875381719530621280832290081242891839"
+          ]
+        },
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "103958457",
+            "103958457"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "10409920710392198888747721514199574820530",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "103958457",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "11891",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "18963267719850502084"
+      }
+    },
+    {
+      "path": "journal-harvest-06-WeightedConvert/4cfd0e83fcc3375ce63f646c82f9456e6b01e85e31d59428621a452e3db5a50c.receipt.json",
+      "hash": "0x9add015ca9cc2293e4e321f228df2d5c9908b113ccdfd108e9cba6960b6617a7",
+      "block": 108945008,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "103970348",
+            "557319635264347623008"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "0",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "0",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "576282902984198125092"
+      }
+    },
+    {
+      "path": "journal-harvest-01-WeightedClaim/41abbae4293f59623faee11a4824eb4dc55b90ae18bcc660272024d9e2522ab7.receipt.json",
+      "hash": "0x269e2c28228f73e52ec470b8112420a66e4f3805a16d344e506cde25c365e52a",
+      "block": 108945002,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "86299016",
+            "17638842"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "90995708718391020086848067119452674798511682",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "103937858",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "18963267719850502084",
+        "nftSurrender:[\"0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e\",\"4\"]": "[\"[\\\"true\\\",\\\"0xc3cd5f423b6a078e162286e901f2f692d41db80642f068a0aac8823e931dd211\\\",\\\"0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8\\\",\\\"281387179\\\",\\\"281387179\\\",\\\"13872781\\\",\\\"8\\\",\\\"1794111229\\\"]\"]",
+        "recovery:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:4": "[\"86299016\",\"17638842\",\"0\",\"false\"]"
+      }
+    },
+    {
+      "path": "journal-harvest-05-WeightedUnstake/8c77f5709fc469d7f34566e54bcbf0cbfe2332bb9ee3264dbbb3ac4d174728b7.receipt.json",
+      "hash": "0xae00dd4c58675840566d80faf6306094bcd7da6dd5bffa8316aa5de94bf9be26",
+      "block": 108945007,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "11891",
+            "11891"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "0",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "103970348",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "0",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "18963267719850502084"
+      }
+    },
+    {
+      "path": "journal-harvest-07-Donate/f23dd32043cd67a728fb93906dce35f53570ee268d4d4a335da8e4558272eb14.receipt.json",
+      "hash": "0x2e4327fa8560d08ef7ce66099aa02553a8cb9eb811647f75536f5e8e92e4b0ce",
+      "block": 108945009,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryDonated",
+          "values": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000",
+            "118884664693415640"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "0",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "0",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "575282902984198125092"
+      }
+    },
+    {
+      "path": "journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.receipt.json",
+      "hash": "0x4c1ca5ff27913c6d844e51d20938eafe0f414af97cf52e3c0e8ff3cec78858b5",
+      "block": 108944941,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationActivated",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+          ]
+        }
+      ],
+      "state": {
+        "migrationActivated:[]": "[\"true\"]",
+        "migrationOwnerFirstBondTokenId:[]": "[\"6\"]"
+      }
+    },
+    {
+      "path": "journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.receipt.json",
+      "hash": "0x3cbd3c87fd42b9da61ddee3d03040d34d193ede4f5c1bd075cbfc5d4dae18ac7",
+      "block": 108944890,
+      "status": "0x1",
+      "events": [],
+      "state": {
+        "allowance": "900000000000000000000"
+      }
+    },
+    {
+      "path": "journal-fund/e4155f10909096070c1a6f57cc9f7a31f4ed8cebc72755c0f0c0d15c4dda5875.receipt.json",
+      "hash": "0x09dcd059b8511edb7e05c21397d904c5027171ce4cc05c85b9f8e0609d4bc4cf",
+      "block": 108944893,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "231662479035539984912"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440",
+            "231662479035539984912"
+          ]
+        },
+        {
+          "name": "MigrationReserveBootstrapped",
+          "values": [
+            "1000000000000",
+            "402821897672817483805",
+            "1794111149"
+          ]
+        }
+      ],
+      "state": {
+        "migrationBootstrapSelfMinted:[]": "[\"1000000000000\"]"
+      }
+    },
+    {
+      "path": "journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.receipt.json",
+      "hash": "0x84b631cc1ff1b5a37cc7694b145722f0c6025431fa1efa4f17c8c7a1c338d880",
+      "block": 108944891,
+      "status": "0x1",
+      "events": [],
+      "state": {
+        "allowance": "1000000000000000000000"
+      }
+    },
+    {
+      "path": "journal-fund/d5c695f0fa293eafa77f70b2d3b579093f0e01f43926f99a11fbcf64321665fa.receipt.json",
+      "hash": "0x997f7a1aaf6566ef78629e4aef31ee70b6bc83dc32bd4b3c44e8ce66d61b5399",
+      "block": 108944892,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "900000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "100000000000000000000"
+          ]
+        }
+      ],
+      "state": {
+        "migrationDonationInventory:[\"0x8096e26a26059c5240ab23d69157e121b28d326a\"]": "[\"1000000000000000000000\"]",
+        "migrationDonationInventory:[\"0xee5576fa1bcaa380e591d01245f406f3f384eb01\"]": "[\"1000000000000000000000\"]",
+        "migrationSnapshotSource:[]": "[\"[\\\"0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0\\\",\\\"0xAa66038Ae217b246F5bF7537104342672e56fed8\\\",\\\"0x8096E26a26059c5240Ab23d69157e121b28d326a\\\",\\\"0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01\\\"]\"]",
+        "nativeAmount": "100000000000000000000"
+      }
+    },
+    {
+      "path": "journal-harvest-03-WeightedRewards/b7ae4d492a9fa8fb61c0f36b4b0a6f0d0274870691a3bf9fe31ba90475b4990d.receipt.json",
+      "hash": "0xbf0f6266f318e26e6fc25544a4dabc34556b6ae0cfa736a9d9d3dd9994836dd2",
+      "block": 108945004,
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0",
+            "3622"
+          ]
+        }
+      ],
+      "state": {
+        "attributedGons": "91013742769120544805577300343929877375152953",
+        "inventory:0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+        "inventory:0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "103958457",
+        "inventory:0xee5576fa1bcaa380e591d01245f406f3f384eb01": "18963267719850502084",
+        "nftSurrender:[\"0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e\",\"26\"]": "[\"[\\\"true\\\",\\\"0x5c49bc9f66d9cfe8d0a4fb6d6b420dbfeefe69e79999160bf2751b55009c5708\\\",\\\"0xC379FeB4182211aBe71a34858265e4Bf5FF35e06\\\",\\\"56299\\\",\\\"56299\\\",\\\"22233172691\\\",\\\"9\\\",\\\"1794111244\\\"]\"]",
+        "recovery:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:26": "[\"16977\",\"3622\",\"0\",\"false\"]"
+      }
+    }
+  ],
+  "fixtureReceiptIndex": [
+    {
+      "hash": "0x31ea1a256fd03b1a6d46b580c49674ca21c653f257d41dd25bd9da3dfae6caf5",
+      "block": 108944664,
+      "status": "0x1",
+      "gasUsed": "1478648"
+    },
+    {
+      "hash": "0x03378163369c4e72863f05634954806735141a53e9b9ce11cde219988c75b12f",
+      "block": 108944665,
+      "status": "0x1",
+      "gasUsed": "207354"
+    },
+    {
+      "hash": "0xeb13ca22d8a968332463d2e720637489921e0547fbbedf48599ca3140b849d8b",
+      "block": 108944666,
+      "status": "0x1",
+      "gasUsed": "52060"
+    },
+    {
+      "hash": "0x627a9bf3b0e41befc0f931ac9bf628af291a4e787d7b35f5322e6466f4605549",
+      "block": 108944667,
+      "status": "0x1",
+      "gasUsed": "1203827"
+    },
+    {
+      "hash": "0xec2debbd374f66d887cfc803cb6d15297c04dd64a2aca2ad4c96aff727ee4fb9",
+      "block": 108944668,
+      "status": "0x1",
+      "gasUsed": "51388"
+    },
+    {
+      "hash": "0x359a18f5cf1aa4b7022df5c4304550c33f3215a951142e968ab45d0db03889e0",
+      "block": 108944918,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0xe613fceaeed27d8632cf404c4c4282342a8f2ea5b03d609ae364a4be3d7284a7",
+      "block": 108944919,
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "hash": "0x8373e6980494a82b126a039f709a3ae5e2697fe476303ac0986f35acf15e36cb",
+      "block": 108944920,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x946b59c92f10ca3d7e7048ec83090e4d022caaddbf2459715b164cf86364a63f",
+      "block": 108944921,
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "hash": "0x88b120be36a587d6ab55abf9aa683801e50d337c3ff37108d5f5558286b4fd6e",
+      "block": 108944922,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x20468e2d2afebd35cf67ff7b8f5fd29acf0e88e9f170248dfe160b95d1c77915",
+      "block": 108944923,
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "hash": "0xf83e98e3b0aa508f2800175ce6af4a9dea0c0504622563bc4efddb46a4d08bd5",
+      "block": 108944924,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0xc2780d4b93cf88fc2002c358b106425e44fc5790cbc658c15215fdb7cb5c6d30",
+      "block": 108944925,
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "hash": "0x28539f7f97a52639040732ee417c902184e6baab5cce68073853b5ba443ade5e",
+      "block": 108944926,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x60a7ca00fb5e992c5b73b45c757ec2ad43c00412014c82b98503c5f98a346783",
+      "block": 108944927,
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "hash": "0xbbf89382b2cb7316ba841ac84931c7a2002a567098028f46a56658d045a2f3b8",
+      "block": 108944928,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x56f7894abf537f3b250657d54c623902bb808edbda520910f25e345cde229eb1",
+      "block": 108944929,
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "hash": "0xc6d51620e832d3b7914df2a6b01999f53cfeeeb99772f037779843e71c3ac6e1",
+      "block": 108944930,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x80a22e80a65734018f706c0c45e6c8c00b5a1edb048239ccd0d5a2643f1e4d35",
+      "block": 108944931,
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "hash": "0xf4e2987f7458d25550415be945b6ce6612410732dd8fcb6a6ba4ff8a7e6a97dd",
+      "block": 108944932,
+      "status": "0x1",
+      "gasUsed": "52048"
+    },
+    {
+      "hash": "0xdaf6aa0e69d9285836a93b2bfee14e501ee9fb09f871abd52b1f8b2b38ccb685",
+      "block": 108944933,
+      "status": "0x0",
+      "gasUsed": "29907"
+    },
+    {
+      "hash": "0x41c9be2bfa2056133e0ed3ac4d46969f2f0d503c688769b4202c91fd8a89192d",
+      "block": 108944934,
+      "status": "0x0",
+      "gasUsed": "29907"
+    },
+    {
+      "hash": "0xa2eb210890c6f63b1ed1b1f05df33330be4d3e2ac8d72cc9a0721a95f20fe050",
+      "block": 108944935,
+      "status": "0x0",
+      "gasUsed": "91655"
+    },
+    {
+      "hash": "0xa110ef9d85fddc9bb0d97dd61d8a5fe4db2f68665252c5908b23ed63f898a697",
+      "block": 108944938,
+      "status": "0x0",
+      "gasUsed": "190820"
+    },
+    {
+      "hash": "0x00110070ecfd66e20c657623049219ef00dfbfdcdf2abc14e80d971815e28df3",
+      "block": 108944939,
+      "status": "0x0",
+      "gasUsed": "216256"
+    },
+    {
+      "hash": "0x9b255322c24cff8ff5d46b67f7bb5d51c2093b0f800f2901d8240d6b24bc0d61",
+      "block": 108944940,
+      "status": "0x0",
+      "gasUsed": "92863"
+    },
+    {
+      "hash": "0x3aa169dd6b202415f301ba7cf4b3ebb0c1a5ac9dace8ac954f304a722ff1241a",
+      "block": 108944942,
+      "status": "0x1",
+      "gasUsed": "51224"
+    },
+    {
+      "hash": "0xd042709f4757fcb7f851ca353f40962edb59105863d02c537da5ead40d8bfea8",
+      "block": 108944943,
+      "status": "0x1",
+      "gasUsed": "45786"
+    },
+    {
+      "hash": "0x4d9b92b7f8603b8ef1bc7d78096df60f690f9d7c60e7e9ab685554acb601af6a",
+      "block": 108944944,
+      "status": "0x1",
+      "gasUsed": "19603419"
+    },
+    {
+      "hash": "0x0da6636b87eaf3fccf958baee4c9d3ecd0b9dffba517fde711885fed2c0b7617",
+      "block": 108944945,
+      "status": "0x0",
+      "gasUsed": "109704"
+    },
+    {
+      "hash": "0xc1f1c46ceb73c71812d4d386d875c9a9bc04f87f150ef77cf12937e4d3c64e8b",
+      "block": 108944946,
+      "status": "0x1",
+      "gasUsed": "57700"
+    },
+    {
+      "hash": "0x05527c9355e3fb6f95ecc99b1d1e08e084957352765d3e8aa7cba52af25b21f2",
+      "block": 108944947,
+      "status": "0x1",
+      "gasUsed": "52012"
+    },
+    {
+      "hash": "0xe805481948622646329bfd0de639c4763a412d87cd24a8b48d5ad5a2791bb7e2",
+      "block": 108944948,
+      "status": "0x0",
+      "gasUsed": "118662"
+    },
+    {
+      "hash": "0xc5121848d35beb4872a63e5fc450806bd69ed5764f9a84e0de5e2a92612e582b",
+      "block": 108944949,
+      "status": "0x1",
+      "gasUsed": "35800"
+    },
+    {
+      "hash": "0xaa6d736dc90ee007c40b7f176892c59eb0080ca2c08a458eeb2cdb7a02cd1a8e",
+      "block": 108944950,
+      "status": "0x1",
+      "gasUsed": "57700"
+    },
+    {
+      "hash": "0x0f1fb9f3153796bae73c9da3f5eb2cde4ed81ee3e4f35920ebb0f2fa9f3ff167",
+      "block": 108944951,
+      "status": "0x1",
+      "gasUsed": "34264"
+    },
+    {
+      "hash": "0x46bda080ff617747dae8bfcc5a14d3dad3ec54104ae3a40f16db89eacc505ca5",
+      "block": 108944952,
+      "status": "0x1",
+      "gasUsed": "158192"
+    },
+    {
+      "hash": "0x2882736a64a700e74c5af72aeca8db4fe93287e37c0180cfb46fd7bb658d2af4",
+      "block": 108944953,
+      "status": "0x1",
+      "gasUsed": "34936"
+    },
+    {
+      "hash": "0x7c45d4e26469268f8914e114c41b0238cd4a2665ef404d5fb1d8d58cfb040f55",
+      "block": 108944954,
+      "status": "0x1",
+      "gasUsed": "696766"
+    },
+    {
+      "hash": "0xefebe555acc7c4607d8d3576d86315f2a7692566c44377aa966a4e1a844b089c",
+      "block": 108944955,
+      "status": "0x0",
+      "gasUsed": "27840"
+    },
+    {
+      "hash": "0x5ce166d7d1682d48573f46c235ffad48ce288002b00f8b5067e3bb9bd63871e9",
+      "block": 108944956,
+      "status": "0x0",
+      "gasUsed": "27870"
+    },
+    {
+      "hash": "0xc28128d34be718f3856a4c5fa5c230fb1c35a7088c601ee6c404efa8b3407200",
+      "block": 108944957,
+      "status": "0x1",
+      "gasUsed": "1364313"
+    },
+    {
+      "hash": "0x651c47a2c9ee70bf8d3dc211151130ad37e6ea675a3dbab8b9987b901785cd90",
+      "block": 108944958,
+      "status": "0x1",
+      "gasUsed": "23522786"
+    },
+    {
+      "hash": "0xf72b43a182387bf68b4c7f5c8fbe75479aa3ef53631cf895c448fc922d16ceb5",
+      "block": 108944959,
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "hash": "0x4c336de988a21d0da860c5ed395753dc62bc0e17a955769205d66b8caad0e6b4",
+      "block": 108944960,
+      "status": "0x0",
+      "gasUsed": "111782"
+    },
+    {
+      "hash": "0x05b23683ea921104eb82ee445638ef781f9269cd64ba4acc3088cd9bc83ad4d7",
+      "block": 108944961,
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "hash": "0x4fb678ad4c465e00157aa8169afcb7d5da4006aaaa40395589bf3324c52d93a8",
+      "block": 108944962,
+      "status": "0x0",
+      "gasUsed": "111804"
+    },
+    {
+      "hash": "0xc107996c6f3385e51cc778515651aa6995be56657c55dbb98da69c604c631f29",
+      "block": 108944963,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0xa2c842d8473d08bbae36d23dc10875659488c57caa138df50ec162179deca3ef",
+      "block": 108944964,
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "hash": "0xb070dcae922302bc5cd50bec086fcb9bb018d8514a6997ef68e26d09c2df9c03",
+      "block": 108944965,
+      "status": "0x1",
+      "gasUsed": "143297"
+    },
+    {
+      "hash": "0xea33938e209384591534e8ab418b341cc60b012acbc861aeff8a3bd49759d469",
+      "block": 108944966,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0xf26bbe53a8ee10942ab71eda9953da7364ad4e8d7eb9c8b9ab37e3cb8077d3c5",
+      "block": 108944967,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0xbffd5ae28a4ab7d8639b4d1988992ab719e2d61bffcb62130152296e95908f38",
+      "block": 108944968,
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "hash": "0x314813c1bc3af2a78ce66eb7790c927927792da99bbe2b6d728f5c01288d4436",
+      "block": 108944969,
+      "status": "0x0",
+      "gasUsed": "163915"
+    },
+    {
+      "hash": "0x40d636c030498bd13dad06ddd85a782206bdb218fca7489f0fbf5b9418e00a70",
+      "block": 108944970,
+      "status": "0x1",
+      "gasUsed": "121397"
+    },
+    {
+      "hash": "0x792eabe5da99be12a9306969db9d8d1339f7f746cf91d283dceeb89ca288e125",
+      "block": 108944971,
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "hash": "0x653305cd34c54b46ffe94ef0020752434d3fdd74ccd287957e9637a38c58bfad",
+      "block": 108944972,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x9f17cc27dec50f4ff3fa66dd145749470f6e6b3f7347f50c901215fe78672636",
+      "block": 108944973,
+      "status": "0x1",
+      "gasUsed": "1009984"
+    },
+    {
+      "hash": "0xeb259148790d64e4dc19c6156ec7760b2f2e26ad3b1792d8203e085412681680",
+      "block": 108944974,
+      "status": "0x0",
+      "gasUsed": "109465"
+    },
+    {
+      "hash": "0x3477b6dffdc6642d7e223f7329821455dbb1b078de07ca06cbc001d1ff55d38a",
+      "block": 108944975,
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "hash": "0x78fe14a822f6323ff726cdc97221a55949917cfc359a4c27c5a71677ac10a102",
+      "block": 108944976,
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "hash": "0xd7b0a3f9cee38a2dc9fb227e08840fd905defd72def48ddc6f8c81244bea7c02",
+      "block": 108944977,
+      "status": "0x1",
+      "gasUsed": "138497"
+    },
+    {
+      "hash": "0x64602a4841126812cff09ac7935cb6d24e0585a5f2b1e3e729866ad325eba23b",
+      "block": 108944978,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0xe2e5eeb6026b5d758f05f203dbfb7ef1eee2eca3973633fbe4e9daf37693e48a",
+      "block": 108944979,
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "hash": "0x96681f92789cbccde600b15097818850d1a9bdd3b39f2dce04df91a98bcbd67e",
+      "block": 108944980,
+      "status": "0x1",
+      "gasUsed": "140497"
+    },
+    {
+      "hash": "0x50039eae3c817ba204b2552c149ecff55f2a8f04363792f59a3b3c355c394f5c",
+      "block": 108944981,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0xa263d755aa2c532e3baa17ec19db338e30a3c6b662e9343d25687bb4cfe56028",
+      "block": 108944982,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0xd7d560d20f1ca318b16d3fe587496045020e069f3b5f5b6b04fc3dce054d0e5f",
+      "block": 108944983,
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "hash": "0x303a0acc06fe2b70012f64747b1168ec0847434a64f52a70d612d9d841114647",
+      "block": 108944984,
+      "status": "0x0",
+      "gasUsed": "163915"
+    },
+    {
+      "hash": "0xe5fe4a34c1bf8cb8046c512faa7897bab38509add0f09ba6db605666de207e2e",
+      "block": 108944985,
+      "status": "0x1",
+      "gasUsed": "138497"
+    },
+    {
+      "hash": "0x6fa788141bbcbf384a324be3a7324317acc57c56522647d9412be4069a92c10a",
+      "block": 108944986,
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "hash": "0xb3b73d6dcf528fe7ecc5e7744879cd56a3daacc4bf26145b9785a05e931249fa",
+      "block": 108944987,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x6251a58ca870ff8cea42d7c1fab3f9093144f748664ae496baa1f0548479a7d4",
+      "block": 108944988,
+      "status": "0x1",
+      "gasUsed": "991447"
+    },
+    {
+      "hash": "0x633f881da4cb46f29d0ad3368f8d4a10fefab96ee37c2ea7f337978968939b9b",
+      "block": 108944989,
+      "status": "0x0",
+      "gasUsed": "109465"
+    },
+    {
+      "hash": "0x3ead149c8b5762c0ca9e3ba12c0dc5cced8cacb47f2137433a224119d28d4c57",
+      "block": 108944990,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0xa7472a1f27258bd9f36a8b0526fd369ba3a081f11bdc52df533a932440c9d464",
+      "block": 108944991,
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "hash": "0x30ab632f69f1c9a0d380f8622db11677288c369961dc2e839ea0ffc83693b378",
+      "block": 108944992,
+      "status": "0x1",
+      "gasUsed": "68150"
+    },
+    {
+      "hash": "0xb28c9dc44467d29180c29442d9ec6a1138a1d6ac118319ae226f2e327ac523ce",
+      "block": 108944993,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x979e185a0390d2709a6338cffd3f7de085d23a31e150e4f58f5de3d32b9ca499",
+      "block": 108944994,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0xa896888fa4477da24b4898bcf3336901e3911582bfd436966371bd69adb0f18d",
+      "block": 108944995,
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "hash": "0x597cad226ff56e8c21faaf5ceae84a1db089cd6b088b4094b87148fd46547967",
+      "block": 108944996,
+      "status": "0x0",
+      "gasUsed": "164366"
+    },
+    {
+      "hash": "0x4dd89ec6f0d6580c69740f53a5eb023c0d983c159c3b2e5921f185a8424d2130",
+      "block": 108944997,
+      "status": "0x1",
+      "gasUsed": "46250"
+    },
+    {
+      "hash": "0x3fee2e04ac781eb3a41d86faf62a0667504ef4692c364d01778be7d8a2a3a065",
+      "block": 108944998,
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "hash": "0x475c4446d3e02d1f7412b3c0ea2626ac918f2bf44d6ecf8914843b8f26f46947",
+      "block": 108944999,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x6e98f8041eec6f524702ce24a718a12ad906b23d1c787fcadeccf62580c0c04e",
+      "block": 108945000,
+      "status": "0x1",
+      "gasUsed": "947748"
+    },
+    {
+      "hash": "0xd533f43cfb0bca14f048b6e8044990ccd2d0e3fbb60294a896c7b287653e5f0a",
+      "block": 108945001,
+      "status": "0x0",
+      "gasUsed": "109487"
+    },
+    {
+      "hash": "0x0cfd95731d69937e9fb6c77f3b04568c46d8eb62024d422192480158135c3717",
+      "block": 108945013,
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "hash": "0x3da14021ecae8bb981a50c726518f3f203d38b0b5ab270665fd37124c27b874c",
+      "block": 108945014,
+      "status": "0x0",
+      "gasUsed": "111782"
+    },
+    {
+      "hash": "0x26197b209f91f1ca5254cd2d5310370a4e6268f9cf1811df2eebb4d4eaf66acc",
+      "block": 108945015,
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "hash": "0x0df37c7b0708007b3c36caffd143d28475f3639f53f201c254000ed238b7b8c3",
+      "block": 108945016,
+      "status": "0x0",
+      "gasUsed": "111804"
+    },
+    {
+      "hash": "0x641bfd18a329937ceac183e456257c6030ed02f5fbe04226b8ad176c094db379",
+      "block": 108945017,
+      "status": "0x1",
+      "gasUsed": "32272"
+    },
+    {
+      "hash": "0xd95eab60d67ae3d07a5f34fca2a888f9a51b24c6c7289e7a5b0db45c94929e8b",
+      "block": 108945018,
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "hash": "0xdc8821d2184f9196e94a4d5943a1994c4abd0599b4956ce1b3122607e60c69da",
+      "block": 108945019,
+      "status": "0x1",
+      "gasUsed": "1391046"
+    },
+    {
+      "hash": "0xc42890da4711793617ee3f2df799248caffb1d8ee219de50b193cc2b7c20aa27",
+      "block": 108945020,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0xcf06123202d1ea5f3e9850f7040d8ee5175322eebf2313ba037495fb4f89758d",
+      "block": 108945021,
+      "status": "0x1",
+      "gasUsed": "32272"
+    },
+    {
+      "hash": "0x962b1c1051104b829a833030d45e2340e28627e917ca44ae3144d039ec8d144e",
+      "block": 108945022,
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "hash": "0x100752ef0ac3a77409875fe9144d00a47a9a8c06c675680eb3a1d62c5e90c9a6",
+      "block": 108945023,
+      "status": "0x0",
+      "gasUsed": "163915"
+    },
+    {
+      "hash": "0x7ecc7c7e401d6fe50aa86cc0141a18392f1e1dcdb83fbb7d0a5510b1a70dc6f1",
+      "block": 108945024,
+      "status": "0x1",
+      "gasUsed": "121397"
+    },
+    {
+      "hash": "0x0ae2a55ba64158370327706a50713646ab801cecde1b2c3d6b775c36145dd8a1",
+      "block": 108945025,
+      "status": "0x1",
+      "gasUsed": "796000"
+    },
+    {
+      "hash": "0xde90656fed66b752785e2a9b48fd5cfac3e3a093715c1e6dbe76c9b87d200cb3",
+      "block": 108945026,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x795a10dfb35338e02e0481f6bcaaf3fd81720af0f6f490f05cf729e66ad68713",
+      "block": 108945027,
+      "status": "0x1",
+      "gasUsed": "977757"
+    },
+    {
+      "hash": "0xa158fde7bc80c41a70b434b9f9032aef47434487e6523b71a5d2f351ec0625c2",
+      "block": 108945028,
+      "status": "0x0",
+      "gasUsed": "109465"
+    },
+    {
+      "hash": "0x9538d2162b58a1590790b8a26dd105ac76fc08e674cd20fa85004207f155499d",
+      "block": 108945029,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0x09f3bccd078b9f46b6cd5bab2416673c57ec9ac50a3813d1adbb5a1958823013",
+      "block": 108945030,
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "hash": "0x53d0f6a7370c7e090e1af0a0739132e4a3d00fe5033ed0a226d2e9d860d4cc4a",
+      "block": 108945031,
+      "status": "0x1",
+      "gasUsed": "63350"
+    },
+    {
+      "hash": "0xaa6982668404ece9231beba9dfdde6445a439116dd16c85c0fa4a093c15d0fb6",
+      "block": 108945032,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x91d62aae4189cb676f28c9992616cc7430ff9c1365b41a854d0f4e59b4205fe7",
+      "block": 108945033,
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "hash": "0x0e8d83acb28e8ef9e3437629b11ff78b79e04f0faebc8fac42df95dce32ad69e",
+      "block": 108945034,
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "hash": "0xe6753743ad7d2ad96319b89d533918b1eaa34ccd3eef2f4d1b72bd6ff789cc19",
+      "block": 108945035,
+      "status": "0x0",
+      "gasUsed": "164366"
+    },
+    {
+      "hash": "0x1758083d254951e3dffeffda125764b22476f4301c76d85d5d521c3dffca3e90",
+      "block": 108945036,
+      "status": "0x1",
+      "gasUsed": "63350"
+    },
+    {
+      "hash": "0x09d3485a7228d5512c41f1d103c815b35181984a71b170334a9504778a52eeaf",
+      "block": 108945037,
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "hash": "0x2077296a767cc90fef647779a332cee56a4a0379aa645e6e3d82eaf8693f8f59",
+      "block": 108945038,
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "hash": "0x44012b9a9a34b74e3334418bb957061250d0d7399968e17414d338a4a88f6a42",
+      "block": 108945039,
+      "status": "0x1",
+      "gasUsed": "947728"
+    },
+    {
+      "hash": "0x84c36b367cffe3a499863f08b822bfe89e35600ae0a715e8a15004742f56e12e",
+      "block": 108945040,
+      "status": "0x0",
+      "gasUsed": "109487"
+    },
+    {
+      "hash": "0x88e1f9590f8c66ba9034e57a6c157a196648fa5f69c5ef9146f1d7708a2597ff",
+      "block": 108945041,
+      "status": "0x0",
+      "gasUsed": "109704"
+    },
+    {
+      "hash": "0x8ce2a55aef42aa4206679b11753dc2b812d63244aaca6441008d84ce6ce54161",
+      "block": 108945042,
+      "status": "0x1",
+      "gasUsed": "57700"
+    },
+    {
+      "hash": "0xfebc2f0aa42b0ee8685e0a0e487512a0a50cebd17db64807319f1ea42251f8c0",
+      "block": 108945043,
+      "status": "0x1",
+      "gasUsed": "32112"
+    },
+    {
+      "hash": "0x6e357664a5d7aa5d848f0d031b058ffe78cf6c4e51d424cad21678163dd4215a",
+      "block": 108945044,
+      "status": "0x0",
+      "gasUsed": "118662"
+    },
+    {
+      "hash": "0xae444c65fbcc009d9dfbfa1250b3d80b45823550ebf32bc5abc1790381231d33",
+      "block": 108945045,
+      "status": "0x1",
+      "gasUsed": "35800"
+    },
+    {
+      "hash": "0x7777ed1ede5a09e7e88bbc45ad4268c6c0b8aae960cce12e0076f24ec551f1ed",
+      "block": 108945046,
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "hash": "0x4cf1c7977dded1a7bd7cfc9305d73b153632069773d56c420a7d5aa699b8013a",
+      "block": 108945047,
+      "status": "0x1",
+      "gasUsed": "52036"
+    },
+    {
+      "hash": "0xba958362a56f8a9cebd5e9c5ca9ba17a925f41a01e5d09750837374346d4ef51",
+      "block": 108945048,
+      "status": "0x1",
+      "gasUsed": "649713"
+    },
+    {
+      "hash": "0xbcf8faf835300fa3fb5ca06173cbe54e895ef9fda57990e0778c11da7e9d0628",
+      "block": 108945049,
+      "status": "0x0",
+      "gasUsed": "27840"
+    },
+    {
+      "hash": "0x9e638bed004ec2b7da374813cd9b43db0d433636b3250cbcbe8262432a2f9b6f",
+      "block": 108945050,
+      "status": "0x0",
+      "gasUsed": "27870"
+    },
+    {
+      "hash": "0x3ee3ab20b7c199b3797f52a09cf79c2caf64b552762b1af0eb1c922c9996ab44",
+      "block": 108945051,
+      "status": "0x1",
+      "gasUsed": "1347213"
+    },
+    {
+      "hash": "0x582e2b1504ba7d24a3ac07094146e9a28fb4fc4ad2f728fae5da04b26f63c247",
+      "block": 108945052,
+      "status": "0x1",
+      "gasUsed": "29012519"
+    },
+    {
+      "hash": "0x8cf0bec016e7ff196ac6c33f26e5db1ecb25b053f02648fbceba657af1e383e0",
+      "block": 108945053,
+      "status": "0x0",
+      "gasUsed": "114248"
+    }
+  ],
+  "recovery": {
+    "accrued": "11891",
+    "actualWeightedOutput": "103970348",
+    "attributedGonsAfterOriginalSpent": "10409920710392198888747721514199574820530",
+    "convertedDtf": "576282902984198125092",
+    "donated": "1000000000000000000",
+    "earlierLiquidation": "blocked: SB-E1/E2/E3/E4; sale-and-hold is not liquidation",
+    "fixedDestination": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+    "original": "103958457",
+    "owner": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+    "synchronizedDivisor": "875381719530621280832290081242891839"
+  },
+  "weightedLiquid": {
+    "stage1": {
+      "activated": false,
+      "observations": [
+        {
+          "caller": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+          "error": "MigrationSurrenderClosed",
+          "kind": "rejection",
+          "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+          "revertData": "0x84e1905b",
+          "status": "0x0",
+          "transactionHash": "0xdaf6aa0e69d9285836a93b2bfee14e501ee9fb09f871abd52b1f8b2b38ccb685"
+        },
+        {
+          "caller": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+          "error": "MigrationSurrenderClosed",
+          "kind": "rejection",
+          "originalId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revertData": "0x84e1905b",
+          "status": "0x0",
+          "transactionHash": "0x41c9be2bfa2056133e0ed3ac4d46969f2f0d503c688769b4202c91fd8a89192d"
+        }
+      ],
+      "originalCredit": "2774608",
+      "remainingCredit": "2774608",
+      "remainingUnits": "21225530",
+      "syntheticOriginalAllocation": {
+        "contributionsKnown": true,
+        "evidenceId": "0xa330d14ffee0cb310bc78a72e22ce40acfec46fb987023c407690f7fec37845e",
+        "originalDtf": "0",
+        "originalEth": "6000000000000000",
+        "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+        "originalUnits": "21225530",
+        "originalWallet": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+        "source": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7"
+      }
+    },
+    "partial": {
+      "activated": true,
+      "observations": [
+        {
+          "caller": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+          "error": "InvalidWeightedLiquidEntitlement",
+          "kind": "rejection",
+          "originalId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revertData": "0x6c524998aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "0x0",
+          "transactionHash": "0x0da6636b87eaf3fccf958baee4c9d3ecd0b9dffba517fde711885fed2c0b7617"
+        },
+        {
+          "caller": "0xc4c81d5c1851702d27d602aa8ff830a7689f17cc",
+          "error": "NotOriginalWeightedLiquidWallet",
+          "kind": "rejection",
+          "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+          "revertData": "0xf48c0576000000000000000000000000c4c81d5c1851702d27d602aa8ff830a7689f17cc000000000000000000000000082cb14f04d9c485473dedc00d604d7e9abca303",
+          "status": "0x0",
+          "transactionHash": "0xe805481948622646329bfd0de639c4763a412d87cd24a8b48d5ad5a2791bb7e2"
+        },
+        {
+          "bondTokenId": "7",
+          "configurationId": "0xf5361e1ead5f4cb43582b433027990569d71136ec77fd83a30dfd757f2f7b996",
+          "consumedUnits": "7075176",
+          "credit": "924869",
+          "deliveredCredit": "924869",
+          "duration": "7776000",
+          "gons": "812501554034653314723789186217982806757290",
+          "kind": "surrender",
+          "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+          "quantity": "7075176",
+          "remainingCredit": "1849739",
+          "remainingUnits": "14150354",
+          "startTimestamp": "1794111210",
+          "transactionHash": "0x7c45d4e26469268f8914e114c41b0238cd4a2665ef404d5fb1d8d58cfb040f55",
+          "wallet": "0x082cb14f04d9c485473dedc00d604d7e9abca303"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "1849739",
+          "remainingUnits": "14150354",
+          "revertData": "0x23dbef4b256c417b00000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0xefebe555acc7c4607d8d3576d86315f2a7692566c44377aa966a4e1a844b089c"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "1849739",
+          "remainingUnits": "14150354",
+          "revertData": "0x23dbef4b256c417b00000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0x5ce166d7d1682d48573f46c235ffad48ce288002b00f8b5067e3bb9bd63871e9"
+        },
+        {
+          "compensationUnchanged": true,
+          "convertTransaction": "0xc28128d34be718f3856a4c5fa5c230fb1c35a7088c601ee6c404efa8b3407200",
+          "donationBudget": "0",
+          "donationTransaction": "0x651c47a2c9ee70bf8d3dc211151130ad37e6ea675a3dbab8b9987b901785cd90",
+          "dtfDonated": "18963267719850502083",
+          "dtfReceived": "37926535439701004167",
+          "dtfUnbookedFloor": "1000000000000000000",
+          "kind": "recovery",
+          "quantity": "7075176",
+          "selfAllowance": "0",
+          "weightedUnbookedFloor": "7"
+        }
+      ],
+      "originalCredit": "2774608",
+      "syntheticOriginalAllocation": {
+        "contributionsKnown": true,
+        "evidenceId": "0xa330d14ffee0cb310bc78a72e22ce40acfec46fb987023c407690f7fec37845e",
+        "originalDtf": "0",
+        "originalEth": "6000000000000000",
+        "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+        "originalUnits": "21225530",
+        "originalWallet": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+        "source": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7"
+      }
+    },
+    "final": {
+      "activated": true,
+      "observations": [
+        {
+          "caller": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+          "error": "InvalidWeightedLiquidEntitlement",
+          "kind": "rejection",
+          "originalId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revertData": "0x6c524998aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "0x0",
+          "transactionHash": "0x88e1f9590f8c66ba9034e57a6c157a196648fa5f69c5ef9146f1d7708a2597ff"
+        },
+        {
+          "caller": "0xc4c81d5c1851702d27d602aa8ff830a7689f17cc",
+          "error": "NotOriginalWeightedLiquidWallet",
+          "kind": "rejection",
+          "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+          "revertData": "0xf48c0576000000000000000000000000c4c81d5c1851702d27d602aa8ff830a7689f17cc000000000000000000000000082cb14f04d9c485473dedc00d604d7e9abca303",
+          "status": "0x0",
+          "transactionHash": "0x6e357664a5d7aa5d848f0d031b058ffe78cf6c4e51d424cad21678163dd4215a"
+        },
+        {
+          "bondTokenId": "13",
+          "configurationId": "0xf5361e1ead5f4cb43582b433027990569d71136ec77fd83a30dfd757f2f7b996",
+          "consumedUnits": "21225530",
+          "credit": "1849739",
+          "deliveredCredit": "2774608",
+          "duration": "7776000",
+          "gons": "800809389168906116164176416240322133253306",
+          "kind": "surrender",
+          "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+          "quantity": "14150354",
+          "remainingCredit": "0",
+          "remainingUnits": "0",
+          "startTimestamp": "1825676105",
+          "transactionHash": "0xba958362a56f8a9cebd5e9c5ca9ba17a925f41a01e5d09750837374346d4ef51",
+          "wallet": "0x082cb14f04d9c485473dedc00d604d7e9abca303"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "0",
+          "remainingUnits": "0",
+          "revertData": "0x23dbef4b256c417b00000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0xbcf8faf835300fa3fb5ca06173cbe54e895ef9fda57990e0778c11da7e9d0628"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "0",
+          "remainingUnits": "0",
+          "revertData": "0x23dbef4b256c417b00000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0x9e638bed004ec2b7da374813cd9b43db0d433636b3250cbcbe8262432a2f9b6f"
+        },
+        {
+          "compensationUnchanged": true,
+          "convertTransaction": "0x3ee3ab20b7c199b3797f52a09cf79c2caf64b552762b1af0eb1c922c9996ab44",
+          "donationBudget": "0",
+          "donationTransaction": "0x582e2b1504ba7d24a3ac07094146e9a28fb4fc4ad2f728fae5da04b26f63c247",
+          "dtfDonated": "37924547409845947369",
+          "dtfReceived": "75849094819691894738",
+          "dtfUnbookedFloor": "1000000000000000000",
+          "kind": "recovery",
+          "quantity": "14150354",
+          "selfAllowance": "0",
+          "weightedUnbookedFloor": "7"
+        },
+        {
+          "caller": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+          "error": "InvalidWeightedLiquidQuantity",
+          "kind": "rejection",
+          "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+          "revertData": "0x1c51121500000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0x8cf0bec016e7ff196ac6c33f26e5db1ecb25b053f02648fbceba657af1e383e0"
+        }
+      ],
+      "originalCredit": "2774608",
+      "syntheticOriginalAllocation": {
+        "contributionsKnown": true,
+        "evidenceId": "0xa330d14ffee0cb310bc78a72e22ce40acfec46fb987023c407690f7fec37845e",
+        "originalDtf": "0",
+        "originalEth": "6000000000000000",
+        "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+        "originalUnits": "21225530",
+        "originalWallet": "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+        "source": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7"
+      }
+    }
+  },
+  "commandCounts": {
+    "total": 47,
+    "success": 38,
+    "expectedDomainRejection": 6,
+    "expectedMinedSIGKILL": 3
+  },
+  "deployment": {
+    "gasUsed": 43263865,
+    "hash": "0x78479d09e968252e83fad3f99c09bfc55657b48e3d24013489de9bbaa9e306b3"
+  },
+  "criticalTraceAnchors": {
+    "unseededZeroState": 35490,
+    "unseededStaked": 36915,
+    "unseededBondPurchased": 36936,
+    "unseededRewardsFunded": 36990,
+    "unseededCompletion": 63114,
+    "prerequisiteRejection": 65976,
+    "partialCutRemoved": [
+      93727,
+      93728
+    ],
+    "cutOutOfGas": 93729,
+    "restoredRouting": [
+      93731,
+      93766
+    ],
+    "successfulCut": [
+      93829,
+      93835
+    ]
+  }
+}

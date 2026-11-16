@@ -1,0 +1,212 @@
+{
+  "type": "DoneClaim",
+  "task": 16,
+  "title": "Carry authenticated donor evidence through bundles",
+  "status": "completed",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "scope": "Offline funding-evidence transport only",
+  "independentlyVerified": false,
+  "dependency": {
+    "task": 7,
+    "verdict": "confirmed",
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-7-verdict.json"
+  },
+  "rootCause": "The strict authority input admitted only the 22 required authority sources. It had no declared funding-evidence reference, so an extra bundle file was unreferenced and a bare FileRef would incorrectly require the raw transfer CSV to be JSON history. The pre-fix public CLI rejected rehearsalFundingEvidence as an unrecognized key. This was a transport/provenance contract defect, not global DTF scarcity.",
+  "changed_files": [
+    "scripts/recovery/dtf-migration/bundle.ts",
+    "scripts/recovery/dtf-migration/bundle-files.ts",
+    "scripts/recovery/dtf-migration/bundle-materialize.ts",
+    "scripts/recovery/dtf-migration/bundle.test.ts"
+  ],
+  "sourceHashes": {
+    "scripts/recovery/dtf-migration/bundle.ts": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+    "scripts/recovery/dtf-migration/bundle-files.ts": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+    "scripts/recovery/dtf-migration/bundle-materialize.ts": "01505bf4ca5fbb81d7466ec6cfe7e8b9382a949c8a6cd9a072973dba1ad62282",
+    "scripts/recovery/dtf-migration/bundle.test.ts": "6fdc999ed41fa75b694f0efdb43c3f59a0e46c01d2338d10709ca5ecffb4911e"
+  },
+  "contract": {
+    "version": "dtf-operator-authorities-v1",
+    "optionalField": "rehearsalFundingEvidence",
+    "schema": "Existing strict source schema extended with three literal restrictions; path, sha256, bytes, and provenance retain the existing source validation.",
+    "id": "rehearsal-funding-transfers",
+    "purpose": "synthetic-local",
+    "format": "transfer-csv",
+    "requiredAuthorityRoles": 22,
+    "compatibility": "Already admitted v1 inputs omit the optional field and still export, load, and materialize. Their 22-role identity rule is unchanged. Both absent and present funding cases relocate twice in tests.",
+    "transport": "Existing walkReferences loads and verifies this explicitly typed raw source without parsing CSV as JSON. Existing writeBundle, readBundle, locate, complete, and materialization preserve exact bytes. Loader and materializer return the contained funding reference separately from sources.",
+    "wrongPurpose": "Incorrect ID or purpose rejects in the authority schema. The typed raw source cannot substitute for an authority source, preparation input, or accepted-configuration FileRef. A bare historical FileRef still requires JSON.",
+    "rejectedAlternatives": [
+      "Replacing any authority document with the CSV",
+      "An undeclared extra bundle item",
+      "Native-path fallback",
+      "Relaxing bundle.complete()",
+      "A CSV/JSON fallback for historical references",
+      "A separate provenance service",
+      "Treating a file hash as donor eligibility or financial approval"
+    ]
+  },
+  "retainedEvidence": {
+    "lead": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/funding-blocker.json",
+    "historicalClaim": ".omo/ulw-execute/dtf-conformance/task-10-done.json",
+    "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+    "bytes": 4535122,
+    "recordedDtfTransferRows": 2522,
+    "qualification": "Raw retained evidence and historical funded-candidate observations only. No donor was selected, no financial dataset was approved, and no balance was invented.",
+    "originalUnchanged": true,
+    "authorityBytes": "All 22 original authority role bytes were copied from the retained task-10 authorities-bundle-r2 and preserved in both fresh relocations."
+  },
+  "evidenceRoot": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115",
+  "evidenceFilesRelativeToRoot": {
+    "report": "report.md",
+    "commands": "commands.json",
+    "inventory": "evidence-inventory.json",
+    "sourceBindings": "source-fingerprints.json",
+    "toolchain": "toolchain.json",
+    "narrowDiff": "narrow-diff.patch",
+    "diffCommandReceipts": "narrow-diff.json",
+    "preservation": "preservation.json",
+    "sizes": "sizes.json",
+    "initialDiagnostics": "diagnostics-before.json",
+    "manualOrigins": "manual/origins.json",
+    "manualProgram": "manual/manual-transport.ts",
+    "manualResults": "manual/transport-results.json",
+    "cleanup": "cleanup.json",
+    "manualCleanup": "manual/cleanup.json"
+  },
+  "verification": {
+    "runtime": {
+      "bun": "1.4.2",
+      "typescript": "5.9.2",
+      "platform": "darwin",
+      "architecture": "arm64"
+    },
+    "baseline": {
+      "attempt": "01-baseline-tests",
+      "exitCode": 0,
+      "passed": 38,
+      "failed": 0
+    },
+    "reproduction": {
+      "publicExportAttempt": "04-baseline-export",
+      "regressionAttempt": "05-red-regression",
+      "exitCodes": [1, 1],
+      "reason": "The unchanged authority schema rejected rehearsalFundingEvidence."
+    },
+    "bundleTests": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/bundle.test.ts",
+      "attempt": "08-bundle-tests",
+      "exitCode": 0,
+      "passed": 48,
+      "failed": 0,
+      "files": 1,
+      "finalProductAndTestHashesMatch": true
+    },
+    "strictCompiler": {
+      "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts",
+      "attempt": "09-operator-types",
+      "shellExpandedFiles": 86,
+      "exitCode": 0,
+      "stdoutBytes": 0,
+      "stderrBytes": 0
+    },
+    "evidenceCompiler": {
+      "failedAttemptPreserved": "11-evidence-types",
+      "failure": "Evidence helpers referenced Bun-specific metadata without installed Bun type definitions.",
+      "fix": "Used Node-compatible path and runtime metadata APIs; installed nothing.",
+      "passingAttempt": "12-evidence-types",
+      "exitCode": 0
+    },
+    "mutation": {
+      "attempt": "07-mutated-purpose-identity",
+      "exitCode": 1,
+      "intendedFailures": 2,
+      "observation": "Both ID and purpose rejection tests failed with Missing expected rejection when the new literal restrictions were removed.",
+      "productionRestoredByteForByte": true
+    },
+    "orderIsolation": {
+      "attempt": "14-randomized-transport",
+      "seed": 16115,
+      "passed": 10,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "publicExport": {
+      "command": "bun scripts/recovery/dtf-migration/cli.ts bundle-export --input docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/native/authorities-input.json --output docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/exported",
+      "attempt": "10-public-export",
+      "exitCode": 0,
+      "reportedMode": "offline-integrity-only"
+    },
+    "manualTransport": {
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/manual-transport.ts",
+      "attempt": "13-manual-transport",
+      "exitCode": 0,
+      "freshLocations": 2,
+      "authorityRolesPerLocation": 22,
+      "fundingSourcesPerLocation": 1,
+      "identicalByteComparisons": 46,
+      "controlledRejections": 25,
+      "nativeCopiesUnavailableBeforeBothLoads": true,
+      "containedReadsOnly": true,
+      "nonceOperations": 0,
+      "signingOperations": 0,
+      "transactions": 0,
+      "qualification": "Offline export/load/materialize/schema routines only; no RPC or signer constructed. No current-chain lifecycle claim."
+    },
+    "sourceFreshness": "All operator/test sources match the passing test and strict-compiler attempts. The evidence-only recorder changed afterward to remove Bun typing assumptions; that difference is explicit in source-fingerprints.json. Final helpers match attempts 12 and 13. Native copy setup was not repeated solely for metadata/path API changes."
+  },
+  "ultraqa": {
+    "malformed_input": "pass: omitted required fields and forged ID, purpose, digest, and size reject",
+    "prompt_injection": "inapplicable: source text is transported as bytes with no model, instruction interpreter, or command execution",
+    "cancel_resume": "pass for controlled partial export states; no transactional resume or crash-durability claim",
+    "stale_state": "pass: two relocations without native copies and rejection of stale or corrupted bindings",
+    "dirty_worktree": "pass: 68811 pre-existing dirty/untracked entries checked; only three initially dirty owned sources changed, plus the initially clean owned materializer; unrelated bytes retained",
+    "hung_long_commands": "inapplicable to new behavior: no external service, network wait, or long-running operation added; bounded local tests completed under monitored commands",
+    "flaky_tests": "pass for exercised order and fixture isolation: ten new cases pass with fixed randomized seed 16115; no flake-rate guarantee",
+    "misleading_success_output": "pass: real exit codes/raw streams retained, failing export has no success stdout, successful export is labeled offline integrity",
+    "repeated_interruptions": "pass for two modeled partial filesystem states, each rejecting two reuse attempts; no process-kill injection claimed"
+  },
+  "cleanup": {
+    "removed": [
+      "manual/negative/partial-root-created",
+      "manual/negative/partial-data-written",
+      "manual/resume-input.json"
+    ],
+    "retainedNativeCopies": "manual/native.unavailable",
+    "retainedCopiesQualification": "Intentional evidence, not a filesystem fallback",
+    "newFixtureRootsRemaining": 0,
+    "commandMonitorSessionsCompleted": 12,
+    "taskOwnedProcessesRemaining": 0,
+    "taskOwnedServicesOrPortsRemaining": 0,
+    "unknownPreExistingTemporaryResources": "Untouched",
+    "priorLogsAndDonorBlocker": "Preserved"
+  },
+  "remainingTask10Work": [
+    "At rehearse.ts:65-66, require authorities.rehearsalFundingEvidence for the new portable funding path before starting funding work; old optional-field compatibility is not a funding fallback.",
+    "Read the contained source using existing readReference(evidence, authorities.reference), then use parseCandidateCsv at candidate-input.ts:84 for raw row parsing. Keep the funding reference separate from the 22-role authorities.sources array.",
+    "Recheck DTF identity, deterministic candidate ordering, balances, and exclusions at block 108944663 with hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733. Integrity is not donor eligibility.",
+    "Replace rehearse.ts:114-125, which currently consumes NFT 3 principal for setup, with the approved task-10 local funding acquisition flow. Task 10 owns selection and the actual local transfer.",
+    "Keep bootstrapManifest at rehearse.ts:147 receiving only authorities.sources; retain funding evidence separately in setup receipts.",
+    "Run the complete remaining task-10 rehearsal and its lifecycle negatives with fresh evidence."
+  ],
+  "limits": {
+    "independentTask16Verifier": "Not run by this cohesive executor",
+    "lsp": "Strict compiler checks passed. Initial final production bytes and final test annotation had clean LSP results; some mutation/restoration notifications timed out. No fresh whole-tree LSP-clean claim.",
+    "testFileSize": "554 pure lines in the existing bundle.test.ts; retained there under the explicit owner scope, without adding a size suppression or unrelated split.",
+    "financialAwardSelected": false,
+    "donorSelected": false,
+    "chainAllocations": false,
+    "transactionsSent": false,
+    "publicTransactions": false,
+    "rehearsalRan": false,
+    "forgeRan": false,
+    "solidityEdited": false,
+    "pinRestored": false,
+    "mainCheckoutEdited": false,
+    "commitsCreated": false,
+    "delegation": false,
+    "planCheckboxesEdited": false
+  },
+  "doneClaimWrittenLast": true
+}

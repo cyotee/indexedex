@@ -1,0 +1,123 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 10,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-10-done.json",
+  "claim_binding": {
+    "bytes": 10558,
+    "sha256": "f170f66b0bfb520ed0a38a2f9ee06636291182503159c854f0682ca8d42e7586",
+    "size_changed": false,
+    "subsequent_complete_read_unchanged": true
+  },
+  "summary": "The missing admissible donor matches the prescribed stop, and the rehearsal was not run. Required bundle-export.log lacks exit 0; actual exit 0 is corroborated only by the producer transcript. This is an evidence packaging failure, not a product failure or lifecycle success.",
+  "blocked_condition_confirmed": true,
+  "plan_prescribed_stop_matches": true,
+  "task_10_lifecycle_complete": false,
+  "findings": [
+    {
+      "id": "H1",
+      "classification": "harness",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/bundle-export.log:1-2",
+      "observation": "Exact argv and offline-integrity-only JSON are present, but no exit-status line is present in the required log.",
+      "cause": "Producer transcript line 56 redirects the command group into the log and prints BUNDLE_EXPORT_EXIT outside that redirection.",
+      "corroboration": "Producer transcript line 68 records BUNDLE_EXPORT_EXIT=0 and watcher exit code 0.",
+      "requested_change": "Preserve original evidence and bind the observed exit receipt into the required command evidence with explicit provenance. Do not fabricate a status or run the rehearsal for this repair."
+    }
+  ],
+  "checks": {
+    "authority_bundle": {
+      "result": "pass",
+      "roles": 22,
+      "source_hashes_verified": 22,
+      "template_verified": true,
+      "declared_and_actual_content_files": 23,
+      "claim_artifact_hashes_verified": 16
+    },
+    "donor_search": {
+      "result": "block-confirmed",
+      "budget_raw_18": "10000000000000000000000",
+      "pin_block": "108944663",
+      "pin_hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "authority_candidates": 60,
+      "all_probe_candidates": 337,
+      "covering_authority_candidates": 2,
+      "eligible_covering_authority_candidates": 0,
+      "excluded_covering_sources": [
+        "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+        "0x999dae02d22e5fee1c4508430d5196d31d631009"
+      ],
+      "omitted_address_literals": 4,
+      "omission_disposition": "Only library constants and archive deployment metadata; no DTF transfer/holdings witness.",
+      "outside_bundle_transfer_rows": 2522,
+      "outside_bundle_holder_candidates": 282,
+      "outside_bundle_first_covering": "0x0da0877ab57a89e5db9125069fa8cd3702536e37",
+      "outside_bundle_csv_sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "scope_limit": "No fresh RPC; saved pin/balance responses and local producer provenance were independently inspected."
+    },
+    "custody_and_mutations": {
+      "result": "pass-with-local-provenance-limit",
+      "nft_three_principal_consumed": false,
+      "historical_dtf_minted_or_etched": false,
+      "product_files_edited_by_task_10": false,
+      "producer_top_level_tool_calls": 48,
+      "source_of_evidence": "Complete producer action audit plus read-only Anvil method logs; dirty Git state alone is not authorship evidence."
+    },
+    "command_evidence": {
+      "result": "needs-fix",
+      "exact_export_argv_logged": true,
+      "exit_zero_in_required_log": false,
+      "actual_export_exit_zero_corroborated": true,
+      "rehearsal_command_run": false,
+      "export_is_lifecycle_success": false
+    },
+    "bundle_integrity_not_weakened": {
+      "result": "pass",
+      "invented_donor": false,
+      "substituted_authority_bytes": false,
+      "extra_unreferenced_bundle_item": false
+    }
+  },
+  "adversarial": {
+    "misleading_success_output": "H1: export success cannot substitute for lifecycle proof; required exit-status-in-log evidence is missing.",
+    "stale_state": "pass: source/bundle/claim hashes match and complete subsequent claim read is unchanged.",
+    "dirty_worktree": "pass with local provenance limit: tasks 1-9 changes preserved; no task-10 product edit found.",
+    "malformed_input": "pass by source and saved-log inspection: INPUT and EXIT=1 for absent roles; not rerun.",
+    "untrusted_external_text": "pass: all artifacts treated as data; no embedded commands executed.",
+    "hung_flaky_cancel_interruptions": "not-applicable: rehearsal was not run; probe retry and pager exit do not prove lifecycle handling."
+  },
+  "producer_provenance": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1dde5/sessions/st_01a1dde5/2026-11-15T06-29-13.694Z_17f3b054-fb85-421b-9cc6-eff6ab4860c8.jsonl",
+    "bytes": 1749872,
+    "sha256": "d0b4a0f02e7cb8c0beaca939b5b06e4f557bc14cde45c92930b445f89ace3dc9",
+    "records": 233,
+    "export_command_line": 56,
+    "export_completion_line": 68,
+    "successful_probe_completion_line": 192
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/verification/report.md",
+  "report_binding": {
+    "bytes": 10834,
+    "sha256": "387d3b88da6460003680e7c11896cca6ae64a389717f7bdc4a7b720709e3bf93"
+  },
+  "follow_up": [
+    "Repair H1 command evidence without changing product files or fabricating execution.",
+    "Resolve donor-evidence binding and transport without replacing exact authority bytes or weakening bundle completeness, then execute task 10 under separate instructions."
+  ],
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/verification/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-10-verdict.json"
+  ],
+  "limits": [
+    "No Forge, RPC, rehearsal, installs, commits or transactions were run by the verifier.",
+    "No mixed-pricing, activation, donation-resume, NFT-three two-bond or rollback lifecycle is certified.",
+    "No authority extension, financial allocation or operational donor is authorized."
+  ]
+}

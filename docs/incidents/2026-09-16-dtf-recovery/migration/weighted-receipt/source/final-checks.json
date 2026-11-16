@@ -1,0 +1,83 @@
+{
+  "disposition": "not-ready",
+  "head": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+  "branch": "work/dtf-migration-phase-17-weighted-receipt",
+  "finalRun": "run-04",
+  "checks": [
+    {
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/ReceiptBoundaryProbe.sol",
+      "exitCode": 0,
+      "log": "probe-build-path-fixed.log",
+      "monitor": "mon_3R61EBTASXE69D47"
+    },
+    {
+      "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt; export PATH=/Users/cyotee/.foundry/bin:$PATH; /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/probe.ts run-04'",
+      "exitCode": 0,
+      "log": "probe-run-04.log",
+      "monitor": "mon_9R5C26NX26A1ASK6",
+      "result": "SOURCE_BOUNDARIES_PROVEN"
+    },
+    {
+      "command": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/audit.ts",
+      "exitCode": 0,
+      "log": "audit-final.log",
+      "monitor": "mon_V0C82Q232S8954WZ",
+      "signedReceipts": 17,
+      "atomicFailures": 4
+    },
+    {
+      "command": "./node_modules/.bin/tsc --noEmit --strict --target ES2022 --module NodeNext --moduleResolution NodeNext --skipLibCheck --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/archive.ts docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/probe.ts docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/audit.ts docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/seal.ts",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --check",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --exit-code",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --cached --ignore-submodules=all --exit-code",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "lsof -nP -iTCP:18567 -sTCP:LISTEN",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "",
+      "meaning": "No listener on the owned probe port."
+    },
+    {
+      "command": "ps -p 99301,382,1820 -o pid=,command=",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "",
+      "meaning": "All three owned Anvil processes exited."
+    }
+  ],
+  "cleanup": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/.omo-runtime/dtf-migration-weighted-receipt/checkpoints",
+    "checkpointLstat": "ENOENT",
+    "emptyRun01Directory": "removed with rmdir",
+    "fundingImpersonation": "stopped in finally",
+    "providersAndReceiptSubscriptions": "closed in finally",
+    "rootResponseMonitor": "rpc_1 explicitly killed",
+    "executionMonitors": "all completed",
+    "ownedRuntimePending": false
+  },
+  "diagnostics": {
+    "ReceiptBoundaryProbe.sol": "Solidity LSP: no error diagnostics",
+    "typescript": "LSP freshness timed out; explicit strict tsc check passed"
+  },
+  "admittedRuntimeEvidence": "Only run-04 and audit-final.log. Earlier failed or malformed witness bytes remain historical and are not relabeled.",
+  "productionImplementation": false
+}

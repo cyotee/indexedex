@@ -1,0 +1,194 @@
+{
+  "date": "2026-11-11",
+  "base": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "branch": "work/dtf-migration-phase-08-operator",
+  "sources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "accepted": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "accepted": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "accepted": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "accepted": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "accepted": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "sha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "accepted": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "accepted": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "accepted": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "accepted": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "accepted": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-schema.ts",
+      "sha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "accepted": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "accepted": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "accepted": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "sha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "accepted": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "accepted": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "accepted": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "accepted": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "accepted": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "accepted": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "sha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "accepted": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "accepted": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "accepted": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "sha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "accepted": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "sha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "accepted": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "accepted": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "match": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "sha256": "f0e9450eead4647d5917c1f9272aa148f1383dda7fdcdda1b257750cfecc4f83",
+      "creation": "0xf9a8cc0c49ddc52cd96274b7354c089f66462f33243654970986e0d844a426c3",
+      "runtime": "0x9af2487766db6cda2c85c8029ef698b7ee7a021d1cf21aa45588fc1da616dba5",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "sha256": "e4434ba8f5a0ad0e327c204e545121445848f3b9267a5de2b42f74c7bfbf391b",
+      "creation": "0xb5c728e1d786308228f9d92388fc5483226229b9207f27d36dbde5f8f0ef1c02",
+      "runtime": "0xaaf2fd3eb176808eb5d75442e3e1539f6ecc3520e2a150d6bfb13d5748f3401a",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+      "sha256": "d15bf21cdd1b60a1404fd5a09b5c87902c2ff78435656a33707b15b2edfc59a0",
+      "creation": "0xd6cb5920e3be7cbed3f882c1ffead506f7fb4df28bac39d73562f592d6c69d83",
+      "runtime": "0x828916102195798b272d44d03527cdca3cac0a164c17e4a4e1d4e41db51a1747",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+      "sha256": "d2155f97a52da5e99cad7d0a9c98f17844554262a9a6a0c9d0a4bb361892dbf4",
+      "creation": "0x42b2a20528abb4f8d1353d1c8a0df35b8228b3fa6bc6bdd8d1be036321f25982",
+      "runtime": "0x7e11203432a30e80a367ae4849363be7a0f0acc33a39decd5368b7c79b0b3f63",
+      "match": true
+    }
+  ],
+  "setup": {
+    "warmOut": true,
+    "warmCache": true,
+    "craneLink": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "nodeLink": "/Users/cyotee/Projects/indexedex/node_modules"
+  },
+  "trackedDelta": "Only MigrationCoreLocalQA._localInfrastructure private to internal; pre-existing operator change. No staged delta."
+}

@@ -18,20 +18,23 @@ library UniswapV4DetfMigration_Pkg_FactoryService {
     function deployParent(IVaultRegistryDeployment registry_, IUniswapV4DetfMigrationDFPkg.PkgInit memory init_)
         internal returns (IUniswapV4DetfMigrationDFPkg)
     {
-        return IUniswapV4DetfMigrationDFPkg(_registered(registry_, "UniswapV4DetfMigrationDFPkg", abi.encode(init_)));
+        return IUniswapV4DetfMigrationDFPkg(_registered(registry_, "UniswapV4DetfMigrationDFPkg",
+            "UniswapV4DetfMigrationDFPkg.sol:UniswapV4DetfMigrationDFPkg", abi.encode(init_)));
     }
 
     function deployBond(IVaultRegistryDeployment registry_, IDETFNFTVaultDFPkg.PkgInit memory init_)
         internal returns (IDETFNFTVaultDFPkg)
     {
-        return IDETFNFTVaultDFPkg(_registered(registry_, "UniswapV4DetfMigrationBondNFTVaultDFPkg", abi.encode(init_)));
+        return IDETFNFTVaultDFPkg(_registered(registry_, "UniswapV4DetfMigrationBondNFTVaultDFPkg",
+            "UniswapV4DetfMigrationBondNFTVaultDFPkg.sol:UniswapV4DetfMigrationBondNFTVaultDFPkg", abi.encode(init_)));
     }
 
     function deploySy(IVaultRegistryDeployment registry_, IUniswapV4DetfMigrationSYDFPkg.MigrationPkgInit memory init_)
         internal returns (IUniswapV4DetfMigrationSYDFPkg)
     {
         return IUniswapV4DetfMigrationSYDFPkg(
-            _registered(registry_, "UniswapV4DetfMigrationSYDFPkg", abi.encode(init_))
+            _registered(registry_, "UniswapV4DetfMigrationSYDFPkg",
+                "UniswapV4DetfMigrationSYDFPkg.sol:UniswapV4DetfMigrationSYDFPkg", abi.encode(init_))
         );
     }
 
@@ -46,11 +49,11 @@ library UniswapV4DetfMigration_Pkg_FactoryService {
         vm.label(address(package_), name_);
     }
 
-    function _registered(IVaultRegistryDeployment registry_, string memory name_, bytes memory init_)
+    function _registered(IVaultRegistryDeployment registry_, string memory name_, string memory artifact_, bytes memory init_)
         private returns (address package_)
     {
         package_ = address(registry_.deployPkg(
-            ArtifactCreationCode.creationCode(string.concat(name_, ".sol:", name_)), init_,
+            ArtifactCreationCode.creationCode(artifact_), init_,
             ArtifactCreationCode.releaseSalt(keccak256(abi.encode(name_)))
         ));
         vm.label(package_, name_);

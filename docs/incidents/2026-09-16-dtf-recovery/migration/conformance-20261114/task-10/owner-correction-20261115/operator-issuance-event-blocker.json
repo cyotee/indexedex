@@ -1,0 +1,39 @@
+{
+  "type": "Task10OperatorBlocker",
+  "status": "outside-task10-scope",
+  "attempt": "41-portable-cli",
+  "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911",
+  "canonicalIssuance": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/journal-issue/45d11109c06929c65a7b95c0cf6aab8e5b17c0de5210986a11e8cb2b1c9609d0.canonical-chain.json",
+  "transactionHash": "0xa41931626451a9242220fcb3c253b9275e8d697beb1a7fd860afcc6fd2ebdc68",
+  "statusCode": "0x1",
+  "diagnostic": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/28-resume-diagnostic.json",
+  "rootCause": "execution-state.ts filters logs by bond child address then attempts to parse every child log with fundingAbi, whose Transfer ABI is ERC20 (value in data). The real bond emits ERC721 Transfer with indexed tokenId and empty data. Same signature topic reaches the ERC20 decoder and throws BUFFER_OVERRUN before MigrationPositionCreated can be verified.",
+  "exactPath": "scripts/recovery/dtf-migration/execution-state.ts:173-176",
+  "repairOwnerPaths": [
+    "scripts/recovery/dtf-migration/execution-state.ts",
+    "scripts/recovery/dtf-migration/execution-state.test.ts"
+  ],
+  "collision": {
+    "log": {
+      "address": "0xebb22b8619265b4a587a72eaa2b438b0f0c0bc50",
+      "blockHash": "0xcd7a32d10749d878890d870619fa139a79d8ab5f063b51e50eea40604c1e37a0",
+      "blockNumber": "0x67e5e84",
+      "blockTimestamp": "0x6aeff722",
+      "data": "0x",
+      "logIndex": "0xa",
+      "removed": false,
+      "topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+        "0x0000000000000000000000000000000000000000000000000000000000000003"
+      ],
+      "transactionHash": "0xa41931626451a9242220fcb3c253b9275e8d697beb1a7fd860afcc6fd2ebdc68",
+      "transactionIndex": "0x0"
+    },
+    "message": "data out-of-bounds (buffer=0x, length=0, offset=32, code=BUFFER_OVERRUN, version=6.17.0)"
+  },
+  "oldEvidenceUntouched": true,
+  "operatorEdited": false,
+  "task10Complete": false
+}

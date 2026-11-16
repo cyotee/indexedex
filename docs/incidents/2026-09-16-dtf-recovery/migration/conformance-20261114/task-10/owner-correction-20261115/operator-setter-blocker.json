@@ -1,0 +1,33 @@
+{
+  "type": "Task10OperatorBlocker",
+  "status": "blocked-pending-owning-task-repair",
+  "attempt": "32-portable-cli",
+  "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330",
+  "transactionHash": "0xa3bde746c8e8aed493469528c9b3dfc423ecaba903f4ed04a56d3b72b4e4fc63",
+  "receiptStatus": "0x1",
+  "receipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/journal-set-pricing/b596ce099567412a62c0e767258f360d97f8d3562b37cbb422e14becf2a2ced2.canonical-chain.json",
+  "expectedBookId": "0xe7f20b629b1814a326fbcf0d71509cf6fa97fd347db8a00eeae32ded0fbfd531",
+  "actualEventBookId": "0xe7f20b629b1814a326fbcf0d71509cf6fa97fd347db8a00eeae32ded0fbfd531",
+  "returnBookId": "0xe7f20b629b1814a326fbcf0d71509cf6fa97fd347db8a00eeae32ded0fbfd531",
+  "rootCause": "The real setter emits MigrationWeightedPricingSet with the exact expected ID and succeeds. Both generated migration and allocation ABI artifacts omit that event (it is declared on the separate pricing interface). execution-state.ts only tries migration, allocation and recovery ABIs, so it records no setter event and rejects a successful transaction.",
+  "outsideScopeOwnedPaths": [
+    "scripts/recovery/dtf-migration/execution-domain.ts",
+    "scripts/recovery/dtf-migration/execution-state.ts",
+    "scripts/recovery/dtf-migration/execution.test.ts"
+  ],
+  "secondarySourceFinding": {
+    "path": "scripts/recovery/dtf-migration/execution.ts:267",
+    "status": "source-observation-not-yet-real-reproduction",
+    "finding": "fault-after-mined does not include configure methods, but task 10 requires real configure interruption"
+  },
+  "operatorSourceEdited": false,
+  "task10Complete": false,
+  "claimWritten": false,
+  "cleanup": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/.omo-runtime/dtf-migration-portable/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 99936,
+    "runtime": "removed"
+  }
+}

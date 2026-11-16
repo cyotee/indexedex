@@ -1,0 +1,675 @@
+{
+  "verdict": "bounded-local-source-proof",
+  "rpcExchanges": 961,
+  "signedTransactions": 33,
+  "disclosedDonorTransactions": 3,
+  "transactions": [
+    {
+      "hash": "0x146d2b57612739c6c43e6f1dac21f824a27a1c0c68c8ff9905853ec1b149af55",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944669",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xa7ec5d22a5d0285c6425303514a32402807a9bf6271c90277056f3e044f74880",
+      "signed": true,
+      "type": 2,
+      "from": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944698",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x15feaebc88676b3fa5559ae36e78f053d3c59d139dab6622de47d039fec4f384",
+      "signed": false,
+      "type": null,
+      "from": "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+      "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "block": "108944672",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x475237cdf521c30b692410798a226410b5637200a7eaec41299de8ca2417c4f3",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xf40fcb5937ab8abd4685e0ad10a5e971ce23ae3d",
+      "block": "108944671",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xbb34309860ec9b6bcb84a8e023fcc89e610eef84a6b05655a0f3b2693b5aa8f5",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944683",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x76578ef7ef0bf6fd05925c0258a632b39cf840bd05af42cea54930b5608555e5",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944682",
+      "status": "0x0"
+    },
+    {
+      "hash": "0x32484071ff4dacdddd696504256627f2276e8903ab19ae07f00f76c87b5e37a6",
+      "signed": true,
+      "type": 2,
+      "from": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "to": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "block": "108944684",
+      "status": "0x0"
+    },
+    {
+      "hash": "0x72ec1d9bf464bc40f4906b710de967cfa9f66a7a9f841af2c888061730c4f2e8",
+      "signed": true,
+      "type": 2,
+      "from": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944694",
+      "status": "0x0"
+    },
+    {
+      "hash": "0xd9f741d00b79a8b0be03a679c34893508d6debcea3cb66ecbec2ac60c02bd2cc",
+      "signed": true,
+      "type": 2,
+      "from": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "to": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "block": "108944689",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x741e6a614fe7a636137d22c71cbfda16d443cf1935edaaf688757f692589161c",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944681",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x646bdf5eb244fcaed451a8894cc031dc4da98147d3239ecf6d504e87b0dc58c9",
+      "signed": true,
+      "type": 4,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944674",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x88fafabc3d4e34a6d83359c36260b7fcd06c9787a802977023a0358764eed9ff",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944688",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x43996418ac34f6e25fece21d670f58d50160fe6c125750e77baf923a208ba072",
+      "signed": true,
+      "type": 4,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944675",
+      "status": "0x0"
+    },
+    {
+      "hash": "0x4575233195b8f037293371fff5360faad77ca7748e9807ec5514412bea74c07f",
+      "signed": true,
+      "type": 2,
+      "from": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "to": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "block": "108944693",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x3bd35931c1ddea7e9b9cbb39c759007028c12aa479cf7c9b88d35fc177b90125",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944697",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xcf78608c1378114dcf644ae7fca06f5fb53f292a05c390d026f92d73967d3a02",
+      "signed": true,
+      "type": 2,
+      "from": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "block": "108944685",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x9f3247ad7411b329ae53cbeb101a61697bc7ff42c98ad39830824f13dd6bac21",
+      "signed": true,
+      "type": 2,
+      "from": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944692",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x0633683d198b57a703f3d8dd2a70e06a72c991687dfa5a365c602946a643e446",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+      "block": "108944666",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xb43afef75032d54ea38b9a84ceeccd23624a95115e6ae7caaad85a7d7db00799",
+      "signed": true,
+      "type": 2,
+      "from": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944696",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x2be46e58bba0ecfe1276178e140979fd0e6ee9f5f62dd61e16561c1b93a826e0",
+      "signed": true,
+      "type": 2,
+      "from": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944691",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xe075c5e9d4fce4966224b4106bbb39d6875d45275bf5a6359641d3e72b676d7e",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944687",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x77adcb3d7de6f5bdc8cfed5fe4a54b9978eadc0926214e9a3b8f72e67ea73cd3",
+      "signed": true,
+      "type": 2,
+      "from": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944695",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x8fd16a5f0dc5fee407e588728e012656ef39d0ff72ae4bdb571375fc169ee4f1",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944699",
+      "status": "0x0"
+    },
+    {
+      "hash": "0x6e48fd42125f73602ee23ebddc71737a9e41d1519bd8650548b5bc65c32528d2",
+      "signed": false,
+      "type": null,
+      "from": "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+      "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "block": "108944670",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x5f4e6e4a39377b9cb81aebe55d487369dab8e40bc8cefe4fe71b520a88f68b8e",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944686",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xa31adcd3ccfb22420f3ab5d7419fabad1bc98b36a19585d8ea0e05ffe4631e12",
+      "signed": true,
+      "type": 2,
+      "from": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944690",
+      "status": "0x0"
+    },
+    {
+      "hash": "0x6d1037d81bd79b0c2b242b2cc3f0dce03d8af6ded3cff37ffb8ed39ffe9ea3c6",
+      "signed": true,
+      "type": 2,
+      "from": "0xf40fcb5937ab8abd4685e0ad10a5e971ce23ae3d",
+      "to": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "block": "108944678",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x75bf643077cbe180e31301873c61c8d1c7a53c16fd6d816074ea15125fa9baeb",
+      "signed": true,
+      "type": 2,
+      "from": "0xf40fcb5937ab8abd4685e0ad10a5e971ce23ae3d",
+      "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "block": "108944677",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x02b258f938ba5622b1e840dcca70faccd3dde9431ff6c8e63045dd5137a1c716",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "block": "108944676",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x07729211c10e153a23337ab0227648a7d5221cae3f089a802791bcb8d6b52405",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944667",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x955a7492035505e8b32a84e12cf73fb8d06b45783c4cddb9bb7f794e570d70b4",
+      "signed": true,
+      "type": 2,
+      "from": "0xf40fcb5937ab8abd4685e0ad10a5e971ce23ae3d",
+      "to": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "block": "108944679",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x33dc22d567777b4b8e7f7ece04076b5b90b86ec67cd04311f18056b544f79190",
+      "signed": true,
+      "type": 2,
+      "from": "0x0318ef1295c6fefb4946618f111103f5798707fb",
+      "to": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "block": "108944680",
+      "status": "0x0"
+    },
+    {
+      "hash": "0x10b7f93caa3b45d5d6a3cb99e1549196d8f155bd9f2d868431c75fb68ce3b0d4",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": null,
+      "block": "108944664",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xdb0e4a1589b225fd4f0e5c9e33e245ff0c92e33fe9bda70c99cab31fbfe6715d",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x0318ef1295c6fefb4946618f111103f5798707fb",
+      "block": "108944673",
+      "status": "0x1"
+    },
+    {
+      "hash": "0x90122f175e021a840db60ab8d0a3d7b157adfe20a7c39d8f0a72ec1f1160d57a",
+      "signed": false,
+      "type": null,
+      "from": "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+      "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "block": "108944668",
+      "status": "0x1"
+    },
+    {
+      "hash": "0xb406591f6be2065961651fc4e9e923d9827eb7424aca3bffa454a1d405123eb6",
+      "signed": true,
+      "type": 2,
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": null,
+      "block": "108944665",
+      "status": "0x1"
+    }
+  ],
+  "admitted": [
+    {
+      "label": "eligible-full-direct",
+      "transactionHash": "0xcf78608c1378114dcf644ae7fca06f5fb53f292a05c390d026f92d73967d3a02",
+      "sourcePath": [],
+      "sourceCaller": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "outerCaller": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+      "weight": "10013000000000000000017",
+      "shares": "180773969307098861",
+      "received": "18077396",
+      "weightRemainder": "5183411095209026995953490",
+      "vaultFloor": "18077396",
+      "vaultRemainder": "263165049625847633715"
+    },
+    {
+      "label": "eligible-split-first",
+      "transactionHash": "0x5f4e6e4a39377b9cb81aebe55d487369dab8e40bc8cefe4fe71b520a88f68b8e",
+      "sourcePath": [
+        0
+      ],
+      "sourceCaller": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "outerCaller": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "weight": "3337000000000000000005",
+      "shares": "60245953817815729",
+      "received": "6024595",
+      "weightRemainder": "8891495132663117882763546",
+      "vaultFloor": "6024595",
+      "vaultRemainder": "107520067844104807452"
+    },
+    {
+      "label": "eligible-split-zero",
+      "transactionHash": "0xe075c5e9d4fce4966224b4106bbb39d6875d45275bf5a6359641d3e72b676d7e",
+      "sourcePath": [
+        0
+      ],
+      "sourceCaller": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "outerCaller": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "weight": "1",
+      "shares": "0",
+      "received": "0",
+      "weightRemainder": "276671509755956724204",
+      "vaultFloor": "0",
+      "vaultRemainder": "0"
+    },
+    {
+      "label": "eligible-split-final",
+      "transactionHash": "0x88fafabc3d4e34a6d83359c36260b7fcd06c9787a802977023a0358764eed9ff",
+      "sourcePath": [
+        0
+      ],
+      "sourceCaller": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "outerCaller": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "weight": "6676000000000000000011",
+      "shares": "120528015489283131",
+      "received": "12052801",
+      "weightRemainder": "11621046838061203315159689",
+      "vaultFloor": "12052801",
+      "vaultRemainder": "155657926419601350644"
+    }
+  ],
+  "rejected": [
+    {
+      "label": "wrong-caller",
+      "hash": "0x33dc22d567777b4b8e7f7ece04076b5b90b86ec67cd04311f18056b544f79190",
+      "reason": "failed, changed or nonisolated receipt/block"
+    },
+    {
+      "label": "outer-success-inner-failed",
+      "hash": "0x741e6a614fe7a636137d22c71cbfda16d443cf1935edaaf688757f692589161c",
+      "reason": "wrong/failed actual source caller or weight"
+    },
+    {
+      "label": "source-success-outer-revert",
+      "hash": "0x76578ef7ef0bf6fd05925c0258a632b39cf840bd05af42cea54930b5608555e5",
+      "reason": "failed, changed or nonisolated receipt/block"
+    },
+    {
+      "label": "multiple-source-calls",
+      "hash": "0xbb34309860ec9b6bcb84a8e023fcc89e610eef84a6b05655a0f3b2693b5aa8f5",
+      "reason": "ambiguous or absent source invocation"
+    },
+    {
+      "label": "wrong-source",
+      "hash": "0x32484071ff4dacdddd696504256627f2276e8903ab19ae07f00f76c87b5e37a6",
+      "reason": "failed, changed or nonisolated receipt/block"
+    }
+  ],
+  "custody": [
+    {
+      "label": "custody-late-failure-291",
+      "hash": "0xa31adcd3ccfb22420f3ab5d7419fabad1bc98b36a19585d8ea0e05ffe4631e12",
+      "before": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "18077496",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "0",
+        "allowance": "18077396",
+        "booked": "0",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      },
+      "after": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "18077496",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "0",
+        "allowance": "18077396",
+        "booked": "0",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      }
+    },
+    {
+      "label": "custody-partial-291",
+      "hash": "0x2be46e58bba0ecfe1276178e140979fd0e6ee9f5f62dd61e16561c1b93a826e0",
+      "before": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "18077496",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "0",
+        "allowance": "18077396",
+        "booked": "0",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      },
+      "after": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "12051698",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "6025798",
+        "allowance": "12051598",
+        "booked": "6025798",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      }
+    },
+    {
+      "label": "custody-terminal-291",
+      "hash": "0x9f3247ad7411b329ae53cbeb101a61697bc7ff42c98ad39830824f13dd6bac21",
+      "before": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "12051698",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "6025798",
+        "allowance": "12051598",
+        "booked": "6025798",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      },
+      "after": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "100",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "18077396",
+        "allowance": "0",
+        "booked": "18077396",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      }
+    },
+    {
+      "label": "custody-late-failure-292",
+      "hash": "0x72ec1d9bf464bc40f4906b710de967cfa9f66a7a9f841af2c888061730c4f2e8",
+      "before": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "18077497",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "18077396",
+        "allowance": "18077396",
+        "booked": "0",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      },
+      "after": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "18077497",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "18077396",
+        "allowance": "18077396",
+        "booked": "0",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      }
+    },
+    {
+      "label": "custody-partial-292",
+      "hash": "0x77adcb3d7de6f5bdc8cfed5fe4a54b9978eadc0926214e9a3b8f72e67ea73cd3",
+      "before": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "18077497",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "18077396",
+        "allowance": "18077396",
+        "booked": "0",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      },
+      "after": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "12051699",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "24103194",
+        "allowance": "12051598",
+        "booked": "6025798",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      }
+    },
+    {
+      "label": "custody-terminal-292",
+      "hash": "0xb43afef75032d54ea38b9a84ceeccd23624a95115e6ae7caaad85a7d7db00799",
+      "before": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "12051699",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "24103194",
+        "allowance": "12051598",
+        "booked": "6025798",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      },
+      "after": {
+        "weight": "7000000000000000000",
+        "weightSupply": "15318051546808403036783894",
+        "shares": "276550981740467441073",
+        "vaultSupply": "276550981740467441073",
+        "walletSy": "101",
+        "vaultSy": "27655098206",
+        "sySupply": "54373903396",
+        "custodySy": "36154792",
+        "allowance": "0",
+        "booked": "18077396",
+        "rewards": "204498784479836920680",
+        "donorWeight": "44847781291192882058339",
+        "relayerSy": "0",
+        "walletShares": "0"
+      }
+    }
+  ],
+  "deployments": [
+    {
+      "name": "SourceCustody",
+      "target": "0x3a25408d952f91e42f39587820bee5f051f4556c",
+      "runtimeHash": "0x16d1f1224178ce643d0a2bb3e4989258aceae636a710e177fb01e877f953ed92",
+      "bytes": 676,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "artifactSha256": "06b053f02f345f517fffe6f3bb5eab0a7e4e0c8d3709f94de01eb05ba68353ed"
+    },
+    {
+      "name": "DelegatedSourceProbe",
+      "target": "0xa6407325ff7daab36d20992dadc031c82d1c4390",
+      "runtimeHash": "0x255dbfb8c19169373803cca2d60cfaa4add22375283853c70f33171b8952f192",
+      "bytes": 1505,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "artifactSha256": "6dd7ace06d4c93518a190218b7367c5f34a0cdb2c90996ac3ce756b06c124c46"
+    }
+  ],
+  "initialSupply": "15338080546808403036783930",
+  "final": {
+    "weight": "7000000000000000000",
+    "weightSupply": "15318051546808403036783894",
+    "shares": "276550981740467441073",
+    "vaultSupply": "276550981740467441073",
+    "walletSy": "101",
+    "vaultSy": "27655098206",
+    "sySupply": "54373903396",
+    "custodySy": "36154792",
+    "allowance": "0",
+    "booked": "18077396",
+    "rewards": "204498784479836920680",
+    "donorWeight": "44847781291192882058339",
+    "relayerSy": "0",
+    "walletShares": "0"
+  },
+  "historicalTraceRequests": 0,
+  "injectionRequests": 0,
+  "authority": "Same producer's separate stopped-evidence audit; not an independent agent or public-chain attestation"
+}

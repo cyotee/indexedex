@@ -1,0 +1,178 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase} from "./UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase.sol";
+
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+import {NativeStandardYieldExecutionTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {
+    toBeforeSwapDelta,
+    BeforeSwapDelta
+} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BeforeSwapDelta.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {ModifyLiquidityParams, SwapParams} from
+    "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {
+    UniswapV4DualStandardExchangeBufferConstantProductHookCommon
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookCommon.sol";
+import {
+    UniswapV4DualStandardExchangeBufferConstantProductHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookRepo.sol";
+import {
+    UniswapV4DualStandardExchangeBufferConstantProductHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol";
+import {
+    UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib as ClaimLib
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol";
+import {
+    UniswapV4DualStandardExchangeBufferConstantProductHookPullLib as PullLib
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol";
+import {
+    IUniswapV4DualStandardExchangeBufferConstantProductHook as IHook
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+
+/// @title UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
+/// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
+abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget is NativeStandardYieldTarget, UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase {
+    using SafeERC20 for IERC20;
+
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256 amount_)
+    {
+        return _exitLiquidityFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
+    }
+
+    function isValidTokenIn(address token_) public view virtual override returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        return token_ == l.token0 || token_ == l.token1 || token_ == l.se0 || token_ == l.se1;
+    }
+    function isValidTokenOut(address token_) public view virtual override returns (bool) { return isValidTokenIn(token_); }
+
+
+function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountOut, uint256 amountRefunded) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return (_exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
+        return (_swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
+    }
+
+    function _swapExchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountOut) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountIn);
+        if (recipient == address(0)) revert ZeroAddress();
+        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
+        // Quote on pre-pull book so inventory does not reprice the trade mid-path.
+        BookSwapPlan memory plan = _planExactIn(zfo, amountIn);
+        amountOut = plan.output.amount;
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        // L-GAPS-11 / ISecurePullErrors: pretransfer credits claimed only when in-window
+        // delta covers it — blocks free extract of dual SE book / pair inventory. Leftover
+        // spendable economics unchanged (surplus delta not exact-matched).
+        _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
+        amountOut = _executePlannedSwap(plan, true, recipient);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+    }
+
+
+    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        external
+        view unlockedQuery
+        returns (uint256 amountIn)
+    {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut);
+        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
+        return _previewSwapExactOut(zfo, amountOut);
+    }
+
+
+    function exchangeOut(IERC20 tokenIn, uint256 maxAmountIn, IERC20 tokenOut, uint256 amountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountIn) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+        return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountIn) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountOut);
+        if (recipient == address(0)) revert ZeroAddress();
+        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
+        BookSwapPlan memory plan = _planExactOut(zfo, amountOut);
+        amountIn = plan.amountIn;
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+        // D15: false-flag pulls exactly `amountIn`; true-flag credits `budget(unbooked, maxAmountIn)`
+        // and refunds only `credit - amountIn` (never booked inventory or SE book).
+        _pullExactOutInput(IERC20(address(tokenIn)), amountIn, maxAmountIn, pretransferred);
+        _executePlannedSwap(plan, false, recipient);
+    }
+
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountIn);
+        _requireLive();
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) revert InvalidRoute();
+        if (_classify(tokenIn) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        if (_classify(tokenOut) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        BookSwapPlan memory plan = _planExactIn(zfo, amountIn);
+        amountOut = plan.output.amount;
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        amountOut = _executePlannedSwap(plan, true, msg.sender);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+    }
+
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountOut);
+        _requireLive();
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) revert InvalidRoute();
+        if (_classify(tokenIn) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        if (_classify(tokenOut) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        BookSwapPlan memory plan = _planExactOut(zfo, amountOut);
+        amountIn = plan.amountIn;
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _executePlannedSwap(plan, false, msg.sender);
+    }
+
+
+}

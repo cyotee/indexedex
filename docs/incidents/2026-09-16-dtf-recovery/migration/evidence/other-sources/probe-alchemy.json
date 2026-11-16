@@ -1,0 +1,3125 @@
+{
+  "schema": 1,
+  "started": "2026-11-10T12:10:13.533Z",
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy",
+  "binaryPassObservable": "exit 0 AND overall=PASS; any harness gap or unsupported required route yields exit 2",
+  "runtime": {
+    "bun": "1.4.2",
+    "execPath": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 54212
+  },
+  "sourceObservations": [
+    {
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b06fdde0300000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b313ce56700000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "15338080546808403036783930"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "selector": "0xab518e6e",
+          "args": [],
+          "value": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "selector": "0xb1c9fe6e",
+          "args": [],
+          "value": 2
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b6972223300000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x517234F78A4BcAfc5F880024A3E45D49cF43b305"
+          },
+          "facetCodeHash": "0x8c1ea71d607b09b21c4e78f850647a059dc7935b6772f7cd3aeaa700a995439f"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "Wrapped SY Staked DTF-DETF"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 19
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "276912583840862116302"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "selector": "0x38d52e0f",
+          "args": [],
+          "value": "0xB55604CF4dcdABB362078e106D20F98512391EdF"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b6972223300000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "SY Staked DTF-DETF"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 9
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "54373903396"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b6972223300000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "selector": "0x071bc3c9",
+          "args": [],
+          "value": [
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+      "code": "0x60806040526004361015610011575f80fd5b5f3560e01c806306fdde03146106b1578063095ea7b31461060957806318160ddd146105ec57806323b872dd146105b4578063313ce5671461059957806342966c681461057c578063536dac9b1461053857806353cd512a146104ac57806370a08231146104755780637165485d146104315780637284e4161461041657806379cc6790146103e457806395d89b41146102f0578063a9059cbb146102bf578063abb1dc44146101aa578063d5f3948814610166578063dd62ed3e146101165763fb7f21eb146100df575f80fd5b34610112575f3660031901126101125761010e6100fa6108dc565b60405191829160208352602083019061076c565b0390f35b5f80fd5b346101125760403660031901126101125761012f610790565b6101376107a6565b6001600160a01b039182165f908152600160209081526040808320949093168252928352819020549051908152f35b34610112575f366003190112610112576040517f000000000000000000000000ed1fa21329fc45860cab5d5e26a5fafccdacd6d56001600160a01b03168152602090f35b34610112575f36600319011261011257606060806040516101ca816107bc565b828152826020820152826040820152828082015201526102446101eb6108dc565b61010e6101f661080e565b610252610201610a3e565b9160405195869560018060a01b037f000000000000000000000000ed1fa21329fc45860cab5d5e26a5fafccdacd6d516875260806020880152608087019061076c565b90858203604087015261076c565b838103606085015260806102ae61029c61028a610278865160a0875260a087019061076c565b6020870151868203602088015261076c565b6040860151858203604087015261076c565b6060850151848203606086015261076c565b92015190608081840391015261076c565b34610112576040366003190112610112576102e56102db610790565b6024359033610b39565b602060405160018152f35b34610112575f366003190112610112576040515f6004548060011c906001811680156103da575b6020831081146103c6578285529081156103a25750600114610344575b61010e836100fa818503826107ec565b60045f9081527f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b939250905b808210610388575090915081016020016100fa610334565b919260018160209254838588010152019101909291610370565b60ff191660208086019190915291151560051b840190910191506100fa9050610334565b634e487b7160e01b5f52602260045260245ffd5b91607f1691610317565b3461011257604036600319011261011257610414610400610790565b6024359061040f823383610a96565b610bf6565b005b34610112575f3660031901126101125761010e6100fa61080e565b34610112575f366003190112610112576040517f000000000000000000000000912467fc912f0f88df3b0d221946de78f38d45596001600160a01b03168152602090f35b34610112576020366003190112610112576001600160a01b03610496610790565b165f525f602052602060405f2054604051908152f35b34610112575f366003190112610112576105006104c7610a3e565b61010e81519161052a60208201519161051c604082015161050e6080606085015194015195604051998a9960a08b5260a08b019061076c565b9089820360208b015261076c565b90878203604089015261076c565b90858203606087015261076c565b90838203608085015261076c565b34610112575f366003190112610112576040517f0000000000000000000000007ed598bcef8bd9edd8c97a195c6d13f40801ec7e6001600160a01b03168152602090f35b346101125760203660031901126101125761041460043533610bf6565b34610112575f36600319011261011257602060405160128152f35b34610112576060366003190112610112576102e56105d0610790565b6105d86107a6565b604435916105e7833383610a96565b610b39565b34610112575f366003190112610112576020600254604051908152f35b3461011257604036600319011261011257610622610790565b60243590331561069e576001600160a01b031690811561068b57335f52600160205260405f20825f526020528060405f20556040519081527f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b92560203392a3602060405160018152f35b634a1406b160e11b5f525f60045260245ffd5b63e602df0560e01b5f525f60045260245ffd5b34610112575f366003190112610112576040515f6003548060011c90600181168015610762575b6020831081146103c6578285529081156103a257506001146107045761010e836100fa818503826107ec565b60035f9081527fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b939250905b808210610748575090915081016020016100fa610334565b919260018160209254838588010152019101909291610730565b91607f16916106d8565b805180835260209291819084018484015e5f828201840152601f01601f1916010190565b600435906001600160a01b038216820361011257565b602435906001600160a01b038216820361011257565b60a0810190811067ffffffffffffffff8211176107d857604052565b634e487b7160e01b5f52604160045260245ffd5b90601f8019910116810190811067ffffffffffffffff8211176107d857604052565b604051905f6006548060011c91600182169182156108d2575b6020841083146103c65783865285929081156108b35750600114610854575b610852925003836107ec565b565b5060065f90815290917ff652222313e28459528d920b65115c16c04f3efc82aaedc97be59f3f377c0d3f5b81831061089757505090602061085292820101610846565b602091935080600191548385890101520191019091849261087f565b6020925061085294915060ff191682840152151560051b820101610846565b92607f1692610827565b604051905f6005548060011c916001821691821561097e575b6020841083146103c65783865285929081156108b3575060011461091f57610852925003836107ec565b5060055f90815290917f036b6384b5eca791c62761152d0c79bb0604c104a5fb6f4eb0703f3154bb3db05b81831061096257505090602061085292820101610846565b602091935080600191548385890101520191019091849261094a565b92607f16926108f5565b90604051915f8154908160011c9260018316928315610a34575b6020851084146103c6578487528693908115610a1257506001146109ce575b50610852925003836107ec565b90505f9291925260205f20905f915b8183106109f6575050906020610852928201015f6109c1565b60209193508060019154838589010152019101909184926109dd565b90506020925061085294915060ff191682840152151560051b8201015f6109c1565b93607f16936109a2565b60405190610a4b826107bc565b81610a566007610988565b8152610a626008610988565b6020820152610a716009610988565b6040820152610a80600a610988565b60608201526080610a91600b610988565b910152565b6001600160a01b039081165f818152600160209081526040808320948616835293905291909120549291905f198410610ad0575b50505050565b828410610b1657801561069e576001600160a01b0382161561068b575f52600160205260405f209060018060a01b03165f5260205260405f20910390555f808080610aca565b508290637dc7a0d960e11b5f5260018060a01b031660045260245260445260645ffd5b6001600160a01b0316908115610be3576001600160a01b0316918215610bd057815f525f60205260405f2054818110610bb757817fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef92602092855f525f84520360405f2055845f525f825260405f20818154019055604051908152a3565b8263391434e360e21b5f5260045260245260445260645ffd5b63ec442f0560e01b5f525f60045260245ffd5b634b637e8f60e11b5f525f60045260245ffd5b9091906001600160a01b03168015610be357805f525f60205260405f2054838110610c60576020845f94957fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef938587528684520360408620558060025403600255604051908152a3565b915063391434e360e21b5f5260045260245260445260645ffdfea2646970667358221220f8f8df1aef409554acec1774e66d855cbdc94f6a3e199a378f5ba9fe2a08326664736f6c63430008230033",
+      "codeHash": "0xc95f518da431326e81a95ea4e7cba683ea02488e702604042fe57299345e2baa",
+      "bytes": 3248,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x70a08231"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x23b872dd"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xcc447fba"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xba087652"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xd02d3063"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "Down to Finance"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 18
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "1000000000000000000000000000"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        }
+      ]
+    },
+    {
+      "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "code": "0x60806040523661001357610011610017565b005b6100115b61001f6101a7565b6001600160a01b0316330361015f5760606001600160e01b0319600035166364d3180d60e11b810161005a576100536101da565b9150610157565b63587086bd60e11b6001600160e01b031982160161007a57610053610231565b63070d7c6960e41b6001600160e01b031982160161009a57610053610277565b621eb96f60e61b6001600160e01b03198216016100b9576100536102a8565b63a39f25e560e01b6001600160e01b03198216016100d9576100536102e8565b60405162461bcd60e51b815260206004820152604260248201527f5472616e73706172656e745570677261646561626c6550726f78793a2061646d60448201527f696e2063616e6e6f742066616c6c6261636b20746f2070726f78792074617267606482015261195d60f21b608482015260a4015b60405180910390fd5b815160208301f35b6101676102fc565b565b606061018e838360405180606001604052806027815260200161083e6027913961030c565b9392505050565b90565b6001600160a01b03163b151590565b60007fb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d61035b546001600160a01b0316919050565b60606101e4610384565b60006101f33660048184610691565b81019061020091906106d7565b905061021d8160405180602001604052806000815250600061038f565b505060408051602081019091526000815290565b60606000806102433660048184610691565b8101906102509190610708565b915091506102608282600161038f565b604051806020016040528060008152509250505090565b6060610281610384565b60006102903660048184610691565b81019061029d91906106d7565b905061021d816103bb565b60606102b2610384565b60006102bc6101a7565b604080516001600160a01b03831660208201529192500160405160208183030381529060405291505090565b60606102f2610384565b60006102bc610412565b610167610307610412565b610421565b6060600080856001600160a01b03168560405161032991906107ee565b600060405180830381855af49150503d8060008114610364576040519150601f19603f3d011682016040523d82523d6000602084013e610369565b606091505b509150915061037a86838387610445565b9695505050505050565b341561016757600080fd5b610398836104c4565b6000825111806103a55750805b156103b6576103b48383610169565b505b505050565b7f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f6103e46101a7565b604080516001600160a01b03928316815291841660208301520160405180910390a161040f81610504565b50565b600061041c6105ad565b905090565b3660008037600080366000845af43d6000803e808015610440573d6000f35b3d6000fd5b606083156104b25782516000036104ab5761045f85610198565b6104ab5760405162461bcd60e51b815260206004820152601d60248201527f416464726573733a2063616c6c20746f206e6f6e2d636f6e7472616374000000604482015260640161014e565b50816104bc565b6104bc83836105d5565b949350505050565b6104cd816105ff565b6040516001600160a01b038216907fbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b90600090a250565b6001600160a01b0381166105695760405162461bcd60e51b815260206004820152602660248201527f455243313936373a206e65772061646d696e20697320746865207a65726f206160448201526564647265737360d01b606482015260840161014e565b807fb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d61035b80546001600160a01b0319166001600160a01b039290921691909117905550565b60007f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc6101cb565b8151156105e55781518083602001fd5b8060405162461bcd60e51b815260040161014e919061080a565b61060881610198565b61066a5760405162461bcd60e51b815260206004820152602d60248201527f455243313936373a206e657720696d706c656d656e746174696f6e206973206e60448201526c1bdd08184818dbdb9d1c9858dd609a1b606482015260840161014e565b807f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc61058c565b600080858511156106a157600080fd5b838611156106ae57600080fd5b5050820193919092039150565b80356001600160a01b03811681146106d257600080fd5b919050565b6000602082840312156106e957600080fd5b61018e826106bb565b634e487b7160e01b600052604160045260246000fd5b6000806040838503121561071b57600080fd5b610724836106bb565b9150602083013567ffffffffffffffff8082111561074157600080fd5b818501915085601f83011261075557600080fd5b813581811115610767576107676106f2565b604051601f8201601f19908116603f0116810190838211818310171561078f5761078f6106f2565b816040528281528860208487010111156107a857600080fd5b8260208601602083013760006020848301015280955050505050509250929050565b60005b838110156107e55781810151838201526020016107cd565b50506000910152565b600082516108008184602087016107ca565b9190910192915050565b60208152600082518060208401526108298160408501602087016107ca565b601f01601f1916919091016040019291505056fe416464726573733a206c6f772d6c6576656c2064656c65676174652063616c6c206661696c6564a264697066735822122072007c277cc5d8471be1434c6b2d5b70fb7c2f6f77a0697617733c4d4ae5b76964736f6c63430008100033",
+      "codeHash": "0x5706be52f64875fee65a2cec0d80e47a23d8793cbe85d214b48445e2d05f5353",
+      "bytes": 2202,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x70a08231"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x23b872dd"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xcc447fba"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xba087652"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xd02d3063"
+            ],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "WETH"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 18
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "36860375390393709328747"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x\"}"
+        }
+      ]
+    },
+    {
+      "address": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b06fdde0300000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b313ce56700000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b18160ddd00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0000000000000000000000000000000000000000",
+            "0x39dBED3a2bd333467115dE45665cC57F813C4571",
+            "0xf517e2cF2f6c68020B9a66f05C5a9895E6F89f68",
+            "0xe9708FA00425cff8F25Eb2a0719A8Ff4D56dE888",
+            "0xE3d8B10ABE00596F67BE1A498777b6Cdea4DD82f",
+            "0x7c61FaEd6cA729663b5a96cA69339B100A7aa888",
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+            "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+            "0x85BD24D4aa7872dD46c5bF889cb324B72fe473F1",
+            "0x8D761531C98F9F566eB5dF57d63678637b10a888",
+            "0xCE74BC02Cdf5c8FaECB94a380D98Ec47195a39d1",
+            "0x1ca1771d04366761a2aEf7Ea26F9e18bC8bb6888",
+            "0xc2FBe67c474CE7ce273D31B9B3C1c57915642e28",
+            "0x25Ef9b3036Ac1faA5090bbFadC68b2EED0f56888",
+            "0x0f585337c8C7075886C575aFc14A11C8e44ba30E",
+            "0x55119a02d034d78593CF7b3359390dbBB00AA888",
+            "0x40B613522bC5944330B7141E973280948124f844",
+            "0x46D949601BAE5c7ae0d5792487758862FA6be888",
+            "0x2094aA9A98d4255E61911D3Bb250e92d3d50d26B",
+            "0x7A71C38F245cBaA5AC2776a86D1D02c0FCb0A888",
+            "0xbebD0E65414437a8f91e13C47e399a906D7C2935",
+            "0xb5F5040Bf271dEf9D528Dd977c7C97f13F26a888",
+            "0xd3B36C198C91fd0E02115782ACDC3d905AC6Bb76",
+            "0xbbC8D3c8cF1149c36769b4FB0d6d6f8d2d34a888",
+            "0x72EF4Be65e356E102bB31a97d2d7B309e8c97226",
+            "0x2e97F7183597A43735Fb5B052923251693A2E888",
+            "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+            "0xAc77646bcff9d52e99800534192E0290933F4094",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0x46E068c2393e189Fbc86632f67210aF253a42Aa8"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "WETH / Down to Finance Uniswap V4 DETF"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 18
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "50292329131921480247306459955614"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "selector": "0x0266f044",
+          "args": [],
+          "value": "0x923877336b14662cFb5B3A60b14e7d716d54A888"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "selector": "0x61d7483a",
+          "args": [],
+          "value": "0xb7D4Bb379D361AD442CddEE53eA71a33957826A7"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "selector": "0x435e0ab0",
+          "args": [],
+          "value": "0xb7D4Bb379D361AD442CddEE53eA71a33957826A7"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "0x923877336b14662cFb5B3A60b14e7d716d54A888"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279"
+          },
+          "facetCodeHash": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b"
+          },
+          "facetCodeHash": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279"
+          },
+          "facetCodeHash": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b06fdde0300000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b313ce56700000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b18160ddd00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "selector": "0x5fcbd285",
+          "args": [],
+          "value": "0x923877336b14662cFb5B3A60b14e7d716d54A888"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x923877336b14662cFb5B3A60b14e7d716d54A888"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291"
+          },
+          "facetCodeHash": "0x1eadaa06571b1cca173491d149bab9b07d5d1b9dc83d268654e49d3179b1a460"
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "DTF-DETF"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 9
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "16868128524740"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "selector": "0x0266f044",
+          "args": [],
+          "value": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "0x46E068c2393e189Fbc86632f67210aF253a42Aa8"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "UniV4 Vault of (WETH / DTF)"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 18
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "240208335094234316503663860544238124591"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "SSEBCP-WETH-DTF-V4-DETF-DTF"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 18
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "107517175831127663376533975408073383"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b071bc3c900000000000000000000000000000000000000000000000000000000\"}"
+        }
+      ]
+    },
+    {
+      "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x614f204B98Ff2E6ba7C4a365CAf7A39f167924A6"
+          },
+          "facetCodeHash": "0x7c02a5793a00529350c466cf37009b6e046109bedb49379087daef548f4faacf"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x4D9976E8Fd5C6f698DF0303C6056efAff47e6f48"
+          },
+          "facetCodeHash": "0x8992feb5af0dea8274c8ad51e34c4d912c8257c217205dc0b18aa85e72d49ce5"
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "UniV4 Vault of (WETH / DTF)"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 18
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "2363429102805702807136567"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b61d7483a00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "selector": "0x071bc3c9",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0xDbcEEFf98F2388b0eFA0C0fDA2e08cdd263Ce8f5"
+          },
+          "facetCodeHash": "0x99b74f701969463d5147a782113b30bef06ef1c65f58902d410849d6d2cef616"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0xd1F06fdB8e21a4566bB1B21118f66a12Fc66c0C3"
+          },
+          "facetCodeHash": "0x575684348cb71035ed51b9cc9eb2ac5338b35b6053937927e5e91ea9e2b990b9"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0xdd1AaD6d8C312774509B7779fde018bAa014826F"
+          },
+          "facetCodeHash": "0xa68db41fe1fcac6daa4ea4f8a148d3f265d2190c34b1a3dba40eddbc14b1d5ab"
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "selector": "0x06fdde03",
+          "args": [],
+          "value": "Wrapped Down to Finance"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "selector": "0x313ce567",
+          "args": [],
+          "value": 28
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "selector": "0x18160ddd",
+          "args": [],
+          "value": "162264645901640184296798110000000000"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "selector": "0x38d52e0f",
+          "args": [],
+          "value": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bab518e6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b5fcbd28500000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b435e0ab000000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b00f32d0c00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "selector": "0x071bc3c9",
+          "args": [],
+          "value": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bytes": 370,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x70a08231"
+            ],
+            "error": "ProbeError: eth_call: HTTP 429"
+          }
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x23b872dd"
+            ],
+            "error": "ProbeError: eth_call: HTTP 429"
+          }
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "error": "ProbeError: eth_call: HTTP 429"
+          }
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "error": "ProbeError: eth_call: HTTP 429"
+          }
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xba087652"
+            ],
+            "error": "ProbeError: eth_call: HTTP 429"
+          }
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0xe6275c805e712f609c5DeA5b07481A4229e966F7"
+          },
+          "facetCodeHash": "0xb022d06e679e0e3ea6c8e081dc69e255d3d1f3d5363584fb0029d6aac8858565"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "args": [
+              "0xd02d3063"
+            ],
+            "error": "ProbeError: eth_call: HTTP 429"
+          }
+        }
+      ],
+      "metadata": [
+        {
+          "signature": "name() view returns (string)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "decimals() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "totalSupply() view returns (uint256)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "asset() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b38d52e0f00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "claimVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "phase() view returns (uint8)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4bb1c9fe6e00000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "lpToken() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "reservePool() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted\",\"data\":\"0x23dbef4b0266f04400000000000000000000000000000000000000000000000000000000\"}"
+        },
+        {
+          "signature": "standardExchangeVault() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "standardExchangeVaultShare() view returns (address)",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "underlyingVaults() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        },
+        {
+          "signature": "vaultTokens() view returns (address[])",
+          "selector": "0x69722233",
+          "args": [],
+          "value": [
+            "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01"
+          ]
+        },
+        {
+          "signature": "getTokensOut() view returns (address[])",
+          "args": [],
+          "error": "ProbeError: eth_call: HTTP 429"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "name": "probe harness",
+      "verdict": "UNPROVEN",
+      "evidence": {
+        "error": "ProbeError: eth_getCode: HTTP 429",
+        "productProof": false
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "label": "requested-historical",
+      "block": "108944663",
+      "header": {
+        "baseFeePerGas": "0x13134d0",
+        "difficulty": "0x1",
+        "extraData": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+        "gasLimit": "0x4000000000000",
+        "gasUsed": "0x7cbe",
+        "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+        "l1BlockNumber": "0x19256ab",
+        "logsBloom": "0x00000000000000200000000000000000000000000004000000000000000000000000000000000000000080000000000000000000000020000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000",
+        "miner": "0xa4b000000000000000000073657175656e636572",
+        "mixHash": "0x0000000000000ea500000000019256ab000000000000003d0000000000000000",
+        "nonce": "0x0000000000069efe",
+        "number": "0x67e5d17",
+        "parentHash": "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+        "receiptsRoot": "0xed4030c56b19861b12d407133d34d67e86eb659431133713cbdc126ba9f35a17",
+        "sendCount": "0xea5",
+        "sendRoot": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "0x34d",
+        "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+        "timestamp": "0x6aeff5b5",
+        "transactions": [
+          "0x3b092c0a635bf7308445d38cd9e4057f66ac9673c4988feafbe6b59be795c5a7",
+          "0xa0827ff9299145bc2c8be17e3f803c4e1aa21cf6d0295104d4d06946a1ea815c"
+        ],
+        "transactionsRoot": "0x33c7e74b2b83169ffe7ccc0d196e7389b7edcf9da4b2aec25c442f450a5db7ab",
+        "uncles": []
+      },
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "state": "15338080546808403036783930",
+      "verdict": "PASS"
+    }
+  ],
+  "cleanup": {
+    "noChildStarted": true,
+    "caches": [
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/bun-cache",
+        "absent": true
+      },
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/node-cache",
+        "absent": true
+      },
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/cache",
+        "absent": true
+      }
+    ]
+  },
+  "overall": "UNPROVEN",
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/sources.json",
+      "bytes": 5502,
+      "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/manifest.json",
+      "bytes": 3209,
+      "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/custody-inventory.csv",
+      "bytes": 139535,
+      "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+      "bytes": 41316,
+      "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+    }
+  ],
+  "pin": {
+    "chainId": "0x1237",
+    "block": "108944663",
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+    "timestamp": "0x6aeff5b5",
+    "rpcAlias": "robinhood_mainnet_alchemy",
+    "label": "requested-historical"
+  },
+  "registry": {
+    "signature": "vaultsOfToken(address) view returns (address[])",
+    "selector": "0x2b9fc930",
+    "args": [
+      "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    ],
+    "value": [
+      "0xb7D4Bb379D361AD442CddEE53eA71a33957826A7",
+      "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+      "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+      "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7"
+    ]
+  },
+  "graph": [
+    {
+      "from": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "method": "claimVault() view returns (address)",
+      "to": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0"
+    },
+    {
+      "from": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "method": "asset() view returns (address)",
+      "to": "0xb55604cf4dcdabb362078e106d20f98512391edf"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x39dbed3a2bd333467115de45665cc57f813c4571"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xf517e2cf2f6c68020b9a66f05c5a9895e6f89f68"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xe9708fa00425cff8f25eb2a0719a8ff4d56de888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xe3d8b10abe00596f67be1a498777b6cdea4dd82f"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x7c61faed6ca729663b5a96ca69339b100a7aa888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x0bd7d308f8e1639fab988df18a8011f41eacad73"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x923877336b14662cfb5b3a60b14e7d716d54a888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x85bd24d4aa7872dd46c5bf889cb324b72fe473f1"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x8d761531c98f9f566eb5df57d63678637b10a888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xce74bc02cdf5c8faecb94a380d98ec47195a39d1"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x1ca1771d04366761a2aef7ea26f9e18bc8bb6888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xc2fbe67c474ce7ce273d31b9b3c1c57915642e28"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x25ef9b3036ac1faa5090bbfadc68b2eed0f56888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x0f585337c8c7075886c575afc14a11c8e44ba30e"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x55119a02d034d78593cf7b3359390dbbb00aa888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x40b613522bc5944330b7141e973280948124f844"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x46d949601bae5c7ae0d5792487758862fa6be888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x2094aa9a98d4255e61911d3bb250e92d3d50d26b"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x7a71c38f245cbaa5ac2776a86d1d02c0fcb0a888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xbebd0e65414437a8f91e13c47e399a906d7c2935"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xb5f5040bf271def9d528dd977c7c97f13f26a888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xd3b36c198c91fd0e02115782acdc3d905ac6bb76"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xbbc8d3c8cf1149c36769b4fb0d6d6f8d2d34a888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x72ef4be65e356e102bb31a97d2d7b309e8c97226"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x2e97f7183597a43735fb5b052923251693a2e888"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x5fc5360d0400a0fd4f2af552add042d716f1d168"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xac77646bcff9d52e99800534192e0290933f4094"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7"
+    },
+    {
+      "from": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x46e068c2393e189fbc86632f67210af253a42aa8"
+    },
+    {
+      "from": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "method": "reservePool() view returns (address)",
+      "to": "0x923877336b14662cfb5b3a60b14e7d716d54a888"
+    },
+    {
+      "from": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "method": "standardExchangeVault() view returns (address)",
+      "to": "0xb7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "from": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "method": "standardExchangeVaultShare() view returns (address)",
+      "to": "0xb7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "from": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122"
+    },
+    {
+      "from": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x923877336b14662cfb5b3a60b14e7d716d54a888"
+    },
+    {
+      "from": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "method": "lpToken() view returns (address)",
+      "to": "0x923877336b14662cfb5b3a60b14e7d716d54a888"
+    },
+    {
+      "from": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x923877336b14662cfb5b3a60b14e7d716d54a888"
+    },
+    {
+      "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "method": "reservePool() view returns (address)",
+      "to": "0x46e068c2393e189fbc86632f67210af253a42aa8"
+    },
+    {
+      "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x0bd7d308f8e1639fab988df18a8011f41eacad73"
+    },
+    {
+      "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7"
+    },
+    {
+      "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x46e068c2393e189fbc86632f67210af253a42aa8"
+    },
+    {
+      "from": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x0bd7d308f8e1639fab988df18a8011f41eacad73"
+    },
+    {
+      "from": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xaf0e1967c8f755c747615c5427108bc549ca1122"
+    },
+    {
+      "from": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x0bd7d308f8e1639fab988df18a8011f41eacad73"
+    },
+    {
+      "from": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "method": "asset() view returns (address)",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    },
+    {
+      "from": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x0bd7d308f8e1639fab988df18a8011f41eacad73"
+    },
+    {
+      "from": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7"
+    },
+    {
+      "from": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "method": "vaultTokens() view returns (address[])",
+      "to": "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    }
+  ],
+  "harnessError": "ProbeError: eth_getCode: HTTP 429",
+  "finished": "2026-11-10T12:10:19.242Z"
+}

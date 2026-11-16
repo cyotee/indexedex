@@ -1,0 +1,170 @@
+[
+  {
+    "path": "scripts/recovery/dtf-migration/cli.ts",
+    "bytes": 13484,
+    "sha256": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 13484,
+    "testedSha256": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437",
+    "verifierBytes": 13484,
+    "verifierSha256": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "a747e8e821487792ef99c4ff2c7d04631d0cb6d2",
+    "lsFiles": "100644 a747e8e821487792ef99c4ff2c7d04631d0cb6d2 0\tscripts/recovery/dtf-migration/cli.ts",
+    "accepted": {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 13484,
+      "sha256": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437"
+    }
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+    "bytes": 5724,
+    "sha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 5724,
+    "testedSha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+    "verifierBytes": 5724,
+    "verifierSha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e",
+    "lsFiles": "100644 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e 0\tscripts/recovery/dtf-migration/receipt-input.ts",
+    "accepted": {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "bytes": 5724,
+      "sha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323"
+    }
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+    "bytes": 8738,
+    "sha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 8738,
+    "testedSha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+    "verifierBytes": 8738,
+    "verifierSha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "05cbdb06d1691e079538a8ed8d91107f23eb7240",
+    "lsFiles": "100644 05cbdb06d1691e079538a8ed8d91107f23eb7240 0\tscripts/recovery/dtf-migration/receipt-evidence.ts",
+    "accepted": {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "bytes": 8738,
+      "sha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e"
+    }
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+    "bytes": 10148,
+    "sha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 10148,
+    "testedSha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+    "verifierBytes": 10148,
+    "verifierSha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "defd60ad74e0bab892edaa4796ee454e63996fa0",
+    "lsFiles": "100644 defd60ad74e0bab892edaa4796ee454e63996fa0 0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts",
+    "accepted": {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "bytes": 10148,
+      "sha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4"
+    }
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+    "bytes": 8477,
+    "sha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 8477,
+    "testedSha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+    "verifierBytes": 8477,
+    "verifierSha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "2032aba6449fd1c9e59e25e8d571addadf1d4622",
+    "lsFiles": "100644 2032aba6449fd1c9e59e25e8d571addadf1d4622 0\tscripts/recovery/dtf-migration/receipt.fixture.ts",
+    "accepted": {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "bytes": 8477,
+      "sha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472"
+    }
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+    "bytes": 9645,
+    "sha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 9645,
+    "testedSha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+    "verifierBytes": 9645,
+    "verifierSha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "1a7aac03d616bd79b6971e1a53ff55456a5bc6fd",
+    "lsFiles": "100644 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd 0\tscripts/recovery/dtf-migration/receipt.test.ts",
+    "accepted": {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "bytes": 9645,
+      "sha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1"
+    }
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+    "bytes": 9271,
+    "sha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 9271,
+    "testedSha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+    "verifierBytes": 9271,
+    "verifierSha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "3ba48a4b42cda20db7ec30c48bdf94469222e941",
+    "lsFiles": "100644 3ba48a4b42cda20db7ec30c48bdf94469222e941 0\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+    "accepted": {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "bytes": 9271,
+      "sha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4"
+    }
+  },
+  {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "bytes": 65301,
+    "sha256": "65474dcf25df7a9c737fe4b7afb4e9833bf148594f979d794d6356d08a49da4a",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "predictedGitMode": "100644",
+    "testedBytes": 65301,
+    "testedSha256": "65474dcf25df7a9c737fe4b7afb4e9833bf148594f979d794d6356d08a49da4a",
+    "verifierBytes": 65301,
+    "verifierSha256": "65474dcf25df7a9c737fe4b7afb4e9833bf148594f979d794d6356d08a49da4a",
+    "testedManifestHasMode": false,
+    "match": true,
+    "parentBlob": "1737b863327ac1a9a7e48bbc0be6dbdac0d4954b",
+    "lsFiles": "100644 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b 0\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    "accepted": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "bytes": 65301,
+      "sha256": "65474dcf25df7a9c737fe4b7afb4e9833bf148594f979d794d6356d08a49da4a"
+    }
+  }
+]

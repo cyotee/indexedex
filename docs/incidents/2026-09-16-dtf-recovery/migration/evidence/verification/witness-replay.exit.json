@@ -1,0 +1,28 @@
+{
+  "label": "witness-replay",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "argv": [
+    "/opt/homebrew/bin/bun",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/witness.mjs"
+  ],
+  "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/witness.mjs'",
+  "binaryPassObservable": "exit 0 and ATTRIBUTION_COUNTEREXAMPLE_PASS; equal balances unequal credits; rollback and TCP refusal",
+  "started": "2026-11-10T12:56:06.998Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY",
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY",
+    "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY/cache"
+  },
+  "credentialPresent": true,
+  "childPid": 85468,
+  "code": 2,
+  "signal": null,
+  "finished": "2026-11-10T12:56:07.337Z"
+}

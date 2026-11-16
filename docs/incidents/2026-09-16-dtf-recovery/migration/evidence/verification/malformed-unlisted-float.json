@@ -1,0 +1,509 @@
+{
+  "account_ledger_directly_uploadable": false,
+  "address_normalization": "lowercase_for_joins_recorded_checksum_retained",
+  "allocations_approved": false,
+  "blank_numeric_encoding": "UNKNOWN",
+  "category_coverage": [
+    {
+      "decimals": 9,
+      "generation": "weighted",
+      "id": "weighted_detf",
+      "model": "fungible_detf",
+      "note": "fungible transfer ancestry is not proved by balance rows",
+      "observed_rows": 0,
+      "provenance_status": "OBSERVED_UNITS",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "DETF"
+    },
+    {
+      "decimals": 18,
+      "generation": "earlier_cp",
+      "id": "earlier_cp_detf",
+      "model": "fungible_detf",
+      "note": "acquisition cost is unproved; detf equivalent is blank",
+      "observed_rows": 0,
+      "provenance_status": "OBSERVED_UNITS",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "DETF"
+    },
+    {
+      "decimals": 9,
+      "generation": "weighted",
+      "id": "weighted_nft",
+      "model": "fixed_principal_nft",
+      "note": "source identity is collection plus token id, not the buyer",
+      "observed_rows": 0,
+      "provenance_status": "ABSENT_NOT_PROVED",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "funded_principal_detf"
+    },
+    {
+      "decimals": 18,
+      "generation": "earlier_cp",
+      "id": "earlier_cp_nft_lp_lock",
+      "model": "lp_share_lock_nft",
+      "note": "distinct from fungible LP; S011 does not replay these receipts",
+      "observed_rows": 0,
+      "provenance_status": "ABSENT_NOT_PROVED",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "LP_SHARES"
+    },
+    {
+      "decimals": 9,
+      "generation": "weighted",
+      "id": "weighted_sdetf",
+      "model": "rebasing_receipt",
+      "note": "summing Transfer amounts is invalid; replay in gons",
+      "observed_rows": 0,
+      "provenance_status": "OBSERVED_UNITS",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "sDETF_nominal_gons_required"
+    },
+    {
+      "decimals": 18,
+      "generation": "earlier_cp",
+      "id": "earlier_cp_receipt",
+      "model": "rebasing_receipt",
+      "note": "supply discrepancy remains unresolved and is not allocatable",
+      "observed_rows": 0,
+      "provenance_status": "OBSERVED_LATEST_STATE",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "receipt"
+    },
+    {
+      "decimals": 9,
+      "generation": "weighted",
+      "id": "weighted_sy",
+      "model": "wrapper_shares",
+      "note": "wrapper shares are not a second claim on backing sDETF",
+      "observed_rows": 0,
+      "provenance_status": "OBSERVED_UNITS",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "SY"
+    },
+    {
+      "decimals": 18,
+      "generation": "weighted",
+      "id": "tokenstaking_claim",
+      "model": "nontransferable_claim_weight",
+      "note": "weights are not an ERC-20 and are not DETF units",
+      "observed_rows": 0,
+      "provenance_status": "OBSERVED_WEIGHTS",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "DTF_weight"
+    },
+    {
+      "decimals": 9,
+      "generation": "weighted",
+      "id": "claim_vault_sy_custody",
+      "model": "wrapper_custody_for_claims",
+      "note": "claim-vault SY backs remaining weights; do not credit it again",
+      "observed_rows": 0,
+      "provenance_status": "OBSERVED_OR_RELATED",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "SY"
+    },
+    {
+      "decimals": null,
+      "generation": "unspecified",
+      "id": "underlying_se_shares",
+      "model": "fungible_vault_shares",
+      "note": "no standalone SE-share position rows; absence of exposure is not proved",
+      "observed_rows": 0,
+      "provenance_status": "ABSENT_NOT_PROVED",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "SE_SHARES"
+    },
+    {
+      "decimals": null,
+      "generation": "unspecified",
+      "id": "fungible_lp_token",
+      "model": "fungible_lp",
+      "note": "separate from the earlier CP NFT LP lock; absence is not proved",
+      "observed_rows": 0,
+      "provenance_status": "ABSENT_NOT_PROVED",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "LP"
+    },
+    {
+      "decimals": 18,
+      "generation": "contribution",
+      "id": "native_eth",
+      "model": "native_eth",
+      "note": "native ETH flows were not reconstructed",
+      "observed_rows": 0,
+      "provenance_status": "ABSENT_NOT_PROVED",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "ETH"
+    },
+    {
+      "decimals": 18,
+      "generation": "contribution",
+      "id": "weth",
+      "model": "wrapped_eth",
+      "note": "observed WETH is not renamed to ETH; post-cutoff coverage is unproved",
+      "observed_rows": 0,
+      "provenance_status": "PARTIAL_INBOUND_EVIDENCE",
+      "route_status": "UNPROVEN",
+      "supported_because_address_exists": false,
+      "unit": "WETH"
+    }
+  ],
+  "chain_id": 4663,
+  "contribution_joins": {
+    "earlier_cp_nft": [],
+    "fungible_wrapper_and_claim": {
+      "account_ledger_used_as_upload": false,
+      "c0": "UNKNOWN",
+      "funded_snapshot": "UNKNOWN",
+      "held_lower_bound_used_as_attribution": false,
+      "historical_payer_rows": 0,
+      "payer_holder_address_overlap": 0,
+      "payer_set_is_not_holder_set": true,
+      "position_holder_rows": 0,
+      "position_kind_counts": {},
+      "proportional_contribution_ancestry": "UNPROVEN",
+      "quote_inputs_retained": "original DTF and observed WETH components, separately; routed intermediate DTF excluded",
+      "tokenstaking_migration_per_holder_ancestry": "UNPROVEN",
+      "tokenstaking_migration_rows": 0
+    },
+    "weighted_nft": []
+  },
+  "coverage": {
+    "cited_preincident": [
+      {
+        "bytes": null,
+        "path": "../2026-09-16-dtf-pre-exploit/DTF_SOLD.md",
+        "role": "cited_context_missing",
+        "sha256": "UNKNOWN"
+      },
+      {
+        "bytes": null,
+        "path": "../2026-09-16-dtf-pre-exploit/SNAPSHOT.md",
+        "role": "cited_context_missing",
+        "sha256": "UNKNOWN"
+      },
+      {
+        "bytes": null,
+        "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-summary.json",
+        "role": "cited_context_missing",
+        "sha256": "UNKNOWN"
+      },
+      {
+        "bytes": null,
+        "path": "../2026-09-16-dtf-pre-exploit/holders.csv",
+        "role": "cited_context_missing",
+        "sha256": "UNKNOWN"
+      }
+    ],
+    "discovered_not_declared": [
+      {
+        "bytes": 14,
+        "path": "manifest.json",
+        "role": "discovered_input",
+        "sha256": "40a4d9be65559a3e38cfd456a0581d8edfe5c1b71550a412c6386b2546c4d101"
+      },
+      {
+        "bytes": 18,
+        "path": "sample.csv",
+        "role": "discovered_input",
+        "sha256": "ce456f6d77132994526aa790852e1e082cbf0c171ba04d5319a1d2d9e46be293"
+      },
+      {
+        "bytes": 40,
+        "path": "sources.json",
+        "role": "discovered_input",
+        "sha256": "edfdc88145d39de814318b14d746f8636c05d0a9dde71060d0ab86f0dcfcbcd0"
+      }
+    ],
+    "every_declared_source_listed": true,
+    "every_manifest_file_listed": true,
+    "excluded_from_determinism": [
+      "migration/"
+    ],
+    "input_directory_basename": "unlisted-float",
+    "manifest_files": [],
+    "source_ids_present": [],
+    "sources": []
+  },
+  "gaps": [
+    {
+      "id": "account-ledger-upload",
+      "reason": "account-ledger.csv is historical and non-issuable",
+      "status": "FORBIDDEN"
+    },
+    {
+      "id": "descendant-double-credit",
+      "independent_allocation_dataset": "ABSENT_NOT_APPROVED",
+      "status": "UNRESOLVED_NO_APPROVED_INDEPENDENT_SET"
+    },
+    {
+      "id": "funded-snapshot-quote",
+      "reason": "no post-funding reserve snapshot is in this bundle; C0 is not computed",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "fungible-proportional-ancestry",
+      "reason": "mixed fungible balances do not carry proved contribution ancestry",
+      "status": "UNPROVEN"
+    },
+    {
+      "id": "held-lower-bound",
+      "reason": "historical held lower bounds are not full proportional attribution",
+      "status": "NOT_ATTRIBUTION"
+    },
+    {
+      "category": "earlier_cp_nft_lp_lock",
+      "id": "provenance-earlier_cp_nft_lp_lock",
+      "note": "distinct from fungible LP; S011 does not replay these receipts",
+      "status": "ABSENT_NOT_PROVED"
+    },
+    {
+      "category": "earlier_cp_receipt",
+      "id": "provenance-earlier_cp_receipt",
+      "note": "supply discrepancy remains unresolved and is not allocatable",
+      "status": "OBSERVED_LATEST_STATE"
+    },
+    {
+      "category": "fungible_lp_token",
+      "id": "provenance-fungible_lp_token",
+      "note": "separate from the earlier CP NFT LP lock; absence is not proved",
+      "status": "ABSENT_NOT_PROVED"
+    },
+    {
+      "category": "native_eth",
+      "id": "provenance-native_eth",
+      "note": "native ETH flows were not reconstructed",
+      "status": "ABSENT_NOT_PROVED"
+    },
+    {
+      "category": "underlying_se_shares",
+      "id": "provenance-underlying_se_shares",
+      "note": "no standalone SE-share position rows; absence of exposure is not proved",
+      "status": "ABSENT_NOT_PROVED"
+    },
+    {
+      "category": "weighted_nft",
+      "id": "provenance-weighted_nft",
+      "note": "source identity is collection plus token id, not the buyer",
+      "status": "ABSENT_NOT_PROVED"
+    },
+    {
+      "category": "weth",
+      "id": "provenance-weth",
+      "note": "observed WETH is not renamed to ETH; post-cutoff coverage is unproved",
+      "status": "PARTIAL_INBOUND_EVIDENCE"
+    },
+    {
+      "category": "claim_vault_sy_custody",
+      "id": "route-claim_vault_sy_custody",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "earlier_cp_detf",
+      "id": "route-earlier_cp_detf",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "earlier_cp_nft_lp_lock",
+      "id": "route-earlier_cp_nft_lp_lock",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "earlier_cp_receipt",
+      "id": "route-earlier_cp_receipt",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "fungible_lp_token",
+      "id": "route-fungible_lp_token",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "native_eth",
+      "id": "route-native_eth",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "tokenstaking_claim",
+      "id": "route-tokenstaking_claim",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "underlying_se_shares",
+      "id": "route-underlying_se_shares",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "weighted_detf",
+      "id": "route-weighted_detf",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "weighted_nft",
+      "id": "route-weighted_nft",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "weighted_sdetf",
+      "id": "route-weighted_sdetf",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "weighted_sy",
+      "id": "route-weighted_sy",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    },
+    {
+      "category": "weth",
+      "id": "route-weth",
+      "reason": "route support is not established by an address or a frozen row",
+      "status": "UNPROVEN"
+    }
+  ],
+  "held_lower_bound_is_full_proportional_attribution": false,
+  "historical_diagnostics": {
+    "checks": {
+      "account_ledger_directly_uploadable": false,
+      "account_rows": 0,
+      "earlier_position_rows": 0,
+      "held_exclusion_lower_bound_raw": "0",
+      "held_lower_bound_is_full_proportional_attribution": false,
+      "held_partition_matches_exposure": true,
+      "held_plus_remainder_raw": "0",
+      "issuable_accounts": 0,
+      "look_through_mismatches": 0,
+      "nft_pre_gons_raw": "0",
+      "recovery_observations": 0,
+      "recovery_raw_dtf_sum": "0",
+      "unresolved_snapshot_remainder_raw": "0",
+      "upfront_credit_for_current_holdings_raw": "0",
+      "weighted_nominal_detf_exposure_raw": "0",
+      "weighted_position_rows": 0
+    },
+    "frozen_reconciliation_compare": {},
+    "label": "historical_diagnostic_not_an_award_and_not_proportional_attribution"
+  },
+  "malformed_quantity_policy": "reject_without_zero_substitution",
+  "policy_revision": "UNKNOWN",
+  "recorded_source_addresses": {
+    "0x0bd7d308f8e1639fab988df18a8011f41eacad73": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+    "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+    "0x2e9c1f705ab967c5af59249203d7495bdabb223b": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+    "0x46e068c2393e189fbc86632f67210af253a42aa8": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+    "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+    "0x4ac89ad061a531fa62ddceed53520c2750113b01": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+    "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+    "0x999dae02d22e5fee1c4508430d5196d31d631009": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+    "0xaf0e1967c8f755c747615c5427108bc549ca1122": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+    "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+    "0xb55604cf4dcdabb362078e106d20f98512391edf": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+    "0xc84999f31ea72a793a65ce73aa05ff624fdcbb51": "0xC84999F31eA72A793a65ce73aa05ff624FDCBB51",
+    "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00",
+    "0xee5576fa1bcaa380e591d01245f406f3f384eb01": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+    "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E"
+  },
+  "schema_version": "dtf-migration-phase01-provenance-reconciliation/1",
+  "status": "read_only_reconciliation_not_an_allocation",
+  "unknown_values": {
+    "census": [],
+    "policy": "blank numeric fields are UNKNOWN and are never coerced to zero; explicit canonical zero stays zero",
+    "records": [],
+    "unproved_ancestry": [
+      {
+        "reason": "proportional contribution ancestry is not proved",
+        "subject": "fungible_and_wrapper_balances",
+        "value": "UNKNOWN"
+      },
+      {
+        "reason": "native ETH was not reconstructed; observed WETH is a separate asset",
+        "subject": "native_eth",
+        "value": "UNKNOWN"
+      },
+      {
+        "reason": "post-funding quote book is not in this bundle",
+        "subject": "funded_snapshot_c0",
+        "value": "UNKNOWN"
+      },
+      {
+        "reason": "exception C2 leaves the gap unresolved and not allocatable",
+        "subject": "earlier_cp_receipt_supply_gap",
+        "value": "UNKNOWN"
+      },
+      {
+        "reason": "claim and transfer events do not prove later holders",
+        "subject": "descendant_ownership_after_claim_or_transfer",
+        "value": "UNKNOWN"
+      }
+    ]
+  },
+  "unresolved_relationships": {
+    "claimed_descendant_also_represented_in_conversions": true,
+    "descendants": [
+      {
+        "double_credit_with_remaining_weight": "UNRESOLVED",
+        "kind": "legacy_weight_to_sy_descendants",
+        "observed_conversions": 0,
+        "status": "UNRESOLVED",
+        "subsequent_proportional_ancestry": "UNPROVEN"
+      },
+      {
+        "addresses": [],
+        "kind": "same_address_two_products",
+        "note": "A repeated address is not one human entitlement and is not automatically two unrelated entitlements.",
+        "status": "NOT_MERGED"
+      },
+      {
+        "external_recovery": false,
+        "kind": "stake_unstake_representation_change",
+        "observed_conversions": 0,
+        "status": "UNRESOLVED",
+        "subsequent_proportional_ancestry": "UNPROVEN"
+      },
+      {
+        "backing_receipt": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+        "claim_vault": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+        "kind": "sy_wrapper_backing",
+        "note": "SY shares and the wrapper's sDETF backing are one wrapped claim, not two. TokenStaking weights and claim-vault SY are the same remaining claim, not two.",
+        "status": "UNRESOLVED_IF_BOTH_CREDITED",
+        "wrapper": "0xb55604cf4dcdabb362078e106d20f98512391edf"
+      }
+    ],
+    "duplicate_key_scan": "complete_for_loaded_tables",
+    "duplicates": [
+      {
+        "column": "token_id",
+        "note": "The same numeric token id in both NFT collections is two source identities. A token-id-only join is unsafe.",
+        "overlapping_token_ids": [],
+        "status": "DISAMBIGUATED_NOT_A_DUPLICATE",
+        "table": "cross_generation_token_id"
+      }
+    ],
+    "independent_allocation_dataset": "ABSENT_NOT_APPROVED",
+    "same_contribution_paid_via_nft_descendant_and_independent_allocation": "UNRESOLVED_NO_APPROVED_INDEPENDENT_SET"
+  }
+}

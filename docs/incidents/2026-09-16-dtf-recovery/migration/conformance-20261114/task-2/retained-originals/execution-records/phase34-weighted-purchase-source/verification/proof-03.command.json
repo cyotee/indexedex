@@ -1,0 +1,36 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/verify.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification",
+  "pid": 10635,
+  "startedAt": "2026-11-13T12:20:38.159Z",
+  "finishedAt": "2026-11-13T12:20:39.204Z",
+  "exit": 0,
+  "stdoutBytes": 6275016,
+  "stdoutSha256": "66351a0b9218a5db2cca5f99409c75414772d7ad161973f8e60dfbf57954ce2c",
+  "stderrBytes": 0,
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrInline": "",
+  "sources": [
+    {
+      "path": "auth.mjs",
+      "bytes": 8865,
+      "sha256": "54ddfaacea1e48302685d5ec47a479583f93b9342ff908ea7f8603def2d0eba9",
+      "pureLines": 141
+    },
+    {
+      "path": "rows.mjs",
+      "bytes": 14646,
+      "sha256": "ab78ac804fbd1f12ce82bf28473a7af43a52c59a0ff6e051c27d076220bfc77c",
+      "pureLines": 186
+    },
+    {
+      "path": "verify.mjs",
+      "bytes": 7784,
+      "sha256": "4bd0612024c89f2c34a10f369eae4d077d3250805595c7d64a765083fb31f94d",
+      "pureLines": 92
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cartographer Audit Ledger",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "kind",
+    "target",
+    "snapshot",
+    "classes",
+    "validation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "cartographer.audit-ledger.v1"
+    },
+    "id": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "removal"
+      ]
+    },
+    "target": {
+      "type": "object"
+    },
+    "snapshot": {
+      "type": "object"
+    },
+    "classes": {
+      "type": "array"
+    },
+    "validation": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

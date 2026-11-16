@@ -1,0 +1,939 @@
+{
+  "started": "2026-11-13T09:09:31.965Z",
+  "subject": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+  "baselineRoot": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support",
+  "acceptedBrief": {
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 4340,
+    "sha256": "51675db52e223003696e4af110d3b9db5df4e316f85531a54c022fcc92183445",
+    "target": null
+  },
+  "acceptedSource": {
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 1659,
+    "sha256": "c6f972ac5dbc306d5e838e11775e403a28ed637646c97db6ad8bb796775c9d0c",
+    "target": null
+  },
+  "acceptedReport": {
+    "expected": {
+      "path": "report.md",
+      "bytes": 13625,
+      "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50"
+    },
+    "actual": {
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 13625,
+      "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50",
+      "target": null
+    },
+    "match": true
+  },
+  "scope": "Immutable delivery authentication; no runtime or financial approval",
+  "runtimeReplay": false,
+  "originalBaselineRows": {
+    "evidence": 5842,
+    "evidence-perms": 5849,
+    "evidence-dirs": 7,
+    "input": 30,
+    "input-perms": 35,
+    "input-dirs": 5,
+    "refs": 60
+  },
+  "originalIntakeRows": 2930,
+  "preservationDifferences": {
+    "evidence": [],
+    "evidence-perms": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+        "expected": {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+          "kind": "dir",
+          "perm": "0o755",
+          "st_mode": 16877,
+          "size": 128,
+          "sha256": null,
+          "target": null
+        },
+        "actual": {
+          "kind": "dir",
+          "perm": "0o755",
+          "st_mode": 16877,
+          "size": 160,
+          "sha256": null,
+          "target": null
+        },
+        "differences": [
+          "size"
+        ]
+      }
+    ],
+    "evidence-dirs": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+        "expected": {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+          "kind": "dir",
+          "perm": "0o755",
+          "st_mode": 16877,
+          "size": 128,
+          "nlink": 4,
+          "childCount": 2,
+          "childrenSha256": "6427893862c3486e1889c0f3958e78f4e1423eaf68bdb0c670238d58b2430259",
+          "sha256": null,
+          "target": null
+        },
+        "actual": {
+          "kind": "dir",
+          "perm": "0o755",
+          "st_mode": 16877,
+          "size": 160,
+          "nlink": 5,
+          "childCount": 3,
+          "childrenSha256": "c7fc894590f20266a5c6109144443da05e87deae03aa23b777e5132c15e9af1d",
+          "sha256": null,
+          "target": null
+        },
+        "differences": [
+          "size",
+          "nlink",
+          "childCount",
+          "childrenSha256"
+        ]
+      }
+    ],
+    "input": [],
+    "input-perms": [],
+    "input-dirs": [],
+    "refs": [
+      {
+        "path": ".git/packed-refs",
+        "expected": {
+          "path": ".git/packed-refs",
+          "bytes": 4291,
+          "sha256": "c9b82b77265bae5c48a14f51d7f5f2e00a223688b420889aee5b79a98bf6771d",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": null
+        },
+        "actual": {
+          "bytes": 6754,
+          "sha256": "d4eaea5282d2f7e72f8eedd07e617823fb095218f60756366b17a7eccdaf4711",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": null
+        },
+        "differences": [
+          "bytes",
+          "sha256"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-05",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-05",
+          "bytes": 41,
+          "sha256": "edb739ece2625919fa727b5f4dfc42b203235c1ef4b59dd71111024ce9266c3e",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-06-e2",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-06-e2",
+          "bytes": 41,
+          "sha256": "b2bb51cf93d31af93769cc7d5a31016e8663ddf9309b4f7d86f7f0e2af69ddaf",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "5021e8d4a62bcbddc555f580ef98f8666d993aab\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-07-recovery",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-07-recovery",
+          "bytes": 41,
+          "sha256": "c2463823deab2b92f87fb7093509d9e7fa7daafeb6729674f91ba862f9f2198f",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "421072a7630a0d3d47a6f36e1062d9eae98c93e2\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-08-operator",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-08-operator",
+          "bytes": 41,
+          "sha256": "38a2374f42f21c7b4d8e1758eb093e042a63df5acd071193fb28c0db75b17f78",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "3f577eeca049c1bd70a812d130941c8a38dd4781\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-09-deployment-gas",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-09-deployment-gas",
+          "bytes": 41,
+          "sha256": "c2463823deab2b92f87fb7093509d9e7fa7daafeb6729674f91ba862f9f2198f",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "421072a7630a0d3d47a6f36e1062d9eae98c93e2\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-11-same-wallet-sources",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-11-same-wallet-sources",
+          "bytes": 41,
+          "sha256": "38a2374f42f21c7b4d8e1758eb093e042a63df5acd071193fb28c0db75b17f78",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "3f577eeca049c1bd70a812d130941c8a38dd4781\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-12-wallet-admission",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-12-wallet-admission",
+          "bytes": 41,
+          "sha256": "451f07cae19ca79a11ba85c21faec3caa72becb91ba46a1b4aa38c81c1a02e25",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "2c2b3370ded30cae1662329025d4fb58f7197330\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-13-weighted-liquid",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-13-weighted-liquid",
+          "bytes": 41,
+          "sha256": "2fe5906f23eef90c72aeedc3a3217ac72955bb76015294bc9d8ebd759531c8d4",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-14-weighted-sy",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-14-weighted-sy",
+          "bytes": 41,
+          "sha256": "708418ff2231e8856c35a30c7c94cd24cf3ffb0664d6a335a5adad35102e1559",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-15-dtf-custody-se",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-15-dtf-custody-se",
+          "bytes": 41,
+          "sha256": "d8d38e4012dc345bbbc2a91f2afda3e05e2836576c69bf3e69227797d20dbd6f",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "4a53299b490343ed904d70c92ecbc7360fcb7659\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-16-claim-vault",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-16-claim-vault",
+          "bytes": 41,
+          "sha256": "3461d7732f066ca97f4fc3a69ce2b863571bc5535e6907c550329bdd6273bc0e",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "a96f0fd26c1a1fdba35750cff74d866afa3a9796\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-17-weighted-receipt",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-17-weighted-receipt",
+          "bytes": 41,
+          "sha256": "5d62d75633ee1f0028faffa72d87698aea97cb5bb31d5a34f8ba191ec48aad39",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "acdbe319f3a20c3af6bea594c62461b6c7988717\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-18-earlier-receipt",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-18-earlier-receipt",
+          "bytes": 41,
+          "sha256": "404f1334d7521e8484ee1e75d6c9e64bc61b3b3d0d4ff6361e959e51623eb854",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "1df9076c73b94a4f63172395763fa8cdd48fe060\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-19-earlier-liquid",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-19-earlier-liquid",
+          "bytes": 41,
+          "sha256": "df16cdbdf12193dd191acd02aae7e0aecd63f42c55be906392cc0758baa4d8f3",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "3ec0912bafebf9c0aa66770a72f04501e5c11865\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-19-earlier-liquid-source",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-19-earlier-liquid-source",
+          "bytes": 41,
+          "sha256": "5d62d75633ee1f0028faffa72d87698aea97cb5bb31d5a34f8ba191ec48aad39",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "acdbe319f3a20c3af6bea594c62461b6c7988717\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-20-se-lp-source",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-20-se-lp-source",
+          "bytes": 41,
+          "sha256": "404f1334d7521e8484ee1e75d6c9e64bc61b3b3d0d4ff6361e959e51623eb854",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "1df9076c73b94a4f63172395763fa8cdd48fe060\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-21-held-se-lp",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-21-held-se-lp",
+          "bytes": 41,
+          "sha256": "e58e63b0db95446c132506cac6e055cbae9e6915345000c561f5a3c6cdeae5e1",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "4eaa7decab80d24cf37cb3781eff5ffaf9362942\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-22-claimed-sy-source",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-22-claimed-sy-source",
+          "bytes": 41,
+          "sha256": "e58e63b0db95446c132506cac6e055cbae9e6915345000c561f5a3c6cdeae5e1",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "4eaa7decab80d24cf37cb3781eff5ffaf9362942\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-23-claimed-sy-integration",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-23-claimed-sy-integration",
+          "bytes": 41,
+          "sha256": "1fc8fc83c08ffea454b82ae5312aa8a5ba769c5cd6ee1ab2520b9f3d423526fc",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "15fd629375edeb361f6a39262795bdc66723ca3a\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-24-stateful-invariants",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-24-stateful-invariants",
+          "bytes": 41,
+          "sha256": "bbad16e5c6ca428ad8c6deeb8792560a9e2bf7c70aeb20c9b87b35f6fa3fb30c",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-25-full-hermetic",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-25-full-hermetic",
+          "bytes": 41,
+          "sha256": "9f631241fe1d82ef6d8e279442be85e640fd477ee94da3690c0ef01ba31e76c4",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "137fa0c8749165087c7d1d0156788f58a1dbf1b8\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-26-portable-operator",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-26-portable-operator",
+          "bytes": 41,
+          "sha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "0856a5c56e5d09b81c669f59b613efef79133e19\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-27-data-candidates",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-27-data-candidates",
+          "bytes": 41,
+          "sha256": "dcd150d26b0ed9bfa44f3993987b3b3257ee4c57cd500a55f785cd5cd86890a5",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "789fced820ed494d9651c598fb8f75c646d727a7\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+          "bytes": 41,
+          "sha256": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-29-delegated-source",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-29-delegated-source",
+          "bytes": 41,
+          "sha256": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      },
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-30-recovery-receipts",
+        "expected": {
+          "path": ".git/refs/heads/work/dtf-migration-phase-30-recovery-receipts",
+          "bytes": 41,
+          "sha256": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+          "st_mode": 33188,
+          "perm": "0o644",
+          "text": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n"
+        },
+        "actual": {
+          "present": false
+        },
+        "differences": [
+          "bytes",
+          "sha256",
+          "st_mode",
+          "perm"
+        ]
+      }
+    ]
+  },
+  "originalCommitArtifacts": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/source-manifest.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 34431,
+      "sha256": "4fae94bf90323ae2e738e0e4c8092da607594d708a31f093a76ae9250e53d28a",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/receipt.md",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 17552,
+      "sha256": "54c90f14e7135e14b3d721d97d538a2e756d7735234ff07b0ed55169b52b00df",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/whitespace.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 200,
+      "sha256": "1d3e93575d9e813b163571f7504402527be224b69b87f9601c2f440ecbf634d6",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/summary.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2455,
+      "sha256": "681da794f4744e72d45909933b88629c23fbfa16f46135f2f17a66e8a5b0fe63",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/commit-invocation.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 887,
+      "sha256": "f0381778f61e063466e5c42093195c8177d207a7d835868596a017f470811c3b",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/preservation-compare-before-support.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 531,
+      "sha256": "bc88698d5d812cc46c792769dc0459e78b62cbb14acf5c919ca1b7aaea4efe04",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence-dirs.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2046,
+      "sha256": "b9f01ec959d98138ca979e9f900e947cb09ac162d50c4e03e15bb037ac3989db",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input-dirs.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1296,
+      "sha256": "6ae2df4d65fe91a66d30c747628271679dbab1ecf8a1d7f35fac89f5d49f91f9",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence-perms.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1600457,
+      "sha256": "7bc075805c7f55be5f186a1c66e81cd5eb9e95074e237032ce5fe935ee9ed1fc",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/show-ref.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 6774,
+      "sha256": "773bd8131429e81c86329dc1ccd2d9f6d25d89bb6948a12b144e9baa214eeef2",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/links.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2796,
+      "sha256": "c4404427f4fe25f0a09eb5bb2d530ac874d7e3a5547e576b65f106e53d83cecd",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/support-scripts.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1709,
+      "sha256": "c9388921f32b3ac21c9406667c08207eac0206fe6602baea4d5c73a30d2b01aa",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/name-status.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 438,
+      "sha256": "51d4df08c41830c289445a5cc2d1591cdb085c1d0a00df2327fd85bb7510865d",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/ref-bookkeeping.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 9689,
+      "sha256": "6de8ccfd9a506d28333dfa85f0e7c2001b7736863eab347139b434a756140d9e",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/check-attr.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/numstat.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 461,
+      "sha256": "9e8c84459fd91fed4ec6cc29bde5f3a39eeff79feea94c086fbfdc8ec217f258",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/status-before.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 696731,
+      "sha256": "f484432b815ed942d35f4846b9a1cc1c442b52db4f902488e513554bb6702547",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/preservation-compare.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 9310,
+      "sha256": "bd04bc75f34af1fa3cb61463fd07686f7a09a4a4fc3571af48bf319d78e19374",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1710196,
+      "sha256": "69535830f7d81b086ed57d6e222df9738010f66e596941edc501eca886b7b20f",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/scope-files.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2021,
+      "sha256": "97297fb207333377ee6607b2bbfbb8a5f6415b85dd7f929d90f099399b0aa04d",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 7898,
+      "sha256": "a28a29eb85372bf3c41c3f4d461475b7b0aaba7d9bfbdb8ead12b2f222c44800",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/source-bindings.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 7384,
+      "sha256": "fc9d71d4d189c4993cffc63431ef5c29289c137d73b5a5212e4bf9c22638b0dd",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/recipe.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 5103,
+      "sha256": "bda4414e160eb697df748d753223ec2ef6c7a9707f89dc837692f3e65c7ed0ca",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/refs.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 14561,
+      "sha256": "2c35f60cf9f244958e5ea091fad5b9be37494923d0667f0c431e5337373b458d",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input-perms.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 8076,
+      "sha256": "1caf7f698a7113d62eed6c92b73d4f70115c89439137a5a9e311b13291145e73",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/source-diff-relation.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1073,
+      "sha256": "5a4cc79a4cf5d5a1399e8a000960cf9371a13a00cdacf11879fbc083a9b92ddf",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/frozen-source-modes.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 37746,
+      "sha256": "c31efadc5fd435e4fba453508858c6d6e2bc9b4996f3a3b96f77b49817a4a25e",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/seal-check.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 6017,
+      "sha256": "4e25d49b0bd471189b77ba67f784c22678116c5c581e215250aa7988a46a7c32",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/tracked-diff.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 28723,
+      "sha256": "24489d1a61812c9d7b91d03bf874cffb85a36cb6d10821636fbb56ea80533829",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/staged-before.txt",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/indexes.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 7876,
+      "sha256": "03788db198e56b82cf8692b6369b305ad6183df73614152599a2f6d4f141b580",
+      "target": null
+    }
+  ]
+}

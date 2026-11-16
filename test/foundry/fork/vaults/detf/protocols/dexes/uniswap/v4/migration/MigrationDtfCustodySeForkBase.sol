@@ -64,7 +64,7 @@ abstract contract MigrationDtfCustodySeForkBase is MigrationRecoveryDonationFork
 
     function _configureSe(address wallet_, uint256 q_) internal returns (uint256) {
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(_seInputs(wallet_, q_));
+        allocation.configureDtfCustodySeEntitlements(_seInputs(wallet_, q_), pricingId);
         return migration.dtfCustodySeEntitlement(SE_ORIGIN).credit;
     }
 

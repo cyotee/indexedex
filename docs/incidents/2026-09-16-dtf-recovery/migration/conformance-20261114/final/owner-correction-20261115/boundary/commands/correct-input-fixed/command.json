@@ -1,0 +1,15 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "argv": [
+    "bun",
+    "--eval",
+    "import {readFile,writeFile} from \"node:fs/promises\"; import {createHash} from \"node:crypto\"; const p=\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/current-input.json\"; const b=await readFile(p); const a=JSON.parse(b.toString()); a.generatedAuditRecords=[p,\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery/inventory.json\"]; a.parentInventory={path:p,sha256:createHash(\"sha256\").update(b).digest(\"hex\")}; a.qualification+=\" Corrected self-reference ordering; prior failed attempt preserved.\"; await writeFile(\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/corrected-input.json\",JSON.stringify(a),{flag:\"wx\"}); console.log(\"CURRENT_INPUT_CORRECTED\");"
+  ],
+  "started": "2026-11-15T19:38:07.996Z",
+  "runtime": "1.4.2",
+  "recorder": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+  },
+  "scope": "Offline file inventory bookkeeping only"
+}

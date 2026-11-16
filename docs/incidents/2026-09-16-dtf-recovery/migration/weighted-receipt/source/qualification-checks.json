@@ -1,0 +1,67 @@
+{
+  "disposition": "admitted-proposal",
+  "scope": "Producer qualification for independent source-contract admission; no implementation authorization.",
+  "runtimeReplay": false,
+  "mappingChanged": false,
+  "productNotReadyInference": "withdrawn",
+  "requirementFindings": {
+    "gonsMandatoryForEligibleCredit": "No such explicit requirement established. Gon custody representation alone is insufficient.",
+    "retainedCurrentlyNonTransferableRemainderViolatesRequirement": "No explicit violation established. Current positive-input, proportional-credit, zero-credit rejection and residue-preservation rules apply.",
+    "unconditionalTerminalRedemption": "No explicit immediate, deadline or source-funding-independent eventual terminal guarantee found.",
+    "ownerDecisionRequiredByBoundaryAlone": false
+  },
+  "citations": {
+    "currentMainPlan": {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "lines": ["206", "259", "286-302", "560"]
+    },
+    "currentMainPrd": {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "lines": ["253", "255", "283", "395-404", "458"]
+    },
+    "phase11WeightedContract": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/weighted/contract.md",
+      "lines": ["333-340", "344-359"]
+    }
+  },
+  "checks": [
+    {
+      "command": "./node_modules/.bin/tsc --noEmit --strict --target ES2022 --module NodeNext --moduleResolution NodeNext --skipLibCheck --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/qualification.ts",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --exit-code",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --cached --ignore-submodules=all --exit-code",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "lsof -nP -iTCP:18567 -sTCP:LISTEN",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "ps -p 99301,382,1820 -o pid=,command=",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "checkpointLstat": "ENOENT",
+  "ownedRuntimePending": false,
+  "historicalDelivery": {
+    "seal": "seal.json",
+    "sha256": "d2a2e2393463e6b1ba2957221572d40440ba01a18cee4890a90096deda4f824c",
+    "preservedOriginalDocuments": ["history/pre-qualification/contract.md", "history/pre-qualification/report.md"],
+    "witnesses": "Unchanged run-04, proof.json and audit-final.log; no source probe or receipt replay."
+  }
+}

@@ -1,0 +1,260 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {Creation} from "@crane/contracts/utils/Creation.sol";
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+import {IERC165} from "@crane/contracts/introspection/ERC165/IERC165.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
+
+import {TestBase_RebasingAwareERC4626} from
+    "contracts/protocols/staking/rebasingVault/TestBase_RebasingAwareERC4626.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
+import {IVaultRegistryVaultPackageQuery} from "contracts/interfaces/IVaultRegistryVaultPackageQuery.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
+import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {
+    IStandardExchangeTransitionQuote,
+    IStandardExchangeExternalQuote
+} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IRebasingAwareERC4626} from
+    "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
+import {RebasingAwareERC4626_Component_FactoryService} from
+    "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626_Component_FactoryService.sol";
+import {IRebasingAwareERC4626DFPkg} from
+    "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626DFPkg.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+
+contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
+    /// @notice Release labels stay metadata; component identity is solely the ABI-encoded contract name.
+    function test_create3CanonicalSalt_bindingsAndReuse() public {
+        bytes32 salt = RebasingAwareERC4626_Component_FactoryService.releaseSalt("RebasingAwareERC4626DFPkg");
+        assertEq(salt, abi.encode("RebasingAwareERC4626DFPkg")._hash());
+        assertTrue(salt != abi.encode("indexedex.rebasing-aware-erc4626.sy-se.v1", "RebasingAwareERC4626DFPkg")._hash());
+        assertEq(address(pkg), Creation._create3AddressFromOf(address(create3Factory), salt));
+        address[] memory initial = pkg.facetAddresses();
+        assertEq(initial[0], address(erc20Facet));
+        assertEq(initial[1], address(rebasingAwareErc4626Facet));
+        assertEq(initial[2], address(standardExchangeFacet));
+        assertEq(initial[3], address(standardYieldFacet));
+        assertEq(initial[4], address(vaultMetadataFacet));
+        assertEq(initial[5], address(transitionQuoteFacet));
+        IRebasingAwareERC4626DFPkg.PkgInit memory init = _pkgInit();
+        init.standardExchangeFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("RebasingAwareStandardExchangeFacet.sol:RebasingAwareStandardExchangeFacet"),
+            abi.encode("RebasingAwareERC4626_Packaging.alternateExchange")._hash());
+        vm.prank(owner);
+        IRebasingAwareERC4626DFPkg again = RebasingAwareERC4626_Component_FactoryService.deployRebasingAwareERC4626DFPkg(indexedexManager, init);
+        assertEq(address(again), address(pkg));
+        assertEq(again.facetAddresses(), initial);
+    }
+
+    using BetterEfficientHashLib for bytes;
+    uint256 constant MAX_RUNTIME = 24_576;
+
+    /// @notice Compare every installed function against compiler-generated ABI signatures.
+    function test_PKG02_completeFacetAbiAndLoupeMatrix() public {
+        IFacet[6] memory facets = [erc20Facet, rebasingAwareErc4626Facet, standardExchangeFacet,
+            standardYieldFacet, vaultMetadataFacet, transitionQuoteFacet];
+        for (uint256 i; i < facets.length; ++i) {
+            IFacet facet = facets[i];
+            string memory name = facet.facetName();
+            string memory artifact = vm.readFile(string.concat("out/", name, ".sol/", name, ".json"));
+            string[] memory signatures = vm.parseJsonKeys(artifact, ".methodIdentifiers");
+            bytes4[] memory expected = new bytes4[](signatures.length - 4);
+            uint256 count;
+            for (uint256 j; j < signatures.length; ++j) {
+                bytes4 selector = bytes4(keccak256(bytes(signatures[j])));
+                if (selector == IFacet.facetName.selector || selector == IFacet.facetFuncs.selector
+                    || selector == IFacet.facetInterfaces.selector || selector == IFacet.facetMetadata.selector) continue;
+                expected[count++] = selector;
+                assertEq(IDiamondLoupe(address(vault)).facetAddress(selector), address(facet), signatures[j]);
+            }
+            assertEq(count, expected.length);
+            assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet, expected, facet.facetFuncs()));
+            (string memory metaName, bytes4[] memory interfaces, bytes4[] memory selectors) = facet.facetMetadata();
+            assertTrue(Behavior_IFacet.areValid_IFacet_facetMetadata(facet, metaName, interfaces, selectors));
+            for (uint256 j; j < interfaces.length; ++j) {
+                assertTrue(IERC165(address(vault)).supportsInterface(interfaces[j]));
+            }
+        }
+        assertEq(IDiamondLoupe(address(vault)).facetAddress(bytes4(0xffffffff)), address(0));
+        assertFalse(IERC165(address(vault)).supportsInterface(bytes4(0xffffffff)));
+    }
+
+    function test_PKG03_registeredPackageAndVault() public view {
+        assertTrue(IVaultRegistryVaultPackageQuery(address(indexedexManager)).isPackage(address(pkg)));
+        assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(address(vault)));
+        address[] memory ofToken = IVaultRegistryVaultQuery(address(indexedexManager)).vaultsOfToken(address(asset));
+        bool found;
+        for (uint256 i; i < ofToken.length; ++i) {
+            if (ofToken[i] == address(vault)) found = true;
+        }
+        assertTrue(found);
+    }
+
+    function test_PKG02_proxySelectors() public view {
+        assertEq(vault.asset(), address(asset));
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(address(vault)).previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(vault)));
+        assertEq(previewAmountOut1, 0);
+        assertEq(IStandardizedYield(address(vault)).yieldToken(), address(asset));
+        assertEq(IBasicVault(address(vault)).vaultTokens().length, 1);
+        assertEq(IStandardVault(address(vault)).vaultFeeTypeIds(), bytes32(0));
+        (bytes memory state,) = IStandardExchangeTransitionQuote(address(vault)).quoteState(address(asset), alice);
+        assertEq(state.length, 288);
+    }
+
+    function test_PKG02_loupeDestinations() public view {
+        bytes4[4] memory selectors = [
+            IERC4626.deposit.selector,
+            IStandardExchangeIn.exchangeIn.selector,
+            IStandardizedYield.deposit.selector,
+            IStandardExchangeTransitionQuote.quoteState.selector
+        ];
+        address[4] memory facets = [
+            address(rebasingAwareErc4626Facet),
+            address(standardExchangeFacet),
+            address(standardYieldFacet),
+            address(transitionQuoteFacet)
+        ];
+        for (uint256 i; i < selectors.length; ++i) {
+            assertEq(IDiamondLoupe(address(vault)).facetAddress(selectors[i]), facets[i]);
+        }
+        assertEq(
+            IDiamondLoupe(address(vault)).facetAddress(IERC20Metadata.name.selector),
+            address(erc20Facet)
+        );
+    }
+
+    function test_PKG02_erc165() public view {
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IERC4626).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeIn).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeOut).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardizedYield).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeTransitionQuote).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeExternalQuote).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IBasicVault).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardVault).interfaceId));
+    }
+
+    function test_runtimeSizes() public view {
+        assertLe(address(rebasingAwareErc4626Facet).code.length, MAX_RUNTIME);
+        assertLe(address(standardExchangeFacet).code.length, MAX_RUNTIME);
+        assertLe(address(standardYieldFacet).code.length, MAX_RUNTIME);
+        assertLe(address(vaultMetadataFacet).code.length, MAX_RUNTIME);
+        assertLe(address(transitionQuoteFacet).code.length, MAX_RUNTIME);
+        assertLe(address(pkg).code.length, MAX_RUNTIME);
+        assertLe(address(vault).code.length, MAX_RUNTIME);
+    }
+
+    function test_disableInboundLeavesExits() public {
+        vm.prank(alice);
+        uint256 shares = vault.deposit(15e18, alice);
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(vault), true);
+        vm.prank(alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(vault))
+        );
+        vault.deposit(1e18, alice);
+        vm.prank(alice);
+        uint256 out = vault.redeem(shares / 2, alice, alice);
+        assertGt(out, 0);
+        vm.prank(alice);
+        IERC20(address(vault)).transfer(address(vault), shares / 4);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)),
+            shares / 8,
+            IERC20(address(asset)),
+            0,
+            alice,
+            true,
+            block.timestamp
+        );
+        vm.prank(alice);
+        IERC20(address(vault)).transfer(address(vault), shares / 16);
+        vm.prank(address(caller));
+        IStandardizedYield(address(vault)).redeem(address(caller), shares / 16, address(asset), 0, true);
+    }
+
+    function test_releaseIdentifier() public view {
+        assertEq(pkg.releaseIdentifier(), "indexedex.rebasing-aware-erc4626.sy-se.v1");
+        assertEq(pkg.name(), "RebasingAwareERC4626");
+        assertEq(pkg.vaultFeeTypeIds(), bytes32(0));
+    }
+
+    function test_create3ReplaySameAddress() public {
+        vm.prank(owner);
+        address again = address(
+            RebasingAwareERC4626_Component_FactoryService.deployRebasingAwareERC4626DFPkg(
+                indexedexManager, _pkgInit()
+            )
+        );
+        assertEq(again, address(pkg));
+    }
+
+    function test_legacyErc4626StillWorksOnEnhancedDiamond() public {
+        vm.prank(alice);
+        uint256 shares = vault.deposit(8e18, alice);
+        vm.prank(alice);
+        uint256 assets = vault.redeem(shares, alice, alice);
+        assertGt(assets, 0);
+    }
+
+    function test_F13_feeOracleUpdateStillZeroWrapperFees() public {
+        IVaultFeeOracleManager feeMgr = IVaultFeeOracleManager(address(indexedexManager));
+        vm.prank(owner);
+        feeMgr.setDefaultUsageFee(1e16);
+        vm.prank(owner);
+        feeMgr.setUsageFeeOfVault(address(vault), 1e16);
+        uint256 collectorBefore = asset.balanceOf(address(feeCollector));
+        uint256 supplyBefore = IERC20(address(vault)).totalSupply();
+        vm.prank(alice);
+        uint256 shares = vault.deposit(10e18, alice);
+        assertEq(IERC20(address(vault)).totalSupply(), supplyBefore + shares);
+        assertEq(asset.balanceOf(address(vault)), 10e18);
+        assertEq(asset.balanceOf(address(feeCollector)), collectorBefore);
+        assertEq(IStandardVault(address(vault)).vaultFeeTypeIds(), bytes32(0));
+    }
+
+    function test_PKG03_packageDisableBlocksInboundNotExit() public {
+        vm.prank(alice);
+        uint256 shares = vault.deposit(4e18, alice);
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setPackageDisabled(address(pkg), true);
+        vm.prank(alice);
+        vm.expectRevert();
+        vault.deposit(1e18, alice);
+        vm.prank(alice);
+        uint256 out = vault.redeem(shares, alice, alice);
+        assertGt(out, 0);
+    }
+
+    function test_wrongFacetPkgCannotDeployVault() public {
+        IRebasingAwareERC4626DFPkg.PkgInit memory bad = _pkgInit();
+        bad.standardExchangeFacet = erc20Facet;
+        vm.prank(owner);
+        IRebasingAwareERC4626DFPkg badPkg =
+            IRebasingAwareERC4626DFPkg(IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+                ArtifactCreationCode.creationCode("RebasingAwareERC4626DFPkg.sol:RebasingAwareERC4626DFPkg"),
+                abi.encode(bad), abi.encode("RebasingAwareERC4626_Packaging.wrongFacet")._hash()
+            ));
+        vm.expectRevert();
+        badPkg.deployVault(IERC20Metadata(address(asset)), 10, bytes32(uint256(77)));
+    }
+}

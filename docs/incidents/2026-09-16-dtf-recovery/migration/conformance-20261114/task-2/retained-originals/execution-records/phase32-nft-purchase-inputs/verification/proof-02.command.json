@@ -1,0 +1,52 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/verify.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification",
+  "pid": 79747,
+  "startedAt": "2026-11-13T11:26:07.156Z",
+  "finishedAt": "2026-11-13T11:26:07.766Z",
+  "exit": 0,
+  "stdoutSha256": "4f28af08b2512341039f7d9643a4fe2fb9f31f5c408a7b6ed4238d3e9382a444",
+  "stdoutBytes": 3303390,
+  "stderr": {
+    "inline": "",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/intake.mjs",
+      "bytes": 7589,
+      "sha256": "0ed1b9b3be441d7b65e0c9e82f942e635ad56478678f807f0e967795c5ef4d9f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/routing.mjs",
+      "bytes": 7105,
+      "sha256": "96a84e919b005f7e82efe427fbc8e4949d4a4f1eb819dc81d076bea21f2c56b4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/verify.mjs",
+      "bytes": 15514,
+      "sha256": "c9c13413ebd377a4521f93684b129245e9bd8ee30691f5fc2de2164e712b5c17"
+    }
+  ],
+  "libraries": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/node_modules/ethers/lib.esm/index.js",
+      "bytes": 350,
+      "sha256": "586bc08ce4c6bdb64f2972f9284f9eca568b7211f33c387d5b83f63887ffc468"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/node_modules/ethers/package.json",
+      "bytes": 4945,
+      "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f"
+    }
+  ],
+  "stdout": {
+    "path": "proof.json",
+    "bytes": 3303390,
+    "sha256": "4f28af08b2512341039f7d9643a4fe2fb9f31f5c408a7b6ed4238d3e9382a444"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "label": "malformed-exponent",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "argv": [
+    "/opt/homebrew/bin/bun",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs",
+    "--input",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/exponent",
+    "--output",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-exponent.json"
+  ],
+  "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/provenance/reconcile.mjs' '--input' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/fixtures/exponent' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/malformed-exponent.json'",
+  "binaryPassObservable": "reject invalid unsigned quantity or malformed CSV; nonzero exit, no fresh output",
+  "started": "2026-11-10T12:54:53.787Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX",
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX",
+    "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX/cache"
+  },
+  "credentialPresent": true
+}

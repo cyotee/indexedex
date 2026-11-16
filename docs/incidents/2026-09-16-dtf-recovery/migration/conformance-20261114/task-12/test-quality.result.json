@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "bun",
+    "/Users/cyotee/.omo/binary-runtime/5.1.70/plugin/skills/programming/scripts/typescript/check-test-junk.ts",
+    "scripts/recovery/dtf-migration/bundle.test.ts"
+  ],
+  "exit": 0,
+  "signal": null,
+  "logSha256": "3ae2f957ef0cc92adb8041c5accdd49c29b0cb7548f6b210891d2d8c74b870cb",
+  "recorderSha256": "cc8f59ad0803b7caf4df3373c0d8ea3d756494501f6d93cc57765c917ab22f48",
+  "sourcesUnchanged": true
+}

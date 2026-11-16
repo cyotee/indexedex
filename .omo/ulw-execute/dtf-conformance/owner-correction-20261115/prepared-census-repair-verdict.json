@@ -1,0 +1,165 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "exact_scope": "Frozen A1 production prepared-range repair: shared compensationEventTopics in execution-domain.ts and use in execution-state.ts, associated frozen tests; retained failure classification only for the shared gate",
+  "confidence": "high",
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "before": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+      "after": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "changed": true,
+      "pureLines": 234
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "before": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "after": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "changed": false,
+      "pureLines": 242
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "before": "c86ed48392ad0c6909df77eb867b83b64d52dc9979f573dde30a29de847c1e47",
+      "after": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "changed": true,
+      "pureLines": 426
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "before": "31cfec3cfb1c1e032f4a5f6159600d17300f75a7b24d07b91e9ac0bea5b9d785",
+      "after": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+      "changed": true,
+      "pureLines": 350
+    }
+  ],
+  "evidence": {
+    "claim": {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-done.json",
+      "sha256": "12fa20751a1c7eb9faec567572c3d2f98ffb700e615437ac30302f29e69caee5"
+    },
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/independent/report.md",
+    "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/independent/verification.json",
+    "beforeFix": {
+      "exit": 1,
+      "passed": 10,
+      "failed": 2,
+      "reason": "Both public prepared verify and read-only activate reject required initialization before repair"
+    },
+    "focused": {
+      "exit": 0,
+      "passed": 41,
+      "failed": 0
+    },
+    "manualPrepared": {
+      "exit": 0,
+      "scenarios": 30,
+      "closedContexts": 30,
+      "actualCliChildren": 3,
+      "originalEvidenceFilesUnchanged": 41
+    },
+    "mutations": {
+      "membershipOmissionsFailed": 20,
+      "deploymentBoundaryOmissionsFailed": 10,
+      "canonicalReceiptCasesFailed": 4,
+      "exactMutantHashesReconstructed": true,
+      "restored": true
+    },
+    "preservation": {
+      "sharedClassifierComplete": true,
+      "sourceBoundRequiredAbisFailClosed": true,
+      "fullDeploymentToLatestRange": true,
+      "completeOriginCoverage": true,
+      "canonicalReceiptAndRangeIdentity": true,
+      "historicalPinnedCutoff": true,
+      "historicalAAndCurrentB": true,
+      "missingXMissingYAndCurrentEmptyReject": true,
+      "resumes": 2,
+      "protectedFixtureBytesUnchanged": 7,
+      "transactionLocalConfigureAndIssuanceByteIdentical": true,
+      "sourceBoundPricingAndHistoricalAuthenticationByteIdentical": true,
+      "priorNarrowVerdictsUnchanged": true
+    },
+    "strictTypes": {
+      "operatorExit": 0,
+      "helperExit": 0,
+      "stdoutStderrEmpty": true,
+      "exactPreservedArgv": true
+    },
+    "verifierExecutedTestsOrReplays": false
+  },
+  "separateSharedGate": {
+    "status": "open",
+    "lastFullSuite": {
+      "exit": 1,
+      "passed": 333,
+      "failed": 3
+    },
+    "combinedExit": 1,
+    "failureClassifications": [
+      {
+        "id": "H1",
+        "failure_class": "harness-fixture-response-key-mismatch",
+        "status": "confirmed",
+        "location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts:234-236",
+        "failedTest": "omitting old configured SY from a relocated complete preparation rejects the census",
+        "rawFailure": "AssertionError: Missing expected rejection at bundle.test.ts:495",
+        "cause": "Map transport responses are keyed by the old eleven-topic suffix query. The correct ten-compensation-topic query is absent and preparation.fixture.ts:104-106 supplies [].",
+        "evidence": {
+          "attempt": "attempt-15-portable-fixture-diagnosis",
+          "oldTopicCount": 11,
+          "newTopicCount": 10,
+          "onlyOldTopic": "0x9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe1622",
+          "configurationRows": 3,
+          "unchangedVerifierWithStaleTransport": "accepts empty census as supplied",
+          "unchangedVerifierWithSameRowsUnderCorrectKey": "rejects omitted configuration"
+        },
+        "productDefectEstablished": false,
+        "next": "Already authorized executor st_01a1df7f adapts only mixed-fixture.ts response key, then runs the full suite and affected operator types; do not weaken product or omission assertion."
+      },
+      {
+        "id": "H2",
+        "failure_class": "runner-timeout",
+        "status": "confirmed-observed-failure-kind",
+        "failedTest": "complete mixed A-SY/B-configuration and immutable A-issuance relocate twice without native fallback or new prices",
+        "rawFailure": "Test timed out after unchanged 15000 ms; observed 15000.01 ms",
+        "diagnostic": {
+          "attempt": "attempt-14-portable-timeout-diagnosis",
+          "sameTimeoutMs": 15000,
+          "exit": 0,
+          "testMs": 9979.77,
+          "meaning": "Isolated diagnostic pass only; does not replace failed combined run"
+        },
+        "cause": "The timing cause is not established. No evidence establishes a product semantic or type defect from this timeout.",
+        "productDefectEstablished": false,
+        "next": "Keep shared gate open. A repeated genuine runner failure in the authorized fresh run is handled under the checkpoint one harness-repair rule; no timeout increase, suppression, or second-signature rerun here."
+      },
+      {
+        "id": "H3",
+        "failure_class": "harness-lifecycle-cleanup-fallout",
+        "status": "probable",
+        "failedTest": "default validate on a relocated retained-A preparation stays read-only without current pricing",
+        "rawFailure": "ENOENT lstat owned readonly-bundle/data/68f29913a7a65d9d543a08ad9dc5345a84a43ae14c029afcd196ed0a1caf3cd8 under dtf-prepare-test-zd1oJQ immediately following timeout",
+        "evidence": "bundle.test.ts:33 drains shared fixture cleanup; the failing path is a temporary fixture bundle, and the root is recorded absent after cleanup. The neighboring default verify then passed.",
+        "cause": "Consistent with timeout/lifecycle cleanup interference; no deletion interleaving trace proves the exact mechanism.",
+        "productDefectEstablished": false,
+        "next": "Retain as a failed shared-gate result; classify again if it recurs in the authorized new run. No independent product fix is justified by this evidence."
+      }
+    ],
+    "isolatedPassIsDiagnosticOnly": true,
+    "pending": "Parent prepared-fixture-done.json after already authorized mixed-fixture.ts response-key adaptation and full-suite/affected operator types validation",
+    "combinedAcceptance": false
+  },
+  "fixesInNarrowProductionScope": [],
+  "limits": [
+    "Successful prepared manual contexts are synthetic with saved authentic initialization topics/data, not real chain activation.",
+    "Timeout is a confirmed runner failure kind; timing cause is unknown. Following ENOENT lifecycle attribution is probable, not a traced deletion interleaving.",
+    "No new shared-gate result accepted; authorized fixture adaptation runs independently.",
+    "No extra tests, replays, installations, Forge, Anvil, public RPC, delegation, source changes, readiness marker or task closure."
+  ],
+  "sourceEdited": false,
+  "readinessMarkerWritten": false,
+  "task10Complete": false,
+  "writtenLast": true
+}

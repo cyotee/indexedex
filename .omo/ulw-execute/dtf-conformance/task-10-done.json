@@ -1,0 +1,194 @@
+{
+  "type": "DoneClaim",
+  "task": 10,
+  "title": "Rehearse mixed pricing and both NFT-three bonds",
+  "status": "blocked",
+  "escalation": "ESCALATE: deep-high",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "summary": "No admissible donor covering 10000 DTF is witnessed by the fixed authority bundle. Retained transfer evidence outside that bundle contains funded candidates. Binding and transporting that evidence requires a change to the strict authority/bundle contract owned outside task 10; no filesystem fallback, extra unreferenced bundle item, substituted authority bytes or source-contract donation was used.",
+  "decision": "A provenance contract extension is needed to carry the retained transfer census without replacing an existing authority or weakening bundle completeness. That contract is outside task 10 allowed writes. No product code was edited.",
+  "aliases": {
+    "S": "scripts/recovery/dtf-migration",
+    "E": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114",
+    "K": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "P": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"
+  },
+  "happyQA": {
+    "bundleExport": {
+      "status": "pass",
+      "exitCode": 0,
+      "exactCommandLogged": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/bundle-export-r2.log",
+      "roles": 22
+    },
+    "rehearse": {
+      "status": "not-run",
+      "reason": "Existing setup claims NFT 3 principal; no admissible covering donor is present in the exact authority bundle. Running it would violate the explicit task prohibition.",
+      "freshCheckout": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/checkout",
+      "returnedRuntimeDirectory": null
+    }
+  },
+  "probe": {
+    "status": "pass",
+    "pinnedBlock": "108944663",
+    "pinnedBlockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "budgetRaw18": "10000000000000000000000",
+    "addresses": 337,
+    "transactionsSent": 0,
+    "qualification": "Read-only candidate superset; not fixture acquisition or a transfer receipt. Outside-bundle CSV candidates cover the budget, so this is a transport/provenance blocker, not global DTF scarcity."
+  },
+  "checks": {
+    "typescriptProbe": {
+      "status": "pass",
+      "exitCode": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/probe-types.log"
+    },
+    "stale_state": {
+      "status": "pass",
+      "expectedError": "PROVENANCE",
+      "exitCode": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/stale-authority.log"
+    },
+    "malformed_input": {
+      "status": "pass",
+      "expectedError": "INPUT",
+      "exitCode": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/malformed-authority.log"
+    },
+    "misleading_success_output": {
+      "status": "qualified",
+      "observation": "Successful bundle export says offline-integrity-only. It was not accepted as lifecycle success; no green rehearsal or NFT count was claimed."
+    },
+    "dirty_worktree": {
+      "status": "preserved",
+      "observation": "Initial git status showed tasks 1-9 changes. All task-owned writes are E/task-10 plus this requested DoneClaim. No existing product, test, prior evidence or task 11-12 file was edited."
+    },
+    "hung_commands": {
+      "status": "not-run-for-rehearsal",
+      "observation": "Git diff opened a pager; sent q and observed exit 0. This is not a timeout-handling proof for the rehearsal."
+    },
+    "flaky_cancel_interruptions_untrusted_text": {
+      "status": "not-applicable-to-unrun-lifecycle",
+      "observation": "No economic scenario, mocked SUT, cancellation injection or untrusted command execution was introduced. The first donor probe failed on quantity parsing, then was corrected and passed; both logs are retained."
+    }
+  },
+  "notDelivered": [
+    "mixed-pricing.json",
+    "same-recipient-config-b-issuance-a.json",
+    "same-block-config-a-then-b.json",
+    "unset-pricing-owner-bond-activation.json",
+    "donation-identity-resume.json",
+    "nft-three-two-bonds.json",
+    "nft-three-rollback.json",
+    "rehearsal-location.json",
+    "positive lifecycle and on-chain negative scenarios",
+    "NFT 3 second-callback trace and two-bond rollback",
+    "signed configure recovery original hash/nonce/canonical completion"
+  ],
+  "limits": {
+    "delegation": false,
+    "commits": false,
+    "installs": false,
+    "publicTransactions": false,
+    "historicalDtfMintOrEtch": false,
+    "claimedSyWitnessPinRetuned": false,
+    "nftThreePrincipalConsumed": false,
+    "forgeBuildOrTest": false,
+    "localAnvil": "Two read-only donor probes; both stopped through finally cleanup.",
+    "lsp": "JSON Biome server missing; no install attempted. Probe strict TypeScript command passed."
+  },
+  "evidence": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/bundle-export-r2.log",
+      "bytes": 730,
+      "sha256": "332ec6ac8864ed1f17a00adaa4da285701e4f3971876f3e091e5dadaec2699e5"
+},
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/authorities-bundle-r2/bundle.json",
+      "bytes": 10246,
+      "sha256": "4ab93713b6aafd43d674a7b605252f938c4e70cf638a1ed89bf33b4fc5f1dac0"
+},
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/authorities-input.json",
+      "bytes": 12705,
+      "sha256": "2601b5c3fa6b349984e42730ee5d380221e5541f7234212fb8bf3c4fe0a7ab8c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/authorities-bundle/bundle.json",
+      "bytes": 10246,
+      "sha256": "4ab93713b6aafd43d674a7b605252f938c4e70cf638a1ed89bf33b4fc5f1dac0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/bundle-export.log",
+      "bytes": 703,
+      "sha256": "10c171d534be637b2522e26f9a9fe9195f59b40159d2071b4abbf0d420ec24db"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/donor-probe-input.json",
+      "bytes": 17638,
+      "sha256": "3c31e980aec7d45ea3e32c5672a51f99d649f067ee1a9c5f3c7b6cb638aa37a2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/probe-donors.ts",
+      "bytes": 3505,
+      "sha256": "2161ceeeb4339f18738cfded3a5a9b2d6ad5fbb7a925aad4559cb9a0446c24f8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/donor-budget-probe.json",
+      "bytes": 702926,
+      "sha256": "99c4182119ddf3fb01bc9179080d1ea3e27fe3589c9ef8ff9c92a34be07c07f0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/funding-blocker.json",
+      "bytes": 12503,
+      "sha256": "032b72966ee7a584eefe165d863dfc5fd1864a19f0de7810825c34f701d9b5c1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/donor-probe.log",
+      "bytes": 869,
+      "sha256": "30b6cc0899b959949b9c5f177fd76562bc7856ac332ef9a22e37e931c08c5d86"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/donor-probe-r2.log",
+      "bytes": 17462,
+      "sha256": "a6385f1cbae26b98fb934782ed24605f147e57c5967cb62c4204c6129139f68d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/donor-probe-anvil.log",
+      "bytes": 2645,
+      "sha256": "3def46f7710217370bd36f8d2c4c121122de6e5b328f738e5551b1575387f043"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/donor-probe-anvil-r2.log",
+      "bytes": 9731,
+      "sha256": "f7218c4e74a7cccbcfcf084df4193d6661460565a5aadbdd4188867e88bc2e72"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/probe-types.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/stale-authorities-input.json",
+      "bytes": 12705,
+      "sha256": "a5be1fd3ff94fe357cf3607eeaa530343f53340e23e92786792d4e88d1fe374b"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/malformed-authorities-input.json",
+      "bytes": 55,
+      "sha256": "18eca4ec1c45102df2cd5bc73dae115067a72ad3ef8d2ef1ccf1e507a843e4a2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/stale-authority.log",
+      "bytes": 762,
+      "sha256": "8bca5808e6d21d08e20b36bf5e8580f7cc2fedd46fb230a4f7dd446b0287f6c0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/malformed-authority.log",
+      "bytes": 768,
+      "sha256": "2e87c42f3eaea38424358db81bbdbebd647c737ec234405bf7ba89587e49d0a0"
+    }
+  ],
+  "requestedResolution": "Authorize and deliver a named hashed transfer/holdings evidence reference through the authority bundle contract, then rerun task 10. Preserve every existing authority role and exact source bytes."
+}

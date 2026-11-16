@@ -109,8 +109,8 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         legs_[1] = Migration.GenesisLeg(IERC20(pairB), amounts_[1], 1);
         vm.startPrank(migrationOwner);
         allocation.bootstrapMigrationReserve(legs_, 0, 1, block.timestamp);
-        allocation.captureMigrationSnapshot();
         vm.stopPrank();
+        _setObservedPricing();
     }
 
     /// @dev Exact phase01 receipt joins: weighted purchase receipts and earlier NewLock/direct inputs.
@@ -165,7 +165,7 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         Migration.NftEntitlementInput[] memory a_ = new Migration.NftEntitlementInput[](1);
         a_[0] = _original(collection_, id_);
         vm.prank(migrationOwner);
-        allocation.configureNftEntitlements(a_);
+        allocation.configureNftEntitlements(a_, pricingId);
         return migration.nftEntitlement(collection_, id_).credit;
     }
 

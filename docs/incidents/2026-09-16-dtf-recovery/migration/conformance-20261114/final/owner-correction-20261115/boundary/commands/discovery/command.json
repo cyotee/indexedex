@@ -1,0 +1,18 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "argv": [
+    "bun",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "inventory",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration"
+  ],
+  "started": "2026-11-15T19:24:51.106Z",
+  "runtime": "1.4.2",
+  "recorder": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+  },
+  "scope": "Offline file inventory bookkeeping only"
+}

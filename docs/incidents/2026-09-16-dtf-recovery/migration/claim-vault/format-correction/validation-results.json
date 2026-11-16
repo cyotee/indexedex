@@ -1,0 +1,91 @@
+{
+  "monitor": "mon_421RFJBGZ9MVA9XE",
+  "bashId": "bash_85",
+  "exitCode": 0,
+  "checks": [
+    {
+      "name": "specs",
+      "bytes": 229420,
+      "summary": [
+        "Ran 22 test suites in 1.31s (15.84s CPU time): 130 tests passed, 0 failed, 0 skipped (130 total tests)"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "forks",
+      "bytes": 180237,
+      "summary": [
+        "Ran 16 test suites in 1.53s (16.85s CPU time): 81 tests passed, 0 failed, 0 skipped (81 total tests)"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "stages",
+      "bytes": 359,
+      "summary": "completed; command exit observed",
+      "exitCode": 0
+    },
+    {
+      "name": "operator",
+      "bytes": 6249,
+      "summary": [
+        "64 pass",
+        "0 fail"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "types",
+      "bytes": 0,
+      "summary": "no diagnostics",
+      "exitCode": 0
+    },
+    {
+      "name": "rehearsal",
+      "bytes": 254,
+      "summary": [
+        "bounded-rehearsal-complete\"}"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "diagnostics": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "result": "No diagnostics found"
+    }
+  ],
+  "prestartFailure": "timeout_ms14400000 rejected by tool validation; no command started"
+}

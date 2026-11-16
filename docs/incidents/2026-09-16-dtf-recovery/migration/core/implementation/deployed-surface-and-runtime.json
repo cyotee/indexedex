@@ -1,0 +1,1065 @@
+{
+  "nodeInstance": "0x9acbcd5bdce3e90268561d142e212f1a6854e15c0c060b4c3dd2a663fbe5740c",
+  "surfaceCensus": {
+    "parent": {
+      "address": "0x406cd20cb6f03f51cd303a3d14d6b1fbbcccab88",
+      "proxyCodeHash": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "facets": [
+        {
+          "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0xCd29F772d1c9DbdBafDB0e54504160A5A977C0E8",
+          "functionSelectors": [
+            "0xd7d4cf09",
+            "0xa2090219",
+            "0x7fda99ae",
+            "0xa5ef9788",
+            "0xdc6bf0d3",
+            "0xa7b715f1",
+            "0x5bd8902d",
+            "0x2479d2d4",
+            "0x2ba474f1",
+            "0x3d9feccd"
+          ]
+        },
+        {
+          "facetAddress": "0xecd6e45d2938A6d434a8a051201853706f84619E",
+          "functionSelectors": [
+            "0x06fdde03",
+            "0x95d89b41",
+            "0x313ce567",
+            "0x18160ddd",
+            "0x70a08231",
+            "0xdd62ed3e",
+            "0x095ea7b3",
+            "0xa9059cbb",
+            "0x23b872dd"
+          ]
+        },
+        {
+          "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+          "functionSelectors": [
+            "0x84b0196e"
+          ]
+        },
+        {
+          "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+          "functionSelectors": [
+            "0xd505accf",
+            "0x7ecebe00",
+            "0x3644e515"
+          ]
+        },
+        {
+          "facetAddress": "0x4022629690473e24Fc5cF641694a6feB8a4516af",
+          "functionSelectors": [
+            "0x69722233",
+            "0x46f910ac",
+            "0x75172a8b"
+          ]
+        },
+        {
+          "facetAddress": "0xdDd1E0cDE46B5c90cD1b93b91352A7Dc00c24009",
+          "functionSelectors": [
+            "0x6a4d3f12",
+            "0xf5ee7c5b",
+            "0x36abf3dc",
+            "0x7cc34bb4"
+          ]
+        },
+        {
+          "facetAddress": "0xb084b225AA4395B47cc7aFfD375B8f56fc26083f",
+          "functionSelectors": [
+            "0xd02d3063"
+          ]
+        },
+        {
+          "facetAddress": "0x046402dB2a88B54da34dEC0fdd0f9ae549b43Cc0",
+          "functionSelectors": [
+            "0x7a3b1181"
+          ]
+        },
+        {
+          "facetAddress": "0x77BE20724AF3F142979fc53aF037b5738Df07d3a",
+          "functionSelectors": [
+            "0x0f5f2ea4",
+            "0xa53df2e2",
+            "0x588bc426",
+            "0x8d3ae940",
+            "0xecc823dc",
+            "0x81b5eeca",
+            "0x0910d5ea",
+            "0xb0910943"
+          ]
+        },
+        {
+          "facetAddress": "0xC6B7B81dfd59E97337BbcA6f5E7D6B3BaA772453",
+          "functionSelectors": [
+            "0x11941b88",
+            "0xdde448b0"
+          ]
+        },
+        {
+          "facetAddress": "0x8F06dd279099a5d11AC504dec681C851f1aBB223",
+          "functionSelectors": [
+            "0x89d61912",
+            "0x7f5a7c7b",
+            "0x0266f044",
+            "0x6553aead",
+            "0xc7b57783",
+            "0x27415d21",
+            "0xa575b122",
+            "0xeb8660dc",
+            "0xd23b7b31",
+            "0x7ae5f561",
+            "0x674bd742",
+            "0x7dfe0293",
+            "0x24d44167",
+            "0x0e52fe80",
+            "0x6789692c",
+            "0x9c8dead2",
+            "0x4f6d38d0",
+            "0x1afdb693",
+            "0x0aee1940",
+            "0x9c54eea2",
+            "0x2be8656f",
+            "0x705caed9",
+            "0xd7cb29d0",
+            "0x2b481883",
+            "0xe03c65c4",
+            "0xe76af32e",
+            "0x9520b23e",
+            "0x85358493",
+            "0xc8a3fe0b",
+            "0xda345f76",
+            "0xebecb84e",
+            "0xd0c7cd72",
+            "0xc0cadedd",
+            "0xfe884e28",
+            "0x7d54bc82"
+          ]
+        },
+        {
+          "facetAddress": "0xD1d56864Ab234Ff18cb7279362e50A2B7960BB59",
+          "functionSelectors": [
+            "0xc0b6f561",
+            "0x3c213957",
+            "0x737293e2",
+            "0xb842e87f",
+            "0x8da5cb5b",
+            "0xe30c3978",
+            "0x1af1b0c4",
+            "0x0f9f2530"
+          ]
+        }
+      ]
+    },
+    "bond": {
+      "address": "0xfA53c3188BcbDaE211Fe037aCD211C4031b8fE9d",
+      "proxyCodeHash": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "facets": [
+        {
+          "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0xFCfBd6d21DB3E51dFd40b399f3dFBf4765B6268A",
+          "functionSelectors": [
+            "0x06fdde03",
+            "0x95d89b41",
+            "0xc87b56dd"
+          ]
+        },
+        {
+          "facetAddress": "0x6EE568C5f08f35680998218847884cC5124C7E7B",
+          "functionSelectors": [
+            "0x70a08231",
+            "0x6352211e",
+            "0xa22cb465",
+            "0x081812fc",
+            "0xe985e9c5",
+            "0x095ea7b3"
+          ]
+        },
+        {
+          "facetAddress": "0x2961a135928E633BDdB5d4ED52603ee46CE023f9",
+          "functionSelectors": [
+            "0x8a91f8bc",
+            "0x5fcbd285",
+            "0x2bd949e3",
+            "0x1b552ac9",
+            "0x0a528e5b",
+            "0x46f96023",
+            "0xae648e90",
+            "0xf400c743",
+            "0x6c7b69cb",
+            "0x084c59ae",
+            "0x3ec90986",
+            "0x6a4d3f12",
+            "0xf5ee7c5b",
+            "0x36abf3dc",
+            "0x7cc34bb4",
+            "0x85eb9aab",
+            "0x27c76759",
+            "0x0ed4fd8f",
+            "0x9430e218",
+            "0x3d9f5912",
+            "0x3aee3287",
+            "0xcffb3366",
+            "0xdb98a568",
+            "0x07b101f9",
+            "0x23b872dd",
+            "0x42842e0e",
+            "0xb88d4fde"
+          ]
+        }
+      ]
+    },
+    "receipt": {
+      "address": "0xEf2E550310745309Fc07B1DdE1853447e6a528bF",
+      "proxyCodeHash": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "facets": [
+        {
+          "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0xa4C01791F5042A7878391c9B6603EeBEFbC3b5A7",
+          "functionSelectors": [
+            "0x18160ddd",
+            "0x70a08231",
+            "0xa9059cbb",
+            "0xdd62ed3e",
+            "0x095ea7b3",
+            "0x23b872dd",
+            "0x06fdde03",
+            "0x95d89b41",
+            "0x313ce567",
+            "0x8a91f8bc",
+            "0x79a67521",
+            "0xe082f1d4",
+            "0x93707a19",
+            "0x2cd2af81",
+            "0x89d61912",
+            "0xd02d3063",
+            "0xdb149bc5",
+            "0xbbac8477",
+            "0xe2c0a539",
+            "0x07b101f9",
+            "0x68aae9be",
+            "0x2a554842",
+            "0xf1195d55",
+            "0xbf4bb149",
+            "0xbe559498",
+            "0x98652511",
+            "0xf223ef37",
+            "0x7f29a7f0",
+            "0x8e3e4a89",
+            "0x514c1b5d",
+            "0x0b2de757",
+            "0x4ec699fc",
+            "0x69d10961",
+            "0xa43a7ee6"
+          ]
+        },
+        {
+          "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+          "functionSelectors": [
+            "0x84b0196e"
+          ]
+        },
+        {
+          "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+          "functionSelectors": [
+            "0xd505accf",
+            "0x7ecebe00",
+            "0x3644e515"
+          ]
+        }
+      ]
+    },
+    "rawSY": {
+      "address": "0x3af09b5667CCd422F4Cc883F4D991Bc5bFB4Af96",
+      "proxyCodeHash": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "facets": [
+        {
+          "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+          "functionSelectors": [
+            "0x18160ddd",
+            "0x70a08231",
+            "0xa9059cbb",
+            "0xdd62ed3e",
+            "0x095ea7b3",
+            "0x23b872dd",
+            "0x06fdde03",
+            "0x95d89b41",
+            "0x313ce567",
+            "0x20e8c565",
+            "0x769f8e5d",
+            "0x3ba0b9a9",
+            "0x76d5de85",
+            "0xa40bee50",
+            "0x213cae63",
+            "0x071bc3c9",
+            "0xfa5a4f06",
+            "0x784367d6",
+            "0xb8f82b26",
+            "0xcbe52ae3",
+            "0xc4f59f9b",
+            "0x128fced1",
+            "0xf8b2f991",
+            "0xda88ecb4",
+            "0xef5cfb8c",
+            "0x6a4d3f12",
+            "0xf5ee7c5b",
+            "0x36abf3dc",
+            "0x7cc34bb4",
+            "0x852465fb",
+            "0x7a2cd6fb",
+            "0x07b101f9"
+          ]
+        },
+        {
+          "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+          "functionSelectors": [
+            "0x84b0196e"
+          ]
+        },
+        {
+          "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+          "functionSelectors": [
+            "0xd505accf",
+            "0x7ecebe00",
+            "0x3644e515"
+          ]
+        }
+      ]
+    },
+    "stakingSY": {
+      "address": "0xd5A995B3199Be66EC1b6825014CbAE48691c3425",
+      "proxyCodeHash": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "facets": [
+        {
+          "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+          "functionSelectors": [
+            "0x18160ddd",
+            "0x70a08231",
+            "0xa9059cbb",
+            "0xdd62ed3e",
+            "0x095ea7b3",
+            "0x23b872dd",
+            "0x06fdde03",
+            "0x95d89b41",
+            "0x313ce567",
+            "0x20e8c565",
+            "0x769f8e5d",
+            "0x3ba0b9a9",
+            "0x76d5de85",
+            "0xa40bee50",
+            "0x213cae63",
+            "0x071bc3c9",
+            "0xfa5a4f06",
+            "0x784367d6",
+            "0xb8f82b26",
+            "0xcbe52ae3",
+            "0xc4f59f9b",
+            "0x128fced1",
+            "0xf8b2f991",
+            "0xda88ecb4",
+            "0xef5cfb8c",
+            "0x6a4d3f12",
+            "0xf5ee7c5b",
+            "0x36abf3dc",
+            "0x7cc34bb4",
+            "0x852465fb",
+            "0x7a2cd6fb",
+            "0x07b101f9"
+          ]
+        },
+        {
+          "facetAddress": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+          "functionSelectors": [
+            "0x84b0196e"
+          ]
+        },
+        {
+          "facetAddress": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+          "functionSelectors": [
+            "0xd505accf",
+            "0x7ecebe00",
+            "0x3644e515"
+          ]
+        }
+      ]
+    },
+    "rewardToken": {
+      "address": "0x186a8c0806FACeDC673789980F7483DCCC633430",
+      "proxyCodeHash": "0x1b525b92e26bfecf5bd6b8e51fc259e9a0d1514811debc59804797eedfc3b015",
+      "facets": [
+        {
+          "facetAddress": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0x30615A3688433e11461671C76B738AB06396A5BB",
+          "functionSelectors": [
+            "0x18160ddd",
+            "0x70a08231",
+            "0xa9059cbb",
+            "0xdd62ed3e",
+            "0x095ea7b3",
+            "0x23b872dd",
+            "0x06fdde03",
+            "0x95d89b41",
+            "0x313ce567",
+            "0x07b101f9",
+            "0x2b35dca5",
+            "0x4678942c",
+            "0xd8780161",
+            "0x4cdad506",
+            "0xe1e6b898",
+            "0x60f96a8f"
+          ]
+        }
+      ]
+    }
+  },
+  "runtimeBindings": [
+    {
+      "address": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+      "name": "ERC165Facet",
+      "bytes": 538,
+      "codeHash": "0x615d0edb68e477e436cabda8e66faae68e3b03a2aa569e9c05af810e71518a8b",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "supportsInterface(bytes4)": "01ffc9a7"
+      }
+    },
+    {
+      "address": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+      "name": "DiamondLoupeFacet",
+      "bytes": 1458,
+      "codeHash": "0xe0b3837895469a427f844521f3041183e921ab25bd0464b03aa39c50db65a04c",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "facetAddress(bytes4)": "cdffacc6",
+        "facetAddresses()": "52ef6b2c",
+        "facetFuncs()": "574a4cff",
+        "facetFunctionSelectors(address)": "adfca15e",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "facets()": "7a0ed627"
+      }
+    },
+    {
+      "address": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+      "name": "ERC8109IntrospectionFacet",
+      "bytes": 1160,
+      "codeHash": "0xedd12dcfc4e750c70fcc3f4a968b7297dd407e84825b427666aad294a740c81f",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "facetAddress(bytes4)": "cdffacc6",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "functionFacetPairs()": "60b5befb"
+      }
+    },
+    {
+      "address": "0xCd29F772d1c9DbdBafDB0e54504160A5A977C0E8",
+      "name": "UniswapV4DetfMigrationFacet",
+      "bytes": 16210,
+      "codeHash": "0xf577aa2e4b2b046e3ff1739bd2038dbf182ddd55f969a5abc02611c711604e4b",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [
+        {
+          "start": 10101,
+          "length": 20
+        },
+        {
+          "start": 10301,
+          "length": 20
+        },
+        {
+          "start": 11013,
+          "length": 20
+        },
+        {
+          "start": 11228,
+          "length": 20
+        }
+      ],
+      "methods": {
+        "donateMigrationCapital(address[],uint256[],uint256,uint256,uint256)": "3d9feccd",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "independentAllocation(address)": "a7b715f1",
+        "independentIssuance(address)": "5bd8902d",
+        "migrationActivated()": "d7d4cf09",
+        "migrationBootstrapSelfMinted()": "2ba474f1",
+        "migrationDonationInventory(address)": "2479d2d4",
+        "migrationSnapshot()": "a5ef9788",
+        "migrationSnapshotSource()": "7fda99ae",
+        "migrationSyRewardToken()": "a2090219",
+        "previewOriginalCredit(uint256,uint256)": "dc6bf0d3"
+      }
+    },
+    {
+      "address": "0xecd6e45d2938A6d434a8a051201853706f84619E",
+      "name": "ERC20Facet",
+      "bytes": 1726,
+      "codeHash": "0xd2c38526c9f982688af35f64fac7c89092b49def2231fad5d5b63d4f6d2bc05f",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "allowance(address,address)": "dd62ed3e",
+        "approve(address,uint256)": "095ea7b3",
+        "balanceOf(address)": "70a08231",
+        "decimals()": "313ce567",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "name()": "06fdde03",
+        "symbol()": "95d89b41",
+        "totalSupply()": "18160ddd",
+        "transfer(address,uint256)": "a9059cbb",
+        "transferFrom(address,address,uint256)": "23b872dd"
+      }
+    },
+    {
+      "address": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+      "name": "ERC5267Facet",
+      "bytes": 974,
+      "codeHash": "0x76102a311a187629400430f9521318e69cda4c20e538815a5cd8c509aed4b8ec",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "eip712Domain()": "84b0196e",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01"
+      }
+    },
+    {
+      "address": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+      "name": "ERC2612Facet",
+      "bytes": 1219,
+      "codeHash": "0xd2c5869b775231df8f2aff82ae2f4ea6679858e10ebc09f92d9b33cb3930706d",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "DOMAIN_SEPARATOR()": "3644e515",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "nonces(address)": "7ecebe00",
+        "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": "d505accf"
+      }
+    },
+    {
+      "address": "0x4022629690473e24Fc5cF641694a6feB8a4516af",
+      "name": "MultiAssetBasicVaultFacet",
+      "bytes": 1004,
+      "codeHash": "0x3dec918b5cc2dd0d25d2e5aefddc2b5ddc67bf767149fd9f1e05cfa2d61c40cd",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "reserveOfToken(address)": "46f910ac",
+        "reserves()": "75172a8b",
+        "vaultTokens()": "69722233"
+      }
+    },
+    {
+      "address": "0xdDd1E0cDE46B5c90cD1b93b91352A7Dc00c24009",
+      "name": "MultiAssetStandardVaultFacet",
+      "bytes": 1212,
+      "codeHash": "0x63c551bb61182cad1d91df952d5b978f16731912994d8051f4b5784d9be91b1b",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "contentsId()": "f5ee7c5b",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "vaultConfig()": "7cc34bb4",
+        "vaultFeeTypeIds()": "6a4d3f12",
+        "vaultTypes()": "36abf3dc"
+      }
+    },
+    {
+      "address": "0xb084b225AA4395B47cc7aFfD375B8f56fc26083f",
+      "name": "UniswapV4DetfMigrationExchangeFacet",
+      "bytes": 9122,
+      "codeHash": "0xfac559bd61c4d3878517a056fb592718252aa335900d61ad1d4ff43c3b611efc",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01"
+      }
+    },
+    {
+      "address": "0x046402dB2a88B54da34dEC0fdd0f9ae549b43Cc0",
+      "name": "UniswapV4DetfMigrationBondFacet",
+      "bytes": 9596,
+      "codeHash": "0xcdaede3bcdc9df0b25d999a800d3b56dc9eb729286392502595363a339966801",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "bond(address,uint256,uint256,address,bool,uint256)": "7a3b1181",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01"
+      }
+    },
+    {
+      "address": "0x77BE20724AF3F142979fc53aF037b5738Df07d3a",
+      "name": "UniswapV4DetfMigrationMaintenanceFacet",
+      "bytes": 11613,
+      "codeHash": "0x9a4ca923343268ca5629dd074d7b350e65fb438193a3de4cd4889d03d328fb2b",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "donate(address,uint256,bool)": "0f5f2ea4",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "joinDonatedCapital(address,uint256,uint256)": "588bc426",
+        "joinResidualAtomic(address,uint256,bool)": "b0910943",
+        "notifyReserveDonated()": "8d3ae940",
+        "sweepDust()": "a53df2e2",
+        "sweepDustAtomic()": "ecc823dc",
+        "sweepPairToShare(address,address,uint256)": "81b5eeca",
+        "synchronizeRewards()": "0910d5ea"
+      }
+    },
+    {
+      "address": "0xC6B7B81dfd59E97337BbcA6f5E7D6B3BaA772453",
+      "name": "UniswapV4DetfClaimFacet",
+      "bytes": 2662,
+      "codeHash": "0x7b63e4615ff9e921bee504fded3116752575b52722fa7f30e2197e584ed7573b",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "completeReserveBondNft()": "11941b88",
+        "completeReserveClaim()": "dde448b0",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01"
+      }
+    },
+    {
+      "address": "0x8F06dd279099a5d11AC504dec681C851f1aBB223",
+      "name": "UniswapV4DetfMigrationQueryFacet",
+      "bytes": 10738,
+      "codeHash": "0xb9baef59f4379d7cd26190637e8014d2e2c86cc2405ff6e33c0884dd48770bfb",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "acceptedBondTokens()": "d7cb29d0",
+        "bondNftVault()": "9c54eea2",
+        "bondRouteMode()": "7dfe0293",
+        "bondRoutes()": "eb8660dc",
+        "burnRouteMode()": "674bd742",
+        "burnRoutes()": "a575b122",
+        "burnThreshold()": "4f6d38d0",
+        "creationPairPerDetfWad()": "0e52fe80",
+        "detfNFTVault()": "2be8656f",
+        "donateRouteMode()": "24d44167",
+        "donateRoutes()": "d23b7b31",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "hook()": "7f5a7c7b",
+        "isBurningAllowed()": "e76af32e",
+        "isBurningAllowed(address)": "9520b23e",
+        "isMintingAllowed()": "2b481883",
+        "isMintingAllowed(address)": "e03c65c4",
+        "isReserveLive()": "6553aead",
+        "isReserveWired()": "c7b57783",
+        "mintRouteMode()": "7ae5f561",
+        "mintRoutes()": "27415d21",
+        "mintThreshold()": "9c8dead2",
+        "openingPairPerDetfWad()": "6789692c",
+        "ownerOnlyLiquidity()": "fe884e28",
+        "peekPairEq(address,address,uint256)": "c8a3fe0b",
+        "pendingExpansionDetf()": "0aee1940",
+        "previewBond(address,uint256,uint256)": "7d54bc82",
+        "previewExchangeIn(address,uint256,address)": "89d61912",
+        "previewFirstBondPayments(address,uint256)": "c0cadedd",
+        "previewJoinDonatedCapital(address,uint256)": "85358493",
+        "previewStakingGonsPerUnit(address,uint256)": "da345f76",
+        "rawSY()": "ebecb84e",
+        "rebasingClaimToken()": "705caed9",
+        "reservePool()": "0266f044",
+        "stakingSY()": "d0c7cd72",
+        "syntheticPrice()": "1afdb693"
+      }
+    },
+    {
+      "address": "0xD1d56864Ab234Ff18cb7279362e50A2B7960BB59",
+      "name": "MultiStepOwnableFacet",
+      "bytes": 1422,
+      "codeHash": "0x03022f12407c5f848da7a9e3d1722a0976dd2b52e5c066643b8a314c9ea7d2bc",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "acceptOwnershipTransfer()": "b842e87f",
+        "cancelPendingOwnershipTransfer()": "737293e2",
+        "confirmOwnershipTransfer(address)": "3c213957",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "getOwnershipTransferBuffer()": "0f9f2530",
+        "initiateOwnershipTransfer(address)": "c0b6f561",
+        "owner()": "8da5cb5b",
+        "pendingOwner()": "e30c3978",
+        "preConfirmedOwner()": "1af1b0c4"
+      }
+    },
+    {
+      "address": "0xFCfBd6d21DB3E51dFd40b399f3dFBf4765B6268A",
+      "name": "UniswapV4DetfMigrationBondMetadataFacet",
+      "bytes": 12099,
+      "codeHash": "0x623e42f93407f74179fb4f64ea1db530337fbce656eb79b9b55855a651f9b568",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "name()": "06fdde03",
+        "symbol()": "95d89b41",
+        "tokenURI(uint256)": "c87b56dd"
+      }
+    },
+    {
+      "address": "0x6EE568C5f08f35680998218847884cC5124C7E7B",
+      "name": "ERC721Facet",
+      "bytes": 1981,
+      "codeHash": "0xd3f393499252ae72e1d03be4d2c2b7d5ef9e6983dfe63da3e98efee323330421",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "approve(address,uint256)": "095ea7b3",
+        "balanceOf(address)": "70a08231",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "getApproved(uint256)": "081812fc",
+        "isApprovedForAll(address,address)": "e985e9c5",
+        "ownerOf(uint256)": "6352211e",
+        "safeTransferFrom(address,address,uint256)": "42842e0e",
+        "safeTransferFrom(address,address,uint256,bytes)": "b88d4fde",
+        "setApprovalForAll(address,bool)": "a22cb465",
+        "transferFrom(address,address,uint256)": "23b872dd"
+      }
+    },
+    {
+      "address": "0x2961a135928E633BDdB5d4ED52603ee46CE023f9",
+      "name": "UniswapV4DetfMigrationBondNFTVaultFacet",
+      "bytes": 9408,
+      "codeHash": "0xf6b6ca55025e920f87068a6049aaccc75f3d3815ae9e2367ef02ee89f9c86e6f",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "attributedBondGons()": "db98a568",
+        "claimBond(uint256,address)": "084c59ae",
+        "claimPrincipal(uint256,address)": "f400c743",
+        "claimRewards(uint256,address)": "6c7b69cb",
+        "contentsId()": "f5ee7c5b",
+        "createFundedPosition(uint256,uint256,address)": "0a528e5b",
+        "createMigrationPosition(uint256,address)": "3aee3287",
+        "detf()": "8a91f8bc",
+        "donate(address,address,uint256,uint256,bool,uint256)": "27c76759",
+        "donate(address,uint256,uint256,bool,uint256)": "85eb9aab",
+        "donateWithPermit2Allowance(address,uint256,uint256,uint256)": "0ed4fd8f",
+        "donateWithPermit2Signature(address,uint256,uint256,uint256,bytes)": "9430e218",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "initializeReservedBondNfts(address,address)": "2bd949e3",
+        "isMigrationPosition(uint256)": "cffb3366",
+        "lpToken()": "5fcbd285",
+        "migrationAccountingPhase()": "07b101f9",
+        "positionOf(uint256)": "46f96023",
+        "previewClaim(uint256)": "ae648e90",
+        "previewDonate(address,uint256)": "3d9f5912",
+        "reservedBondNftsWired()": "1b552ac9",
+        "safeTransferFrom(address,address,uint256)": "42842e0e",
+        "safeTransferFrom(address,address,uint256,bytes)": "b88d4fde",
+        "transferFrom(address,address,uint256)": "23b872dd",
+        "transferHeldToken(address,address,uint256)": "3ec90986",
+        "vaultConfig()": "7cc34bb4",
+        "vaultFeeTypeIds()": "6a4d3f12",
+        "vaultTypes()": "36abf3dc"
+      }
+    },
+    {
+      "address": "0xa4C01791F5042A7878391c9B6603EeBEFbC3b5A7",
+      "name": "UniswapV4DetfMigrationStakedDETFFacet",
+      "bytes": 12536,
+      "codeHash": "0xcc8b00f621867aabc053c12857ebda4664c79c95998b450e04b7a4aee1c66d61",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "allowance(address,address)": "dd62ed3e",
+        "approve(address,uint256)": "095ea7b3",
+        "balanceOf(address)": "70a08231",
+        "checkpointRewards()": "2a554842",
+        "claimDeferredRewards(uint8)": "be559498",
+        "claimDeferredRoleRewards(address)": "98652511",
+        "decimals()": "313ce567",
+        "deferSyRewards(address,uint256,uint256)": "8e3e4a89",
+        "deferredRewardGons(uint8,address)": "f1195d55",
+        "deliverBondClaim(address,uint256,uint256,uint256)": "7f29a7f0",
+        "detf()": "8a91f8bc",
+        "egressState(address)": "68aae9be",
+        "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+        "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "fundRewards(uint256)": "93707a19",
+        "gonsOf(address)": "79a67521",
+        "issueSyRewardTokens(address,uint256)": "4ec699fc",
+        "migrationAccountingPhase()": "07b101f9",
+        "name()": "06fdde03",
+        "paySyRewardRemainder(address,uint256)": "69d10961",
+        "previewDistributions(uint256[])": "e2c0a539",
+        "previewExchangeIn(address,uint256,address)": "89d61912",
+        "previewExchangeOut(address,address,uint256)": "db149bc5",
+        "redeemSyRewardTokens(address,address,uint256,uint256)": "a43a7ee6",
+        "retireEscrowDust(uint256)": "2cd2af81",
+        "stakingState()": "e082f1d4",
+        "symbol()": "95d89b41",
+        "tokenizedSyRewardGons()": "bf4bb149",
+        "totalSupply()": "18160ddd",
+        "transfer(address,uint256)": "a9059cbb",
+        "transferDeferredRewardRights(uint8,address,uint256)": "f223ef37",
+        "transferFrom(address,address,uint256)": "23b872dd",
+        "transferSyPrincipal(address,uint256,uint256)": "514c1b5d",
+        "withdrawSyPrincipal(address,uint256,uint256)": "0b2de757"
+      }
+    },
+    {
+      "address": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+      "name": "UniswapV4DetfMigrationSYFacet",
+      "bytes": 9405,
+      "codeHash": "0x16f1555cdc58a2c328a8f3c0c0f07316f1c928a3f7272c7209647888ec316306",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "accruedRewards(address)": "128fced1",
+        "allowance(address,address)": "dd62ed3e",
+        "approve(address,uint256)": "095ea7b3",
+        "assetInfo()": "a40bee50",
+        "attributedSyGons()": "7a2cd6fb",
+        "balanceOf(address)": "70a08231",
+        "claimRewardRemainder()": "852465fb",
+        "claimRewards(address)": "ef5cfb8c",
+        "contentsId()": "f5ee7c5b",
+        "decimals()": "313ce567",
+        "deposit(address,address,uint256,uint256)": "20e8c565",
+        "exchangeRate()": "3ba0b9a9",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "getRewardTokens()": "c4f59f9b",
+        "getTokensIn()": "213cae63",
+        "getTokensOut()": "071bc3c9",
+        "isValidTokenIn(address)": "fa5a4f06",
+        "isValidTokenOut(address)": "784367d6",
+        "migrationAccountingPhase()": "07b101f9",
+        "name()": "06fdde03",
+        "previewDeposit(address,uint256)": "b8f82b26",
+        "previewRedeem(address,uint256)": "cbe52ae3",
+        "redeem(address,uint256,address,uint256,bool)": "769f8e5d",
+        "rewardIndexesCurrent()": "f8b2f991",
+        "rewardIndexesStored()": "da88ecb4",
+        "symbol()": "95d89b41",
+        "totalSupply()": "18160ddd",
+        "transfer(address,uint256)": "a9059cbb",
+        "transferFrom(address,address,uint256)": "23b872dd",
+        "vaultConfig()": "7cc34bb4",
+        "vaultFeeTypeIds()": "6a4d3f12",
+        "vaultTypes()": "36abf3dc",
+        "yieldToken()": "76d5de85"
+      }
+    },
+    {
+      "address": "0x30615A3688433e11461671C76B738AB06396A5BB",
+      "name": "UniswapV4DetfMigrationRewardTokenFacet",
+      "bytes": 3288,
+      "codeHash": "0x57639e98351a95bceb31d9a59d5089fbf35cbe6f1c2e1ed335a102199bb5dd44",
+      "artifactMatchesAfterLinkAndImmutableMask": true,
+      "maskedSlots": [],
+      "methods": {
+        "allowance(address,address)": "dd62ed3e",
+        "approve(address,uint256)": "095ea7b3",
+        "balanceOf(address)": "70a08231",
+        "burnByReceipt(address,uint256)": "4678942c",
+        "decimals()": "313ce567",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "migrationAccountingPhase()": "07b101f9",
+        "mintByReceipt(address,uint256)": "2b35dca5",
+        "name()": "06fdde03",
+        "parent()": "60f96a8f",
+        "previewRedeem(uint256)": "4cdad506",
+        "receipt()": "e1e6b898",
+        "redeem(uint256,address,uint256)": "d8780161",
+        "symbol()": "95d89b41",
+        "totalSupply()": "18160ddd",
+        "transfer(address,uint256)": "a9059cbb",
+        "transferFrom(address,address,uint256)": "23b872dd"
+      }
+    }
+  ]
+}

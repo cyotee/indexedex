@@ -1,0 +1,52 @@
+Precommit inventory recipe v1
+Captured before staging or committing the portable-operator source delivery.
+The walks completed before any file existed under migration/portable-operator/commit/.
+Inventory files written afterward are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, artifact restoration, relocation, or runtime rerun is part of this recipe.
+Every Git invocation uses GIT_MASTER=1 and --no-pager. GIT_PAGER=cat and PAGER=cat are set.
+Read-only Git invocations also set GIT_OPTIONAL_LOCKS=0 so they do not refresh the index.
+Status and diff use --ignore-submodules=all.
+Index identity is the SHA-256 of the raw index file bytes. It is not git ls-files output and not a decoded string.
+No path under /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas was opened. The phase09 foreign index was hashed only at .git/worktrees/dtf-migration-phase-09-deployment-gas/index.
+
+Content inventory
+Files: docs-incidents.jsonl, out.jsonl, cache_forge.jsonl.
+Walk: lstat, followlinks false. Symlinked directories are recorded and not descended. Ordinary directories are not content entries.
+Fields, fixed key order: path, kind, gitMode, perm, st_mode, size, sha256, target.
+path: POSIX relative to the worktree, sorted by UTF-8 byte order.
+kind: file, symlink, or other.
+gitMode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other. This collapses exact regular-file modes and is not the permission proof.
+perm: oct(st_mode & 0o777), written as 0o644 style text. Decimal 420 is the same permission bits as 0o644. It is not full lstat mode 33188.
+st_mode: full lstat mode integer, for example 33188 for a 0o644 regular file and 33152 for a 0o600 regular file.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null otherwise.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, compact JSON with key order as listed, one record per line, each line ending in \n, no extra trailing blank line.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the rows.
+
+Permission inventory
+Files: docs-incidents-perms.jsonl, out-perms.jsonl, cache_forge-perms.jsonl.
+Same roots. Ordinary directories are included, including the walk root. Directory paths have no trailing slash.
+Fields, fixed key order: path, kind, perm, st_mode, size, sha256, target.
+Directory sha256 is null. File and symlink sha256 use the same rules as the content inventory.
+A later permission comparison must not leave file sha256 null and then treat that null as a byte change. The content inventory rehash is the byte proof. Directory rows are proved by kind, perm, st_mode, size, and the directory bookkeeping file.
+
+Directory bookkeeping
+Files: docs-incidents-dirs.jsonl, out-dirs.jsonl, cache_forge-dirs.jsonl.
+Ordinary directories only, including the walk root. Symlinked directories are not descended and are not directory rows.
+Fields, fixed key order: path, kind, perm, st_mode, size, nlink, childCount, childrenSha256.
+childrenSha256: SHA-256 of the UTF-8 concatenation of each direct child name followed by a newline, names sorted by UTF-8 bytes. An empty directory hashes the empty byte string.
+This is the additive-directory proof. A new child changes the parent childrenSha256, childCount, and possibly nlink or st_size. That is directory bookkeeping, not a content-row change. Do not chmod a directory to force a later walk to match.
+
+Mode distinction
+gitMode 100644 covers both perm 0o644 / st_mode 33188 and perm 0o600 / st_mode 33152. Preservation compares perm and st_mode, not gitMode alone. Collapsing those two regular-file modes is not a match.
+
+Other baselines
+indexes.json: raw SHA-256, size, mode, and permission of .git/index and every .git/worktrees/*/index. foreign is true except this worktree.
+refs.jsonl: raw bytes, length, mode, and permission of every file under .git/refs, plus .git/HEAD, .git/packed-refs when present, and every worktree HEAD under .git/worktrees. Reflogs are not in this set. Fields: path, kind, perm, st_mode, size, sha256, target. Paths are absolute.
+show-ref.txt: exact UTF-8 bytes of GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git --no-pager show-ref, captured before staging.
+host-deps.json: top-level and lib/ symlinks only. Targets were not opened.
+source-identity-before.json: the 24 accepted paths, current/accepted hashes, permission mode 420, full st_mode, and git blob ids, captured before staging.
+tracked-diff.txt: exact GIT_MASTER=1 git diff --ignore-submodules=all bytes of the 19 tracked modifications. It does not include the five untracked additions.
+whitespace-before.txt: exit code line for that diff --check. Empty stdout is not appended.
+capture.py: the read-only script that produced the inventories. It writes only under /tmp during the walk. An unused fill_hashes function in that script raises if called; main() does not call it and produced these inventories.

@@ -1,0 +1,11 @@
+# Portable operator handoff after claimed-SY delivery
+
+The accepted15fd6293 rehearsal has22 literal external source inputs, not the14 in the earlier ED snapshot, plus the hardcoded Foundry directory. The companion JSON records every actual current ID/path/line/raw length/hash. Runtime acquisition files, reviewed original certificates, prepared snapshots and relative ABI artifacts are additional inputs. Preserve original worktrees and archives; this inventory is not relocation or F3 acceptance.
+
+Observed current contracts matter for relocation: loadInput resolves source/snapshot paths, normalize retains them, and prepareDomain hashes the entire normalized input. Execution requires absolute source paths, validates raw bytes and revalidates the prepared manifest. Therefore rewriting locations can change preparation identity even when content bytes are equal. Copying a folder and calling it the same prepared intent would be insufficient.
+
+A portability implementation must explicitly separate fresh portable preparation from recovery of an already signed/mined intent. Preserve content identities, full original certificates, canonical chain/domain/payload checks and journal reconciliation. Do not silently ignore changed provenance fields or manufacture old captures. If physical location resolution is separated from immutable logical identity, prove that content verification and actual old intent/signature/nonce/receipt identity still hold; do not assume it.
+
+Required observable proof is relocated execution using complete bound inputs rather than original host paths, with no dependency on the original external worktree locations, followed by actual mined-before-checkpoint recovery without duplicate payment. Keep originals intact while establishing this proof; never delete or rename shared directories to simulate absence. Use explicit toolchain discovery/configuration rather than the user-specific Foundry path. Cold/dependency reconstruction and cross-platform claims require their own actual checks; same-host relocation alone does not establish them.
+
+No portability contract change is selected or implemented by this assessment. The active stateful closure candidate is untouched. Original authorities, snapshots and seals remain unchanged.

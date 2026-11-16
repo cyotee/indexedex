@@ -1,0 +1,47 @@
+{
+  "status": "stopped-producer-deliverable",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 493162,
+    "sha256": "4332313443099271a63c52be668964c1eea41bbb5f27eead9b7de00d1e5ef39b"
+  },
+  "bindings": [
+    {
+      "path": "report.md",
+      "bytes": 14587,
+      "sha256": "f8a6f15a4269d3fa7852a1aadd3192e2e7972ba5886cbcec46d5efceb15397a4"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 14556,
+      "sha256": "4471544a145da46e207f66c744f5ca30be3d74dfb63f2f8a338b0f21caec110c"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 1132,
+      "sha256": "44d36e5d2d04b7428853cf729f0f68c7ea3f59bdac6373425742692377d882ee"
+    },
+    {
+      "path": "actual/archive.json",
+      "bytes": 5917231,
+      "sha256": "6f3d656a88b325503f4cddd23cab96e582e171ce1f40e632eb065f4ad24fe9f2"
+    },
+    {
+      "path": "actual/reconciliation.json",
+      "bytes": 841408,
+      "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2"
+    },
+    {
+      "path": "actual/http-manifest.json",
+      "bytes": 638076,
+      "sha256": "aafc37d15f223382c84679188a8b5a2f125d4d5c1b645dddfbb1941ab87e151f"
+    },
+    {
+      "path": "independent-proof.json",
+      "bytes": 1324604,
+      "sha256": "7373fd927c2017fc87cd5c53143281c46f3108ec127cb8e3cc9260aef467fdc4"
+    }
+  ],
+  "independentVerification": "required separate verifier, not claimed",
+  "lastProducerWrite": true
+}

@@ -1,0 +1,288 @@
+set -euo pipefail
+export PATH=/Users/cyotee/.foundry/bin:$PATH
+cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source'
+chain=$(cast chain-id --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100)
+test "$chain" = 4663
+hash=$(cast block 108944663 --field hash --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100)
+test "$hash" = 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733
+printf "PIN|%s|%s\n" "$chain" "$hash"
+printf 'QUERY|E-S|0x230f95db9644c5b3608ba676d18426d03e435b1d
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x230f95db9644c5b3608ba676d18426d03e435b1d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x230f95db9644c5b3608ba676d18426d03e435b1d
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x230f95db9644c5b3608ba676d18426d03e435b1d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x230f95db9644c5b3608ba676d18426d03e435b1d
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x230f95db9644c5b3608ba676d18426d03e435b1d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xfad14e74911353728b9bbfd9f0566827790c16c2
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xfad14e74911353728b9bbfd9f0566827790c16c2 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xfad14e74911353728b9bbfd9f0566827790c16c2
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xfad14e74911353728b9bbfd9f0566827790c16c2 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xfad14e74911353728b9bbfd9f0566827790c16c2
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xfad14e74911353728b9bbfd9f0566827790c16c2 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xd3d58fdd70b33143052de127be8700fa37825e96
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xd3d58fdd70b33143052de127be8700fa37825e96 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xd3d58fdd70b33143052de127be8700fa37825e96
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xd3d58fdd70b33143052de127be8700fa37825e96 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xd3d58fdd70b33143052de127be8700fa37825e96
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xd3d58fdd70b33143052de127be8700fa37825e96 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x73c121d572e065c8b6fa6acec6b40deffb62e1df
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x73c121d572e065c8b6fa6acec6b40deffb62e1df --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x73c121d572e065c8b6fa6acec6b40deffb62e1df
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x73c121d572e065c8b6fa6acec6b40deffb62e1df --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x73c121d572e065c8b6fa6acec6b40deffb62e1df
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x73c121d572e065c8b6fa6acec6b40deffb62e1df --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x76b60dcf71da2294f8aa034432d925d1eed8cf68
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x76b60dcf71da2294f8aa034432d925d1eed8cf68 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x76b60dcf71da2294f8aa034432d925d1eed8cf68
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x76b60dcf71da2294f8aa034432d925d1eed8cf68 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x76b60dcf71da2294f8aa034432d925d1eed8cf68
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x76b60dcf71da2294f8aa034432d925d1eed8cf68 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xbedf78eb17a054d972c85ce222e2175f19899cd6
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xbedf78eb17a054d972c85ce222e2175f19899cd6 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xbedf78eb17a054d972c85ce222e2175f19899cd6
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xbedf78eb17a054d972c85ce222e2175f19899cd6 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xbedf78eb17a054d972c85ce222e2175f19899cd6
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xbedf78eb17a054d972c85ce222e2175f19899cd6 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xe8ca5d7b03204d110ff8a06753e7cd90defc544a
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xe8ca5d7b03204d110ff8a06753e7cd90defc544a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xe8ca5d7b03204d110ff8a06753e7cd90defc544a
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xe8ca5d7b03204d110ff8a06753e7cd90defc544a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xe8ca5d7b03204d110ff8a06753e7cd90defc544a
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xe8ca5d7b03204d110ff8a06753e7cd90defc544a --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x5160f655bf9b567f8a47a4f107371ad938126c3c
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x5160f655bf9b567f8a47a4f107371ad938126c3c --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x5160f655bf9b567f8a47a4f107371ad938126c3c
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x5160f655bf9b567f8a47a4f107371ad938126c3c --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x5160f655bf9b567f8a47a4f107371ad938126c3c
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x5160f655bf9b567f8a47a4f107371ad938126c3c --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x03f523d7243aaf869c44322197b4fc55e0d12cd7
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x03f523d7243aaf869c44322197b4fc55e0d12cd7 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x03f523d7243aaf869c44322197b4fc55e0d12cd7
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x03f523d7243aaf869c44322197b4fc55e0d12cd7 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x03f523d7243aaf869c44322197b4fc55e0d12cd7
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x03f523d7243aaf869c44322197b4fc55e0d12cd7 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x4aa38d56933887bdba2e790fa45509bfd9d1b938
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x4aa38d56933887bdba2e790fa45509bfd9d1b938 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x4aa38d56933887bdba2e790fa45509bfd9d1b938
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x4aa38d56933887bdba2e790fa45509bfd9d1b938 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x4aa38d56933887bdba2e790fa45509bfd9d1b938
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x4aa38d56933887bdba2e790fa45509bfd9d1b938 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xdc7d32b21cfdf003b5467141bd67e1f68a732cce
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xdc7d32b21cfdf003b5467141bd67e1f68a732cce --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xdc7d32b21cfdf003b5467141bd67e1f68a732cce
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xdc7d32b21cfdf003b5467141bd67e1f68a732cce --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xdc7d32b21cfdf003b5467141bd67e1f68a732cce
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xdc7d32b21cfdf003b5467141bd67e1f68a732cce --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x26acc4c07cac494d49054eaad406ef108a074a66
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x26acc4c07cac494d49054eaad406ef108a074a66 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x26acc4c07cac494d49054eaad406ef108a074a66
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x26acc4c07cac494d49054eaad406ef108a074a66 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x26acc4c07cac494d49054eaad406ef108a074a66
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x26acc4c07cac494d49054eaad406ef108a074a66 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xed2e9d1e229e6a78baf74abc7314bd16b9924f33
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xed2e9d1e229e6a78baf74abc7314bd16b9924f33 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xed2e9d1e229e6a78baf74abc7314bd16b9924f33
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xed2e9d1e229e6a78baf74abc7314bd16b9924f33 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xed2e9d1e229e6a78baf74abc7314bd16b9924f33
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xed2e9d1e229e6a78baf74abc7314bd16b9924f33 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x8b73c11e053581620bf5d7826d0942c50cb7b9cf
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x8b73c11e053581620bf5d7826d0942c50cb7b9cf --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x8b73c11e053581620bf5d7826d0942c50cb7b9cf
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x8b73c11e053581620bf5d7826d0942c50cb7b9cf --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x8b73c11e053581620bf5d7826d0942c50cb7b9cf
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x8b73c11e053581620bf5d7826d0942c50cb7b9cf --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xc379feb4182211abe71a34858265e4bf5ff35e06
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xc379feb4182211abe71a34858265e4bf5ff35e06 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xc379feb4182211abe71a34858265e4bf5ff35e06
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xc379feb4182211abe71a34858265e4bf5ff35e06 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xc379feb4182211abe71a34858265e4bf5ff35e06
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xc379feb4182211abe71a34858265e4bf5ff35e06 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xb63159deb0ed4b388b964c5eb5a9f2845e469a08
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xb63159deb0ed4b388b964c5eb5a9f2845e469a08 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xb63159deb0ed4b388b964c5eb5a9f2845e469a08
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xb63159deb0ed4b388b964c5eb5a9f2845e469a08 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xb63159deb0ed4b388b964c5eb5a9f2845e469a08
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xb63159deb0ed4b388b964c5eb5a9f2845e469a08 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xcb2735084b4c10343e2f54c2c7573615ccf4d97f
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xcb2735084b4c10343e2f54c2c7573615ccf4d97f --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xcb2735084b4c10343e2f54c2c7573615ccf4d97f
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xcb2735084b4c10343e2f54c2c7573615ccf4d97f --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xcb2735084b4c10343e2f54c2c7573615ccf4d97f
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xcb2735084b4c10343e2f54c2c7573615ccf4d97f --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x4dfebb21d855115d4019819393e514977e490e5d
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x4dfebb21d855115d4019819393e514977e490e5d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x4dfebb21d855115d4019819393e514977e490e5d
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x4dfebb21d855115d4019819393e514977e490e5d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x4dfebb21d855115d4019819393e514977e490e5d
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x4dfebb21d855115d4019819393e514977e490e5d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x9140e11bb397188a0c930e91f3f266029c35524d
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x9140e11bb397188a0c930e91f3f266029c35524d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x9140e11bb397188a0c930e91f3f266029c35524d
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x9140e11bb397188a0c930e91f3f266029c35524d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x9140e11bb397188a0c930e91f3f266029c35524d
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x9140e11bb397188a0c930e91f3f266029c35524d --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xba9b369a75e216cc9d73c9f3f916c939a5755a08
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xba9b369a75e216cc9d73c9f3f916c939a5755a08 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xba9b369a75e216cc9d73c9f3f916c939a5755a08
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xba9b369a75e216cc9d73c9f3f916c939a5755a08 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xba9b369a75e216cc9d73c9f3f916c939a5755a08
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xba9b369a75e216cc9d73c9f3f916c939a5755a08 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0x74d09665900a5f29bac25befd30c73a5962d44e7
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0x74d09665900a5f29bac25befd30c73a5962d44e7 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0x74d09665900a5f29bac25befd30c73a5962d44e7
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0x74d09665900a5f29bac25befd30c73a5962d44e7 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0x74d09665900a5f29bac25befd30c73a5962d44e7
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0x74d09665900a5f29bac25befd30c73a5962d44e7 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xb4b258c63d56c11f97d3f881d19aa296945846ae
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xb4b258c63d56c11f97d3f881d19aa296945846ae --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xb4b258c63d56c11f97d3f881d19aa296945846ae
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xb4b258c63d56c11f97d3f881d19aa296945846ae --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xb4b258c63d56c11f97d3f881d19aa296945846ae
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xb4b258c63d56c11f97d3f881d19aa296945846ae --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-S|0xd221eea1c0ca823f57a96fdfe1d392a367384fdd
+'
+cast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'balanceOf(address)(uint256)' 0xd221eea1c0ca823f57a96fdfe1d392a367384fdd --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|E-P|0xd221eea1c0ca823f57a96fdfe1d392a367384fdd
+'
+cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 'balanceOf(address)(uint256)' 0xd221eea1c0ca823f57a96fdfe1d392a367384fdd --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf 'QUERY|W-P|0xd221eea1c0ca823f57a96fdfe1d392a367384fdd
+'
+cast call 0x46e068c2393e189fbc86632f67210af253a42aa8 'balanceOf(address)(uint256)' 0xd221eea1c0ca823f57a96fdfe1d392a367384fdd --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100
+printf "RETAINED_PURCHASERS_COMPLETE|93\n"

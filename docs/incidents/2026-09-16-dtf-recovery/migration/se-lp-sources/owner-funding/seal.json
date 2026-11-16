@@ -1,0 +1,114 @@
+{
+  "schema": "phase20-actual-eoa-owner-funding-seal-v1",
+  "date": "2026-11-12",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source",
+  "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+  "branch": "work/dtf-migration-phase-20-se-lp-source",
+  "files": [
+    {
+      "path": "contract.md",
+      "bytes": 10950,
+      "sha256": "436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184"
+    },
+    {
+      "path": "probe/build/build-info/50e0b03222b94591.json",
+      "bytes": 99,
+      "sha256": "bca6c009b19724a30203bcf8ea17a92c30ff170cd7ab15cb104f4022491c109b"
+    },
+    {
+      "path": "probe/build/OwnerFundingCustody.sol/EarlierLpCustody.json",
+      "bytes": 11643,
+      "sha256": "98747b4671a37fd34b9adb816d5d2a5b610cf069db18a865aef44cf7eb1fa876"
+    },
+    {
+      "path": "probe/build/OwnerFundingCustody.sol/ISource.json",
+      "bytes": 3369,
+      "sha256": "456f86aa86699ef6ff613996d9dc4d864860618f115733ee3882e82c14d67d40"
+    },
+    {
+      "path": "probe/build/OwnerFundingCustody.sol/OwnerFundingCustody.json",
+      "bytes": 5888,
+      "sha256": "6126fafcd3478936a7cd84af1d52edc09f49e38f6cbedf8ff009c47fc834b100"
+    },
+    {
+      "path": "probe/build/OwnerFundingCustody.sol/WeightedLpCustody.json",
+      "bytes": 11645,
+      "sha256": "aa16bb6bcfa5f70c78755fa285caf018288338ec1f0d2183f61f94d842e7e711"
+    },
+    {
+      "path": "probe/cache/solidity-files-cache.json",
+      "bytes": 1872,
+      "sha256": "7f8a5115c8756c9488cc9e185ce08e5311d52d9adeb0c5673ffea7e8eed6f493"
+    },
+    {
+      "path": "probe/OwnerFundingCustody.sol",
+      "bytes": 2309,
+      "sha256": "aec2c3bb8d6f6b6d9cfc1823d3ffef035f24f4b56fbec149a082bc544e657cf5"
+    },
+    {
+      "path": "report.md",
+      "bytes": 15194,
+      "sha256": "0e662f5040d1d0d9e0f8a2b71ef4dbf4769fc9eaf822460b0cd280941669d5b0"
+    },
+    {
+      "path": "rpc.json",
+      "bytes": 1907517,
+      "sha256": "f5a0de0a570624528caa095d5fc57f3846024f2fe7bca5567b825a8653125c18"
+    },
+    {
+      "path": "runtime.json",
+      "bytes": 623279,
+      "sha256": "7c0fd4fc17b4e2bb5171f6f0a66e3df8f4257e857ad1908e0742528b66476d96"
+    }
+  ],
+  "selfExcluded": "seal.json",
+  "rowResults": [
+    {
+      "row": "E-S",
+      "result": "not-ready",
+      "reason": "fixed collector inventory zero; no withdrawal attempted"
+    },
+    {
+      "row": "E-P",
+      "result": "admitted-proposal",
+      "qualification": "external actual EOA owner release and personal donation; signed source-only custody-and-hold"
+    },
+    {
+      "row": "W-P",
+      "result": "admitted-proposal",
+      "qualification": "external actual EOA owner release and personal donation; signed source-only custody-and-hold"
+    },
+    {
+      "row": "W-SW",
+      "result": "prior independent admission unchanged",
+      "qualification": "not replayed"
+    }
+  ],
+  "checks": {
+    "isolatedSolarBuildExit": 0,
+    "solidityDiagnostics": "No diagnostics found",
+    "jsonParsed": true,
+    "rawRpcResponses": 1141,
+    "rawSignedPayloadsRecovered": 34,
+    "intentionalSignedReverts": 14,
+    "impersonatedDonorTransactions": 4,
+    "priorImmutableFiles": 35,
+    "indexUnchanged": true,
+    "trackedDiffEmpty": true,
+    "stagedDiffEmpty": true,
+    "checkpointAbsent": true,
+    "nodeStopped": true,
+    "nodeExit": 0,
+    "ownedRuntimePending": 0,
+    "receiptSubscriptionsPending": 0,
+    "impersonationsPending": 0,
+    "monitorsPending": 0,
+    "sourceProbeChangesStopped": true
+  },
+  "limits": [
+    "No production or existing test suite run; no production edits",
+    "Biome JSON language server unavailable; no installation permitted",
+    "No independent owner-funding verifier result claimed",
+    "No operational original allocation, generic user acquisition, recovery or Migration authority admitted"
+  ]
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"constructor","inputs":[{"name":"vault_","type":"address","internalType":"address"},{"name":"token_","type":"address","internalType":"address"}],"stateMutability":"nonpayable"}],"id":5843}

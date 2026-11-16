@@ -1,0 +1,29 @@
+{
+  "label": "receipt-audit-r2",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "argv": [
+    "/opt/homebrew/bin/bun",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/audit-receipts.mjs",
+    "receipt-audit-r2"
+  ],
+  "literal": "'/opt/homebrew/bin/bun' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/audit-receipts.mjs' 'receipt-audit-r2'",
+  "binaryPassObservable": "exit 0 RECEIPT_AUDIT PASS; measured deltas, actual inner/outer rollback and caller-bound errors",
+  "started": "2026-11-10T13:21:59.103Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9",
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9",
+    "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9/cache"
+  },
+  "credentialPresent": true,
+  "childPid": 3255,
+  "code": 0,
+  "signal": null,
+  "finished": "2026-11-10T13:21:59.273Z"
+}

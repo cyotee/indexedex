@@ -1,0 +1,100 @@
+{
+  "alias": "robinhood_mainnet_alchemy",
+  "start": "2026-11-13T14:45:37.430Z",
+  "stop": "2026-11-13T14:45:37.469Z",
+  "requests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 89,
+      "method": "eth_getCode",
+      "params": [
+        "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+        "0x6c0835d"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 90,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "data": "0x70a0823100000000000000000000000058fbac0714a77a30b266776616d93911e36d363e"
+        },
+        "0x6c0835d"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 91,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "data": "0x70a0823100000000000000000000000058fbac0714a77a30b266776616d93911e36d363e"
+        },
+        "0x6c0835d"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 92,
+      "method": "eth_getCode",
+      "params": [
+        "0x58fbac0714a77a30b266776616d93911e36d363e",
+        "0x6c0835d"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 93,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "data": "0x70a0823100000000000000000000000056188b8bbe70013408553ce28124f6d48e5896e6"
+        },
+        "0x6c0835d"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 94,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+          "data": "0x70a0823100000000000000000000000056188b8bbe70013408553ce28124f6d48e5896e6"
+        },
+        "0x6c0835d"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 95,
+      "method": "eth_getCode",
+      "params": [
+        "0x56188b8bbe70013408553ce28124f6d48e5896e6",
+        "0x6c0835d"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 96,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "data": "0x70a08231000000000000000000000000f410e458d0d603789323937ee05774d2178cb553"
+        },
+        "0x6c0835d"
+      ]
+    }
+  ],
+  "httpStatus": 200,
+  "responseText": "[{\"jsonrpc\":\"2.0\",\"id\":89,\"result\":\"0x\"},{\"jsonrpc\":\"2.0\",\"id\":90,\"result\":\"0x0000000000000000000000000000000000000000000000000000000000000000\"},{\"jsonrpc\":\"2.0\",\"id\":91,\"result\":\"0x0000000000000000000000000000000000000000000000000000000000000000\"},{\"jsonrpc\":\"2.0\",\"id\":92,\"result\":\"0x\"},{\"jsonrpc\":\"2.0\",\"id\":93,\"result\":\"0x0000000000000000000000000000000000000000000000000000000000000000\"},{\"jsonrpc\":\"2.0\",\"id\":94,\"result\":\"0x0000000000000000000000000000000000000000000000000000000000000000\"},{\"jsonrpc\":\"2.0\",\"id\":95,\"result\":\"0x\"},{\"jsonrpc\":\"2.0\",\"id\":96,\"result\":\"0x00000000000000000000000000000000000000000000152d02c81fa1d96a4eef\"}]",
+  "responseSha256": "01e5cffbffd8fd709f88b998ba89dab55c4cae82248c339e1fd6fdb11e92ba2e",
+  "responseUtf8Bytes": 641,
+  "raw": true,
+  "transportFailure": null
+}

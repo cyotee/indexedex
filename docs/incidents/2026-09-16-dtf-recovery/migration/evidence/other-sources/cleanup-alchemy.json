@@ -1,0 +1,27 @@
+{
+  "lane": "other-sources",
+  "date": "2026-11-10",
+  "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq",
+  "probeProcessReadback": [
+    {"pid": 54212, "absent": true, "code": "ESRCH"},
+    {"pid": 55971, "absent": true, "code": "ESRCH"}
+  ],
+  "anvilChildrenStarted": 0,
+  "ownedPortsOpened": 0,
+  "perRunCacheReadback": "Both result JSON files record all three owned cache directories absent in finally.",
+  "finalRunRootEntries": [],
+  "finalSourceChecks": {
+    "credentialPresenceOnly": "ALCHEMY_KEY_PRESENT",
+    "syntax": "node --check scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs",
+    "executable": "test -x scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs",
+    "stdout": "ALCHEMY_KEY_PRESENT FINAL_SYNTAX_PASS EXECUTABLE_PASS",
+    "exitCode": 0
+  },
+  "cleanupOperation": "rmdir \"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq\" && test ! -e \"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq\"",
+  "cleanupShell": "/bin/zsh -lc, with absolute worktree cwd and owned TMPDIR/cache exports",
+  "cleanupStdout": "ALCHEMY_RETRY_RUN_ROOT_REMOVED_AND_ABSENT",
+  "cleanupExitCode": 0,
+  "runRootAbsent": true,
+  "sharedResourcesRemoved": false,
+  "keyOrExpandedSecretUrlPrinted": false
+}

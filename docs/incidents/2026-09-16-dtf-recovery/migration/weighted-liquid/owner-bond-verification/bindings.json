@@ -1,0 +1,2627 @@
+{
+  "version": "independent-owner-bond-verification-bindings-v1",
+  "sealedAt": "2026-11-11T22:01:35.634Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+  "branch": "work/dtf-migration-phase-13-weighted-liquid",
+  "base": "2c2b3370ded30cae1662329025d4fb58f7197330",
+  "AdversarialVerify": "confirmed",
+  "scope": "Owner-paid first ordinary bond, on-chain activation prerequisite, D1 closure and preserved Stage2 NFT/W-L/operator resumes only",
+  "D1": "closed under approved paid first-bond rule",
+  "allRequiredChecksExitZero": true,
+  "sourceModificationsByVerifier": false,
+  "producerSourceModificationsStopped": true,
+  "ownedRuntimeRemaining": false,
+  "requiredChecks": {
+    "specs": {
+      "passed": 109,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    "forks": {
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    "operator": {
+      "passed": 57,
+      "failed": 0,
+      "exit": 0
+    },
+    "operatorStagesExit": 0,
+    "strictTypesExit": 0,
+    "rehearsalExit": 0,
+    "criticalTraces": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    }
+  },
+  "authority": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "bytes": 8528,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/input-snapshots/phase13-owner-first-bond-correction.md.txt"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "bytes": 79305,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/input-snapshots/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md.txt"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "bytes": 108022,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/input-snapshots/MIGRATION_DETF_DRAFT_PRD.md.txt"
+    }
+  ],
+  "producerReport": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/report.md",
+    "sha256": "b0aec1774148f103a8d2b6e265b3d3edc0de5a59ca20ed5fc7fa5eebe0f905e8"
+  },
+  "producerBindings": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/bindings.json",
+    "sha256": "8e801d24e1b9c87c60b68dabe9801fb77a65759b54be76dcab545f7e9f7f2687"
+  },
+  "sourceFiles": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "producerSha256": "48e634c7ccdf7790a54710ce19c124a38b098c418efbee9ff35f1177eb84a691",
+      "finalSha256": "48e634c7ccdf7790a54710ce19c124a38b098c418efbee9ff35f1177eb84a691",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol.txt"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "producerSha256": "7896a426ba15f5b869ca17fcc59e977599f3bc0a0c2f291cc1d9a433b817305e",
+      "finalSha256": "7896a426ba15f5b869ca17fcc59e977599f3bc0a0c2f291cc1d9a433b817305e",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol.txt"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+      "producerSha256": "c4945faa5e9a3bae8eedd5d3a45ea617a3091d0005a630b447c628c13de81ee8",
+      "finalSha256": "c4945faa5e9a3bae8eedd5d3a45ea617a3091d0005a630b447c628c13de81ee8",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol.txt"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "producerSha256": "1574849c0dca733746100645722f4b070a6317b7a7769968c4912c0ac8d8cdb1",
+      "finalSha256": "1574849c0dca733746100645722f4b070a6317b7a7769968c4912c0ac8d8cdb1",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol.txt"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "producerSha256": "6204ee037aa541e2c6c9ca67b845007fedea5a029f8c5767487bcad1a80659a5",
+      "finalSha256": "6204ee037aa541e2c6c9ca67b845007fedea5a029f8c5767487bcad1a80659a5",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol.txt"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "producerSha256": "95e4b18f0d18304a392de199173b4010d8b1fa190926018fd714ea09bf1099c3",
+      "finalSha256": "95e4b18f0d18304a392de199173b4010d8b1fa190926018fd714ea09bf1099c3",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol.txt"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "producerSha256": "3f60c4c5ab04d54dd94ccd71d5bb3e35d144a49394b12a6af3e3e22ccbdc8883",
+      "finalSha256": "3f60c4c5ab04d54dd94ccd71d5bb3e35d144a49394b12a6af3e3e22ccbdc8883",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol.txt"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "producerSha256": "910b440417e3b484462e719615ac7805c1152f0e0026f12c108e847ca400c8cd",
+      "finalSha256": "910b440417e3b484462e719615ac7805c1152f0e0026f12c108e847ca400c8cd",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol.txt"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "producerSha256": "2a3bb5bced966dbfb379aeaad989258c2ad005b1edee8353ba744d3694bb4b57",
+      "finalSha256": "2a3bb5bced966dbfb379aeaad989258c2ad005b1edee8353ba744d3694bb4b57",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md.txt"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "producerSha256": "aadae5bbe6daa45d5835df1deee2a76909ab43ad4392c099b222b94de5989ed6",
+      "finalSha256": "aadae5bbe6daa45d5835df1deee2a76909ab43ad4392c099b222b94de5989ed6",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "producerSha256": "575c904d4919db3499f5b7bef429b01b30038087a7a1c1d2fb4e8e32110788cd",
+      "finalSha256": "575c904d4919db3499f5b7bef429b01b30038087a7a1c1d2fb4e8e32110788cd",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/cli.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "producerSha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "finalSha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/execution-owner-bond.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "producerSha256": "22c03ce6bbef1f6d565bf4d300acd46466c34a4bcd122e7f2ced3ff1b02f64d6",
+      "finalSha256": "22c03ce6bbef1f6d565bf4d300acd46466c34a4bcd122e7f2ced3ff1b02f64d6",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/execution-plan.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "producerSha256": "f71a8a00f17914a198a65d33e61654cfd378ba69ab8e8a97ff1e10aed92e3141",
+      "finalSha256": "f71a8a00f17914a198a65d33e61654cfd378ba69ab8e8a97ff1e10aed92e3141",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/execution-schema.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "producerSha256": "22ccd94ae0f00dc9b65f9142337d1e65fd2efdc7a80e677083cdc1b240fff34e",
+      "finalSha256": "22ccd94ae0f00dc9b65f9142337d1e65fd2efdc7a80e677083cdc1b240fff34e",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/execution-state.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "producerSha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "finalSha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/execution.test.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "producerSha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+      "finalSha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/execution.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "producerSha256": "33a369e8cd4b64f5d6a8c357057f3bd33c5d2a9ac62cc1e95659833654972128",
+      "finalSha256": "33a369e8cd4b64f5d6a8c357057f3bd33c5d2a9ac62cc1e95659833654972128",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/payloads.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "producerSha256": "55301049017ecad5f35c8dc3e64684cadd38e30cec802a3da2a38e4cfb2c11c3",
+      "finalSha256": "55301049017ecad5f35c8dc3e64684cadd38e30cec802a3da2a38e4cfb2c11c3",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/preparation.fixture.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "producerSha256": "0995b68e5b20f0fc9a5aca93a6183169184cb984baed8be496496c48c5d13d40",
+      "finalSha256": "0995b68e5b20f0fc9a5aca93a6183169184cb984baed8be496496c48c5d13d40",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/preparation.test.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "producerSha256": "6282d36cbd4413f745c2a611e91fad7a3ebd865ee4243dc7f88d9098961364d8",
+      "finalSha256": "6282d36cbd4413f745c2a611e91fad7a3ebd865ee4243dc7f88d9098961364d8",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/preparation.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "producerSha256": "ff1f142ede94d546d190ae6a822d90e14ee409a8bf610ed6c64a505e3b32286e",
+      "finalSha256": "ff1f142ede94d546d190ae6a822d90e14ee409a8bf610ed6c64a505e3b32286e",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/provenance.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "producerSha256": "ef111fcc9e8b88bf452b5425f7fa1d151437be48fe4dc4cda44cdfab805c36c6",
+      "finalSha256": "ef111fcc9e8b88bf452b5425f7fa1d151437be48fe4dc4cda44cdfab805c36c6",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/quotes.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "producerSha256": "2db966695ebbb2a28489d8032677f9c3d0b73ffd6b4563140de493b24ab429d8",
+      "finalSha256": "2db966695ebbb2a28489d8032677f9c3d0b73ffd6b4563140de493b24ab429d8",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearsal-admission.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "producerSha256": "0207301b92af56bee920d8c62c91e7a98ce283f541a3b4f2425e28b1d008cb5f",
+      "finalSha256": "0207301b92af56bee920d8c62c91e7a98ce283f541a3b4f2425e28b1d008cb5f",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearsal-chain.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "producerSha256": "ef160288009ae7f855879a8122755afb8d7e71ec5b0c30d321cca4ee7bdc06f2",
+      "finalSha256": "ef160288009ae7f855879a8122755afb8d7e71ec5b0c30d321cca4ee7bdc06f2",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearsal-data.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "producerSha256": "f2aeaa470973d551c72a7fc3e47c726f9aa833c85b10e3c238b31955f38ab515",
+      "finalSha256": "f2aeaa470973d551c72a7fc3e47c726f9aa833c85b10e3c238b31955f38ab515",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearsal-owner-bond.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "producerSha256": "7232dce7be3eeea98d11dccc06f6daf0054103eaef13cfb59d125ed702a9bf0a",
+      "finalSha256": "7232dce7be3eeea98d11dccc06f6daf0054103eaef13cfb59d125ed702a9bf0a",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearsal-proof.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "producerSha256": "ac4caaf5439eebaadda6355a9d5aa3a59801027471ff5f158628a46b379ccf29",
+      "finalSha256": "ac4caaf5439eebaadda6355a9d5aa3a59801027471ff5f158628a46b379ccf29",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearsal-recovery.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "producerSha256": "4a90163a4938d36714be51ff1b3da1ba60ed435d815b3ab8cefa02d39a552d7d",
+      "finalSha256": "4a90163a4938d36714be51ff1b3da1ba60ed435d815b3ab8cefa02d39a552d7d",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "producerSha256": "99401616a7d7a3808e4fbc6d9fe7a53d19fab422941b696ebd67866191850a89",
+      "finalSha256": "99401616a7d7a3808e4fbc6d9fe7a53d19fab422941b696ebd67866191850a89",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/rehearse.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "producerSha256": "7134c09beeafc10aac47382b6c13076b2efcbbf56ea404639c9e4b9ab5bdca9e",
+      "finalSha256": "7134c09beeafc10aac47382b6c13076b2efcbbf56ea404639c9e4b9ab5bdca9e",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/schema.ts.txt"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "producerSha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "finalSha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/scripts/recovery/dtf-migration/weighted-liquid.test.ts.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "producerSha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac",
+      "finalSha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "producerSha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1",
+      "finalSha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "producerSha256": "0a827e9d5580529687ed90fd34f6c932b11db264aa0ce08a4de188480cf676a2",
+      "finalSha256": "0a827e9d5580529687ed90fd34f6c932b11db264aa0ce08a4de188480cf676a2",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "producerSha256": "58307c198d12baa90f0d967034d06957733e113b67e7252e84d8f39f889f359e",
+      "finalSha256": "58307c198d12baa90f0d967034d06957733e113b67e7252e84d8f39f889f359e",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "producerSha256": "b307aa5c39f080e227551fad610cad0c3720592ba23c17861782b419cb0004db",
+      "finalSha256": "b307aa5c39f080e227551fad610cad0c3720592ba23c17861782b419cb0004db",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+      "producerSha256": "3e0bacae12cd81a6557b293ec9a5e51a9ef416043e651078bba1d42784a3e475",
+      "finalSha256": "3e0bacae12cd81a6557b293ec9a5e51a9ef416043e651078bba1d42784a3e475",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryForkBase.sol",
+      "producerSha256": "eb234fe3d03c5c32d5abebfee3b6f0ea9d4efe2a66cdbc6e40399654b6824d81",
+      "finalSha256": "eb234fe3d03c5c32d5abebfee3b6f0ea9d4efe2a66cdbc6e40399654b6824d81",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryForkBase.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+      "producerSha256": "4421d0427cda8da2b0567dce7544364301df995887d5991a280395dc72b70e26",
+      "finalSha256": "4421d0427cda8da2b0567dce7544364301df995887d5991a280395dc72b70e26",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+      "producerSha256": "d93c0760bd6c5b03392b5339edbf140a2ab4150ea4f09809fba488f891a55d88",
+      "finalSha256": "d93c0760bd6c5b03392b5339edbf140a2ab4150ea4f09809fba488f891a55d88",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+      "producerSha256": "80718c9ae444b9a3bdcaa9bbf1c31a5278bf4283c6671e42df92d738af5d9b77",
+      "finalSha256": "80718c9ae444b9a3bdcaa9bbf1c31a5278bf4283c6671e42df92d738af5d9b77",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+      "producerSha256": "9c9b1af8e21ec962cacc5bde41ab9eb48c8a446ffa5b46ccabf20427524da312",
+      "finalSha256": "9c9b1af8e21ec962cacc5bde41ab9eb48c8a446ffa5b46ccabf20427524da312",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "producerSha256": "ccb97b697a2d211b9f907181924da91c45c44dd3d4d85a1184ef5ac2280f22ba",
+      "finalSha256": "ccb97b697a2d211b9f907181924da91c45c44dd3d4d85a1184ef5ac2280f22ba",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+      "producerSha256": "cf8c83025d4b01200d7b7aa31732db5071347a4c590dfe348a1aedafc6880546",
+      "finalSha256": "cf8c83025d4b01200d7b7aa31732db5071347a4c590dfe348a1aedafc6880546",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "producerSha256": "ca22e64dbc25e226ba5339d9257384d9d97df9bcba73bec6542eab0ccad9d782",
+      "finalSha256": "ca22e64dbc25e226ba5339d9257384d9d97df9bcba73bec6542eab0ccad9d782",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol",
+      "producerSha256": "4d0575284cca99bd7da6e1b23b6206ce0f37a8f2fd3c09af9a4acaedbf64a9dd",
+      "finalSha256": "4d0575284cca99bd7da6e1b23b6206ce0f37a8f2fd3c09af9a4acaedbf64a9dd",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+      "producerSha256": "53d354d8e8769364f45a231c347461ad683cffcdc6b6a4124f7f673816d9cd0e",
+      "finalSha256": "53d354d8e8769364f45a231c347461ad683cffcdc6b6a4124f7f673816d9cd0e",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+      "producerSha256": "056de212fc18170e502fc4b33e40478c5de70273a87d67c4a78af209ac027bb3",
+      "finalSha256": "056de212fc18170e502fc4b33e40478c5de70273a87d67c4a78af209ac027bb3",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "producerSha256": "d5b392756f8ae8cdcd43abc047c052d9a5b0c12436e2dd05117f961a5f8149b4",
+      "finalSha256": "d5b392756f8ae8cdcd43abc047c052d9a5b0c12436e2dd05117f961a5f8149b4",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+      "producerSha256": "06db89fec3d1f2fc007dd8008f970980f5fa9fec6b86606fc2d268bb7de38535",
+      "finalSha256": "06db89fec3d1f2fc007dd8008f970980f5fa9fec6b86606fc2d268bb7de38535",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "producerSha256": "6a19d3eb07b7c660f68f903c0457925504036ee5b6de54b2f197fd2c688e8656",
+      "finalSha256": "6a19d3eb07b7c660f68f903c0457925504036ee5b6de54b2f197fd2c688e8656",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol.txt"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+      "producerSha256": "b901f6ce3e7ee1aabf89270fd1b45e63f529ea51e1c382731086c38722f32b39",
+      "finalSha256": "b901f6ce3e7ee1aabf89270fd1b45e63f529ea51e1c382731086c38722f32b39",
+      "unchanged": true,
+      "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-snapshots/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol.txt"
+    }
+  ],
+  "finalArtifacts": [
+    {
+      "path": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "producerSha256": "195dc4fc1fdeb509f40c371dcea41875d0e2ce051a9983cc2d6760f85cf07daf",
+      "finalSha256": "818c2cc5d226ea4bb004a34e274232e132e25258a875ec446fdbfa1993f7653a",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "producerSha256": "7111e456864ddb329fa7b6cadcd1831662386c3d144f22682e36d2ce22156250",
+      "finalSha256": "9e83b8ce88f3fcb0318af05791aa9f27832d57aa45b1559e8c0239d03637bcc0",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "producerSha256": "0b4f843fac1c9793797974c0b97736a62fe79dd61d512914b8ba293511375744",
+      "finalSha256": "9474d50cd22b8a8c1cf1d3e1695ec6f53e8284ab48c3a1bd5a8c7082a8041d9c",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "producerSha256": "947a8e0e30359a790f9cca405a29a535334eee1d6d8bd8831d03d06a813cb165",
+      "finalSha256": "8ce5a5a79dc0334dbf37d9d625219896ff08e0b3fe5ceeed022f8d99cd6bad2b",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "producerSha256": "36e04beff1895cffae98beea94ac633ea7077fed48c09d3ea0cf265768ea7931",
+      "finalSha256": "e22b12dfd811a42299c3fec6ac1961e3a5f0b5267d41d4e47f43b7fcde0cbe29",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultFacet.sol/UniswapV4DetfMigrationBondNFTVaultFacet.json",
+      "producerSha256": "b8f6f9990f0a60fc1e753221e9a61de7736c240524713537f1aab44482e08198",
+      "finalSha256": "29aed207eab5a567374b46f53347cd8144d61e076debaaef775b9156dc889b84",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFFacet.sol/UniswapV4DetfMigrationStakedDETFFacet.json",
+      "producerSha256": "2af198924e5dff612f1b837a6307d92a9fdf8b52d420ed23929ec161631e08c0",
+      "finalSha256": "80a9df24e845e4d074c451dd455c30308048005c07c481f66a0775d13872dbd7",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+      "producerSha256": "4dacda46a5f7542101f7506f96aca551ed4d0e7cb935260b4f473c170b0fdc64",
+      "finalSha256": "15b6b632893c54d248ba338d68b5a182ea43cf85c136c0cf04cda32182b366f1",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+      "producerSha256": "bcf44bfb52f2e982bc426013a8747f9f3c9b941c940ae9c1401fe527ad468731",
+      "finalSha256": "bcf44bfb52f2e982bc426013a8747f9f3c9b941c940ae9c1401fe527ad468731",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondFacet.sol/UniswapV4DetfMigrationBondFacet.json",
+      "producerSha256": "5b1a87200909995c07f88d913149ab2946184f37451ca36d343ea74cabb6bd89",
+      "finalSha256": "4148c7b844143d2fcb6e52c340101b8591e2abee1f8a72eab0b128ce65cae2cc",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationQueryFacet.sol/UniswapV4DetfMigrationQueryFacet.json",
+      "producerSha256": "1fa0f1398bee5bbe8cc1f78c2d779fb27b050b30998bd0822225dcceae930217",
+      "finalSha256": "636263e7df794c9b27350f31f75abf53d00d546773bdd2a310a893083f95b36c",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationMaintenanceFacet.sol/UniswapV4DetfMigrationMaintenanceFacet.json",
+      "producerSha256": "8eb138e1a7f0b282c61d15fd184ab77753a1113f0e3a19db3be0948551779ebe",
+      "finalSha256": "4a13369049e5ce3914f133168c77486fc5e400fe93e7316c6f521ef357763e44",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "producerSha256": "12c93f77e7dfe6aa478099ea7153adeea8826d6b19e29e03156d51643957ceac",
+      "finalSha256": "7ff2033c0b66282768bf0b7042a808fdc4c32e31caca0f250fe41a8e1903c9d1",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "producerSha256": "15f2c5639f9b9e8237a616cfd77bc499b71a5dae47432d7be3792a0249d95db8",
+      "finalSha256": "a09a1d228de7854f0edfa9ef141f11a04da38efecf74d0a123c496d224b0b18d",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "producerSha256": "06f50e7c9b2e9d7ee54a1a134a263cd06bfe055547963ca82e60e99f830ba33e",
+      "finalSha256": "6d77383ca9336d782393dd552626864999bd05474b2eb9c74a2288fdc40aaa28",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "producerSha256": "b844a8507edf4755308379f2c4f9c39e7e171295c0bced33319b0d5fc534b5fb",
+      "finalSha256": "fd5fb6811cbeb9948467e3465ec04569a1a82cdbe169b2c116dd9f837483645f",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationAdministration.t.sol/MigrationAdministrationTest.json",
+      "producerSha256": "8ceb121839d8e94419ba55a8d8bf1276b373f93927b9b04ba1f485b60cf02194",
+      "finalSha256": "b2c66f77812b728ea374131f903406ddebaff7e1bfe15e9436831de3404842c1",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationAdministration.t.sol/MigrationOwnerReceiver.json",
+      "producerSha256": "59202e675e6e23172ac03fb727a044f1fafc2fac326cdf93cc6452b9f50976a3",
+      "finalSha256": "5671274418de5de2d27bae100791f610c063c35fd53671470acb3632886e3c97",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+      "producerSha256": "f743705748dcccbf78efe30457410fce7c42c526bd85d0fd0866402cb8766736",
+      "finalSha256": "e371732718f4639d38898f5202646f96574ce364bacc542394a312c696b218b2",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationEgress.t.sol/MigrationEgressTest.json",
+      "producerSha256": "be5858b33458662de000b71c0b36d12535d6b6fc5b93fbcb925fe2def15e37ce",
+      "finalSha256": "d2c992fddfb9a619e93e5c4cad44c3534beb503b8790899ce9c0f85326f0357f",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalBase.json",
+      "producerSha256": "156d791799c4b481736621d6a3fbf0032aebfb2cc930ea6ede4c38209ffc3128",
+      "finalSha256": "505bddecf36eed7962eb1a20c33a97485a93d03730535d885b14b08c56e29a98",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalTest.json",
+      "producerSha256": "1a3b678e6e620e2bb980c16cbeb50720b08fe4dd2c0463fcfb50c3a0914614f6",
+      "finalSha256": "be3ed6f01c1ca047fbfaee3a1449b45d505e0029cc238577981323dce24bee78",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalDecimalsTest.json",
+      "producerSha256": "367484f36c9d854b0d0da3f313b2adb07270d3c1c2d1f41e55d9a02e049d3218",
+      "finalSha256": "a34fce76ff7f79fb3f9d065285b9de78c963e252ffafa5610171ba86f3b30c56",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+      "producerSha256": "7d76bf14ce2ada1c1f127ba0a8dc44ca601de06a693538991b95a2213b08e4b8",
+      "finalSha256": "c0b6462b0601082eb9dde64ac5032adbce32b7cd13b54a993d32cf3adfa20b08",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationHostileContribution.t.sol/MigrationHostileContribution.json",
+      "producerSha256": "339aaead12f030e24f054934ae0ddaece24d6b6978a17708ca1e2a99c3b1a485",
+      "finalSha256": "dda9f8d3e85d045c047df97e1bf291d1c79037b5cab9d33c0c5f4d87f0ec074d",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+      "producerSha256": "ada6432451a53b04ca1e76be56961eb896cfe0dd541a2ce74dd47dfdd5636aa6",
+      "finalSha256": "2ffe85e526c2b7e581c46725738e11b688ee7a45c1f1575e0f283c7448a8ebdb",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationOwnerBondCallbacks.t.sol/MigrationOwnerBondCallbacksTest.json",
+      "producerSha256": "cb8bc1121f4b30ce4494f756d1211f32e373d1193dfc6bc5d613b190dcdd9a0a",
+      "finalSha256": "6c4d551d55c635569edf41b9033e4766bbcabec2d2b52321e990a24f15971f2a",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationOwnerBondCallbacks.t.sol/PaidOwnerWallet.json",
+      "producerSha256": "9615ef62274da44afc29b724f7cbe09e429f66dbe06f6e8dfa25aba443073cc2",
+      "finalSha256": "e3e2cfd59ec21535e6a1634d8352d363c530a09f9455bb7281e196e7da3910ef",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationOwnerFirstBond.t.sol/MigrationOwnerFirstBondTest.json",
+      "producerSha256": "07d6b2b46faac00d078fa9f5f2a6beadbdd86f193eff11e0a2ac8af7e3353095",
+      "finalSha256": "ce3f7a2acbd689f453914cdc229f91485eee746c4a636140cd1d319bcd5429f4",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationPermit2.t.sol/MigrationPermit2Test.json",
+      "producerSha256": "26e2e05039662ec55033dd631328017d70492dec9488619a34d7a37ee80ad1b8",
+      "finalSha256": "f6bfeb29ea62e2b7e18b0af208b3a66e3e4cce00254e1f5834077542acec5f94",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationPermit2Callback.sol/MigrationPermit2Callback.json",
+      "producerSha256": "dc8a79e4847a9e9d8c835640f87d79180d75ef9d1a3eb19b74cc9ad9fe36cb64",
+      "finalSha256": "3863f6ff50e329a8967e5a612e0fc06d672039aa91153e499f584c09c2bd97ea",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationPermitAndRetirement.t.sol/MigrationPermitAndRetirementTest.json",
+      "producerSha256": "78d482ba9237367ab1bb916487351c14bc5fa10f7fc6083af74b9a21beca0d2d",
+      "finalSha256": "83d938f8af001eb478b8cb2c5556688d81e7b986363cba8605caecf4418cae01",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationRecovery.t.sol/MigrationRecoveryCallbackTest.json",
+      "producerSha256": "ace03558719375dddcfbf11d666fca13b156bc03ff527106d51fd34e5792d436",
+      "finalSha256": "e2b2aebb564b36f403b1568fbd8295e74b97dd0f3d480f2884effbb5b20e02bd",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationRecovery.t.sol/MigrationRecoveryTest.json",
+      "producerSha256": "093067cd39ec961e54935bfa09dea0863bb3a5026f63d6253750359526e9b566",
+      "finalSha256": "794efe1841d954d6517e707528513a8187046f3e512ba05c20dee71887e38e97",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationRetainedAccounting.t.sol/MigrationRetainedAccountingTest.json",
+      "producerSha256": "3439bff48cccd885e46a69874518cae197c93117077681a9bb0fd3fea6ad280d",
+      "finalSha256": "6ebc0c50380a2f5e310307cd24bc7f0f1f516a88d3e9d391e4a881ae46e7b669",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+      "producerSha256": "ddcabe7a924e91e740ade6bac904ebd01b0ad1f7e5482b5599cf32ef5e131c91",
+      "finalSha256": "cb347cf12b1b91ae38e8f13e77663ee488f5735a40797c3c986a73fca61999d3",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationWeightedLiquidConfiguration.t.sol/MigrationWeightedLiquidConfigurationTest.json",
+      "producerSha256": "1ed8993a5472842bb0e9de478ab11464959d12c4cd8ef8c6b14792e2c027eabd",
+      "finalSha256": "61806c3868ec5a6cdb11b173c33f923545301b766de33ab82e70da0e86e05254",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotReceiptExclusionTest.json",
+      "producerSha256": "a99c0d0b9979b8aed25950facbacb1b506addc4b14ca1b4771348acc5966a275",
+      "finalSha256": "a99c0d0b9979b8aed25950facbacb1b506addc4b14ca1b4771348acc5966a275",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotDecimalsTest.json",
+      "producerSha256": "5b20f073fc7d9d72020541ae77b31ada9ee5e7721cb3aa0f81e3eeff7a3134ca",
+      "finalSha256": "5b20f073fc7d9d72020541ae77b31ada9ee5e7721cb3aa0f81e3eeff7a3134ca",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotTest.json",
+      "producerSha256": "b306f7cda63f04b82ba6933994f89a191a1b1d78494476a55be4e40dae5d7e59",
+      "finalSha256": "b306f7cda63f04b82ba6933994f89a191a1b1d78494476a55be4e40dae5d7e59",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+      "producerSha256": "0bd299aee1ecd37919aa767bcc3d414b61c577a8b77674cfd17a401fb37ccb23",
+      "finalSha256": "0bd299aee1ecd37919aa767bcc3d414b61c577a8b77674cfd17a401fb37ccb23",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/MigrationNftForkBase.json",
+      "producerSha256": "5320cb3d68cd8b5f813bbf91d20e66df61c7ce987af0ba413059dd125433fe1e",
+      "finalSha256": "5320cb3d68cd8b5f813bbf91d20e66df61c7ce987af0ba413059dd125433fe1e",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IWeightedClaims.json",
+      "producerSha256": "a8f627107026d62c25a9b551264f35b16185248c17d4aafe2515065fe4f8e1e2",
+      "finalSha256": "a8f627107026d62c25a9b551264f35b16185248c17d4aafe2515065fe4f8e1e2",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IEarlierClaims.json",
+      "producerSha256": "aa45d1d5d2f43f956e2c21626d99bd9186410b4b994fd298b2009e6b441f61a9",
+      "finalSha256": "aa45d1d5d2f43f956e2c21626d99bd9186410b4b994fd298b2009e6b441f61a9",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IEarlierParent.json",
+      "producerSha256": "a74379bf808dab9e100075f99789f34813c33f18837520277f4bbfc9f6271649",
+      "finalSha256": "a74379bf808dab9e100075f99789f34813c33f18837520277f4bbfc9f6271649",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationNftLifecycle.t.sol/MigrationNftHolder.json",
+      "producerSha256": "4ce42f87066a79f86878d517b8f0c526c19eb4b97f94930abc07543cb199815f",
+      "finalSha256": "4ce42f87066a79f86878d517b8f0c526c19eb4b97f94930abc07543cb199815f",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+      "producerSha256": "7cc869910f70080e4015125976fd913a2aa363c29a4b7c88a43a173b76005c09",
+      "finalSha256": "7cc869910f70080e4015125976fd913a2aa363c29a4b7c88a43a173b76005c09",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationOriginalWallet.t.sol/MigrationOriginalWalletTest.json",
+      "producerSha256": "942badc3549e4409be93d3e4421728c3b1a2550ccd40b37f88ba1f145cfa761f",
+      "finalSha256": "942badc3549e4409be93d3e4421728c3b1a2550ccd40b37f88ba1f145cfa761f",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationRecoveryAccrual.t.sol/MigrationRecoveryAccrualTest.json",
+      "producerSha256": "98861dbb509ff781224c1ee72a5f8236108f65e82321f0823190b68ccdcba028",
+      "finalSha256": "98861dbb509ff781224c1ee72a5f8236108f65e82321f0823190b68ccdcba028",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationRecoveryAccrualRollback.t.sol/MigrationRecoveryAccrualRollbackTest.json",
+      "producerSha256": "e6b40d6b136025925a544255c98c3ed304df6946e8ddff49eca421563524680c",
+      "finalSha256": "e6b40d6b136025925a544255c98c3ed304df6946e8ddff49eca421563524680c",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationTest.json",
+      "producerSha256": "5ccc7e8ec683dafa49c605aced96f7d546aa82087d129fe7bd62d4874b44075c",
+      "finalSha256": "55bd517bb26a3da4a343d44efec2cea4dd29ddb24aa7ad8064540200b2605c10",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationForkBase.json",
+      "producerSha256": "e0f31d78d15ff8c430f5a1085eee98dd411058b04837edf96729091f032ad5c0",
+      "finalSha256": "c4f210e463f5ecbbbf308f0c19c3ab21f44f8ff993b7fa97a52644601432096a",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/RecoveryHostileRate.json",
+      "producerSha256": "ee872ba69ba127109d76e0bb1ede7759836402e9f5ede32547a435bddb5a1dd4",
+      "finalSha256": "b4359a767973e47ea1c8790b2b7334afc64c972decacba89d0b65f8f19f546b4",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationRecoveryEarlier.t.sol/MigrationRecoveryEarlierTest.json",
+      "producerSha256": "b136399791396a78ec2abcc610fc90872c8c6debbce47e843616b5575443dd9c",
+      "finalSha256": "b136399791396a78ec2abcc610fc90872c8c6debbce47e843616b5575443dd9c",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationRecoveryForkBase.sol/MigrationRecoveryForkBase.json",
+      "producerSha256": "ac50094b84e9560934525e6ad344ef5c43a7627e89b4af499974242c73e8fda0",
+      "finalSha256": "6bb26c9c7951196174c802fbdaa08f34af5469d83dd726639f4e88c83730e153",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationRecoveryGas.t.sol/MigrationRecoveryGasTest.json",
+      "producerSha256": "b91e3895773dd729688d9c9735763d7ed564cff705a29a405720282ff3192ab4",
+      "finalSha256": "b91e3895773dd729688d9c9735763d7ed564cff705a29a405720282ff3192ab4",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationRecoveryWeighted.t.sol/MigrationRecoveryWeightedTest.json",
+      "producerSha256": "3bb105d53766e1c32cdb3517e0d898b704f7e549a73974cb7c2cd499c5b04652",
+      "finalSha256": "3bb105d53766e1c32cdb3517e0d898b704f7e549a73974cb7c2cd499c5b04652",
+      "rawUnchanged": true
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/MigrationWeightedLiquidTest.json",
+      "producerSha256": "fbf6b2ac6235cab2d73f5c6b2dcf7addd51246d1101eb321581d36caf3a5295b",
+      "finalSha256": "9811195ad567f376800f148ee9ac9756c628c23ee9f1ef639d44ba65d2537e2f",
+      "rawUnchanged": false
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/WeightedLiquidReceiver.json",
+      "producerSha256": "f2f660724a3b92e8bd2159d2ef3db62f3e53bae791230f4fba95ad23e23af8de",
+      "finalSha256": "52349c08aaf0a4043bcbe3db2e5337e812fd0d5af45506c3dfa0cf33fc788aa5",
+      "rawUnchanged": false
+    }
+  ],
+  "finalSealValidation": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/report.md",
+      "expected": "16e84b65ed405a1956be793da7b5e5b859f24b6c98cd81aaf151e38fd17c9334",
+      "actual": "16e84b65ed405a1956be793da7b5e5b859f24b6c98cd81aaf151e38fd17c9334",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/bindings.json",
+      "expected": "eb964802171dd822133be5b6480b9aa6a4f10fab1545bc3f578c855b5c37c661",
+      "actual": "eb964802171dd822133be5b6480b9aa6a4f10fab1545bc3f578c855b5c37c661",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/cleanup.json",
+      "expected": "039d96df2b853ba240df75e33108fe33b523f043c41a4a8a9281b0cb2a201f3f",
+      "actual": "039d96df2b853ba240df75e33108fe33b523f043c41a4a8a9281b0cb2a201f3f",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/report.md",
+      "expected": "deb62a122bb8949b03107ef04208f35f5c36dd1849e9ce79245d56091d369250",
+      "actual": "deb62a122bb8949b03107ef04208f35f5c36dd1849e9ce79245d56091d369250",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/bindings.json",
+      "expected": "dd81dd32c42d05153f9e186c6671f7b080ea179e4ee33f01ccff746bbdb0e057",
+      "actual": "dd81dd32c42d05153f9e186c6671f7b080ea179e4ee33f01ccff746bbdb0e057",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/cleanup.json",
+      "expected": "61902867ab7c6450a71604f27f21539b7cd534407dc0364abb9c4fbb1b870674",
+      "actual": "61902867ab7c6450a71604f27f21539b7cd534407dc0364abb9c4fbb1b870674",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/execution-index.json",
+      "expected": "2e5037ab42fd20f9c59b4ae9940fe173b57638cbdebfaf9f3663a3146072965c",
+      "actual": "2e5037ab42fd20f9c59b4ae9940fe173b57638cbdebfaf9f3663a3146072965c",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/source-artifact-parity.json",
+      "expected": "b1f01448c15fb0e0fec01fc9c6b9c55ca83ef8a506c737a254a38848f87931ef",
+      "actual": "b1f01448c15fb0e0fec01fc9c6b9c55ca83ef8a506c737a254a38848f87931ef",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/commands.json",
+      "expected": "585441f90030a0b88401ef56746b4cfdcbaf7d75e5a8f6df71c0f8e176b4b436",
+      "actual": "585441f90030a0b88401ef56746b4cfdcbaf7d75e5a8f6df71c0f8e176b4b436",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/report.md",
+      "expected": "b0aec1774148f103a8d2b6e265b3d3edc0de5a59ca20ed5fc7fa5eebe0f905e8",
+      "actual": "b0aec1774148f103a8d2b6e265b3d3edc0de5a59ca20ed5fc7fa5eebe0f905e8",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/bindings.json",
+      "expected": "8e801d24e1b9c87c60b68dabe9801fb77a65759b54be76dcab545f7e9f7f2687",
+      "actual": "8e801d24e1b9c87c60b68dabe9801fb77a65759b54be76dcab545f7e9f7f2687",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/cleanup.json",
+      "expected": "9a88cdbbbd2603d89a5522ace73c84578e2bc288bfc64d49068b6781eead5e0d",
+      "actual": "9a88cdbbbd2603d89a5522ace73c84578e2bc288bfc64d49068b6781eead5e0d",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/commands.json",
+      "expected": "217e61363914d2e79a30d049502b9a50ee257f4c289d068684b6c9267f6e03dc",
+      "actual": "217e61363914d2e79a30d049502b9a50ee257f4c289d068684b6c9267f6e03dc",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/execution-index.json",
+      "expected": "d410725c861a94e00221a736cf4d9feb32e77eab821d5922796f6284fdea483b",
+      "actual": "d410725c861a94e00221a736cf4d9feb32e77eab821d5922796f6284fdea483b",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/source-artifact-parity.json",
+      "expected": "fd8592d7e854df78d27fe60d4a839a84a7965e0e3cc050a50c5e5b02abed2d61",
+      "actual": "fd8592d7e854df78d27fe60d4a839a84a7965e0e3cc050a50c5e5b02abed2d61",
+      "match": true
+    }
+  ],
+  "admission": {
+    "rawEntries": 527,
+    "snapshots": 57,
+    "sealedEntries": 15,
+    "mismatches": 0
+  },
+  "closing": {
+    "unchangedCandidateFiles": 54,
+    "nonArtifactAdmissionMatches": 468,
+    "compiledInputMatches": 684,
+    "testArtifactTargetMatches": 43,
+    "runtimeArtifactMatches": 10,
+    "changedRawArtifactHashes": 42,
+    "unchangedRawArtifactHashes": 17
+  },
+  "ownedEvidence": [
+    {
+      "path": "admission.json",
+      "sha256": "606d102124e5b2dd004a9fd8c7cec1932d676155a52492ed4c15d2a58efb3999",
+      "bytes": 271889
+    },
+    {
+      "path": "artifact-reconciliation.json",
+      "sha256": "9d3a07f33c93b53db945b964637e5dc0f5c3fc9c532e0f8e44ec1a4b66184b3a",
+      "bytes": 500008
+    },
+    {
+      "path": "checks.json",
+      "sha256": "7b5155b676f764fc4c811848be643bd163678354e0d68fc7ffa247fc1eb98f6f",
+      "bytes": 16200
+    },
+    {
+      "path": "cleanup.json",
+      "sha256": "6632e1e3f7621217702b2976515a9c93f0691342661bff0b28b4880b37825d0a",
+      "bytes": 1675
+    },
+    {
+      "path": "coverage.json",
+      "sha256": "27ef1d4f617f535621378d293d3b36aa8869aa68601641693f4c1266e42eb92f",
+      "bytes": 57973
+    },
+    {
+      "path": "critical-traces.log",
+      "sha256": "67b4571d59767030e3c50a5e82786fd51876e4086e3c52dcf8da31f33dbc3358",
+      "bytes": 17867090
+    },
+    {
+      "path": "forks.log",
+      "sha256": "2b4c8cfcd4bbed0f185b615cc78467341a64b21960713fce141dc4f357b8718d",
+      "bytes": 318097
+    },
+    {
+      "path": "operator-stages.log",
+      "sha256": "8446138f3d18186f561b7e38628ef149e41edfa92710660a8ed1f3b961a9c060",
+      "bytes": 359
+    },
+    {
+      "path": "operator-tests.log",
+      "sha256": "0fc409cd6cf632d124b655535c4e32b28602c013046a002df52e868aa92390b8",
+      "bytes": 5161
+    },
+    {
+      "path": "operator-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/001-deploy.log",
+      "sha256": "025048be81634dc34540812dde949a899cbb3d132d362e935f2b70877e678573",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/001-deploy.log.command.json",
+      "sha256": "b15713d5deb56a77ed44d068733a8597010cbafa7539433f5e65c5b5903cacd7",
+      "bytes": 522
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/002-deploy.log",
+      "sha256": "9b46eb1ec275ba56e2d1524a01f200a0eeef182eb8b5445cd6782283c4a8767c",
+      "bytes": 155492
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/002-deploy.log.command.json",
+      "sha256": "22d64e233e4c011e5415e25dcad2f41c46524a2f0bb66464fc71350415ce239a",
+      "bytes": 625
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/003-fund.log",
+      "sha256": "2723f09e56c6effc0ce95bfbf15f0ff743626825a5adcbcd303d42c1823fa291",
+      "bytes": 138
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/003-fund.log.command.json",
+      "sha256": "fb351718e96de6b2a12c8ccf4597a8ea04c6f48c873e115acb861c52c6ec831a",
+      "bytes": 651
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/004-resume.log",
+      "sha256": "62a0540c05c7ba55836750f2046b5cc6650a662125263fe2a91495939ce9f11b",
+      "bytes": 422
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/004-resume.log.command.json",
+      "sha256": "e8f98568d321894f421ccb98a5683a541394b61d0b54e3e16ae422e685ac73a2",
+      "bytes": 520
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/005-resume.log",
+      "sha256": "9b5afbc8c313262ee7cabc2e706904d5b756d48e8939d9f01fa6ad8621c60fa9",
+      "bytes": 72879
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/005-resume.log.command.json",
+      "sha256": "59f68449746ea51e2053243d9062c4be9a8cd85639355a2b76de8b38fd7b858a",
+      "bytes": 623
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/006-rejection.json",
+      "sha256": "1b2dc7ac9f865328d22cabf90b890ade0382f2d6461a12d73aa170801cce86e8",
+      "bytes": 62
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/006-resume.log",
+      "sha256": "e4c7d2178113ba59d2c84fbc802a1d29668d241e48590b2939ff4aa6ecba6643",
+      "bytes": 75
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/006-resume.log.command.json",
+      "sha256": "196a4f3e165af3d075bd3a8685b031dcdf4ff559f6f449f573cb88e73a24d856",
+      "bytes": 635
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/007-capture.log",
+      "sha256": "0bdf67504b5db818e902a51f3a01d2a5a0c292fa0e2b0f0d4a3f0b5ad8d924ac",
+      "bytes": 19644
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/007-capture.log.command.json",
+      "sha256": "6e5e8e1c23ea63a0d369650add7677fdffbe6b2a8a02d475ca06d2f0df6ac8fe",
+      "bytes": 627
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/008-prepare.log",
+      "sha256": "fc7935a30e898b9516d8da240c88a622b770c79acd2bef746c6991004b356ae0",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/008-prepare.log.command.json",
+      "sha256": "100bcbfdafb0a5d51a4ef2b7751ad2615d1a4b2f5445f2f1ce2bc99f93d1a765",
+      "bytes": 592
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/009-validate.log",
+      "sha256": "c1ab779cfb0a775c4b7b055384ffa9a123e2f0907304c6ee258ea5e7d5f0086c",
+      "bytes": 142
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/009-validate.log.command.json",
+      "sha256": "489c2ce0d6293cf2127c52d23019ce954c039044b21f2ce98ec84c3cc827be5a",
+      "bytes": 376
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/010-prepare.log",
+      "sha256": "fc7935a30e898b9516d8da240c88a622b770c79acd2bef746c6991004b356ae0",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/010-prepare.log.command.json",
+      "sha256": "88d084d9a3d6652391ac0d27890b1912bdc462a3a54d30c61bdd80e397ed201e",
+      "bytes": 612
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/011-configure.log",
+      "sha256": "0ac9a3375ee14121e2ea8344165c84abab98bebe22740f682d73f634f9ecf004",
+      "bytes": 28426
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/011-configure.log.command.json",
+      "sha256": "c31b81f7daf28ed45c8b69ac76cca88fca3675f8fdbf694b0b6564f7bfca9fef",
+      "bytes": 644
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/012-independent-issue.log",
+      "sha256": "e7c913e192a2cda72a7f7955bb1a1f7f92a34b1ee7494a3abdc728381444c6e7",
+      "bytes": 138
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/012-independent-issue.log.command.json",
+      "sha256": "0fb71bdd8839abf9261ce1df2093b37807ab257a8def79c86c6434947fcb795c",
+      "bytes": 666
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/013-resume.log",
+      "sha256": "d37d81c8150cb749c9490264c2cc8cd337fe9c2ccd2ed11769c4c1131591b99f",
+      "bytes": 368
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/013-resume.log.command.json",
+      "sha256": "619ea5dbb02fabe18f820128231526ab7fd2e479e028d21c5871cee4adaa6836",
+      "bytes": 522
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/014-resume.log",
+      "sha256": "083019b0572e9ee4b3b111d0e3726299f5faddfb2e243ad13e49cc4d6c55d587",
+      "bytes": 35017
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/014-resume.log.command.json",
+      "sha256": "34d5b473acae5444f6a087bd99ea99a434cb23c6a4a39f61c9c42f8a8ce02dd2",
+      "bytes": 637
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/015-verify.log",
+      "sha256": "828e4f2fa64c82aba45fb7be8a69d39b962e468991db59ea3bc19d6a38957e3a",
+      "bytes": 461
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/015-verify.log.command.json",
+      "sha256": "19e53cf42b76029a43e8a2bfe69349daaee6d91d3f47f927983a0692e5aad86b",
+      "bytes": 523
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/016-rejection.json",
+      "sha256": "c26677a6ff2f843c8bd2a833e7e78ddf0e351c7e70e3438b96fffb6b0d899f4a",
+      "bytes": 62
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/016-resume.log",
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5",
+      "bytes": 74
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/016-resume.log.command.json",
+      "sha256": "34c577e05d0d4ba7f58501b8558d9d56888ad4607735a757cd5f7d488a1d1b8c",
+      "bytes": 627
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/017-rejection.json",
+      "sha256": "c26677a6ff2f843c8bd2a833e7e78ddf0e351c7e70e3438b96fffb6b0d899f4a",
+      "bytes": 62
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/017-resume.log",
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5",
+      "bytes": 74
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/017-resume.log.command.json",
+      "sha256": "348c014ab573a3cd31bfa3a6c5fa96ef7bf27e3cd2a031cb22f4409211d4abd9",
+      "bytes": 625
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/018-rejection.json",
+      "sha256": "c26677a6ff2f843c8bd2a833e7e78ddf0e351c7e70e3438b96fffb6b0d899f4a",
+      "bytes": 62
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/018-resume.log",
+      "sha256": "a8f4acf119f9e20fa75ed11fd6ab1fc9d74126b8eb1b258c2795af162ae95b92",
+      "bytes": 57
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/018-resume.log.command.json",
+      "sha256": "87d69d8fd659d7b7d9e451346059b0284cf20319be637cb3e563fe972c88d1f8",
+      "bytes": 627
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/019-rejection.json",
+      "sha256": "c26677a6ff2f843c8bd2a833e7e78ddf0e351c7e70e3438b96fffb6b0d899f4a",
+      "bytes": 62
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/019-resume.log",
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5",
+      "bytes": 74
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/019-resume.log.command.json",
+      "sha256": "1b854ba7b48c6bda739d878587b05e686a8843918c51690577898d3f5884e568",
+      "bytes": 630
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/020-rejection.json",
+      "sha256": "c26677a6ff2f843c8bd2a833e7e78ddf0e351c7e70e3438b96fffb6b0d899f4a",
+      "bytes": 62
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/020-resume.log",
+      "sha256": "2072e82f3ee757ccf3a4f724fe6ba8f9af59aecaf0499e721316ebb9df3df101",
+      "bytes": 92
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/020-resume.log.command.json",
+      "sha256": "f9a2036209040618e8f3a7c15c6a7603b145152bfde6b1ddf8c244bd87c9321b",
+      "bytes": 627
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/021-prepare.log",
+      "sha256": "5facc12d83aa2e90951bd2248b069256428f8e834f481b809e4bc04180e116e4",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/021-prepare.log.command.json",
+      "sha256": "6bf64ddcf6550bd19c419386c958fd740b6ad317bf6de91ac46b364d2f5b5930",
+      "bytes": 607
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/022-configure.log",
+      "sha256": "71639eb8a87ad2293430898649eebe0d40fb38b3931a4f1fb3d181fa7f055c80",
+      "bytes": 28425
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/022-configure.log.command.json",
+      "sha256": "60757e3c9ce472f813bae0e0788e9b0e7a493a5ff067deefaa81faeacd1f4c2a",
+      "bytes": 643
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/023-owner-bond.log",
+      "sha256": "3e9aac2b150a77b6b96cf2d9f6910ed78ca7e21e7c31d647a07163f43b6a05fe",
+      "bytes": 138
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/023-owner-bond.log.command.json",
+      "sha256": "7aa2906b920e436b2b1353a21954ee1a9060751eeedb3b93e4a9d3706670fd6e",
+      "bytes": 673
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/024-resume.log",
+      "sha256": "43fe6cd2c70d050b770bb16f7f0d5488d7579403ef37d5c67369eb589628f36f",
+      "bytes": 294
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/024-resume.log.command.json",
+      "sha256": "87fe5800f6e04aec646b29b1cd1e59e92348977ea5416c24c357fe446bc700b7",
+      "bytes": 536
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/025-resume.log",
+      "sha256": "e132601b163e634d1df6a0ca5a765714d59075b6d93abd66e894b66878128c26",
+      "bytes": 176414
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/025-resume.log.command.json",
+      "sha256": "0aa3b8527784221187754536a47c001f7ac3032e115a2f33ca1b2ab8fda91d5d",
+      "bytes": 639
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/026-resume.log",
+      "sha256": "e132601b163e634d1df6a0ca5a765714d59075b6d93abd66e894b66878128c26",
+      "bytes": 176414
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/026-resume.log.command.json",
+      "sha256": "0aa3b8527784221187754536a47c001f7ac3032e115a2f33ca1b2ab8fda91d5d",
+      "bytes": 639
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/027-activate.log",
+      "sha256": "fd713bcc69191e06e2a6fd02ab2a5b94a7e4706809212e8c63222a55fc791c4d",
+      "bytes": 5851
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/027-activate.log.command.json",
+      "sha256": "105aa46f8199631b8b1a7b127b8be8dcea55417391f898dcb9cbd03c6383060d",
+      "bytes": 639
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/028-prepare.log",
+      "sha256": "7076a1de391cc1287e8d222dcbb82b18507c039f3e955bd539d60acbbc07c0d0",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/028-prepare.log.command.json",
+      "sha256": "33609c511297e6df2db83c08118eb89502d10c3c00312335853de7e0f5361db9",
+      "bytes": 633
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/029-harvest.log",
+      "sha256": "06a41b3cb63ea3b43bd680c5ead9bda9a66fbaa966e08d05b57ff976a492f54e",
+      "bytes": 4014
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/029-harvest.log.command.json",
+      "sha256": "1ec2105f662cbe6f5f13a925f2a5c7f9e7650d59d09d6c32633eaf6245948c9a",
+      "bytes": 667
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/030-prepare.log",
+      "sha256": "8862d73ce4cb12ad2681faf0af909884e0e433bcbf13952f0370c5d67453183c",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/030-prepare.log.command.json",
+      "sha256": "a38228c1d1a39f18d5be22835cf6a766e7656c0c3fdf35f8246079ba89599d63",
+      "bytes": 641
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/031-harvest.log",
+      "sha256": "3f923bcb5ad3d252cc93f01fbabbe05697a7f775fb7ed93b1f615aa9b427e58d",
+      "bytes": 3992
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/031-harvest.log.command.json",
+      "sha256": "8c1820f29962ec7c236186c3e4b951ccdbac5e8994312b56dae74c39e2a83a2b",
+      "bytes": 675
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/032-prepare.log",
+      "sha256": "0273d1f01d17d52a4cb9ec7dcda8607c3a444a8f06f03697e81083a00e54c0f1",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/032-prepare.log.command.json",
+      "sha256": "2bae01abaff61f0d40c23bcf3de91b23b83e284c0bd4aed0728f87622d231a79",
+      "bytes": 637
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/033-harvest.log",
+      "sha256": "f83c84b7fd03b0b3c9ebbfadd65f86ba5fda05ec8d3ae30ac8450cd3c1aba345",
+      "bytes": 3994
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/033-harvest.log.command.json",
+      "sha256": "017ab87e8db01be3ddd90d7c889f92423aa222bb20f3c406b70d7155f6c7a7f3",
+      "bytes": 671
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/034-prepare.log",
+      "sha256": "dd6beb1e919b4053ead3f6ff16359575da28a28063711aaaaff17526d25dee6f",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/034-prepare.log.command.json",
+      "sha256": "3225d530bb43ad151a322af1aa5a2f26f3a4ed7b579f1958515f06c6955e2cc8",
+      "bytes": 637
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/035-harvest.log",
+      "sha256": "06f1fb47236cd01fb3aceb79770c5aaf793ba6c4113d6f2afd51d0ef2184b4af",
+      "bytes": 11056
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/035-harvest.log.command.json",
+      "sha256": "01f68e7eb6cca971cff2c5bd1d17416b62c68db7c0dce788c5ea3e3eb7d44258",
+      "bytes": 671
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/036-prepare.log",
+      "sha256": "95881216634aca5574d4d9e57002f536ceb3c194b6a6d0de049471eafa4e9e6e",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/036-prepare.log.command.json",
+      "sha256": "c0ce6bc02d6bd36a20176d6d4df1a93ef9cbf192d2d97e4088c01b9483167e6b",
+      "bytes": 637
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/037-harvest.log",
+      "sha256": "36b6c5d63be3cf3d428fb284531a930028e3302079b8c58387ad34fc4574a447",
+      "bytes": 4238
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/037-harvest.log.command.json",
+      "sha256": "aab78752b3379e1e0b5db4b6c2ffcf6ee24a13d99b653e6a9178dcd11cb6494e",
+      "bytes": 671
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/038-prepare.log",
+      "sha256": "d75d8c68cb0285060eb70cb75a135aa07749e6cd9095ac7e9616fad497730602",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/038-prepare.log.command.json",
+      "sha256": "da41c2cc2ad63b1d7ec97671d761699b0d93151799aa5ab20002b2c3468ed41e",
+      "bytes": 637
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/039-harvest.log",
+      "sha256": "0f8076c7fbcbdb98ad92f8a0c1595a1b00c109708488d939092b6e47c5014205",
+      "bytes": 11918
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/039-harvest.log.command.json",
+      "sha256": "3c88761213cc3375cd5a9a3d96cb314556ffddd6a62c59c8bed270b6cb458d19",
+      "bytes": 671
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/040-prepare.log",
+      "sha256": "f83b8711936cf3f3a9ce3146da447223e0cc5f8f5ec033c1c1443f75c3ef7ed2",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/040-prepare.log.command.json",
+      "sha256": "606a2c9c96dac286b7475913d0ce9789b39b989315a2d2c2a12017ca54843ad2",
+      "bytes": 619
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/041-harvest.log",
+      "sha256": "934ef316dbce14bea815918e02b21546c14561ddea0c20ea2ed2ce301ee7c44a",
+      "bytes": 171143
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/041-harvest.log.command.json",
+      "sha256": "cc2cb9e1a4687abdb16f3b6452d50c3f6b8cef8b209bdeca80e7d77b8a3d13ea",
+      "bytes": 653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/042-prepare.log",
+      "sha256": "3e7b6099817f02d9ef0fec39cdcbb97d8f9749e2b3330837e6be3d54b17c4b59",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/042-prepare.log.command.json",
+      "sha256": "40c0ead855764e522c9895b1107d4d1e2a53d22ccf44827ca0e495a0ce443fb0",
+      "bytes": 631
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/043-harvest.log",
+      "sha256": "7f7282f2b79565d9d9370722432312a0a38acef03ab6a7b7384f0ec19c9099f6",
+      "bytes": 3932
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/043-harvest.log.command.json",
+      "sha256": "3116aa99f5f30e74d5b78afbc52f23b21eb12e48f15bc4f73a3d37ec7186289d",
+      "bytes": 665
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/044-prepare.log",
+      "sha256": "d0b852e671c9f6d8b93a7711d9a9ee04006235e93eabac052a06b8798287e485",
+      "bytes": 223
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/044-prepare.log.command.json",
+      "sha256": "d7427221dabc0b89b7618bdad9bcb7ae63daf98318211c764213f0decf2bef71",
+      "bytes": 629
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/045-harvest.log",
+      "sha256": "0672ba7de4be011144db6db59c9ba60dba614d86b1a2acd633724655061218fc",
+      "bytes": 4622
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/045-harvest.log.command.json",
+      "sha256": "0c2a5580aa63c3b730d04703232f4a5298a1220e218120c99c16739d75168124",
+      "bytes": 663
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/046-verify.log",
+      "sha256": "98425ea4c4fd61a493fd65368582aeac2b8daf4472a9afa0071a8a0b5a3a6c23",
+      "bytes": 461
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/046-verify.log.command.json",
+      "sha256": "0470225a1db14896017ccf2201373c0d49812ea94389eee0395c09642a36eab8",
+      "bytes": 538
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/admission-after-activation.json",
+      "sha256": "a2e97a033183e48cfdc0edf934d5964e666b093e58cee75ca56f5a92ae58523b",
+      "bytes": 7608
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/admission-before-activation.json",
+      "sha256": "a1132afaaef4cf0d103d29ec56d76a3e90c5c2c418a197c598ab129718800d89",
+      "bytes": 2076
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/admission-late-activation.json",
+      "sha256": "0c4a4f41a1489b8225a6d5a36b08f735b4386fc791f8d9f0f76f9bda472523b0",
+      "bytes": 5071
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/anvil-command.json",
+      "sha256": "b6a5022a9df9203e29625e06a51578b7e7f7cd932a2a5451b6462b9e21bfdd08",
+      "bytes": 258
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/anvil.log",
+      "sha256": "137456b5bdf3d37edb5f95cd4b7826d5d1839e61c30842cba38215b05f666557",
+      "bytes": 281514
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/cleanup.json",
+      "sha256": "df40f25c2619d694f91c3284ad2b8f1ed0798812c16dbb3c1bb29f7af1d6926f",
+      "bytes": 217
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/deterministic-preparation.json",
+      "sha256": "943fa8453e76c708e176d55f5fad30d25d3e52d05954fdc2116390a8cc7e0400",
+      "bytes": 560
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/donation-before-resume.json",
+      "sha256": "edf5fc72b3ef09e11e010c5e6a1c109725f465d003e7e2decac912da95604786",
+      "bytes": 8347
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/donation-resumed.json",
+      "sha256": "648c2e0dc7de6f2c19aedf741d48b225c3cff2e09d5057bbe414fc8bc7b88f25",
+      "bytes": 1137
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/environment-mined-transactions.json",
+      "sha256": "c56428db17c08abed35de47763d35f3f1ce20f15339e55eb0289642aa8183246",
+      "bytes": 5806741
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/environment-stage.log",
+      "sha256": "3b8cb641c835512c89066f7c7d9cd79261f6d741ca87664d25e31fb2d68b47c4",
+      "bytes": 27883
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/environment-stage.log.command.json",
+      "sha256": "ddea7b0ca28a2afaf934e2966af0394b2fe84435289673847e79222875e8da42",
+      "bytes": 479
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/environment.json",
+      "sha256": "e56c9bbaf79bb68f68406722df2a739d316521e233326771b081c2cf10dac309",
+      "bytes": 4089
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/fixture-receipts.json",
+      "sha256": "b8ca12ff3f785c1a0052eaedf080e82f4781ab7c6786e65550548c397ae8cff1",
+      "bytes": 852239
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/funding-observation.json",
+      "sha256": "c41f035377c41c272f095e57cfc2f7b6d06c48a8f2e968dc7800630f78c66091",
+      "bytes": 230
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-01-WeightedClaim-execution.json",
+      "sha256": "c61358b04314b26c17dcdf4070fbbaacb299034e9018664970d698877fcb79ed",
+      "bytes": 8502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-01-WeightedClaim-input.json",
+      "sha256": "a74ae8990d9ce95eb97d31272e9654111804640410631de44c1d571d2b68d10d",
+      "bytes": 15159
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-01-WeightedClaim/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-01-WeightedClaim/manifest.json",
+      "sha256": "78e567629cdfcce685e80ea7781f60e67ffb12dbf7c5ca94ec1de1b6eff73042",
+      "bytes": 35820
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-01-WeightedClaim/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-01-WeightedClaim/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-02-WeightedPrincipal-execution.json",
+      "sha256": "0bc1b703101b7e02f700b17af40c5c4f6874a865e53a9df0f5d22968c3f92f84",
+      "bytes": 8506
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-02-WeightedPrincipal-input.json",
+      "sha256": "3382043fae2ba3f0f2afb131a7d0cacfdfa29dc40d546e08831d256e9a97c63a",
+      "bytes": 15164
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-02-WeightedPrincipal/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-02-WeightedPrincipal/manifest.json",
+      "sha256": "01ed00174a2c569edc0ca410f4033e68cbe5ab5d5c4aa50729f395f0472d343b",
+      "bytes": 35830
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-02-WeightedPrincipal/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-02-WeightedPrincipal/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-03-WeightedRewards-execution.json",
+      "sha256": "fd8ce8e4bca0b153d9a9f28f0d43aa10db751a89174d486bb34903809885e538",
+      "bytes": 8504
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-03-WeightedRewards-input.json",
+      "sha256": "8156a97497387058b15984aacce38335960290bd9b1e030e086875fb9895a755",
+      "bytes": 15162
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-03-WeightedRewards/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-03-WeightedRewards/manifest.json",
+      "sha256": "3d15a6a7b1c459e815f6196aec75b1b067fd2d764e5afdfe086815ca242e4fc6",
+      "bytes": 35826
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-03-WeightedRewards/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-03-WeightedRewards/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-04-WeightedUnstake-execution.json",
+      "sha256": "ad9be2accffe46966d883ba637ff3f416a18fc9d7dafe27c751568cb45b44ea1",
+      "bytes": 8504
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-04-WeightedUnstake-input.json",
+      "sha256": "5e3a73cbd729d8c400a47a9aa5148d7b9520adc6771bff81123ec6409b7052a7",
+      "bytes": 15169
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-04-WeightedUnstake/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-04-WeightedUnstake/manifest.json",
+      "sha256": "35ac7d2249f45a87d85adbd43c37bbe11c43b6c0d8d4d852930b1dfaf3c8a157",
+      "bytes": 35840
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-04-WeightedUnstake/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-04-WeightedUnstake/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-05-WeightedUnstake-execution.json",
+      "sha256": "8348a5b3e711e13b967b5b5c829c9fb5d1e62a0c1a3352717b8bad686381399c",
+      "bytes": 8504
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-05-WeightedUnstake-input.json",
+      "sha256": "7c717838e659ff3a972d50b517a61659ba6d3e74bdc0b23f81f900dca9c8f498",
+      "bytes": 15165
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-05-WeightedUnstake/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-05-WeightedUnstake/manifest.json",
+      "sha256": "ff5429d22badf1579bde937aa59105d146731f4f62c7962fe68976ff71bcdfbc",
+      "bytes": 35832
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-05-WeightedUnstake/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-05-WeightedUnstake/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-06-WeightedConvert-execution.json",
+      "sha256": "109d30264d132f3bfd6ec2d2de99ac5a22aa87b61578e74d0765d9b601f6d6a7",
+      "bytes": 8504
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-06-WeightedConvert-input.json",
+      "sha256": "bc6549f2961b6f4abbdc335a6de3f8d3974e4971a6a73e764cc9c0d5dbf74a06",
+      "bytes": 15169
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-06-WeightedConvert/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-06-WeightedConvert/manifest.json",
+      "sha256": "6627f7f248684255aa9101c25593e1d06c7fa858cf611a3be11a2ddafa57bb72",
+      "bytes": 35840
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-06-WeightedConvert/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-06-WeightedConvert/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-07-Donate-execution.json",
+      "sha256": "ef91e2b25835fddc332cec1e0e1127b868a182f4801cfe689e12ac877d63e6f3",
+      "bytes": 8495
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-07-Donate-input.json",
+      "sha256": "4395028462b2d4edba13f6ce1cec2d823eac92af6324b2882e2cff051a0bdb1c",
+      "bytes": 15170
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-07-Donate/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-07-Donate/manifest.json",
+      "sha256": "3658e84b6ef7464bdd615c34fb7f82aaba7257d41f2f12cb2afeef448784970b",
+      "bytes": 35842
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-07-Donate/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-07-Donate/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-08-EarlierClaim-execution.json",
+      "sha256": "6be057fe07c2640a181250b91b290bab388d531e6d9aee2ece694135836cae57",
+      "bytes": 8501
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-08-EarlierClaim-input.json",
+      "sha256": "3415337aea52f948c476335678d29b7ac384ee5a3ed7577b6955fc50c88c67b3",
+      "bytes": 15158
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-08-EarlierClaim/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-08-EarlierClaim/manifest.json",
+      "sha256": "800800c7bc94b2a70cdbd517069c808ea29be674346508d6082e3f6890406d9e",
+      "bytes": 35818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-08-EarlierClaim/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-08-EarlierClaim/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-09-EarlierSale-execution.json",
+      "sha256": "85b5979ae2b4feff6d9fffad064244f7eec12aec679ed59f4ff2ee1b7ea8edca",
+      "bytes": 8500
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-09-EarlierSale-input.json",
+      "sha256": "31926ce3ab03b28d4bd2aba0f10b844fc49056a42f8774ca398cf757bf3b4c9a",
+      "bytes": 15157
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-09-EarlierSale/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-09-EarlierSale/manifest.json",
+      "sha256": "70a54152e353d3864a3619ed0754efe40a06b42982826609697a0a9de6db50e1",
+      "bytes": 35816
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-09-EarlierSale/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/harvest-09-EarlierSale/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/historical-header.json",
+      "sha256": "fcb077545e0b7b6a1813acbe95e2d700973f229556749e6d4e7a53cf4f0e457a",
+      "bytes": 1717
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/input.json",
+      "sha256": "07d12b48e6a23d41555ae2e3b693d9c8de824ec3d10b47f45cf18de5f805d2a4",
+      "bytes": 15148
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/issuance-before-resume.json",
+      "sha256": "6ecde8a143be082bb09500680a9d3fed57270d6ad87d985b024b2c041d170e37",
+      "bytes": 13188
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/issuance-observation.json",
+      "sha256": "4702e7c548ddcd114b7cbde2fab04e73aafc5f931b51ab47f1e71aae693c2cba",
+      "bytes": 107
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/issuance-resumed.json",
+      "sha256": "2af262d44e620a63ce2b9adf5316696dcebbbae0f98ead0fd9a8c2d96f625697",
+      "bytes": 717
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-activate/domain.json",
+      "sha256": "af77bcf7632d2c9603fdaaa0ccc5976f9cd27aa9010410a9fb874f30cccccd7c",
+      "bytes": 8665
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.intent.json",
+      "sha256": "af9a6ffa20b65e66e89b526b0d7eb1638ca9015dfd78998afead665d806761c0",
+      "bytes": 751
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.receipt.json",
+      "sha256": "216d2a983a94537db220d4965d59dd725795395faec012c3b57a202f53a0e077",
+      "bytes": 5781
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-activate/run.json",
+      "sha256": "828446767d8e2f00feeac895f702103d5913360fa9a2defce0931e51a054a40e",
+      "bytes": 104
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.intent.json",
+      "sha256": "6c6d0cf12089a4cf60c3067f67318a7383cbc26a49e3395ef07f263b40e54168",
+      "bytes": 757
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.receipt.json",
+      "sha256": "7d390433d5e7e34c076e942e494f4488f0c1003fd0e5850b3ba02b9f2847eb40",
+      "bytes": 19575
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-capture/domain.json",
+      "sha256": "092930ad6e048326212dd28d3d963b42cc051f44ceee878e91e1818978429da2",
+      "bytes": 8244
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-capture/run.json",
+      "sha256": "fdb957ec6fcabd9e748bfc9058f5fa2d9db023facec782fe2651bf9185bec837",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.intent.json",
+      "sha256": "b8c8e28f0cbc6ad49271ef9b4ccb44d27d33c5bc10cf470907fae94cc691f38a",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "sha256": "c80949d6098e26279932f853b34b4768974b7f88ffef96b0af7d031726a867e4",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.intent.json",
+      "sha256": "a5bcc938377ab663bc969ce309dfaa0a8d235847e483c8dc99e26bbd512236e0",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "sha256": "06141b1adebce7901fa8766b09a4660dcf09afa96c199cfcf90992c7d342de43",
+      "bytes": 2834
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.intent.json",
+      "sha256": "3dfa4b31d74e830608f6b4594bf998536bbe9cd00dc1a3bef2fa2ac2d2458715",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.receipt.json",
+      "sha256": "cda82a9886c9aaa9c4785ec456a09bd91c2de0642b81048487195fcebd7205d4",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.intent.json",
+      "sha256": "ad519d29a16002c9c073f7aee04347be3c9abb068aa0a50d15926785228c8799",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "sha256": "33cc16d1be05cb0c7f84b3e7235fff20cea677873f4bbacc31d2326a24eeb995",
+      "bytes": 2826
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.intent.json",
+      "sha256": "92c2a18a36f6159bfc733ceedf4d42907f64fa21f7d8ce47d7c48faa353ea841",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "sha256": "77990dacf74c7ef67502d8eda94febddd24b059db1201cae0f4177cd9c466a08",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.intent.json",
+      "sha256": "c8b348b995d2ef64bfc9d3ddf605d2afa05d96323de42a325ff8c233c5296a2e",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "sha256": "70fd5df7954971b4822c304501080accbd6cdfe8a2f2ab68efaac9110df9bd82",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.intent.json",
+      "sha256": "9b6bf73d5ff572c08658ed540df68a11a4d59133f194abe569afc75f9a56dce9",
+      "bytes": 2056
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.receipt.json",
+      "sha256": "54bdf9cce937a2af44c20a6af710bcbd8fe0515e1b381aa19c3811750848e4e0",
+      "bytes": 2926
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.intent.json",
+      "sha256": "a938a253852cf457af3c2bd61b7e22719c91b009306dcc19b410d86f49ae88ff",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "sha256": "2498057492e1e8baab801f8996d33dfb00643aa8bad013e12a9410ab15d66f00",
+      "bytes": 2826
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.intent.json",
+      "sha256": "64179c31564c9febac80252c808c3496b8f8dc9ea2cb1cff9851a0df70a2b6bf",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "sha256": "04e1de0bcaa201271259b712767e4b9022132828a3dff9cb4bc33bfbad64870c",
+      "bytes": 2829
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.intent.json",
+      "sha256": "f8ec0e6a12d39396703a6e2af43e04084a3feb7fe389a4231d403989340f3456",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "sha256": "23c6207da61b74fc767332a6e9c4d7c9d98e6ca00a17a9d3136beea416e8d58c",
+      "bytes": 2842
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/domain.json",
+      "sha256": "3ebbdf7ee8d9808a4cc30fe74773b62258523e0e9dfa2455721eba7a7651ad54",
+      "bytes": 8662
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-configure/run.json",
+      "sha256": "6101e1f0846c1bafed6617c5aa0f09b0f1b8931923b779fa0cc7b670c1c28741",
+      "bytes": 708
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.intent.json",
+      "sha256": "3d9bbd3edc9d335cf2810cd2b50a8d7170d161af9d95f315c630d90538b3405f",
+      "bytes": 6383
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.receipt.json",
+      "sha256": "990429bee81522fc56a831a4a2bc9719674d7f9726a3dd1fe4d6474cbf9f03d2",
+      "bytes": 155424
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-deploy/domain.json",
+      "sha256": "092930ad6e048326212dd28d3d963b42cc051f44ceee878e91e1818978429da2",
+      "bytes": 8244
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-deploy/run.json",
+      "sha256": "1661ae5ffa03fee0b6237074f927314d8841b809fad1c94589e74437804fe219",
+      "bytes": 102
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.intent.json",
+      "sha256": "b0af589024a73bafbce5a1b958d6fd0240ccbf59e28f5944363370633edf1b77",
+      "bytes": 995
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.receipt.json",
+      "sha256": "c1d9dc9f55f9b27cb9e6f594a190860111649cba738afa8b7414d8bee022caae",
+      "bytes": 1797
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.intent.json",
+      "sha256": "cc6d26fc21c279e6d9ea853f0838d707fb96dec4e1450c955483a3ce97c0ff81",
+      "bytes": 995
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.receipt.json",
+      "sha256": "a2d895a125c82c5eaf8c5e5e4051c1881c7f20aac2daea3816c338d8c638a4ab",
+      "bytes": 1798
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/d5c695f0fa293eafa77f70b2d3b579093f0e01f43926f99a11fbcf64321665fa.intent.json",
+      "sha256": "9aee200535665f375d01e4cc40b0a6bdc78293f0b992518a5d9da6062cb59d76",
+      "bytes": 2204
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/d5c695f0fa293eafa77f70b2d3b579093f0e01f43926f99a11fbcf64321665fa.receipt.json",
+      "sha256": "0a759add28e4a61aa3df617a76d61aebd2ee1fbc2f0b09c6f022ce3cb0a46004",
+      "bytes": 5842
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/domain.json",
+      "sha256": "092930ad6e048326212dd28d3d963b42cc051f44ceee878e91e1818978429da2",
+      "bytes": 8244
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/e4155f10909096070c1a6f57cc9f7a31f4ed8cebc72755c0f0c0d15c4dda5875.intent.json",
+      "sha256": "232d262b28c1f2cce32f36a4d0badaf3694069892edafc50fad00e89ca74e6eb",
+      "bytes": 2169
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/e4155f10909096070c1a6f57cc9f7a31f4ed8cebc72755c0f0c0d15c4dda5875.receipt.json",
+      "sha256": "81a602a5b4e4b9acd45e6db38e39756a9d5b7f98b2c6a3ededd11bf04f5cedcd",
+      "bytes": 63376
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-fund/run.json",
+      "sha256": "3ad629345eb14fb1e692a5b0b771a0e3117c9b3ae0aecbe945004dba0619c227",
+      "bytes": 301
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-01-WeightedClaim/41abbae4293f59623faee11a4824eb4dc55b90ae18bcc660272024d9e2522ab7.intent.json",
+      "sha256": "18a8f8a6ddd3d053865c696eba30fe5bf993486f90faa20526742794da65463e",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-01-WeightedClaim/41abbae4293f59623faee11a4824eb4dc55b90ae18bcc660272024d9e2522ab7.receipt.json",
+      "sha256": "c9b0c06449d7e739370461c5d16572635720716bc498c48ce7e48de7f220c47c",
+      "bytes": 3945
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-01-WeightedClaim/domain.json",
+      "sha256": "40f0e3574eedea3ba64d3a32e8d38f0e7311eeb0f38db67f49e9ddc1fda63e53",
+      "bytes": 8678
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-01-WeightedClaim/run.json",
+      "sha256": "7fd83a8e97c7d21b37e93f02b11d21b502a257ae23c1d58b09571e2d3e909060",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-02-WeightedPrincipal/a59e0fcc061c26261ad30e2912b7eafd7ca313fb6d340ae8719d72e6d1cd29e1.intent.json",
+      "sha256": "659a260be04e4b473d9166c4abe06052524a76e8ca28011e2e3933f0386daab9",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-02-WeightedPrincipal/a59e0fcc061c26261ad30e2912b7eafd7ca313fb6d340ae8719d72e6d1cd29e1.receipt.json",
+      "sha256": "b32e514cc2695b285d33ac4fd974b00215dbef7e2c3c76ef6fadc3046db0474c",
+      "bytes": 3923
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-02-WeightedPrincipal/domain.json",
+      "sha256": "cd44d0261e5879765c3c9832c0c012a474f654e351654ae3146b4e087909a9e9",
+      "bytes": 8682
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-02-WeightedPrincipal/run.json",
+      "sha256": "50d056cf85d75254e344b7500aa98bc13fe63e77e3900ff71994a87909cafcff",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-03-WeightedRewards/b7ae4d492a9fa8fb61c0f36b4b0a6f0d0274870691a3bf9fe31ba90475b4990d.intent.json",
+      "sha256": "d532f6cc490e173c679525d28f0894797dfedc78a15df5444ffc360a35c0b2a7",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-03-WeightedRewards/b7ae4d492a9fa8fb61c0f36b4b0a6f0d0274870691a3bf9fe31ba90475b4990d.receipt.json",
+      "sha256": "a56d9e0af9d72ab654be0c5b837c05a9134a2077b495639330a2bcceb9ccec1c",
+      "bytes": 3925
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-03-WeightedRewards/domain.json",
+      "sha256": "5129005a43cda060a60c35ba7da5887d1c487e1b7f913ac3e505daad7a56d69f",
+      "bytes": 8680
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-03-WeightedRewards/run.json",
+      "sha256": "9808d6b54ac311d894d7e3e487962f2ac8c2750ad644de4ecd29d28ab0a4268a",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-04-WeightedUnstake/4e113be2605b36d946ffca3958fd10bfa279843f91fb27ac670f9440efcea959.intent.json",
+      "sha256": "f623c2a54d290a14134cfb5c1ab7e76917517851b8d6b398822251f8cb7a022d",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-04-WeightedUnstake/4e113be2605b36d946ffca3958fd10bfa279843f91fb27ac670f9440efcea959.receipt.json",
+      "sha256": "05494642f0279ec3c3552d988ae2f5aa12a56c78a7c909894ee114e1a05f7136",
+      "bytes": 10987
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-04-WeightedUnstake/domain.json",
+      "sha256": "deb1f76060e003140663a8616b945cdef4c4480882d20429cd22c6a90de06abc",
+      "bytes": 8680
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-04-WeightedUnstake/run.json",
+      "sha256": "5bac51ccd82cf47e0a2c5ef056cd2af695ab3454d0e2f9a4b85ffeeab78abb04",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-05-WeightedUnstake/8c77f5709fc469d7f34566e54bcbf0cbfe2332bb9ee3264dbbb3ac4d174728b7.intent.json",
+      "sha256": "8e7c915c005c06d37225648beffbdcb341fcf2391febb5ead411a4214c886f47",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-05-WeightedUnstake/8c77f5709fc469d7f34566e54bcbf0cbfe2332bb9ee3264dbbb3ac4d174728b7.receipt.json",
+      "sha256": "97529ea7e312da3b3667d8de2cd8ea11a936610e84f55c00e63df7fda6056f72",
+      "bytes": 4169
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-05-WeightedUnstake/domain.json",
+      "sha256": "45c4adb5ff41a6b519a5046491dfc76a1721b3346fe7fa6a27a5dcde3f6daa3e",
+      "bytes": 8680
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-05-WeightedUnstake/run.json",
+      "sha256": "f139d9cbc14a74fcfb6f57eecc53e2c6da7d4a0c7360f1a90f49f395ed936df1",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-06-WeightedConvert/4cfd0e83fcc3375ce63f646c82f9456e6b01e85e31d59428621a452e3db5a50c.intent.json",
+      "sha256": "f4e16824f9e98eb0d47d4f1db7c13e5160057a8917b5083bd7462b3ef834cacd",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-06-WeightedConvert/4cfd0e83fcc3375ce63f646c82f9456e6b01e85e31d59428621a452e3db5a50c.receipt.json",
+      "sha256": "779520df68fe32bb46c0785230debf71fac9ea7db9805e98d8aa7c466b7b7629",
+      "bytes": 11849
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-06-WeightedConvert/domain.json",
+      "sha256": "a0167c939eb01989d2159c1f470f3ccab41081161522b9765075fd806a98a573",
+      "bytes": 8680
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-06-WeightedConvert/run.json",
+      "sha256": "755f8fecee0221475b315401e9c622d88c1e13ee2da7a180f4d51ee7737551d1",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-07-Donate/domain.json",
+      "sha256": "70252b1bd938182678eb3c740c482d576d0a583bf687e41b7ed8f424bd6888ae",
+      "bytes": 8671
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-07-Donate/f23dd32043cd67a728fb93906dce35f53570ee268d4d4a335da8e4558272eb14.intent.json",
+      "sha256": "bc72af9bcf2c7bd41c60757e48b7bef60d8d60d056218905fe4b7d8aa6594d0e",
+      "bytes": 1655
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-07-Donate/f23dd32043cd67a728fb93906dce35f53570ee268d4d4a335da8e4558272eb14.receipt.json",
+      "sha256": "66e1ec76b480e51fbeb25bfac76f061264d84f9d1745d265bcf924320e727674",
+      "bytes": 171074
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-07-Donate/run.json",
+      "sha256": "3647c1aa127a24dec3eeade5f200eee3ef5bad53b1a32bcfb0671cc37260c3b7",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-08-EarlierClaim/domain.json",
+      "sha256": "ede1c588a51b929c7d5f518fa326b3109dee3e500bcc8b61fd2ae922c2f29a01",
+      "bytes": 8677
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-08-EarlierClaim/ec24ed7ec3ed3966752a18bb09f6514d39448d0ca251010ea2a81b69d0b6d1de.intent.json",
+      "sha256": "55098c440ca8a7879eadd32c0c9d168b4dbec90e0a42cedb2f83efd7ae6587d4",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-08-EarlierClaim/ec24ed7ec3ed3966752a18bb09f6514d39448d0ca251010ea2a81b69d0b6d1de.receipt.json",
+      "sha256": "e890f919d5c593b8cdc5300e23c5ca4b215287342376b3304e8a6eadcf86c6a6",
+      "bytes": 3863
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-08-EarlierClaim/run.json",
+      "sha256": "7887cbe3893f4260289946d1b9b99501a145ffd1e01bf319b1baba34bef68422",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-09-EarlierSale/c5630ef97f7b00e919f19a5f5e3f1e96c84e6232e6206fec65bddfe768a0b0bb.intent.json",
+      "sha256": "66d4a78e46aa5ed787013ff87f8570fbe6ae1f4c2484ca0c068240d460a99433",
+      "bytes": 1653
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-09-EarlierSale/c5630ef97f7b00e919f19a5f5e3f1e96c84e6232e6206fec65bddfe768a0b0bb.receipt.json",
+      "sha256": "755a01bc76091f7994cc10c03e0456af20a286ff88e45e0d1c7346e226cab5d9",
+      "bytes": 4553
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-09-EarlierSale/domain.json",
+      "sha256": "bdf6fb9c9dd1e1dc68323cb4ad9b0deee8959cc58d16b032d36be1001f49c0aa",
+      "bytes": 8676
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-harvest-09-EarlierSale/run.json",
+      "sha256": "9ab4e7eaf543b695aafc123b362d073f687a9dca72c20968a4f6fb07c63832f7",
+      "bytes": 103
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/4ff4f3dd6a38e838c6a440c43ebe76bd39bc8fdac3214e873d31ec2dccaebb18.intent.json",
+      "sha256": "390492b049d6260584aa2e74545f833a43c7ca9dab56082f67d597f0b4064589",
+      "bytes": 1284
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/4ff4f3dd6a38e838c6a440c43ebe76bd39bc8fdac3214e873d31ec2dccaebb18.receipt.json",
+      "sha256": "23dbcf4802e9feac4be4ec850b0d4fbf4b2145749f21e7c49db63cd726b7f768",
+      "bytes": 11646
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/a8c9b68619f41c419b9576fcbe980ef4301ab38e5b139ec3f416a27f7e5ae095.intent.json",
+      "sha256": "e735524409b875bdc8b707c150988234ef5db738669ce1f424853b7d4bd2b5b2",
+      "bytes": 1284
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/a8c9b68619f41c419b9576fcbe980ef4301ab38e5b139ec3f416a27f7e5ae095.receipt.json",
+      "sha256": "7fc0e66077a1859e888ab2ec4e9450bb0a562685b0e17d03561fa853b55be70a",
+      "bytes": 11646
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/d8c221db897a13b2463be63c7bab160967c9f64bb86166c56806263b7d1c55b3.intent.json",
+      "sha256": "17b9a307a924aee034a0219436504c95fc5d3f2b8e7da69919d4f2e80e3b61b3",
+      "bytes": 1284
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/d8c221db897a13b2463be63c7bab160967c9f64bb86166c56806263b7d1c55b3.receipt.json",
+      "sha256": "701132ff323807b130df2b8a5605aee845d244eb5deca2b1f5da0a3132550fea",
+      "bytes": 11646
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/domain.json",
+      "sha256": "3ebbdf7ee8d9808a4cc30fe74773b62258523e0e9dfa2455721eba7a7651ad54",
+      "bytes": 8662
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-issue/run.json",
+      "sha256": "18e730a131ea7a798e438990bb79b2f58cba81eafea76df116f3e332174a494a",
+      "bytes": 247
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-owner-bond/46241245c4191594650f924a819027b4165bab3e31b9d00b2f9232876374d730.intent.json",
+      "sha256": "1e8eccc05df42bcb5b4e584555e8930cffb4ba91af953a4081ac490cc6f86ad7",
+      "bytes": 1001
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-owner-bond/46241245c4191594650f924a819027b4165bab3e31b9d00b2f9232876374d730.receipt.json",
+      "sha256": "d75cfc31b270e7a92bcb141be401af566ea994f72d872950c37a241e05fcba7e",
+      "bytes": 1795
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-owner-bond/8bea8dd25c0a289b2474588319657833c4540a46c00e8a4114123b7025770475.intent.json",
+      "sha256": "28f55067a82bb98e515493cc490b1905684dc810d43df0bf675fef6618436b61",
+      "bytes": 1514
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-owner-bond/8bea8dd25c0a289b2474588319657833c4540a46c00e8a4114123b7025770475.receipt.json",
+      "sha256": "0641fbb8766ef6cc379693f4c595705cc6a18cabb286aaf48501a26392ffc0dd",
+      "bytes": 174547
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-owner-bond/domain.json",
+      "sha256": "af77bcf7632d2c9603fdaaa0ccc5976f9cd27aa9010410a9fb874f30cccccd7c",
+      "bytes": 8665
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-owner-bond/run.json",
+      "sha256": "247fb270cbd0f981974fe2fe7550503ccf688d3e41e1ab061eb32c22990c5892",
+      "bytes": 173
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.intent.json",
+      "sha256": "735281c3b1bc45320d742c41aa572eaf1d81a3e68e3b635fb9e2b23350c415b7",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "sha256": "28f7ad9a150d6d62732bc075e1b30eddaedda0a0972b6e04e171effa75fdab9e",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.intent.json",
+      "sha256": "a5b4c8242b2ac0ecda07dbfe2149e486c6b73e080678fb4c1b580b8ade7caccd",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "sha256": "b6179b75f5ea4ab73e52c787746962f5e6820c6a7481f68665910026ce76e23b",
+      "bytes": 2834
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.intent.json",
+      "sha256": "3fc942c40ab7099762ac204bcd518f423fb999965093af0ca17258eb1bcd1f19",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "sha256": "cde3aa88858c47ad2ccad4c4fadb137bbd67fb219c2aafc0899b9afd58940283",
+      "bytes": 2826
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.intent.json",
+      "sha256": "f5fde29b8f7c6ff8b892faf428dac0bbb3cf5c87ec7c35fc563fc7321d460806",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "sha256": "41b8d1a95a706b8534d966ab2358b2dbc1bfdfb66ff6561a1b56908b187fbd74",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.intent.json",
+      "sha256": "b5a452e457f6dbc8f8a6e0ea53866452d23812df40844533c6075b6bfb793a54",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "sha256": "dffc75ef5d719cf7e5ff4cf41ea934eb90399ba55c032193012bfc9a76ecc39b",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.intent.json",
+      "sha256": "3dc692e5bccacf59b913bf93224579cbc7c35936477d57f3ac2989afdbac9c4b",
+      "bytes": 2180
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.receipt.json",
+      "sha256": "4a02cfd0e791a55be3a66ae6832d0a48da9194a4233827c28ffb8ef8702b917f",
+      "bytes": 2818
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.intent.json",
+      "sha256": "7cf08ef86749269800859b506c540b934788377768c567433a07447caa2dc805",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "sha256": "37cfc668b2ee45dfc6053ba7de87cdfc4e0873e2de30c09b150d0d1e13dc7d6b",
+      "bytes": 2826
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.intent.json",
+      "sha256": "856e6c7303b4ea038a4ff4dcbd22c4c56ef99a791f9e539ecac80c002714b91e",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "sha256": "ca9b4f5bb5d573780842412929c1a749d49c7ae7b9fd14e6550c67f941305160",
+      "bytes": 2829
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.intent.json",
+      "sha256": "a5b760d193baf392b5bdc2d67c4f422bccf7aa34d88de4299d82ef5d5149cf29",
+      "bytes": 2056
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.receipt.json",
+      "sha256": "6d643bdae1457f0e028c27672fb0b15cd4d44939c323f288fe0dd0fe25a6a280",
+      "bytes": 2925
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.intent.json",
+      "sha256": "d4206eaeac6bd276862ba5d2ffea5d4b794b954c77279453584d1f231d98119e",
+      "bytes": 2045
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "sha256": "c7343015d5a6e1547a24f3145a9be9fa3d5fc72ceaca9b3df5104f5c30ab0284",
+      "bytes": 2842
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/domain.json",
+      "sha256": "af77bcf7632d2c9603fdaaa0ccc5976f9cd27aa9010410a9fb874f30cccccd7c",
+      "bytes": 8665
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/journal-replacement/run.json",
+      "sha256": "d87368af63b17cc57a17cb213486eeb05633d85eb3c8306d7395ab32c37bea5b",
+      "bytes": 708
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/ordinary-deposit.json",
+      "sha256": "5e2dffa9cdcf4797c2198f7878d3497916a8deb4db4bab74708dcc952f052e1a",
+      "bytes": 271
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/owner-bond-before-resume.json",
+      "sha256": "d62ccd505f8aa0c348dce7077a80b378fd3e9fba8aa1e087a9364f6d57b82a87",
+      "bytes": 176066
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/owner-bond-child-runtime.json",
+      "sha256": "9e9ae1b5f6949a0cd9ca1e49a20a7920c55964c04cb222886088668773bb3c02",
+      "bytes": 92920
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/owner-bond-observation.json",
+      "sha256": "6d150f76711f2b5d5dcc4233dc2087d3559b76bb1fe8726c13e7ad46338027da",
+      "bytes": 1616
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/owner-bond-resumed.json",
+      "sha256": "da36ca03c4fa4f9f312539a3ca22e580e8602a383dd97052f2e6e35d71fdd10b",
+      "bytes": 1099
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/post-capture.json",
+      "sha256": "7e9a5196effda8d8f08fe03a98cb5581bfa0fda349bd15fe44b62566dbef684a",
+      "bytes": 8486
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/pre-capture.json",
+      "sha256": "0eb96913978d379dde25779cf1feb2cccd4ca58d10796f6e92180de93b138a45",
+      "bytes": 8192
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared-reordered/independent.json",
+      "sha256": "ee23f0ba3ee6f4e68bc42ab8b4c03be13d79b4bb9e9d9ba09cb87d64c29b1b39",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared-reordered/manifest.json",
+      "sha256": "276283096c5ef7a19cad4a107edac0978e384a93e9c00f64478f2b9306c36930",
+      "bytes": 35712
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared-reordered/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared-reordered/weighted-liquid.json",
+      "sha256": "81369207073a958640396f9636a9d5791c0a158c03fed10f18929984a72d3578",
+      "bytes": 389
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared/independent.json",
+      "sha256": "ee23f0ba3ee6f4e68bc42ab8b4c03be13d79b4bb9e9d9ba09cb87d64c29b1b39",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared/manifest.json",
+      "sha256": "276283096c5ef7a19cad4a107edac0978e384a93e9c00f64478f2b9306c36930",
+      "bytes": 35712
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/prepared/weighted-liquid.json",
+      "sha256": "81369207073a958640396f9636a9d5791c0a158c03fed10f18929984a72d3578",
+      "bytes": 389
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/recipient-identity.json",
+      "sha256": "dc74595de6d4b5892e1ee61b9b03fb8566c4a613804e471de79806f2f302ca64",
+      "bytes": 255
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/recovery-observation.json",
+      "sha256": "46b977d7024481e7d0a18557574a86ec12b1a4db64ec569321777948607b4fbc",
+      "bytes": 487
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/reject-chainId.json",
+      "sha256": "b49f066f22f7ea30435b19a9c3e470f04e7263e1ef45dee149d5a79e45265b83",
+      "bytes": 8483
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/reject-package.json",
+      "sha256": "73d566a41eaf82d0cfd8c78154ea6f58661cd5d9f1c30b6f252c8429ab7981fe",
+      "bytes": 8486
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/reject-payload.json",
+      "sha256": "264bdeb1130b24ccf01a45af2f54eee8387ce8d96a12eefab0dfe613c013c9fc",
+      "bytes": 8486
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/reject-proxy.json",
+      "sha256": "59c1159041613829785fafe598317e772ac69cb8e3c635852de3328b61dffad7",
+      "bytes": 8486
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/reject-snapshotId.json",
+      "sha256": "8be2d00dfe586070a836e0c4b06d6833d870d847ea0ae2caaca358eec04627a0",
+      "bytes": 8486
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/reordered-input.json",
+      "sha256": "9fc27aff856caa97f8b110a2cec349038b969810f8582663d34b16f5c24c05dd",
+      "bytes": 15148
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/reordered-issuance.json",
+      "sha256": "50d783cf5d6fadf4e314c35043a6da24a71507a36e30d56344782fdaf267030f",
+      "bytes": 913
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/replacement-execution.json",
+      "sha256": "f242f5b7de6c24a5afc2993efbd2656517efd99744875e61e418fed5e01fdf03",
+      "bytes": 8489
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/replacement-input.json",
+      "sha256": "6bb5b4e75e1fb7c826907cdfef89fa864ff778f67bcf0724ed3fd9431166fa07",
+      "bytes": 15159
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/replacement-observation.json",
+      "sha256": "93d031b1ff6071d623a64f7bb6de46fc654c324e9c67d5f4b9c1d7c22d8851b0",
+      "bytes": 271
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/replacement/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/replacement/manifest.json",
+      "sha256": "e4925ea2d112f9c575d4aa8e5d933d74477a4716fde7b89ea961b2a251174646",
+      "bytes": 35820
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/replacement/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/replacement/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/runtime-code.json",
+      "sha256": "c27537e3d9beb98457b98fce2eb868c202536ddfaeb1b7154ccd5f3124bf7ebb",
+      "bytes": 260499
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/synthetic-originals.json",
+      "sha256": "09ee3634fa907a2985b864d1557a09d0942ab6375c0ffcabbc16316c8e8b185f",
+      "bytes": 5815
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/synthetic-replacement-originals.json",
+      "sha256": "fabbcc83e4b92a1d6b243cdbe2ae735adfe37c6e001e3d3eb268b62a29549845",
+      "bytes": 5814
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/tampered-prepared.json",
+      "sha256": "3ce57e89b038249c796dbafa23d4093e052ce1c077f42d1d451c991fe1646d74",
+      "bytes": 35712
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/weighted-liquid-final.json",
+      "sha256": "2b587cacb71b796c5923bd3f6b24b1f4b18071c4c89bfc3bd384fed72fe70d0c",
+      "bytes": 3328
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/weighted-liquid-partial.json",
+      "sha256": "6a592b20baf19f08e10ee1160d247cf29297288490e7bed0b430a6faeceff379",
+      "bytes": 2908
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/weighted-liquid-source-bindings.json",
+      "sha256": "9bd53d25a888e53efb9a4597fc8d9c1bd30050e33222a2066d7c1ffe43e80ec8",
+      "bytes": 1116
+    },
+    {
+      "path": "owner-bond-correction/rehearsal-1794433923560/weighted-liquid-stage1.json",
+      "sha256": "1bd6ab4053661843c9e939e2cf771146f24956e266e98a3eb460e8cf7a4c3022",
+      "bytes": 1176
+    },
+    {
+      "path": "rehearsal.log",
+      "sha256": "717bbc7cd32e48b2d69f1cf026f676c83f0422fe071bbb2f59c046484938bed3",
+      "bytes": 282
+    },
+    {
+      "path": "report.md",
+      "sha256": "6f2b72c1a50919171790459be6699ce26fefdb4bdc09a2f577f9c01ba3fc365d",
+      "bytes": 22020
+    },
+    {
+      "path": "runtime-index.json",
+      "sha256": "8acd875a862a04a0d390ce12783bdba45544b77ab398d02185371cf894bbf671",
+      "bytes": 124415
+    },
+    {
+      "path": "specs.log",
+      "sha256": "0258b27fb6386a0b0378373cbf4439fedd19bd2a6cd740d98705c46105452b9a",
+      "bytes": 365949
+    }
+  ],
+  "limitations": [
+    "No full-category Migration acceptance.",
+    "No target gas or public deployment acceptance; local parent 43,263,865 gas exceeds retained historical 32,000,000 transaction limit.",
+    "Operational source/origin/original-wallet/Q0/contribution data still required; fixtures are synthetic.",
+    "Other-source limitations and earlier sale-and-hold versus liquidation remain.",
+    "No full ordinary/common shared-suite replay; no shared production changes."
+  ]
+}

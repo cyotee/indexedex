@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"callWithCurrentSE","inputs":[{"name":"current","type":"address","internalType":"contract IStandardExchangeProxy"},{"name":"target","type":"address","internalType":"address"},{"name":"data","type":"bytes","internalType":"bytes"}],"outputs":[{"name":"","type":"bytes","internalType":"bytes"}],"stateMutability":"nonpayable"}],"id":3644}

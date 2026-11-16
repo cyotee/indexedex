@@ -1,0 +1,340 @@
+{
+  "type": "DoneClaim",
+  "task": 3,
+  "status": "done-claim",
+  "acceptance_met": true,
+  "scope": "Complete authenticated source and recovery evidence indexes only; source-only assertions in an existing allowed fork test. No financial allocation or production behavior change.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "readiness": {
+    "ready": "confirmed",
+    "task2Verdict": "confirmed",
+    "task2Round": 2,
+    "crane": "setup prerequisites confirmed; plain local copy",
+    "gateBindings": [
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/ready.json",
+        "bytes": 1853,
+        "sha256": "23f9602d0e6c746218334c47a2662b5f494f3012358b50efcb18267fee7811f3"
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/crane-ready.json",
+        "bytes": 5841,
+        "sha256": "f70b0f21c468af0a3d930e35243a0d3a48923512c56f920eab4a1cdceb70d349"
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/task-2-verdict.json",
+        "bytes": 16958,
+        "sha256": "7d6ad2c16462bab3ed03be1cdb79a69a9f5b35fd85de051380de4cfe3433e046"
+      }
+    ],
+    "warmSeed": {
+      "beforeFirstCompile": true,
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && rsync -a --ignore-existing /Users/cyotee/Projects/indexedex/out/ out/ && rsync -a --ignore-existing /Users/cyotee/Projects/indexedex/cache_forge/ cache_forge/ && printf 'TASK3_SEED_COMPLETE\\n'",
+      "exitCode": 0,
+      "source": "/Users/cyotee/Projects/indexedex/out and cache_forge",
+      "target": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out and cache_forge",
+      "sharedCacheDeletion": false,
+      "primaryCopyBack": false
+    },
+    "task1Specification": {
+      "status": "independently confirmed per user; exact amended local bytes verified",
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e"
+    }
+  },
+  "historicalClaim": {
+    "preservedAs": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/initial-blocked-claim.json",
+    "binding": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/initial-blocked-claim.json",
+      "bytes": 6688,
+      "sha256": "6f2380d5ba28ea6fe7175fb1ee2ef371a44f3ea9d19f0807303596bdfab9c380"
+    },
+    "qualification": "The preliminary needs-fix observation remains correct for its earlier gate state; this claim applies to the substantive resumed execution only."
+  },
+  "changes": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "bytes": 101287,
+      "sha256": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "bytes": 19779,
+      "sha256": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "bytes": 13907,
+      "sha256": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "bytes": 14150,
+      "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+    }
+  ],
+  "ownedEvidenceRoot": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3",
+  "ownedEvidenceInventory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/artifacts.json",
+  "result": {
+    "sourceCategories": 14,
+    "indexedRouteSchemaReferences": 118,
+    "proxyAndFacetRuntimeHashChecks": {
+      "passed": 34,
+      "failed": 0
+    },
+    "nullHashesRecovered": [
+      "weighted-nft",
+      "weighted-receipt",
+      "earlier-receipt"
+    ],
+    "earlierReservedIds": [
+      {
+        "id": "0",
+        "classification": "reserved",
+        "role": "protocol",
+        "ownerAtPin": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+        "originalShares": "30553440974423605336759687659017983",
+        "effectiveShares": "30553440974423605336759687659017983"
+      },
+      {
+        "id": "1",
+        "classification": "reserved",
+        "role": "current-at-initialization fee recipient standing rewards",
+        "ownerAtPin": "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+        "originalShares": "0",
+        "effectiveShares": "21514144891010951919251332737340123"
+      },
+      {
+        "id": "2",
+        "classification": "reserved",
+        "role": "creator standing rewards",
+        "ownerAtPin": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+        "originalShares": "0",
+        "effectiveShares": "50199671412358887811586443053793621"
+      }
+    ],
+    "reservedRoleEvidence": "Exact deployed initialization/constants, live wired=true and owner/position reads, plus the separate canonical ordinary-ID-3 acquisition receipt. No current Migration numeric guard/new-child role convention or no-exposure dataset used.",
+    "ePCustody": "Permanent protocol custody bound to exact owner-only withdrawal facet, parent accepted intake/claimLiquidity, NFT forwarding roles and collector surface.",
+    "wPException": "Actual current-fee-recipient removal exception stays weighted-only and externally controlled.",
+    "unresolvedActualSourceCustodyConservationGates": [],
+    "independentSourceVerification": "Pending the lead-requested independent verification; this DoneClaim does not itself confirm that gate."
+  },
+  "tests": [
+    {
+      "id": "exact-final-source-happy-and-failure",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && mkdir -p '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && mkdir -p '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home'\\''\\'\\'''\\'' && export HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home'\\''\\'\\'''\\'' FOUNDRY_DIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home/.foundry'\\''\\'\\'''\\'' TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 GIT_ALLOW_PROTOCOL= FOUNDRY_OFFLINE=true && set -o pipefail; FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test '\\''\\'\\'''\\''contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol'\\''\\'\\'''\\'' -- -vv 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log'\\''\\'\\'''\\''; rc=${PIPESTATUS[0]}; printf '\\''\\'\\'''\\''TASK3_SOURCE_SUITES_EXIT=%s\n'\\''\\'\\'''\\'' \"$rc\"; exit \"$rc\"'\\'''",
+      "exitCode": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "actualSummary": "Ran 2 test suites in 1.04s (1.47s CPU time): 13 tests passed, 0 failed, 0 skipped (13 total tests)",
+      "rawLog": "conformance-20261114/task-3/source-state-assertions.log",
+      "sourceFingerprint": "5c9111e657d552eb95054c24912dad33af16cf5ae59946a3f075162fdcfdded8",
+      "assertions": "Wrong original wallet; burned/reserved/nonexistent IDs with explicit unchanged owner/custody/consumption/supply/backing/gons; missing approval/pretransfer rollback; unauthorized E-P exit and parent intake with unchanged LP holdings/supply; conditional authorized W-P exit."
+    },
+    {
+      "id": "inventory-positive",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 && set -o pipefail; bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts' inventory '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/source' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/destination' 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_INVENTORY_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 0,
+      "rawOutput": "INVENTORY_COMPLETE source=1 destination=1 divergent=0\n"
+    },
+    {
+      "id": "delivery-positive",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 && set -o pipefail; bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts' delivery '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive' 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_DELIVERY_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 0,
+      "rawOutput": "DELIVERY_COMPLETE entries=1 failures=0\n"
+    },
+    {
+      "id": "wrong-runtime-hash-integrity-negative",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 && set -o pipefail; bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts' delivery '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative' 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_DELIVERY_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "rawOutput": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/source/runtime.json: stale source inventory; source bytes/type changed or missing\nDELIVERY_FAILED entries=1 failures=1\n",
+      "originalArchiveUnchanged": true,
+      "qualification": "Raw-file integrity failure for a deliberately wrong expected-runtime descriptor. Separate actual runtime keccak computations are recorded for EVM identity."
+    }
+  ],
+  "allExactCommandsAndFailures": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/commands.json",
+  "allRuntimeCommandArgvStdoutStderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-hash-checks.json",
+  "manual_qa_artifacts": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-negative.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-complete.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-custody-live.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-missing-runtime.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/recovery-authority.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inputs-and-results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/manual-qa.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-preservation.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/artifact-validation.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/report.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/specification-reference-followup.json"
+  ],
+  "adversarialClassResults": {
+    "file": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/adversarial-results.json",
+    "applicablePassed": [
+      "stale state",
+      "dirty worktree",
+      "misleading success output",
+      "external source identity",
+      "long commands",
+      "generated artifacts",
+      "scoped evidence symlink boundaries"
+    ],
+    "notApplicableWithConcreteReasons": [
+      "malformed input (no parser change)",
+      "prompt injection (source bytes are data, no changed instruction channel)",
+      "cancel/resume (no resumable signed transaction workflow)",
+      "flaky tests (no timing/random case introduced)",
+      "repeated interruptions (none occurred)"
+    ]
+  },
+  "cleanup": {
+    "version": 1,
+    "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && set -eo pipefail; { test -d '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'; test ! -L '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'; test -d '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; test ! -L '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; printf 'OWNED_TEMP_ROOTS\n'; du -sh '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; rm -rf -- '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; test ! -e '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'; test ! -e '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; printf 'TASK3_OWNED_CLEANUP_COMPLETE\n'; } 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup.log'",
+    "exitCode": 0,
+    "monitor": "mon_5V351ZN09VTW3G5D",
+    "log": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup.log",
+      "bytes": 368,
+      "sha256": "38dff24c8f24d46f90a4a0d5a95db3651b0007983008cfe60ae86bffaac369be"
+    },
+    "roots": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp",
+        "presentAfterCleanup": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture",
+        "presentAfterCleanup": false
+      }
+    ],
+    "result": "removed only owned temporary resources",
+    "retained": [
+      "task-local out/",
+      "task-local cache_forge/",
+      "all task-3 evidence and baselines",
+      "inventory/delivery snapshots and integrity input descriptors"
+    ],
+    "backgroundState": "Every task-started monitor/process delivered completion before final handoff. No child agent, daemon, server, port or wallet session was created.",
+    "sharedCaches": "No shared cache deletion or copy-back. Initial HOME-derived cache isolation is not claimed; accepted final QA used explicit owned HOME.",
+    "primaryAndRetainedSources": "No primary project source or retained phase30 archive edit was performed. No blanket unrelated-file preservation audit is claimed."
+  },
+  "preservation": {
+    "rawArchivedFilesChecked": 26,
+    "rawArchivedFilesUnchanged": 26,
+    "indexBaselinesByteIdentical": 3,
+    "originalSourceTestBackupByteIdentical": true,
+    "sourceOnlyTestDiff": "Five added lines in the existing invalid-ID case; no weakened/removed/skipped tests.",
+    "productionMigrationDiff": "Empty; no production code edited.",
+    "currentWorktree": "Dirty/untracked, including task-1 and task-2 work; not claimed clean.",
+    "primaryAndPhase30": "No primary project source or phase30 archive edit performed."
+  },
+  "failedOrUnrunChecks": [
+    {
+      "check": "Initial nonlogin fork setup",
+      "result": "failed: ALCHEMY_KEY absent; later supported existing login-shell run succeeded",
+      "productDefect": false
+    },
+    {
+      "check": "Login shell wrapper exit capture",
+      "result": "failed: source cases passed but process exit 255/empty marker; corrected literal quoting; failed log retained",
+      "productDefect": false
+    },
+    {
+      "check": "E-N owner() read, initial and failed command-removal attempt",
+      "result": "failed: source has no owner() route, NoTargetFor; corrected supported read set succeeded",
+      "productDefect": false
+    },
+    {
+      "check": "Exact earlier IDs 0/1/2 mint-log receipts",
+      "result": "unavailable: exact collection/IDs/from-zero filter rejected by approved RPC ten-block range cap; no range census/provider switch/trace retry",
+      "productDefect": false
+    },
+    {
+      "check": "Biome LSP diagnostics",
+      "result": "unrun: configured server not installed; installs forbidden; JSON/ref diagnostics, actual compiler test and scoped diff check passed"
+    },
+    {
+      "check": "Broad new whole-tree regression or recovery census",
+      "result": "not run: outside task 3; retained category witnesses are source-bound historical results"
+    }
+  ],
+  "remainingRisks": [
+    "Exact reserved mint transaction receipt is supplemental unavailable provenance. Reserved roles are resolved from the independent deployed-source/current-state facts; absence is never used as no-exposure evidence.",
+    "No approved operational eligibility/original-contribution/exposure dataset is supplied or invented. Synthetic local witnesses are not operational allocations.",
+    "Historical pricing/ABI/category witnesses do not establish the future manual-pricing/operator/gas/whole-tree implementation; those plan tasks and independent verification remain separate.",
+    "Initial attempts did not explicitly isolate HOME-derived RPC caches; accepted final QA did. No shared cache deletion or restoration was attempted.",
+    "Existing Forge dependency-auto-install attempts failed against the populated plain Crane directory; no install succeeded, and existing warnings remain preserved.",
+    "Matched source archives retain their actual match labels. TokenStaking/direct claim-vault mechanics are authenticated by runtime/calls/receipts; no unsupported exact transitive-source equivalence or fixed conversion formula is asserted."
+  ],
+  "commitsMergesPushesPublicTransactionsInstallsDelegation": "None performed; automatic failed dependency-install attempts are separately disclosed.",
+  "specificationAuthority": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+    "bytes": 98213,
+    "status": "confirmed amended local specification for wave 1",
+    "confirmation": "User reports task-1 independent confirmation; exact local raw-file SHA-256 matches the supplied fingerprint.",
+    "references": [
+      {
+        "section": "1.10",
+        "lines": [
+          122,
+          134
+        ],
+        "scope": "Manual Weighted pricing and keep-until-reloaded precedence; no change to authenticated source/custody/conservation obligations."
+      },
+      {
+        "section": "1.9",
+        "lines": [
+          112,
+          120
+        ],
+        "scope": "Iterative reward harvesting and conditional permanent custody."
+      },
+      {
+        "section": "2 source identity table",
+        "lines": [
+          181,
+          195
+        ],
+        "scope": "Fixed legacy identities and actual source-unit models; refresh operational pins before configuration."
+      },
+      {
+        "section": "3 E1/E2",
+        "lines": [
+          197,
+          209
+        ],
+        "scope": "Source route closure, configured original-wallet surrender, measured custody and conservation."
+      },
+      {
+        "section": "Implementation task 1",
+        "lines": [
+          462,
+          471
+        ],
+        "scope": "Every source row needs executable evidence or a concrete blocker; preserve historical evidence."
+      }
+    ],
+    "qualification": "This binds specification references only. Historical source archives and completed QA retain their original byte/source bindings and wording; no recovery/source checks are repeated."
+  },
+  "specificationReferenceFollowup": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/specification-reference-followup.json",
+    "sha256": "0272db64b43a9aed19c977a225d2326bb21416b00f2e0b435a0bba518472601e",
+    "completedRecoveryChecksRerun": false,
+    "sourceRowsAndCodeUnchanged": true,
+    "previousDoneClaimPreserved": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/task-3-done-before-spec-amendment.json",
+      "bytes": 22916,
+      "sha256": "b40f40c2b5587e68bae30a67c72417e20a6314cf6fede416727fcab5a09f0624"
+    }
+  },
+  "ownedEvidenceInventoryBinding": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/artifacts.json",
+    "bytes": 13843,
+    "sha256": "70b2adcf9395ecc62fc7ff96edd613ddd6fa1fe4c97d5ad1339517a66cee361e"
+  }
+}

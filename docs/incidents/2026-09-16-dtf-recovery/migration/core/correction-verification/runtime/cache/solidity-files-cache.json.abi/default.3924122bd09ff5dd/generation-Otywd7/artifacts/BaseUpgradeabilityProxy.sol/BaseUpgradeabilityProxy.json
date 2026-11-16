@@ -1,0 +1,1 @@
+{"abi":[{"type":"fallback","stateMutability":"payable"},{"type":"receive","stateMutability":"payable"},{"type":"event","name":"Upgraded","inputs":[{"name":"implementation","type":"address","indexed":true,"internalType":"address"}],"anonymous":false}],"id":1722}

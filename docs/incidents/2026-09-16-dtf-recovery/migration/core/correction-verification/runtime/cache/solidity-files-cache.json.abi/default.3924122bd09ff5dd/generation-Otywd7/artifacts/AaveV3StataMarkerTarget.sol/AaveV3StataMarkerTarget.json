@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"stataToken","inputs":[],"outputs":[{"name":"stataToken_","type":"address","internalType":"address"}],"stateMutability":"view"}],"id":1360}

@@ -1,0 +1,3021 @@
+{
+  "date": "2026-11-11",
+  "scope": "Earlier NFT adapter source contract; no new RPC or fork execution",
+  "finalValidation": {
+    "jsonSyntax": "parsed successfully",
+    "checksPassed": 36,
+    "checksFailed": 0,
+    "coverage": "17 verbatim source extracts, 9 selectors, 8 preserved input fingerprints, relative evidence link and exact earlier output filenames",
+    "gitDiffCheckExit": 0,
+    "trackedDiff": [],
+    "ownedNewFiles": ["contract.md", "source-evidence.json"],
+    "concurrentUnownedFileObserved": "nft/weighted/archive-audit.json; untouched",
+    "finalBranch": "work/dtf-migration-phase-05",
+    "finalHead": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+    "finalGitSessionExit": 0,
+    "ownedNodeOrTemporaryRuntime": "none created"
+  },
+  "worktree": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+    "branch": "work/dtf-migration-phase-05",
+    "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+    "initialStatus": "clean with --ignore-submodules=all; linked warm lib/crane preserved",
+    "warmSeed": "Root-reported exit 0; not rerun by this lane"
+  },
+  "preservedInputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "sha256": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+      "sha256": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.exit.json",
+      "sha256": "2880ed08fbe2b836cf880fa34e250d1a604ddd19a00deadc713c796289051708"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+      "sha256": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9"
+    }
+  ],
+  "proxy": {
+    "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+    "block": "0x67e5d17",
+    "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+    "recomputedHashMatches": true
+  },
+  "bindings": [
+    {
+      "signature": "getPosition(uint256)",
+      "selector": "0xeb02c301",
+      "facet": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "runtimeKeccak256": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "getPosition",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "originalShares",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "effectiveShares",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "bonusMultiplier",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "unlockTime",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "rewardDebt",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ],
+              "internalType": "struct IDETFNFTVault.Position"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ]
+    },
+    {
+      "signature": "ownerOf(uint256)",
+      "selector": "0x6352211e",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "ownerOf",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ]
+    },
+    {
+      "signature": "safeTransferFrom(address,address,uint256)",
+      "selector": "0x42842e0e",
+      "facet": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "runtimeKeccak256": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "safeTransferFrom",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    },
+    {
+      "signature": "originalSharesOf(uint256)",
+      "selector": "0x0f3767df",
+      "facet": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "runtimeKeccak256": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "originalSharesOf",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "shares",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ]
+    },
+    {
+      "signature": "transferFrom(address,address,uint256)",
+      "selector": "0x23b872dd",
+      "facet": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "runtimeKeccak256": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "transferFrom",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    },
+    {
+      "signature": "approve(address,uint256)",
+      "selector": "0x095ea7b3",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "approve",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "payable"
+        }
+      ]
+    },
+    {
+      "signature": "getApproved(uint256)",
+      "selector": "0x081812fc",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "getApproved",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ]
+    },
+    {
+      "signature": "setApprovalForAll(address,bool)",
+      "selector": "0xa22cb465",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "setApprovalForAll",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "operator",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "approved",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    },
+    {
+      "signature": "isApprovedForAll(address,address)",
+      "selector": "0xe985e9c5",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "observedEqualsSourcifyOnchain": true,
+      "recomputedKeccakMatches": true,
+      "recompiledBodyEqualsObservedWithoutCbor": true,
+      "abi": [
+        {
+          "name": "isApprovedForAll",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "operator",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ]
+    }
+  ],
+  "sourceContents": [
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "sha256": "650b70e14685784602908dfe0900b188a444d0cbc2c36348f548bdb5af96d166",
+      "lineCount": 17108
+    },
+    {
+      "file": "ERC721Facet.sol",
+      "sha256": "6034c1d3b5072019c06970998f10646a56a0aea5b26258398b2333531bab4f72",
+      "lineCount": 2861
+    }
+  ],
+  "extractionFormat": "lines are verbatim entries from flattened sources[file].content.split(\"\\n\"), indexed start..end inclusive; no substitutions",
+  "extracts": [
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 13428,
+      "end": 13450,
+      "lines": [
+        "    // tag::_ownerOf(Storage-uint256)[]",
+        "    /**",
+        "     * @dev Argumented version of _ownerOf to allow direct Storage access.",
+        "     * @dev The Storage struct to operate on.",
+        "     * @param layoutStruct The Storage struct to operate on.",
+        "     * @param tokenId_ The token id.",
+        "     * @return The owner address.",
+        "     */",
+        "    function _ownerOf(Storage storage layoutStruct, uint256 tokenId_) internal view returns (address) {",
+        "        return layoutStruct.ownerOfTokenId[tokenId_];",
+        "    }",
+        "",
+        "    // end::_ownerOf(Storage-uint256)[]",
+        "",
+        "    // tag::_ownerOf(uint256)[]",
+        "    /**",
+        "     * @dev Default version of _ownerOf binding to the standard STORAGE_SLOT.",
+        "     * @param tokenId_ The token id.",
+        "     * @return The owner address.",
+        "     */",
+        "    function _ownerOf(uint256 tokenId_) internal view returns (address) {",
+        "        return _ownerOf(_layoutStruct(), tokenId_);",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 13465,
+      "end": 13482,
+      "lines": [
+        "    function _safeTransferFrom(",
+        "        Storage storage layoutStruct,",
+        "        address from_,",
+        "        address to_,",
+        "        uint256 tokenId_,",
+        "        bytes memory data_",
+        "    ) internal {",
+        "        if (to_.code.length > 0) {",
+        "            try IERC721Receiver(to_).onERC721Received(msg.sender, from_, tokenId_, data_) returns (bytes4 response) {",
+        "                if (response != IERC721Receiver.onERC721Received.selector) {",
+        "                    revert IERC721Errors.ERC721InvalidReceiver(to_);",
+        "                }",
+        "            } catch {",
+        "                revert IERC721Errors.ERC721InvalidReceiver(to_);",
+        "            }",
+        "        }",
+        "        _transferFrom(layoutStruct, from_, to_, tokenId_);",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 13525,
+      "end": 13527,
+      "lines": [
+        "    function _safeTransferFrom(address from_, address to_, uint256 tokenId_) internal {",
+        "        _safeTransferFrom(_layoutStruct(), from_, to_, tokenId_, \"\");",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 13541,
+      "end": 13566,
+      "lines": [
+        "    function _transferFrom(Storage storage layoutStruct, address from_, address to_, uint256 tokenId_) internal {",
+        "        if (from_ == address(0)) {",
+        "            revert IERC721Errors.ERC721InvalidOwner(from_);",
+        "        }",
+        "        if (to_ == address(0)) {",
+        "            revert IERC721Errors.ERC721InvalidOwner(to_);",
+        "        }",
+        "        if (!layoutStruct.allTokenIds._contains(tokenId_)) {",
+        "            revert IERC721Errors.ERC721NonexistentToken(tokenId_);",
+        "        }",
+        "        address owner_ = layoutStruct.ownerOfTokenId[tokenId_];",
+        "        if (owner_ != from_) {",
+        "            revert IERC721Errors.ERC721IncorrectOwner(from_, tokenId_, owner_);",
+        "        }",
+        "        if (",
+        "            from_ != address(msg.sender) && layoutStruct.approvedForTokenId[tokenId_] != msg.sender",
+        "                && !layoutStruct.operatorApprovals[from_][msg.sender]",
+        "        ) {",
+        "            revert IERC721Errors.ERC721InsufficientApproval(msg.sender, tokenId_);",
+        "        }",
+        "        delete layoutStruct.approvedForTokenId[tokenId_];",
+        "        layoutStruct.ownerOfTokenId[tokenId_] = to_;",
+        "        layoutStruct.balanceOfAccount[from_]--;",
+        "        layoutStruct.balanceOfAccount[to_]++;",
+        "        emit IERC721Events.Transfer(from_, to_, tokenId_);",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 14305,
+      "end": 14311,
+      "lines": [
+        "    struct Position {",
+        "        uint256 originalShares; // Base LP allocation",
+        "        uint256 effectiveShares; // Boosted shares for reward calculation",
+        "        uint256 bonusMultiplier; // Lock duration bonus (1e18 = 1x)",
+        "        uint256 unlockTime; // Timestamp when position unlocks",
+        "        uint256 rewardDebt; // Reward debt for calculating pending rewards",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 15566,
+      "end": 15601,
+      "lines": [
+        "    function _createPosition(",
+        "        Storage storage layoutStruct_,",
+        "        uint256 tokenId_,",
+        "        uint256 originalShares_,",
+        "        uint256 effectiveShares_,",
+        "        uint256 bonusMultiplier_,",
+        "        uint256 unlockTime_",
+        "    ) internal {",
+        "        layoutStruct_.originalSharesOf[tokenId_] = originalShares_;",
+        "        layoutStruct_.effectiveSharesOf[tokenId_] = effectiveShares_;",
+        "        layoutStruct_.bonusMultiplierOf[tokenId_] = bonusMultiplier_;",
+        "        layoutStruct_.unlockTimeOf[tokenId_] = unlockTime_;",
+        "        layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;",
+        "        layoutStruct_.totalShares += effectiveShares_;",
+        "        layoutStruct_.totalOriginalShares += originalShares_;",
+        "    }",
+        "",
+        "    function _createPosition(",
+        "        uint256 tokenId_,",
+        "        uint256 originalShares_,",
+        "        uint256 effectiveShares_,",
+        "        uint256 bonusMultiplier_,",
+        "        uint256 unlockTime_",
+        "    ) internal {",
+        "        _createPosition(_layoutStruct(), tokenId_, originalShares_, effectiveShares_, bonusMultiplier_, unlockTime_);",
+        "    }",
+        "",
+        "    function _removePosition(Storage storage layoutStruct_, uint256 tokenId_) internal {",
+        "        layoutStruct_.totalShares -= layoutStruct_.effectiveSharesOf[tokenId_];",
+        "        layoutStruct_.totalOriginalShares -= layoutStruct_.originalSharesOf[tokenId_];",
+        "        delete layoutStruct_.originalSharesOf[tokenId_];",
+        "        delete layoutStruct_.effectiveSharesOf[tokenId_];",
+        "        delete layoutStruct_.bonusMultiplierOf[tokenId_];",
+        "        delete layoutStruct_.unlockTimeOf[tokenId_];",
+        "        delete layoutStruct_.userRewardPerSharePaid[tokenId_];",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 15787,
+      "end": 15801,
+      "lines": [
+        "    function _convertToAssets(Storage storage layoutStruct_, uint256 shares_) internal view returns (uint256 lpAmount_) {",
+        "        (uint256 totalLpReserve, uint256 totalShares_) = _totalLpReserveForConversion(layoutStruct_);",
+        "",
+        "        if (totalShares_ == 0 || totalLpReserve == 0) {",
+        "            lpAmount_ = shares_;",
+        "        } else {",
+        "            lpAmount_ = BetterMath._convertToAssets(",
+        "                shares_, totalLpReserve, totalShares_, layoutStruct_.decimalOffset, Math.Rounding.Floor",
+        "            );",
+        "        }",
+        "    }",
+        "",
+        "    function _convertToAssets(uint256 shares_) internal view returns (uint256) {",
+        "        return _convertToAssets(_layoutStruct(), shares_);",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16135,
+      "end": 16158,
+      "lines": [
+        "    function _getPosition(uint256 tokenId_) internal view returns (IDETFNFTVault.Position memory position) {",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        position = DETFBondNFTMathLib._position(",
+        "            layoutStruct.originalSharesOf[tokenId_],",
+        "            layoutStruct.effectiveSharesOf[tokenId_],",
+        "            layoutStruct.bonusMultiplierOf[tokenId_],",
+        "            layoutStruct.unlockTimeOf[tokenId_],",
+        "            layoutStruct.userRewardPerSharePaid[tokenId_]",
+        "        );",
+        "    }",
+        "",
+        "    /**",
+        "     * @notice Checks if a token ID is the protocol-owned NFT.",
+        "     * @param tokenId_ Token ID to check",
+        "     * @return True if this is the protocol NFT",
+        "     */",
+        "    function _isDETFNFT(uint256 tokenId_) internal view returns (bool) {",
+        "        return tokenId_ == DETFNFTVaultRepo._detfNFTId();",
+        "    }",
+        "",
+        "    function _isStandingRewardNft(uint256 tokenId_) internal view returns (bool) {",
+        "        if (!DETFNFTVaultRepo._reservedIdsWired()) return false;",
+        "        return tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID;",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16206,
+      "end": 16254,
+      "lines": [
+        "    function createPosition(uint256 shares, uint256 lockDuration, address recipient)",
+        "        external",
+        "        onlyOwner",
+        "        nonReentrant",
+        "        returns (uint256 tokenId)",
+        "    {",
+        "        // Peer path: original = effective base = shares (LP); bonus applied to both.",
+        "        tokenId = _createPositionInternal(shares, shares, lockDuration, recipient);",
+        "    }",
+        "",
+        "    /// @notice Open bond with LP principal + separate reward-weight base (before lock bonus).",
+        "    function createPositionWithEffectiveBase(",
+        "        uint256 originalShares,",
+        "        uint256 effectiveBase,",
+        "        uint256 lockDuration,",
+        "        address recipient",
+        "    ) external onlyOwner nonReentrant returns (uint256 tokenId) {",
+        "        tokenId = _createPositionInternal(originalShares, effectiveBase, lockDuration, recipient);",
+        "    }",
+        "",
+        "    function _createPositionInternal(",
+        "        uint256 originalShares_,",
+        "        uint256 effectiveBase_,",
+        "        uint256 lockDuration_,",
+        "        address recipient_",
+        "    ) private returns (uint256 tokenId) {",
+        "        if (originalShares_ == 0) revert BaseSharesZero();",
+        "        if (effectiveBase_ == 0) revert BaseSharesZero();",
+        "",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        _validateLockDuration(layoutStruct, lockDuration_);",
+        "",
+        "        uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration_);",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "",
+        "        // Reward ledger weight = effectiveBase * lock bonus (PRD open-time mids path).",
+        "        uint256 effectiveShares = DETFBondNFTMathLib._calcEffectiveShares(effectiveBase_, bonusMultiplier);",
+        "",
+        "        tokenId = ERC721Repo._mint(recipient_);",
+        "        DETFNFTVaultRepo._createPosition(",
+        "            layoutStruct,",
+        "            tokenId,",
+        "            originalShares_,",
+        "            effectiveShares,",
+        "            bonusMultiplier,",
+        "            block.timestamp + lockDuration_",
+        "        );",
+        "",
+        "        emit NewLock(tokenId, recipient_, originalShares_, bonusMultiplier, block.timestamp + lockDuration_);"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16331,
+      "end": 16404,
+      "lines": [
+        "    function redeemPosition(uint256 tokenId, address recipient, uint256 deadline)",
+        "        external",
+        "        onlyOwner",
+        "        nonReentrant",
+        "        returns (uint256 wethOut)",
+        "    {",
+        "        if (DETFBondNFTMathLib._isDeadlineExceeded(deadline, block.timestamp)) {",
+        "            revert DeadlineExceeded(deadline, block.timestamp);",
+        "        }",
+        "",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "",
+        "        // Cannot redeem protocol NFT or standing reward ids 1–2 (D7 / D17).",
+        "        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {",
+        "            revert DETFNFTRestricted(tokenId);",
+        "        }",
+        "",
+        "        // Mature-only: public user close is DETF `closeBondMature`; this path is DETF-only.",
+        "        {",
+        "            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];",
+        "            if (block.timestamp < unlockTime) {",
+        "                revert BondNotMature(unlockTime);",
+        "            }",
+        "        }",
+        "",
+        "        // Update and harvest rewards",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "        uint256 rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);",
+        "",
+        "        // N10: 4626 input is originalShares, never effectiveShares (lock bonus is reward weight only).",
+        "        uint256 lpAmount = DETFNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.originalSharesOf[tokenId]);",
+        "        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);",
+        "",
+        "        // Grant approval for burn if DETF is calling",
+        "        if (msg.sender == address(layoutStruct.detf)) {",
+        "            ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;",
+        "        }",
+        "        ERC721Repo._burn(tokenId);",
+        "",
+        "        // Canonical Bond NFT → WETH redemption:",
+        "        // delegate to the DETF diamond, which custody-holds BPT and executes the pool unwind.",
+        "        wethOut = layoutStruct.detf.claimLiquidity(lpAmount, recipient);",
+        "",
+        "        emit IDETFNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);",
+        "    }",
+        "",
+        "    /// @notice D25: harvest + remove + burn a mature user bond. Does not credit id 0.",
+        "    function retireMaturePosition(uint256 tokenId, address rewardsRecipient)",
+        "        external",
+        "        onlyOwner",
+        "        nonReentrant",
+        "        returns (uint256 originalShares, uint256 rewardsClaimed)",
+        "    {",
+        "        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {",
+        "            revert DETFNFTRestricted(tokenId);",
+        "        }",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        address owner_ = ERC721Repo._ownerOf(tokenId);",
+        "        if (owner_ == address(0)) revert PositionNotFound(tokenId);",
+        "        {",
+        "            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];",
+        "            if (block.timestamp < unlockTime) {",
+        "                revert BondNotMature(unlockTime);",
+        "            }",
+        "        }",
+        "        if (rewardsRecipient == address(0)) rewardsRecipient = owner_;",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "        rewardsClaimed = _harvestRewardsInternal(layoutStruct, tokenId, rewardsRecipient);",
+        "        originalShares = layoutStruct.originalSharesOf[tokenId];",
+        "        if (originalShares == 0) revert PositionNotFound(tokenId);",
+        "        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);",
+        "        ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;",
+        "        ERC721Repo._burn(tokenId);",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16413,
+      "end": 16425,
+      "lines": [
+        "    function claimRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {",
+        "        // Bond holder OR package owner (DETF diamond orchestrating holder claim).",
+        "        address owner = ERC721Repo._ownerOf(tokenId);",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        if (!DETFBondNFTMathLib._isCallerOwner(owner, msg.sender) && msg.sender != address(layoutStruct.detf)) {",
+        "            revert NotBondHolder(owner, msg.sender);",
+        "        }",
+        "",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "",
+        "        rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);",
+        "",
+        "        emit IDETFNFTVault.RewardsClaimed(tokenId, recipient, rewards);"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16463,
+      "end": 16546,
+      "lines": [
+        "    function addToDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {",
+        "        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {",
+        "            revert DETFNFTRestricted(tokenId);",
+        "        }",
+        "",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "        DETFNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);",
+        "    }",
+        "",
+        "    /// @notice L7: effective-share weight only on ids 1 or 2. Does not change `originalShares`.",
+        "    function addEffectiveSharesOnly(uint256 tokenId, uint256 shares) external onlyOwner {",
+        "        if (!_isStandingRewardNft(tokenId)) {",
+        "            revert DETFNFTRestricted(tokenId);",
+        "        }",
+        "        if (ERC721Repo._ownerOf(tokenId) == address(0)) {",
+        "            revert ReservedBondNftsNotWired();",
+        "        }",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "        DETFNFTVaultRepo._addEffectiveSharesOnly(layoutStruct, tokenId, shares);",
+        "    }",
+        "",
+        "    /// @notice Debit protocol-NFT principal 1:1 (original and effective). `tokenId` must be `detfNFTId`.",
+        "    function removeFromDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {",
+        "        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {",
+        "            revert DETFNFTRestricted(tokenId);",
+        "        }",
+        "",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "        DETFNFTVaultRepo._removeFromPosition(layoutStruct, tokenId, shares);",
+        "    }",
+        "",
+        "    /**",
+        "     * @notice Sells a user bond NFT into the protocol-owned position.",
+        "     */",
+        "    function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)",
+        "        external",
+        "        onlyOwner",
+        "        nonReentrant",
+        "        returns (uint256 principalShares, uint256 rewardsClaimed)",
+        "    {",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "",
+        "        // Cannot sell protocol NFT or standing reward ids 1–2 (D7 / D17).",
+        "        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {",
+        "            revert DETFNFTRestricted(tokenId);",
+        "        }",
+        "",
+        "        address owner = ERC721Repo._ownerOf(tokenId);",
+        "        if (owner != seller) {",
+        "            revert NotBondHolder(owner, seller);",
+        "        }",
+        "",
+        "        principalShares = layoutStruct.originalSharesOf[tokenId];",
+        "        if (principalShares == 0) {",
+        "            revert PositionNotFound(tokenId);",
+        "        }",
+        "",
+        "        {",
+        "            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];",
+        "            if (block.timestamp < unlockTime) {",
+        "                revert BondNotMature(unlockTime);",
+        "            }",
+        "        }",
+        "",
+        "        if (rewardsRecipient == address(0)) {",
+        "            rewardsRecipient = seller;",
+        "        }",
+        "",
+        "        // Update + harvest rewards to recipient (per TASK.md).",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "        rewardsClaimed = _harvestRewardsInternal(layoutStruct, tokenId, rewardsRecipient);",
+        "",
+        "        // Remove the sold position (burns bonus shares by removing effectiveShares).",
+        "        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);",
+        "",
+        "        // Transfer principal-only shares into the protocol NFT position.",
+        "        DETFNFTVaultRepo._addToPosition(layoutStruct, layoutStruct.detfNFTId, principalShares);",
+        "",
+        "        // Burn the sold bond NFT.",
+        "        ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;",
+        "        ERC721Repo._burn(tokenId);"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16556,
+      "end": 16558,
+      "lines": [
+        "    function getPosition(uint256 tokenId) external view returns (IDETFNFTVault.Position memory) {",
+        "        return _getPosition(tokenId);",
+        "    }"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16643,
+      "end": 16669,
+      "lines": [
+        "    function positionOf(uint256 tokenId) external view returns (IDETFNFTVault.Position memory position) {",
+        "        return _getPosition(tokenId);",
+        "    }",
+        "",
+        "    // /**",
+        "    //  * @inheritdoc IDETFNFTVault",
+        "    //  */",
+        "    function originalSharesOf(uint256 tokenId) external view returns (uint256 shares) {",
+        "        return DETFNFTVaultRepo._originalSharesOf(tokenId);",
+        "    }",
+        "",
+        "    function totalOriginalShares() external view returns (uint256 shares) {",
+        "        return DETFNFTVaultRepo._totalOriginalShares();",
+        "    }",
+        "",
+        "    // /**",
+        "    //  * @inheritdoc IDETFNFTVault",
+        "    //  */",
+        "    function effectiveSharesOf(uint256 tokenId) external view returns (uint256 shares) {",
+        "        return DETFNFTVaultRepo._effectiveSharesOf(tokenId);",
+        "    }",
+        "",
+        "    // /**",
+        "    //  * @inheritdoc IDETFNFTVault",
+        "    //  */",
+        "    function unlockTimeOf(uint256 tokenId) external view returns (uint256 unlockTime) {",
+        "        return DETFNFTVaultRepo._unlockTimeOf(tokenId);"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16922,
+      "end": 16929,
+      "lines": [
+        "    function _creditId0(uint256 lpBefore_, uint256 lpOut_) private {",
+        "        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();",
+        "        uint256 shares_ = DETFNFTVaultRepo._convertToSharesAtLpReserve(layoutStruct, lpOut_, lpBefore_);",
+        "        if (shares_ == 0) revert ZeroAmount();",
+        "        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);",
+        "        uint256 protocolId_ = layoutStruct.detfNFTId;",
+        "        DETFNFTVaultRepo._addToPosition(layoutStruct, protocolId_, shares_);",
+        "        emit IDETFNFTVault.DETFNFTUpdated(protocolId_, lpOut_, layoutStruct.totalShares);"
+      ]
+    },
+    {
+      "file": "DETFNFTVaultFacet.sol",
+      "start": 16982,
+      "end": 17001,
+      "lines": [
+        "    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) public virtual {",
+        "        if (to == address(DETFNFTVaultRepo._detf())) {",
+        "            revert IERC721Errors.ERC721InvalidReceiver(to);",
+        "        }",
+        "        ERC721Repo._safeTransferFrom(from, to, tokenId, data);",
+        "    }",
+        "",
+        "    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual {",
+        "        if (to == address(DETFNFTVaultRepo._detf())) {",
+        "            revert IERC721Errors.ERC721InvalidReceiver(to);",
+        "        }",
+        "        ERC721Repo._safeTransferFrom(from, to, tokenId);",
+        "    }",
+        "",
+        "    function transferFrom(address from, address to, uint256 tokenId) public virtual {",
+        "        if (to == address(DETFNFTVaultRepo._detf())) {",
+        "            revert IERC721Errors.ERC721InvalidReceiver(to);",
+        "        }",
+        "        ERC721Repo._transferFrom(from, to, tokenId);",
+        "    }"
+      ]
+    },
+    {
+      "file": "ERC721Facet.sol",
+      "start": 2754,
+      "end": 2756,
+      "lines": [
+        "    function ownerOf(uint256 tokenId) public view virtual returns (address) {",
+        "        return ERC721Repo._ownerOf(tokenId);",
+        "    }"
+      ]
+    }
+  ],
+  "missingSource": {
+    "facet": "0x67ed019ec3f8b77bc51ed1e6403fc90e0abb15be",
+    "runtimeHash": "0xa289425ebf221bd44551376c3459083a4d53eb30f485b48e783bf8291f7a05d6",
+    "error": "Source HTTP 404",
+    "proxy": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+    "selectors": [
+      "0x6a4d3f12",
+      "0xf5ee7c5b",
+      "0x36abf3dc",
+      "0x7cc34bb4"
+    ],
+    "consumedByMinimalNftReadOrCustody": false
+  },
+  "producer": {
+    "startedAt": "2026-11-10T11:58:21.256Z",
+    "pin": {
+      "chainId": "0x1237",
+      "block": "0x67e5d17",
+      "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "freshFallback": false
+    },
+    "transactions": [
+      {
+        "name": "transferFrom",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000bad1",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad10000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x59b7b5232b062475a6dd2bc427c0d73f7d6ae10a86ea098c92423cbf9e559625",
+        "status": "0x0",
+        "output": "0x177e802f000000000000000000000000100000000000000000000000000000000000bad10000000000000000000000000000000000000000000000000000000000000004"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000bad1"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000bad1",
+        "hash": "0x8d64b0da937c77d7c73a105c1ce0e05f58f0edab923ef293ac702d8fb867b859",
+        "status": "0x0",
+        "output": "0x82b47157000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad1"
+      },
+      {
+        "name": "approve",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x100000000000000000000000000000000000bad1",
+          "4"
+        ],
+        "calldata": "0x095ea7b3000000000000000000000000100000000000000000000000000000000000bad10000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0xbdc32f3ff31638665079b77beaf50a6e41055eb8f4e4f67c7a5d28d7b16d4811",
+        "status": "0x1"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000bad1"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000bad1",
+        "hash": "0x8d64b0da937c77d7c73a105c1ce0e05f58f0edab923ef293ac702d8fb867b859",
+        "status": "0x0",
+        "output": "0x82b47157000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad1"
+      },
+      {
+        "name": "safeTransferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x69A470758A14176C86927Ee080f9419D30c49480",
+          "4"
+        ],
+        "calldata": "0x42842e0e000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d00000000000000000000000069a470758a14176c86927ee080f9419d30c494800000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0xc9aef14f6f8caba0b2bb65a13a447c4d72f08e8a4b5c913772b4353a977ee978",
+        "status": "0x0",
+        "output": "0x64a0ae9200000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000c001",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+        "status": "0x1"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0x5dfa0bfd67a8a62b6db4867245de7a3e2332195d97a75219bc0b6dd6e9ca1d45",
+        "status": "0x1",
+        "output": "0x00000000000000000000000000000000000000000000000000011909f98ec921"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d",
+        "hash": "0xae8827549547faabae5a83fc8dff270129b3d25d359126e1bcec0d0f0ac7b228",
+        "status": "0x0",
+        "output": "0x82b47157000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000c001",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+        "status": "0x1"
+      },
+      {
+        "name": "sellPositionToDetfNft",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6b7d927e0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0x3d54621af7e5dff968aed64f3639d0222170d962ead7c80339f39a33ede46042",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000001faac66868d24492"
+      },
+      {
+        "name": "sellPositionToDetfNft",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6b7d927e0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0xd4c3859e30426144370b839ba50c646758e67b786e4e5a1e9c0302719a4e2626",
+        "status": "0x0",
+        "output": "0x82b471570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000c001",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+        "status": "0x1"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0x61fb08ec01b576756fa25ae3ab9631613f140471c843576a2eac3774a7ff37a1",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "999999",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000f423f0000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0x794214f20823212cc840e0bca77d7d0679251dac91326bb69ff792414c4a84a2",
+        "status": "0x0",
+        "output": "0x1f2a2005"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000bad1",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000bad1000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0xbecb8677c003a5a4a58dfbc511237973681cb0250ba6a78fc6928ce1a03ab528",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "1",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0xf40c99a046f86976902a85a674dd7401f5eaec2afe24eb453db3e16b1b43f2a8",
+        "status": "0x0",
+        "output": "0x8848bd470000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+          "0x100000000000000000000000000000000000c001",
+          "3"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000003",
+        "hash": "0x3e722c66a2030af0181fc0fcd4195abff50f3bd832c9b0bbb91c5179910f9056",
+        "status": "0x1"
+      },
+      {
+        "name": "sellPositionToDetfNft",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "3",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6b7d927e0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0xddaf9a56d8cc5830a56551bd3aa26511e90bad5b7c59fa26f1c58ad5c4e922b8",
+        "status": "0x0",
+        "output": "0x11b4a773000000000000000000000000000000000000000000000000000000006b7abaaf"
+      },
+      {
+        "name": "transfer",
+        "from": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "0x100000000000000000000000000000000000c001",
+          "1000000000000000000"
+        ],
+        "calldata": "0xa9059cbb000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000de0b6b3a7640000",
+        "hash": "0xb93cca719623ffb0014880437a5eabe5def921684a8d19fa3d6860e24b676f46",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "transfer",
+        "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+        "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "args": [
+          "0x100000000000000000000000000000000000c001",
+          "1000000000000000000"
+        ],
+        "calldata": "0xa9059cbb000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000de0b6b3a7640000",
+        "hash": "0xd68774706044a88abb5a8455f466371da0244623dc5795b034aea8e26dcfbbd6",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "redeemClaim",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "999999999999999999",
+          "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+          "0",
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0xbfe556060000000000000000000000000000000000000000000000000de0b6b3a763ffff000000000000000000000000af0e1967c8f755c747615c5427108bc549ca11220000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff",
+        "hash": "0xe4359e06c585390d0c6e33cfb105c2384f58c4f9b44d75e1e0c566a2a97109e9",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      },
+      {
+        "name": "redeemClaim",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "0",
+          "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+          "0",
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0xbfe556060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000af0e1967c8f755c747615c5427108bc549ca11220000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff",
+        "hash": "0xe71cc2f8a616117f81c47b72c71e79d5956d2f5977fc0810157cee5d90a67003",
+        "status": "0x0",
+        "output": "0x1f2a2005"
+      },
+      {
+        "name": "transfer",
+        "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+        "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "args": [
+          "0x100000000000000000000000000000000000c001",
+          "1000000000000000000"
+        ],
+        "calldata": "0xa9059cbb000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000de0b6b3a7640000",
+        "hash": "0xd68774706044a88abb5a8455f466371da0244623dc5795b034aea8e26dcfbbd6",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "redeem",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "args": [
+          "999999999999999999",
+          "0x100000000000000000000000000000000000c001",
+          false
+        ],
+        "calldata": "0x5236be400000000000000000000000000000000000000000000000000de0b6b3a763ffff000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0x22fb95c8bfd0b3f7c58faa20f4672371f4740ffb8a3276cccb3ff2a731880a0d",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      }
+    ],
+    "positions": [
+      {
+        "id": "0",
+        "owner": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "position": {
+          "originalShares": "30553440974423605336759687659017983",
+          "effectiveShares": "30553440974423605336759687659017983",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147991718391587"
+        },
+        "originalShares": "30553440974423605336759687659017983",
+        "pendingRewards": "0",
+        "lpAssets": "30553440974423605336759752219592410"
+      },
+      {
+        "id": "1",
+        "owner": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "21514144891010951919251332737340123",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "134481857074021"
+        },
+        "originalShares": "0",
+        "pendingRewards": "290653113843579046365552686535",
+        "lpAssets": "0"
+      },
+      {
+        "id": "2",
+        "owner": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "50199671412358887811586443053793621",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147947160112360"
+        },
+        "originalShares": "0",
+        "pendingRewards": "2236810975895536781843835695",
+        "lpAssets": "0"
+      },
+      {
+        "id": "3",
+        "owner": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "position": {
+          "originalShares": "562524912595035608166",
+          "effectiveShares": "843787368892553412249",
+          "bonusMultiplier": "1500000000000000000",
+          "unlockTime": "1803205295",
+          "rewardDebt": "0"
+        },
+        "originalShares": "562524912595035608166",
+        "pendingRewards": "124873542679524901",
+        "lpAssets": "562524912595035608166"
+      },
+      {
+        "id": "4",
+        "owner": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "position": {
+          "originalShares": "2281854312954086546",
+          "effectiveShares": "2283136213569959131",
+          "bonusMultiplier": "1000561780219094285",
+          "unlockTime": "1788261679",
+          "rewardDebt": "12649110640673"
+        },
+        "originalShares": "2281854312954086546",
+        "pendingRewards": "309005608995105",
+        "lpAssets": "2281854312954086546"
+      },
+      {
+        "id": "12",
+        "owner": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "position": {
+          "originalShares": "47848240999749918187208884",
+          "effectiveShares": "47848240999749918187208884",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787825624",
+          "rewardDebt": "41482098997884"
+        },
+        "originalShares": "47848240999749918187208884",
+        "pendingRewards": "5096297937541538907725",
+        "lpAssets": "47848240999749918187208985"
+      },
+      {
+        "id": "19",
+        "owner": "0x0000000000000000000000000000000000000000",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "0",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "0"
+        },
+        "originalShares": "0",
+        "pendingRewards": "0",
+        "lpAssets": "0"
+      }
+    ],
+    "purchases": [
+      {
+        "tokenId": "3",
+        "matches": true,
+        "newLock": {
+          "tokenId": "3",
+          "recipient": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+          "shares": "562524912595035608166",
+          "bonusMultiplier": "1500000000000000000",
+          "unlockTime": "1803205295"
+        },
+        "receiptTransactionHash": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+        "canonicalBlockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+        "receiptBlockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+        "directDtf": "0",
+        "directWeth": "2000000000000000000",
+        "routedDtf": "1778859964387451305574664",
+        "reserveSettlementDtf": "0"
+      },
+      {
+        "tokenId": "4",
+        "matches": true,
+        "newLock": {
+          "tokenId": "4",
+          "recipient": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "shares": "2281854312954086546",
+          "bonusMultiplier": "1000561780219094285",
+          "unlockTime": "1788261679"
+        },
+        "receiptTransactionHash": "0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4",
+        "canonicalBlockHash": "0x21a834b0fcbfe4a0f2166b246cebd6eb71ca084cffea3e5c53ddf513fc2beff5",
+        "receiptBlockHash": "0x21a834b0fcbfe4a0f2166b246cebd6eb71ca084cffea3e5c53ddf513fc2beff5",
+        "directDtf": "7215852540309913726431",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "3703818"
+      },
+      {
+        "tokenId": "5",
+        "matches": true,
+        "newLock": {
+          "tokenId": "5",
+          "recipient": "0xfAD14E74911353728b9Bbfd9f0566827790c16C2",
+          "shares": "4733571557235944381",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790249586"
+        },
+        "receiptTransactionHash": "0x80a7af214d8aafe95e2b62b6c67a28b98ef1601f417a5c07b942e44e717f8fa1",
+        "canonicalBlockHash": "0xf107b94abb3461fed11646ecd4b1b14af5ae650b0b6d5b0e1a402a7af0a7772a",
+        "receiptBlockHash": "0xf107b94abb3461fed11646ecd4b1b14af5ae650b0b6d5b0e1a402a7af0a7772a",
+        "directDtf": "14939945008882434692090",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "5679593238886465"
+      },
+      {
+        "tokenId": "6",
+        "matches": true,
+        "newLock": {
+          "tokenId": "6",
+          "recipient": "0xD3d58fDD70B33143052DE127bE8700fa37825E96",
+          "shares": "17499787460727814908",
+          "bonusMultiplier": "1001264005492962142",
+          "unlockTime": "1788535559"
+        },
+        "receiptTransactionHash": "0x68cf362d094e28799bb02943c0fa5d8b7a4577d40d701e360c791bc715ed7535",
+        "canonicalBlockHash": "0xaed693410cd5b965d4485593e9a754e44a82819c4df503d6d976ee88aafe77ef",
+        "receiptBlockHash": "0xaed693410cd5b965d4485593e9a754e44a82819c4df503d6d976ee88aafe77ef",
+        "directDtf": "55026060195080703684401",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "62816193844203301"
+      },
+      {
+        "tokenId": "7",
+        "matches": true,
+        "newLock": {
+          "tokenId": "7",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "101771406718761253180",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787759729"
+        },
+        "receiptTransactionHash": "0x90ad17355e01e23c01e80ab93b246a61c0e791a7d85066c6341fcbf44b963067",
+        "canonicalBlockHash": "0x9ad8b364a27fd83a5db71c3e6d6f0fbf948938366e693bd4f01887d34df03f07",
+        "receiptBlockHash": "0x9ad8b364a27fd83a5db71c3e6d6f0fbf948938366e693bd4f01887d34df03f07",
+        "directDtf": "320000000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "327306939002799687"
+      },
+      {
+        "tokenId": "8",
+        "matches": true,
+        "newLock": {
+          "tokenId": "8",
+          "recipient": "0x73c121D572E065c8B6FA6aCeC6B40DefFB62E1dF",
+          "shares": "3177276484339682675",
+          "bonusMultiplier": "1500000000000000000",
+          "unlockTime": "1803230928"
+        },
+        "receiptTransactionHash": "0x176e169d8d7add51dce9f3f5009f6322f93264fc7cfdc17a5d2c969066a4a88f",
+        "canonicalBlockHash": "0xdad7f0f160801f7e3d1d0ea393130e332f38ceca5455439ad7b2e90eb91debec",
+        "receiptBlockHash": "0xdad7f0f160801f7e3d1d0ea393130e332f38ceca5455439ad7b2e90eb91debec",
+        "directDtf": "10000000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "10210351169511441"
+      },
+      {
+        "tokenId": "9",
+        "matches": true,
+        "newLock": {
+          "tokenId": "9",
+          "recipient": "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+          "shares": "26355776123062198039",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787797897"
+        },
+        "receiptTransactionHash": "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55",
+        "canonicalBlockHash": "0x6a4b173d967f7e4a7cf4c3eab19c27ee5c332a4ef5ac9ae7de2424c3cd406595",
+        "receiptBlockHash": "0x6a4b173d967f7e4a7cf4c3eab19c27ee5c332a4ef5ac9ae7de2424c3cd406595",
+        "directDtf": "0",
+        "directWeth": "100000000000000",
+        "routedDtf": "41454674363068691516",
+        "reserveSettlementDtf": "41220182501921"
+      },
+      {
+        "tokenId": "10",
+        "matches": true,
+        "newLock": {
+          "tokenId": "10",
+          "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+          "shares": "635830119561554894104",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787824066"
+        },
+        "receiptTransactionHash": "0x8ec17aa049770ee9c2d525d5e6e1c707ee42f2c039532526de56a132c9f5876f",
+        "canonicalBlockHash": "0x02e6bd34884f315ae2017aad0b225fb75b821f71b41fee3acb5e959add4c13a5",
+        "receiptBlockHash": "0x02e6bd34884f315ae2017aad0b225fb75b821f71b41fee3acb5e959add4c13a5",
+        "directDtf": "1000000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "2848"
+      },
+      {
+        "tokenId": "11",
+        "matches": true,
+        "newLock": {
+          "tokenId": "11",
+          "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+          "shares": "63710177980044045505074",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790330314"
+        },
+        "receiptTransactionHash": "0xb6292353395922bd69b073664afb0188d47cbdbfcc4d13cd185ac37d4cb4ad73",
+        "canonicalBlockHash": "0xe10a87953680e6d5f34b1c6d2cafd87c31195a017ff4972846f399f867266189",
+        "receiptBlockHash": "0xe10a87953680e6d5f34b1c6d2cafd87c31195a017ff4972846f399f867266189",
+        "directDtf": "100000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "3"
+      },
+      {
+        "tokenId": "12",
+        "matches": true,
+        "newLock": {
+          "tokenId": "12",
+          "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+          "shares": "47848240999749918187208884",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787825624"
+        },
+        "receiptTransactionHash": "0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24",
+        "canonicalBlockHash": "0x60257f9f34cea2460050eff1cb05ffc1d3c1fca04b3fcf3ce1af6361ccecb8cc",
+        "receiptBlockHash": "0x60257f9f34cea2460050eff1cb05ffc1d3c1fca04b3fcf3ce1af6361ccecb8cc",
+        "directDtf": "75081277576132719227716",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "2"
+      },
+      {
+        "tokenId": "13",
+        "matches": true,
+        "newLock": {
+          "tokenId": "13",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "14076427465745415752889694594",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790332861"
+        },
+        "receiptTransactionHash": "0xa18c5713d0e7f67099072b20ecca3418c89dc9bf61af2f503f9fa04f97f5625b",
+        "canonicalBlockHash": "0x6015ed44641191909d880318e1af69a07ecb4207e4a5dcf676ebc6f46a0495c7",
+        "receiptBlockHash": "0x6015ed44641191909d880318e1af69a07ecb4207e4a5dcf676ebc6f46a0495c7",
+        "directDtf": "22000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "5212466"
+      },
+      {
+        "tokenId": "14",
+        "matches": true,
+        "newLock": {
+          "tokenId": "14",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "63994795678617495504331915305",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790332934"
+        },
+        "receiptTransactionHash": "0x1b17aaa9a895121a4b496bb5c74ba00e4ed445951f2ed1a6cc7ba3b1dc77a829",
+        "canonicalBlockHash": "0x7061652a732614cb882702853ab1f45dcd82df85c3bc763f022ea36eb3eb572a",
+        "receiptBlockHash": "0x7061652a732614cb882702853ab1f45dcd82df85c3bc763f022ea36eb3eb572a",
+        "directDtf": "100000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1390591"
+      },
+      {
+        "tokenId": "15",
+        "matches": true,
+        "newLock": {
+          "tokenId": "15",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "384036613756141320755161221429",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790333485"
+        },
+        "receiptTransactionHash": "0xa45445505ce0d5c5f8011d49bef9344f883a245d6a86a0752a610376c6bb5287",
+        "canonicalBlockHash": "0x8a6d9b18a4bce91dbe19e7e3948cb427f6470df7a751e73cbc45840909684c2d",
+        "receiptBlockHash": "0x8a6d9b18a4bce91dbe19e7e3948cb427f6470df7a751e73cbc45840909684c2d",
+        "directDtf": "600000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1444477"
+      },
+      {
+        "tokenId": "16",
+        "matches": true,
+        "newLock": {
+          "tokenId": "16",
+          "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+          "shares": "682214153247983854950221048859993",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790345310"
+        },
+        "receiptTransactionHash": "0x0a902f1d04b7da358cc37504cb976901597febc12f72d13cf9d2db660190ec8a",
+        "canonicalBlockHash": "0x523e6059230418c06ef8e7f3990b6638123b934b34c9eb5c05a8cc0ae6b240ce",
+        "receiptBlockHash": "0x523e6059230418c06ef8e7f3990b6638123b934b34c9eb5c05a8cc0ae6b240ce",
+        "directDtf": "1063674247110000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1"
+      },
+      {
+        "tokenId": "17",
+        "matches": true,
+        "newLock": {
+          "tokenId": "17",
+          "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+          "shares": "75379755917867944374016634265685128",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787840867"
+        },
+        "receiptTransactionHash": "0xb525bd3a74304840614be0fd894afd6f24b93f022be6b2c8d6be5df04d7314b6",
+        "canonicalBlockHash": "0x87388258f7b397b42f6cdc2622b886264e61777021c3b7da3213b8a539e256d8",
+        "receiptBlockHash": "0x87388258f7b397b42f6cdc2622b886264e61777021c3b7da3213b8a539e256d8",
+        "directDtf": "117496434189960639589934",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1"
+      },
+      {
+        "tokenId": "18",
+        "matches": true,
+        "newLock": {
+          "tokenId": "18",
+          "recipient": "0x24E447B7407A304b024a5A57D7638f4cb6D5d0Fb",
+          "shares": "900849466801106375326463227667169",
+          "bonusMultiplier": "1050000000000000000",
+          "unlockTime": "1790443692"
+        },
+        "receiptTransactionHash": "0x46b804fa90b141eb7ec105162f11d9b70238f5cdd44284caffefab1c01574e1d",
+        "canonicalBlockHash": "0xda2c21b2456a1affcde60395eb48514020d649c95a33a761a7e2fbf51966ab36",
+        "receiptBlockHash": "0xda2c21b2456a1affcde60395eb48514020d649c95a33a761a7e2fbf51966ab36",
+        "directDtf": "1000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "16837633828346"
+      }
+    ],
+    "reward": {
+      "before": {
+        "originalShares": "2281854312954086546",
+        "effectiveShares": "2283136213569959131",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679",
+        "rewardDebt": "12649110640673"
+      },
+      "after": {
+        "originalShares": "2281854312954086546",
+        "effectiveShares": "2283136213569959131",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679",
+        "rewardDebt": "147991718391587"
+      }
+    },
+    "sale": {
+      "before": {
+        "owner": "0x100000000000000000000000000000000000C001",
+        "position": {
+          "originalShares": "2281854312954086546",
+          "effectiveShares": "2283136213569959131",
+          "bonusMultiplier": "1000561780219094285",
+          "unlockTime": "1788261679",
+          "rewardDebt": "12649110640673"
+        },
+        "approved": "0x0000000000000000000000000000000000000000",
+        "ownerDetf": "0",
+        "recoveryDetf": "0",
+        "attackerDetf": "0",
+        "nftDetf": "1744781936146519239557001703942",
+        "lpCustody": "107516722668090845797720021675152213",
+        "recoveryPair": "0",
+        "recoveryReceipt": "0",
+        "recoveryReceiptShares": "0",
+        "receiptTotalShares": "26345106194913509598392145360059647",
+        "receiptSupply": "57898677945502333609"
+      },
+      "after": {
+        "owner": "0x0000000000000000000000000000000000000000",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "0",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "0"
+        },
+        "approved": "0x0000000000000000000000000000000000000000",
+        "ownerDetf": "0",
+        "recoveryDetf": "309005608995105",
+        "attackerDetf": "0",
+        "nftDetf": "1744781936146518930551392708837",
+        "lpCustody": "107516722668090845797720021675152213",
+        "recoveryPair": "0",
+        "recoveryReceipt": "4322",
+        "recoveryReceiptShares": "1967558883021387942",
+        "receiptTotalShares": "26345106194913511565951028381447589",
+        "receiptSupply": "57898677945502337219"
+      }
+    },
+    "safeTransferRollback": {
+      "pass": true,
+      "rollbackEqual": true
+    },
+    "locked": {
+      "originalShares": "562524912595035608166",
+      "effectiveShares": "843787368892553412249",
+      "bonusMultiplier": "1500000000000000000",
+      "unlockTime": "1803205295",
+      "rewardDebt": "0"
+    },
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-mature-close-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-mature-close-redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "zero-principal-standing-position-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "locked-NFT-custody-retains-lock-and-principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-and-conversions",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "direct-receipt-to-pair-redemption",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ],
+    "overall": "UNPROVEN",
+    "cleanup": {
+      "snapshotReverted": true,
+      "exit": [
+        0,
+        null
+      ],
+      "endpointClosed": true,
+      "endpointReadback": "Unable to connect. Is the computer able to access the url?",
+      "runRootRemoved": true
+    }
+  },
+  "independentReplay": {
+    "startedAt": "2026-11-10T12:55:13.863Z",
+    "pin": {
+      "chainId": "0x1237",
+      "block": "0x67e5d17",
+      "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "freshFallback": false
+    },
+    "transactions": [
+      {
+        "name": "transferFrom",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000bad1",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad10000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x59b7b5232b062475a6dd2bc427c0d73f7d6ae10a86ea098c92423cbf9e559625",
+        "status": "0x0",
+        "output": "0x177e802f000000000000000000000000100000000000000000000000000000000000bad10000000000000000000000000000000000000000000000000000000000000004"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000bad1"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000bad1",
+        "hash": "0x8d64b0da937c77d7c73a105c1ce0e05f58f0edab923ef293ac702d8fb867b859",
+        "status": "0x0",
+        "output": "0x82b47157000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad1"
+      },
+      {
+        "name": "approve",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x100000000000000000000000000000000000bad1",
+          "4"
+        ],
+        "calldata": "0x095ea7b3000000000000000000000000100000000000000000000000000000000000bad10000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0xbdc32f3ff31638665079b77beaf50a6e41055eb8f4e4f67c7a5d28d7b16d4811",
+        "status": "0x1"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000bad1"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000bad1",
+        "hash": "0x8d64b0da937c77d7c73a105c1ce0e05f58f0edab923ef293ac702d8fb867b859",
+        "status": "0x0",
+        "output": "0x82b47157000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000bad1"
+      },
+      {
+        "name": "safeTransferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x69A470758A14176C86927Ee080f9419D30c49480",
+          "4"
+        ],
+        "calldata": "0x42842e0e000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d00000000000000000000000069a470758a14176c86927ee080f9419d30c494800000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0xc9aef14f6f8caba0b2bb65a13a447c4d72f08e8a4b5c913772b4353a977ee978",
+        "status": "0x0",
+        "output": "0x64a0ae9200000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000c001",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+        "status": "0x1"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0x5dfa0bfd67a8a62b6db4867245de7a3e2332195d97a75219bc0b6dd6e9ca1d45",
+        "status": "0x1",
+        "output": "0x00000000000000000000000000000000000000000000000000011909f98ec921"
+      },
+      {
+        "name": "claimRewards",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "4",
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D"
+        ],
+        "calldata": "0x6c7b69cb0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d",
+        "hash": "0xae8827549547faabae5a83fc8dff270129b3d25d359126e1bcec0d0f0ac7b228",
+        "status": "0x0",
+        "output": "0x82b47157000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000c001",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+        "status": "0x1"
+      },
+      {
+        "name": "sellPositionToDetfNft",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6b7d927e0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0x3d54621af7e5dff968aed64f3639d0222170d962ead7c80339f39a33ede46042",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000001faac66868d24492"
+      },
+      {
+        "name": "sellPositionToDetfNft",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6b7d927e0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0xd4c3859e30426144370b839ba50c646758e67b786e4e5a1e9c0302719a4e2626",
+        "status": "0x0",
+        "output": "0x82b471570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "0x100000000000000000000000000000000000c001",
+          "4"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000230f95db9644c5b3608ba676d18426d03e435b1d000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000004",
+        "hash": "0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398",
+        "status": "0x1"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0x61fb08ec01b576756fa25ae3ab9631613f140471c843576a2eac3774a7ff37a1",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "999999",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000f423f0000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0x794214f20823212cc840e0bca77d7d0679251dac91326bb69ff792414c4a84a2",
+        "status": "0x0",
+        "output": "0x1f2a2005"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000bad1",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "4",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000bad1",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000bad1000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0xbecb8677c003a5a4a58dfbc511237973681cb0250ba6a78fc6928ce1a03ab528",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      },
+      {
+        "name": "closeBondMature",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "1",
+          [
+            "0",
+            "0"
+          ],
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0x7c21289300000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000080000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0xf40c99a046f86976902a85a674dd7401f5eaec2afe24eb453db3e16b1b43f2a8",
+        "status": "0x0",
+        "output": "0x8848bd470000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "transferFrom",
+        "from": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "to": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "args": [
+          "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+          "0x100000000000000000000000000000000000c001",
+          "3"
+        ],
+        "calldata": "0x23b872dd000000000000000000000000495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000003",
+        "hash": "0x3e722c66a2030af0181fc0fcd4195abff50f3bd832c9b0bbb91c5179910f9056",
+        "status": "0x1"
+      },
+      {
+        "name": "sellPositionToDetfNft",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "3",
+          "0x100000000000000000000000000000000000c001"
+        ],
+        "calldata": "0x6b7d927e0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000100000000000000000000000000000000000c001",
+        "hash": "0xddaf9a56d8cc5830a56551bd3aa26511e90bad5b7c59fa26f1c58ad5c4e922b8",
+        "status": "0x0",
+        "output": "0x11b4a773000000000000000000000000000000000000000000000000000000006b7abaaf"
+      },
+      {
+        "name": "transfer",
+        "from": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "0x100000000000000000000000000000000000c001",
+          "1000000000000000000"
+        ],
+        "calldata": "0xa9059cbb000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000de0b6b3a7640000",
+        "hash": "0xb93cca719623ffb0014880437a5eabe5def921684a8d19fa3d6860e24b676f46",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "transfer",
+        "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+        "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "args": [
+          "0x100000000000000000000000000000000000c001",
+          "1000000000000000000"
+        ],
+        "calldata": "0xa9059cbb000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000de0b6b3a7640000",
+        "hash": "0xd68774706044a88abb5a8455f466371da0244623dc5795b034aea8e26dcfbbd6",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "redeemClaim",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "999999999999999999",
+          "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+          "0",
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0xbfe556060000000000000000000000000000000000000000000000000de0b6b3a763ffff000000000000000000000000af0e1967c8f755c747615c5427108bc549ca11220000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff",
+        "hash": "0xe4359e06c585390d0c6e33cfb105c2384f58c4f9b44d75e1e0c566a2a97109e9",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      },
+      {
+        "name": "redeemClaim",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "args": [
+          "0",
+          "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+          "0",
+          "0x100000000000000000000000000000000000c001",
+          "18446744073709551615"
+        ],
+        "calldata": "0xbfe556060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000af0e1967c8f755c747615c5427108bc549ca11220000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000c001000000000000000000000000000000000000000000000000ffffffffffffffff",
+        "hash": "0xe71cc2f8a616117f81c47b72c71e79d5956d2f5977fc0810157cee5d90a67003",
+        "status": "0x0",
+        "output": "0x1f2a2005"
+      },
+      {
+        "name": "transfer",
+        "from": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+        "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "args": [
+          "0x100000000000000000000000000000000000c001",
+          "1000000000000000000"
+        ],
+        "calldata": "0xa9059cbb000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000de0b6b3a7640000",
+        "hash": "0xd68774706044a88abb5a8455f466371da0244623dc5795b034aea8e26dcfbbd6",
+        "status": "0x1",
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      {
+        "name": "redeem",
+        "from": "0x100000000000000000000000000000000000c001",
+        "to": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "args": [
+          "999999999999999999",
+          "0x100000000000000000000000000000000000c001",
+          false
+        ],
+        "calldata": "0x5236be400000000000000000000000000000000000000000000000000de0b6b3a763ffff000000000000000000000000100000000000000000000000000000000000c0010000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0x22fb95c8bfd0b3f7c58faa20f4672371f4740ffb8a3276cccb3ff2a731880a0d",
+        "status": "0x0",
+        "output": "0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7"
+      }
+    ],
+    "positions": [
+      {
+        "id": "0",
+        "owner": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "position": {
+          "originalShares": "30553440974423605336759687659017983",
+          "effectiveShares": "30553440974423605336759687659017983",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147991718391587"
+        },
+        "originalShares": "30553440974423605336759687659017983",
+        "pendingRewards": "0",
+        "lpAssets": "30553440974423605336759752219592410"
+      },
+      {
+        "id": "1",
+        "owner": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "21514144891010951919251332737340123",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "134481857074021"
+        },
+        "originalShares": "0",
+        "pendingRewards": "290653113843579046365552686535",
+        "lpAssets": "0"
+      },
+      {
+        "id": "2",
+        "owner": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "50199671412358887811586443053793621",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147947160112360"
+        },
+        "originalShares": "0",
+        "pendingRewards": "2236810975895536781843835695",
+        "lpAssets": "0"
+      },
+      {
+        "id": "3",
+        "owner": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "position": {
+          "originalShares": "562524912595035608166",
+          "effectiveShares": "843787368892553412249",
+          "bonusMultiplier": "1500000000000000000",
+          "unlockTime": "1803205295",
+          "rewardDebt": "0"
+        },
+        "originalShares": "562524912595035608166",
+        "pendingRewards": "124873542679524901",
+        "lpAssets": "562524912595035608166"
+      },
+      {
+        "id": "4",
+        "owner": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "position": {
+          "originalShares": "2281854312954086546",
+          "effectiveShares": "2283136213569959131",
+          "bonusMultiplier": "1000561780219094285",
+          "unlockTime": "1788261679",
+          "rewardDebt": "12649110640673"
+        },
+        "originalShares": "2281854312954086546",
+        "pendingRewards": "309005608995105",
+        "lpAssets": "2281854312954086546"
+      },
+      {
+        "id": "12",
+        "owner": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "position": {
+          "originalShares": "47848240999749918187208884",
+          "effectiveShares": "47848240999749918187208884",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787825624",
+          "rewardDebt": "41482098997884"
+        },
+        "originalShares": "47848240999749918187208884",
+        "pendingRewards": "5096297937541538907725",
+        "lpAssets": "47848240999749918187208985"
+      },
+      {
+        "id": "19",
+        "owner": "0x0000000000000000000000000000000000000000",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "0",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "0"
+        },
+        "originalShares": "0",
+        "pendingRewards": "0",
+        "lpAssets": "0"
+      }
+    ],
+    "purchases": [
+      {
+        "tokenId": "3",
+        "matches": true,
+        "newLock": {
+          "tokenId": "3",
+          "recipient": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+          "shares": "562524912595035608166",
+          "bonusMultiplier": "1500000000000000000",
+          "unlockTime": "1803205295"
+        },
+        "receiptTransactionHash": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+        "canonicalBlockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+        "receiptBlockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+        "directDtf": "0",
+        "directWeth": "2000000000000000000",
+        "routedDtf": "1778859964387451305574664",
+        "reserveSettlementDtf": "0"
+      },
+      {
+        "tokenId": "4",
+        "matches": true,
+        "newLock": {
+          "tokenId": "4",
+          "recipient": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+          "shares": "2281854312954086546",
+          "bonusMultiplier": "1000561780219094285",
+          "unlockTime": "1788261679"
+        },
+        "receiptTransactionHash": "0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4",
+        "canonicalBlockHash": "0x21a834b0fcbfe4a0f2166b246cebd6eb71ca084cffea3e5c53ddf513fc2beff5",
+        "receiptBlockHash": "0x21a834b0fcbfe4a0f2166b246cebd6eb71ca084cffea3e5c53ddf513fc2beff5",
+        "directDtf": "7215852540309913726431",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "3703818"
+      },
+      {
+        "tokenId": "5",
+        "matches": true,
+        "newLock": {
+          "tokenId": "5",
+          "recipient": "0xfAD14E74911353728b9Bbfd9f0566827790c16C2",
+          "shares": "4733571557235944381",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790249586"
+        },
+        "receiptTransactionHash": "0x80a7af214d8aafe95e2b62b6c67a28b98ef1601f417a5c07b942e44e717f8fa1",
+        "canonicalBlockHash": "0xf107b94abb3461fed11646ecd4b1b14af5ae650b0b6d5b0e1a402a7af0a7772a",
+        "receiptBlockHash": "0xf107b94abb3461fed11646ecd4b1b14af5ae650b0b6d5b0e1a402a7af0a7772a",
+        "directDtf": "14939945008882434692090",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "5679593238886465"
+      },
+      {
+        "tokenId": "6",
+        "matches": true,
+        "newLock": {
+          "tokenId": "6",
+          "recipient": "0xD3d58fDD70B33143052DE127bE8700fa37825E96",
+          "shares": "17499787460727814908",
+          "bonusMultiplier": "1001264005492962142",
+          "unlockTime": "1788535559"
+        },
+        "receiptTransactionHash": "0x68cf362d094e28799bb02943c0fa5d8b7a4577d40d701e360c791bc715ed7535",
+        "canonicalBlockHash": "0xaed693410cd5b965d4485593e9a754e44a82819c4df503d6d976ee88aafe77ef",
+        "receiptBlockHash": "0xaed693410cd5b965d4485593e9a754e44a82819c4df503d6d976ee88aafe77ef",
+        "directDtf": "55026060195080703684401",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "62816193844203301"
+      },
+      {
+        "tokenId": "7",
+        "matches": true,
+        "newLock": {
+          "tokenId": "7",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "101771406718761253180",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787759729"
+        },
+        "receiptTransactionHash": "0x90ad17355e01e23c01e80ab93b246a61c0e791a7d85066c6341fcbf44b963067",
+        "canonicalBlockHash": "0x9ad8b364a27fd83a5db71c3e6d6f0fbf948938366e693bd4f01887d34df03f07",
+        "receiptBlockHash": "0x9ad8b364a27fd83a5db71c3e6d6f0fbf948938366e693bd4f01887d34df03f07",
+        "directDtf": "320000000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "327306939002799687"
+      },
+      {
+        "tokenId": "8",
+        "matches": true,
+        "newLock": {
+          "tokenId": "8",
+          "recipient": "0x73c121D572E065c8B6FA6aCeC6B40DefFB62E1dF",
+          "shares": "3177276484339682675",
+          "bonusMultiplier": "1500000000000000000",
+          "unlockTime": "1803230928"
+        },
+        "receiptTransactionHash": "0x176e169d8d7add51dce9f3f5009f6322f93264fc7cfdc17a5d2c969066a4a88f",
+        "canonicalBlockHash": "0xdad7f0f160801f7e3d1d0ea393130e332f38ceca5455439ad7b2e90eb91debec",
+        "receiptBlockHash": "0xdad7f0f160801f7e3d1d0ea393130e332f38ceca5455439ad7b2e90eb91debec",
+        "directDtf": "10000000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "10210351169511441"
+      },
+      {
+        "tokenId": "9",
+        "matches": true,
+        "newLock": {
+          "tokenId": "9",
+          "recipient": "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+          "shares": "26355776123062198039",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787797897"
+        },
+        "receiptTransactionHash": "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55",
+        "canonicalBlockHash": "0x6a4b173d967f7e4a7cf4c3eab19c27ee5c332a4ef5ac9ae7de2424c3cd406595",
+        "receiptBlockHash": "0x6a4b173d967f7e4a7cf4c3eab19c27ee5c332a4ef5ac9ae7de2424c3cd406595",
+        "directDtf": "0",
+        "directWeth": "100000000000000",
+        "routedDtf": "41454674363068691516",
+        "reserveSettlementDtf": "41220182501921"
+      },
+      {
+        "tokenId": "10",
+        "matches": true,
+        "newLock": {
+          "tokenId": "10",
+          "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+          "shares": "635830119561554894104",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787824066"
+        },
+        "receiptTransactionHash": "0x8ec17aa049770ee9c2d525d5e6e1c707ee42f2c039532526de56a132c9f5876f",
+        "canonicalBlockHash": "0x02e6bd34884f315ae2017aad0b225fb75b821f71b41fee3acb5e959add4c13a5",
+        "receiptBlockHash": "0x02e6bd34884f315ae2017aad0b225fb75b821f71b41fee3acb5e959add4c13a5",
+        "directDtf": "1000000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "2848"
+      },
+      {
+        "tokenId": "11",
+        "matches": true,
+        "newLock": {
+          "tokenId": "11",
+          "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+          "shares": "63710177980044045505074",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790330314"
+        },
+        "receiptTransactionHash": "0xb6292353395922bd69b073664afb0188d47cbdbfcc4d13cd185ac37d4cb4ad73",
+        "canonicalBlockHash": "0xe10a87953680e6d5f34b1c6d2cafd87c31195a017ff4972846f399f867266189",
+        "receiptBlockHash": "0xe10a87953680e6d5f34b1c6d2cafd87c31195a017ff4972846f399f867266189",
+        "directDtf": "100000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "3"
+      },
+      {
+        "tokenId": "12",
+        "matches": true,
+        "newLock": {
+          "tokenId": "12",
+          "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+          "shares": "47848240999749918187208884",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787825624"
+        },
+        "receiptTransactionHash": "0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24",
+        "canonicalBlockHash": "0x60257f9f34cea2460050eff1cb05ffc1d3c1fca04b3fcf3ce1af6361ccecb8cc",
+        "receiptBlockHash": "0x60257f9f34cea2460050eff1cb05ffc1d3c1fca04b3fcf3ce1af6361ccecb8cc",
+        "directDtf": "75081277576132719227716",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "2"
+      },
+      {
+        "tokenId": "13",
+        "matches": true,
+        "newLock": {
+          "tokenId": "13",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "14076427465745415752889694594",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790332861"
+        },
+        "receiptTransactionHash": "0xa18c5713d0e7f67099072b20ecca3418c89dc9bf61af2f503f9fa04f97f5625b",
+        "canonicalBlockHash": "0x6015ed44641191909d880318e1af69a07ecb4207e4a5dcf676ebc6f46a0495c7",
+        "receiptBlockHash": "0x6015ed44641191909d880318e1af69a07ecb4207e4a5dcf676ebc6f46a0495c7",
+        "directDtf": "22000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "5212466"
+      },
+      {
+        "tokenId": "14",
+        "matches": true,
+        "newLock": {
+          "tokenId": "14",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "63994795678617495504331915305",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790332934"
+        },
+        "receiptTransactionHash": "0x1b17aaa9a895121a4b496bb5c74ba00e4ed445951f2ed1a6cc7ba3b1dc77a829",
+        "canonicalBlockHash": "0x7061652a732614cb882702853ab1f45dcd82df85c3bc763f022ea36eb3eb572a",
+        "receiptBlockHash": "0x7061652a732614cb882702853ab1f45dcd82df85c3bc763f022ea36eb3eb572a",
+        "directDtf": "100000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1390591"
+      },
+      {
+        "tokenId": "15",
+        "matches": true,
+        "newLock": {
+          "tokenId": "15",
+          "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+          "shares": "384036613756141320755161221429",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790333485"
+        },
+        "receiptTransactionHash": "0xa45445505ce0d5c5f8011d49bef9344f883a245d6a86a0752a610376c6bb5287",
+        "canonicalBlockHash": "0x8a6d9b18a4bce91dbe19e7e3948cb427f6470df7a751e73cbc45840909684c2d",
+        "receiptBlockHash": "0x8a6d9b18a4bce91dbe19e7e3948cb427f6470df7a751e73cbc45840909684c2d",
+        "directDtf": "600000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1444477"
+      },
+      {
+        "tokenId": "16",
+        "matches": true,
+        "newLock": {
+          "tokenId": "16",
+          "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+          "shares": "682214153247983854950221048859993",
+          "bonusMultiplier": "1013123810118285945",
+          "unlockTime": "1790345310"
+        },
+        "receiptTransactionHash": "0x0a902f1d04b7da358cc37504cb976901597febc12f72d13cf9d2db660190ec8a",
+        "canonicalBlockHash": "0x523e6059230418c06ef8e7f3990b6638123b934b34c9eb5c05a8cc0ae6b240ce",
+        "receiptBlockHash": "0x523e6059230418c06ef8e7f3990b6638123b934b34c9eb5c05a8cc0ae6b240ce",
+        "directDtf": "1063674247110000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1"
+      },
+      {
+        "tokenId": "17",
+        "matches": true,
+        "newLock": {
+          "tokenId": "17",
+          "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+          "shares": "75379755917867944374016634265685128",
+          "bonusMultiplier": "1000000000000000000",
+          "unlockTime": "1787840867"
+        },
+        "receiptTransactionHash": "0xb525bd3a74304840614be0fd894afd6f24b93f022be6b2c8d6be5df04d7314b6",
+        "canonicalBlockHash": "0x87388258f7b397b42f6cdc2622b886264e61777021c3b7da3213b8a539e256d8",
+        "receiptBlockHash": "0x87388258f7b397b42f6cdc2622b886264e61777021c3b7da3213b8a539e256d8",
+        "directDtf": "117496434189960639589934",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "1"
+      },
+      {
+        "tokenId": "18",
+        "matches": true,
+        "newLock": {
+          "tokenId": "18",
+          "recipient": "0x24E447B7407A304b024a5A57D7638f4cb6D5d0Fb",
+          "shares": "900849466801106375326463227667169",
+          "bonusMultiplier": "1050000000000000000",
+          "unlockTime": "1790443692"
+        },
+        "receiptTransactionHash": "0x46b804fa90b141eb7ec105162f11d9b70238f5cdd44284caffefab1c01574e1d",
+        "canonicalBlockHash": "0xda2c21b2456a1affcde60395eb48514020d649c95a33a761a7e2fbf51966ab36",
+        "receiptBlockHash": "0xda2c21b2456a1affcde60395eb48514020d649c95a33a761a7e2fbf51966ab36",
+        "directDtf": "1000000000000000000",
+        "directWeth": "0",
+        "routedDtf": "0",
+        "reserveSettlementDtf": "16837633828346"
+      }
+    ],
+    "reward": {
+      "before": {
+        "originalShares": "2281854312954086546",
+        "effectiveShares": "2283136213569959131",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679",
+        "rewardDebt": "12649110640673"
+      },
+      "after": {
+        "originalShares": "2281854312954086546",
+        "effectiveShares": "2283136213569959131",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679",
+        "rewardDebt": "147991718391587"
+      }
+    },
+    "sale": {
+      "before": {
+        "owner": "0x100000000000000000000000000000000000C001",
+        "position": {
+          "originalShares": "2281854312954086546",
+          "effectiveShares": "2283136213569959131",
+          "bonusMultiplier": "1000561780219094285",
+          "unlockTime": "1788261679",
+          "rewardDebt": "12649110640673"
+        },
+        "approved": "0x0000000000000000000000000000000000000000",
+        "ownerDetf": "0",
+        "recoveryDetf": "0",
+        "attackerDetf": "0",
+        "nftDetf": "1744781936146519239557001703942",
+        "lpCustody": "107516722668090845797720021675152213",
+        "recoveryPair": "0",
+        "recoveryReceipt": "0",
+        "recoveryReceiptShares": "0",
+        "receiptTotalShares": "26345106194913509598392145360059647",
+        "receiptSupply": "57898677945502333609"
+      },
+      "after": {
+        "owner": "0x0000000000000000000000000000000000000000",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "0",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "0"
+        },
+        "approved": "0x0000000000000000000000000000000000000000",
+        "ownerDetf": "0",
+        "recoveryDetf": "309005608995105",
+        "attackerDetf": "0",
+        "nftDetf": "1744781936146518930551392708837",
+        "lpCustody": "107516722668090845797720021675152213",
+        "recoveryPair": "0",
+        "recoveryReceipt": "4322",
+        "recoveryReceiptShares": "1967558883021387942",
+        "receiptTotalShares": "26345106194913511565951028381447589",
+        "receiptSupply": "57898677945502337219"
+      }
+    },
+    "safeTransferRollback": {
+      "pass": true,
+      "rollbackEqual": true
+    },
+    "locked": {
+      "originalShares": "562524912595035608166",
+      "effectiveShares": "843787368892553412249",
+      "bonusMultiplier": "1500000000000000000",
+      "unlockTime": "1803205295",
+      "rewardDebt": "0"
+    },
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-mature-close-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-mature-close-redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "zero-principal-standing-position-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "locked-NFT-custody-retains-lock-and-principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-and-conversions",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "direct-receipt-to-pair-redemption",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ],
+    "overall": "UNPROVEN",
+    "cleanup": {
+      "snapshotReverted": true,
+      "exit": [
+        0,
+        null
+      ],
+      "endpointClosed": true,
+      "endpointReadback": "Unable to connect. Is the computer able to access the url?",
+      "runRootRemoved": true
+    }
+  },
+  "independentReplayExit": 2,
+  "localAudit": {
+    "checks": [
+      {
+        "name": "producer and independent historical pins agree",
+        "pass": true
+      },
+      {
+        "name": "getPosition(uint256) code identity",
+        "pass": true
+      },
+      {
+        "name": "ownerOf(uint256) code identity",
+        "pass": true
+      },
+      {
+        "name": "safeTransferFrom(address,address,uint256) code identity",
+        "pass": true
+      },
+      {
+        "name": "originalSharesOf(uint256) code identity",
+        "pass": true
+      },
+      {
+        "name": "transferFrom(address,address,uint256) code identity",
+        "pass": true
+      },
+      {
+        "name": "approve(address,uint256) code identity",
+        "pass": true
+      },
+      {
+        "name": "getApproved(uint256) code identity",
+        "pass": true
+      },
+      {
+        "name": "setApprovalForAll(address,bool) code identity",
+        "pass": true
+      },
+      {
+        "name": "isApprovedForAll(address,address) code identity",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 3",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 4",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 5",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 6",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 7",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 8",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 9",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 10",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 11",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 12",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 13",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 14",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 15",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 16",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 17",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z original purchase 18",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z reward retains original shares",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z sale burns and clears",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z cleanup",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T11:58:21.256Z mined receipt counts",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 3",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 4",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 5",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 6",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 7",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 8",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 9",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 10",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 11",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 12",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 13",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 14",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 15",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 16",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 17",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z original purchase 18",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z reward retains original shares",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z sale burns and clears",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z cleanup",
+        "pass": true
+      },
+      {
+        "name": "2026-11-10T12:55:13.863Z mined receipt counts",
+        "pass": true
+      }
+    ],
+    "failures": 0,
+    "note": "Read-only archive recomputation; not a new execution of legacy transactions"
+  },
+  "ownedRuntime": {
+    "anvilStarted": false,
+    "rpcProbes": 0,
+    "port18550Acquired": false,
+    "temporaryDirectoriesCreated": [],
+    "processesRemaining": [],
+    "note": "Only completed read-only Git commands; no owned node or temporary runtime to clean"
+  }
+}

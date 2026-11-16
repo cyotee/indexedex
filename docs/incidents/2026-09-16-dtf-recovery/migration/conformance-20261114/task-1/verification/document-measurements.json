@@ -1,0 +1,515 @@
+{
+  "purpose": "One-off document inspection measurements; not product tests or a semantic pass oracle.",
+  "original_sha256": "f5816a8810961ad311bd221fe6e3bbb3b599fa9ad43b76d4c403f48de4aa6d5c",
+  "amended_sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+  "current_plan_sha256": "4b06a66300227213075bc6ce81a68045bfc218063b836738ba563232957e2d21",
+  "plan_with_task_2_checkbox_unchecked_sha256": "31a0f3daff03b0e51830f5428168656eaeb19f81f40dee6f3e7f619be7230683",
+  "executor_plan_sha256": "31a0f3daff03b0e51830f5428168656eaeb19f81f40dee6f3e7f619be7230683",
+  "diff_matches_executor_bytes": true,
+  "baseline_p_diff_bytes": 0,
+  "baseline_tracked_diff_stat_bytes": 0,
+  "executor_diff_check_bytes": 0,
+  "rows": {
+    "acceptance": {
+      "original_ids": [
+        "MIG-AC01",
+        "MIG-AC02",
+        "MIG-AC03",
+        "MIG-AC04",
+        "MIG-AC05",
+        "MIG-AC06",
+        "MIG-AC07",
+        "MIG-AC08",
+        "MIG-AC09",
+        "MIG-AC10",
+        "MIG-AC11",
+        "MIG-AC12",
+        "MIG-AC13",
+        "MIG-AC14",
+        "MIG-AC15",
+        "MIG-AC16",
+        "MIG-AC17",
+        "MIG-AC18",
+        "MIG-AC19",
+        "MIG-AC20",
+        "MIG-AC21",
+        "MIG-AC22",
+        "MIG-AC23",
+        "MIG-AC24",
+        "MIG-AC25",
+        "MIG-AC26",
+        "MIG-AC27",
+        "MIG-AC28",
+        "MIG-AC29",
+        "MIG-AC30",
+        "MIG-AC31",
+        "MIG-AC32",
+        "MIG-AC33",
+        "MIG-AC34",
+        "MIG-AC35",
+        "MIG-AC36",
+        "MIG-AC37",
+        "MIG-AC38",
+        "MIG-AC39",
+        "MIG-AC40",
+        "MIG-AC41",
+        "MIG-AC42",
+        "MIG-AC43",
+        "MIG-AC44",
+        "MIG-AC45",
+        "MIG-AC46",
+        "MIG-AC47",
+        "MIG-AC48",
+        "MIG-AC49",
+        "MIG-AC50",
+        "MIG-AC51",
+        "MIG-AC52",
+        "MIG-AC53"
+      ],
+      "amended_ids": [
+        "MIG-AC01",
+        "MIG-AC02",
+        "MIG-AC03",
+        "MIG-AC04",
+        "MIG-AC05",
+        "MIG-AC06",
+        "MIG-AC07",
+        "MIG-AC08",
+        "MIG-AC09",
+        "MIG-AC10",
+        "MIG-AC11",
+        "MIG-AC12",
+        "MIG-AC13",
+        "MIG-AC14",
+        "MIG-AC15",
+        "MIG-AC16",
+        "MIG-AC17",
+        "MIG-AC18",
+        "MIG-AC19",
+        "MIG-AC20",
+        "MIG-AC21",
+        "MIG-AC22",
+        "MIG-AC23",
+        "MIG-AC24",
+        "MIG-AC25",
+        "MIG-AC26",
+        "MIG-AC27",
+        "MIG-AC28",
+        "MIG-AC29",
+        "MIG-AC30",
+        "MIG-AC31",
+        "MIG-AC32",
+        "MIG-AC33",
+        "MIG-AC34",
+        "MIG-AC35",
+        "MIG-AC36",
+        "MIG-AC37",
+        "MIG-AC38",
+        "MIG-AC39",
+        "MIG-AC40",
+        "MIG-AC41",
+        "MIG-AC42",
+        "MIG-AC43",
+        "MIG-AC44",
+        "MIG-AC45",
+        "MIG-AC46",
+        "MIG-AC47",
+        "MIG-AC48",
+        "MIG-AC49",
+        "MIG-AC50",
+        "MIG-AC51",
+        "MIG-AC52",
+        "MIG-AC53"
+      ],
+      "missing_ids": [],
+      "added_ids": [],
+      "changed_ids": [
+        "MIG-AC21",
+        "MIG-AC22",
+        "MIG-AC49",
+        "MIG-AC36",
+        "MIG-AC51",
+        "MIG-AC31",
+        "MIG-AC52",
+        "MIG-AC24",
+        "MIG-AC15",
+        "MIG-AC38"
+      ],
+      "unchanged_ids": [
+        "MIG-AC01",
+        "MIG-AC02",
+        "MIG-AC03",
+        "MIG-AC04",
+        "MIG-AC05",
+        "MIG-AC06",
+        "MIG-AC07",
+        "MIG-AC08",
+        "MIG-AC09",
+        "MIG-AC10",
+        "MIG-AC11",
+        "MIG-AC12",
+        "MIG-AC13",
+        "MIG-AC14",
+        "MIG-AC16",
+        "MIG-AC17",
+        "MIG-AC18",
+        "MIG-AC19",
+        "MIG-AC20",
+        "MIG-AC23",
+        "MIG-AC25",
+        "MIG-AC26",
+        "MIG-AC27",
+        "MIG-AC28",
+        "MIG-AC29",
+        "MIG-AC30",
+        "MIG-AC32",
+        "MIG-AC33",
+        "MIG-AC34",
+        "MIG-AC35",
+        "MIG-AC37",
+        "MIG-AC39",
+        "MIG-AC40",
+        "MIG-AC41",
+        "MIG-AC42",
+        "MIG-AC43",
+        "MIG-AC44",
+        "MIG-AC45",
+        "MIG-AC46",
+        "MIG-AC47",
+        "MIG-AC48",
+        "MIG-AC50",
+        "MIG-AC53"
+      ]
+    },
+    "principles": {
+      "original_ids": [
+        "MIG-P01",
+        "MIG-P02",
+        "MIG-P03",
+        "MIG-P04",
+        "MIG-P05",
+        "MIG-P06",
+        "MIG-P07",
+        "MIG-P08",
+        "MIG-P09",
+        "MIG-P10",
+        "MIG-P11",
+        "MIG-P12",
+        "MIG-P13",
+        "MIG-P14",
+        "MIG-P15"
+      ],
+      "amended_ids": [
+        "MIG-P01",
+        "MIG-P02",
+        "MIG-P03",
+        "MIG-P04",
+        "MIG-P05",
+        "MIG-P06",
+        "MIG-P07",
+        "MIG-P08",
+        "MIG-P09",
+        "MIG-P10",
+        "MIG-P11",
+        "MIG-P12",
+        "MIG-P13",
+        "MIG-P14",
+        "MIG-P15"
+      ],
+      "missing_ids": [],
+      "added_ids": [],
+      "changed_ids": [
+        "MIG-P13",
+        "MIG-P11",
+        "MIG-P10",
+        "MIG-P02",
+        "MIG-P12",
+        "MIG-P01"
+      ],
+      "unchanged_ids": [
+        "MIG-P03",
+        "MIG-P04",
+        "MIG-P05",
+        "MIG-P06",
+        "MIG-P07",
+        "MIG-P08",
+        "MIG-P09",
+        "MIG-P14",
+        "MIG-P15"
+      ]
+    },
+    "gates": {
+      "original_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5"
+      ],
+      "amended_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5"
+      ],
+      "missing_ids": [],
+      "added_ids": [],
+      "changed_ids": [
+        "E3"
+      ],
+      "unchanged_ids": [
+        "E1",
+        "E2",
+        "E4",
+        "E5"
+      ]
+    }
+  },
+  "unchanged_sections": {
+    "### 1.2": {
+      "byte_identical": true,
+      "original_sha256": "c60f39347737c0a686c1afe0411f8f57f18838f1aff15b2d5cb055c926e8dd62",
+      "amended_sha256": "c60f39347737c0a686c1afe0411f8f57f18838f1aff15b2d5cb055c926e8dd62"
+    },
+    "### 1.6": {
+      "byte_identical": true,
+      "original_sha256": "265a3661f7d68b0f600984e16b07ef731be859c79bbd0aca4ddcea01ab41c24c",
+      "amended_sha256": "265a3661f7d68b0f600984e16b07ef731be859c79bbd0aca4ddcea01ab41c24c"
+    },
+    "### 1.9": {
+      "byte_identical": true,
+      "original_sha256": "476a7638ae7092f26befcbd926a9e3a1c22ce4830b8f55c9e9f5664d7c70eab2",
+      "amended_sha256": "476a7638ae7092f26befcbd926a9e3a1c22ce4830b8f55c9e9f5664d7c70eab2"
+    },
+    "### 4.1": {
+      "byte_identical": true,
+      "original_sha256": "9d07584ac885b884a767537f47ae3a0f01728fe817bd333ea93c1094ae1aabfd",
+      "amended_sha256": "9d07584ac885b884a767537f47ae3a0f01728fe817bd333ea93c1094ae1aabfd"
+    },
+    "### 5.5": {
+      "byte_identical": true,
+      "original_sha256": "f12ebf158a9c37005864b0e3aad73c4b731bcc50f3c01791996b9824c4f7a29e",
+      "amended_sha256": "f12ebf158a9c37005864b0e3aad73c4b731bcc50f3c01791996b9824c4f7a29e"
+    },
+    "### 5.6": {
+      "byte_identical": true,
+      "original_sha256": "90408e876e51985790cd0eae9b2fbc2cc76e8cbdf75148f14e72bfc1b959c0fa",
+      "amended_sha256": "90408e876e51985790cd0eae9b2fbc2cc76e8cbdf75148f14e72bfc1b959c0fa"
+    },
+    "### 8.1": {
+      "byte_identical": true,
+      "original_sha256": "ca620d66fcae608aecd15a5196c2162b1864032f29185087b82362ee0c6e1a0e",
+      "amended_sha256": "ca620d66fcae608aecd15a5196c2162b1864032f29185087b82362ee0c6e1a0e"
+    },
+    "## 10.": {
+      "byte_identical": true,
+      "original_sha256": "a5a48dedd273d644da8ee379d884c2b59d6886d4fa0d9b38fe5ca696a8f86cdd",
+      "amended_sha256": "a5a48dedd273d644da8ee379d884c2b59d6886d4fa0d9b38fe5ca696a8f86cdd"
+    }
+  },
+  "done_claim_paths": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "exists": true,
+      "bytes": 98213,
+      "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-git-status.txt",
+      "exists": true,
+      "bytes": 9938712,
+      "sha256": "23dc9cf3be365c2389106b1330398dc532773c9dcdd355f0f0419ad07aed0039"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-p.diff",
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-tracked-diff.stat",
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p.diff",
+      "exists": true,
+      "bytes": 82640,
+      "sha256": "928269f94a952b9db2e882bed9e773343ebd6d5abd8e895522acdd65a0130536"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p-diff.stat",
+      "exists": true,
+      "bytes": 132,
+      "sha256": "aca5c215099d26806f8972b85fdf723cdd88640f025525fa62fadea0ff72e7ce"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/git-diff-check.txt",
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/source-hashes.txt",
+      "exists": true,
+      "bytes": 279,
+      "sha256": "fe83ac8d8dbf103a139e72d46e4e8f9fdecc99363b0795b2ae659c6ef4e37b7f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/environment.txt",
+      "exists": true,
+      "bytes": 161,
+      "sha256": "e3e5f6a11fb978ee98ea0845ab067f0666051995b1a9d29540a4634a159e72ca"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/requirements-reconciliation.md",
+      "exists": true,
+      "bytes": 11262,
+      "sha256": "2aa26af69401ef4abcf781215cb66f9b42b76850d472c5872ab21d9494f29f66"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md",
+      "exists": true,
+      "bytes": 2019,
+      "sha256": "a5c86bb6e2fedbc8b9273126bbd666e67d5f8c74101f969e73e8517264aa8531"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json",
+      "exists": true,
+      "bytes": 1327,
+      "sha256": "5b27dc3e25dcefaaef00b31cbb4df1f1c7744f5a17f2b554fe85c7385adc0bbb"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-git-status.txt",
+      "exists": true,
+      "bytes": 9945291,
+      "sha256": "a03a7d5e6faa574e61b5a534d3b18904b774a5deb4aaab4a0ec9b85e385f39a3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-files.txt",
+      "exists": true,
+      "bytes": 86,
+      "sha256": "b054fc7378cc2e82c1d18dc2a37679491d12a8d6ef7cde07c7c5f6c65e7f1a6b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-diff.stat",
+      "exists": true,
+      "bytes": 132,
+      "sha256": "aca5c215099d26806f8972b85fdf723cdd88640f025525fa62fadea0ff72e7ce"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json",
+      "exists": true,
+      "bytes": 27717,
+      "sha256": "d9a4ebf2777473e41d468970e1db7daa4e611572b1b26ab8e6ffa726e189b894"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json",
+      "exists": true,
+      "bytes": 2844,
+      "sha256": "cf43b037d3d76d07500488aa712e7f69484dd1f0c10fea9f949c120d94d0a0b1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/commands.json",
+      "exists": true,
+      "bytes": 13612,
+      "sha256": "10e7187543d6b57c171526bcba3258a0a8f5e76892821af6275adb9a93e62a57"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-1-done.json",
+      "exists": true,
+      "bytes": 8272,
+      "sha256": "1d48925840b3056d0618e12453a607461c53343f61ba4bbed1fa1fa4850e08e5"
+    }
+  ],
+  "exact_amendment_matches": true,
+  "arithmetic_example_numbers": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13"
+  ],
+  "hunk_headers": [
+    "@@ -6,9 +6,10 @@",
+    "@@ -16,8 +17,8 @@ The later owner clarifications govern where r20 differs. An executor must read t",
+    "@@ -25,10 +26,10 @@ The later owner clarifications govern where r20 differs. An executor must read t",
+    "@@ -36,10 +37,10 @@ The later owner clarifications govern where r20 differs. An executor must read t",
+    "@@ -62,13 +63,13 @@ For every token, receipt, NFT or claim surrender, require a matching configured",
+    "@@ -80,9 +81,9 @@ This is a narrow first-purchase exception, not an owner bypass for all acquisiti",
+    "@@ -96,15 +97,15 @@ Plain DTF holdings still use ordinary new-money deposits and do not create a mig",
+    "@@ -118,6 +119,20 @@ The owner conditionally accepts permanent custody only where there truly is no w",
+    "@@ -127,8 +142,8 @@ All paths in this plan are repository-relative. A proposed file is explicitly ma",
+    "@@ -159,7 +174,7 @@ Use these existing incident artifacts:",
+    "@@ -187,7 +202,7 @@ These gates are work-product checks, **not new on-chain lifecycle flags**. They",
+    "@@ -206,11 +221,12 @@ This directory and the Migration files below are new. Reuse compatible ordinary",
+    "@@ -236,21 +252,21 @@ If selector or bytecode size requires splitting a target, split within this boun",
+    "@@ -258,8 +274,8 @@ For each original entitlement `i`, retain original ETH/DTF components `E_i` and",
+    "@@ -273,7 +289,7 @@ C_i = U(ETH, E_i) + U(DTF, D_i)",
+    "@@ -291,12 +307,12 @@ Minimum semantic fields (packing is an implementation detail):",
+    "@@ -318,7 +334,7 @@ Read the remaining **total principal**, not just currently vested/claimable prin",
+    "@@ -392,18 +408,18 @@ The following fixes semantic arguments and authority. Final source-adapter tuple",
+    "@@ -411,13 +427,15 @@ No user-controlled historical amounts, original principal, output credit, arbitr",
+    "@@ -429,14 +447,14 @@ Test strategy: implement each behavior with a regression test capable of failing",
+    "@@ -452,14 +470,14 @@ Test strategy: implement each behavior with a regression test capable of failing",
+    "@@ -476,11 +494,11 @@ Test strategy: implement each behavior with a regression test capable of failing",
+    "@@ -498,7 +516,7 @@ Test strategy: implement each behavior with a regression test capable of failing",
+    "@@ -508,11 +526,11 @@ Test strategy: implement each behavior with a regression test capable of failing",
+    "@@ -527,18 +545,18 @@ Test strategy: implement each behavior with a regression test capable of failing",
+    "@@ -562,15 +580,15 @@ Use new Migration TestBases composed from existing production deployment helpers",
+    "@@ -592,16 +610,16 @@ Use native DETF units in tests; human-readable quantities below are explanatory.",
+    "@@ -627,30 +645,30 @@ All 53 r20 acceptance IDs remain accounted for. \"Revised\" means apply the owner-",
+    "@@ -661,10 +679,10 @@ All 53 r20 acceptance IDs remain accounted for. \"Revised\" means apply the owner-",
+    "@@ -720,6 +738,6 @@ The evidence report records exact commands, environment/compiler versions, exit"
+  ],
+  "obsolete_hits": [],
+  "remaining_frozen_terms": [
+    {
+      "line": 11,
+      "text": "- **Deliverable boundary:** This plan is the only new artifact produced by the planning task. The PRD, historical ledger, frozen evidence, contracts and scripts are not changed."
+    },
+    {
+      "line": 56,
+      "text": "This clarification replaces the earlier transfer-history interpretation of E2. It does not remove any legacy category, change the agreed frozen valuation and NFT remaining-principal rules, authorize live repricing, or conflate recipient-keyed independent compensation with token-backed surrender. Historical phase01/phase06 ancestry investigations remain archived findings under the superseded interpretation, not blockers to this clarified mechanism."
+    },
+    {
+      "line": 464,
+      "text": "  - Read the incident evidence/provenance files and verify actual deployed code at pinned chain/block identities. Add the execution evidence manifest under this incident's new `migration/` subdirectory; never rewrite frozen inputs."
+    },
+    {
+      "line": 635,
+      "text": "| MIG-AC02 | Task 6: every legacy surrender rejects before activation with no state changes and works against frozen configuration only after the atomic activation |"
+    },
+    {
+      "line": 672,
+      "text": "| MIG-AC39 | Revised: tasks 1/6 conserve wallet-bound original entitlement and proportional frozen credit through actual surrender, without intermediate-holder history |"
+    }
+  ],
+  "status_comparison": {
+    "baseline_lines": 60270,
+    "final_lines": 60322,
+    "added_external": 128,
+    "removed_external": 88,
+    "added_exactly_matches_record": true,
+    "removed_exactly_matches_record": true,
+    "baseline_sha256": "23dc9cf3be365c2389106b1330398dc532773c9dcdd355f0f0419ad07aed0039",
+    "final_sha256": "a03a7d5e6faa574e61b5a534d3b18904b774a5deb4aaab4a0ec9b85e385f39a3",
+    "limitation": "Status records detect path/status changes, not content changes in pre-existing untracked files. They cannot prove historical write attribution."
+  },
+  "executor_json_parse": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/commands.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json"
+  ]
+}

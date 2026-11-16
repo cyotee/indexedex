@@ -1,0 +1,258 @@
+{
+  "parent": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+  "accepted": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 26343,
+      "sha256": "b589bb7155f89fb946acc6676ad5582aa6934925764be761ea4f07a2877886bb",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "bytes": 1224,
+      "sha256": "72129fe61e9cf8f6943cae9887472ec0e3711bc9d74243f111b87fb02dc1b569",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "bytes": 5821,
+      "sha256": "b9be17c40b56e59f0bba79436e2b1b1ac4e8b99ca403463facb9e45e567ed85a",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "bytes": 1953,
+      "sha256": "49c4aafdc63dc40d043fe250e2fd543b7d02e972e46f37a28cf5297fa78f0bd2",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "bytes": 13416,
+      "sha256": "a8e8d30a7beb537a892d47ef1aeda6459e0993470684871c36536b92dfd44434",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "bytes": 4313,
+      "sha256": "8e12e4373fa2a6a9722fa02212cf2247ae69dc064aecb61708c18969495e83c1",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 29133,
+      "sha256": "75b56699a9f2b13264a5072f0f59c1f69d4812320b93d19a86bec55a12c5ff18",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "bytes": 3025,
+      "sha256": "62f0e8274649a89bfe8cc8bb063c7ca6679835707d2715d1cb54e79bd7c433be",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 17130,
+      "sha256": "920f600327920f9ea74bb701dc9ab920b238393447ca083bcf198ad8da36e269",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "bytes": 33448,
+      "sha256": "373f16fe2eac76a293b3daaf801689582361cd704bc1d50740cac61c235ab1f1",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "bytes": 7877,
+      "sha256": "3688c1060080fb2d22215a7c130211175caea0a9a17b57de8eeef3bf76208a20",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 7825,
+      "sha256": "ffc43cc9b3c40ac646fd21c6ade6995c716957d9fb2c9524003f50516cfcba80",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "bytes": 5677,
+      "sha256": "44f0d04c1b73ac914d6b208b28510b32358a598af836a89072cd5601ab6e3abd",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "bytes": 25108,
+      "sha256": "4ef93025f937ee51d65a072da72ab391132112f48815015ae9e378836bbc7a0a",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "bytes": 12469,
+      "sha256": "d44ae9f28f4801f326ca6f4add794be96775db934f94cf72d50bc94bdf0e71c8",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "bytes": 9865,
+      "sha256": "da5cd5fb5d161572ba8489083c495667a4ba60d1170467e315d4050739def577",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "bytes": 14409,
+      "sha256": "4a8e62be86b61280f7078098866553663674136b398cb4c3fe69bed89c900778",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 8171,
+      "sha256": "7a96dd0411472fdf614909d224746af447a67573c98d6ef7bb7fb15026299bd9",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 4306,
+      "sha256": "9ebca91d33298cf28bd0d4624368a30080b3734ee629abd3f880768c80202a38",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "bytes": 6911,
+      "sha256": "e57fe8b5cd8a63a9056f5a7f115649a7a9e55fba3c81962235149d9f6ef0530b",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "bytes": 6731,
+      "sha256": "cd7f326325d8e18d008df593c1e21831b6da520961ae04e1de41d574c3dc5b83",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 19254,
+      "sha256": "d23a5d74e05d19a7aa12ee83445bb4c4f1daab0c9d6f79951711f5c96ae0de6a",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "bytes": 6506,
+      "sha256": "a7c63fe61a9760b737aca778d773dad61f18d1915fde7124d1be065b58e083dd",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "bytes": 5488,
+      "sha256": "ef058e4342e93a36d4b6dbd9d1ed378b55ef6815cb757334e63fdf4c3b83981e",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "bytes": 6034,
+      "sha256": "82451a5250fc39ba5d2d6d7f528cdc93db2ba6484dd98105393bf08bfceb44b8",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "bytes": 15737,
+      "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "bytes": 21635,
+      "sha256": "52cd30cc35b8a4926063006b571f4f70405faf0cacd12f0d2561000b49a5efae",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 6513,
+      "sha256": "39c0a63fb4b536d8882436aac7677738a3e2bf7519a2da756595bfe316f19d11",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "bytes": 6581,
+      "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+      "bytes": 7446,
+      "sha256": "e5ea1cfbfcdfe4148abdb993de25908e2f915beda6bb33dc5ea1630d4977ee6a",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+      "bytes": 11341,
+      "sha256": "732d8298dfb9a61085363f5363d7758d579767d1597f7abc63aaf902b6c661e6",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptForkBase.sol",
+      "bytes": 6005,
+      "sha256": "644d92ae80d18908e76ea652f3f2288b6467267090aabc28cb9463236c901fff",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "bytes": 14126,
+      "sha256": "0a3fba1c2ffbcf0ce39a31195412abb08e66d819b95218674c9322fbb0a11b0c",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "bytes": 8008,
+      "sha256": "48ab1ebe82cc73369439172f2ece762263fd699153b6df0e57f49ed2c1119310",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "bytes": 7833,
+      "sha256": "1d96834e7791b7732dca8e2cb619bc9e637f731fac09e0ab2f891124422b79c2",
+      "mode": 420,
+      "perm": "0o644"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptConfiguration.t.sol",
+      "bytes": 11361,
+      "sha256": "f3ba569da83236c43bb20e6de24f0d4a724919f27448c8401ed4aec1efadc929",
+      "mode": 420,
+      "perm": "0o644"
+    }
+  ],
+  "head": "a96f0fd26c1a1fdba35750cff74d866afa3a9796"
+}

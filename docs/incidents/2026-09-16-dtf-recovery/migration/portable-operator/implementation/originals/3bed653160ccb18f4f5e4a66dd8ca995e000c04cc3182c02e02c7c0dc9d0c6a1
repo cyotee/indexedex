@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"FromAddressIsNotOwner","inputs":[]},{"type":"error","name":"InsufficientETH","inputs":[]},{"type":"error","name":"InsufficientToken","inputs":[]},{"type":"error","name":"InvalidPortion","inputs":[]}],"id":2699}

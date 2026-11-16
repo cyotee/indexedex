@@ -1,0 +1,358 @@
+{
+  "auditedAt": "2026-11-15T08:28:54.784Z",
+  "objective": "Deliver task-13 verification and classification evidence plus an honest final claim, preserving explicit known gaps and restrictions.",
+  "executionEvidenceDelivered": true,
+  "taskAcceptanceMet": false,
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "planSha256": "4164033bf24daa6a2483590bd1cee0834759a0f5140b02dd819ec1b108b27e38",
+  "mapping": [
+    {
+      "requirement": "Raw numbered logs, environment, results and exact commands for every mode",
+      "evidence": [
+        "hermetic-r2",
+        "fork",
+        "operator-r2",
+        "invocation-inventory.json"
+      ],
+      "met": true
+    },
+    {
+      "requirement": "Full production build and full hermetic exit 0",
+      "evidence": [
+        "hermetic-r2/03.log.command.json",
+        "hermetic-r2/04.log.command.json"
+      ],
+      "met": true
+    },
+    {
+      "requirement": "Explicit ordinary weighted DETF/common actual nonzero case summaries",
+      "evidence": [
+        "hermetic-suite-summary.json"
+      ],
+      "met": true
+    },
+    {
+      "requirement": "All K fork capability and nonzero tests",
+      "evidence": [
+        "fork-suite-summary.json",
+        "fork/results.json"
+      ],
+      "met": true
+    },
+    {
+      "requirement": "Operator tsc and helper tsc exit 0",
+      "evidence": [
+        "operator-r2/03.log.command.json",
+        "helper-typecheck.exit.log"
+      ],
+      "met": true
+    },
+    {
+      "requirement": "Full operator tests exit 0",
+      "evidence": [
+        "operator-r2/04.log.command.json",
+        "witness-preexisting-audit.json"
+      ],
+      "met": false
+    },
+    {
+      "requirement": "Final hashes, dependency/compiler/runtime and source binding",
+      "evidence": [
+        "source-before.json",
+        "source-final.json",
+        "dependency-versions.json",
+        "invocation-inventory.json",
+        "build-artifact-audit.json"
+      ],
+      "met": true
+    },
+    {
+      "requirement": "Task 11 reuse only for unchanged affecting source",
+      "evidence": [
+        "task-11-reuse-audit.json",
+        "task-11-receipt-hashes.json"
+      ],
+      "met": true,
+      "qualification": "Two nonaffecting historical source-map entries changed; bounded reuse only."
+    },
+    {
+      "requirement": "Task 10 complete current-chain rehearsal reuse",
+      "evidence": [
+        "failure-dispositions.md",
+        "report.md"
+      ],
+      "met": false
+    },
+    {
+      "requirement": "Task 12 real portable owner-purchase/donation lifecycle proof",
+      "evidence": [
+        "failure-dispositions.md",
+        "report.md"
+      ],
+      "met": false
+    },
+    {
+      "requirement": "Failure QA with preserved originals and no test weakening",
+      "evidence": [
+        "hermetic",
+        "operator",
+        "operator-r2",
+        "failure-dispositions.md",
+        "witness-preexisting-audit.json"
+      ],
+      "met": true
+    },
+    {
+      "requirement": "No delegation, commit, public transactions, allocations, forbidden rehearsal, pin retune or plan checkbox edit",
+      "evidence": [
+        "source-final.json",
+        "report.md"
+      ],
+      "met": true,
+      "qualification": "Session action record; source manifest is not a Git cleanliness or whole-filesystem audit."
+    }
+  ],
+  "commandReceipts": [
+    {
+      "mode": "hermetic",
+      "command": [
+        "forge",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/00.log",
+      "sha256": "ec0d2635308bda557b4566669d810b436d3719654fdacb1cdb8dbf5945f659b0"
+    },
+    {
+      "mode": "operator",
+      "command": [
+        "forge",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/00.log",
+      "sha256": "ec0d2635308bda557b4566669d810b436d3719654fdacb1cdb8dbf5945f659b0"
+    },
+    {
+      "mode": "hermetic-r2",
+      "command": [
+        "forge",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/00.log",
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc"
+    },
+    {
+      "mode": "hermetic-r2",
+      "command": [
+        "solar",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/01.log",
+      "sha256": "07dd9ba2368e62a6a36e4ece9387d535b24ec8851273c8d39e66831de94f993f"
+    },
+    {
+      "mode": "hermetic-r2",
+      "command": [
+        "uname",
+        "-sm"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/02.log",
+      "sha256": "16b8cd028eb757aab907ab404e1656e01783846457156eec99372a91fc1b104d"
+    },
+    {
+      "mode": "hermetic-r2",
+      "command": [
+        "forge",
+        "build",
+        "--use",
+        "solar"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log",
+      "sha256": "69a0397fb59237bef3756c1d3ccadae93eaafc1a09b05fe36d5a2754a9e99145"
+    },
+    {
+      "mode": "hermetic-r2",
+      "command": [
+        "forge",
+        "test",
+        "--use",
+        "solar",
+        "-vv",
+        "--no-match-path",
+        "**/fork/**",
+        "--no-match-contract",
+        "Fork"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/04.log",
+      "sha256": "9ee62a42b7fcf2fb1a64bf7d04753238c6710f378f4b077faadb07e5efca5e79"
+    },
+    {
+      "mode": "operator-r2",
+      "command": [
+        "forge",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/00.log",
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc"
+    },
+    {
+      "mode": "operator-r2",
+      "command": [
+        "solar",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/01.log",
+      "sha256": "07dd9ba2368e62a6a36e4ece9387d535b24ec8851273c8d39e66831de94f993f"
+    },
+    {
+      "mode": "operator-r2",
+      "command": [
+        "uname",
+        "-sm"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/02.log",
+      "sha256": "16b8cd028eb757aab907ab404e1656e01783846457156eec99372a91fc1b104d"
+    },
+    {
+      "mode": "operator-r2",
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/03.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "mode": "operator-r2",
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log",
+      "sha256": "ea428eaeadc993624ed88ca301bd4beb1a5871ef207ddbdcd0f330c2aba33861"
+    },
+    {
+      "mode": "fork",
+      "command": [
+        "forge",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/00.log",
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc"
+    },
+    {
+      "mode": "fork",
+      "command": [
+        "solar",
+        "--version"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/01.log",
+      "sha256": "07dd9ba2368e62a6a36e4ece9387d535b24ec8851273c8d39e66831de94f993f"
+    },
+    {
+      "mode": "fork",
+      "command": [
+        "uname",
+        "-sm"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/02.log",
+      "sha256": "16b8cd028eb757aab907ab404e1656e01783846457156eec99372a91fc1b104d"
+    },
+    {
+      "mode": "fork",
+      "command": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+        "--test-root",
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration",
+        "--",
+        "-j",
+        "1",
+        "--compute-units-per-second",
+        "10",
+        "--rpc-timeout",
+        "120",
+        "-vv"
+      ],
+      "code": 0,
+      "signal": null,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/03.log",
+      "sha256": "e0862260e4e33003e9e6cb430ca93e4c95475e222b171144f54fac18a23d995d"
+    }
+  ],
+  "jsonFilesParsed": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/dependency-versions.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-suite-summary.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/build-artifact-audit.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/03.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/02.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/01.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/00.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/environment.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/witness-preexisting-audit.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/source-before.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/02.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/01.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/00.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/environment.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/04.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/task-11-receipt-hashes.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/invocation-inventory.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/03.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/02.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/01.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/00.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/environment.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/00.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/environment.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork-suite-summary.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/source-final.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/00.log.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/environment.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/task-11-reuse-audit.json"
+  ],
+  "internalEvidenceFailures": [],
+  "sourceChanges": [],
+  "sourceRemovals": [],
+  "remainingWrite": "Create evidence-index.json, then task-13-done.json as the last file write. Final claim must retain completed:false and separate met/unmet arrays."
+}

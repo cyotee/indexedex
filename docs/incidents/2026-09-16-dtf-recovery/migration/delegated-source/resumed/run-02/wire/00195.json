@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":195,\"method\":\"eth_getTransactionByHash\",\"params\":[\"0x43996418ac34f6e25fece21d670f58d50160fe6c125750e77baf923a208ba072\"]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":195,\"result\":{\"type\":\"0x4\",\"chainId\":\"0x1237\",\"nonce\":\"0x76f\",\"gas\":\"0x4c4b40\",\"maxFeePerGas\":\"0x77359400\",\"maxPriorityFeePerGas\":\"0x5f5e100\",\"to\":\"0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9\",\"value\":\"0x0\",\"accessList\":[],\"authorizationList\":[{\"chainId\":\"0x1237\",\"address\":\"0xa6407325ff7daab36d20992dadc031c82d1c4390\",\"nonce\":\"0x0\",\"yParity\":\"0x1\",\"r\":\"0x93fd11a969824d85129a017a6b30043d5193bdea63d2d5d90c00fcba86d7bc46\",\"s\":\"0x6a630c14f81650e59de32633837c972a7f64ec5a9dfdd7c8a5b4cc6c17e8db0\"}],\"input\":\"0xa9cc4718\",\"r\":\"0x3e7b9e877a23db4d7188b174a815606fd1cd50368e3227f66e03ca15b1a1314b\",\"s\":\"0x69895042fc730d26d19584e5a0d5184c2c9880cb991e059e504bdef6f3749790\",\"yParity\":\"0x1\",\"v\":\"0x1\",\"hash\":\"0x43996418ac34f6e25fece21d670f58d50160fe6c125750e77baf923a208ba072\",\"blockHash\":\"0x97d0dcfe2e259660b3318e8d433a27c68cc17f134d425da5db55a4c1c4f2cfc3\",\"blockNumber\":\"0x67e5d23\",\"transactionIndex\":\"0x0\",\"from\":\"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266\",\"gasPrice\":\"0x6335a4f\",\"blockTimestamp\":\"0x6aeff5de\"}}",
+  "httpStatus": 200,
+  "raw": true
+}

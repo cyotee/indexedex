@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-13",
+  "userStatement": "Sorrty, correction, we do need to handle the old Token Staking. I forgot, they were migrated to the old DTF DETF.",
+  "supersedes": [
+    "TokenStaking exclusion in planr6/PRDr23",
+    "token-staking-scope-removal-20261113.json as current scope"
+  ],
+  "scope": "TokenStaking migrated backing is affected old-DETF exposure; plain DTF holdings remain ordinary new money.",
+  "restoration": "Original claimed-SY certificates, source authentication, preparation/rehearsal modules and tests restored with E-S enhancements preserved.",
+  "canonicalDocuments": {
+    "plan": "migration-detf-implementation-plan-r7-token-staking-migrated-exposure",
+    "prd": "migration-detf-discussion-r24-token-staking-migrated-exposure"
+  },
+  "verification": "mon_PZ95Y5CPFSV2H8MR completed exit0: Solar production build,9real-source fork tests,strict TypeScript,176operator tests. Compiler/nightly/config/lint warnings remain visible; not a warning-free build claim.",
+  "limits": "Existing complete-original subset restored; no universal delegated/partial/prior-delivered admission or operational allocation is inferred. NFT3 separate-contribution/two-bond decision remains a pending implementation requirement.",
+  "cleanup": "Removed only our temporary forge-std/src symlink; preserved existing populated Crane checkout and nested .git metadata.",
+  "command": "/bin/zsh -lc 'set -e; cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts; export PATH=/Users/cyotee/.foundry/bin:$PATH; M=contracts/vaults/detf/protocols/dexes/uniswap/v4/migration; F=test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration; R=($M/**/*Facet.sol $M/UniswapV4DetfMigrationDFPkg.sol $M/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol $M/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol); FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test $M/legacy/MigrationLegacyRecoveryLib.sol $R --test-root $F/MigrationWeightedSy.t.sol -- -vv; bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts; printf \"RESTORED_TYPES_OK\\n\"; bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts'"
+}

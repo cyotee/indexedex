@@ -1,0 +1,1807 @@
+
+scripts/recovery/dtf-migration/bundle.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:28:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) relocated real bundle bytes rebuild identical payloads and quotes but a fresh journal domain [2.05ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:54:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) saved prepared envelopes preserve raw originals and reauthenticate rather than trusting payloads [0.26ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:68:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) replacement proofs bind their new document after normalized bundle preparation [0.26ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:81:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) saved bundles reject a noncanonical prepared envelope just as native validation does [0.18ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:95:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects missing despite intact original inputs [0.22ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:95:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects tamper despite intact original inputs [0.14ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:95:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects symlink despite intact original inputs [0.14ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:113:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects length at its contained-file boundary [0.19ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:113:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects traversal at its contained-file boundary [0.14ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:113:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects duplicate at its contained-file boundary [0.11ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:113:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects missing-reference at its contained-file boundary [0.16ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:113:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects extra at its contained-file boundary [0.12ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:113:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) bundle rejects data-link at its contained-file boundary [0.12ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:134:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) materialized inputs reject template changes and bundle-manifest tampering [0.16ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:17:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/bundle.test.ts:145:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) export rejects duplicate source roles instead of choosing a binding [0.14ms]
+(pass) bundle CLI rejects ambiguous authority: bundle-export --input a --input b --output c [0.24ms]
+(pass) bundle CLI rejects ambiguous authority: bundle-materialize --input a --output b --execute-local [0.06ms]
+(pass) bundle CLI rejects ambiguous authority: rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575 --checkpoint .omo-runtime/dtf-migration-portable/checkpoints --evidence unused [0.02ms]
+
+scripts/recovery/dtf-migration/candidate-inventory.test.ts:
+(pass) inventory links each account, exclusion, source, holding and observed recovery without granting basis [0.72ms]
+(pass) inventory rejects broken account-ledger.csv position_ids relation [0.90ms]
+(pass) inventory rejects broken account-ledger.csv current_holding_ids relation [0.17ms]
+(pass) inventory rejects broken held-exclusions.csv unresolved_snapshot_remainder_detf_raw relation [0.17ms]
+(pass) inventory rejects broken positions.csv source_id relation [0.08ms]
+(pass) inventory rejects broken evidence/all-index-events.csv gons_per_unit relation [0.14ms]
+(pass) inventory rejects broken observed-recoveries.csv observed_amount_raw relation [0.11ms]
+(pass) blank recovery count remains unknown rather than an inferred zero [0.15ms]
+(pass) historical proofs check event-time divisor and signed claim conservation [0.30ms]
+
+scripts/recovery/dtf-migration/candidates.test.ts:
+(pass) joins exact multiple asset inputs to one collection ID and preserves observations [0.33ms]
+(pass) shared purchase transactions never attribute their entire input to each NFT [0.13ms]
+(pass) payer conflicts remain unresolved instead of being assigned to the recipient [0.09ms]
+(pass) earlier LP accounting shares keep direct WETH distinct from routed DTF and missing receipts [0.08ms]
+(pass) unknown integer is distinct from observed zero and rejects decimal or malformed encodings [0.05ms]
+(pass) CSV parser preserves quoted delimiters and rejects truncation, bad widths and duplicate keys [0.07ms]
+(pass) source units distinguish native19 vault shares, native28 SE, raw weights, gons and accounting LP [0.09ms]
+(pass) candidate documents are unsupported by every live input schema and preparation CLI [1.41ms]
+(pass) all declared bytes authenticate before malformed raw CSV parsing and fail closed on missing files [3.54ms]
+(pass) offline candidate command rejects signing, broadcast and duplicate input flags [0.12ms]
+
+scripts/recovery/dtf-migration/claim-vault.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/claim-vault.test.ts:11:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) direct claim-vault requires known original wallet, quantity, components and origin, not current holdings [0.25ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/claim-vault.test.ts:35:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) direct claim-vault fixed source, original units and economic partition are required by the real payload builder [0.19ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/claim-vault.test.ts:59:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) direct claim-vault complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.21ms]
+
+scripts/recovery/dtf-migration/dtf-custody-se.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/dtf-custody-se.test.ts:11:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-SD requires known original wallet, quantity, components and origin, not current holdings [0.24ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/dtf-custody-se.test.ts:35:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-SD fixed source, original units and economic partition are required by the real payload builder [0.18ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/dtf-custody-se.test.ts:59:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-SD complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.21ms]
+
+scripts/recovery/dtf-migration/earlier-liquid.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:36:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ED preparation requires complete known original native18 units without pricing or unit alternatives [0.25ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:56:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ED source and original partition cannot be substituted duplicated or silently omitted [0.17ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:76:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ED grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.17ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-liquid.test.ts:90:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ED operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.19ms]
+
+scripts/recovery/dtf-migration/earlier-receipt.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:36:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ER preparation requires complete known original internal units without pricing or unit alternatives [0.23ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:56:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ER source and original partition cannot be substituted duplicated or silently omitted [0.15ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:76:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ER grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.17ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/earlier-receipt.test.ts:90:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) ER operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.18ms]
+
+scripts/recovery/dtf-migration/execution.test.ts:
+(pass) journal refuses live concurrent writers and changed domains [3.35ms]
+(pass) durable signed intent survives reopening without acquiring another nonce [10.75ms]
+(pass) journal rejects a foreign intent rather than accepting its receipt [1.42ms]
+(pass) partial unpublished records cannot become completed operations [1.36ms]
+(pass) funding rejects arbitrary calldata and unknown native values [0.12ms]
+41 |     records.push({ ...source, rawBase64: raw.toString("base64"), terminalNewline: raw.at(-1) === 10 });
+42 |   }
+43 |   await save(path, { encoding: "lossless original bytes, not normalized JSON or reconstructed ABI", records });
+44 | }
+45 | export async function interfaceFile(path: string) {
+46 |   const artifact = z.object({ abi: z.array(z.unknown()) }).parse(JSON.parse(await readFile(path, "utf8")));
+                                                                                       ^
+ENOENT: no such file or directory, open 'out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json'
+    path: "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async interfaceFile (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/rehearsal-data.ts:46:83)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/execution.test.ts:88:24)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) paid owner purchase requires explicit positive payment and ordinary duration [0.38ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["fund","--manifest","unused","--checkpoint","unused","--execute-local","--broadcast"] [0.09ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["resume","--manifest","unused","--checkpoint","unused","--instance-id","old"] [0.03ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["activate","--manifest","unused","--checkpoint","unused","--broadcast"] [0.03ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["fund","--manifest","unused","--checkpoint","unused","--target","0x1111111111111111111111111111111111111111"] [0.03ms]
+
+scripts/recovery/dtf-migration/held-se-lp.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:37:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 preparation requires complete known original native18 units without pricing or unit alternatives [0.29ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:57:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 source and original partition cannot be substituted duplicated or silently omitted [0.16ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:77:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.18ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:91:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.19ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:37:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 preparation requires complete known original native18 units without pricing or unit alternatives [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:57:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 source and original partition cannot be substituted duplicated or silently omitted [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:77:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:91:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.11ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:37:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 preparation requires complete known original native18 units without pricing or unit alternatives [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:57:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 source and original partition cannot be substituted duplicated or silently omitted [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:77:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/held-se-lp.test.ts:91:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.09ms]
+
+scripts/recovery/dtf-migration/preparation.test.ts:
+(pass) normalizes native integer strings without floating point [0.09ms]
+(pass) rejects unknown or non-native amount  [0.03ms]
+(pass) rejects unknown or non-native amount -1 [0.01ms]
+(pass) rejects unknown or non-native amount 1.5
+(pass) rejects unknown or non-native amount 1e18
+(pass) rejects unknown or non-native amount 0
+(pass) rejects unknown or non-native amount null
+(pass) rejects unknown or non-native amount 115792089237316195423570985008687907853269984665640564039457584007913129639936 [0.01ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:36:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) emits full separate replacements and independently quoted native credits [0.17ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:54:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) normalization is stable under reordered records and source bindings [0.13ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:60:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) full replacements change identities instead of generating credit deltas [0.13ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:69:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects wrong chain domain before accepting payloads [0.15ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:69:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects wrong block domain before accepting payloads [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:69:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects wrong snapshot domain before accepting payloads [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:69:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects wrong proxy domain before accepting payloads [0.08ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:69:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects wrong package domain before accepting payloads [0.11ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:86:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects source tampering rather than trusting quoted originals [0.12ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:91:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects originals that do not match their raw proof [0.11ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:98:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects missing or zero NFT original wallets at preparation boundary [0.17ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:109:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects a wallet differing from the full recorded NFT original [0.14ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:117:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) wallet correction changes full configuration but not economic origin [0.14ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:125:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) NFT payload and configuration identity agree with final Solidity and typed stage ABIs [0.19ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:144:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects unknown contributions and arbitrary credit fields at the schema boundary [0.14ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:150:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects overlapping originals and missing origin partitions [0.13ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:159:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) blocks earlier-liquid without forging executable config [0.12ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:159:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) blocks weighted-receipt without forging executable config [0.09ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:159:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) blocks earlier-receipt without forging executable config [0.09ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:159:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) blocks token-staking without forging executable config [0.12ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:159:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) blocks underlying-se without forging executable config [0.11ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:159:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) blocks fungible-lp without forging executable config [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:159:21)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) blocks earlier-liquidation without forging executable config [0.10ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:168:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects a nonconserving origin partition [0.15ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:179:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects combined quotes that differ from independent frozen component quotes [0.11ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:184:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) revalidates persisted manifest payloads and refuses overwrite [0.14ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:195:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) actual CLI prepares and validates through read-only transport [0.20ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:211:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects missing RPC and synthetic nonlocal endpoints [0.13ms]
+(pass) rejects ambiguous or executing preparation arguments prepare --input a --input b --output c [0.04ms]
+(pass) rejects ambiguous or executing preparation arguments validate --manifest x --broadcast [0.02ms]
+(pass) rejects ambiguous or executing preparation arguments validate --manifest x --execute-local
+(pass) rejects ambiguous or executing preparation arguments prepare --input a
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:233:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) rejects invalid recovery fields and unproved multi-conversion batches [0.11ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:19:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.test.ts:241:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) preserves all category dispositions but emits no manifest for blocked exposure [0.16ms]
+
+scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:
+(pass) source purchase basis is independently required in addition to the mint [3.88ms]
+(pass) routed input stays separate and cannot be attributed as a direct contribution [3.09ms]
+(pass) a shared transaction never assigns its entire direct inputs to each original [3.22ms]
+(pass) canonical association conflicts prohibit otherwise matching input attribution [3.29ms]
+(pass) wrong mint recipient is a conflict even with matching direct payment [3.01ms]
+(pass) indirect calls retain calldata and never receive direct claim decoding [3.03ms]
+(pass) receipt archive format cannot enter preparation, validation or execution loaders [0.10ms]
+(pass) conversion reconciliation preserves exact native output and blank historical principal [3.12ms]
+(pass) conversion ambiguity retains individual matches and never assigns aggregate output [3.12ms]
+(pass) unknown output remains null and missing rather than matching a zero transfer [3.65ms]
+(pass) recovery matching requires the exact declared asset [3.30ms]
+(pass) recovery matching requires the exact declared recipient [3.00ms]
+(pass) recovery matching requires the exact declared amount [3.25ms]
+(pass) recovery matching requires the exact declared index [3.26ms]
+(pass) recovery matching requires the exact declared block [3.24ms]
+(pass) conversion canonical contradiction remains a conflict with a matching output [2.97ms]
+(pass) selection parses native integers and rejects declared blocks beyond the anchor [3.03ms]
+
+scripts/recovery/dtf-migration/receipt.test.ts:
+(pass) complete wire collection authenticates and associates each known reference [21.99ms]
+(pass) collection stops before named requests on wrong-chain [7.53ms]
+(pass) collection stops before named requests on malformed-chain [6.04ms]
+(pass) wrong canonical anchor blocks every named collection [6.23ms]
+(pass) partial null failure stays explicit while unaffected transaction completes [12.31ms]
+(pass) partial missing failure stays explicit while unaffected transaction completes [12.96ms]
+(pass) partial rpc error failure stays explicit while unaffected transaction completes [10.69ms]
+(pass) partial wrong id failure stays explicit while unaffected transaction completes [10.83ms]
+(pass) partial wrong version failure stays explicit while unaffected transaction completes [9.73ms]
+(pass) partial malformed quantity failure stays explicit while unaffected transaction completes [9.86ms]
+(pass) contradictory association identifies transaction-hash [0.03ms]
+(pass) contradictory association identifies block-hash
+(pass) contradictory association identifies block-number [0.01ms]
+(pass) contradictory association identifies transaction-index
+(pass) contradictory association identifies receipt-endpoints
+(pass) contradictory association identifies block-membership
+(pass) contradictory association identifies canonical-header
+(pass) contradictory association identifies after-anchor
+(pass) contradictory association identifies transaction-reverted
+(pass) every log identity and strict ordering are verified [0.02ms]
+(pass) distinct references to one transaction deduplicate requests without losing rows [3.17ms]
+(pass) credential-bearing wire errors retain sanitized bytes and never claim raw capture [2.02ms]
+(pass) fresh exclusive publication refuses an existing directory before network requests [3.06ms]
+(pass) CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs [0.09ms]
+(pass) explicit conversion selection collects complete tables without purchasing references [9.60ms]
+(pass) conversion selection retains every row unavailable on anchor failure [5.89ms]
+(pass) selection rejects unknown values and cannot leak into execution commands [0.14ms]
+
+scripts/recovery/dtf-migration/weighted-liquid.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-liquid.test.ts:11:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-L requires known original wallet, quantity, components and origin, not current holdings [0.28ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-liquid.test.ts:35:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-L fixed source, original units and economic partition are required by the real payload builder [0.20ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-liquid.test.ts:59:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-L complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.21ms]
+
+scripts/recovery/dtf-migration/weighted-receipt.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:36:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) WS preparation requires complete known original gons and wallet, never floating-point or live-derived credit [0.26ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:55:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) WS builder enforces fixed source and gon partition and rejects origin reuse [0.18ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:77:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) WS evidence binding and frozen grouped quote survive exact preparation without scaling by gons [0.18ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async receiptFixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:14:19)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-receipt.test.ts:92:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) WS Solidity configuration and stage ABI preserve eligible gons separately from native surrender [0.22ms]
+
+scripts/recovery/dtf-migration/weighted-sy.test.ts:
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-sy.test.ts:36:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) claimed SY uses every complete original component and exact measured split sums [0.23ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-sy.test.ts:80:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) claimed SY rejects unknown delivery and missing original review rather than inferring zero [0.24ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-sy.test.ts:101:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) missing claimed-origin certificate cannot use its reviewed evidence as ordinary SY [0.24ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-sy.test.ts:132:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-Y requires known original wallet, quantity, components and origin, not current holdings [0.20ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-sy.test.ts:156:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-Y fixed source, original units and economic partition are required by the real payload builder [0.17ms]
+28 | }
+29 | 
+30 | export async function fixture() {
+31 |   const root = await mkdtemp(join(tmpdir(), "dtf-prepare-test-"));
+32 |   const artifactPath = resolve("out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json");
+33 |   const artifactBytes = await readFile(artifactPath);
+                                   ^
+ENOENT: no such file or directory, open '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json'
+    path: "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async fixture (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.fixture.ts:33:31)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/weighted-sy.test.ts:180:19)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) W-Y complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.23ms]
+
+85 tests failed:
+(fail) relocated real bundle bytes rebuild identical payloads and quotes but a fresh journal domain [2.05ms]
+(fail) saved prepared envelopes preserve raw originals and reauthenticate rather than trusting payloads [0.26ms]
+(fail) replacement proofs bind their new document after normalized bundle preparation [0.26ms]
+(fail) saved bundles reject a noncanonical prepared envelope just as native validation does [0.18ms]
+(fail) bundle rejects missing despite intact original inputs [0.22ms]
+(fail) bundle rejects tamper despite intact original inputs [0.14ms]
+(fail) bundle rejects symlink despite intact original inputs [0.14ms]
+(fail) bundle rejects length at its contained-file boundary [0.19ms]
+(fail) bundle rejects traversal at its contained-file boundary [0.14ms]
+(fail) bundle rejects duplicate at its contained-file boundary [0.11ms]
+(fail) bundle rejects missing-reference at its contained-file boundary [0.16ms]
+(fail) bundle rejects extra at its contained-file boundary [0.12ms]
+(fail) bundle rejects data-link at its contained-file boundary [0.12ms]
+(fail) materialized inputs reject template changes and bundle-manifest tampering [0.16ms]
+(fail) export rejects duplicate source roles instead of choosing a binding [0.14ms]
+(fail) direct claim-vault requires known original wallet, quantity, components and origin, not current holdings [0.25ms]
+(fail) direct claim-vault fixed source, original units and economic partition are required by the real payload builder [0.19ms]
+(fail) direct claim-vault complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.21ms]
+(fail) W-SD requires known original wallet, quantity, components and origin, not current holdings [0.24ms]
+(fail) W-SD fixed source, original units and economic partition are required by the real payload builder [0.18ms]
+(fail) W-SD complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.21ms]
+(fail) ED preparation requires complete known original native18 units without pricing or unit alternatives [0.25ms]
+(fail) ED source and original partition cannot be substituted duplicated or silently omitted [0.17ms]
+(fail) ED grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.17ms]
+(fail) ED operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.19ms]
+(fail) ER preparation requires complete known original internal units without pricing or unit alternatives [0.23ms]
+(fail) ER source and original partition cannot be substituted duplicated or silently omitted [0.15ms]
+(fail) ER grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.17ms]
+(fail) ER operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.18ms]
+(fail) paid owner purchase requires explicit positive payment and ordinary duration [0.38ms]
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 preparation requires complete known original native18 units without pricing or unit alternatives [0.29ms]
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 source and original partition cannot be substituted duplicated or silently omitted [0.16ms]
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.18ms]
+(fail) held 0x999dae02d22e5fee1c4508430d5196d31d631009 operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.19ms]
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 preparation requires complete known original native18 units without pricing or unit alternatives [0.10ms]
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 source and original partition cannot be substituted duplicated or silently omitted [0.10ms]
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.10ms]
+(fail) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.11ms]
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 preparation requires complete known original native18 units without pricing or unit alternatives [0.10ms]
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 source and original partition cannot be substituted duplicated or silently omitted [0.10ms]
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 grouped frozen quote and raw proof binding never scale credit by receipt ownership [0.10ms]
+(fail) held 0x46e068c2393e189fbc86632f67210af253a42aa8 operator stage and Solidity share exact tuple ABI and retain separate custody queries [0.09ms]
+(fail) emits full separate replacements and independently quoted native credits [0.17ms]
+(fail) normalization is stable under reordered records and source bindings [0.13ms]
+(fail) full replacements change identities instead of generating credit deltas [0.13ms]
+(fail) rejects wrong chain domain before accepting payloads [0.15ms]
+(fail) rejects wrong block domain before accepting payloads [0.10ms]
+(fail) rejects wrong snapshot domain before accepting payloads [0.10ms]
+(fail) rejects wrong proxy domain before accepting payloads [0.08ms]
+(fail) rejects wrong package domain before accepting payloads [0.11ms]
+(fail) rejects source tampering rather than trusting quoted originals [0.12ms]
+(fail) rejects originals that do not match their raw proof [0.11ms]
+(fail) rejects missing or zero NFT original wallets at preparation boundary [0.17ms]
+(fail) rejects a wallet differing from the full recorded NFT original [0.14ms]
+(fail) wallet correction changes full configuration but not economic origin [0.14ms]
+(fail) NFT payload and configuration identity agree with final Solidity and typed stage ABIs [0.19ms]
+(fail) rejects unknown contributions and arbitrary credit fields at the schema boundary [0.14ms]
+(fail) rejects overlapping originals and missing origin partitions [0.13ms]
+(fail) blocks earlier-liquid without forging executable config [0.12ms]
+(fail) blocks weighted-receipt without forging executable config [0.09ms]
+(fail) blocks earlier-receipt without forging executable config [0.09ms]
+(fail) blocks token-staking without forging executable config [0.12ms]
+(fail) blocks underlying-se without forging executable config [0.11ms]
+(fail) blocks fungible-lp without forging executable config [0.10ms]
+(fail) blocks earlier-liquidation without forging executable config [0.10ms]
+(fail) rejects a nonconserving origin partition [0.15ms]
+(fail) rejects combined quotes that differ from independent frozen component quotes [0.11ms]
+(fail) revalidates persisted manifest payloads and refuses overwrite [0.14ms]
+(fail) actual CLI prepares and validates through read-only transport [0.20ms]
+(fail) rejects missing RPC and synthetic nonlocal endpoints [0.13ms]
+(fail) rejects invalid recovery fields and unproved multi-conversion batches [0.11ms]
+(fail) preserves all category dispositions but emits no manifest for blocked exposure [0.16ms]
+(fail) W-L requires known original wallet, quantity, components and origin, not current holdings [0.28ms]
+(fail) W-L fixed source, original units and economic partition are required by the real payload builder [0.20ms]
+(fail) W-L complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.21ms]
+(fail) WS preparation requires complete known original gons and wallet, never floating-point or live-derived credit [0.26ms]
+(fail) WS builder enforces fixed source and gon partition and rejects origin reuse [0.18ms]
+(fail) WS evidence binding and frozen grouped quote survive exact preparation without scaling by gons [0.18ms]
+(fail) WS Solidity configuration and stage ABI preserve eligible gons separately from native surrender [0.22ms]
+(fail) claimed SY uses every complete original component and exact measured split sums [0.23ms]
+(fail) claimed SY rejects unknown delivery and missing original review rather than inferring zero [0.24ms]
+(fail) missing claimed-origin certificate cannot use its reviewed evidence as ordinary SY [0.24ms]
+(fail) W-Y requires known original wallet, quantity, components and origin, not current holdings [0.20ms]
+(fail) W-Y fixed source, original units and economic partition are required by the real payload builder [0.17ms]
+(fail) W-Y complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [0.23ms]
+
+ 87 pass
+ 85 fail
+Ran 172 tests across 15 files. [286.00ms]

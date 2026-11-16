@@ -1,0 +1,107 @@
+{
+  "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime-r3/rehearsal-1794529844525",
+  "cleanup": {
+    "node": "exited",
+    "runtime": "removed",
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/.omo-runtime/dtf-migration-portable/checkpoints",
+    "pid": 10877,
+    "evidence": "retained"
+  },
+  "commands": [
+    {
+      "binary": "lsof",
+      "args": [
+        "-nP",
+        "-iTCP:18575",
+        "-sTCP:LISTEN"
+      ],
+      "code": 1,
+      "signal": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "ps",
+      "args": [
+        "-p",
+        "10877",
+        "-o",
+        "pid="
+      ],
+      "code": 1,
+      "signal": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "diff",
+        "--check",
+        "--ignore-submodules=all"
+      ],
+      "code": 0,
+      "signal": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "diff",
+        "--cached",
+        "--exit-code",
+        "--ignore-submodules=all"
+      ],
+      "code": 0,
+      "signal": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "status",
+        "--short",
+        "--ignore-submodules=all"
+      ],
+      "code": 0,
+      "signal": null,
+      "stdout": " M docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n M scripts/recovery/dtf-migration/cli.ts\n M scripts/recovery/dtf-migration/execution-domain.ts\n M scripts/recovery/dtf-migration/execution-schema.ts\n M scripts/recovery/dtf-migration/preparation.ts\n M scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n M scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts\n M scripts/recovery/dtf-migration/rehearsal-data.ts\n M scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts\n M scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts\n M scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts\n M scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts\n M scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts\n M scripts/recovery/dtf-migration/rehearsal-process.ts\n M scripts/recovery/dtf-migration/rehearsal-recovery.ts\n M scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts\n M scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts\n M scripts/recovery/dtf-migration/rehearse.ts\n M scripts/recovery/dtf-migration/schema.ts\n?? docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/\n?? scripts/recovery/dtf-migration/bundle-files.ts\n?? scripts/recovery/dtf-migration/bundle-materialize.ts\n?? scripts/recovery/dtf-migration/bundle.test.ts\n?? scripts/recovery/dtf-migration/bundle.ts\n?? scripts/recovery/dtf-migration/rehearsal-portable.ts\n",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "rev-parse",
+        "HEAD"
+      ],
+      "code": 0,
+      "signal": null,
+      "stdout": "137fa0c8749165087c7d1d0156788f58a1dbf1b8\n",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "branch",
+        "--show-current"
+      ],
+      "code": 0,
+      "signal": null,
+      "stdout": "work/dtf-migration-phase-26-portable-operator\n",
+      "stderr": ""
+    }
+  ],
+  "checkpointAbsent": true,
+  "ownedEmptyRuntimeParentRemoved": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/.omo-runtime/dtf-migration-portable",
+  "sourceStopped": true,
+  "ownedIndexAndRefUnchanged": true,
+  "subscriptions": "CLI receipt subscriptions close in finally; canonical observer exited 0 after node exit.",
+  "pendingOwnedOperations": "none after the completed audit and this cleanup process exits"
+}

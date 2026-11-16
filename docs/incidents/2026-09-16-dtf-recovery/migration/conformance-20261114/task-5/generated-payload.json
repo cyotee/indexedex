@@ -1,0 +1,34 @@
+{
+  "task5Payload": {
+    "input": {
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "3",
+      "originalWallet": "0x0000000000000000000000000000000000000015",
+      "originalUnits": "100",
+      "originalEth": "999999000000000",
+      "originalDtf": "362893857600000000000",
+      "evidenceId": "0x00000000000000000000000000000000000000000000000000000000000000ca",
+      "contributionsKnown": true,
+      "separateContributions": true
+    },
+    "configurationId": "0x76aa8853cb488b908240ca3150d145168be29e7237772a3d2e57f018b161a10c",
+    "originalId": "0x01332526ab524f588b2148fc0b55581b8cc045c19e49f8f0c84fa686454e5115",
+    "quotedCredit": "32990450690809090909",
+    "contributions": [
+      {
+        "originalEth": "999999000000000",
+        "originalDtf": "0",
+        "credit": "99999900000000"
+      },
+      {
+        "originalEth": "0",
+        "originalDtf": "362893857600000000000",
+        "credit": "32990350690909090909"
+      }
+    ]
+  },
+  "loader": "configureNftContributionEntitlements",
+  "decodedOriginalEth": "999999000000000",
+  "decodedOriginalDtf": "362893857600000000000",
+  "combinedControl": "configureNftEntitlements"
+}

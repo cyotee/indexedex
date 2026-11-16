@@ -1,0 +1,1540 @@
+{
+  "specs": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants && export PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_INVARIANT_FAIL_ON_REVERT=true FOUNDRY_INVARIANT_RUNS=32 FOUNDRY_INVARIANT_DEPTH=16 && set -o pipefail && python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv --fuzz-seed 0x24d1 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/specs-final-01.log",
+    "exitCode": 0,
+    "completionSource": "Actual matching monitor completion event",
+    "monitor": {
+      "text": "Monitor started with ID: mon_QG76XRBNDJ5PMY2A",
+      "details": {
+        "monitor_id": "mon_QG76XRBNDJ5PMY2A",
+        "bash_id": "bash_3",
+        "monitor": true
+      },
+      "images": [],
+      "hasError": false
+    },
+    "summary": [
+      "Ran 30 test suites in 9.03s (43.61s CPU time): 171 tests passed, 0 failed, 0 skipped (171 total tests)"
+    ],
+    "passCount": 171,
+    "failLines": [],
+    "expandedBuildCommands": [
+      "forge build --use solar contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory.sol contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/test/stubs/MintableERC20Decimals.sol contracts/test/stubs/SimpleMintableERC20.sol contracts/utils/StandardExchangeFrozenQuoteLib.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol contracts/vaults/detf/common/sy/DETFSYDFPkg.sol contracts/vaults/detf/common/sy/DETFSYFacet.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeInFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeMarkerFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol lib/crane/contracts/protocols/launchpads/ponsFamily/v2/hooks/PonsV2MemeHook.sol lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol lib/crane/contracts/protocols/utils/permit2/BetterPermit2.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/tokens/ERC721/ERC721Facet.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol"
+    ],
+    "expandedTestCommands": [
+      "forge test --use solar -vv --fuzz-seed 0x24d1 --skip 'contracts/**' --skip 'test/foundry/spec/constants/**' --skip 'test/foundry/spec/fee/**' --skip 'test/foundry/spec/hooks/**' --skip 'test/foundry/spec/manager/**' --skip 'test/foundry/spec/oracles/**' --skip 'test/foundry/spec/pairtoken-baseline/**' --skip 'test/foundry/spec/permit2/**' --skip 'test/foundry/spec/protocol/**' --skip 'test/foundry/spec/protocols/**' --skip 'test/foundry/spec/registries/**' --skip 'test/foundry/spec/routers/**' --skip 'test/foundry/spec/saf/**' --skip 'test/foundry/spec/scripts/**' --skip 'test/foundry/spec/test/**' --skip 'test/foundry/spec/utils/**' --skip test/foundry/spec/vaults/StandardExchangeOut_Refund.t.sol --skip 'test/foundry/spec/vaults/basic/**' --skip test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol --skip 'test/foundry/spec/vaults/detf/common/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/**' --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/**' --skip 'test/foundry/spec/vaults/standard-exchange/**' --skip 'test/foundry/spec/vaults/standard/**'"
+    ],
+    "invariants": [
+      {
+        "line": 4819,
+        "result": "[PASS] invariant_nativeLedgerAndPermanentLifecycle() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 4824,
+            "contract": "MigrationNativeHandler",
+            "selector": "activate",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4826,
+            "contract": "MigrationNativeHandler",
+            "selector": "advanceTime",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4828,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimPrincipal",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4830,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimRewards",
+            "calls": 38,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4832,
+            "contract": "MigrationNativeHandler",
+            "selector": "configure",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4834,
+            "contract": "MigrationNativeHandler",
+            "selector": "failedBatch",
+            "calls": 50,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4836,
+            "contract": "MigrationNativeHandler",
+            "selector": "issue",
+            "calls": 42,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4838,
+            "contract": "MigrationNativeHandler",
+            "selector": "market",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4840,
+            "contract": "MigrationNativeHandler",
+            "selector": "paidBond",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4842,
+            "contract": "MigrationNativeHandler",
+            "selector": "providerRateChange",
+            "calls": 40,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4844,
+            "contract": "MigrationNativeHandler",
+            "selector": "rejectRoleRewards",
+            "calls": 45,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4846,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferBond",
+            "calls": 49,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4848,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferOwner",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      },
+      {
+        "line": 6050,
+        "result": "[PASS] invariant_laterFundingAndAllPositionClaims() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 6055,
+            "contract": "MigrationNativeHandler",
+            "selector": "activate",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6057,
+            "contract": "MigrationNativeHandler",
+            "selector": "advanceTime",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6059,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimPrincipal",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6061,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimRewards",
+            "calls": 38,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6063,
+            "contract": "MigrationNativeHandler",
+            "selector": "configure",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6065,
+            "contract": "MigrationNativeHandler",
+            "selector": "failedBatch",
+            "calls": 50,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6067,
+            "contract": "MigrationNativeHandler",
+            "selector": "issue",
+            "calls": 42,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6069,
+            "contract": "MigrationNativeHandler",
+            "selector": "market",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6071,
+            "contract": "MigrationNativeHandler",
+            "selector": "paidBond",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6073,
+            "contract": "MigrationNativeHandler",
+            "selector": "providerRateChange",
+            "calls": 40,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6075,
+            "contract": "MigrationNativeHandler",
+            "selector": "rejectRoleRewards",
+            "calls": 45,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6077,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferBond",
+            "calls": 49,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6079,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferOwner",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      }
+    ],
+    "metrics": [
+      {
+        "line": 4544,
+        "text": "frozen ETH user: 1192506669"
+      },
+      {
+        "line": 4545,
+        "text": "frozen DTF user: 1773603425"
+      },
+      {
+        "line": 4546,
+        "text": "changed live ETH user: 1097894234"
+      },
+      {
+        "line": 4566,
+        "text": "pre-pull ordinary donation preview: 1555724301217996"
+      },
+      {
+        "line": 4567,
+        "text": "donor paid: 10000000000000000"
+      },
+      {
+        "line": 4568,
+        "text": "bond LP received: 1555724301217996"
+      },
+      {
+        "line": 4569,
+        "text": "total bond LP including residual joins: 1770544802207521"
+      },
+      {
+        "line": 4570,
+        "text": "remaining ERC20 approval: 9990000000000000000"
+      },
+      {
+        "line": 4571,
+        "text": "remaining Permit2 allowance: 990000000000000000"
+      },
+      {
+        "line": 4572,
+        "text": "signature nonce bitmap: 0"
+      },
+      {
+        "line": 4577,
+        "text": "pre-pull ordinary donation preview: 1555724301217996"
+      },
+      {
+        "line": 4578,
+        "text": "donor paid: 10000000000000000"
+      },
+      {
+        "line": 4579,
+        "text": "bond LP received: 1555724301217996"
+      },
+      {
+        "line": 4580,
+        "text": "total bond LP including residual joins: 1770544802207521"
+      },
+      {
+        "line": 4581,
+        "text": "remaining ERC20 approval: 9990000000000000000"
+      },
+      {
+        "line": 4582,
+        "text": "remaining Permit2 allowance: 990000000000000000"
+      },
+      {
+        "line": 4583,
+        "text": "signature nonce bitmap: 0"
+      },
+      {
+        "line": 4587,
+        "text": "pre-pull ordinary donation preview: 1555724301217996"
+      },
+      {
+        "line": 4588,
+        "text": "donor paid: 10000000000000000"
+      },
+      {
+        "line": 4589,
+        "text": "bond LP received: 1555724301217996"
+      },
+      {
+        "line": 4590,
+        "text": "total bond LP including residual joins: 1770544802207521"
+      },
+      {
+        "line": 4591,
+        "text": "remaining ERC20 approval: 9990000000000000000"
+      },
+      {
+        "line": 4592,
+        "text": "remaining Permit2 allowance: 990000000000000000"
+      },
+      {
+        "line": 4593,
+        "text": "signature nonce bitmap: 0"
+      },
+      {
+        "line": 4600,
+        "text": "domain chain ID: 31337"
+      },
+      {
+        "line": 4602,
+        "text": "domain chain ID: 1"
+      },
+      {
+        "line": 4604,
+        "text": "domain chain ID: 31338"
+      },
+      {
+        "line": 4609,
+        "text": "pre-pull ordinary donation preview: 1555724301217996"
+      },
+      {
+        "line": 4610,
+        "text": "donor paid: 10000000000000000"
+      },
+      {
+        "line": 4611,
+        "text": "bond LP received: 1555724301217996"
+      },
+      {
+        "line": 4612,
+        "text": "total bond LP including residual joins: 1770544802207521"
+      },
+      {
+        "line": 4613,
+        "text": "remaining ERC20 approval: 9990000000000000000"
+      },
+      {
+        "line": 4614,
+        "text": "remaining Permit2 allowance: 1000000000000000000"
+      },
+      {
+        "line": 4615,
+        "text": "signature nonce bitmap: 128"
+      },
+      {
+        "line": 4619,
+        "text": "pre-pull ordinary donation preview: 1555724301217996"
+      },
+      {
+        "line": 4620,
+        "text": "donor paid: 10000000000000000"
+      },
+      {
+        "line": 4621,
+        "text": "bond LP received: 1555724301217996"
+      },
+      {
+        "line": 4622,
+        "text": "total bond LP including residual joins: 1770544802207521"
+      },
+      {
+        "line": 4623,
+        "text": "remaining ERC20 approval: 9990000000000000000"
+      },
+      {
+        "line": 4624,
+        "text": "remaining Permit2 allowance: 1000000000000000000"
+      },
+      {
+        "line": 4625,
+        "text": "signature nonce bitmap: 128"
+      },
+      {
+        "line": 4629,
+        "text": "pre-pull ordinary donation preview: 1555724301217996"
+      },
+      {
+        "line": 4630,
+        "text": "donor paid: 10000000000000000"
+      },
+      {
+        "line": 4631,
+        "text": "bond LP received: 1555724301217996"
+      },
+      {
+        "line": 4632,
+        "text": "total bond LP including residual joins: 1770544802207521"
+      },
+      {
+        "line": 4633,
+        "text": "remaining ERC20 approval: 9990000000000000000"
+      },
+      {
+        "line": 4634,
+        "text": "remaining Permit2 allowance: 1000000000000000000"
+      },
+      {
+        "line": 4635,
+        "text": "signature nonce bitmap: 128"
+      },
+      {
+        "line": 4640,
+        "text": "pre-pull ordinary donation preview: 1555724301217996"
+      },
+      {
+        "line": 4641,
+        "text": "donor paid: 10000000000000000"
+      },
+      {
+        "line": 4642,
+        "text": "bond LP received: 1555724301217996"
+      },
+      {
+        "line": 4643,
+        "text": "total bond LP including residual joins: 1770544802207521"
+      },
+      {
+        "line": 4644,
+        "text": "remaining ERC20 approval: 9990000000000000000"
+      },
+      {
+        "line": 4645,
+        "text": "remaining Permit2 allowance: 1000000000000000000"
+      },
+      {
+        "line": 4646,
+        "text": "signature nonce bitmap: 128"
+      },
+      {
+        "line": 5241,
+        "text": "successful SUT actions: 25"
+      },
+      {
+        "line": 5242,
+        "text": "exact rejected SUT actions: 10"
+      },
+      {
+        "line": 5243,
+        "text": "zero-valued valid claims (not positive witnesses): 2"
+      },
+      {
+        "line": 5244,
+        "text": "market action groups: 4"
+      },
+      {
+        "line": 5245,
+        "text": "successful owner transitions: 2"
+      },
+      {
+        "line": 5246,
+        "text": "actual later paid bonds: 2"
+      },
+      {
+        "line": 5247,
+        "text": "actual later funded native rewards: 20931"
+      },
+      {
+        "line": 5640,
+        "text": "successful SUT actions: 33"
+      },
+      {
+        "line": 5641,
+        "text": "exact rejected SUT actions: 19"
+      },
+      {
+        "line": 5642,
+        "text": "zero-valued valid claims (not positive witnesses): 5"
+      },
+      {
+        "line": 5643,
+        "text": "market action groups: 1"
+      },
+      {
+        "line": 5644,
+        "text": "successful owner transitions: 2"
+      },
+      {
+        "line": 5645,
+        "text": "actual later paid bonds: 2"
+      },
+      {
+        "line": 5646,
+        "text": "actual later funded native rewards: 20928"
+      },
+      {
+        "line": 6039,
+        "text": "successful SUT actions: 13"
+      },
+      {
+        "line": 6040,
+        "text": "exact rejected SUT actions: 8"
+      },
+      {
+        "line": 6041,
+        "text": "zero-valued valid claims (not positive witnesses): 2"
+      },
+      {
+        "line": 6042,
+        "text": "market action groups: 1"
+      },
+      {
+        "line": 6043,
+        "text": "successful owner transitions: 2"
+      },
+      {
+        "line": 6044,
+        "text": "actual later paid bonds: 0"
+      },
+      {
+        "line": 6045,
+        "text": "actual later funded native rewards: 0"
+      },
+      {
+        "line": 6472,
+        "text": "successful active actions: 31"
+      },
+      {
+        "line": 6473,
+        "text": "exact active rejections: 8"
+      },
+      {
+        "line": 6474,
+        "text": "actual later paid bonds: 4"
+      },
+      {
+        "line": 6475,
+        "text": "actual later funded native rewards: 41859"
+      }
+    ],
+    "log": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/specs-final-01.log",
+      "bytes": 5925231,
+      "sha256": "efd2656c4c6c3350dc6ed1eb1fed441fd605abe66a997d06fc07e33dbf85e609",
+      "mode": 33188
+    }
+  },
+  "forks": {
+    "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants && export PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_PROFILE=fork FOUNDRY_INVARIANT_FAIL_ON_REVERT=true FOUNDRY_INVARIANT_RUNS=32 FOUNDRY_INVARIANT_DEPTH=16 && set -o pipefail && python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv -j 1 --rpc-timeout 120 --compute-units-per-second 10 --fuzz-seed 0x24d2 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/forks-final-01.log'",
+    "exitCode": 0,
+    "completionSource": "Actual matching monitor completion event",
+    "monitor": {
+      "text": "Monitor started with ID: mon_8VZRD1K3ABXH7XDF",
+      "details": {
+        "monitor_id": "mon_8VZRD1K3ABXH7XDF",
+        "bash_id": "bash_4",
+        "monitor": true
+      },
+      "images": [],
+      "hasError": false
+    },
+    "summary": [
+      "Ran 26 test suites in 128.09s (253.82s CPU time): 147 tests passed, 0 failed, 0 skipped (147 total tests)"
+    ],
+    "passCount": 147,
+    "failLines": [],
+    "expandedBuildCommands": [
+      "forge build --use solar contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory.sol contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/test/stubs/SimpleMintableERC20.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol contracts/vaults/detf/common/sy/DETFSYDFPkg.sol contracts/vaults/detf/common/sy/DETFSYFacet.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeInFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeMarkerFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol lib/crane/contracts/protocols/launchpads/ponsFamily/v2/hooks/PonsV2MemeHook.sol lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol lib/crane/contracts/protocols/utils/permit2/BetterPermit2.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/tokens/ERC721/ERC721Facet.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol"
+    ],
+    "expandedTestCommands": [
+      "forge test --use solar -vv -j 1 --rpc-timeout 120 --compute-units-per-second 10 --fuzz-seed 0x24d2 --skip 'contracts/**' --skip 'test/foundry/fork/archive/**' --skip 'test/foundry/fork/base_main/**' --skip 'test/foundry/fork/eth_main/**' --skip 'test/foundry/fork/ethereum_main/**' --skip 'test/foundry/fork/protocols/**' --skip 'test/foundry/fork/robinhood_4663/**' --skip 'test/foundry/fork/robinhood_main/**' --skip 'test/foundry/fork/scripts/**' --skip test/foundry/fork/vaults/BalancerV3_ExactOut_Fork.t.sol --skip test/foundry/fork/vaults/BalancerV3_ExactOut_Regression.t.sol"
+    ],
+    "invariants": [
+      {
+        "line": 3511,
+        "result": "[PASS] invariant_originalCreditCustodyFundingAndStagedRecovery() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 3516,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "advanceTime",
+            "calls": 24,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3518,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "changeOwner",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3520,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "claimPrincipal",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3522,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "claimRewards",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3524,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "claimWeighted",
+            "calls": 29,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3526,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "convert",
+            "calls": 25,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3528,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "donate",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3530,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "failedIssuance",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3532,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "failedRecoveryBatch",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3534,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "missingRecord",
+            "calls": 35,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3536,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "redeemSy",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3538,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "rejectNftControl",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3540,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "surrender",
+            "calls": 21,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3542,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "takeNft",
+            "calls": 23,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3544,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "transferAndReject",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3546,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "transferBond",
+            "calls": 26,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3548,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "unstake",
+            "calls": 38,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      },
+      {
+        "line": 4232,
+        "result": "[PASS] invariant_exactOriginalUnitsCustodyAndFreshEscrow() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 4237,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "advanceTime",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4239,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "changeEarlierRate",
+            "calls": 33,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4241,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "changeOwner",
+            "calls": 39,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4243,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "claimPrincipal",
+            "calls": 31,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4245,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "failedIssuance",
+            "calls": 35,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4247,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "failedRecoveryBatch",
+            "calls": 42,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4249,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "missingRecord",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4251,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "recover",
+            "calls": 31,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4253,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "redeemRecoveredSy",
+            "calls": 32,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4255,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "rejectControls",
+            "calls": 33,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4257,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "rejectExcess",
+            "calls": 34,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4259,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "removedConfiguration",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4261,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "sellEarlier",
+            "calls": 43,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4263,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "surrender",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4265,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "transferBond",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      }
+    ],
+    "metrics": [
+      {
+        "line": 3728,
+        "text": "initial protected DTF donation: 1000000000000000000"
+      },
+      {
+        "line": 3729,
+        "text": "initial spendable protocol DTF residual: 6382886"
+      },
+      {
+        "line": 3730,
+        "text": "successful legacy actions: 23"
+      },
+      {
+        "line": 3731,
+        "text": "exact legacy rejections: 19"
+      },
+      {
+        "line": 3732,
+        "text": "real funded bond callbacks: 2"
+      },
+      {
+        "line": 3733,
+        "text": "late funding rollback witnesses: 4"
+      },
+      {
+        "line": 3734,
+        "text": "whole batch recovery rollbacks: 2"
+      },
+      {
+        "line": 3735,
+        "text": "successful recovery stages: 10"
+      },
+      {
+        "line": 3736,
+        "text": "surrendered principal paid: 0"
+      },
+      {
+        "line": 3737,
+        "text": "surrendered position claim actions: 2"
+      },
+      {
+        "line": 3738,
+        "text": "surrendered bond transfers: 2"
+      },
+      {
+        "line": 3918,
+        "text": "initial protected DTF donation: 1000000000000000000"
+      },
+      {
+        "line": 3919,
+        "text": "initial spendable protocol DTF residual: 6382886"
+      },
+      {
+        "line": 3920,
+        "text": "successful legacy actions: 28"
+      },
+      {
+        "line": 3921,
+        "text": "exact legacy rejections: 22"
+      },
+      {
+        "line": 3922,
+        "text": "real funded bond callbacks: 3"
+      },
+      {
+        "line": 3923,
+        "text": "late funding rollback witnesses: 1"
+      },
+      {
+        "line": 3924,
+        "text": "whole batch recovery rollbacks: 1"
+      },
+      {
+        "line": 3925,
+        "text": "successful recovery stages: 5"
+      },
+      {
+        "line": 3926,
+        "text": "surrendered principal paid: 1292280890"
+      },
+      {
+        "line": 3927,
+        "text": "surrendered position claim actions: 9"
+      },
+      {
+        "line": 3928,
+        "text": "surrendered bond transfers: 6"
+      },
+      {
+        "line": 4108,
+        "text": "initial protected DTF donation: 1000000000000000000"
+      },
+      {
+        "line": 4109,
+        "text": "initial spendable protocol DTF residual: 6382886"
+      },
+      {
+        "line": 4110,
+        "text": "successful legacy actions: 22"
+      },
+      {
+        "line": 4111,
+        "text": "exact legacy rejections: 13"
+      },
+      {
+        "line": 4112,
+        "text": "real funded bond callbacks: 3"
+      },
+      {
+        "line": 4113,
+        "text": "late funding rollback witnesses: 1"
+      },
+      {
+        "line": 4114,
+        "text": "whole batch recovery rollbacks: 1"
+      },
+      {
+        "line": 4115,
+        "text": "successful recovery stages: 9"
+      },
+      {
+        "line": 4116,
+        "text": "surrendered principal paid: 0"
+      },
+      {
+        "line": 4117,
+        "text": "surrendered position claim actions: 1"
+      },
+      {
+        "line": 4118,
+        "text": "surrendered bond transfers: 1"
+      },
+      {
+        "line": 4270,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4272,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4274,
+        "text": "configured eligible original source units: 88423667347055516852883910490677229028"
+      },
+      {
+        "line": 4276,
+        "text": "configured eligible original source units: 4551661356395084205735093308"
+      },
+      {
+        "line": 4278,
+        "text": "configured eligible original source units: 29999999967575"
+      },
+      {
+        "line": 4280,
+        "text": "configured eligible original source units: 9999999900000000000000000000"
+      },
+      {
+        "line": 4282,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4284,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4286,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4460,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4461,
+        "text": "source exact rejected operations: 4"
+      },
+      {
+        "line": 4462,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4463,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4464,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4466,
+        "text": "source successful surrenders: 2"
+      },
+      {
+        "line": 4467,
+        "text": "source exact rejected operations: 5"
+      },
+      {
+        "line": 4468,
+        "text": "source late funded receipt rollbacks: 2"
+      },
+      {
+        "line": 4469,
+        "text": "remaining eligible original units: 5625"
+      },
+      {
+        "line": 4470,
+        "text": "remaining frozen credit: 3624098"
+      },
+      {
+        "line": 4472,
+        "text": "source successful surrenders: 2"
+      },
+      {
+        "line": 4473,
+        "text": "source exact rejected operations: 4"
+      },
+      {
+        "line": 4474,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4475,
+        "text": "remaining eligible original units: 50635073830046997872009171561012763540"
+      },
+      {
+        "line": 4476,
+        "text": "remaining frozen credit: 3689438"
+      },
+      {
+        "line": 4478,
+        "text": "source successful surrenders: 2"
+      },
+      {
+        "line": 4479,
+        "text": "source exact rejected operations: 4"
+      },
+      {
+        "line": 4480,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4481,
+        "text": "remaining eligible original units: 2560861833251447247559438618"
+      },
+      {
+        "line": 4482,
+        "text": "remaining frozen credit: 3624880"
+      },
+      {
+        "line": 4484,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4485,
+        "text": "source exact rejected operations: 5"
+      },
+      {
+        "line": 4486,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4487,
+        "text": "remaining eligible original units: 8437499990881"
+      },
+      {
+        "line": 4488,
+        "text": "remaining frozen credit: 1812049"
+      },
+      {
+        "line": 4490,
+        "text": "source successful surrenders: 4"
+      },
+      {
+        "line": 4491,
+        "text": "source exact rejected operations: 4"
+      },
+      {
+        "line": 4492,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4493,
+        "text": "remaining eligible original units: 1874999981250000000000000000"
+      },
+      {
+        "line": 4494,
+        "text": "remaining frozen credit: 1208033"
+      },
+      {
+        "line": 4496,
+        "text": "source successful surrenders: 2"
+      },
+      {
+        "line": 4497,
+        "text": "source exact rejected operations: 5"
+      },
+      {
+        "line": 4498,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4499,
+        "text": "remaining eligible original units: 5625"
+      },
+      {
+        "line": 4500,
+        "text": "remaining frozen credit: 3624098"
+      },
+      {
+        "line": 4502,
+        "text": "source successful surrenders: 2"
+      },
+      {
+        "line": 4503,
+        "text": "source exact rejected operations: 5"
+      },
+      {
+        "line": 4504,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4505,
+        "text": "remaining eligible original units: 5625"
+      },
+      {
+        "line": 4506,
+        "text": "remaining frozen credit: 3624098"
+      },
+      {
+        "line": 4508,
+        "text": "source successful surrenders: 2"
+      },
+      {
+        "line": 4509,
+        "text": "source exact rejected operations: 5"
+      },
+      {
+        "line": 4510,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4511,
+        "text": "remaining eligible original units: 5625"
+      },
+      {
+        "line": 4512,
+        "text": "remaining frozen credit: 3624098"
+      },
+      {
+        "line": 4513,
+        "text": "canonical competing enrollment rejections: 99"
+      },
+      {
+        "line": 4514,
+        "text": "successful admitted recovery stages: 7"
+      },
+      {
+        "line": 4515,
+        "text": "late whole recovery batch rollbacks: 2"
+      },
+      {
+        "line": 4516,
+        "text": "whole position principal paid: 1610065"
+      },
+      {
+        "line": 4517,
+        "text": "real source and bond transfers: 19"
+      },
+      {
+        "line": 4518,
+        "text": "actual ER source rate increases: 2"
+      },
+      {
+        "line": 4519,
+        "text": "separate NFT-sale external ER shares: 485044501927175493321"
+      },
+      {
+        "line": 4524,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4526,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4528,
+        "text": "configured eligible original source units: 88423667347055516852883910490677229028"
+      },
+      {
+        "line": 4530,
+        "text": "configured eligible original source units: 4551661356395084205735093308"
+      },
+      {
+        "line": 4532,
+        "text": "configured eligible original source units: 29999999967575"
+      },
+      {
+        "line": 4534,
+        "text": "configured eligible original source units: 9999999900000000000000000000"
+      },
+      {
+        "line": 4536,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4538,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4540,
+        "text": "configured eligible original source units: 10000"
+      },
+      {
+        "line": 4714,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4715,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4716,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4717,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4718,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4720,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4721,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4722,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4723,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4724,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4726,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4727,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4728,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4729,
+        "text": "remaining eligible original units: 419661796441813012824673292252566920"
+      },
+      {
+        "line": 4730,
+        "text": "remaining frozen credit: 30578"
+      },
+      {
+        "line": 4732,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4733,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4734,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4735,
+        "text": "remaining eligible original units: 392519172024864887958474"
+      },
+      {
+        "line": 4736,
+        "text": "remaining frozen credit: 556"
+      },
+      {
+        "line": 4738,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4739,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4740,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4741,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4742,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4744,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4745,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4746,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4747,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4748,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4750,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4751,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4752,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4753,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4754,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4756,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4757,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4758,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4759,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4760,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4762,
+        "text": "source successful surrenders: 3"
+      },
+      {
+        "line": 4763,
+        "text": "source exact rejected operations: 6"
+      },
+      {
+        "line": 4764,
+        "text": "source late funded receipt rollbacks: 1"
+      },
+      {
+        "line": 4765,
+        "text": "remaining eligible original units: 0"
+      },
+      {
+        "line": 4766,
+        "text": "remaining frozen credit: 0"
+      },
+      {
+        "line": 4767,
+        "text": "canonical competing enrollment rejections: 99"
+      },
+      {
+        "line": 4768,
+        "text": "successful admitted recovery stages: 6"
+      },
+      {
+        "line": 4769,
+        "text": "late whole recovery batch rollbacks: 1"
+      },
+      {
+        "line": 4770,
+        "text": "whole position principal paid: 1330910174"
+      },
+      {
+        "line": 4771,
+        "text": "real source and bond transfers: 48"
+      },
+      {
+        "line": 4772,
+        "text": "actual ER source rate increases: 1"
+      },
+      {
+        "line": 4773,
+        "text": "separate NFT-sale external ER shares: 485044501927175493321"
+      }
+    ],
+    "log": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/forks-final-01.log",
+      "bytes": 3623982,
+      "sha256": "9ac3081f323f60bade37225e779fe6e1a9c137f436eb230052f6d3b632267227",
+      "mode": 33188
+    }
+  },
+  "ordinary": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants && export PATH=/Users/cyotee/.foundry/bin:$PATH && set -o pipefail && python3 scripts/forge-artifacts.py test --test-root test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol --test-root test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol --test-root test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_FeeCreatorClaim.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_TrustFlags.t.sol -- -vv --fuzz-seed 0x24d3 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/ordinary-final-01.log",
+    "exitCode": 0,
+    "completionSource": "Actual matching monitor completion event",
+    "monitor": {
+      "text": "Monitor started with ID: mon_7VSNHBK3G5QDF9Y0",
+      "details": {
+        "monitor_id": "mon_7VSNHBK3G5QDF9Y0",
+        "bash_id": "bash_5",
+        "monitor": true
+      },
+      "images": [],
+      "hasError": false
+    },
+    "summary": [
+      "Ran 8 test suites in 376.84ms (2.13s CPU time): 58 tests passed, 0 failed, 0 skipped (58 total tests)"
+    ],
+    "passCount": 58,
+    "failLines": [],
+    "expandedBuildCommands": [
+      "forge build --use solar contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory.sol contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol contracts/vaults/detf/common/sy/DETFSYDFPkg.sol contracts/vaults/detf/common/sy/DETFSYFacet.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeInFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeMarkerFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol lib/crane/contracts/protocols/launchpads/ponsFamily/v2/hooks/PonsV2MemeHook.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/tokens/ERC721/ERC721Facet.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol"
+    ],
+    "expandedTestCommands": [
+      "forge test --use solar -vv --fuzz-seed 0x24d3 --skip 'contracts/**' --skip 'test/foundry/spec/constants/**' --skip 'test/foundry/spec/fee/**' --skip 'test/foundry/spec/hooks/**' --skip 'test/foundry/spec/manager/**' --skip 'test/foundry/spec/oracles/**' --skip 'test/foundry/spec/pairtoken-baseline/**' --skip 'test/foundry/spec/permit2/**' --skip 'test/foundry/spec/protocol/**' --skip 'test/foundry/spec/protocols/**' --skip 'test/foundry/spec/registries/**' --skip 'test/foundry/spec/routers/**' --skip 'test/foundry/spec/saf/**' --skip 'test/foundry/spec/scripts/**' --skip 'test/foundry/spec/test/**' --skip 'test/foundry/spec/utils/**' --skip test/foundry/spec/vaults/StandardExchangeOut_Refund.t.sol --skip 'test/foundry/spec/vaults/basic/**' --skip test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol --skip test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol --skip 'test/foundry/spec/vaults/detf/common/bondNft/**' --skip test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedDecimalBooks.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Surface.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol --skip test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol --skip test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol --skip test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol --skip test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol --skip test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol --skip test/foundry/spec/vaults/detf/common/core/DETFThresholdPolicy.t.sol --skip 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/**' --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/**' --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_AdversarialOpenBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25OpenBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaim.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimPolicyBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15OpenBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15PolicyBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Bond.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Burn.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Claim.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimOpenBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Donate.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Dust.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_HighestPriceExpansion.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesOpenBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Mint.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OpeningPrice.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OpeningPriceBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OpeningPriceLayerBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_A0Crops.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_NestedSe.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Reentrancy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_TrustFlags.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_CloseD25.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_FeeCreatorClaim.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_RedeemD15.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Claim.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_IoTables.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_OpeningPrice.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_OwnerOnlyLiquidity.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_ReserveDonation.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OriginalPrincipal.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OwnerOnlyLiquidity.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OwnerOnlyLiquidityBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OwnerOnlyLiquidityOpenBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_PolicyBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_PolicyLayerBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_A0Crops.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_NestedSe.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Reentrancy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_TrustFlags.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_CloseD25.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_FeeCreatorClaim.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Claim.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_IoTables.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_OpeningPrice.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_OwnerOnlyLiquidity.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_ReserveDonation.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonation.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11PolicySuite.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_A0Crops.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_NestedSe.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Reentrancy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_CloseD25.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_RedeemD15.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Claim.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_IoTables.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_OpeningPrice.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_OwnerOnlyLiquidity.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_ReserveDonation.t.sol --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/**' --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_MorphoBlueSe.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_MorphoBlueSe_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_MorphoBlueSe_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_PonsV1Se.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_PonsV1Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_PonsV1Se_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsV1Se.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsV1Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsV1Se_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ3Se.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ3Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ3Se_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoBlueSe.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoBlueSe_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoBlueSe_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsV1Se.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsV1Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsV1Se_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ3Se.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ3Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ3Se_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV1Se.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV1Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV1Se_ProductLaw.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se_Policy.t.sol --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se_ProductLaw.t.sol --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/**' --skip 'test/foundry/spec/vaults/standard-exchange/**' --skip 'test/foundry/spec/vaults/standard/**'"
+    ],
+    "invariants": [],
+    "metrics": [],
+    "log": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/ordinary-final-01.log",
+      "bytes": 325269,
+      "sha256": "22503c95cfbfc31657d2fd426c32dbef8ff4f15ee742cea19e7efbb5d3dd6196",
+      "mode": 33188
+    }
+  }
+}

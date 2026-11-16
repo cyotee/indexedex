@@ -1,0 +1,51 @@
+{
+  "manual": {
+    "cleanup": [
+      {
+        "ownedPartialExportOnly": true,
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/negative/partial-root-created",
+        "removed": true
+      },
+      {
+        "ownedPartialExportOnly": true,
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/negative/partial-data-written",
+        "removed": true
+      },
+      {
+        "ownedPartialExportOnly": true,
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/resume-input.json",
+        "removed": true
+      }
+    ],
+    "liveProcesses": [],
+    "nativeCopies": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/native.unavailable",
+    "originalArchive": "read only; unchanged",
+    "ports": [],
+    "retainedEvidence": [
+      "native.unavailable",
+      "exported",
+      "relocated-a",
+      "relocated-b",
+      "negative"
+    ]
+  },
+  "temporaryBeforeRandom": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "temporaryAfterRandom": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "newFixtureRoots": [],
+  "observedDuringSuite": [
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-uX77Ki",
+      "birthtime": "2026-11-15T14:29:52.041Z",
+      "stillListed": false
+    }
+  ],
+  "monitors": "All 12 command-monitor sessions exited; every launched command has a result.json. No persistent monitors or services were started.",
+  "untouched": "Unknown pre-existing temporary directories and all original archives remain untouched.",
+  "sourceMutationRestored": true
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"CREATE2_FACTORY","inputs":[],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"}],"id":1782}

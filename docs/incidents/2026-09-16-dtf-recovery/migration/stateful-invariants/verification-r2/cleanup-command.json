@@ -1,0 +1,13 @@
+{
+  "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants && export GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 && set -o pipefail && { printf 'HEAD\\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git rev-parse HEAD; printf 'BRANCH\\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git branch --show-current; printf 'TRACKED_DIFF\\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --quiet --ignore-submodules=all || exit 1; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --cached --quiet --ignore-submodules=all || exit 1; printf 'STATUS\\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git status --porcelain=v1 --untracked-files=all --ignore-submodules=all; printf 'FORGE_PROCESSES\\n'; ps -axo pid,ppid,comm | awk '$3 ~ /(^|\\/)(forge|solar|anvil)$/ {print}'; printf 'PORT_18574\\n'; if lsof -nP -iTCP:18574 -sTCP:LISTEN; then exit 1; fi; printf 'CLEANUP_COMPLETE\\n'; } 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/verification-r2/cleanup-final.log",
+  "monitor": {
+    "text": "Monitor started with ID: mon_PP2ER4QSEJF4A3E8",
+    "details": {
+      "monitor_id": "mon_PP2ER4QSEJF4A3E8",
+      "bash_id": "bash_7",
+      "monitor": true
+    },
+    "images": [],
+    "hasError": false
+  }
+}

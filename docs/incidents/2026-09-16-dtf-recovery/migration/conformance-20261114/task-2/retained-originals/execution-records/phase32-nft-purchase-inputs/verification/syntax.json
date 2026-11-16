@@ -1,0 +1,44 @@
+[
+  {
+    "name": "intake.mjs",
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/intake.mjs"
+    ],
+    "pid": 80573,
+    "startedAt": "2026-11-13T11:27:33.145Z",
+    "finishedAt": "2026-11-13T11:27:33.193Z",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "routing.mjs",
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/routing.mjs"
+    ],
+    "pid": 80574,
+    "startedAt": "2026-11-13T11:27:33.145Z",
+    "finishedAt": "2026-11-13T11:27:33.193Z",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "verify.mjs",
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/verify.mjs"
+    ],
+    "pid": 80575,
+    "startedAt": "2026-11-13T11:27:33.145Z",
+    "finishedAt": "2026-11-13T11:27:33.193Z",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

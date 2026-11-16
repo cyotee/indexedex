@@ -1,0 +1,27 @@
+{
+  "validatedAt": "2026-11-15T09:11:09.198Z",
+  "originalIndexedEvidenceFiles": 63,
+  "originalEvidencePreserved": true,
+  "boundSourceAndVerifierFiles": 8,
+  "boundSourcesPreserved": true,
+  "originalClaimPreservedUntilFinalReplacement": true,
+  "archive": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-13-done-attempt-1.json",
+    "sha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd",
+    "bytes": 8737,
+    "identical": true
+  },
+  "jsonFilesParsed": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/approved-bytecode-investigation.json"
+  ],
+  "expectedPinFromUnchangedTestImport": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+  "preparedClaimExpectedPin": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+  "preparedClaimCompleted": false,
+  "preparedClaimStatus": "incomplete",
+  "productFixed": false,
+  "operatorExitStill": 1,
+  "strictHistoricalRawLogRequirementMet": false,
+  "preservationFailures": [],
+  "qualification": "Local documentary validation only. No build/test execution or new process stdout. Product sources, assertion, pin, artifact, 63 original evidence files and verifier records preserved; the requested replacement claim is the only existing file to be changed."
+}

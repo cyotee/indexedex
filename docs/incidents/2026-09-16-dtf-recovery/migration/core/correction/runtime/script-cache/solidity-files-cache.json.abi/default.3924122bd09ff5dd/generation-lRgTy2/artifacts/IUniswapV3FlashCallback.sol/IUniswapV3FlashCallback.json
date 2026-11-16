@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"uniswapV3FlashCallback","inputs":[{"name":"fee0","type":"uint256","internalType":"uint256"},{"name":"fee1","type":"uint256","internalType":"uint256"},{"name":"data","type":"bytes","internalType":"bytes"}],"outputs":[],"stateMutability":"nonpayable"}],"id":2254}

@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-13",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+  "localNode": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts && if lsof -nP -iTCP:18561 -sTCP:LISTEN >/dev/null 2>&1; then printf \"OWNED_PORT_OCCUPIED\\n\"; exit 1; fi; /bin/zsh -lc 'test -n \"$ALCHEMY_KEY\" || { printf \"ARCHIVE_CREDENTIAL_MISSING\\n\"; exit 1; }; exec /Users/cyotee/.foundry/bin/anvil --host 127.0.0.1 --port 18561 --chain-id 4663 --fork-url \"https://robinhood-mainnet.g.alchemy.com/v2/$ALCHEMY_KEY\" --fork-block-number 108944663 --gas-limit 100000000 --disable-min-priority-fee --balance 1000000 --no-mining --silent'",
+    "port": 18561,
+    "pin": 108944663,
+    "cleanupCommand": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts && if lsof -nP -iTCP:18561 -sTCP:LISTEN; then printf \"OWNED_PORT_STILL_OPEN\\n\"; exit 1; else printf \"OWNED_PORT_CLOSED\\n\"; fi && test -d out && test -d cache_forge && printf \"WARM_ARTIFACTS_AND_CACHE_PRESERVED\\n\" && test -L lib/crane/lib/forge-std/src && printf \"FORGE_STD_LINK_LEFT_FOR_PARENT\\n\" && GIT_MASTER=1 git --no-pager diff --check && GIT_MASTER=1 git rev-parse HEAD",
+    "cleanupExit": 0,
+    "cleanupOutput": "status: completed exit_code: 0\nOWNED_PORT_CLOSED\nWARM_ARTIFACTS_AND_CACHE_PRESERVED\nFORGE_STD_LINK_LEFT_FOR_PARENT\n1694e68a4bd66dd67d3b5e3f145f1da23074ff48",
+    "termination": "kill_bash returned EPERM removing terminal metadata; node monitor subsequently delivered killed exit 1; independent listener check confirms closed"
+  },
+  "commands": [
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+      "exit": 0,
+      "result": "199 passed; initial old import failure preserved in spec-results.json"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts && /bin/zsh -lc 'export PATH=/Users/cyotee/.foundry/bin:$PATH; export FOUNDRY_PROFILE=fork; python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv'",
+      "exit": 1,
+      "result": "164 passed, 1 known pre-existing failure"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts && /bin/zsh -lc 'export PATH=/Users/cyotee/.foundry/bin:$PATH; export FOUNDRY_PROFILE=fork; python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol -- --match-test test_actualRecoveredDtfDonationProtectsUnrelatedInventoryAndBacking -j 1 --rpc-timeout 120 -vvv'",
+      "exit": 1,
+      "result": "Identical unchanged-test failure on pre-change package"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py build contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --consumer scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasResumedQA.s.sol",
+      "exit": 0
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts && PATH=/Users/cyotee/.foundry/bin:$PATH forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasResumedQA.s.sol:MigrationDeploymentGasResumedQA --sig \"run()\" --rpc-url http://127.0.0.1:18561 --sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --unlocked -vv --legacy --gas-price 2000000000",
+      "exit": 0
+    },
+    {
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vv",
+      "exit": 0,
+      "result": "13 passed after exact restoration"
+    }
+  ],
+  "replay": {
+    "generatedTransactionFile": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/broadcast/MigrationDeploymentGasResumedQA.s.sol/4663/dry-run/run-latest.json",
+    "rpc": "async(method,params=[])=>{var response=await fetch('http://127.0.0.1:18561',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:++rpcId,method,params}),signal:AbortSignal.timeout(120000)});var json=await response.json();if(json.error)throw new Error(JSON.stringify({method,error:json.error}));return json.result;}",
+    "sendCapped": "async(tx,label)=>{var envTx={from:tx.from,to:tx.to,data:tx.input??tx.data,value:tx.value??'0x0',gas:'0x1e84800',gasPrice:'0x77359400'};if(!envTx.to)delete envTx.to;if(tx.nonce!==undefined)envTx.nonce=tx.nonce;var simulation;try{simulation=await rpc('eth_call',[envTx,'latest']);}catch(e){print({label,simulationFailure:String(e)});throw e;}var hash=await rpc('eth_sendTransaction',[envTx]);await rpc('evm_mine',[]);var receipt=await rpc('eth_getTransactionReceipt',[hash]);if(!receipt)throw new Error('Explicit mining did not produce receipt '+hash);var actual=await rpc('eth_getTransactionByHash',[hash]);var canonical=await rpc('eth_getBlockByHash',[receipt.blockHash,false]);if(!canonical?.transactions.includes(hash)||receipt.blockNumber!==canonical.number||BigInt(actual.gas)>32000000n)throw new Error('Noncanonical or oversized receipt '+hash);var record={label,simulationResult:simulation,transaction:actual,receipt};mined.push(record);if(receipt.status!=='0x1')throw new Error('Capped transaction failed '+hash);return record;}",
+    "sequence": "Send generated transactions 0..224; inspectPrepared(argsFirst); send 225; send 226..240; inspectPrepared(argsSecond); send 241. Every send invokes bounded eth_call, eth_sendTransaction with 32000000 gas, evm_mine, and canonical receipt verification.",
+    "defaultGas": "0x1e84800",
+    "gasPrice": "0x77359400",
+    "simulationOnlyHistoryFailures": [
+      {
+        "step": "enclosing script aggregate gas100000000",
+        "result": "OutOfGas while deploying a V3 query facet; not an actual 32-million transaction"
+      },
+      {
+        "step": "default EIP1559 fee-history discovery",
+        "result": "Historical state unavailable; documented local explicit legacy fee policy used instead"
+      }
+    ]
+  },
+  "preservedOriginalGasTests": true,
+  "impersonations": [
+    {
+      "address": "0x1111111111111111111111111111111111111111",
+      "started": true,
+      "stopped": true
+    },
+    {
+      "address": "0x1111111111111111111111111111111111111111",
+      "started": true,
+      "stopped": true
+    },
+    {
+      "address": "0x2222222222222222222222222222222222222222",
+      "started": true,
+      "stopped": true
+    },
+    {
+      "address": "0x2222222222222222222222222222222222222222",
+      "started": true,
+      "stopped": true
+    },
+    {
+      "address": "0x2222222222222222222222222222222222222222",
+      "started": true,
+      "stopped": true
+    },
+    {
+      "address": "0x1111111111111111111111111111111111111111",
+      "started": true,
+      "stopped": true
+    }
+  ],
+  "sourceAndArtifactRestore": "exact bytes verified",
+  "forgeStdLink": {
+    "path": "lib/crane/lib/forge-std/src",
+    "target": "/Users/cyotee/Projects/indexedex/lib/crane/lib/forge-std/src",
+    "leftForParentCleanup": true
+  },
+  "jsonDiagnostics": "Biome unavailable; no installation",
+  "publicOperations": false,
+  "commits": false,
+  "otherPort18579Untouched": true
+}

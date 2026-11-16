@@ -1,0 +1,202 @@
+{
+  "completed": true,
+  "checks": 7,
+  "commands": [
+    {
+      "label": "negative-inventory",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination"
+      ],
+      "code": 0,
+      "expected": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/negative-inventory.log"
+    },
+    {
+      "label": "negative-delivery",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/delivery"
+      ],
+      "code": 1,
+      "expected": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/negative-delivery.log"
+    },
+    {
+      "label": "malformed-input",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/malformed.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/malformed-output"
+      ],
+      "code": 1,
+      "expected": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/malformed-input.log"
+    },
+    {
+      "label": "symlink-root",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/symlink-output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/outward-link",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination"
+      ],
+      "code": 1,
+      "expected": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/symlink-root.log"
+    },
+    {
+      "label": "fixture-inventory",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/destination"
+      ],
+      "code": 0,
+      "expected": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/fixture-inventory.log"
+    },
+    {
+      "label": "fixture-delivery",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/delivery"
+      ],
+      "code": 0,
+      "expected": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/fixture-delivery.log"
+    },
+    {
+      "label": "stale-source",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/stale-delivery"
+      ],
+      "code": 1,
+      "expected": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/stale-source.log"
+    },
+    {
+      "label": "eof-inventory",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/eof-inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/destination"
+      ],
+      "code": 0,
+      "expected": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/eof-inventory.log"
+    },
+    {
+      "label": "eof-delivery",
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/eof-inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/eof-delivery"
+      ],
+      "code": 1,
+      "expected": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/eof-delivery.log"
+    }
+  ],
+  "before": {
+    "source": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/different.bin",
+        "inode": 21542713,
+        "mtime": 1794704805953.69,
+        "size": 9,
+        "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/missing.bin",
+        "inode": 21542712,
+        "mtime": 1794704805953.5403,
+        "size": 5,
+        "sha256": "20d848c1b63d6f67881bfb88e57343e4809668f99b23550ca846dbfacc23b5ab"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/outward-link",
+        "inode": 21542716,
+        "mtime": 1794704805954.0562,
+        "size": 178,
+        "sha256": "4ec23fe5aa167366cc0f340e682fca3abb3981e978cc9a1e83ccab21902b1edd"
+      }
+    ],
+    "destination": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/different.bin",
+        "inode": 21542714,
+        "mtime": 1794704805953.894,
+        "size": 9,
+        "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f"
+      }
+    ]
+  },
+  "after": {
+    "source": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/different.bin",
+        "inode": 21542713,
+        "mtime": 1794704805953.69,
+        "size": 9,
+        "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/missing.bin",
+        "inode": 21542712,
+        "mtime": 1794704805953.5403,
+        "size": 5,
+        "sha256": "20d848c1b63d6f67881bfb88e57343e4809668f99b23550ca846dbfacc23b5ab"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/outward-link",
+        "inode": 21542716,
+        "mtime": 1794704805954.0562,
+        "size": 178,
+        "sha256": "4ec23fe5aa167366cc0f340e682fca3abb3981e978cc9a1e83ccab21902b1edd"
+      }
+    ],
+    "destination": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/different.bin",
+        "inode": 21542714,
+        "mtime": 1794704805953.894,
+        "size": 9,
+        "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f"
+      }
+    ]
+  },
+  "negativeFailures": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/different.bin: different retained bytes/type; unresolved divergence",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/missing.bin: missing task-owned entry",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/outward-link: unresolved symlink; no traversal or implicit exclusion"
+  ],
+  "fixtureDisposition": "Task-owned fixture bytes retained for review. The outward link was never dereferenced; its exact text is retained at outward-link.link-text.",
+  "cleanup": "Both fixture trees were unchanged across verification, as before/after snapshots prove. After checks, the owned outward symlink was archived as link text and unlinked. Disposable command caches are removed separately."
+}

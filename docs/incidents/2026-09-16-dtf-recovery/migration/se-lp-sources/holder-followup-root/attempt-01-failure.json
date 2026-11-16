@@ -1,0 +1,7 @@
+{
+  "attempt": 1,
+  "exitCode": 127,
+  "error": "/Users/cyotee/.bun/bin/bun: No such file or directory",
+  "acceptedResults": false,
+  "correction": "Use observed installed /opt/homebrew/bin/bun; preserve first log; same read-only queries/provider/pin, no tests or writes replayed."
+}

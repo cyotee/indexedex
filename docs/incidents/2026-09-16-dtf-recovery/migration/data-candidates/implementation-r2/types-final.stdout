@@ -1,0 +1,8 @@
+docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/prove.ts(27,9): error TS7022: 'current' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/prove.ts(34,9): error TS7022: 'actual' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/prove.ts(41,9): error TS7022: 'raw' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/prove.ts(59,9): error TS7022: 'original' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/prove.ts(69,26): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/prove.ts(95,41): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.

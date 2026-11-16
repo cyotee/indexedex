@@ -1,0 +1,65 @@
+{
+  "capturedAt": "2026-11-12T06:06:08.169149+00:00",
+  "head": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+  "branch": "work/dtf-migration-phase-17-weighted-receipt",
+  "parentRequired": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+  "core.autocrlf": "",
+  "autocrlfExit": 1,
+  "core.whitespace": "",
+  "whitespaceExit": 1,
+  "core.filemode": "true",
+  "links": [
+    {
+      "path": "lib/crane",
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "inode": 19240329,
+      "mode": "0o755",
+      "size": 42
+    },
+    {
+      "path": "node_modules",
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "inode": 19240330,
+      "mode": "0o755",
+      "size": 45
+    }
+  ],
+  "archive": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+    "size": 1047506,
+    "mode": "0o644",
+    "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7"
+  },
+  "inventories": {
+    "docs-incidents.jsonl": {
+      "entries": 1561,
+      "bytes": 465949,
+      "sha256": "ca8f3c6e3486279d045c1d63723aa654f4d4acbc5074d5df521524c55f40bbce"
+    },
+    "docs-incidents-perms.jsonl": {
+      "entries": 1750,
+      "bytes": 478886,
+      "sha256": "b46be8e2a0de767b2000b3573d8789d14244930ea65b39c22c75e0e4504f1522"
+    },
+    "out.jsonl": {
+      "entries": 7337,
+      "bytes": 1701537,
+      "sha256": "644ac1053a1dafa8f35323ea8778068cf3e190d80db7e61c7a1371c35d01aebe"
+    },
+    "cache_forge.jsonl": {
+      "entries": 599,
+      "bytes": 165258,
+      "sha256": "fac4556af9b93fad665070e677840c1802c5e89998fc12b078bf6c0d3d8f880f"
+    }
+  },
+  "specialIndexFlags": [],
+  "indexCount": 18,
+  "foreignIndexCount": 17,
+  "showRefBytes": 5416,
+  "showRefSha256": "c2ea68c17d7b3b1c9520e37cc267e034847dbd8542816f714487f8945cc6cde1",
+  "statusBytes": 2831,
+  "statusSha256": "1588ac2e489e15bbd7d2930bf9f6fecd50611d504e9bf1d4825930efad0384c8",
+  "exclusions": "Walks completed before any weighted-receipt/commit file existed. Files written under commit/ afterward are excluded evidence and are not preservation-set members. No build, deletion, chmod, cache write, or runtime rerun is part of this recipe.",
+  "thisIndexSha256": "c97896e1ec5399cb1654f31b8707ad3d90433fca0112a977cd5d35cacadd4c83",
+  "serializationCorrection": "Attempt 01 appended the two characters backslash and n, and parsed worktree blocks incorrectly. The same walk records were re-serialized to recipe JSONL before staging. Failed files are retained under failed-serialization-attempt-01. Indexes were recaptured before staging. No source, out, cache, or sealed evidence file was rewritten."
+}

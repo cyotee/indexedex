@@ -1,0 +1,34 @@
+{
+  "status": "pass",
+  "wireRows": 574,
+  "wireErrors": 0,
+  "transactions": 11,
+  "realSignatures": 9,
+  "impersonated": 2,
+  "claimObservationDivisions": 5,
+  "canonicalReceiptTraceComparisons": "all complete objects equal original wire results",
+  "signatureFields": "hash signer chain nonce to data value gas gasPrice",
+  "logIdentities": "all nested log transaction/block identities match receipt",
+  "rpcMethods": {
+    "anvil_impersonateAccount": 1,
+    "anvil_stopImpersonatingAccount": 1,
+    "debug_traceTransaction": 11,
+    "eth_blockNumber": 21,
+    "eth_call": 442,
+    "eth_chainId": 1,
+    "eth_getBlockByNumber": 1,
+    "eth_getCode": 43,
+    "eth_getTransactionByHash": 11,
+    "eth_getTransactionCount": 9,
+    "eth_getTransactionReceipt": 11,
+    "eth_sendRawTransaction": 9,
+    "eth_sendTransaction": 2,
+    "evm_mine": 11
+  },
+  "preservationFiles": 17,
+  "limits": [
+    "five-point explanatory vault quotient fit is not byte-identical legacy source proof",
+    "no actual funded Migration quote or new funding rollback",
+    "no operational historical original allocation"
+  ]
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "path": "bundle.ts",
+    "result": {
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle.ts",
+        "severity": "error",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      },
+      "images": [],
+      "hasError": false
+    }
+  },
+  {
+    "path": "bundle-files.ts",
+    "result": {
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle-files.ts",
+        "severity": "error",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      },
+      "images": [],
+      "hasError": false
+    }
+  },
+  {
+    "path": "bundle-materialize.ts",
+    "result": {
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "severity": "error",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      },
+      "images": [],
+      "hasError": false
+    }
+  },
+  {
+    "path": "bundle.test.ts",
+    "result": {
+      "text": "error[typescript] (7022) at 75:14: 'source' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle.test.ts",
+        "severity": "error",
+        "mode": "file",
+        "diagnostics": [
+          {
+            "file": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle.test.ts",
+            "diagnostic": {
+              "range": {
+                "start": {
+                  "line": 74,
+                  "character": 14
+                },
+                "end": {
+                  "line": 74,
+                  "character": 20
+                }
+              },
+              "message": "'source' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.",
+              "severity": 1,
+              "code": 7022,
+              "source": "typescript"
+            }
+          }
+        ],
+        "totalDiagnostics": 1,
+        "truncated": false
+      },
+      "images": [],
+      "hasError": false
+    }
+  }
+]

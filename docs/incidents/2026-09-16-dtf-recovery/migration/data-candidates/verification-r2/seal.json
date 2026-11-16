@@ -1,0 +1,57 @@
+{
+  "version": "dtf-phase27-independent-r2-final-seal-v1",
+  "verdict": "confirmed",
+  "scope": "Complete authenticated offline non-issuable review-candidate increment",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 17767,
+    "sha256": "34d3c438937d1dc0f1c42bc861bb3331deeabd36480e40a84458a535819ff892"
+  },
+  "report": {
+    "path": "report.md",
+    "bytes": 25267,
+    "sha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5"
+  },
+  "sourceManifest": {
+    "path": "source-manifest.json",
+    "bytes": 12911,
+    "sha256": "f3f8f2df3a7eb9ec3f67ad6b3b72490eb8a8b3787e4c6ff9baf29d02ef8dc13c"
+  },
+  "cleanup": {
+    "path": "cleanup.json",
+    "bytes": 1432,
+    "sha256": "ffece87bacdfed8505903b1be0b3eed999c86814176737d54654916c0bc15b9d"
+  },
+  "canonicalCandidate": {
+    "path": "full-a/candidates.json",
+    "bytes": 16570240,
+    "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+  },
+  "completeRawDeclarations": 36,
+  "uniqueDeclaredPaths": 27,
+  "independentlyMatchedRawRows": 18044,
+  "matchedQuantityFields": 39507,
+  "weightedPurchases": 43,
+  "earlierCpPurchases": 16,
+  "unresolvedRecords": 1240,
+  "strictTypesExit": 0,
+  "operatorTests": {
+    "pass": 128,
+    "fail": 0,
+    "files": 13,
+    "completeInvocations": 1
+  },
+  "repeatAndRelocatedBytesIdentical": true,
+  "inputsAndProducerSourceUnchanged": true,
+  "primaryAnnotatedTreeRejected": true,
+  "operationalLoadersRejectCandidate": true,
+  "cleanupComplete": true,
+  "pendingOwnedOperations": 0,
+  "sourceFixesByVerifier": false,
+  "fullTask9": "open",
+  "migrationImplementationComplete": false,
+  "candidatesApproved": false,
+  "operationalAuthorization": false,
+  "p1Recovered": false,
+  "writtenLast": true
+}

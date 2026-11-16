@@ -1,0 +1,336 @@
+{
+  "version": 1,
+  "archiveRows": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "before": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "after": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "before": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "after": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "before": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+      "after": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "before": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+      "after": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "before": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "after": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.sources.json",
+      "before": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "after": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json",
+      "before": "3cedd67167cb74af689f26647f16bddc7466f5aec52ea853b1484c5e42ea27b4",
+      "after": "3cedd67167cb74af689f26647f16bddc7466f5aec52ea853b1484c5e42ea27b4",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/source-evidence.json",
+      "before": "b95b643ef079ac8f53d8ab2679fdf9693a27ed7a9a2a9605a7e8fd1436a20e9c",
+      "after": "b95b643ef079ac8f53d8ab2679fdf9693a27ed7a9a2a9605a7e8fd1436a20e9c",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/run-04/identity.json",
+      "before": "009bd89749084cfbdd66b5e1589f952f6361831227b49c6790d5645e9e126be7",
+      "after": "009bd89749084cfbdd66b5e1589f952f6361831227b49c6790d5645e9e126be7",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/identity.json",
+      "before": "84fb5f922b81b661c02d16104a938bd640817aec25a9beb4b27d20bcac6d57bc",
+      "after": "84fb5f922b81b661c02d16104a938bd640817aec25a9beb4b27d20bcac6d57bc",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/source-identities.json",
+      "before": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "after": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/observations.json",
+      "before": "a864d40a72717eca3ddd1a4601b75a613852b18c935e7cd1b36112f433dc934d",
+      "after": "a864d40a72717eca3ddd1a4601b75a613852b18c935e7cd1b36112f433dc934d",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/transactions.json",
+      "before": "8311e6212e77704e2494424fe4c74e3189e98326a944be509225798ed97156c6",
+      "after": "8311e6212e77704e2494424fe4c74e3189e98326a944be509225798ed97156c6",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/runtime.json",
+      "before": "15b986be06a244cd0c545cb31077a640c952ccbb64ec17ae215c200383ca5908",
+      "after": "15b986be06a244cd0c545cb31077a640c952ccbb64ec17ae215c200383ca5908",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/source-evidence.json",
+      "before": "ef728f8b05033c5d89f72ee937b0c92695ac99a7009f00925092100dc4900da4",
+      "after": "ef728f8b05033c5d89f72ee937b0c92695ac99a7009f00925092100dc4900da4",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-authentication.json",
+      "before": "750ffbb12fa39d498367849479f5330ce5a8c4d54ffa911491e77edab13f53f0",
+      "after": "750ffbb12fa39d498367849479f5330ce5a8c4d54ffa911491e77edab13f53f0",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+      "before": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+      "after": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/runtime-index.json",
+      "before": "5e8afe496662f416db3763cac0bc2177fb43fe7cbb4a704c1c2cc3bf9126c629",
+      "after": "5e8afe496662f416db3763cac0bc2177fb43fe7cbb4a704c1c2cc3bf9126c629",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/receipt-audit.json",
+      "before": "b16b0c71237baf82b17f62d4b6bc818407c634de3b9f4e9ed0eaeceba13b4675",
+      "after": "b16b0c71237baf82b17f62d4b6bc818407c634de3b9f4e9ed0eaeceba13b4675",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/reviewed-summary.json",
+      "before": "6b53fe09efb3ac2c58d1d61155f7baf4b4074f31bf3a0fae486f2fd287fd6ba8",
+      "after": "6b53fe09efb3ac2c58d1d61155f7baf4b4074f31bf3a0fae486f2fd287fd6ba8",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x81fb72511016b42437fe1ac2d5bdb0ba82f14a35.json",
+      "before": "4d81f7bb447b176e85081631fa2678ccf7849bd5da0c69d0af8533e80542e78f",
+      "after": "4d81f7bb447b176e85081631fa2678ccf7849bd5da0c69d0af8533e80542e78f",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x1b7a7bc9044642c4e42e64f805f6400d75ad2c16.json",
+      "before": "834f55f3211fcf78b42e04517117d2111599f213bd9c546cfe17b1020f44797e",
+      "after": "834f55f3211fcf78b42e04517117d2111599f213bd9c546cfe17b1020f44797e",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669.json",
+      "before": "d0370b49a72a86930b810b6137182d2415397ead53b04d619ec6ae08709f08fe",
+      "after": "d0370b49a72a86930b810b6137182d2415397ead53b04d619ec6ae08709f08fe",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/results.json",
+      "before": "2bf04e3612c99c20f0d75bb42e6a88dfe4fd88d37082bb6b3b9a36ef776c3197",
+      "after": "2bf04e3612c99c20f0d75bb42e6a88dfe4fd88d37082bb6b3b9a36ef776c3197",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+      "before": "52308ad9e4587a7a86f3e6259373ac2eb7c8b1b19eac01def209340da6d010aa",
+      "after": "52308ad9e4587a7a86f3e6259373ac2eb7c8b1b19eac01def209340da6d010aa",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/environment.json",
+      "before": "c9e6803ddc3eb3b6d30719015e099097df319ace2a2e447cbb0fddc35b19ec8d",
+      "after": "c9e6803ddc3eb3b6d30719015e099097df319ace2a2e447cbb0fddc35b19ec8d",
+      "unchanged": true
+    }
+  ],
+  "archiveRowsUnchanged": true,
+  "baselineIndexes": [
+    {
+      "source": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "preserved": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-source-manifest.json",
+      "expected": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc",
+      "actual": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc",
+      "byteIdentical": true
+    },
+    {
+      "source": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "preserved": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-source-route-matrix.md",
+      "expected": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4",
+      "actual": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4",
+      "byteIdentical": true
+    },
+    {
+      "source": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "preserved": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-recovery-route-disposition.md",
+      "expected": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4",
+      "actual": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4",
+      "byteIdentical": true
+    }
+  ],
+  "baselineIndexesByteIdentical": true,
+  "preliminaryClaim": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/initial-blocked-claim.json",
+    "bytes": 6688,
+    "sha256": "6f2380d5ba28ea6fe7175fb1ee2ef371a44f3ea9d19f0807303596bdfab9c380"
+  },
+  "evidenceAncestorChecks": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.sources.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/source-evidence.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/run-04/identity.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/identity.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/source-identities.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/observations.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/transactions.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/runtime.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/source-evidence.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-authentication.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/runtime-index.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/receipt-audit.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/reviewed-summary.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x81fb72511016b42437fe1ac2d5bdb0ba82f14a35.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x1b7a7bc9044642c4e42e64f805f6400d75ad2c16.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/results.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/environment.json",
+      "regularFile": true,
+      "noSymlinkAncestors": true
+    }
+  ],
+  "originalSourceTest": {
+    "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+    "bytes": 13761,
+    "sha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac"
+  },
+  "currentSourceTest": {
+    "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+    "bytes": 14150,
+    "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+  },
+  "testChange": "Five added state assertions/observations in the existing invalid-ID case; no test removed, skipped or weakened.",
+  "productionSourceChange": "None; current git production diff is empty. Historical direct source hashes remain bound; no broad transitive source audit is claimed.",
+  "sharedHomeQualification": "Initial test and read attempts set TMPDIR/XDG_CACHE_HOME/FOUNDRY_HOME but did not explicitly override HOME. Their HOME-derived cache isolation is not claimed. The accepted final source run explicitly overrides HOME and used owned HOME/.foundry. No shared cache was deleted or copied back."
+}

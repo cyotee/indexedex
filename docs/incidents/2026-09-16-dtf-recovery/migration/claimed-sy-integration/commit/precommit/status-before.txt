@@ -1,0 +1,29 @@
+ M docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+ M scripts/recovery/dtf-migration/cli.ts
+ M scripts/recovery/dtf-migration/payloads.ts
+ M scripts/recovery/dtf-migration/preparation.fixture.ts
+ M scripts/recovery/dtf-migration/provenance.ts
+ M scripts/recovery/dtf-migration/quotes.ts
+ M scripts/recovery/dtf-migration/rehearsal-admission.ts
+ M scripts/recovery/dtf-migration/rehearsal-chain.ts
+ M scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
+ M scripts/recovery/dtf-migration/rehearsal-data.ts
+ M scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts
+ M scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
+ M scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
+ M scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
+ M scripts/recovery/dtf-migration/rehearsal-owner-bond.ts
+ M scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts
+ M scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+ M scripts/recovery/dtf-migration/rehearse.ts
+ M scripts/recovery/dtf-migration/schema.ts
+ M scripts/recovery/dtf-migration/weighted-sy.test.ts
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol
+?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/
+?? scripts/recovery/dtf-migration/claimed-sy.ts
+?? scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts
+?? scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts

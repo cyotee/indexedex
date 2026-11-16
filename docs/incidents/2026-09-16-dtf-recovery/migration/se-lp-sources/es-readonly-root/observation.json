@@ -1,0 +1,9 @@
+{
+  "scope": "Additional read-only acquisition observation, not a funded/mined transaction or positive fixture.",
+  "command": "export PATH=/Users/cyotee/.foundry/bin:$PATH\ncd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source'\ncast call 0xb7d4bb379d361ad442cddee53ea71a33957826a7 'exchangeIn(address,uint256,address,uint256,address,bool,uint256)' 0xee5576fa1bcaa380e591d01245f406f3f384eb01 100000000000000000000 0xb7d4bb379d361ad442cddee53ea71a33957826a7 1 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 false 18446744073709551615 --from 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 --block 108944663 --rpc-url robinhood_mainnet_alchemy --compute-units-per-second 100\nrc=$?\nprintf \"ES_MINT_READONLY_EXIT=%s\\n\" \"$rc\"\n",
+  "output": "Warning: This is a nightly build of Foundry. It is recommended to use the latest stable version. To mute this warning set `FOUNDRY_DISABLE_NIGHTLY_WARNING` in your environment. \n\nWarning: Found unknown `skip` config key in section `fmt` defined in foundry.toml.\nError: execution reverted: VaultDisabled(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7)\n\nContext:\n- server returned an error response: error code 3: execution reverted, data: \"0x1ba84b43000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a7\"\nES_MINT_READONLY_EXIT=1",
+  "actualCallExitCode": 1,
+  "observed": "VaultDisabled(0xb7d4bb379d361ad442cddee53ea71a33957826a7)",
+  "sourceObservation": "Archived ED _burnDetfExactIn lines25149-25154 restrict ED-burn output to pairToken, not an arbitrary SE-share receiver route.",
+  "qualification": "No state changed. E-S remains not-ready within the checked acquisition paths; not universal impossibility or a holder census."
+}

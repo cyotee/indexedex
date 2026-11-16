@@ -1,0 +1,2514 @@
+{
+  "verdict": "PASS",
+  "viewports": [
+    {
+      "mode": "light",
+      "width": 1440,
+      "height": 1100,
+      "metrics": {
+        "width": 1440,
+        "height": 1100,
+        "scrollWidth": 1440,
+        "scrollHeight": 1100
+      },
+      "filename": "release-light-1440.png.b64",
+      "sha256": "d6552be4302256919f65503ea7724f15fff26ef1c72200f1337aa274ddd54949",
+      "boxes": [
+        {
+          "name": "release-cliff-issued",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 47,
+              "width": 193.875,
+              "height": 16.0078125,
+              "overflow": false
+            },
+            {
+              "text": "0.0% principal unlocked",
+              "x": 24,
+              "y": 81,
+              "width": 193.875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "Cliff locked / 7775998 seconds",
+              "x": 24,
+              "y": 156,
+              "width": 216.75,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378,
+              "width": 267.3125,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402,
+              "width": 231.1875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-mature-closed",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 47,
+              "width": 193.875,
+              "height": 16.0078125,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 81,
+              "width": 210.71875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156,
+              "width": 130.046875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378,
+              "width": 267.3125,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402,
+              "width": 231.1875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 47,
+              "width": 193.875,
+              "height": 16.0078125,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 81,
+              "width": 210.71875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156,
+              "width": 130.046875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims open",
+              "x": 24,
+              "y": 378,
+              "width": 130.046875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402,
+              "width": 252.875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-ordinary-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Staked DETF bond #4",
+              "x": 24,
+              "y": 47,
+              "width": 160.15625,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "0.0% vested",
+              "x": 24,
+              "y": 81,
+              "width": 92.71875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1802123662 / Maturity 1809899662",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "7775993 seconds remaining",
+              "x": 24,
+              "y": 156,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Purchased DETF",
+              "x": 24,
+              "y": 193,
+              "width": 101.15625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000249",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.002550054",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.002550303",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402,
+              "width": 252.875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "light",
+      "width": 390,
+      "height": 1800,
+      "metrics": {
+        "width": 390,
+        "height": 1800,
+        "scrollWidth": 390,
+        "scrollHeight": 1800
+      },
+      "filename": "release-light-390.png.b64",
+      "sha256": "6f540c8b247aa67ef137b06a17ec56e6ec7a09e9823d50aa2cb56533c2c3e390",
+      "boxes": [
+        {
+          "name": "release-cliff-issued",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "0.0% principal unlocked",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Cliff locked / 7775998 seconds",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 216.7003173828125,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 173.364990234375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378.3562316894531,
+              "width": 267.2581787109375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 231.14541625976562,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-mature-closed",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 210.57064819335938,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 130.02969360351562,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 173.364990234375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378.3562316894531,
+              "width": 267.2581787109375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 231.14541625976562,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 210.57064819335938,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 130.02969360351562,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 173.364990234375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims open",
+              "x": 24,
+              "y": 378.3562316894531,
+              "width": 130.02969360351562,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 252.81307983398438,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-ordinary-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Staked DETF bond #4",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 160.0365447998047,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "0.0% vested",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 92.65774536132812,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1802123662 / Maturity 1809899662",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "7775993 seconds remaining",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Purchased DETF",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 101.13948822021484,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000249",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.002550054",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.002550303",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 252.81307983398438,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "dark",
+      "width": 1440,
+      "height": 1100,
+      "metrics": {
+        "width": 1440,
+        "height": 1100,
+        "scrollWidth": 1440,
+        "scrollHeight": 1100
+      },
+      "filename": "release-dark-1440.png.b64",
+      "sha256": "edf3c9fc24477bcf60d76d3ee60695fce3d649aae4e8ef5edbe1f532931c6a31",
+      "boxes": [
+        {
+          "name": "release-cliff-issued",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 47,
+              "width": 193.875,
+              "height": 16.0078125,
+              "overflow": false
+            },
+            {
+              "text": "0.0% principal unlocked",
+              "x": 24,
+              "y": 81,
+              "width": 193.875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "Cliff locked / 7775998 seconds",
+              "x": 24,
+              "y": 156,
+              "width": 216.75,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378,
+              "width": 267.3125,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402,
+              "width": 231.1875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-mature-closed",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 47,
+              "width": 193.875,
+              "height": 16.0078125,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 81,
+              "width": 210.71875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156,
+              "width": 130.046875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378,
+              "width": 267.3125,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402,
+              "width": 231.1875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 47,
+              "width": 193.875,
+              "height": 16.0078125,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 81,
+              "width": 210.71875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156,
+              "width": 130.046875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims open",
+              "x": 24,
+              "y": 378,
+              "width": 130.046875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402,
+              "width": 252.875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-ordinary-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20,
+              "width": 189.65625,
+              "height": 18,
+              "overflow": false
+            },
+            {
+              "text": "Staked DETF bond #4",
+              "x": 24,
+              "y": 47,
+              "width": 160.15625,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "0.0% vested",
+              "x": 24,
+              "y": 81,
+              "width": 92.71875,
+              "height": 16,
+              "overflow": false
+            },
+            {
+              "text": "Start 1802123662 / Maturity 1809899662",
+              "x": 24,
+              "y": 135,
+              "width": 251.671875,
+              "height": 13,
+              "overflow": false
+            },
+            {
+              "text": "7775993 seconds remaining",
+              "x": 24,
+              "y": 156,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "Purchased DETF",
+              "x": 24,
+              "y": 193,
+              "width": 101.15625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 24,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193,
+              "width": 173.390625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 278,
+              "y": 214,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260,
+              "width": 180.625,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.000000249",
+              "x": 24,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260,
+              "width": 166.171875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.002550054",
+              "x": 278,
+              "y": 281,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333,
+              "width": 151.71875,
+              "height": 14,
+              "overflow": false
+            },
+            {
+              "text": "0.002550303",
+              "x": 24,
+              "y": 354,
+              "width": 112.59375,
+              "height": 20,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402,
+              "width": 252.875,
+              "height": 14,
+              "overflow": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "dark",
+      "width": 390,
+      "height": 1800,
+      "metrics": {
+        "width": 390,
+        "height": 1800,
+        "scrollWidth": 390,
+        "scrollHeight": 1800
+      },
+      "filename": "release-dark-390.png.b64",
+      "sha256": "aeb059c3eded2ecd1c8c2c315fe80a749c7b1f2a2035702edc0711e3831c1cc6",
+      "boxes": [
+        {
+          "name": "release-cliff-issued",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "0.0% principal unlocked",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Cliff locked / 7775998 seconds",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 216.7003173828125,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 173.364990234375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378.3562316894531,
+              "width": 267.2581787109375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 231.14541625976562,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-mature-closed",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 210.57064819335938,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 130.02969360351562,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 173.364990234375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims locked until activation",
+              "x": 24,
+              "y": 378.3562316894531,
+              "width": 267.2581787109375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal-only claims pay sDETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 231.14541625976562,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-cliff-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Migration cliff bond #3",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 193.72593688964844,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "100.0% principal unlocked",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 210.57064819335938,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1794347650 / Maturity 1802123650",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Principal unlocked",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 130.02969360351562,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Migration DETF principal",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 173.364990234375,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.201585232",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000000",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Accrued rewards sDETF",
+              "x": 278,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "1.065857776",
+              "x": 278,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Reward claims open",
+              "x": 24,
+              "y": 378.3562316894531,
+              "width": 130.02969360351562,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 252.81307983398438,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        },
+        {
+          "name": "release-ordinary-active",
+          "width": 520,
+          "height": 440,
+          "text": [
+            {
+              "text": "Migration DETF (DETF)",
+              "x": 24,
+              "y": 20.31516456604004,
+              "width": 189.56822204589844,
+              "height": 16.905881881713867,
+              "overflow": false
+            },
+            {
+              "text": "Staked DETF bond #4",
+              "x": 24,
+              "y": 46.315162658691406,
+              "width": 160.0365447998047,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "0.0% vested",
+              "x": 24,
+              "y": 80.3151626586914,
+              "width": 92.65774536132812,
+              "height": 16.725910186767578,
+              "overflow": false
+            },
+            {
+              "text": "Start 1802123662 / Maturity 1809899662",
+              "x": 24,
+              "y": 134.35623168945312,
+              "width": 251.53012084960938,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "7775993 seconds remaining",
+              "x": 24,
+              "y": 156.35623168945312,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "Purchased DETF",
+              "x": 24,
+              "y": 193.35623168945312,
+              "width": 101.13948822021484,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 24,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Remaining DETF principal",
+              "x": 278,
+              "y": 193.35623168945312,
+              "width": 173.36500549316406,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.277056448",
+              "x": 278,
+              "y": 214.7946319580078,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable principal sDETF",
+              "x": 24,
+              "y": 260.3562316894531,
+              "width": 180.58753967285156,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.000000249",
+              "x": 24,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claimable rewards sDETF",
+              "x": 278,
+              "y": 260.3562316894531,
+              "width": 166.1424560546875,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.002550054",
+              "x": 278,
+              "y": 281.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Total claimable sDETF",
+              "x": 24,
+              "y": 333.3562316894531,
+              "width": 151.69735717773438,
+              "height": 13.684835433959961,
+              "overflow": false
+            },
+            {
+              "text": "0.002550303",
+              "x": 24,
+              "y": 354.79461669921875,
+              "width": 112.59103393554688,
+              "height": 19.766984939575195,
+              "overflow": false
+            },
+            {
+              "text": "Claims pay sDETF. Unstake for DETF.",
+              "x": 24,
+              "y": 402.35626220703125,
+              "width": 252.81307983398438,
+              "height": 13.684835433959961,
+              "overflow": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": "Actual tokenURI SVGs, unchanged, rendered with responsive embedding. All four states visible; no clipping, text overlap, blank cards, or horizontal overflow observed. SVG typography and ordinary renderer preserved. PNG captures are lossless base64-encoded files."
+}

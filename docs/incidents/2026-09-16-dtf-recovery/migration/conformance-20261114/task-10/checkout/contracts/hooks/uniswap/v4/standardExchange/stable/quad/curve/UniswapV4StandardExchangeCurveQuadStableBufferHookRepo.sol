@@ -1,0 +1,139 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+
+/**
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookRepo
+ * @notice Diamond storage: four-token bindings, separate component books, dual scales and lock.
+ * @dev Slot: indexedex.hooks.uv4.se.stable.quad.buffer.storage
+ *      LP ERC-20 uses shared ERC20Repo; vaultTokens use MultiAssetBasicVaultRepo.
+ *      rawReserves[i] is the booked raw/local pair component; seReserves[i] is the booked share component.
+ *      Ambient custody and pending caller inventory are excluded from both.
+ *      kLast is retained for storage/selector compatibility and no longer accrues a growth fee.
+ *      DETF-facing membership is `legs` (AddressSetRepo); do not scan tokens() at runtime.
+ */
+library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
+    using AddressSetRepo for AddressSet;
+    bytes32 internal constant STORAGE_SLOT = keccak256(
+        abi.encode(uint256(keccak256("indexedex.hooks.uv4.se.stable.quad.buffer.storage")) - 1)
+    ) & ~bytes32(uint256(0xff));
+
+    uint256 internal constant N_TOKENS = 4;
+    uint256 internal constant MINIMUM_LIQUIDITY = 1000;
+    uint256 internal constant FEE_DENOMINATOR = 100_000;
+    uint256 internal constant WAD = 1e18;
+    uint256 internal constant AMP_PRECISION = 100;
+    uint256 internal constant MAX_AMP = 1_000_000;
+    uint256 internal constant MAX_DUST_WEI = 10;
+    uint256 internal constant NOT_ENTERED = 1;
+    uint256 internal constant ENTERED = 2;
+    int24 internal constant TICK_SPACING = 1;
+
+    struct Layout {
+        address poolManager;
+        address feeOracle;
+        bool bindingsInitialized;
+        uint256 kLast;
+        uint256 reentrancyStatus;
+        uint256 baseAmp;
+        address[4] tokens;
+        address[4] standardExchanges;
+        address[4] rateProviders;
+        /// @dev Inventory scale: 10^(36 - invDecimals), using pair decimals for raw
+        ///      legs and SE share-token decimals for buffered legs.
+        uint256[4] invScales;
+        /// @dev Rated scale: always 10^(36 - pairToken.decimals()).
+        uint256[4] ratedScales;
+        uint8[4] pairDecimals;
+        uint8[4] invDecimals;
+        /// @dev Booked raw tokens or local pair tokens; never an ambient balance snapshot.
+        uint256[4] rawReserves;
+        /// @dev Append-only: set by finalizeInitialization after all six product doors are live.
+        bool initializationFinalized;
+        bool ownerOnlyLiquidity;
+        UniswapV4SeBufferHookLegLib.Layout legs;
+        /// @dev Pool-owned SE shares only. Pending and unsolicited custody is not backing.
+        uint256[4] seReserves;
+    }
+
+    function _layout() internal pure returns (Layout storage l) {
+        bytes32 slot = STORAGE_SLOT;
+        assembly {
+            l.slot := slot
+        }
+    }
+
+    function _initializeBindings(
+        address poolManager_,
+        address feeOracle_,
+        address[4] memory tokens_,
+        address[4] memory ses_,
+        address[4] memory rps_,
+        uint256 baseAmp_,
+        uint256[4] memory invScales_,
+        uint256[4] memory ratedScales_,
+        uint8[4] memory pairDecimals_,
+        uint8[4] memory invDecimals_
+    ) internal {
+        Layout storage l = _layout();
+        require(!l.bindingsInitialized, "bound");
+        l.poolManager = poolManager_;
+        l.feeOracle = feeOracle_;
+        l.baseAmp = baseAmp_;
+        l.tokens = tokens_;
+        l.standardExchanges = ses_;
+        l.rateProviders = rps_;
+        l.invScales = invScales_;
+        l.ratedScales = ratedScales_;
+        l.pairDecimals = pairDecimals_;
+        l.invDecimals = invDecimals_;
+        l.bindingsInitialized = true;
+        l.reentrancyStatus = NOT_ENTERED;
+        _initLegs(l, tokens_, ses_);
+    }
+
+    /// @dev Exactly one unbuffered leg is the DETF self-leg. Else unbuffered tokens are bare pairs.
+    function _initLegs(Layout storage l, address[4] memory tokens_, address[4] memory ses_) private {
+        uint8 unbuffered;
+        address unbufferedTok;
+        for (uint8 i; i < N_TOKENS; ++i) {
+            if (ses_[i] != address(0)) {
+                UniswapV4SeBufferHookLegLib.addPairSe(l.legs, tokens_[i], ses_[i]);
+            } else {
+                unchecked {
+                    ++unbuffered;
+                }
+                unbufferedTok = tokens_[i];
+            }
+        }
+        if (unbuffered == 1) {
+            l.legs.detfToken = unbufferedTok;
+            return;
+        }
+        for (uint8 i; i < N_TOKENS; ++i) {
+            if (ses_[i] == address(0)) {
+                l.legs.pairTokens._add(tokens_[i]);
+            }
+        }
+    }
+
+    function _indexOf(Layout storage l, address token) internal view returns (uint8) {
+        for (uint8 i; i < N_TOKENS; ++i) {
+            if (l.tokens[i] == token) return i;
+        }
+        revert("token");
+    }
+
+    function _lock(Layout storage l) internal {
+        require(l.reentrancyStatus != ENTERED, "REENTRANCY");
+        l.reentrancyStatus = ENTERED;
+    }
+
+    function _unlock(Layout storage l) internal {
+        l.reentrancyStatus = NOT_ENTERED;
+    }
+}

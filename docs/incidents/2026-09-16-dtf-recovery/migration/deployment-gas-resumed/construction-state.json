@@ -1,0 +1,3034 @@
+{
+  "pin": {
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "parentHash": "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+    "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+    "miner": "0xa4b000000000000000000073657175656e636572",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+    "transactionsRoot": "0x33c7e74b2b83169ffe7ccc0d196e7389b7edcf9da4b2aec25c442f450a5db7ab",
+    "receiptsRoot": "0xed4030c56b19861b12d407133d34d67e86eb659431133713cbdc126ba9f35a17",
+    "logsBloom": "0x00000000000000200000000000000000000000000004000000000000000000000000000000000000000080000000000000000000000020000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000",
+    "difficulty": "0x1",
+    "number": "0x67e5d17",
+    "gasLimit": "0x4000000000000",
+    "gasUsed": "0x7cbe",
+    "timestamp": "0x6aeff5b5",
+    "extraData": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+    "mixHash": "0x0000000000000ea500000000019256ab000000000000003d0000000000000000",
+    "nonce": "0x0000000000069efe",
+    "baseFeePerGas": "0x13134d0",
+    "size": "0x34d",
+    "uncles": [],
+    "transactions": [
+      "0x3b092c0a635bf7308445d38cd9e4057f66ac9673c4988feafbe6b59be795c5a7",
+      "0xa0827ff9299145bc2c8be17e3f803c4e1aa21cf6d0295104d4d06946a1ea815c"
+    ],
+    "l1BlockNumber": "0x19256ab",
+    "sendCount": "0xea5",
+    "sendRoot": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c"
+  },
+  "finalStates": [
+    {
+      "block": "0x67e5e09",
+      "parent": "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+      "args": {
+        "baseArgs": {
+          "name": "Migration DETF",
+          "symbol": "DETF",
+          "hook": "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8",
+          "ownerOnlyLiquidity": true,
+          "creationPairPerDetfWad": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ],
+          "openingPairPerDetfWad": [],
+          "mintThreshold": "0",
+          "burnThreshold": "0",
+          "expansionClosureRatePerYearWad": "0",
+          "creator": "0x0000000000000000000000000000000000000000",
+          "claimName": "",
+          "claimSymbol": "",
+          "bondName": "",
+          "bondSymbol": "",
+          "mintRouteMode": "0",
+          "mintRoutes": [],
+          "burnRouteMode": "0",
+          "burnRoutes": [],
+          "bondRouteMode": "0",
+          "bondRoutes": [],
+          "donateRouteMode": "0",
+          "donateRoutes": []
+        },
+        "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "ownershipBufferPeriod": "86400",
+        "weth": "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+        "originalDtf": "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+      },
+      "fields": {
+        "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "hook": "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8",
+        "bondNftVault": "0x9bC2F9d13ad7facA1E1993052D24E3013Ab4614B",
+        "rebasingClaimToken": "0x46058e46913479D889b158a0F4339758CbFD0700",
+        "rawSY": "0x3263494F8C3E2118EaE755AdBBE1508B80203755",
+        "stakingSY": "0x0c0e015506730e00E52B106d761b1871540c429B",
+        "migrationSyRewardToken": "0x52b8131AcD0Fae4bfAC28C7940d5037AF50D6A84",
+        "migrationActivated": false
+      },
+      "preparation": {
+        "block": "0x67e5df8",
+        "construction": {
+          "constructionId": "0x5e388f84b6d87f85218ae3dae9e6e4270022b47f5aab87d3c80005a45a56f862",
+          "parent": "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+          "bond": "0x9bC2F9d13ad7facA1E1993052D24E3013Ab4614B",
+          "receipt": "0x46058e46913479D889b158a0F4339758CbFD0700",
+          "bondArgs": {
+            "name": "Migration DETF Bond",
+            "symbol": "DETF-BOND",
+            "detf": "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+            "lpToken": "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          },
+          "rawArgs": {
+            "detf": "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+            "staking": "0x46058e46913479D889b158a0F4339758CbFD0700",
+            "isStaking": false,
+            "name": "SY Migration DETF",
+            "symbol": "SY-DETF",
+            "tokensIn": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ],
+            "tokensOut": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ]
+          },
+          "stakingArgs": {
+            "detf": "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+            "staking": "0x46058e46913479D889b158a0F4339758CbFD0700",
+            "isStaking": true,
+            "name": "SY Staked Migration DETF",
+            "symbol": "SY-sDETF",
+            "tokensIn": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ],
+            "tokensOut": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ]
+          }
+        },
+        "preparation": {
+          "parentPackage": "0x61ea4165547b0A67Ee98556bE00722Eb18AA80a2",
+          "constructionId": "0x5e388f84b6d87f85218ae3dae9e6e4270022b47f5aab87d3c80005a45a56f862",
+          "parent": "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+          "bond": "0x9bC2F9d13ad7facA1E1993052D24E3013Ab4614B",
+          "bondPackage": "0x2111F9934F9171C8a04bf0CBd5A44Cd99872adF7",
+          "bondArgsHash": "0x9d77c6c3253e67f2dee45f4e42debe0b5113698b43ba1d1843e29ea5abcbdeed",
+          "receipt": "0x46058e46913479D889b158a0F4339758CbFD0700",
+          "rawSy": "0x3263494F8C3E2118EaE755AdBBE1508B80203755",
+          "stakingSy": "0x0c0e015506730e00E52B106d761b1871540c429B",
+          "rawArgsHash": "0x972317941edebf9f5fc60ea0cc740d07edce797f29cc4d2fc3db8a0ea77cb097",
+          "stakingArgsHash": "0x88f0d69c88cb845cc6fab4d6ef6222471b75fed79e77800a8839c20a3a7f8c54",
+          "completed": true
+        },
+        "parentCode": "0x",
+        "receiptCode": "0x",
+        "parentRegistered": false,
+        "bondNextId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "children": [
+          {
+            "child": "0x3263494F8C3E2118EaE755AdBBE1508B80203755",
+            "package": "0xb61ba6993373935f896F314c2509eD6148bDF61D",
+            "args": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000023e7d9ab48812f3e47ac64078d653eededa6da5b00000000000000000000000046058e46913479d889b158a0f4339758cbfd0700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d44455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c930000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c93",
+            "zeroBackingSlots": [
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ],
+            "facets": [
+              {
+                "facetAddress": "0x31D9Da964ad9279aef65B6a0840392e12A30926e",
+                "functionSelectors": [
+                  "0x01ffc9a7"
+                ]
+              },
+              {
+                "facetAddress": "0xa800F05BD844f1d964875Ce029ec7e4E60e8fcBe",
+                "functionSelectors": [
+                  "0x7a0ed627",
+                  "0xadfca15e",
+                  "0x52ef6b2c",
+                  "0xcdffacc6"
+                ]
+              },
+              {
+                "facetAddress": "0x858b7DA8D196E361727De4742BaEbda903b5c27C",
+                "functionSelectors": [
+                  "0x60b5befb"
+                ]
+              },
+              {
+                "facetAddress": "0xE993e109a9697512bd897348B524a02CfE5dD402",
+                "functionSelectors": [
+                  "0x18160ddd",
+                  "0x70a08231",
+                  "0xa9059cbb",
+                  "0xdd62ed3e",
+                  "0x095ea7b3",
+                  "0x23b872dd",
+                  "0x06fdde03",
+                  "0x95d89b41",
+                  "0x313ce567",
+                  "0x20e8c565",
+                  "0x769f8e5d",
+                  "0x3ba0b9a9",
+                  "0x76d5de85",
+                  "0xa40bee50",
+                  "0x213cae63",
+                  "0x071bc3c9",
+                  "0xfa5a4f06",
+                  "0x784367d6",
+                  "0xb8f82b26",
+                  "0xcbe52ae3",
+                  "0xc4f59f9b",
+                  "0x128fced1",
+                  "0xf8b2f991",
+                  "0xda88ecb4",
+                  "0xef5cfb8c",
+                  "0x6a4d3f12",
+                  "0xf5ee7c5b",
+                  "0x36abf3dc",
+                  "0x7cc34bb4",
+                  "0x852465fb",
+                  "0x7a2cd6fb",
+                  "0x07b101f9"
+                ]
+              },
+              {
+                "facetAddress": "0xD4C87bCa1e9107b1100801439523BA9257F8Afec",
+                "functionSelectors": [
+                  "0x84b0196e"
+                ]
+              },
+              {
+                "facetAddress": "0x6171d08AfAab83B1F8340e21CdE28C93eeAEc222",
+                "functionSelectors": [
+                  "0xd505accf",
+                  "0x7ecebe00",
+                  "0x3644e515"
+                ]
+              }
+            ]
+          },
+          {
+            "child": "0x0c0e015506730e00E52B106d761b1871540c429B",
+            "package": "0xb61ba6993373935f896F314c2509eD6148bDF61D",
+            "args": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000023e7d9ab48812f3e47ac64078d653eededa6da5b00000000000000000000000046058e46913479d889b158a0f4339758cbfd0700000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d73444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c930000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c93",
+            "zeroBackingSlots": [
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ],
+            "facets": [
+              {
+                "facetAddress": "0x31D9Da964ad9279aef65B6a0840392e12A30926e",
+                "functionSelectors": [
+                  "0x01ffc9a7"
+                ]
+              },
+              {
+                "facetAddress": "0xa800F05BD844f1d964875Ce029ec7e4E60e8fcBe",
+                "functionSelectors": [
+                  "0x7a0ed627",
+                  "0xadfca15e",
+                  "0x52ef6b2c",
+                  "0xcdffacc6"
+                ]
+              },
+              {
+                "facetAddress": "0x858b7DA8D196E361727De4742BaEbda903b5c27C",
+                "functionSelectors": [
+                  "0x60b5befb"
+                ]
+              },
+              {
+                "facetAddress": "0xE993e109a9697512bd897348B524a02CfE5dD402",
+                "functionSelectors": [
+                  "0x18160ddd",
+                  "0x70a08231",
+                  "0xa9059cbb",
+                  "0xdd62ed3e",
+                  "0x095ea7b3",
+                  "0x23b872dd",
+                  "0x06fdde03",
+                  "0x95d89b41",
+                  "0x313ce567",
+                  "0x20e8c565",
+                  "0x769f8e5d",
+                  "0x3ba0b9a9",
+                  "0x76d5de85",
+                  "0xa40bee50",
+                  "0x213cae63",
+                  "0x071bc3c9",
+                  "0xfa5a4f06",
+                  "0x784367d6",
+                  "0xb8f82b26",
+                  "0xcbe52ae3",
+                  "0xc4f59f9b",
+                  "0x128fced1",
+                  "0xf8b2f991",
+                  "0xda88ecb4",
+                  "0xef5cfb8c",
+                  "0x6a4d3f12",
+                  "0xf5ee7c5b",
+                  "0x36abf3dc",
+                  "0x7cc34bb4",
+                  "0x852465fb",
+                  "0x7a2cd6fb",
+                  "0x07b101f9"
+                ]
+              },
+              {
+                "facetAddress": "0xD4C87bCa1e9107b1100801439523BA9257F8Afec",
+                "functionSelectors": [
+                  "0x84b0196e"
+                ]
+              },
+              {
+                "facetAddress": "0x6171d08AfAab83B1F8340e21CdE28C93eeAEc222",
+                "functionSelectors": [
+                  "0xd505accf",
+                  "0x7ecebe00",
+                  "0x3644e515"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "config": {
+        "vaultFeeTypeIds": "0x59fb297100000000000000000000000000000000000000000000000000000000",
+        "contentsId": "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700",
+        "vaultTypes": [
+          "0x36372b07",
+          "0xa219a025",
+          "0x9d8ff7da",
+          "0x84b0196e",
+          "0x5a9c1814",
+          "0xd5cbfb21",
+          "0x59fb2971",
+          "0x2c5102bb",
+          "0x3415fed3",
+          "0x3b2b753c",
+          "0xda345f76",
+          "0x0910d5ea",
+          "0x4c60d07c",
+          "0x5a10cb7a",
+          "0x1f8a92ec",
+          "0x150b7a02",
+          "0x24e61335"
+        ],
+        "tokens": [
+          "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+          "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+          "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+          "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+        ]
+      },
+      "memberships": [
+        {
+          "query": "vaults",
+          "args": [],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPackage",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfContentsId",
+          "args": [
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x36372b07"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x36372b07",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0xa219a025"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0xa219a025",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x9d8ff7da"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x9d8ff7da",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x84b0196e"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x84b0196e",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x5a9c1814"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x5a9c1814",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0xd5cbfb21"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0xd5cbfb21",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x59fb2971"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x59fb2971",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x2c5102bb"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x2c5102bb",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x3415fed3"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x3415fed3",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x3b2b753c"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x3b2b753c",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0xda345f76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0xda345f76",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x0910d5ea"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x0910d5ea",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x4c60d07c"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x4c60d07c",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x5a10cb7a"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x5a10cb7a",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x1f8a92ec"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x1f8a92ec",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x150b7a02"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x150b7a02",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x24e61335"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x24e61335",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0xEA48fE818E5e7bE3107852C0B75d2A1799CB2Aa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfContentsId",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0x56777d07f2363bd8f3419d7471b9ad7676017937434c74d93c47c42084ec5700"
+          ],
+          "containsParent": true
+        }
+      ],
+      "facets": [
+        {
+          "facetAddress": "0x31D9Da964ad9279aef65B6a0840392e12A30926e",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xa800F05BD844f1d964875Ce029ec7e4E60e8fcBe",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x858b7DA8D196E361727De4742BaEbda903b5c27C",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0x91Bf4ff4fE9939BF825C15972EF99005901e1fca",
+          "functionSelectors": [
+            "0xe11315e2",
+            "0x92631220",
+            "0x516fc9a7",
+            "0x256c417b",
+            "0x1ac7e79a",
+            "0xf176a921",
+            "0x12076202",
+            "0x808073a0"
+          ]
+        },
+        {
+          "facetAddress": "0xe5ed17dB26Bfe8dc0D245E4FC751D5fEf6Af83C7",
+          "functionSelectors": [
+            "0x06fdde03",
+            "0x95d89b41",
+            "0x313ce567",
+            "0x18160ddd",
+            "0x70a08231",
+            "0xdd62ed3e",
+            "0x095ea7b3",
+            "0xa9059cbb",
+            "0x23b872dd"
+          ]
+        },
+        {
+          "facetAddress": "0xD4C87bCa1e9107b1100801439523BA9257F8Afec",
+          "functionSelectors": [
+            "0x84b0196e"
+          ]
+        },
+        {
+          "facetAddress": "0x6171d08AfAab83B1F8340e21CdE28C93eeAEc222",
+          "functionSelectors": [
+            "0xd505accf",
+            "0x7ecebe00",
+            "0x3644e515"
+          ]
+        },
+        {
+          "facetAddress": "0x33ECade222574c9e60428Fd3197433FC2210cE1a",
+          "functionSelectors": [
+            "0x69722233",
+            "0x46f910ac",
+            "0x75172a8b"
+          ]
+        },
+        {
+          "facetAddress": "0x150f97513589CEC5Db2fA9bc6a32F656Ed26aE1D",
+          "functionSelectors": [
+            "0x6a4d3f12",
+            "0xf5ee7c5b",
+            "0x36abf3dc",
+            "0x7cc34bb4"
+          ]
+        },
+        {
+          "facetAddress": "0x1AF5ee368b240544bf39FB2cfB00dDc3298979c4",
+          "functionSelectors": [
+            "0xd02d3063"
+          ]
+        },
+        {
+          "facetAddress": "0x562B87b7C2566a6C75E1B0D01c903C0F91EdA333",
+          "functionSelectors": [
+            "0x7a3b1181"
+          ]
+        },
+        {
+          "facetAddress": "0x861868b50042169FB4a444c592BC8B322F8752c5",
+          "functionSelectors": [
+            "0x0f5f2ea4",
+            "0xa53df2e2",
+            "0x588bc426",
+            "0x8d3ae940",
+            "0xecc823dc",
+            "0x81b5eeca",
+            "0x0910d5ea",
+            "0xb0910943"
+          ]
+        },
+        {
+          "facetAddress": "0x060E71798206D2806B25a5429c26c0E52Ad010DE",
+          "functionSelectors": [
+            "0x11941b88",
+            "0xdde448b0"
+          ]
+        },
+        {
+          "facetAddress": "0xC45372b2AddB93f92795e231B65071d5D570F163",
+          "functionSelectors": [
+            "0x89d61912",
+            "0x7f5a7c7b",
+            "0x0266f044",
+            "0x6553aead",
+            "0xc7b57783",
+            "0x27415d21",
+            "0xa575b122",
+            "0xeb8660dc",
+            "0xd23b7b31",
+            "0x7ae5f561",
+            "0x674bd742",
+            "0x7dfe0293",
+            "0x24d44167",
+            "0x0e52fe80",
+            "0x6789692c",
+            "0x9c8dead2",
+            "0x4f6d38d0",
+            "0x1afdb693",
+            "0x0aee1940",
+            "0x9c54eea2",
+            "0x2be8656f",
+            "0x705caed9",
+            "0xd7cb29d0",
+            "0x2b481883",
+            "0xe03c65c4",
+            "0xe76af32e",
+            "0x9520b23e",
+            "0x85358493",
+            "0xc8a3fe0b",
+            "0xda345f76",
+            "0xebecb84e",
+            "0xd0c7cd72",
+            "0xc0cadedd",
+            "0xfe884e28",
+            "0x7d54bc82",
+            "0x6430e3a1",
+            "0xd12b6274",
+            "0x06a85569",
+            "0x431dbd2d",
+            "0x35a314d0"
+          ]
+        },
+        {
+          "facetAddress": "0xF5F16Cd0Cd230E7eA868151f8E14Ff7A0D33e1B2",
+          "functionSelectors": [
+            "0xc0b6f561",
+            "0x3c213957",
+            "0x737293e2",
+            "0xb842e87f",
+            "0x8da5cb5b",
+            "0xe30c3978",
+            "0x1af1b0c4",
+            "0x0f9f2530"
+          ]
+        },
+        {
+          "facetAddress": "0x42b0cc4ac33C738E56029d3Db78d88705E9b571d",
+          "functionSelectors": [
+            "0xd7d4cf09",
+            "0xa2090219",
+            "0x7fda99ae",
+            "0xa5ef9788",
+            "0xdc6bf0d3",
+            "0xa7b715f1",
+            "0x5bd8902d",
+            "0x2479d2d4",
+            "0x2ba474f1",
+            "0x3d9feccd",
+            "0xc924f7c8",
+            "0x9a33cb9d",
+            "0x8ec81731",
+            "0x13f4cce1",
+            "0x150b7a02",
+            "0x4f3f3feb",
+            "0x6ced1880",
+            "0xe275a40a",
+            "0x81ce9cbd",
+            "0xef0c687b",
+            "0x6d2eadff",
+            "0x59bc0a5a",
+            "0xe14edf6d",
+            "0x0df8e806",
+            "0xf602c45b",
+            "0xb6c38b52",
+            "0x62595182",
+            "0x06c0e80d",
+            "0xb018df9b"
+          ]
+        },
+        {
+          "facetAddress": "0x81f699BC4C814B885603e8194e1D20a30fE0Da16",
+          "functionSelectors": [
+            "0xec55c474",
+            "0x161d9afc",
+            "0xccff9894",
+            "0x787642e8",
+            "0xe9dc9e6d",
+            "0x74d1295f",
+            "0x9ade58a9",
+            "0x28dd2984"
+          ]
+        },
+        {
+          "facetAddress": "0x5bCfa4ab275e44f68049adC0386DFd8AFe4e54D7",
+          "functionSelectors": [
+            "0x4f8448b3",
+            "0xb64483bc",
+            "0x36bd523f",
+            "0xa4ab9f4b",
+            "0x0378c852",
+            "0x3611810a",
+            "0x7d68700e",
+            "0x0c525a0d",
+            "0x544f82ed",
+            "0xef51da64",
+            "0xe4732319",
+            "0x4dfcd8a0",
+            "0x4f30154e",
+            "0xfe4e04e2",
+            "0xcf236475",
+            "0x68349cae",
+            "0x81a6be34",
+            "0x21680043",
+            "0xf291ba5d",
+            "0x222d122e",
+            "0xc6322c88",
+            "0xe703d142",
+            "0xf142ce12",
+            "0x8563c5b3",
+            "0x2560bf26"
+          ]
+        }
+      ],
+      "interfaces": [
+        "0x36372b07",
+        "0xa219a025",
+        "0x9d8ff7da",
+        "0x84b0196e",
+        "0x5a9c1814",
+        "0xd5cbfb21",
+        "0x59fb2971",
+        "0x2c5102bb",
+        "0x3415fed3",
+        "0x3b2b753c",
+        "0xda345f76",
+        "0x0910d5ea",
+        "0x4c60d07c",
+        "0x5a10cb7a",
+        "0x1f8a92ec",
+        "0x150b7a02",
+        "0x24e61335"
+      ],
+      "zeroSupply": [
+        {
+          "child": "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0x46058e46913479D889b158a0F4339758CbFD0700",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0x3263494F8C3E2118EaE755AdBBE1508B80203755",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0x0c0e015506730e00E52B106d761b1871540c429B",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0x52b8131AcD0Fae4bfAC28C7940d5037AF50D6A84",
+          "decimals": "27",
+          "supply": "0"
+        }
+      ],
+      "convenienceArrayQuery": [
+        "0x23E7D9ab48812f3e47aC64078D653EEdeda6dA5B"
+      ]
+    },
+    {
+      "block": "0x67e5e09",
+      "parent": "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+      "args": {
+        "baseArgs": {
+          "name": "Migration DETF",
+          "symbol": "DETF",
+          "hook": "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8",
+          "ownerOnlyLiquidity": true,
+          "creationPairPerDetfWad": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ],
+          "openingPairPerDetfWad": [],
+          "mintThreshold": "0",
+          "burnThreshold": "0",
+          "expansionClosureRatePerYearWad": "0",
+          "creator": "0x0000000000000000000000000000000000000000",
+          "claimName": "",
+          "claimSymbol": "",
+          "bondName": "",
+          "bondSymbol": "",
+          "mintRouteMode": "0",
+          "mintRoutes": [],
+          "burnRouteMode": "0",
+          "burnRoutes": [],
+          "bondRouteMode": "0",
+          "bondRoutes": [],
+          "donateRouteMode": "0",
+          "donateRoutes": []
+        },
+        "owner": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "ownershipBufferPeriod": "86400",
+        "weth": "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+        "originalDtf": "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+      },
+      "fields": {
+        "owner": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "hook": "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8",
+        "bondNftVault": "0x370FE5C17615150EB67876AaAee0B176F2ad6543",
+        "rebasingClaimToken": "0xD16d08bbc18EE4425BDBd6B90476791C4aC95758",
+        "rawSY": "0xeb548a540e1CC0A1F656fFb1F09CE5C16273Aa02",
+        "stakingSY": "0xfE71249411e9f128a3Dcc413da67c8452c15660F",
+        "migrationSyRewardToken": "0xEB6Df6b50bF897362B6A4F657F990Ddd135c964A",
+        "migrationActivated": false
+      },
+      "preparation": {
+        "block": "0x67e5e08",
+        "construction": {
+          "constructionId": "0x65fa31a36366c161b32991d108dd7140748fb97c135bebf86913e31542f2df1d",
+          "parent": "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+          "bond": "0x370FE5C17615150EB67876AaAee0B176F2ad6543",
+          "receipt": "0xD16d08bbc18EE4425BDBd6B90476791C4aC95758",
+          "bondArgs": {
+            "name": "Migration DETF Bond",
+            "symbol": "DETF-BOND",
+            "detf": "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+            "lpToken": "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          },
+          "rawArgs": {
+            "detf": "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+            "staking": "0xD16d08bbc18EE4425BDBd6B90476791C4aC95758",
+            "isStaking": false,
+            "name": "SY Migration DETF",
+            "symbol": "SY-DETF",
+            "tokensIn": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ],
+            "tokensOut": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ]
+          },
+          "stakingArgs": {
+            "detf": "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+            "staking": "0xD16d08bbc18EE4425BDBd6B90476791C4aC95758",
+            "isStaking": true,
+            "name": "SY Staked Migration DETF",
+            "symbol": "SY-sDETF",
+            "tokensIn": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ],
+            "tokensOut": [
+              "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+              "0x226e8846F06E954bCb27184EB5b94f614E03c5dF",
+              "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+              "0x815E9b00D7FCDB6d9cE17Ef133b4B7ae6DbD9c93"
+            ]
+          }
+        },
+        "preparation": {
+          "parentPackage": "0x61ea4165547b0A67Ee98556bE00722Eb18AA80a2",
+          "constructionId": "0x65fa31a36366c161b32991d108dd7140748fb97c135bebf86913e31542f2df1d",
+          "parent": "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+          "bond": "0x370FE5C17615150EB67876AaAee0B176F2ad6543",
+          "bondPackage": "0x2111F9934F9171C8a04bf0CBd5A44Cd99872adF7",
+          "bondArgsHash": "0x86cb97f6c90adb763f56357b632390bbc5b9a7e924867f23be43a12e2df40b4b",
+          "receipt": "0xD16d08bbc18EE4425BDBd6B90476791C4aC95758",
+          "rawSy": "0xeb548a540e1CC0A1F656fFb1F09CE5C16273Aa02",
+          "stakingSy": "0xfE71249411e9f128a3Dcc413da67c8452c15660F",
+          "rawArgsHash": "0x5eecb9cee10c11aedb975374f5a416d6dd471e3f795e558583839ed72c68aa67",
+          "stakingArgsHash": "0x9aa5a8f989f5168b84ba1c497a8ed93cd64650fb483ae155d731d70cb2603578",
+          "completed": true
+        },
+        "parentCode": "0x",
+        "receiptCode": "0x",
+        "parentRegistered": false,
+        "bondNextId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "children": [
+          {
+            "child": "0xeb548a540e1CC0A1F656fFb1F09CE5C16273Aa02",
+            "package": "0xb61ba6993373935f896F314c2509eD6148bDF61D",
+            "args": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000922e83dccd1b23d33ddd3ac621b1ece301f1cd13000000000000000000000000d16d08bbc18ee4425bdbd6b90476791c4ac95758000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000115359204d6967726174696f6e2044455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000753592d44455446000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c930000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c93",
+            "zeroBackingSlots": [
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ],
+            "facets": [
+              {
+                "facetAddress": "0x31D9Da964ad9279aef65B6a0840392e12A30926e",
+                "functionSelectors": [
+                  "0x01ffc9a7"
+                ]
+              },
+              {
+                "facetAddress": "0xa800F05BD844f1d964875Ce029ec7e4E60e8fcBe",
+                "functionSelectors": [
+                  "0x7a0ed627",
+                  "0xadfca15e",
+                  "0x52ef6b2c",
+                  "0xcdffacc6"
+                ]
+              },
+              {
+                "facetAddress": "0x858b7DA8D196E361727De4742BaEbda903b5c27C",
+                "functionSelectors": [
+                  "0x60b5befb"
+                ]
+              },
+              {
+                "facetAddress": "0xE993e109a9697512bd897348B524a02CfE5dD402",
+                "functionSelectors": [
+                  "0x18160ddd",
+                  "0x70a08231",
+                  "0xa9059cbb",
+                  "0xdd62ed3e",
+                  "0x095ea7b3",
+                  "0x23b872dd",
+                  "0x06fdde03",
+                  "0x95d89b41",
+                  "0x313ce567",
+                  "0x20e8c565",
+                  "0x769f8e5d",
+                  "0x3ba0b9a9",
+                  "0x76d5de85",
+                  "0xa40bee50",
+                  "0x213cae63",
+                  "0x071bc3c9",
+                  "0xfa5a4f06",
+                  "0x784367d6",
+                  "0xb8f82b26",
+                  "0xcbe52ae3",
+                  "0xc4f59f9b",
+                  "0x128fced1",
+                  "0xf8b2f991",
+                  "0xda88ecb4",
+                  "0xef5cfb8c",
+                  "0x6a4d3f12",
+                  "0xf5ee7c5b",
+                  "0x36abf3dc",
+                  "0x7cc34bb4",
+                  "0x852465fb",
+                  "0x7a2cd6fb",
+                  "0x07b101f9"
+                ]
+              },
+              {
+                "facetAddress": "0xD4C87bCa1e9107b1100801439523BA9257F8Afec",
+                "functionSelectors": [
+                  "0x84b0196e"
+                ]
+              },
+              {
+                "facetAddress": "0x6171d08AfAab83B1F8340e21CdE28C93eeAEc222",
+                "functionSelectors": [
+                  "0xd505accf",
+                  "0x7ecebe00",
+                  "0x3644e515"
+                ]
+              }
+            ]
+          },
+          {
+            "child": "0xfE71249411e9f128a3Dcc413da67c8452c15660F",
+            "package": "0xb61ba6993373935f896F314c2509eD6148bDF61D",
+            "args": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000922e83dccd1b23d33ddd3ac621b1ece301f1cd13000000000000000000000000d16d08bbc18ee4425bdbd6b90476791c4ac95758000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000185359205374616b6564204d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000853592d73444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c930000000000000000000000000000000000000000000000000000000000000004000000000000000000000000053c4887029f00f6db0b8f4b06f9af5f489cff76000000000000000000000000226e8846f06e954bcb27184eb5b94f614e03c5df000000000000000000000000b5ffb22624666d66bb702e613ccaef386f10dc7d000000000000000000000000815e9b00d7fcdb6d9ce17ef133b4b7ae6dbd9c93",
+            "zeroBackingSlots": [
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ],
+            "facets": [
+              {
+                "facetAddress": "0x31D9Da964ad9279aef65B6a0840392e12A30926e",
+                "functionSelectors": [
+                  "0x01ffc9a7"
+                ]
+              },
+              {
+                "facetAddress": "0xa800F05BD844f1d964875Ce029ec7e4E60e8fcBe",
+                "functionSelectors": [
+                  "0x7a0ed627",
+                  "0xadfca15e",
+                  "0x52ef6b2c",
+                  "0xcdffacc6"
+                ]
+              },
+              {
+                "facetAddress": "0x858b7DA8D196E361727De4742BaEbda903b5c27C",
+                "functionSelectors": [
+                  "0x60b5befb"
+                ]
+              },
+              {
+                "facetAddress": "0xE993e109a9697512bd897348B524a02CfE5dD402",
+                "functionSelectors": [
+                  "0x18160ddd",
+                  "0x70a08231",
+                  "0xa9059cbb",
+                  "0xdd62ed3e",
+                  "0x095ea7b3",
+                  "0x23b872dd",
+                  "0x06fdde03",
+                  "0x95d89b41",
+                  "0x313ce567",
+                  "0x20e8c565",
+                  "0x769f8e5d",
+                  "0x3ba0b9a9",
+                  "0x76d5de85",
+                  "0xa40bee50",
+                  "0x213cae63",
+                  "0x071bc3c9",
+                  "0xfa5a4f06",
+                  "0x784367d6",
+                  "0xb8f82b26",
+                  "0xcbe52ae3",
+                  "0xc4f59f9b",
+                  "0x128fced1",
+                  "0xf8b2f991",
+                  "0xda88ecb4",
+                  "0xef5cfb8c",
+                  "0x6a4d3f12",
+                  "0xf5ee7c5b",
+                  "0x36abf3dc",
+                  "0x7cc34bb4",
+                  "0x852465fb",
+                  "0x7a2cd6fb",
+                  "0x07b101f9"
+                ]
+              },
+              {
+                "facetAddress": "0xD4C87bCa1e9107b1100801439523BA9257F8Afec",
+                "functionSelectors": [
+                  "0x84b0196e"
+                ]
+              },
+              {
+                "facetAddress": "0x6171d08AfAab83B1F8340e21CdE28C93eeAEc222",
+                "functionSelectors": [
+                  "0xd505accf",
+                  "0x7ecebe00",
+                  "0x3644e515"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "config": {
+        "vaultFeeTypeIds": "0x59fb297100000000000000000000000000000000000000000000000000000000",
+        "contentsId": "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38",
+        "vaultTypes": [
+          "0x36372b07",
+          "0xa219a025",
+          "0x9d8ff7da",
+          "0x84b0196e",
+          "0x5a9c1814",
+          "0xd5cbfb21",
+          "0x59fb2971",
+          "0x2c5102bb",
+          "0x3415fed3",
+          "0x3b2b753c",
+          "0xda345f76",
+          "0x0910d5ea",
+          "0x4c60d07c",
+          "0x5a10cb7a",
+          "0x1f8a92ec",
+          "0x150b7a02",
+          "0x24e61335"
+        ],
+        "tokens": [
+          "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76",
+          "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+          "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D",
+          "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+        ]
+      },
+      "memberships": [
+        {
+          "query": "vaults",
+          "args": [],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPackage",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfContentsId",
+          "args": [
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x36372b07"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x36372b07",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x36372b07",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0xa219a025"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0xa219a025",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xa219a025",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x9d8ff7da"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x9d8ff7da",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x9d8ff7da",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x84b0196e"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x84b0196e",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x84b0196e",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x5a9c1814"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x5a9c1814",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a9c1814",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0xd5cbfb21"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0xd5cbfb21",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xd5cbfb21",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x59fb2971"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x59fb2971",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x59fb2971",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x2c5102bb"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x2c5102bb",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x2c5102bb",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x3415fed3"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x3415fed3",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3415fed3",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x3b2b753c"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x3b2b753c",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x3b2b753c",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0xda345f76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0xda345f76",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0xda345f76",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x0910d5ea"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x0910d5ea",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x0910d5ea",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x4c60d07c"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x4c60d07c",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x4c60d07c",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x5a10cb7a"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x5a10cb7a",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x5a10cb7a",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x1f8a92ec"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x1f8a92ec",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x1f8a92ec",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x150b7a02"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x150b7a02",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x150b7a02",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfType",
+          "args": [
+            "0x24e61335"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfContentsId",
+          "args": [
+            "0x24e61335",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfTypeOfToken",
+          "args": [
+            "0x24e61335",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0x053C4887029f00F6dB0b8F4b06F9Af5f489cff76"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0xB5FFB22624666D66bb702e613CcAEF386f10dC7D"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfToken",
+          "args": [
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfToken",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0x5C066F349b73AB2b857Ee06f45542d0AC85baAa8"
+          ],
+          "containsParent": true
+        },
+        {
+          "query": "vaultsOfPkgOfContentsId",
+          "args": [
+            "0x61ea4165547b0a67ee98556be00722eb18aa80a2",
+            "0x863d5de3b3c0bac02be4749f273da3710baa1e3d515593449b473fe81422cb38"
+          ],
+          "containsParent": true
+        }
+      ],
+      "facets": [
+        {
+          "facetAddress": "0x31D9Da964ad9279aef65B6a0840392e12A30926e",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0xa800F05BD844f1d964875Ce029ec7e4E60e8fcBe",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0x858b7DA8D196E361727De4742BaEbda903b5c27C",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0x91Bf4ff4fE9939BF825C15972EF99005901e1fca",
+          "functionSelectors": [
+            "0xe11315e2",
+            "0x92631220",
+            "0x516fc9a7",
+            "0x256c417b",
+            "0x1ac7e79a",
+            "0xf176a921",
+            "0x12076202",
+            "0x808073a0"
+          ]
+        },
+        {
+          "facetAddress": "0xe5ed17dB26Bfe8dc0D245E4FC751D5fEf6Af83C7",
+          "functionSelectors": [
+            "0x06fdde03",
+            "0x95d89b41",
+            "0x313ce567",
+            "0x18160ddd",
+            "0x70a08231",
+            "0xdd62ed3e",
+            "0x095ea7b3",
+            "0xa9059cbb",
+            "0x23b872dd"
+          ]
+        },
+        {
+          "facetAddress": "0xD4C87bCa1e9107b1100801439523BA9257F8Afec",
+          "functionSelectors": [
+            "0x84b0196e"
+          ]
+        },
+        {
+          "facetAddress": "0x6171d08AfAab83B1F8340e21CdE28C93eeAEc222",
+          "functionSelectors": [
+            "0xd505accf",
+            "0x7ecebe00",
+            "0x3644e515"
+          ]
+        },
+        {
+          "facetAddress": "0x33ECade222574c9e60428Fd3197433FC2210cE1a",
+          "functionSelectors": [
+            "0x69722233",
+            "0x46f910ac",
+            "0x75172a8b"
+          ]
+        },
+        {
+          "facetAddress": "0x150f97513589CEC5Db2fA9bc6a32F656Ed26aE1D",
+          "functionSelectors": [
+            "0x6a4d3f12",
+            "0xf5ee7c5b",
+            "0x36abf3dc",
+            "0x7cc34bb4"
+          ]
+        },
+        {
+          "facetAddress": "0x1AF5ee368b240544bf39FB2cfB00dDc3298979c4",
+          "functionSelectors": [
+            "0xd02d3063"
+          ]
+        },
+        {
+          "facetAddress": "0x562B87b7C2566a6C75E1B0D01c903C0F91EdA333",
+          "functionSelectors": [
+            "0x7a3b1181"
+          ]
+        },
+        {
+          "facetAddress": "0x861868b50042169FB4a444c592BC8B322F8752c5",
+          "functionSelectors": [
+            "0x0f5f2ea4",
+            "0xa53df2e2",
+            "0x588bc426",
+            "0x8d3ae940",
+            "0xecc823dc",
+            "0x81b5eeca",
+            "0x0910d5ea",
+            "0xb0910943"
+          ]
+        },
+        {
+          "facetAddress": "0x060E71798206D2806B25a5429c26c0E52Ad010DE",
+          "functionSelectors": [
+            "0x11941b88",
+            "0xdde448b0"
+          ]
+        },
+        {
+          "facetAddress": "0xC45372b2AddB93f92795e231B65071d5D570F163",
+          "functionSelectors": [
+            "0x89d61912",
+            "0x7f5a7c7b",
+            "0x0266f044",
+            "0x6553aead",
+            "0xc7b57783",
+            "0x27415d21",
+            "0xa575b122",
+            "0xeb8660dc",
+            "0xd23b7b31",
+            "0x7ae5f561",
+            "0x674bd742",
+            "0x7dfe0293",
+            "0x24d44167",
+            "0x0e52fe80",
+            "0x6789692c",
+            "0x9c8dead2",
+            "0x4f6d38d0",
+            "0x1afdb693",
+            "0x0aee1940",
+            "0x9c54eea2",
+            "0x2be8656f",
+            "0x705caed9",
+            "0xd7cb29d0",
+            "0x2b481883",
+            "0xe03c65c4",
+            "0xe76af32e",
+            "0x9520b23e",
+            "0x85358493",
+            "0xc8a3fe0b",
+            "0xda345f76",
+            "0xebecb84e",
+            "0xd0c7cd72",
+            "0xc0cadedd",
+            "0xfe884e28",
+            "0x7d54bc82",
+            "0x6430e3a1",
+            "0xd12b6274",
+            "0x06a85569",
+            "0x431dbd2d",
+            "0x35a314d0"
+          ]
+        },
+        {
+          "facetAddress": "0xF5F16Cd0Cd230E7eA868151f8E14Ff7A0D33e1B2",
+          "functionSelectors": [
+            "0xc0b6f561",
+            "0x3c213957",
+            "0x737293e2",
+            "0xb842e87f",
+            "0x8da5cb5b",
+            "0xe30c3978",
+            "0x1af1b0c4",
+            "0x0f9f2530"
+          ]
+        },
+        {
+          "facetAddress": "0x42b0cc4ac33C738E56029d3Db78d88705E9b571d",
+          "functionSelectors": [
+            "0xd7d4cf09",
+            "0xa2090219",
+            "0x7fda99ae",
+            "0xa5ef9788",
+            "0xdc6bf0d3",
+            "0xa7b715f1",
+            "0x5bd8902d",
+            "0x2479d2d4",
+            "0x2ba474f1",
+            "0x3d9feccd",
+            "0xc924f7c8",
+            "0x9a33cb9d",
+            "0x8ec81731",
+            "0x13f4cce1",
+            "0x150b7a02",
+            "0x4f3f3feb",
+            "0x6ced1880",
+            "0xe275a40a",
+            "0x81ce9cbd",
+            "0xef0c687b",
+            "0x6d2eadff",
+            "0x59bc0a5a",
+            "0xe14edf6d",
+            "0x0df8e806",
+            "0xf602c45b",
+            "0xb6c38b52",
+            "0x62595182",
+            "0x06c0e80d",
+            "0xb018df9b"
+          ]
+        },
+        {
+          "facetAddress": "0x81f699BC4C814B885603e8194e1D20a30fE0Da16",
+          "functionSelectors": [
+            "0xec55c474",
+            "0x161d9afc",
+            "0xccff9894",
+            "0x787642e8",
+            "0xe9dc9e6d",
+            "0x74d1295f",
+            "0x9ade58a9",
+            "0x28dd2984"
+          ]
+        },
+        {
+          "facetAddress": "0x5bCfa4ab275e44f68049adC0386DFd8AFe4e54D7",
+          "functionSelectors": [
+            "0x4f8448b3",
+            "0xb64483bc",
+            "0x36bd523f",
+            "0xa4ab9f4b",
+            "0x0378c852",
+            "0x3611810a",
+            "0x7d68700e",
+            "0x0c525a0d",
+            "0x544f82ed",
+            "0xef51da64",
+            "0xe4732319",
+            "0x4dfcd8a0",
+            "0x4f30154e",
+            "0xfe4e04e2",
+            "0xcf236475",
+            "0x68349cae",
+            "0x81a6be34",
+            "0x21680043",
+            "0xf291ba5d",
+            "0x222d122e",
+            "0xc6322c88",
+            "0xe703d142",
+            "0xf142ce12",
+            "0x8563c5b3",
+            "0x2560bf26"
+          ]
+        }
+      ],
+      "interfaces": [
+        "0x36372b07",
+        "0xa219a025",
+        "0x9d8ff7da",
+        "0x84b0196e",
+        "0x5a9c1814",
+        "0xd5cbfb21",
+        "0x59fb2971",
+        "0x2c5102bb",
+        "0x3415fed3",
+        "0x3b2b753c",
+        "0xda345f76",
+        "0x0910d5ea",
+        "0x4c60d07c",
+        "0x5a10cb7a",
+        "0x1f8a92ec",
+        "0x150b7a02",
+        "0x24e61335"
+      ],
+      "zeroSupply": [
+        {
+          "child": "0x922e83dCCd1b23d33ddd3ac621B1ECE301F1cD13",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0xD16d08bbc18EE4425BDBd6B90476791C4aC95758",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0xeb548a540e1CC0A1F656fFb1F09CE5C16273Aa02",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0xfE71249411e9f128a3Dcc413da67c8452c15660F",
+          "decimals": "9",
+          "supply": "0"
+        },
+        {
+          "child": "0xEB6Df6b50bF897362B6A4F657F990Ddd135c964A",
+          "decimals": "27",
+          "supply": "0"
+        }
+      ],
+      "convenienceArrayQuery": []
+    }
+  ]
+}

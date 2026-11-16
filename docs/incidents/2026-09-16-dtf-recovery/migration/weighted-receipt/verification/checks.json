@@ -1,0 +1,56 @@
+[
+  {
+    "name": "specs",
+    "command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol -- -vv",
+    "bootstrap": "/bin/zsh -lc; approved existing login environment",
+    "code": 0,
+    "signal": null,
+    "bytes": 408517,
+    "sha256": "7de1a744293ce884125755788599d14ddbb3a2babe3e2abdff08e8a17c076536"
+  },
+  {
+    "name": "forks",
+    "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv",
+    "bootstrap": "/bin/zsh -lc; approved existing login environment",
+    "code": 0,
+    "signal": null,
+    "bytes": 359344,
+    "sha256": "8f2f11f8525e88d2c9b7c0a3845e01d6bda38d9fc325a6f87ce63c72083bbda8"
+  },
+  {
+    "name": "stages",
+    "command": "forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+    "bootstrap": "/bin/zsh -lc; approved existing login environment",
+    "code": 0,
+    "signal": null,
+    "bytes": 359,
+    "sha256": "86809c33d785da16ee48e91eeb84c82d95131d6fea6490cccc550e187574c037"
+  },
+  {
+    "name": "types",
+    "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts",
+    "bootstrap": "/bin/zsh -lc; approved existing login environment",
+    "code": 0,
+    "signal": null,
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "operator",
+    "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts ./scripts/recovery/dtf-migration/weighted-sy.test.ts ./scripts/recovery/dtf-migration/dtf-custody-se.test.ts ./scripts/recovery/dtf-migration/claim-vault.test.ts ./scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+    "bootstrap": "/bin/zsh -lc; approved existing login environment",
+    "code": 0,
+    "signal": null,
+    "bytes": 6721,
+    "sha256": "2575ea7cd4a405694aec926bf2e8abf7fbf65cb5460b0d9fc5aa4ffaedac4289"
+  },
+  {
+    "name": "cli",
+    "command": "bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18567 --checkpoint .omo-runtime/dtf-migration-weighted-receipt/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01",
+    "bootstrap": "/bin/zsh -lc; approved existing login environment",
+    "code": 0,
+    "signal": null,
+    "bytes": 262,
+    "sha256": "6478e870392006ca25473bd3460e8760dab498e132f5abf92775a52eb4be984a"
+  }
+]

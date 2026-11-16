@@ -1,0 +1,51 @@
+{
+  "schema": "phase20-source-validation-v1",
+  "signedRawRecords": 17,
+  "successfulSignedReceipts": 11,
+  "intentionalSignedReverts": 6,
+  "separateEOAFundingSuccesses": 1,
+  "rawHashRecoveredSignerChainReceiptChecks": "pass",
+  "canonicalReceiptHeaderPresence": "pass",
+  "fourActualSourceRuntimeBindingNative18Checks": "pass",
+  "helperRuntime": "exact match after only declared five20-byte wallet immutable bindings",
+  "helperSourceHash": "0x00a368d77ce4457f6df85f6329bbd1ca8714b2d425ca96ae0ac3b91a81c7bf57",
+  "partial": "exact3331 debit/credit; finite allowance9993->6662; Q/C9993/1001->6662/668",
+  "terminal": "exact6662 debit/credit; maximum allowance decreases6662; Q=C=0",
+  "unrelated": "custody10000 - booked9993 =7",
+  "late": "successful real transferFrom returningtrue before top-level LateFailure; endpoints, allowance, Q/C/booked unchanged",
+  "jsonParsing": "pass for retained inputs/runtime/RPC/source evidence/commands/compiler/cache JSON",
+  "helperPureLines": 38,
+  "comparisonInputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/contracts/fee/collector/FeeCollectorManagerTarget.sol",
+      "bytes": 2991,
+      "sha256": "cde9ec6a48912c9e940399b00d0acbadf655ef19af1cc502ff989d5ceab9320d",
+      "role": "current comparison or receipt helper, not claimed deployed source equivalence"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/contracts/fee/collector/FeeCollectorSingleTokenPushTarget.sol",
+      "bytes": 1807,
+      "sha256": "e48b22163df9aaf3414af8aeb3f5386c21a90ca0a7a7feff6e89fc605ade9c5c",
+      "role": "current comparison or receipt helper, not claimed deployed source equivalence"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol",
+      "bytes": 60233,
+      "sha256": "1389f1f0944d0f1ec0fe5337d4e95c6e4367fbb0d577d64cfa05fad4b10f2d98",
+      "role": "current comparison or receipt helper, not claimed deployed source equivalence"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "bytes": 8426,
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "role": "current comparison or receipt helper, not claimed deployed source equivalence"
+    }
+  ],
+  "unrun": [
+    "full repository build and existing tests: outside source-only scope",
+    "actual Migration configuration, frozen pricing, funding/bonds and operator integration: not authorized",
+    "new positive E-S/E-P/W-P fixtures: no authenticated acquisition/control established",
+    "unchanged disabled/owner-restricted recovery negatives: retained, deliberately not replayed"
+  ],
+  "diagnostics": "isolated Solar compile exit0; Biome unavailable, no install"
+}

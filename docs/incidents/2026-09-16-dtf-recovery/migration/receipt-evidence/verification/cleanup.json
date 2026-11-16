@@ -1,0 +1,29 @@
+{
+  "status": "STOPPED",
+  "ownedPendingOperations": 0,
+  "actualCollections": 1,
+  "actualRpcRequests": 310,
+  "actualRpcFailures": 0,
+  "completedSessions": [
+    {"id": "bash_1", "purpose": "initial read-only complete tracked diff", "exit": 0},
+    {"id": "mon_ZSEK6J7RPX2BBM7B", "purpose": "independent strict operator types", "exit": 0},
+    {"id": "mon_PADF3RA97AF734AY", "purpose": "one complete operator test invocation", "exit": 0},
+    {"id": "mon_HA993C7DMG3HDWTA", "purpose": "one finite actual collection", "exit": 0},
+    {"id": "mon_7XFSMRZMVGFT92NV", "purpose": "independent two-archive raw oracle", "exit": 0},
+    {"id": "mon_VGW9N6ZNC700VQV4", "purpose": "final read-only source boundary", "exit": 0},
+    {"id": "mon_A2X7DMT51EWBGKD5", "purpose": "strict scan support types", "exit": 0},
+    {"id": "mon_NT823YE56Q0N4TRE", "purpose": "selected-credential absence scan", "exit": 0}
+  ],
+  "recordedChildrenExited": 6,
+  "testFixtures": "awaited close/removal in passing complete suite",
+  "pycache": "not created; oracle uses python3 -B",
+  "temporaryChainsCreated": 0,
+  "operationalSignersCreated": 0,
+  "subagentsCreated": 0,
+  "checkpointsCreated": 0,
+  "privateWalletCredentialsRead": false,
+  "existingSuiteFixture": "Unchanged offline synthetic-intent signing with the public Anvil development key, not a live transaction.",
+  "retained": "All actual raw responses, canonical observations, original references, flags, proof, source captures and command streams.",
+  "untouched": ["producer handoff", "old evidence/candidates", "input trees", "shared services", "dependencies/configuration", "Foundry artifacts", "held09"],
+  "scope": "No operational eligibility, full Task9/full-plan acceptance, or P1 reconstruction."
+}

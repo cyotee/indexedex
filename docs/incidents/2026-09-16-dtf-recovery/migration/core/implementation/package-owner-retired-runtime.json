@@ -1,0 +1,149 @@
+[
+  {
+    "address": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+    "name": "UniswapV4DetfMigrationDFPkg",
+    "bytes": 16632,
+    "codeHash": "0xf65308fdae93755957b3272d47abbd2eafc54c886154300919abab312748f643",
+    "matches": true,
+    "maskedSlots": [
+      {
+        "start": 9194,
+        "length": 20
+      },
+      {
+        "start": 9220,
+        "length": 20
+      },
+      {
+        "start": 9246,
+        "length": 20
+      },
+      {
+        "start": 9272,
+        "length": 20
+      },
+      {
+        "start": 9298,
+        "length": 20
+      },
+      {
+        "start": 9339,
+        "length": 20
+      },
+      {
+        "start": 9362,
+        "length": 20
+      },
+      {
+        "start": 9388,
+        "length": 20
+      },
+      {
+        "start": 9414,
+        "length": 20
+      },
+      {
+        "start": 9441,
+        "length": 20
+      },
+      {
+        "start": 3088,
+        "length": 20
+      },
+      {
+        "start": 1138,
+        "length": 20
+      },
+      {
+        "start": 2721,
+        "length": 20
+      },
+      {
+        "start": 3117,
+        "length": 20
+      },
+      {
+        "start": 3138,
+        "length": 20
+      },
+      {
+        "start": 11853,
+        "length": 20
+      },
+      {
+        "start": 9113,
+        "length": 20
+      },
+      {
+        "start": 9140,
+        "length": 20
+      },
+      {
+        "start": 9167,
+        "length": 20
+      },
+      {
+        "start": 11677,
+        "length": 20
+      },
+      {
+        "start": 3019,
+        "length": 20
+      }
+    ]
+  },
+  {
+    "address": "0xd8c0e1df4cb2a23eb2949a193374f6524c12d9ae",
+    "name": "MigrationCoreLocalOwner",
+    "bytes": 2449,
+    "codeHash": "0xf57a1cfc10c8cfa0184a81449574abc95d97353d10f919d59b2a415302adb6d8",
+    "matches": true,
+    "maskedSlots": [
+      {
+        "start": 111,
+        "length": 20
+      },
+      {
+        "start": 177,
+        "length": 20
+      },
+      {
+        "start": 429,
+        "length": 20
+      }
+    ]
+  },
+  {
+    "address": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+    "name": "UniswapV4DetfMigrationAllocationFacet",
+    "bytes": 19975,
+    "codeHash": "0xfc2dcc6e768063670b706e2bbcb2dacb8d42b70cac228e3052399f01eb2d1cfb",
+    "matches": true,
+    "maskedSlots": [
+      {
+        "start": 10757,
+        "length": 20
+      },
+      {
+        "start": 10946,
+        "length": 20
+      },
+      {
+        "start": 11493,
+        "length": 20
+      },
+      {
+        "start": 11708,
+        "length": 20
+      },
+      {
+        "start": 10262,
+        "length": 20
+      },
+      {
+        "start": 10319,
+        "length": 20
+      }
+    ]
+  }
+]

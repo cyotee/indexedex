@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "kind": "confirmed-specification-reference-only",
+  "specificationAuthority": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+    "bytes": 98213,
+    "status": "confirmed amended local specification for wave 1",
+    "confirmation": "User reports task-1 independent confirmation; exact local raw-file SHA-256 matches the supplied fingerprint.",
+    "references": [
+      {
+        "section": "1.10",
+        "lines": [
+          122,
+          134
+        ],
+        "scope": "Manual Weighted pricing and keep-until-reloaded precedence; no change to authenticated source/custody/conservation obligations."
+      },
+      {
+        "section": "1.9",
+        "lines": [
+          112,
+          120
+        ],
+        "scope": "Iterative reward harvesting and conditional permanent custody."
+      },
+      {
+        "section": "2 source identity table",
+        "lines": [
+          181,
+          195
+        ],
+        "scope": "Fixed legacy identities and actual source-unit models; refresh operational pins before configuration."
+      },
+      {
+        "section": "3 E1/E2",
+        "lines": [
+          197,
+          209
+        ],
+        "scope": "Source route closure, configured original-wallet surrender, measured custody and conservation."
+      },
+      {
+        "section": "Implementation task 1",
+        "lines": [
+          462,
+          471
+        ],
+        "scope": "Every source row needs executable evidence or a concrete blocker; preserve historical evidence."
+      }
+    ],
+    "qualification": "This binds specification references only. Historical source archives and completed QA retain their original byte/source bindings and wording; no recovery/source checks are repeated."
+  },
+  "previousDoneClaim": {
+    "preservedPath": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/task-3-done-before-spec-amendment.json",
+    "sha256": "b40f40c2b5587e68bae30a67c72417e20a6314cf6fede416727fcab5a09f0624"
+  },
+  "coreSourceRowsUnchanged": true,
+  "completedRecoveryChecksRerun": false,
+  "productionOrTestCodeChanged": false,
+  "historicalSourceOrQALogsChanged": false,
+  "evidenceReused": {
+    "acceptedSourceQa": {
+      "commandRecord": "conformance-20261114/task-3/commands.json#source-state-assertions",
+      "log": "conformance-20261114/task-3/source-state-assertions.log",
+      "rawFile": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+        "bytes": 395748,
+        "sha256": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063"
+      },
+      "exitCode": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "ownedHome": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home",
+      "ownedCompilerArtifacts": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/cache_forge"
+      ],
+      "cacheIsolation": "Accepted run explicitly set HOME, FOUNDRY_DIR, FOUNDRY_HOME, XDG_CACHE_HOME and TMPDIR to task-owned paths; task-owned HOME/.foundry was observed after exit. Earlier attempts lacking HOME isolation remain historical and are not used as cache-isolation proof.",
+      "sourceTestBinding": {
+        "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "bytes": 14150,
+        "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+      },
+      "baselineTestBinding": {
+        "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "bytes": 13761,
+        "sha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac"
+      },
+      "change": "Existing invalid/burned/reserved/nonexistent-ID case now explicitly checks owner, custody/consumption, DETF supply/backing and gons after each expected revert using its original shared assertion helper."
+    },
+    "runtimeChecks": {
+      "path": "conformance-20261114/task-3/runtime-hash-checks.json",
+      "checks": 34,
+      "passed": 34,
+      "failed": 0
+    }
+  },
+  "scope": "Only current specification references and derived delivery metadata; task-2 verification and completed source/recovery checks remain settled."
+}

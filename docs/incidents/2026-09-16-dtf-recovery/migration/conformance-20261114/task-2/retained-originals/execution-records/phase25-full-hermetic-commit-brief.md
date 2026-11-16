@@ -1,0 +1,21 @@
+# Full-hermetic metadata correction delivery
+
+Root executed and sealed the actual full repository gate in `/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic`. Read complete report.md, seal.json, all raw command/log evidence and the initial failure/diagnosis/pager incident under `/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration/full-hermetic`. Required parent8db3f5ee6310e8a700dad2d6a33e21d0955e63ca, branch work/dtf-migration-phase-25-full-hermetic.
+
+Exactly one source path is authorized: `test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol`, raw SHA256 e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1. This corrects a stale test caused by earlier Migration commit215c2bba adding the16th frozen-quote interface: import actual interface, expect16interfaces, assert its exact ID at index15; retain15facet assertions. No production behavior changes, test deletion/skip or unrelated cleanup. Root inspected the complete diff, obtained clean Solidity diagnostics/whitespace, and verified exact source identity after execution.
+
+Actual final exits are0 for full build, all runtime-artifact refresh, focused regression(1pass) and full hermetic suite(28576pass,0fail,0skip,2687suites). Monitor/bash112 completed0. Repository CI fork exclusions/default settings apply, not newly hidden tests. The initial28575pass/1fail logs and in-scope diagnosis remain sealed. R2 initially blocked at a terminal prompt; one Enter resumed the same runner. Earlier incorrect progress statements are documented. No duplicate run, suppressed warning or production edit occurred.
+
+## Commit lane
+
+Under existing scoped local commit authorization, create one coherent commit of ONLY that source file, using local imperative message style, e.g. Fix frozen quote interface metadata expectations. Derive/check its accepted hash against seal and actual source, inspect full diff. Do not stage any evidence. Capture original reproducible per-entry evidence/out/cache/host dependency, ref and foreign-index baselines before staging; use raw bytes, lengths and exact modes/permissions, not aggregates as substitutes. Scope claims to actual current baselines, never all historical artifact versions.
+
+Require current/staged/tested source identity, complete staged whitespace and clean unrelated tracked source. Failures block commit without source edits. Use exactly one required coauthor trailer. After commit verify actual sole parent, exact one-file committed/current/tested identity, full parent-to-HEAD whitespace and clean tracked/index source; reproduce all original preservation rows. Write only commit/receipt.md, source-manifest.json and new support excluded from the commit. No tests/builds/CLI replay, source fix, history rewrite, merge/push/public action, install/provider change, held09 candidate access or relocation.
+
+All Git calls GIT_MASTER=1 and explicit --no-pager; set GIT_PAGER=cat/PAGER=cat. Read-only calls GIT_OPTIONAL_LOCKS=0; status/diff ignore submodules. Do not allow another terminal-pager wait.
+
+## Independent audit
+
+Require actual complete receipt/manifest. Independently compare the single committed/current/tested source hash/bytes/modes and full diff, actual sole parent, coauthor, immutable whitespace, all original per-entry preservation and source/index cleanliness. Read complete actual logs and commands, check focused/full counts and exits, validate complete seal membership and raw hash/length/mode. Reuse the already executed full gate; no runtime replay. Write only commit/verification.md and new support.
+
+The accepted base is QUALIFIED: preserve phase24 commit/P1-followup.md and its explicit unresolved2historicalrawJSONversions. This task does not recover those versions or claim all-history preservation. Full hermetic success is not portable/cold reconstruction, approved operational data, unsupported-source/conversion success or target gas. Retained registration45116678 exceeds32000000; local hermetic gas_limit30000000000 is not that cap. No held09 retry or public authorization. End with complete confirmed/needs-fix evidence and no owned operation pending.

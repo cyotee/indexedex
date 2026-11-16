@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-11-10T23:25:22.802Z",
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "keccak256": "0x57bbf4dbb066872a4e156f5db998d8c031fbca7fe42f02ba65b5b0883c25083a",
+      "lines": 272,
+      "pureLines": 255
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "sha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "keccak256": "0x0762a0228bb1cbe4d7157480a7450fb2ce3f4db66dbdcf7b4012538085c98290",
+      "lines": 332,
+      "pureLines": 311
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+      "sha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "keccak256": "0xdff1e333adc1b77ac25adac7d8fa97523e6a6c0ecdab850c3337f931561e84c4",
+      "lines": 185,
+      "pureLines": 161
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+      "sha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "keccak256": "0x3e38f1547d9e07795103cce6650c3718c9dcced09f92a038f551c960ae6751e4",
+      "lines": 252,
+      "pureLines": 224
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol",
+      "sha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "keccak256": "0x16be736fecb0e67d13822936a585ceb8f62ffddc872ae4ef25de423d9d76afa8",
+      "lines": 28,
+      "pureLines": 20
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 4,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-4-done.json",
+  "independent": true,
+  "summary": "Source and recorded proxy behavior support the requested manual pricing implementation, including all twelve loader guards, stable NFT identities, A/B preservation and unset-book activation. Confirmation is blocked because happy-final.log does not bind the exact required forge-artifacts.py invocation. The producer claim cannot supply its own missing execution evidence.",
+  "claim_read": {
+    "size": 18038,
+    "mtime_ms": 1794711681173.7964,
+    "sha256": "bce786e05c53e9563a930ac35c2970fb7a652f57d89b5001be946cf5b9815f24",
+    "stable_during_reads": true,
+    "reread_final_bytes": true
+  },
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "blocking",
+      "failure_class": "harness",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log:1-3,7950-7952",
+      "requirement": "Plan task 4 line 406 and verifier check 5: accepting log binds the exact four-source forge-artifacts.py command, exit 0 and nonzero selected cases.",
+      "observation": "The complete raw happy-final.log contains zero occurrences of forge-artifacts.py. It prints generated child Forge commands and HAPPY_EXIT=0 with 229 named passing tests. The exact outer invocation exists only in the untrusted DoneClaim. failures.log likewise lacks its outer invocation.",
+      "cause": "scripts/forge-artifacts.py:438-445 prints derived child commands, not original argv; the run wrapper did not capture its invocation in the accepting log.",
+      "impact": "Cannot independently confirm execution of the exact required command from the permitted accepting evidence. Aggregate success and producer status complete do not close this gap.",
+      "requested_change": "Supply a genuine execution receipt binding the exact plan invocation, cwd, raw log and exit status to the applicable rebuild. Preserve original evidence. Do not manufacture a retrospective header. If no existing receipt provides that binding, the producer must execute and record the required run; the verifier does not become the executor.",
+      "repro": "Read the complete happy-final.log; find no forge-artifacts.py occurrence; compare its first three lines to plan line 406 and inspect its final count/exit marker.",
+      "confidence": "high"
+    }
+  ],
+  "checks": [
+    {
+      "id": 1,
+      "result": "PASS",
+      "evidence": [
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol:8-54",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol:37-56",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookTarget.sol:39-42",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol:15-25,76-87"
+      ],
+      "observation": "One evaluator; exact setter/getter/preview and errors/event; capture aliases absent from active Solidity; storage slot and bytes position preserved."
+    },
+    {
+      "id": 2,
+      "result": "PASS",
+      "evidence": [
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol:49-54",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol:18-145"
+      ],
+      "observation": "Exact zero-id ABI book preimage and setter-bound version/chain/consumer/WETH/DTF. Structural validation covers roles, weights, scales and four modes. Evaluation uses canonical pure math without live pricing reads."
+    },
+    {
+      "id": 3,
+      "result": "PASS",
+      "evidence": [
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol:59-62,152-169,219-222",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol:15-24,79-82,108-111,164-167,196-199,236-239,277-280",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol:20-24",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log:44831"
+      ],
+      "observation": "All twelve loaders take expectedBookId last and check before mutation, including empty batches. Stable NFT originals omit book id; configuration IDs retain book id and typed inputs."
+    },
+    {
+      "id": 4,
+      "result": "PASS",
+      "evidence": [
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol:7-39",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol:267-303",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol:253",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol:15-20",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log:10485,12287,12409,12465,40255,40300,40386-40394"
+      ],
+      "observation": "Required rename and name-based artifact/salt wiring are present; other package/facet names retained. Setter removed at activation, reads retained. Actual unset-book activation follows funding and paid owner purchase."
+    },
+    {
+      "id": 5,
+      "result": "needs-fix",
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log:1-3,7950-7952",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log:3,50745-50747"
+      ],
+      "observation": "229 happy and 29 failure-case PASS lines, zero exit markers and all nine families are present. Exact outer helper invocation is not bound; H1 blocks confirmation."
+    },
+    {
+      "id": 6,
+      "result": "PASS",
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/proxy-census.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log:5061-5069",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedPricing.t.sol:287-334"
+      ],
+      "observation": "Decoded every census field against emitted ABI arrays: zero mismatches. All seven arrays also match the failures.log trace byte for byte. Actual proxy loupe reads supply owners."
+    },
+    {
+      "id": 7,
+      "result": "PASS with attribution limit",
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/verification/report.md",
+        ".omo/ulw-execute/dtf-conformance/task-5-verdict.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/verification/report.md:50-56"
+      ],
+      "observation": "Protected shared math diff against HEAD is empty. The four named TypeScript files and preparation.fixture.ts have the already confirmed task 5 changes. No task 4 TypeScript edit identified; shared diffs cannot prove authorship. All 64 baseline status paths and listed task 1/3/5 paths remain; both task 2 helpers exist."
+    },
+    {
+      "id": 8,
+      "result": "PASS",
+      "evidence": [
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedPricing.t.sol:210-235,492-538",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol:211-233",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log:5076",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log:10290,10413-10425,45554,47815"
+      ],
+      "observation": "Setting B preserves A credit/id, Q/C, origin and issued economics. Explicit B configuration replacement preserves immutable A issuance, exact bond/staking state and supply; repeated issuance rejects."
+    }
+  ],
+  "manual_qa": {
+    "result": "PASS",
+    "test": "MigrationWeightedPricingTest.test_ActivationCut_UnsetPricingAndEmptyEntitlements",
+    "census": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/proxy-census.json",
+    "log_bindings": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log:5061-5069",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log:10485-40423"
+    ],
+    "field_mismatches": 0,
+    "cross_log_abi_payloads_matched": 7,
+    "writers_before": 16,
+    "writers_after": 0,
+    "setter": {
+      "selector": "0x43d1e0cc",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    "old_aliases": [
+      {
+        "selector": "0x161d9afc",
+        "before": "0x0000000000000000000000000000000000000000",
+        "after": "0x0000000000000000000000000000000000000000"
+      },
+      {
+        "selector": "0xa5ef9788",
+        "before": "0x0000000000000000000000000000000000000000",
+        "after": "0x0000000000000000000000000000000000000000"
+      },
+      {
+        "selector": "0x7fda99ae",
+        "before": "0x0000000000000000000000000000000000000000",
+        "after": "0x0000000000000000000000000000000000000000"
+      }
+    ],
+    "retained": [
+      {
+        "selector": "0xcc337380",
+        "owner": "0xd8da8fb6c3dae05ef52117ff8c167cccf7abbc6b",
+        "signature": "migrationWeightedPricing()"
+      },
+      {
+        "selector": "0xdc6bf0d3",
+        "owner": "0xd8da8fb6c3dae05ef52117ff8c167cccf7abbc6b",
+        "signature": "previewOriginalCredit(uint256,uint256)"
+      }
+    ],
+    "unset_book_activation": {
+      "funding": "Two external fixture legs transfer 100 ether each; MigrationReserveBootstrapped at failures.log:12287.",
+      "before_purchase": "MigrationOwnerFirstBondRequired at failures.log:12394-12395.",
+      "paid_purchase": "Ordinary bond call at 12409; owner-to-proxy 1 ether transfer at 12465; MigrationOwnerFirstBondPurchased token 3 at 40255.",
+      "activation": "MigrationActivated at 40300.",
+      "pricing": "No setter call in this case; retained getter and preview revert MigrationWeightedPricingNotSet at 40386-40394."
+    }
+  },
+  "failure_family_witnesses": [
+    {
+      "family": "StaleBook",
+      "test": "test_StaleBook_AllTwelveEmptyLoaders",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 44831,
+      "result": "PASS"
+    },
+    {
+      "family": "InvalidManual",
+      "test": "test_InvalidManual_PricingRollback_AllStructuralFields",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 41162,
+      "result": "PASS"
+    },
+    {
+      "family": "UnsetPricing",
+      "test": "test_UnsetPricing_GetterPreviewAndAllLoaders",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 50272,
+      "result": "PASS"
+    },
+    {
+      "family": "UnauthorizedPricing",
+      "test": "test_UnauthorizedPricing_CurrentPendingFormerOwnerAndRollback",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 50143,
+      "result": "PASS"
+    },
+    {
+      "family": "PricingRollback",
+      "test": "test_PricingRollback_CheckedOverflow",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 44720,
+      "result": "PASS"
+    },
+    {
+      "family": "OriginCollision",
+      "test": "test_OriginCollision_StableAcrossBooksAndIndependentIssuance",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 42279,
+      "result": "PASS"
+    },
+    {
+      "family": "MaxIn",
+      "test": "test_MaxIn_RawBoundaryAndNativeOutputCap",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 42188,
+      "result": "PASS"
+    },
+    {
+      "family": "ZeroOutput",
+      "test": "test_ZeroOutput_NativeFloorAndEmptyV3",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 50660,
+      "result": "PASS"
+    },
+    {
+      "family": "ActivationCut",
+      "test": "test_ActivationCut_UnsetPricingAndEmptyEntitlements",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "line": 10485,
+      "result": "PASS"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/verification/report.md",
+      "result": "Independent source and raw-log assessment, complete loader matrix, manual QA, all adversarial classes, preservation limits and captured Git status."
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log",
+      "size": 6133246,
+      "sha256": "13bb4a68ee715d1fad56d62967b5a00d89ca6ab03fb18abb447b72c3bcb4a429",
+      "mtime": "2026-11-15T02:57:21.651Z"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "size": 9473559,
+      "sha256": "b562ffaddfffb18dbcac47f45d4e9e3fe2b71dd145ba22881a38d6508a6dd662",
+      "mtime": "2026-11-15T02:57:51.514Z"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/proxy-census.json",
+      "size": 5737,
+      "sha256": "5f8816dbce2b2442ba34de5bb6089bfef0cb9afe0b58ae6e045fcd06d21b9a18",
+      "mtime": "2026-11-15T02:59:19.171Z"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-r3.log",
+      "size": 6133409,
+      "sha256": "318deb15648ee0b37ade86334b764d4917790cdced067a56d7f490682991d004",
+      "mtime": "2026-11-15T02:56:05.015Z"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/rebuild.log",
+      "size": 283577,
+      "sha256": "6f75d807c8f6b45ff1fc31f37e655aa7fc8dbf977bf8291c3d1f1f75472e414e",
+      "mtime": "2026-11-15T02:47:14.904Z"
+    }
+  ],
+  "repro": {
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "happy_command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+    "failure_command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- --match-test 'test.*(StaleBook|InvalidManual|UnsetPricing|UnauthorizedPricing|PricingRollback|OriginCollision|MaxIn|ZeroOutput|ActivationCut)' -vvvv",
+    "executed_by_verifier": false,
+    "method": "Read current source and raw existing logs; parse emitted ABI census; inspect prefixed read-only Git status and diffs. No Forge execution.",
+    "recorded_results": {
+      "happy": {
+        "named_passes": 229,
+        "suites": 33,
+        "failed": 0,
+        "exit_marker": "HAPPY_EXIT=0"
+      },
+      "failure": {
+        "named_passes": 29,
+        "suites": 15,
+        "failed": 0,
+        "exit_marker": "FAILURE_QA_EXIT=0"
+      }
+    },
+    "expected": "Exact helper command bound to the accepting run with rebuild provenance, exit 0 and named selected cases.",
+    "actual": "Named cases, counts and exit markers exist; exact outer command binding is missing."
+  },
+  "adversarial": {
+    "malformed_input": {
+      "result": "PASS",
+      "observation": "Raw failures.log:41162 executes invalid-manual rollback; 41226-41232 and later iterations show exact Invalid reverts and equality of prior book bytes. Inspected test source:111-149."
+    },
+    "stale_state": {
+      "result": "PASS",
+      "observation": "All twelve empty loaders at 44831; nonempty A/B mismatch and unchanged weighted-SY configuration/Q/C at 10413-10425; origin index and separate-NFT cases at 45554 and 47815."
+    },
+    "dirty_worktree": {
+      "result": "PASS",
+      "observation": "Captured Git status in report; 64 baseline paths remain. Task 1/3/5 listed paths and task 2 helper programs exist. Protected math unchanged; named TypeScript diffs match confirmed task 5. Only report and verdict written.",
+      "limit": "Path presence and source-diff comparison do not independently prove authorship or every historical evidence byte."
+    },
+    "misleading_success_output": {
+      "result": "FAIL",
+      "observation": "Exact command binding absent despite 229/29 named passes and zero exit markers. H1 prevents accepting status complete or count alone."
+    },
+    "generated_or_cached_artifacts": {
+      "result": "needs-fix",
+      "observation": "Prior rebuild.log:15-17 records 882 compiled files; happy-r3.log:16-18 and 4888-4890 record 13 production and 25 test files. happy-final.log:16 skips production compilation and 4873-4875 compiles one test file. The final roots include the parent DFPkg and new facets. H1 leaves exact run/rebuild binding incomplete.",
+      "limit": "No stale-bytecode product defect is demonstrated. Do not describe the final cached production step as a fresh production rebuild."
+    },
+    "hung_or_long_commands": {
+      "result": "not-applicable",
+      "reason": "Verifier did not rerun Forge or launch a long test command."
+    },
+    "flaky_tests": {
+      "result": "not-applicable",
+      "reason": "Verifier did not rerun tests or use retries."
+    },
+    "untrusted_external_text": {
+      "result": "not-applicable",
+      "reason": "Local source and local tests only."
+    },
+    "cancel_resume": {
+      "result": "not-applicable",
+      "reason": "This task does not verify the operator journal."
+    },
+    "repeated_interruptions": {
+      "result": "not-applicable",
+      "reason": "No interruption scenario was executed."
+    }
+  },
+  "limits": [
+    "No Forge, build, test, install, transaction, commit or delegation was performed by this verifier.",
+    "No product defect was identified in the inspected task 4 requirements; required execution provenance remains incomplete.",
+    "The full final migration/operator tree, public execution and financial inputs are outside this verification.",
+    "Producer warnings and failed automatic submodule-install probes remain in the raw logs; no success was inferred from them.",
+    "Manual QA PASS does not override the missing exact command binding."
+  ],
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/verification/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-4-verdict.json"
+  ]
+}

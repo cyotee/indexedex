@@ -1,0 +1,71 @@
+{
+  "lane": "other-sources",
+  "date": "2026-11-10",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "credentialCheck": {
+    "shell": "/bin/zsh -lc",
+    "expression": "test -n \"$ALCHEMY_KEY\"",
+    "stdout": "ALCHEMY_KEY_PRESENT",
+    "valuePrinted": false,
+    "expandedRpcUrlPrinted": false
+  },
+  "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq",
+  "invocations": [
+    {
+      "shell": "/bin/zsh",
+      "arguments": [
+        "-lc",
+        "cd \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01\" && export TMPDIR=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq\" BUN_INSTALL_CACHE_DIR=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/bun-cache\" npm_config_cache=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/node-cache\" XDG_CACHE_HOME=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/cache\" && test -n \"$ALCHEMY_KEY\" && chmod +x \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs\" && node --check \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs\" && bun scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy"
+      ],
+      "probePid": 54212,
+      "started": "2026-11-10T12:10:13.533Z",
+      "finished": "2026-11-10T12:10:19.242Z",
+      "exitCode": 2,
+      "overall": "UNPROVEN",
+      "historicalAttempt": "PASS",
+      "failedOperation": "eth_getCode",
+      "error": "ProbeError: eth_getCode: HTTP 429",
+      "noChildStarted": true,
+      "evidence": ["probe-alchemy.json", "probe-alchemy.sources.json"]
+    },
+    {
+      "shell": "/bin/zsh",
+      "arguments": [
+        "-lc",
+        "cd \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01\" && export TMPDIR=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq\" BUN_INSTALL_CACHE_DIR=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/bun-cache\" npm_config_cache=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/node-cache\" XDG_CACHE_HOME=\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.gF90Oq/cache\" && test -n \"$ALCHEMY_KEY\" && chmod +x \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs\" && node --check \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs\" && bun scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2"
+      ],
+      "probePid": 55971,
+      "started": "2026-11-10T12:12:45.184Z",
+      "finished": "2026-11-10T12:12:58.510Z",
+      "changeFromFirstAttempt": "Sequential metadata reads instead of a concurrent burst; HTTP throttling propagates as a harness failure.",
+      "exitCode": 2,
+      "overall": "UNPROVEN",
+      "historicalAttempt": "PASS",
+      "failedOperation": "eth_call",
+      "error": "ProbeError: eth_call: HTTP 429",
+      "noChildStarted": true,
+      "evidence": ["probe-alchemy-r2.json", "probe-alchemy-r2.sources.json"]
+    }
+  ],
+  "authenticatedHistoricalRead": {
+    "chainId": 4663,
+    "block": 108944663,
+    "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+    "source": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+    "sourceRuntimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+    "totalSupplyRaw": "15338080546808403036783930",
+    "verdict": "PASS",
+    "custodyVerdict": "UNPROVEN",
+    "custodyTransactionsSent": 0
+  },
+  "blockerForOrchestrator": "The existing login credential supplies authenticated historical access. Both acquisitions stopped on HTTP 429, including after sequential metadata reads. Provider throughput, not missing credentials or unavailable historical state, blocks pinned custody QA.",
+  "preservedPublicFailure": {
+    "evidence": "probe-public.json",
+    "method": "eth_getCode",
+    "errorCode": -32000,
+    "message": "historical state b1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071 is not available",
+    "modified": false
+  },
+  "cleanupReceipt": "cleanup-alchemy.json"
+}

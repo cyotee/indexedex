@@ -1,0 +1,42 @@
+{
+  "type": "DoneClaim",
+  "status": "blocked-outside-allowed-writes",
+  "repairComplete": false,
+  "task10Complete": false,
+  "productFilesChanged": [],
+  "requiredProducerPath": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+  "requiredProducerLocation": "bootstrapManifest source list, lines 69-75",
+  "cause": "The actual saved immutable execution manifest binds five generated ABI artifacts but none contains MigrationWeightedPricingSet. The separate generated pricing interface artifact contains the event but is not a bound source. Completing production integration requires the producer to bind that artifact; appending it to historical bindings would change the original execution domain.",
+  "originalTransactionHash": "0xa3bde746c8e8aed493469528c9b3dfc423ecaba903f4ed04a56d3b72b4e4fc63",
+  "expectedBookId": "0xe7f20b629b1814a326fbcf0d71509cf6fa97fd347db8a00eeae32ded0fbfd531",
+  "originalReceiptSha256": "c6b1e9c210ccce97c27d1fb051f2b70198af57302b367cc6952416aee8645666",
+  "originalImmutableDomainHash": "a8954601aaa779ee2dc8e645a4fd94b76b9797bed44ef5ef199e7790f5487dea",
+  "observed": {
+    "savedReceiptStatus": "0x1",
+    "traceReturnEqualsExpectedBook": true,
+    "separateGeneratedArtifactDecodesExpectedBook": true,
+    "productionCaptureCompletionError": "manual setter event differs from exact Inputs",
+    "manualReplayExit": 1,
+    "focusedBaselineExit": 0,
+    "focusedBaselineTestsPassed": 15,
+    "focusedBaselineTestsFailed": 0,
+    "gitStatusExit": 0
+  },
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "evidenceDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/blocked-report.md",
+  "afterFixVerification": "blocked: no repair was shipped; no fabricated domain or hand-typed event ABI substituted",
+  "fullOperatorAndTypeChecks": "not run as instructed while sibling repair remains independently owned",
+  "cleanup": {
+    "originalReceiptBytesPreserved": true,
+    "savedProviderDestroyed": true,
+    "monitoredCommandsExited": true,
+    "anvilStarted": false,
+    "networkRequests": false,
+    "transactionsSent": false,
+    "evidenceRetained": true
+  },
+  "parentReadinessMarkerWritten": false,
+  "planBoxesChanged": false,
+  "writtenLast": true
+}

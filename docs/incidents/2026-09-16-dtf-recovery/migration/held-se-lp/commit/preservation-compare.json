@@ -1,0 +1,54 @@
+{
+  "originalRows": {
+    "docsMissing": 0,
+    "docsChanged": 0,
+    "docsNewBeforeReceipt": 16,
+    "permFileChanges": 0,
+    "directorySizeChange": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp",
+        "before": {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp",
+          "kind": "dir",
+          "perm": "0o755",
+          "size": 128,
+          "sha256": null
+        },
+        "after": {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp",
+          "kind": "dir",
+          "perm": "0o755",
+          "size": 160,
+          "sha256": null
+        }
+      }
+    ],
+    "permNewBeforeReceipt": 18,
+    "outMissing": 0,
+    "outChanged": 0,
+    "outNew": 0,
+    "cacheMissing": 0,
+    "cacheChanged": 0,
+    "cacheNew": 0,
+    "hostByteMismatches": 0,
+    "hostRows": 2621,
+    "uniqueHostPaths": 2615,
+    "dualRolePaths": 6,
+    "refChanges": [
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-21-held-se-lp",
+        "before": "3ec0912bafebf9c0aa66770a72f04501e5c11865",
+        "after": "4eaa7decab80d24cf37cb3781eff5ffaf9362942"
+      }
+    ],
+    "foreignIndexChanges": 0,
+    "thisIndexBefore": "c7826a05a19e32d5027007602a91cac4941d7409cfde62502cd9923efb9ad6f8",
+    "thisIndexAfter": "3062b9c9b66505c209450f11a7da5b25fc61de9a0f094722993631b7cca19286"
+  },
+  "writtenAfterRewalk": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/commit/receipt.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/commit/source-manifest.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/commit/preservation-compare.json"
+  ],
+  "note": "Host comparison is per JSONL row. Collapsing the six dual-role paths would falsely report a role change. This file does not claim its own raw digest."
+}

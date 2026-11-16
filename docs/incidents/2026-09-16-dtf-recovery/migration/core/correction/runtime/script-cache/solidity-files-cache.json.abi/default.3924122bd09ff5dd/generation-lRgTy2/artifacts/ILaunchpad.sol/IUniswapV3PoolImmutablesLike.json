@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"fee","inputs":[],"outputs":[{"name":"","type":"uint24","internalType":"uint24"}],"stateMutability":"view"}],"id":2339}

@@ -1,0 +1,1 @@
+env GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-domain.test.ts scripts/recovery/dtf-migration/execution-state.ts scripts/recovery/dtf-migration/execution-state.test.ts 

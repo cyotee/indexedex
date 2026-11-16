@@ -1,0 +1,5 @@
+Retained root: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration
+Destination root: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration
+Source entries: 13613; destination entries: 72859
+semantic	resumed-integration/record-verification.ts	Approved task 2 extends the delivered recorder with inventory and delivery modes. The complete original hermetic/fork/operator verification body and relative imports remain intact; the original raw file is losslessly archived. This replaces the executable helper only, not historical results or source authority.
+Additional historical-source differences and exact archived destinations: conformance-20261114/task-2/recovery-differences.json (when present).

@@ -1,0 +1,293 @@
+{
+  "links": [
+    {
+      "path": "lib/crane",
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "inode": 18755930,
+      "perm": "0o755",
+      "size": 42
+    },
+    {
+      "path": "node_modules",
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "inode": 18755931,
+      "perm": "0o755",
+      "size": 45
+    }
+  ],
+  "phase15": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+    "size": 1047506,
+    "perm": "0o644",
+    "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7"
+  },
+  "protected": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-commit/verification.md",
+      "size": 11514,
+      "perm": "0o644",
+      "sha256": "54d4df79b8d769d685061506dd26d2acf5466284d552bbab54f3732f5d6c9167"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-commit/audit-checks.json",
+      "size": 831586,
+      "perm": "0o644",
+      "sha256": "6b2bd5db3426c0532a7586b44c37c71c4e9bf58cfb777031a6bab09cdaefe687"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-commit/audit-preservation.json",
+      "size": 5579414,
+      "perm": "0o644",
+      "sha256": "e4e588b466e6b25de6a507891ad3082ebfce5bd7c93b4ac286ff303621806eaf"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-commit/audit-closure.json",
+      "size": 25750,
+      "perm": "0o644",
+      "sha256": "a7119a66bd1002119c1807415815863ed582fccaaeede3627d5baef0d079144d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/verification.md",
+      "size": 11348,
+      "perm": "0o644",
+      "sha256": "55a9eb3f128addf8f10d668015ff7c97985418bb2726534cc86e4bcab73751a3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-correction/report.md",
+      "size": 4563,
+      "perm": "0o644",
+      "sha256": "0f1249a50b5a210df8ef77967ad00b8096c89ebbb2e143ac9406adc4797dd8fb"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-correction/seal.json",
+      "size": 86995,
+      "perm": "0o644",
+      "sha256": "d0c49aac0d178f589d626a8639ce9790db92abcebc5eb6a287543057a3885934"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-verification/f1-closure.md",
+      "size": 5335,
+      "perm": "0o644",
+      "sha256": "6b05e38451153544db3021508104ca08687c786abe3c931c6ff6980639be227b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-verification/f1-closure-evidence.json",
+      "size": 8352,
+      "perm": "0o644",
+      "sha256": "10d598360b2f5cd59b764cf64953164e987fa68aa97df698a26637cf7c789e61"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-verification/report.md",
+      "size": 10200,
+      "perm": "0o644",
+      "sha256": "c18b2c9adbddaa6190bda525c8f2302e6276b35ce44b4f8ba50bbcd7cbd16656"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-evidence-correction/report.md",
+      "size": 737,
+      "perm": "0o644",
+      "sha256": "d6163483945bfd3353a31c3cab9bf5606b89195bc456446d6159f4dde41c054f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-evidence-correction/seal.json",
+      "size": 470,
+      "perm": "0o644",
+      "sha256": "073208f389fbfd45b7a335a6f28352b87158ad905b089ab334e7b4281386bb86"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-evidence-correction/correction.json",
+      "size": 890,
+      "perm": "0o644",
+      "sha256": "f6f0f9946cc2b1ad4c580c983b70a20612896d4678a062f1c9e4f2a4729374c2"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-evidence-correction/validation-results.json",
+      "size": 2594,
+      "perm": "0o644",
+      "sha256": "6b933633e858b16e29d47dd5d865b3c584dc8a6e043997133759aac25bfb2609"
+    }
+  ],
+  "indexes": [
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex",
+      "branch": "refs/heads/main",
+      "head": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/index",
+      "size": 2049344,
+      "mode": "0o644",
+      "sha256": "3cc0d21e28487e7e5af9762e2d584ef8f2254e09a370831f3a57e5eaaf9ab277"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration",
+      "branch": "refs/heads/work/dtf-migration",
+      "head": "6e27ecaa242c4acca132e3575a160514aad07b11",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-integration/index",
+      "size": 2051311,
+      "mode": "0o644",
+      "sha256": "aa8006174469c69a0b117d6916c4d8c6439074ba842a4b23e80309765eba373d"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "branch": "refs/heads/work/dtf-migration-phase-01",
+      "head": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-01/index",
+      "size": 2049344,
+      "mode": "0o644",
+      "sha256": "749de311dc63fa71d84f6c86c1c5a8ca4d282277704577de756ca41061759b6d"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02",
+      "branch": "refs/heads/work/dtf-migration-phase-02",
+      "head": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-02/index",
+      "size": 2051159,
+      "mode": "0o644",
+      "sha256": "9126e38348b1d52a80568fc3190e576f2f8b8498d8b03a28669a547bfee6e4dc"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03",
+      "branch": "refs/heads/work/dtf-migration-phase-03",
+      "head": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-03/index",
+      "size": 2049496,
+      "mode": "0o644",
+      "sha256": "8f7331c9ae5157787c63474325d1075ebc8d1edd55ace7cb322fd527ab6f7b43"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04",
+      "branch": "refs/heads/work/dtf-migration-phase-04",
+      "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-04/index",
+      "size": 2059345,
+      "mode": "0o644",
+      "sha256": "2ea7388ea59115bbc13aa24220bc2bc54b3473c235d090542e5b2882b16aaf00"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+      "branch": "refs/heads/work/dtf-migration-phase-05",
+      "head": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-05/index",
+      "size": 2060522,
+      "mode": "0o644",
+      "sha256": "ac042893ccb68302441a8bf7541b11d2f5cc7e0a4bf63be30eff1fc97c3ffe67"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2",
+      "branch": "refs/heads/work/dtf-migration-phase-06-e2",
+      "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-06-e2/index",
+      "size": 2059345,
+      "mode": "0o644",
+      "sha256": "92403be633233bedc23824bce7d1157ce041aec505684d1b90f60afc849f5366"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery",
+      "branch": "refs/heads/work/dtf-migration-phase-07-recovery",
+      "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-07-recovery/index",
+      "size": 2062817,
+      "mode": "0o644",
+      "sha256": "2fbafd4df15947c89b8d3f0b852b49640b0ae1692996d7acbdc37a7fa40cd33b"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+      "branch": "refs/heads/work/dtf-migration-phase-08-operator",
+      "head": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-08-operator/index",
+      "size": 2065731,
+      "mode": "0o644",
+      "sha256": "ebb6f20c078bd6544c3c578527afb8fe978d32b01fc4e69423259608f38bfebe"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas",
+      "branch": "refs/heads/work/dtf-migration-phase-09-deployment-gas",
+      "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-09-deployment-gas/index",
+      "size": 2062817,
+      "mode": "0o644",
+      "sha256": "6a719d99866e71c51f78d9845d12acb3e8e3ed199b1e153be6416acd62a54ef8"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources",
+      "branch": "refs/heads/work/dtf-migration-phase-11-same-wallet-sources",
+      "head": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-11-same-wallet-sources/index",
+      "size": 2065731,
+      "mode": "0o644",
+      "sha256": "f352931cef814c84990fa46e29d70653fe56616288e327474eb69f09050319dd"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission",
+      "branch": "refs/heads/work/dtf-migration-phase-12-wallet-admission",
+      "head": "2c2b3370ded30cae1662329025d4fb58f7197330",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-12-wallet-admission/index",
+      "size": 2066011,
+      "mode": "0o644",
+      "sha256": "69885674d2a9248874a27082ace9959cb5c2accc914242a635c7d2cb9d236e71"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+      "branch": "refs/heads/work/dtf-migration-phase-13-weighted-liquid",
+      "head": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-13-weighted-liquid/index",
+      "size": 2067163,
+      "mode": "0o644",
+      "sha256": "65041499f12f27f70be8f313e75be6f71ad386ff5dd14c2749d5082cf31b1edd"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy",
+      "branch": "refs/heads/work/dtf-migration-phase-14-weighted-sy",
+      "head": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-14-weighted-sy/index",
+      "size": 2067899,
+      "mode": "0o644",
+      "sha256": "718bef8129d313f1af5e6d5eef22bea8b3a54309cf14cf0580676ddcfe609d8b"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se",
+      "branch": "refs/heads/work/dtf-migration-phase-15-dtf-custody-se",
+      "head": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-15-dtf-custody-se/index",
+      "size": 2068947,
+      "mode": "0o644",
+      "sha256": "1046c4affdbe682780d8bef45c77cdf2361edc3d123f3bde5009a7c74992a342"
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault",
+      "branch": "refs/heads/work/dtf-migration-phase-16-claim-vault",
+      "head": "9c227900b280713305d4a1a1d1cdc3d8d273f23d",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-16-claim-vault/index",
+      "size": 2070332,
+      "mode": "0o644",
+      "sha256": "90fcbe92225a40a47f145bb8f9ef2efffc3d395d9df343dd424f0830b69a3221"
+    }
+  ],
+  "refsSha256": "e01625e90063ad6f5d84e2aafd2a43c4471fda28a1a7024c78079f07843cfa6c",
+  "refsBytes": 5319,
+  "inventories": {
+    "docs-incidents": {
+      "file": "followup-docs-incidents.jsonl",
+      "entries": 1434,
+      "bytes": 421018,
+      "sha256": "f0064eb25bb02ee41afb468b8fe6679a6f6591a64106a5d0f2523443092dea97"
+    },
+    "docs-incidents-perms": {
+      "file": "followup-docs-incidents-perms.jsonl",
+      "entries": 1654,
+      "bytes": 441398,
+      "sha256": "b5b65236323e280afebae7d4f293e526c4d9c2fac0257042790829f0f3a49a8a"
+    },
+    "out": {
+      "file": "followup-out.jsonl",
+      "entries": 7329,
+      "bytes": 1699802,
+      "sha256": "4a15a2bcaf9c7a58737488f7555bc7cc81ceee1a6f40892c0150b6c760bd7e15"
+    },
+    "cache_forge": {
+      "file": "followup-cache-forge.jsonl",
+      "entries": 596,
+      "bytes": 164574,
+      "sha256": "b43394f01976318bbaf8fa412628def718da9b2db2fbcba9dff5f9a7ce09847b"
+    }
+  }
+}

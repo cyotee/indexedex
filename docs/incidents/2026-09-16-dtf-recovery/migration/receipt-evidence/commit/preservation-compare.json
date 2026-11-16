@@ -1,0 +1,98 @@
+{
+  "version": "phase28-receipt-evidence-preservation-compare-v1",
+  "baseline": "commit/precommit inventories captured before staging and before commit/ existed",
+  "preSupportRehash": {
+    "path": "commit/precommit/preservation-compare-before-support.json",
+    "contentPermDirMismatches": 0,
+    "foreignIndexesUnchanged": 29,
+    "ownIndexChanged": 1,
+    "refsChanged": ["refs/heads/work/dtf-migration-phase-28-receipt-evidence"],
+    "unexpectedRefChanges": 0,
+    "hostUnchanged": true,
+    "authoritiesUnchanged": true,
+    "commitDirExisted": false
+  },
+  "postSupportDocsRewalk": {
+    "when": "after precommit inventories and source-manifest.json, before this file and receipt.md",
+    "content": {"before": 1482, "after": 1528, "missing": 0, "changed": 0, "extra": 46},
+    "perms": {"before": 1493, "after": 1541, "missing": 0, "changed": 1, "extra": 48},
+    "dirs": {"before": 11, "after": 13, "missing": 0, "changed": 1, "extra": 2},
+    "unexpectedAdditivePaths": [],
+    "originalDirectoryBookkeepingChanged": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence",
+        "kind": "dir",
+        "perm": "0o755",
+        "st_mode": 16877,
+        "sha256": null,
+        "beforeSize": 128,
+        "afterSize": 160,
+        "beforeNlink": 4,
+        "afterNlink": 5,
+        "beforeChildCount": 2,
+        "afterChildCount": 3,
+        "beforeChildrenSha256": "6427893862c3486e1889c0f3958e78f4e1423eaf68bdb0c670238d58b2430259",
+        "afterChildrenSha256": "c7fc894590f20266a5c6109144443da05e87deae03aa23b777e5132c15e9af1d",
+        "cause": "additive commit/ child directory; kind, permission, and st_mode unchanged"
+      }
+    ]
+  },
+  "inputsAfterSupport": {
+    "recovered-input": {"contentChanged": false, "permsChanged": false, "dirsChanged": false},
+    "original-incident": {"contentChanged": false, "permsChanged": false, "dirsChanged": false}
+  },
+  "artifactRootsAfterSupport": {
+    "out": {
+      "scope": "root directory bookkeeping only; full per-entry compare is the pre-support rehash",
+      "unchanged": true,
+      "size": 199584,
+      "nlink": 6237,
+      "childCount": 6235,
+      "childrenSha256": "5a8becb3e8de62dc236d5aade25695a12077d6d2c2b79caad458d5ac889f7025"
+    },
+    "cache_forge": {
+      "scope": "root directory bookkeeping only; full per-entry compare is the pre-support rehash",
+      "unchanged": true,
+      "size": 288,
+      "nlink": 9,
+      "childCount": 7,
+      "childrenSha256": "f59732c58d3734f272e9ed39915265dd21eed30537adf967c01bd4749a79413c"
+    }
+  },
+  "ownIndex": {
+    "path": "worktrees/dtf-migration-phase-28-receipt-evidence/index",
+    "beforeSha256": "47760b282e13f83c77f8be9a22b49b06bb5f9fd92bf21239728341cbb6c8b570",
+    "afterSha256": "64f80d782c15e24157675abb4b0057a32bd7e46001789077028743aa60ac391d",
+    "beforeBytes": 2077579,
+    "afterBytes": 2078515,
+    "st_mode": 33188,
+    "perm": "0o644"
+  },
+  "branchRef": {
+    "path": "refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+    "beforeSha256": "dcd150d26b0ed9bfa44f3993987b3b3257ee4c57cd500a55f785cd5cd86890a5",
+    "afterSha256": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+    "bytes": 41,
+    "st_mode": 33188,
+    "beforeText": "789fced820ed494d9651c598fb8f75c646d727a7\n",
+    "afterText": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n"
+  },
+  "showRefOnlyLine": {
+    "removed": "789fced820ed494d9651c598fb8f75c646d727a7 refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+    "added": "07d54b9a3d20d98aee24e75235bbf16b650a8028 refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+    "bothFilesBytes": 6579,
+    "beforeSha256": "04d7ac6af4a4ca0be07c8ef7427d3f497ff80d1931953ea36fd414024df1f82f",
+    "afterSha256": "5d67d05f7dbb04f97ed7a3256e3095644323f92b263b7511a7a7cda6b113b2db"
+  },
+  "modeDistinction": {
+    "comparisonUsed": ["perm", "st_mode"],
+    "gitModeIsNotPermissionProof": true,
+    "cacheForgeRegularFiles0o600": 80,
+    "cacheForgeMode33152": 80,
+    "thoseRowsUnchangedInPreSupportCompare": true
+  },
+  "laterAdditiveFilesNotInPostSupportRewalk": [
+    "commit/preservation-compare.json",
+    "commit/receipt.md"
+  ]
+}

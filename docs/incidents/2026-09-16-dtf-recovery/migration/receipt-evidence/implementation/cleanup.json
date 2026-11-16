@@ -1,0 +1,81 @@
+{
+  "status": "STOPPED",
+  "ownedPendingOperations": 0,
+  "actualCollections": 1,
+  "actualRequests": 310,
+  "providerFailures": 0,
+  "chainServicesCreated": 0,
+  "collectorSignersCreated": 0,
+  "operationalSignersCreated": 0,
+  "existingSuiteFixture": "The unchanged offline journal test signs a synthetic intent with the public Anvil development key; no live transaction or operational signer.",
+  "subagentsCreated": 0,
+  "temporaryCheckpointCreated": false,
+  "testServers": "awaited close",
+  "testTemporaryTrees": "removed by awaited finally blocks in passing suite",
+  "retained": "Complete actual raw safe HTTP bodies, request entities, every normalized observation/reference/review, all recorded failures and evidence support",
+  "untouched": [
+    "original raw inputs",
+    "old candidate/evidence archives",
+    "held09",
+    "dependencies/configuration",
+    "warm artifacts",
+    "shared services"
+  ],
+  "completedRuns": [
+    {
+      "id": "bash_1",
+      "exit": 0
+    },
+    {
+      "id": "bash_2",
+      "exit": 0
+    },
+    {
+      "id": "mon_T4G7GK10M7H8XCRS",
+      "exit": 2
+    },
+    {
+      "id": "mon_4Y49PK0W77HE8M00",
+      "exit": 0
+    },
+    {
+      "id": "mon_YGC554MTQZY0VGDQ",
+      "exit": 1,
+      "childExit": 2
+    },
+    {
+      "id": "mon_9R3SWXJYTQ9B8X8W",
+      "exit": 1,
+      "expected": true
+    },
+    {
+      "id": "mon_68YRH3Q9HFKF5GSF",
+      "exit": 0
+    },
+    {
+      "id": "mon_JP24XDBFF1G74ZQX",
+      "exit": 0
+    },
+    {
+      "id": "bash_9",
+      "exit": 0
+    },
+    {
+      "id": "mon_J9B8ADAA47439BER",
+      "exit": 0
+    },
+    {
+      "id": "mon_20GN4HBA1KNB0ZB9",
+      "exit": 0
+    },
+    {
+      "id": "mon_ZB59ABQ46EWBFDWJ",
+      "exit": 0
+    },
+    {
+      "id": "bash_13",
+      "exit": 0
+    }
+  ],
+  "limitations": "Separate verifier has not run; no operational or full-plan acceptance."
+}

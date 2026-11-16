@@ -1,0 +1,155 @@
+{
+  "checkedAt": "2026-11-10T15:30:18.594Z",
+  "implementationEvidence": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/source-manifest.json",
+      "sha256": "8747ab56a87c183c7505d8ee6f0f5cd285b4a400f2873efe55e1c082292af93d",
+      "currentSha256": "8747ab56a87c183c7505d8ee6f0f5cd285b4a400f2873efe55e1c082292af93d",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final-command.txt",
+      "sha256": "06400d7da3f2bc804330fa9e69e35d3677156850c3b1dffadb769c79798a4b66",
+      "currentSha256": "06400d7da3f2bc804330fa9e69e35d3677156850c3b1dffadb769c79798a4b66",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final-exit.txt",
+      "sha256": "d20f6eb27e532f362096f85b2f3ec8817d618ad4cd78af7217aa028fb3a68c03",
+      "currentSha256": "d20f6eb27e532f362096f85b2f3ec8817d618ad4cd78af7217aa028fb3a68c03",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final.log",
+      "sha256": "a11c888997a3670a5e9df25daf0508e5ae00308143af4d8035bfe8662d456b37",
+      "currentSha256": "a11c888997a3670a5e9df25daf0508e5ae00308143af4d8035bfe8662d456b37",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/real-proxy-trace.log",
+      "sha256": "f0b630348aa7944a893decce3ebf069eab3e2c8be9220f7a607b830b6fd5a660",
+      "currentSha256": "f0b630348aa7944a893decce3ebf069eab3e2c8be9220f7a607b830b6fd5a660",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/local-rpc-07.log",
+      "sha256": "849fea2f93cdc407fecdc4f544ea84f4bd2a529810adf4d025a560659b047c31",
+      "currentSha256": "849fea2f93cdc407fecdc4f544ea84f4bd2a529810adf4d025a560659b047c31",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/rpc-proof.json",
+      "sha256": "ea1ab5f184e05d1f40159118264730545b8ae13a60907c358d633ee75b6b3b11",
+      "currentSha256": "ea1ab5f184e05d1f40159118264730545b8ae13a60907c358d633ee75b6b3b11",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/rpc-capture-trace.json",
+      "sha256": "db0566663e5d02d5ef44308b26d1fb87bb7e258446e8294b1ea1014d8ee283c0",
+      "currentSha256": "db0566663e5d02d5ef44308b26d1fb87bb7e258446e8294b1ea1014d8ee283c0",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/rpc-evaluation-trace.json",
+      "sha256": "d50ee8bf722c5fe93368d22bfa53a09a28ca3018c23adb6d49bf040e47497295",
+      "currentSha256": "d50ee8bf722c5fe93368d22bfa53a09a28ca3018c23adb6d49bf040e47497295",
+      "unchanged": true
+    }
+  ],
+  "originalBroadcast": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/broadcast/MigrationSnapshotLocalQA.s.sol/31337/run-latest.json",
+    "sha256": "f94100792055950915d1d320316795396b761638529d70ff8b6ad3272c63a4c9",
+    "currentSha256": "f94100792055950915d1d320316795396b761638529d70ff8b6ad3272c63a4c9"
+  },
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+      "sha256": "b7af401436bf14cd4cde351b5b3af70b27a7cb1a166f06fc23c515e2bff5b618",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "sha256": "6c2a26b7c85e9f075ec0b8188efed41d9d40f6fccd9aaf8b91447a5c613a9d00",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "sha256": "ba05e7db8175d42a9e24b809772bfa03f54db02a1cd9f163e04148b7f84ceafc",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/utils/StandardExchangeFrozenQuoteLib.sol",
+      "sha256": "210d5df7a3c7fc69937c37473770bc34c24146993b1ee3a9527136fa58547137",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "sha256": "138137b39a8f2df0e0b8d922649a8d49d7caf7eb8945927513aabb77eae0f4f2",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol",
+      "sha256": "1dc6ff685e9159b6114bfc67f3a8f8e100ecdabd48bbbc179d957c1bc7eba7b6",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "sha256": "ff8ce788a7d065928512b633aca06ba858aecc5345d17d76d0bd8f909f6a265c",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "sha256": "a1db24f94e177bedd3f8e8fb438783e0048de393d93513a27ecef99698707267",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+      "sha256": "b6bf0d3c0d119b378d391cd281b9c2af0942011eef84f76337615d42960f7ff3",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+      "sha256": "0e7504ac790f6934df323567d665c1fe25dd5dc51874309e8c0ca72b817d4483",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol",
+      "sha256": "04aabbc91ebc34af967171e259396ede574c9c518795bb9cf8c34aab72aaaba6",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol",
+      "sha256": "255386a415233a101edb04233cf10ee3f213694baf22b9e19290d826bb1bc1a5",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol",
+      "sha256": "e518a13530090733f850435f2ca04ef138d9f8716019c48feff11008665bd944",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "sha256": "984241e3393db5d6892ace87bd001ec57c5f53d9c7e179ba03d339c3d722d1b3",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+      "sha256": "5b35b910d22182ee81884c702e53a6ef8869e91e2f3c82752b782f5a77198acc",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol",
+      "sha256": "bccccaca4c9941b5865c02be487d5850b87a8ec610f52371389939df80e72a38",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+      "sha256": "003b66c4cdbcc30b8cf81ecdce58c66b824cf3c6f74d691d41560b47ab93d3ac",
+      "unchanged": true
+    }
+  ],
+  "sharedLinks": {
+    "crane": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "nodeModules": "/Users/cyotee/Projects/indexedex/node_modules"
+  }
+}

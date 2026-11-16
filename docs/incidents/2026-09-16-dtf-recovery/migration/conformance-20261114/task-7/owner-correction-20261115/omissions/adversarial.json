@@ -1,0 +1,29 @@
+{
+  "dirty_worktree": {
+    "result": "preserved",
+    "observation": "git status --short line set was unchanged between the pre-edit snapshot and the post-edit snapshot. The four owned tests stayed modified. Unrelated dirty and untracked work, including the collapsed untracked conformance-20261114 tree, was not reverted or staged."
+  },
+  "malformed_input": {
+    "result": "pass",
+    "observation": "28 isolated omissions of a complete priced row were rejected by preparationInput. Each issue path was the omitted original field."
+  },
+  "stale_fixtures": {
+    "result": "pass",
+    "observation": "The pre-fix row shape, original plus proof and no pricing, is stale against the v2 schema. All 28 reconstructions failed with a pricing Required issue. The current fixture re-parsed successfully and was the valid control.",
+    "staleShapeRejected": true
+  },
+  "misleading_success_output": {
+    "result": "reproduced-then-closed",
+    "observation": "Restoring the omitted field while keeping the old row shape still failed only on pricing. A boolean failure assertion would stay green for that input. The repaired tests require the intended field path and a successful restoration.",
+    "fieldRestoredOldShapeFailsOnlyOnPricing": true,
+    "isolatedFieldPath": true
+  },
+  "notApplicable": {
+    "untrusted_external_text": "Local synthetic fixtures only. No external text is parsed as instructions.",
+    "cancel_resume": "This lane has no resumable operator flow.",
+    "hung_or_long_commands": "The focused command finished in 300ms under the existing 15000ms per-test budget. It was not a long external command.",
+    "flaky_tests": "No sleeps, retries, clocks, or order-dependent assertions were added. The check is a deterministic schema parse.",
+    "repeated_interruptions": "No mid-operation interrupt path is exercised by these schema checks.",
+    "generated_or_cached_artifacts": "The warm ABI was read by the existing fixture and the valid control succeeded. The artifact was not rebuilt or deleted, because sibling lanes share it."
+  }
+}

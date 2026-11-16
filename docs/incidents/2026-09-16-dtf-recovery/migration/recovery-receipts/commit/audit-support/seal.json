@@ -1,0 +1,188 @@
+{
+  "version": "phase30-immutable-commit-audit-seal-v1",
+  "verdict": "confirmed",
+  "status": "CONFIRMED-STOPPED-BOUNDED",
+  "subject": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+  "commit": "1694e68a4bd66dd67d3b5e3f145f1da23074ff48",
+  "soleParent": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+  "published": "2026-11-13T09:19:30.954Z",
+  "bindings": [
+    {
+      "path": "verification.md",
+      "bytes": 18641,
+      "sha256": "a40b6e9ad8eaf1093373001fd50bfe9889f233ffd62ab883dabf1a0f67e053da"
+    },
+    {
+      "path": "audit-support/immutable-diff.json",
+      "bytes": 32631,
+      "sha256": "7cde927583f420dcdc18d20e0095d9a53d1487c170660d90e9aef55f1370b8ca"
+    },
+    {
+      "path": "audit-support/evidence-dirs-01.jsonl",
+      "bytes": 4409,
+      "sha256": "bb09f9bf078275603a0262372598a82332257aedc85b85cc972cd497a27a55b5"
+    },
+    {
+      "path": "audit-support/raw-capture-checks.json",
+      "bytes": 1360297,
+      "sha256": "70f388cd2724e5cddc6b1f1c291f502ff0c8d5ca165ccaf6f94bee8f1d9b015e"
+    },
+    {
+      "path": "audit-support/refs-01.jsonl",
+      "bytes": 28332,
+      "sha256": "9f8cb9b11b3da6e2b8fbd35f4ddcda3233840f8a9b8b4bc73ef209590cb56306"
+    },
+    {
+      "path": "audit-support/original-frozen-modes.json",
+      "bytes": 65364,
+      "sha256": "5e5d3aa3a0238797a0d865e877d283409cc8406ff4a74f31f4d2d92b34078fff"
+    },
+    {
+      "path": "audit-support/input-dirs-01.jsonl",
+      "bytes": 2787,
+      "sha256": "f45ff9908665402d2d81fd50a93a011e2bf8ef123f6bab8b168a9363593db066"
+    },
+    {
+      "path": "audit-support/manifest-and-seal-checks.json",
+      "bytes": 3352312,
+      "sha256": "88db6de60bb86ebeaad1ced8d26b5436fb3fc5a8a060af477e8f6436ba100d59"
+    },
+    {
+      "path": "audit-support/command-receipts-and-streams.json",
+      "bytes": 1117006,
+      "sha256": "daa95ed2d03cb33f3d4d77623eabe6687def79aee5500f0c7c48190453234e1d"
+    },
+    {
+      "path": "audit-support/provenance-and-qualifications.json",
+      "bytes": 29703,
+      "sha256": "d5727be4fd6e9536a73ed11916e994fbc1e0d03e9046d515d53f2376f0dcef1a"
+    },
+    {
+      "path": "audit-support/README.md",
+      "bytes": 3180,
+      "sha256": "19ce9624cb5d4670cccec62c1aa7205fa3eb298490c5eac2656d6306ce89d40f"
+    },
+    {
+      "path": "audit-support/evidence-01.jsonl",
+      "bytes": 955888,
+      "sha256": "4daa0d775f0ccd1fe56d3a1f5b429e56cc53ca3c91d48060165d05e03e8746ca"
+    },
+    {
+      "path": "audit-support/evidence-perms-03.jsonl",
+      "bytes": 885644,
+      "sha256": "747de9186e50b112562ebddc9225ff39dcb48148c92cce615be4bfb3b7abf226"
+    },
+    {
+      "path": "audit-support/evidence-perms-01.jsonl",
+      "bytes": 898164,
+      "sha256": "a7d74e00cb3fb2368f4703fee6ab1508a617497239c98999ab0f1be7ccff4655"
+    },
+    {
+      "path": "audit-support/input-01.jsonl",
+      "bytes": 16966,
+      "sha256": "5730dd407f8d111ddc96652b23a683aae57563610170b8ae01f5b7be16931529"
+    },
+    {
+      "path": "audit-support/evidence-03.jsonl",
+      "bytes": 942194,
+      "sha256": "37080c2d29a4662226407ae1bee1c7f22509b349ad6e5a516723a29ca1d0f768"
+    },
+    {
+      "path": "audit-support/input-perms-01.jsonl",
+      "bytes": 17517,
+      "sha256": "f2e685d1b40e34e229d03b10a302f6bb3cf653ed58a4623ef53f8d60b401f4c2"
+    },
+    {
+      "path": "audit-support/original-baselines-and-links.json",
+      "bytes": 96016,
+      "sha256": "ead565255d00f3d5ecf4fdbd5583e705aae6545bfaa0caf7fab988205e3e7f96"
+    },
+    {
+      "path": "audit-support/evidence-04.jsonl",
+      "bytes": 820056,
+      "sha256": "486a6e595745ca4f6f81fb83f5a3ab477b6f423469acb0a8411122a0c3b001ec"
+    },
+    {
+      "path": "audit-support/commit-and-sources.json",
+      "bytes": 120276,
+      "sha256": "7ed427c0b5d1ce1538732ea578f8e34e3fd4c076e72e1ee5307493fc625c28ef"
+    },
+    {
+      "path": "audit-support/evidence-perms-04.jsonl",
+      "bytes": 773075,
+      "sha256": "793ded63b245885e6a01fb16a9f6616480ce0b4fcc72864c46b1b33a6f61d912"
+    },
+    {
+      "path": "audit-support/evidence-02.jsonl",
+      "bytes": 930092,
+      "sha256": "0d901ac51a94fb2101ee9ea7a6481b90d3619c00c5f124cfa6d9add20694c9aa"
+    },
+    {
+      "path": "audit-support/evidence-perms-02.jsonl",
+      "bytes": 872148,
+      "sha256": "1e2537e57fc7dcec2fcc14721838686cee37075d5bbb81d4c1735ff7be5eea69"
+    },
+    {
+      "path": "audit-support/final-boundary.json",
+      "bytes": 55947,
+      "sha256": "12c47222f7303e9e3110af1ed8130097a3ef9220be20f04e7459fa772f46dba1"
+    }
+  ],
+  "authenticated": {
+    "modifiedPaths": 8,
+    "addedPaths": 0,
+    "frozenSourceBindings": 70,
+    "producerSealMembers": 8,
+    "verifierSealMembers": 12,
+    "producerManifestRows": 2922,
+    "verifierManifestRows": 2916,
+    "originalEvidenceContentRows": 5842,
+    "originalEvidencePermissionRows": 5849,
+    "originalEvidenceDirectoryRows": 7,
+    "originalInputContentRows": 30,
+    "originalInputPermissionRows": 35,
+    "originalInputDirectoryRows": 5,
+    "originalRefRows": 60,
+    "originalIndexes": 32,
+    "foreignIndexesUnchanged": 31,
+    "recordedCommands": 18,
+    "testsPassedPerFinalSuite": 172,
+    "testsFailedPerFinalSuite": 0,
+    "testFiles": 15,
+    "recordsPerArchive": 319,
+    "responsesPerArchive": 1278,
+    "responseEnvelopesAuthenticated": 2556,
+    "byteIdenticalResponsePairs": 1277,
+    "propertyOrderOnlyResponseDifferences": 1
+  },
+  "qualifications": [
+    "Historical tested modes unavailable; current filesystem and Git modes authenticated separately",
+    "One additive original root directory bookkeeping change; no universal directory preservation",
+    "Own index changed for delivered commit; no audit index change; all foreign baseline indexes match",
+    "26 original loose refs absent and packed-refs changed as previously recorded; logical refs differ only by delivered subject commit",
+    "Historical policyRevision projected from parsed metadata; raw historical value retained and not current authority",
+    "Initial actual command failures retained, not relabeled passing",
+    "Original commit invocation has no separate stderr and serialized command omits --no-pager; original signature verification not rerun",
+    "LSP/Biome unavailable is not success; prior credential scans not replayed",
+    "P1 and broader source/data/financial/funding/gas limits remain separate"
+  ],
+  "cleanup": {
+    "ownedPendingOperations": 0,
+    "ownedServicesStarted": 0,
+    "ownedBackgroundChildrenStarted": 0,
+    "gitWrites": 0,
+    "runtimeReplay": false,
+    "phase29Retry": false,
+    "originalDeliveryArtifactMismatches": 0,
+    "auditIndexChanges": 0,
+    "auditLogicalRefChanges": 0
+  },
+  "operationalApproval": false,
+  "financialApproval": false,
+  "sourceAdmission": false,
+  "fullTask9OrPlanApproval": false,
+  "lastAuditArtifactWrite": true,
+  "excludes": [
+    "audit-support/seal.json"
+  ]
+}

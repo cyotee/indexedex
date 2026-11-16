@@ -1,0 +1,64 @@
+{
+  "type": "Task10CheckpointBoundObservation",
+  "observedAt": "2026-11-15T18:56:48.717Z",
+  "openedAt": "2026-11-15T14:55:25.715Z",
+  "originalBound": "2026-11-15T18:55:25.715Z",
+  "clockReset": false,
+  "task10Complete": false,
+  "completionClaimAllowed": false,
+  "existingRun": {
+    "attempt": 52,
+    "monitor": "mon_TPWAF4P2SEBXEKAQ",
+    "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770",
+    "status": "running",
+    "lastObservedCli": "042-verify.log",
+    "latestFinishedVerification": "initial configured census and three independent issuances verified; fourth recipient unissued"
+  },
+  "newLongTopLevelRunsStartedAfterBound": 0,
+  "scenarios": [
+    {
+      "group": "mixed A/B and configure interruption recovery",
+      "status": "unmet-at-bound",
+      "partial": "attempt 49 proves successful configure-A interruption; independent B and A-after-B recovery not yet proved"
+    },
+    {
+      "group": "same-block replacement and tamper rejection",
+      "status": "not-reached-at-bound"
+    },
+    {
+      "group": "unset-pricing paid owner activation",
+      "status": "unmet-at-bound",
+      "partial": "attempt 47 exposed repaired operator census defect; no successful paid-owner/activation replay yet"
+    },
+    {
+      "group": "distinct donation identities and no-resend recovery",
+      "status": "producer-proof-recorded",
+      "evidence": "donation-scenario-audit.json"
+    },
+    {
+      "group": "NFT three dual originals, funded bonds and cliffs",
+      "status": "not-reached-at-bound"
+    },
+    {
+      "group": "synthetic receiver atomic rollback and funded success",
+      "status": "not-reached-at-bound"
+    },
+    {
+      "group": "stale/malformed/history/artifact/chain/proxy negatives",
+      "status": "partial-at-bound",
+      "partial": "claimed-SY and malformed NFT preparation negatives recorded; stale signed A after B and later domain negatives not reached"
+    },
+    {
+      "group": "preserve all existing source/recovery/portability witnesses",
+      "status": "partial-at-bound",
+      "partial": "source acquisitions and initial portability verified; post-activation source admissions/recovery not reached"
+    }
+  ],
+  "cleanup": {
+    "currentRun": "pending; existing run retained under completion monitor",
+    "priorFailedRuns": "cleanup receipts retained"
+  },
+  "ownerRootFix": "owner-root-fix-and-retained-evidence.json",
+  "independentUnitCliGate": "confirmed; not real lifecycle acceptance",
+  "doneClaimWritten": false
+}

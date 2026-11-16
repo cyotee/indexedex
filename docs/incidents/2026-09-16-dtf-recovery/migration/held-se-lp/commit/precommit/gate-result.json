@@ -1,0 +1,13 @@
+{
+  "green": true,
+  "staged": 35,
+  "unexpected": [],
+  "missing": [],
+  "blobMismatches": 0,
+  "shortstat": "35 files changed, 1528 insertions(+), 34 deletions(-)",
+  "whitespace": {
+    "parent": 0,
+    "staged": 0
+  },
+  "lfsHits": []
+}

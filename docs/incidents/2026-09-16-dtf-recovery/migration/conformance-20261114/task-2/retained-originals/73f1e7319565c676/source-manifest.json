@@ -1,0 +1,2845 @@
+{
+  "schema": "dtf-migration-phase01-source-manifest/1",
+  "date": "2026-11-10",
+  "task": 1,
+  "task1_complete": false,
+  "task1_gate_closure": "NOT_MET",
+  "reporting_acceptance": "MET_AS_BLOCKER_RECORD",
+  "implementation_authorized": false,
+  "allocations_approved": false,
+  "c0_computed": false,
+  "compile_run": false,
+  "public_rpc_by_this_unit": false,
+  "foundry_suite_MigrationLegacySources": "NOT_RUN",
+  "synthesis_runtime": {
+    "note": "This unit synthesized producer evidence. It did not rerun probes. Producer runtime was Bun 1.4.2 and Anvil 1.9.0-Homebrew commit 6056c5845d34205a83cf7108042adb137325c9df. Synthesis kernel is separate and is not a fresh-block identity."
+  },
+  "dispositions": {
+    "E1": {
+      "label": "E1_DISPOSITION",
+      "status": "NOT_CLOSED",
+      "task1_complete": false,
+      "meaning": "E1 is not closed. Some source capabilities passed on a pinned or separately labeled fresh fork. Required protection or harvest routes failed, and no category demonstrated one atomic operation that binds the current owner, consumes the entitlement, takes custody and funds a fresh bond with complete rollback.",
+      "fail_routes": [
+        "weighted NFT approved-operator recipient redirection",
+        "earlier mature close and receipt redemption VaultDisabled",
+        "earlier SE and weighted WETH-leg SE exits VaultDisabled",
+        "earlier fungible LP UnsupportedRoute and NotOwner",
+        "weighted fungible LP NotOwner on exact-in and proportional exits"
+      ],
+      "unproven_boundaries": [
+        "atomic Migration handoff for every category",
+        "other-sources historical custody after HTTP 429",
+        "complete earlier source authentication after Sourcify 404",
+        "wrong-owner mature-close authorization masked by VaultDisabled",
+        "direct SY to DTF and disabled-state matrix",
+        "user authority over infrastructure-held SE and LP balances",
+        "on-chain absence of SE, fungible LP, and native ETH exposure",
+        "MigrationLegacySources Foundry suite was not executed"
+      ]
+    },
+    "E2": {
+      "label": "E2_DISPOSITION",
+      "status": "FAIL",
+      "task1_complete": false,
+      "witness_binary_pass_is_not_gate_pass": true,
+      "e2Verdict": "FAIL_CURRENT_INTERFACES",
+      "meaning": "Ordinary legacy transfers do not maintain contribution ancestry or prequoted credit. The weighted DETF counterexample shows two histories with identical balance observations and different required credits. An immutable permissionless history verifier was not established and is UNPROVEN, not a speculative PASS. Frozen allowances, payer signatures, mutable roots and mandatory wrappers are rejected constraints, not available fixes.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.results.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/invocations.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/cleanup.json"
+      ]
+    }
+  },
+  "pins": {
+    "historical": {
+      "label": "requested-historical",
+      "chain_id": 4663,
+      "rpc_chain_id": "0x1237",
+      "block": 108944663,
+      "block_hex": "0x67e5d17",
+      "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "state_root": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+      "timestamp_utc": "2026-11-08T04:08:21Z",
+      "used_by": [
+        "weighted probe",
+        "earlier-cp Alchemy retry",
+        "attribution witness-r3",
+        "other-sources historical header and TokenStaking totalSupply before HTTP 429"
+      ]
+    },
+    "fresh_not_historical": [
+      {
+        "label": "earlier-cp public fresh",
+        "block": 110859526,
+        "block_hex": "0x69b9506",
+        "hash": "0x95e705f74dedcea73e2c87c4276435e1ccb498680f1c46e25fba8bb1aa0cac36",
+        "timestamp": "2026-11-10T11:52:20Z",
+        "discovery_block_hex": "0x69b94c8",
+        "discovery_hash": "0xadd31b8bb9569d43c1aaa065d6c496a96d6f8d339da73e1ba3edc49c2318019d"
+      },
+      {
+        "label": "other-sources public r4",
+        "block": 110862604,
+        "hash": "0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80",
+        "state_root": "0x1d86ca9f4f0457092dbfc6a8aa7d341e90d94e5a5fa4eba5bfa9500065d6ac77",
+        "timestamp_hex": "0x6af306af"
+      },
+      {
+        "label": "other-sources native LP",
+        "block": 110860459,
+        "hash": "0xd5df213bed280397043210c7e927207971def5b71dcedf81e94a4240d4a736a1",
+        "state_root": "0xf7b30af1d962fb6a11d2ed19fdaf19963774f409dc5f11fdb0da3366aa05a582"
+      }
+    ],
+    "not_pins": [
+      "pre-incident last full block 64394556",
+      "attack block 64394557",
+      "funded snapshot, absent"
+    ]
+  },
+  "producers": [
+    {
+      "id": "weighted",
+      "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+      "machine_checks": {
+        "PASS": 34,
+        "FAIL": 1,
+        "UNPROVEN": 2
+      },
+      "migrationReady": false,
+      "binary_token": "WEIGHTED_PROBE_PASS means enumerated source capabilities, not migration readiness"
+    },
+    {
+      "id": "earlier-cp",
+      "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "pinned": {
+        "UNPROVEN": 4,
+        "PASS": 18,
+        "FAIL": 2
+      },
+      "fresh": {
+        "UNPROVEN": 4,
+        "PASS": 18,
+        "FAIL": 2
+      },
+      "authoritative_pinned_journal": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "fresh_replay": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.json"
+    },
+    {
+      "id": "other-sources",
+      "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+      "fresh_full_run": {
+        "PASS": 21,
+        "FAIL": 4,
+        "UNPROVEN": 3
+      },
+      "native_supplement": {
+        "FAIL": 2
+      },
+      "historical_custody": "UNPROVEN"
+    },
+    {
+      "id": "provenance",
+      "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+      "reconciliation": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json",
+      "reconciliation_sha256": "874eb99734cb6f06a6c75982fbe9dcfc52f84e535c3666fb8d2f2f23b11f684f",
+      "route_status_for_every_frozen_category": "UNPROVEN"
+    },
+    {
+      "id": "attribution",
+      "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+      "e2Verdict": "FAIL_CURRENT_INTERFACES",
+      "counterexample_binary_pass": true,
+      "gate_pass": false
+    }
+  ],
+  "rows": [
+    {
+      "id": "weighted_detf",
+      "plan_category": "both DETF generations",
+      "required": true,
+      "generation": "weighted",
+      "address": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "recorded_identity": "Weighted DETF, 9-decimal liquid token. Plan section 2.1 and ENTITLEMENT_LEDGER_PROVENANCE.md section 3.2.",
+      "fresh_identity": "Same address. Fresh other-sources name() returned DTF-DETF, decimals 9, at the fresh pin. Not relabeled as the historical pin.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "returns": "uint256"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "returns": "bool"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "returns": "bool"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "returns": "one uint256; current repository interface is two-value and was not substituted"
+        },
+        {
+          "signature": "previewExchangeIn(address,uint256,address)",
+          "selector": "0x89d61912",
+          "returns": "one uint256"
+        }
+      ],
+      "code_identity": "Proxy runtime keccak 0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601 is shared and insufficient. ERC20 facet 0x1d17acA0e0717d90cea916372070a1BE4652223F runtime 0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50, Sourcify match not exact_match.",
+      "source": {
+        "status": "PASS",
+        "detail": "Pinned historical address, facet binding and deployed ERC20 source authenticated by the weighted probe. requested historical pin block 108944663 hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733 chain 4663; not a fresh block",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "9 decimals. Native DETF units. Not 18-decimal earlier DETF and not gons.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "balanceOf reads current units. Ordinary transfer changes balances and emits Transfer with no Migration callback. Current balance is not contribution ancestry.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Pinned local fork transferFrom custody succeeded. Fixture is EOA 0x000000000000000000000000000000000000c057, not a Migration proxy. Rollback restored.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "UNPROVEN",
+        "detail": "balanceOf is a current unit read, not remaining attributable credit. Mixed transfer history is not recoverable from the balance. Unknown ancestry is not zero.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md"
+        ]
+      },
+      "harvest": {
+        "status": "PASS",
+        "detail": "Pinned staged exchangeIn to DTF succeeded. direct-first-run measured 38283506 raw DETF to 216228659430800592372 raw DTF. That delta is a measured conversion, not an entitlement. Direct SY to DTF was not this row.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json"
+        ]
+      },
+      "proof": {
+        "status": "FAIL",
+        "detail": "E2 balance-only attribution FAIL on this token. Witness histories H1/H2 end at the same balances and require different credits. No post-activation authenticated history verifier was established.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.results.json"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Custody and staged harvest evidence do not close E1 atomic Migration handoff or E2. Address existence is not support.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "FAIL",
+      "disabled_behavior": "No VaultDisabled result recorded for this DETF exchangeIn path on the pinned fork.",
+      "fixture": "Weighted probe local custodian EOA; not MigrationLegacySources.",
+      "route_supported": false
+    },
+    {
+      "id": "earlier_cp_detf",
+      "plan_category": "both DETF generations",
+      "required": true,
+      "generation": "earlier_cp",
+      "address": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "recorded_identity": "Earlier CP DETF, 18-decimal liquid token.",
+      "fresh_identity": "Same address. Fresh name() returned WETH / Down to Finance Uniswap V4 DETF, decimals 18. Pinned Alchemy replay and fresh replay are separately labeled.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "sellPositionToDetfNft(uint256,address)",
+          "selector": "0x6b7d927e",
+          "returns": "uint256 principal shares"
+        },
+        {
+          "signature": "closeBondMature(uint256,uint256[],address,uint256)",
+          "selector": "0x7c212893",
+          "returns": "uint256[]"
+        },
+        {
+          "signature": "redeemClaim(uint256,address,uint256,address,uint256)",
+          "selector": "0xbfe55606",
+          "returns": "uint256"
+        },
+        {
+          "signature": "transfer / balanceOf",
+          "selector": "0xa9059cbb / 0x70a08231",
+          "returns": "bool / uint256"
+        }
+      ],
+      "code_identity": "Core facet 0x8333749Cc7b1f66b5be568257d362aA749497Cf0 hash 0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d. Missing facet 0x67ed019eC3f8b77Bc51ED1e6403Fc90E0aBb15bE Sourcify HTTP 404, observed hash 0xa289425ebf221bd44551376c3459083a4d53eb30f485b48e783bf8291f7a05d6, selectors 0x6a4d3f12, 0xf5ee7c5b, 0x36abf3dc, 0x7cc34bb4. A name read of MultiAssetStandardVaultFacet is not verified source.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Relevant verified core facet matched observed runtime. Complete source authentication is UNPROVEN because one routed facet returned Sourcify HTTP 404. requested historical pin block 108944663 hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733 chain 4663; not a fresh block. separately labeled fresh block 110859526 hash 0x95e705f74dedcea73e2c87c4276435e1ccb498680f1c46e25fba8bb1aa0cac36; not the historical pin.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "18 decimals on the pinned and fresh reads. Not 9-decimal weighted DETF credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.summary.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "balanceOf and transfer move current units. The same generic transfer interface has no Migration callback. Acquisition cost in the frozen ledger is unproved.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Pinned Alchemy retry transferred 1000000000000000000 raw old DETF with an equal recovery delta. Fresh replay is separately labeled and is not this historical PASS.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "UNPROVEN",
+        "detail": "A liquid balance does not identify original ETH/DTF components or remaining prequoted credit. Provenance observed 6 rows and left acquisition unproved.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "This liquid token was custodied, not redeemed through the disabled underlying vault in that liquid-transfer case. Mature close and receipt redemption, which are the position harvest routes, revert VaultDisabled. Do not treat liquid custody as a harvest PASS.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+        ]
+      },
+      "proof": {
+        "status": "FAIL",
+        "detail": "Attribution-spec records the same transfer-interface blocker. The H1/H2 witness transactions ran against weighted DETF, not this token. Acquisition history is also incomplete.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Incomplete source authentication, disabled harvest routes, and the transfer-interface attribution blocker remain. Address existence is not support.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "FAIL",
+      "disabled_behavior": "Underlying SE 0xb7D4Bb379d361aD442Cddee53EA71A33957826A7 reverts VaultDisabled(address), selector 0x1ba84b43, on mature close and receipt redemption.",
+      "fixture": "Recovery EOA 0x100000000000000000000000000000000000c001. Not a Migration proxy.",
+      "route_supported": false
+    },
+    {
+      "id": "weighted_nft",
+      "plan_category": "both NFT models",
+      "required": true,
+      "generation": "weighted",
+      "address": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "recorded_identity": "Fixed-principal funded bond NFT. Purchased IDs 3-45. IDs 0-2 reserved. Not an LP lock and not a fungible LP.",
+      "fresh_identity": "Weighted custody evidence is the historical pin, not a fresh-block fallback. IDs 44-45 are post-incident purchases inside that pin, not pre-incident snapshot positions.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "ownerOf(uint256)",
+          "selector": "0x6352211e",
+          "returns": "address; zero observed for burned/nonexistent is not custody"
+        },
+        {
+          "signature": "positionOf(uint256)",
+          "selector": "0x46f96023",
+          "returns": "principal, claimedPrincipal, stakingGons, startTimestamp, vestingDuration"
+        },
+        {
+          "signature": "previewClaim(uint256)",
+          "selector": "0xae648e90",
+          "returns": "vestedPrincipal, principalRemaining, principalDue, rewardsDue"
+        },
+        {
+          "signature": "safeTransferFrom(address,address,uint256)",
+          "selector": "0x42842e0e",
+          "returns": "none"
+        },
+        {
+          "signature": "claimBond(uint256,address)",
+          "selector": "0x084c59ae",
+          "returns": "two uint256"
+        },
+        {
+          "signature": "claimPrincipal / claimRewards",
+          "selector": "0xf400c743 / 0x6c7b69cb",
+          "returns": "uint256 / uint256"
+        }
+      ],
+      "code_identity": "Funded bond facet 0x3a07364eabA092472d40F0e6788b8891A31faD4D runtime 0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52. Generic ERC721 facet 0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279 is Sourcify match, not exact_match.",
+      "source": {
+        "status": "PASS",
+        "detail": "Historical chain, selector bindings and deployed bond source authenticated. requested historical pin block 108944663 hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733 chain 4663; not a fresh block",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "Fixed principal is 9-decimal DETF units. Remaining principal is principal minus claimedPrincipal. Rewards and currently due principal are different quantities. Example, not an award: NFT 4 original 281387179, claimed 0, remaining 281387179, currently due 86292556.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "ownerOf is the current owner. NFT 26 owner at the pin is 0x2e69E40C4a4Ab5CA6826850F347acf8076a8063e, not the original purchaser. Approval is not beneficiary authentication.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Whole-NFT safeTransferFrom of ID 3 moved the identity with position fields unchanged. direct-first-run claimBond then measured 4308806205 raw sDETF and burned the NFT. Repeat claim failed. EOA fixture, not Migration callback.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Remaining total principal is readable as principal minus claimedPrincipal for extant positions. Burned IDs 25 and 42 and nonexistent 46 revert ERC721NonexistentToken 0x7e273289. A zero ownerOf is not eligibility. Reward-only after full principal claim has remaining principal 0 and must not gain credit from gons.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "Staged claim, unstake and DTF conversion succeeded for the custodian, including 24312424763253115621623 raw DTF in direct-first-run. The same deployed claim accepts an approved operator and an arbitrary nonzero recipient. Operator 0x...0a11 paid 4308806205 raw sDETF to 0x...0bad. That is a source-protection FAIL, not a custody miss.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Identity-local attribution is feasible. Integrated surrender, credit consumption, descendant nonduplication and a fresh 90-day bond were not executed. C0 is not computed. Withdrawn principal is not a second descendant award.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Operator redirection is an incompatible source behavior. Atomic Migration handoff and zero-principal migration rejection are UNPROVEN. Reserved and burned reads are not awards.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Approved-operator recipient redirection is accepted by deployed _claim. Adapter must bind the current owner and a fixed recovery recipient.",
+      "fixture": "EOA custodian 0x000000000000000000000000000000000000c057. Attacker/operator fixtures end 0a11 and 0bad.",
+      "eligibility_rule_preserved": "award = floor(C0 * remainingPrincipal / originalPrincipal) on one frozen funded snapshot; C0 = U(ETH, E0) + U(DTF, D0). P0 zero, nonexistent, burned, or remaining principal zero is ineligible. No configuration premint. This unit computed no C0 and approved no award.",
+      "route_supported": false
+    },
+    {
+      "id": "earlier_cp_nft_lp_lock",
+      "plan_category": "both NFT models",
+      "required": true,
+      "generation": "earlier_cp",
+      "address": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "recorded_identity": "LP-share lock NFT. Not the fungible LP at 0x923877336b14662cFb5B3A60b14e7d716d54A888. Not funded DETF principal.",
+      "fresh_identity": "Same address. Pinned Alchemy custody is historical. Fresh replay is separately labeled and does not replace the pin.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "getPosition(uint256)",
+          "selector": "0xeb02c301",
+          "returns": "originalShares, effectiveShares, bonusMultiplier, unlockTime, rewardDebt"
+        },
+        {
+          "signature": "originalSharesOf(uint256)",
+          "selector": "0x0f3767df",
+          "returns": "uint256 LP accounting shares"
+        },
+        {
+          "signature": "ownerOf(uint256)",
+          "selector": "0x6352211e",
+          "returns": "address"
+        },
+        {
+          "signature": "pendingRewards(uint256)",
+          "selector": "0x7dcb2abf",
+          "returns": "uint256 old DETF"
+        },
+        {
+          "signature": "claimRewards(uint256,address)",
+          "selector": "0x6c7b69cb",
+          "returns": "uint256"
+        },
+        {
+          "signature": "lpToken()",
+          "selector": "0x5fcbd285",
+          "returns": "address"
+        },
+        {
+          "signature": "convertToAssets(uint256)",
+          "selector": "0x07a2d13a",
+          "returns": "LP assets"
+        }
+      ],
+      "code_identity": "DETFNFTVaultFacet 0x3AB85813785b43B864F9C171F7ac97d6B76c459b hash 0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027. NewLock topic 0x6c9c08a1f1b7feb37476c6618f41abf6bb2f0ed71f504b88f6503b3a2a8475e5. No claimedPrincipal field was observed.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "NFT facet runtime matched. Full dependency authentication remains UNPROVEN because a different DETF facet is missing. requested historical pin block 108944663 hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733 chain 4663; not a fresh block",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "originalShares are LP accounting shares, 18-decimal asset conversion observed. effectiveShares include reward weight. Neither is fixed DETF principal. NFT 4 originalShares 2281854312954086546. Do not rename these fields.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.summary.json"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "ownerOf read and transfer demonstrated. NFT 4 owner at the tested pin was 0x230f95db9644C5b3608bA676D18426d03e435B1D before custody.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Pinned transfer 0x3e3b2b3d5ad372acb94c7f5b2af467e4aba3a310be6b0fdd06316d909953e398 moved NFT 4. Reward claim 0x5dfa0bfd67a8a62b6db4867245de7a3e2332195d97a75219bc0b6dd6e9ca1d45 paid 309005608995105 raw old DETF and left original shares unchanged. Locked NFT 3 custody retained lock and shares. These hashes were found in probe-alchemy-retry.json.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Live originalShares remain after reward claim. Sale zeroes all five fields and burns the identity. There is no claimedPrincipal partial-withdrawal model. ID 999999 absent. Standing ID 1 has zero original shares and was restricted. Still-locked shares are not zero merely because withdrawal is unavailable.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "Sale to receipt 0x3d54621af7e5dff968aed64f3639d0222170d962ead7c80339f39a33ede46042 succeeded and created a descendant receipt, not a second award. closeBondMature 0x61fb08ec01b576756fa25ae3ab9631613f140471c843576a2eac3774a7ff37a1 reverted VaultDisabled(0xb7D4Bb379d361aD442Cddee53EA71A33957826A7). Wrong-owner mature-close authorization is masked and UNPROVEN. Approved-operator reward redirection reverted; that PASS is not a mature-close authorization PASS.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "16 purchase receipts matched frozen inputs. Routed DTF is not a second contribution. Descendant receipt is not an independent award. Integrated credit and fresh bond were not executed. S011 does not contain these purchase receipts, so independent provenance replay is ABSENT_UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Mature withdrawal is blocked. LP shares are not funded principal. Atomic Migration handoff is UNPROVEN. Distinct from the fungible LP row.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "VaultDisabled blocks closeBondMature. Deployed public closeBondMature body does not show a holder check before DETF-only child retirement; the probe reaches VaultDisabled first.",
+      "fixture": "Recovery EOA 0x100000000000000000000000000000000000c001. Attacker fixture ends bad1.",
+      "route_supported": false
+    },
+    {
+      "id": "weighted_sdetf",
+      "plan_category": "sDETF/earlier receipts",
+      "required": true,
+      "generation": "weighted",
+      "address": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "recorded_identity": "9-decimal rebasing receipt. Replay in gons. Summing Transfer amounts is not a balance.",
+      "fresh_identity": "Custody evidence is the historical pin. No fresh-block relabel.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "gonsOf(address)",
+          "selector": "0x79a67521",
+          "returns": "uint256"
+        },
+        {
+          "signature": "stakingState()",
+          "selector": "0xe082f1d4",
+          "returns": "seven uint256: totalGons, gonsPerUnit, accountedBacking, allocationDust, stakingDust, feeWeight, creatorWeight"
+        },
+        {
+          "signature": "exchangeIn(...)",
+          "selector": "0xd02d3063",
+          "returns": "one uint256"
+        }
+      ],
+      "code_identity": "Facet 0xB7581fe833a2B2380DD786B345D61FFB734D36EB runtime 0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361. Pinned gonsPerUnit 876973181092115404940326782759509937.",
+      "source": {
+        "status": "PASS",
+        "detail": "Pinned facet and deployed staking source authenticated. Current worktree receipt target hash differs and was not substituted. requested historical pin block 108944663 hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733 chain 4663; not a fresh block",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "9-decimal nominal units plus internal gons. A partial unstake debits amount times current index. A full-account unstake debits remaining gons, including the final fraction.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "balanceOf and gonsOf read current receipt ownership. They do not identify original ETH/DTF credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Pinned transferFrom of 38283506 raw sDETF then unstaked to the same raw DETF amount in direct-first-run. Rollback restored.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "UNPROVEN",
+        "detail": "Current gons fix representation, not mixed contribution ancestry. Provenance has 198 observed rows and route UNPROVEN. Later holders of claimed descendants are UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "harvest": {
+        "status": "PASS",
+        "detail": "Unstake to DETF and DETF exchangeIn to DTF succeeded on the pinned fork for the tested custodian amount. That is a staged source conversion, not a Migration donation.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Complete mixed contribution and prequoted-credit ancestry is UNPROVEN. Gons are not a sufficient ancestry proof. A receipt descendant of an NFT claim is not a second purchase.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md"
+        ]
+      },
+      "verification": {
+        "status": "UNPROVEN",
+        "detail": "Not supported. Source custody and unstake passed. Attribution, descendant nonduplication and atomic bond creation did not.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "No disabled-state result recorded for this unstake path.",
+      "fixture": "Same weighted EOA custodian. Not MigrationLegacySources.",
+      "route_supported": false
+    },
+    {
+      "id": "earlier_cp_receipt",
+      "plan_category": "sDETF/earlier receipts",
+      "required": true,
+      "generation": "earlier_cp",
+      "address": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "recorded_identity": "18-decimal rebasing receipt. Latest-state observation in the frozen ledger is not a pinned historical balance census. Exception C2 leaves the supply gap UNKNOWN and not allocatable.",
+      "fresh_identity": "Pinned displayed supply 57898677945502333609. Fresh displayed supply 57898677945502049312. These are not one number.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "sharesOf(address)",
+          "selector": "0xf5eb42dc",
+          "returns": "external accounting shares"
+        },
+        {
+          "signature": "totalShares()",
+          "selector": "0x3a98ef39",
+          "returns": "external accounting shares"
+        },
+        {
+          "signature": "redemptionRate()",
+          "selector": "0x540385a3",
+          "returns": "WAD rate; observed 2197"
+        },
+        {
+          "signature": "convertToShares / convertToClaim",
+          "selector": "0xc6e6f592 / 0x2fbc6fea",
+          "returns": "source-specific quantities"
+        },
+        {
+          "signature": "redeem(uint256,address,bool)",
+          "selector": "0x5236be40",
+          "returns": "uint256 pair-token output"
+        }
+      ],
+      "code_identity": "Facet 0x25E611FB63Eb904776678286EF5cbe2a931B4f9A hash 0x31151be4bf8ff8e79f448872f9a0a5c37ee413ce7d2b15206f2debcc59d86ccc. SHARE_SCALE 10^9. SHARE_UNIT 10^27. External shares lose internal precision.",
+      "source": {
+        "status": "PASS",
+        "detail": "Receipt facet runtime matched on the pinned replay. This does not authenticate the missing DETF facet. requested historical pin block 108944663 hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733 chain 4663; not a fresh block",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "18 decimals. Transfer of 1000000000000000000 raw receipt produced displayed 999999999999999999 and 455166135639508420573509330905780 external shares. Not 1:1 with DETF or LP.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.summary.json"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "Displayed balance and sharesOf move on transfer. The emitted native amount is not an exact displayed-balance delta.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Pinned receipt transfer custody succeeded. Sale of NFT 4 minted 4322 raw receipt and 1967558883021387942 external shares to recovery. That descendant is one representation, not a second award.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "UNPROVEN",
+        "detail": "Holder-sum versus supply discrepancy is unresolved. Provenance status OBSERVED_LATEST_STATE. Do not assign the gap to users. Do not treat a blank acquisition field as zero.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "redeemClaim 0xe4359e06c585390d0c6e33cfb105c2384f58c4f9b44d75e1e0c566a2a97109e9 reverted VaultDisabled. Direct receipt redeem 0x22fb95c8bfd0b3f7c58faa20f4672371f4740ffb8a3276cccb3ff2a731880a0d also reverted VaultDisabled and is UNPROVEN as an alternate route, not a PASS. Custodied assets remained.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Rounded share conversion does not prove mixed original credit. Complete ancestry is UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Custody passed. Required redemption is blocked by VaultDisabled. Supply gap remains UNKNOWN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "VaultDisabled(0xb7D4Bb379d361aD442Cddee53EA71A33957826A7) on both tested redemption routes.",
+      "fixture": "Recovery EOA. Not a Migration proxy.",
+      "route_supported": false
+    },
+    {
+      "id": "weighted_sy",
+      "plan_category": "SY",
+      "required": true,
+      "generation": "weighted",
+      "address": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+      "recorded_identity": "9-decimal wrapper shares. Not a second claim on backing sDETF.",
+      "fresh_identity": "Fresh name() returned SY Staked DTF-DETF, decimals 9. Weighted custody evidence itself is the historical pin.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "yieldToken()",
+          "selector": "0x76d5de85",
+          "returns": "address; assigned sDETF"
+        },
+        {
+          "signature": "exchangeRate()",
+          "selector": "0x3ba0b9a9",
+          "returns": "uint256 WAD; pinned 1140285725447928057"
+        },
+        {
+          "signature": "getTokensOut()",
+          "selector": "0x071bc3c9",
+          "returns": "address[]"
+        },
+        {
+          "signature": "previewRedeem / redeem",
+          "selector": "0xcbe52ae3 / 0x769f8e5d",
+          "returns": "uint256 / uint256"
+        }
+      ],
+      "code_identity": "Facet 0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc runtime 0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d. Pinned wrapper holds 54373903589043794139626986358920462592399234625 gons, represented as 62001786099 raw sDETF.",
+      "source": {
+        "status": "PASS",
+        "detail": "Pinned SY facet and deployed source authenticated. Current worktree SY target hash differs and was not substituted. requested historical pin block 108944663 hash 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733 chain 4663; not a fresh block",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "9-decimal static shares. Each share converts through 1e36 gons and the funded exchange rate. Conversion dust is retained by the source.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "Share balanceOf is current wrapper ownership. It is not a second balance of the backing receipt.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Pinned transferFrom custody of 8094 SY then redeem paid 9245 sDETF and the surrendered SY balance became zero in direct-first-run.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "UNPROVEN",
+        "detail": "Shares and backing are one economic claim. Provenance has 17 observed share rows. Wrapper ancestry through later transfers is UNPROVEN. Crediting both wrapper and backing would double count.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "harvest": {
+        "status": "UNPROVEN",
+        "detail": "Staged SY to sDETF to DETF to DTF passed, including 52221256856930805 raw DTF from the 9245 sDETF in direct-first-run. Direct SY to DTF was not tested. No selector-existence claim is made for the untested route. Claim-vault redemption into this SY is a different row.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "One economic claim rule is required and not implemented as a Migration nullifier. Full wrapper ancestry is UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md"
+        ]
+      },
+      "verification": {
+        "status": "UNPROVEN",
+        "detail": "Not supported. Staged redemption passed. Direct route, ancestry and atomic bond creation did not.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Disabled-state matrix was not executed.",
+      "fixture": "Weighted EOA custodian.",
+      "route_supported": false
+    },
+    {
+      "id": "tokenstaking_claim",
+      "plan_category": "TokenStaking/claim-vault rights",
+      "required": true,
+      "generation": "weighted",
+      "address": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00",
+      "recorded_identity": "Legacy TokenStaking. 18-decimal DTF-denominated weights. Not an ERC-20 and not DETF units. Frozen ledger has 92 observed weight rows.",
+      "fresh_identity": "Historical Alchemy read totalSupply 15338080546808403036783930 at block 108944663. Historical custody acquisition then HTTP 429. Fresh custody is not that historical read.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "returns": "none"
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "returns": "uint256"
+        },
+        {
+          "signature": "claimVault()",
+          "selector": "0xab518e6e",
+          "returns": "address"
+        },
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "returns": "uint256 weight"
+        },
+        {
+          "signature": "approve/transfer/transferFrom",
+          "selector": "unbound",
+          "returns": "facet binding zero; name() and decimals() reverted"
+        }
+      ],
+      "code_identity": "Fresh binding facet 0x9C90d4a476f3473b9a0e32B530aF3474271a80B1 runtime 0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742. Current TokenStakingTarget.sol explains the mechanism and is not authenticated legacy bytecode. Source phase observed 2 (Wrapped).",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Historical code and totalSupply were read. Historical source acquisition stopped on HTTP 429, so historical custody is UNPROVEN. Fresh routing is separately labeled. separately labeled fresh block 110862604 hash 0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80; not the historical pin",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/alchemy-retry-receipt.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "Weights are DTF-denominated and not DETF. decimals() reverted, so 18 decimals is the recorded ledger unit, not a fresh decimals() success. Do not invent a decimals read.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "ownership": {
+        "status": "PASS",
+        "detail": "Holder-only reassign. No operator pull and no Migration callback. Claim holder 0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3 is an actual recorded EOA, not an infrastructure contract.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh-pin reassign 0x1ef021c20f3e08df3ebd722e1f9c44b180c7e913972ac33b1df11f78c9e177ae moved 64890781291192882058375 weight to custodian 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 and left the former holder at 0. This is not a historical-pin custody PASS.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Remaining exercisable weight is balanceOf. After reassign the original holder retained none of that weight. Zero reassignment, zero claim and a second withdrawClaim reverted. This does not value the weight as credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "PASS",
+        "detail": "Fresh staged withdrawClaim 0x965e7f7265aa42a3837370a5715a33232b6688f186ab1b12052abaf5826f8ce5 consumed the custodied weight and paid 117153341 raw SY. Not 1:1. Repeat claim reverted. Integrated Migration issuance remains UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "No operator pull or callback. Allocation ancestry and post-activation proportional credit are UNPROVEN. Weights and claim-vault SY are one remaining claim, not two. The migration adapter 0xC84999F31eA72A793a65ce73aa05ff624FDCBB51 is a recorded collective input, not this token.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md"
+        ]
+      },
+      "verification": {
+        "status": "UNPROVEN",
+        "detail": "Not supported. Fresh mechanical surrender and SY conversion passed. Historical custody, user-wide exposure and atomic credit did not. HTTP 429 is a provider gap, not proof the mechanism is incompatible.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "ERC-20 transfer surface is unbound. Holder reassignment exists.",
+      "fixture": "Actual claim holder impersonated on the fresh fork. Custodian 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266.",
+      "route_supported": false
+    },
+    {
+      "id": "claim_vault",
+      "plan_category": "TokenStaking/claim-vault rights",
+      "required": true,
+      "generation": "weighted",
+      "address": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+      "recorded_identity": "Claim vault holds SY for old TokenStaking claims. Provenance modeled 74 related inventory rows as SY-related custody, not a proved vault-share balance.",
+      "fresh_identity": "Fresh name() returned Wrapped SY Staked DTF-DETF, decimals 19, at separately labeled fresh block 110862604 hash 0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80. That pin is not historical. Do not relabel the frozen 74 rows as 19-decimal balances.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "balanceOf / transfer / transferFrom / approve",
+          "selector": "0x70a08231 / 0xa9059cbb / 0x23b872dd / 0x095ea7b3",
+          "returns": "uint256 / bool / bool / bool"
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "returns": "uint256"
+        }
+      ],
+      "code_identity": "Diamond proxy shares runtime hash 0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601. That hash does not identify behavior. Fresh behavior was executed, not independently source-verified.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Fresh routing and decimals were read. Historical custody acquisition did not complete. Frozen rows are related inventory, not proved balances.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "Fresh decimals() returned 19. Redemption output is 9-decimal SY. The two units must not be collapsed. Provenance's SY unit describes the related inventory model, not this fresh decimals read.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "balanceOf is implemented. The fresh custody fixture impersonated TokenStaking 0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00, and probe-public-r4.summary.json marks fixtureMayBeInfrastructure true. That is not proof a user can command TokenStaking to surrender these shares. Wrong-operator transferFrom reverted. Do not read the TokenStaking weight-holder EOA as the holder of these shares.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical transferFrom of 2769125838408621163 raw shares from impersonated TokenStaking 0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00. Holder remainder 274143458002453495139. Capability PASS is not user authority and not a historical-pin PASS.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Remaining shares were read back after transfer. After redemption custody shares were 0. This is not remaining migration credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "PASS",
+        "detail": "Fresh ERC-4626 redeem paid 276912584 raw 9-decimal SY. Mechanical only. Do not also credit the SY and the weight.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Allocation ancestry UNPROVEN. One remaining claim with TokenStaking weights. Current RebasingAwareERC4626Target.sol is explanatory, not authenticated legacy code.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "verification": {
+        "status": "UNPROVEN",
+        "detail": "Not supported. Fresh mechanical custody and redemption passed from the TokenStaking infrastructure holder. User authority, historical custody, and ancestry did not. Not a second award beside TokenStaking or SY.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Not effectively disabled in the fresh registry read. That is not historical proof.",
+      "fixture": "Impersonated TokenStaking infrastructure holder on the fresh fork. Historical custody UNPROVEN.",
+      "route_supported": false
+    },
+    {
+      "id": "underlying_se_earlier",
+      "plan_category": "underlying SE shares",
+      "required": true,
+      "generation": "earlier_cp",
+      "address": "0xb7D4Bb379d361aD442Cddee53EA71A33957826A7",
+      "recorded_identity": "Earlier standardExchangeVault. Provenance had 0 standalone SE-share position rows: ABSENT_NOT_PROVED, not proved absent.",
+      "fresh_identity": "Fresh name() UniV4 Vault of (WETH / DTF), decimals 18. Same name as weighted WETH-leg SE, different address. separately labeled fresh block 110862604 hash 0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80; not the historical pin",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "balanceOf / transferFrom",
+          "selector": "0x70a08231 / 0x23b872dd",
+          "returns": "uint256 / bool"
+        },
+        {
+          "signature": "exchangeIn(...)",
+          "selector": "0xd02d3063",
+          "returns": "not successfully executed"
+        }
+      ],
+      "code_identity": "Shared proxy runtime hash is insufficient. Fresh behavior executed. Not independent source verification.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Address resolved by earlier DETF standardExchangeVault() and registry membership. Frozen position rows do not prove absence. Historical other-sources custody UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "18 decimals on the fresh read. Not the 28-decimal weighted DTF custody shares.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "Fresh transferFrom used an infrastructure holder. That proves token mechanics, not that a user can command the holder to surrender.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical transferFrom of 2402083350942343165016427703439986226 raw shares and rollback PASS. Not user authority and not historical.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Holder and custody balances were read back. After failed harvest, custody remainder stayed equal to q. Not attributable credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "WETH and DTF exact-in exits revert VaultDisabled(source), selector 0x1ba84b43. Same disabled vault blocks earlier NFT mature close and receipt redemption. No re-enable was performed.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Mixed ancestry UNPROVEN. Zero frozen rows are not absence. Infrastructure balance is not user eligibility.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Harvest from the tested custodian is blocked. User exposure is UNPROVEN, not absent.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Registry isDisabled true for this source on the fresh pin. Pinned earlier-cp calls revert the same VaultDisabled address.",
+      "fixture": "Infrastructure holder impersonation. fixtureMayBeInfrastructure true.",
+      "route_supported": false
+    },
+    {
+      "id": "underlying_se_weighted_weth",
+      "plan_category": "underlying SE shares",
+      "required": true,
+      "generation": "weighted",
+      "address": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "recorded_identity": "Recorded in the provenance address map. No standalone position rows. Not proved absent.",
+      "fresh_identity": "Fresh name() UniV4 Vault of (WETH / DTF), decimals 18. Do not merge with 0xb7D4 despite the same name. separately labeled fresh block 110862604 hash 0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80; not the historical pin",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "returns": "uint256; call reverted"
+        },
+        {
+          "signature": "exchangeIn(...)",
+          "selector": "0xd02d3063",
+          "returns": "call reverted"
+        }
+      ],
+      "code_identity": "Shared proxy runtime hash is insufficient. Fresh behavior executed. Not independent source verification.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Resolved by weighted deployment exports, registry membership and source metadata. Historical custody UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "18 decimals. Distinct from the 28-decimal DTF custody shares.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "Infrastructure-holder impersonation only.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical transferFrom of 23634291028048331275075 raw shares and rollback PASS. Not historical and not user authority.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Balances read back. Failed harvest left custody remainder equal to q.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "SY redemption and Standard Exchange exact-in to WETH and DTF revert VaultDisabled(source).",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Mixed ancestry and user exposure UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Tested exits are disabled. Do not omit because the frozen ledger had no position rows.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Registry isDisabled true on the fresh pin.",
+      "fixture": "Infrastructure holder.",
+      "route_supported": false
+    },
+    {
+      "id": "underlying_se_weighted_dtf",
+      "plan_category": "underlying SE shares",
+      "required": true,
+      "generation": "weighted",
+      "address": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "recorded_identity": "Recorded in the provenance address map. No standalone position rows. Not proved absent.",
+      "fresh_identity": "Fresh name() Wrapped Down to Finance, decimals 28. separately labeled fresh block 110862604 hash 0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80; not the historical pin",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "returns": "uint256"
+        },
+        {
+          "signature": "exchangeIn(...)",
+          "selector": "0xd02d3063",
+          "returns": "bound; redemption used the ERC-4626 route"
+        }
+      ],
+      "code_identity": "Shared proxy runtime hash is insufficient. Fresh redemption executed. Not independent source verification.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Resolved by registry and metadata. Historical custody UNPROVEN. A successful fresh redemption does not make the other two SE exits supported.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "28 decimals in, 18-decimal DTF out. Do not treat as 18-decimal vault shares.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "Infrastructure-holder impersonation only.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical transferFrom of 1622646459016401842967981100000000 raw shares and rollback PASS. Not historical.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Balances read back. After redemption custody shares were 0.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "PASS",
+        "detail": "Fresh ERC-4626 redemption paid 162264645901640184296798 raw DTF. This PASS is not a PASS for the disabled SE shares and is not a historical-pin PASS.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "User ancestry and eligible exposure UNPROVEN. Output DTF is recovery inventory, not a new contribution.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "verification": {
+        "status": "UNPROVEN",
+        "detail": "Not supported. One fresh redemption passed. Historical custody, user authority and ancestry did not.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Not effectively disabled on the fresh registry read. The other two SE identities are disabled.",
+      "fixture": "Infrastructure holder.",
+      "route_supported": false
+    },
+    {
+      "id": "underlying_se_shares",
+      "plan_category": "underlying SE shares",
+      "required": true,
+      "generation": "both",
+      "address": "three identities; do not collapse",
+      "recorded_identity": "Provenance category underlying_se_shares: 0 rows, ABSENT_NOT_PROVED, route UNPROVEN.",
+      "fresh_identity": "Three fresh identities with different decimals and harvest results. Same displayed name on two 18-decimal vaults is not identity.",
+      "same_address": false,
+      "relabeled_historical": false,
+      "child_ids": [
+        "underlying_se_earlier",
+        "underlying_se_weighted_weth",
+        "underlying_se_weighted_dtf"
+      ],
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Identities resolved. Historical custody and user exposure not proved. Frozen absence is not on-chain absence.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "Earlier 18, weighted WETH-leg 18, weighted DTF custody 28. Units are source-specific.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "Tested holders are infrastructure. User command of those holders is not proved.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical custody passed for all three. Not historical and not user-authority proof.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Raw balances read back per identity. Not credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "Earlier and weighted WETH-leg exits FAIL VaultDisabled. Weighted DTF custody redemption PASS on the fresh pin only. A parent PASS is forbidden.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Mixed ancestry UNPROVEN for all three.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Category retained. Child failures are not omitted by the one successful redemption.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Two disabled, one not disabled. Do not blanket the category.",
+      "fixture": "Infrastructure holders.",
+      "route_supported": false
+    },
+    {
+      "id": "fungible_lp_earlier",
+      "plan_category": "fungible LP tokens",
+      "required": true,
+      "generation": "earlier_cp",
+      "address": "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+      "recorded_identity": "Physical reserve LP returned by earlier NFT lpToken(). Provenance fungible_lp_token category had 0 position rows, ABSENT_NOT_PROVED. Distinct from the NFT lock.",
+      "fresh_identity": "Fresh name() SSEBCP-WETH-DTF-V4-DETF-DTF, decimals 18. separately labeled fresh block 110862604 hash 0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80; not the historical pin. Native replay is a third pin.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "exchangeIn(...)",
+          "selector": "0xd02d3063",
+          "returns": "reverted UnsupportedRoute 0x5d5fe824"
+        },
+        {
+          "signature": "withdrawSeShares(uint256,address,uint256,uint256,uint256)",
+          "selector": "0x84eb9bce",
+          "returns": "reverted NotOwner 0x245aecd3"
+        },
+        {
+          "signature": "exitProportional / exitProportionalFlexible",
+          "selector": "0x8b72d9e5 / 0x94b74d12",
+          "returns": "selector absent on this LP"
+        }
+      ],
+      "code_identity": "Shared proxy runtime hash is insufficient. owner() is earlier DETF 0xaf0E1967c8F755c747615c5427108Bc549CA1122. ownerOnlyLiquidity() reverted; that is not a false reading.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Address identified by NFT lpToken() and registry. Historical custody UNPROVEN. Not independent source verification.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "18 decimals. Not NFT token IDs and not LP accounting shares stored in the NFT.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "owner() is the earlier DETF. The impersonated balance holder in the JSON evidence.owner field is the earlier NFT escrow 0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391. Those are different facts. User authority is UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical transferFrom of 1075167226680908457977200216751522 raw shares and rollback PASS. Not historical and not user authority.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Balances read back. Failed exits left the custodied q unchanged.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "Exact-in to earlier DETF and DTF reverted UnsupportedRoute. Native withdrawSeShares 0x1fc18e1c68581f11d2eab00d4e6ee1020bd699dd6d4b124f1bd5e92726ab9b36 reverted NotOwner(custodian). Proportional selectors are absent. Output deltas were zero. This does not prove every owner-mediated recovery is impossible.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "User ancestry UNPROVEN. NFT lock and this fungible token are separate claims and must not be merged or omitted.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Tested new-custodian exits failed. Distinct from the LP-lock NFT row.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Not the VaultDisabled error. Failures are UnsupportedRoute and NotOwner. Registry did not mark this source effectively disabled.",
+      "fixture": "Earlier NFT escrow impersonated. owner() is the earlier DETF.",
+      "route_supported": false
+    },
+    {
+      "id": "fungible_lp_weighted",
+      "plan_category": "fungible LP tokens",
+      "required": true,
+      "generation": "weighted",
+      "address": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+      "recorded_identity": "ENTITLEMENT_LEDGER_PROVENANCE.md calls this address the weighted reserve hook and says reserve settlement is not a user contribution.",
+      "fresh_identity": "Same address. Fresh name() is SE Weighted Buffer Hook LP, decimals 18. owner() is weighted DETF. ownerOnlyLiquidity() is true. The ledger role and the fresh token name are two labels of one address, not two contracts. This unit does not convert the infrastructure label into user eligibility.",
+      "same_address": true,
+      "relabeled_historical": false,
+      "identity_note": "Recorded role and fresh name differ in wording. Address, fresh name, owner() and failed custodian exits are all preserved. No reclassification.",
+      "selectors": [
+        {
+          "signature": "exchangeIn(...)",
+          "selector": "0xd02d3063",
+          "returns": "reverted NotOwner"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "returns": "reverted NotOwner"
+        },
+        {
+          "signature": "exitProportional",
+          "selector": "0x8b72d9e5",
+          "returns": "reverted NotOwner; tx 0x907c88a4a1c017b13b12a35dabd5e06ec1d5caefcf940499b6f8273ea2576e06"
+        },
+        {
+          "signature": "exitProportionalFlexible",
+          "selector": "0x94b74d12",
+          "returns": "reverted NotOwner; tx 0x4ab538ea64295736b32a289811d1f875f967dbae0b0602f9bf6baea54003d24d"
+        },
+        {
+          "signature": "withdrawSeShares",
+          "selector": "0x84eb9bce",
+          "returns": "selector absent"
+        },
+        {
+          "signature": "owner()",
+          "selector": "0x8da5cb5b",
+          "returns": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7"
+        },
+        {
+          "signature": "ownerOnlyLiquidity()",
+          "selector": "0xfe884e28",
+          "returns": "true"
+        }
+      ],
+      "code_identity": "Shared proxy runtime hash is insufficient. getTokensOut advertised five addresses. That advertisement is not an executed exit.",
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Address is in the frozen ledger and the provenance address map. Fresh LP behavior was executed. Historical custody UNPROVEN. Not independent source verification.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "18 decimals on the fresh read. Not an NFT id and not a hook-only non-token if the fresh fungible surface is the evidence. The recorded infrastructure role is preserved beside that unit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "owner() is the weighted DETF. JSON evidence.owner for the custody case is the fee collector 0x20af9A1e21a59a411cd3b0c40E70AF9084770b2E, the impersonated balance holder. Do not read that field as owner(). User authority is UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical transferFrom of 15166467477246491 raw shares and rollback PASS. Not historical and not user authority.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Balances read back. Failed exits left q unchanged. Not credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "All tested exact-in outputs and both bound proportional exits reverted NotOwner(custodian). Output deltas were zero. Owner-mediated recovery was not proved impossible and was not proved available.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "User ancestry UNPROVEN. Settlement flowing through this address is not a user contribution, per the frozen ledger. Fresh custody does not reverse that rule.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Category not omitted because the ledger called the address a hook. Hook label is not deleted. Custodian exits failed.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Not VaultDisabled. NotOwner and ownerOnlyLiquidity true. Registry did not mark it effectively disabled.",
+      "fixture": "Fee collector balance holder. owner() is the weighted DETF.",
+      "route_supported": false
+    },
+    {
+      "id": "fungible_lp_token",
+      "plan_category": "fungible LP tokens",
+      "required": true,
+      "generation": "both",
+      "address": "two identities; distinct from both NFT models",
+      "recorded_identity": "Provenance fungible_lp_token: 0 rows, ABSENT_NOT_PROVED, route UNPROVEN. NFT LP lock is a different category.",
+      "fresh_identity": "Earlier LP and weighted hook-named LP both have fresh 18-decimal fungible surfaces and failed new-custodian exits.",
+      "same_address": false,
+      "relabeled_historical": false,
+      "child_ids": [
+        "fungible_lp_earlier",
+        "fungible_lp_weighted"
+      ],
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "Identities resolved. Frozen position absence is not on-chain absence. Historical custody UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "Both fresh reads are 18 decimals. NFT lock shares remain a separate unit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "Contract owner() and impersonated balance holder differ on both tokens. User authority UNPROVEN.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json"
+        ]
+      },
+      "custody": {
+        "status": "PASS",
+        "detail": "Fresh mechanical custody passed for both. Not historical and not user authority.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "remaining-unit": {
+        "status": "PASS",
+        "detail": "Raw balances read back. Not credit.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json"
+        ]
+      },
+      "harvest": {
+        "status": "FAIL",
+        "detail": "Both tested custodian exit sets FAIL. Failure modes differ: UnsupportedRoute/NotOwner versus NotOwner/ownerOnlyLiquidity. Do not collapse the errors.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.json"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "User ancestry UNPROVEN. Separate from NFT locks.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+        ]
+      },
+      "verification": {
+        "status": "FAIL",
+        "detail": "Not supported. Category retained. Not merged into the NFT rows.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ],
+        "supported": false
+      },
+      "e1": "FAIL",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Not a disabled-vault result.",
+      "fixture": "Infrastructure holders.",
+      "route_supported": false
+    },
+    {
+      "id": "native_eth",
+      "plan_category": "provenance coverage, not a surrender substitute",
+      "required": true,
+      "generation": "contribution",
+      "address": "native",
+      "recorded_identity": "Native ETH was not reconstructed. Blank is UNKNOWN, not zero.",
+      "fresh_identity": "No fresh native-ETH custody probe. Do not infer it from WETH.",
+      "same_address": false,
+      "relabeled_historical": false,
+      "source": {
+        "status": "UNPROVEN",
+        "detail": "No source contract. Provenance status ABSENT_NOT_PROVED.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ]
+      },
+      "unit": {
+        "status": "UNPROVEN",
+        "detail": "18-decimal convention is recorded for ETH inputs. No reconstructed quantity. Unknown is not zero.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "No owner read.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "custody": {
+        "status": "UNPROVEN",
+        "detail": "No custody transaction.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "remaining-unit": {
+        "status": "UNPROVEN",
+        "detail": "No remaining-unit read. Not zero.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ]
+      },
+      "harvest": {
+        "status": "UNPROVEN",
+        "detail": "No harvest route demonstrated.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Not joined into contribution totals. NFT 3 weighted direct native ETH is UNKNOWN in provenance.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "verification": {
+        "status": "UNPROVEN",
+        "detail": "Not supported. Not omitted. Not converted to zero.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Not applicable. No route was executed.",
+      "fixture": "None.",
+      "route_supported": false
+    },
+    {
+      "id": "weth",
+      "plan_category": "provenance coverage, not a surrender substitute",
+      "required": true,
+      "generation": "contribution",
+      "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "recorded_identity": "18-decimal WETH input. Partial inbound evidence. Not renamed to ETH. Post-cutoff coverage unproved.",
+      "fresh_identity": "Fresh name() WETH, decimals 18. That metadata read is not a surrender route. separately labeled fresh block 110862604 hash 0x4097f2411c284e399051ef93ab5ff2f46b0230e49a2a0c685d2c4e3acb36ff80; not the historical pin",
+      "same_address": true,
+      "relabeled_historical": false,
+      "selectors": [
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03",
+          "returns": "WETH"
+        },
+        {
+          "signature": "decimals()",
+          "selector": "0x313ce567",
+          "returns": "18"
+        }
+      ],
+      "source": {
+        "status": "PASS",
+        "detail": "Address and 18-decimal unit are recorded and freshly named. Route support is not implied.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+        ]
+      },
+      "unit": {
+        "status": "PASS",
+        "detail": "18 decimals. Separate from native ETH.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "ownership": {
+        "status": "UNPROVEN",
+        "detail": "27 transfer rows are partial inbound evidence. A WETH balance is not a migration surrender right.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ]
+      },
+      "custody": {
+        "status": "UNPROVEN",
+        "detail": "No WETH surrender custody was the subject of these probes. WETH appears as a harvest output candidate that failed when the SE was disabled.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "remaining-unit": {
+        "status": "UNPROVEN",
+        "detail": "No remaining eligible WETH unit was established.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "harvest": {
+        "status": "UNPROVEN",
+        "detail": "Disabled SE exact-in routes toward WETH failed. That failure is recorded on the SE rows. WETH itself is not a proved harvest destination for a new custodian.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md"
+        ]
+      },
+      "proof": {
+        "status": "UNPROVEN",
+        "detail": "Partial inbound evidence only. Highest CSV row is not the query boundary.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+        ]
+      },
+      "verification": {
+        "status": "UNPROVEN",
+        "detail": "Not supported as a surrender source. Not omitted. Not renamed to ETH.",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+        ],
+        "supported": false
+      },
+      "e1": "UNPROVEN",
+      "e2": "UNPROVEN",
+      "disabled_behavior": "Not a vault. Related SE exits that target it are disabled.",
+      "fixture": "None for surrender.",
+      "route_supported": false
+    }
+  ],
+  "recorded_adjacent_identities": [
+    {
+      "role": "contribution and recovery DTF",
+      "address": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "unit": "18 decimals",
+      "note": "Quote input and harvest output. Not a user surrender category. Not a second contribution when it is routed intermediate DTF.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"
+      ]
+    },
+    {
+      "role": "TokenStaking migration adapter",
+      "address": "0xC84999F31eA72A793a65ce73aa05ff624FDCBB51",
+      "unit": "recorded collective migration input",
+      "note": "Not a substitute for TokenStaking weights. Route UNPROVEN. Not re-probed by this unit.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md"
+      ]
+    },
+    {
+      "role": "registry",
+      "address": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+      "unit": "not a token source",
+      "note": "vaultsOfToken selector 0x2b9fc930. 43 observed identities are not admission.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json"
+      ]
+    },
+    {
+      "role": "rehearsal export",
+      "address": "0x8ff37779B8Fe866470aEcf64910F4Bf899d73705",
+      "unit": "recorded no code at pinned head",
+      "note": "Ledger statement. This unit did not reread code. Not a source row and not support.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md"
+      ]
+    }
+  ],
+  "preserved_failures": [
+    {
+      "id": "E2-interface",
+      "class": "product-blocker",
+      "status": "FAIL",
+      "producer": "attribution",
+      "detail": "Balance-identical histories require unequal credits. Witness exit 0 printed ATTRIBUTION_COUNTEREXAMPLE_PASS. That is counterexample success, not E2 closure.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.results.json"
+      ]
+    },
+    {
+      "id": "E1-atomic-handoff",
+      "class": "product-blocker",
+      "status": "UNPROVEN",
+      "producer": "all custody producers",
+      "detail": "No probe executed integrated entitlement consumption and fresh funded bond creation.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+      ]
+    },
+    {
+      "id": "weighted-operator-redirect",
+      "class": "product-blocker",
+      "status": "FAIL",
+      "producer": "weighted",
+      "detail": "Approved operator directed claimBond to a stranger.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json"
+      ]
+    },
+    {
+      "id": "earlier-vault-disabled",
+      "class": "product-blocker",
+      "status": "FAIL",
+      "producer": "earlier-cp",
+      "detail": "VaultDisabled on closeBondMature, redeemClaim and receipt redeem.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json"
+      ]
+    },
+    {
+      "id": "earlier-missing-facet",
+      "class": "product-blocker",
+      "status": "UNPROVEN",
+      "producer": "earlier-cp",
+      "detail": "Sourcify HTTP 404 for facet 0x67ed019eC3f8b77Bc51ED1e6403Fc90E0aBb15bE.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json"
+      ]
+    },
+    {
+      "id": "earlier-masked-auth",
+      "class": "product-blocker",
+      "status": "UNPROVEN",
+      "producer": "earlier-cp",
+      "detail": "Wrong-owner mature close reaches VaultDisabled before authorization can be judged.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+      ]
+    },
+    {
+      "id": "other-historical-429",
+      "class": "harness-gap",
+      "status": "UNPROVEN",
+      "producer": "other-sources",
+      "detail": "Login-shell Alchemy authenticated the pin, then eth_getCode and later eth_call returned HTTP 429. No Anvil child. Not a missing credential.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/alchemy-retry-receipt.json"
+      ]
+    },
+    {
+      "id": "public-historical-unavailable",
+      "class": "harness-gap",
+      "status": "UNPROVEN",
+      "producer": "other-sources",
+      "detail": "Public provider eth_getCode code -32000, historical state b1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071 not available. Preserved before fresh fallback.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.json"
+      ]
+    },
+    {
+      "id": "se-lp-exits",
+      "class": "product-blocker",
+      "status": "FAIL",
+      "producer": "other-sources",
+      "detail": "Disabled SE exits and owner-restricted LP exits from the new custodian.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.json"
+      ]
+    },
+    {
+      "id": "receipt-supply-gap",
+      "class": "evidence-limit",
+      "status": "UNPROVEN",
+      "producer": "provenance",
+      "detail": "Exception C2 leaves earlier receipt supply gap UNKNOWN and not allocatable. Pinned and fresh displayed supplies differ and are not normalized.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+      ]
+    },
+    {
+      "id": "manifest-drift",
+      "class": "evidence-limit",
+      "status": "FAIL",
+      "producer": "provenance",
+      "detail": "CUSTODY_AND_HARVEST.md and LOSS_AND_RECOVERY_LEDGER.md no longer match manifest.json. Frozen CSV/JSON still matched. Manifest was not edited.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json"
+      ]
+    },
+    {
+      "id": "provenance-rpc",
+      "class": "harness-gap",
+      "status": "UNPROVEN",
+      "producer": "provenance",
+      "detail": "cast chain-id --rpc-url robinhood_mainnet_alchemy exited 1 because ALCHEMY_KEY was absent in that process. This unit did not rerun it.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+      ]
+    },
+    {
+      "id": "weighted-harness-429",
+      "class": "harness-gap",
+      "status": "preserved",
+      "producer": "weighted",
+      "detail": "Initial async receipt failure and two Alchemy HTTP 429 fork loads remain archived. They are not product evidence. Direct alias fork completed.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/initial-run.results.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/rate-limited-run.results.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/loopback-rate-run.results.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/cleanup-audit.json"
+      ]
+    },
+    {
+      "id": "earlier-harness",
+      "class": "harness-gap",
+      "status": "preserved",
+      "producer": "earlier-cp",
+      "detail": "Original probe.json and probe-alchemy429.json HTTP 429 remain. probe-fresh1.json preserves the classifier that summed every nonpayer DTF inflow. Corrected classifier matched 16 rows.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy429.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-public429.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh1.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+      ]
+    },
+    {
+      "id": "other-harness",
+      "class": "harness-gap",
+      "status": "preserved",
+      "producer": "other-sources",
+      "detail": "Non-login missing ALCHEMY_KEY, public receipt race, rollback tracing gaps, and parser hex mishandling remain in probe-public through probe-public-r3. They are not product proof.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe.json"
+      ]
+    },
+    {
+      "id": "attribution-harness",
+      "class": "harness-gap",
+      "status": "preserved",
+      "producer": "attribution",
+      "detail": "Initial arithmetic-expectation failure and witness-r2 exit 2 cleanup classification remain. witness-r2 had already executed the counterexample. Neither is hidden or treated as E2 closure.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.results.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.results.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+      ]
+    },
+    {
+      "id": "funded-c0-absent",
+      "class": "operational-input",
+      "status": "UNKNOWN",
+      "producer": "provenance",
+      "detail": "No funded snapshot quote book. C0 was not computed. Absence is not a new pricing policy and is not route support.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md"
+      ]
+    },
+    {
+      "id": "lsp-timeouts",
+      "class": "tooling",
+      "status": "UNVERIFIED",
+      "producer": "weighted, other-sources, attribution",
+      "detail": "Producer LSP diagnostics timed out or were not claimed clean, except earlier-cp reported none. This unit does not claim a new LSP result.",
+      "evidence": [
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md"
+      ]
+    }
+  ],
+  "constraints_preserved_not_executed": [
+    "Quote original ETH and DTF once against one frozen funded snapshot and sum user outputs as C0.",
+    "Fixed-principal NFT award = floor(C0 * remainingPrincipal / originalPrincipal).",
+    "Zero-principal, nonexistent, and burned NFTs are ineligible.",
+    "No configuration premint.",
+    "Each successful surrender gets a fresh 90-day cliff bond.",
+    "Current owner configuration freezes irreversibly at activation.",
+    "No post-activation trusted root, signature, or source-admission change.",
+    "All accepted source categories remain required.",
+    "Unknown numeric blanks are not zero.",
+    "No allocation was approved."
+  ],
+  "evidence_index": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+      "migration_relative": "attribution-spec.md",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+      "bytes": 24888,
+      "sha256": "9c1455da9b99ba335b0c3fa9611425ed29ef796954a638dc80de21fdac27e487"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/cleanup.json",
+      "migration_relative": "evidence/attribution/cleanup.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/cleanup.json",
+      "bytes": 12976,
+      "sha256": "02839e4599c3b83783c03d54f604b159b5154adbca4664a25f2f9ee5857f41c8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/cleanup.stdout.log",
+      "migration_relative": "evidence/attribution/cleanup.stdout.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/cleanup.stdout.log",
+      "bytes": 284,
+      "sha256": "8f15b0a821aee5f6a53ef9005bc3647d904933eea42f3d4880681e84bd680677"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/invocations.md",
+      "migration_relative": "evidence/attribution/invocations.md",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/invocations.md",
+      "bytes": 7580,
+      "sha256": "33fbd4beaea79c9e0d517efe5766ef17c48976b9a6ad7b4f0c674a203d313532"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/producer-audit.json",
+      "migration_relative": "evidence/attribution/producer-audit.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/producer-audit.json",
+      "bytes": 1099885,
+      "sha256": "26eaf0f019d15f3545beb891ade9d4c4f96268f17cefff03531d7e4c57e4c8c5"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/verify-cleanup.mjs",
+      "migration_relative": "evidence/attribution/verify-cleanup.mjs",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/verify-cleanup.mjs",
+      "bytes": 5191,
+      "sha256": "fa6186bb01db5242609b9f45a7cd9875100234dc56ced498b998d11bd7f7bdb5"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.anvil.log",
+      "migration_relative": "evidence/attribution/witness-r2.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.anvil.log",
+      "bytes": 3596,
+      "sha256": "e154534f91c0ddeea580fd5077865c5ab846e5e524918489ded3d9fec4b99569"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.producer-audit.json",
+      "migration_relative": "evidence/attribution/witness-r2.producer-audit.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.producer-audit.json",
+      "bytes": 1101363,
+      "sha256": "077720f23cd88360037eb6ff5223de688f2935722d4a85abba72c90adbacb0ef"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.results.json",
+      "migration_relative": "evidence/attribution/witness-r2.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.results.json",
+      "bytes": 77917,
+      "sha256": "7078269eb681dd32895651cb2cdd9f135eabe97aa4ee410f456f3fe713df2506"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.stdout.log",
+      "migration_relative": "evidence/attribution/witness-r2.stdout.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.stdout.log",
+      "bytes": 277,
+      "sha256": "326bc2fa49d299be79dc2c8d7b1a4e90a989a9c2e895462b2e01434cc88e2fa7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.anvil.log",
+      "migration_relative": "evidence/attribution/witness-r3.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.anvil.log",
+      "bytes": 3596,
+      "sha256": "89195c7526b665e937aa987b42c87109bd8f694ac779cd3f5982df8f9b0b4a49"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.producer-audit.json",
+      "migration_relative": "evidence/attribution/witness-r3.producer-audit.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.producer-audit.json",
+      "bytes": 1101363,
+      "sha256": "077720f23cd88360037eb6ff5223de688f2935722d4a85abba72c90adbacb0ef"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.results.json",
+      "migration_relative": "evidence/attribution/witness-r3.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.results.json",
+      "bytes": 78249,
+      "sha256": "d5e19ace9cb08bf17107e4c91e97cbe0e025971591588efd7bd1bfd397f504f2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.stdout.log",
+      "migration_relative": "evidence/attribution/witness-r3.stdout.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.stdout.log",
+      "bytes": 282,
+      "sha256": "91f64c2687825e9eaa333764d765416f7efa2ae341ed561a836f754c1c07848d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.anvil.log",
+      "migration_relative": "evidence/attribution/witness.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.anvil.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs",
+      "migration_relative": "evidence/attribution/witness.mjs",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs",
+      "bytes": 17668,
+      "sha256": "6b2d4ffcb16f28a586124e9664226224fc7d8b87575a8f813584086a3a857ff7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.results.json",
+      "migration_relative": "evidence/attribution/witness.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.results.json",
+      "bytes": 941,
+      "sha256": "e828dfbb18e3c301542675323cd4133fe1a628fb649eba4b71fab80c1302d79f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.stdout.log",
+      "migration_relative": "evidence/attribution/witness.stdout.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.stdout.log",
+      "bytes": 421,
+      "sha256": "d6622b10f4948fb3b22754cf2cd990e62cff54c22f438839215017483e41922d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/cleanup-alchemy-retry.log",
+      "migration_relative": "evidence/earlier-cp/cleanup-alchemy-retry.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/cleanup-alchemy-retry.log",
+      "bytes": 219,
+      "sha256": "8d64b3a39b30c4697b6d9679418b21ae138c4346f8bbd4d7db87ad5247c41912"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/cleanup.log",
+      "migration_relative": "evidence/earlier-cp/cleanup.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/cleanup.log",
+      "bytes": 543,
+      "sha256": "8285b192ae4c00e0472561be2b3ba2cb3a1ec1248954f384c40bfb627096ed37"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "migration_relative": "evidence/earlier-cp/probe-alchemy-retry.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "bytes": 2683989,
+      "sha256": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "migration_relative": "evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "bytes": 4711975,
+      "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.summary.json",
+      "migration_relative": "evidence/earlier-cp/probe-alchemy-retry.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.summary.json",
+      "bytes": 29927,
+      "sha256": "937b93df2351fb000839e3cd075d52b3bf53c5feff6e98843f608715f8262576"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy429.json",
+      "migration_relative": "evidence/earlier-cp/probe-alchemy429.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy429.json",
+      "bytes": 541701,
+      "sha256": "b1b80899416e60afa1ec4404bcc0ec6dfd8f7c04a19539f121e85b4d3a50c051"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy429.summary.json",
+      "migration_relative": "evidence/earlier-cp/probe-alchemy429.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy429.summary.json",
+      "bytes": 11760,
+      "sha256": "f4d89c29ebd22c1cb06c6986de3d76e7641bf5212d74808f6b856c4b6de885ea"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-attempt01.json",
+      "migration_relative": "evidence/earlier-cp/probe-attempt01.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-attempt01.json",
+      "bytes": 7810,
+      "sha256": "050f70e1c4dcf84cfed80edb204e7c08c14995828fc0abb05cdf0f09d849c157"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-attempt01.source.json",
+      "migration_relative": "evidence/earlier-cp/probe-attempt01.source.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-attempt01.source.json",
+      "bytes": 4122689,
+      "sha256": "1432142204da5501ed19d766c8388fd321a17150897f4098233477bf51097fcd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh1.json",
+      "migration_relative": "evidence/earlier-cp/probe-fresh1.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh1.json",
+      "bytes": 557129,
+      "sha256": "09966262d169c70df07ad1c3c7f7e0220db7a01fe37cfada8d4f60f0bd4e0e72"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh1.source.json",
+      "migration_relative": "evidence/earlier-cp/probe-fresh1.source.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh1.source.json",
+      "bytes": 4711975,
+      "sha256": "d30c68d4aae48d5c1741683fd03dabd3eaf847c4880ee50af9373d4cd9e1eeea"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh2.json",
+      "migration_relative": "evidence/earlier-cp/probe-fresh2.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh2.json",
+      "bytes": 892109,
+      "sha256": "9d0ff37dd52d38ad0fa3f80af8e6d72b480e31bab6ab02546764426275c958a7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh2.source.json",
+      "migration_relative": "evidence/earlier-cp/probe-fresh2.source.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh2.source.json",
+      "bytes": 4711975,
+      "sha256": "26aec2b89c51698a6b0317b0738f3a3a555402dfc0158ed71a6bccdb073e6ad7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.json",
+      "migration_relative": "evidence/earlier-cp/probe-fresh3.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.json",
+      "bytes": 2683545,
+      "sha256": "30276751742549bd0a82f7bf94e6734434cb6523d66e4996d48e1138f10ba098"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.source.json",
+      "migration_relative": "evidence/earlier-cp/probe-fresh3.source.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.source.json",
+      "bytes": 4711975,
+      "sha256": "7d43ebafe4c3151e99a9c8efb4c235d76b7e52366821797ea9c971b8d1573b5f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.summary.json",
+      "migration_relative": "evidence/earlier-cp/probe-fresh3.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.summary.json",
+      "bytes": 29918,
+      "sha256": "2611f29a1630bc3a8c882168309f5bb9757e1226dfb4747ed0afa72d5af9960c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-public429.json",
+      "migration_relative": "evidence/earlier-cp/probe-public429.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-public429.json",
+      "bytes": 541549,
+      "sha256": "3700c658904914d97f37f9666a9be128d85312ad5ae72e67828c64f292c9b727"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-public429.summary.json",
+      "migration_relative": "evidence/earlier-cp/probe-public429.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-public429.summary.json",
+      "bytes": 11679,
+      "sha256": "7e883efab233fb0d5ad5c416ba18a88bee305fa4cf85d3b22784966780eb7d11"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.json",
+      "migration_relative": "evidence/earlier-cp/probe.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.json",
+      "bytes": 3959,
+      "sha256": "0d7dcefbd5db4d610ec549ed20d266fd1dfdb9a192498f79b88e3178906d4de1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.source.json",
+      "migration_relative": "evidence/earlier-cp/probe.source.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.source.json",
+      "bytes": 30359,
+      "sha256": "7c7b71f9a38fd163b4f7da1071be5a8bda572cd458d35a3a78b0291b3c016502"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.summary.json",
+      "migration_relative": "evidence/earlier-cp/probe.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.summary.json",
+      "bytes": 858,
+      "sha256": "cc1f3984474c1cce1c99b1e778b9963fd20e9d28edd7cb55c2411f60bb1b47ee"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "migration_relative": "evidence/earlier-cp/report.md",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "bytes": 22872,
+      "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/syntax-check.log",
+      "migration_relative": "evidence/earlier-cp/syntax-check.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/syntax-check.log",
+      "bytes": 72,
+      "sha256": "dbf1343b95c9bedb43b3f0cb6f8a71b9c0504b252a6b9bd4b24784877227a3e4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/alchemy-retry-receipt.json",
+      "migration_relative": "evidence/other-sources/alchemy-retry-receipt.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/alchemy-retry-receipt.json",
+      "bytes": 4892,
+      "sha256": "c8f8efce10625522d6379f190fbf4a8638e49576e4bd6038967410093401fbdf"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/cleanup-alchemy.json",
+      "migration_relative": "evidence/other-sources/cleanup-alchemy.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/cleanup-alchemy.json",
+      "bytes": 1349,
+      "sha256": "6b0f909400761cb44f5d4321b39f043d61fa231e9d0e02b41a77e771728cd2fe"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/cleanup-receipt.json",
+      "migration_relative": "evidence/other-sources/cleanup-receipt.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/cleanup-receipt.json",
+      "bytes": 2000,
+      "sha256": "2f50c9cc55f389104eeb28af937c9c93fc8a6b7664ec1e099cc0fa29c57dabc4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.json",
+      "migration_relative": "evidence/other-sources/probe-alchemy-r2.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.json",
+      "bytes": 188646,
+      "sha256": "e88b5165e46d5b90997842c5119294902248b5a03947e28f095f307f57c95909"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.sources.json",
+      "migration_relative": "evidence/other-sources/probe-alchemy-r2.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.sources.json",
+      "bytes": 184216,
+      "sha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.json",
+      "migration_relative": "evidence/other-sources/probe-alchemy.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.json",
+      "bytes": 142238,
+      "sha256": "8d31448e571d6e176b7db3a112f16f45b3c01a7f796e15f741411884d3de2b64"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.sources.json",
+      "migration_relative": "evidence/other-sources/probe-alchemy.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.sources.json",
+      "bytes": 137805,
+      "sha256": "1e30ff19638b0346971c43f853a1dca5641adce14139827ec7767bcc3c94a9c1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.anvil.log",
+      "migration_relative": "evidence/other-sources/probe-native.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.anvil.log",
+      "bytes": 6459,
+      "sha256": "809f150f985d6928ba704cdeeada5f38b7e7adbd524614448b36dbb247440c0e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.json",
+      "migration_relative": "evidence/other-sources/probe-native.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.json",
+      "bytes": 443633,
+      "sha256": "e781005f6420c385ca9aad423efcd7f5bb706c9450362113845157da9e4526e1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.sources.json",
+      "migration_relative": "evidence/other-sources/probe-native.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.sources.json",
+      "bytes": 411189,
+      "sha256": "29c15af7c6ef4998142c242548e24d16c8455d58e2052e85be9151ece7dfa0fb"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json",
+      "migration_relative": "evidence/other-sources/probe-native.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json",
+      "bytes": 123919,
+      "sha256": "836fd3d58972a3b971c7feaea8a7ec94fefcf6e3235e18a5d7ad77b0018ada15"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.anvil.log",
+      "migration_relative": "evidence/other-sources/probe-public-r2.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.anvil.log",
+      "bytes": 28659,
+      "sha256": "29d57ea521ab0a93cd3501117201ea638ce9afad6b44ff371aa0a737c5a5556d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.json",
+      "migration_relative": "evidence/other-sources/probe-public-r2.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.json",
+      "bytes": 558213,
+      "sha256": "a7cee70b5253fb0a3292fa27bbeb36105ab8b33c2a3664143e1886c137a86fd0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.sources.json",
+      "migration_relative": "evidence/other-sources/probe-public-r2.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.sources.json",
+      "bytes": 411755,
+      "sha256": "6f5c7d373eb0f48e0ef29885c5f8ce5e7d57685f10bbf5426c01229e707adca3"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.anvil.log",
+      "migration_relative": "evidence/other-sources/probe-public-r3.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.anvil.log",
+      "bytes": 37309,
+      "sha256": "e270f0b91b7e424c98e9f249ee5812976e320d96f5868025dd8e6ae9902c6b7d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.json",
+      "migration_relative": "evidence/other-sources/probe-public-r3.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.json",
+      "bytes": 658712,
+      "sha256": "85f54e572c6dafa501e42894da95ef3a6c8e0f3730abc5bcbcd2c62536786c18"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.sources.json",
+      "migration_relative": "evidence/other-sources/probe-public-r3.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.sources.json",
+      "bytes": 411755,
+      "sha256": "103f12072b07df00f81387fba6725d18e965e5a021dc51780947e40135ff09a6"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.summary.json",
+      "migration_relative": "evidence/other-sources/probe-public-r3.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.summary.json",
+      "bytes": 149252,
+      "sha256": "cfdc08253e79ad47c38c6a82cdb2545d2fae4890401697fd6b8dcdcf1cca6151"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.anvil.log",
+      "migration_relative": "evidence/other-sources/probe-public-r4.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.anvil.log",
+      "bytes": 37579,
+      "sha256": "c69d825116d4b3f6ce287b8173a943f70046847b05e5e628061c90e4ae0af881"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json",
+      "migration_relative": "evidence/other-sources/probe-public-r4.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json",
+      "bytes": 701785,
+      "sha256": "a08bef6a8d769925e9b61560774d82d23b0dfa01f5a9e2a84856585a36c8a7b8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+      "migration_relative": "evidence/other-sources/probe-public-r4.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+      "bytes": 411755,
+      "sha256": "d6717adb89d115e4f9d8f2ff61ce6219cf6f15aad3624b78ba5c9576dcb283db"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json",
+      "migration_relative": "evidence/other-sources/probe-public-r4.summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json",
+      "bytes": 157076,
+      "sha256": "8fe24814089b95a386bc1dc17204b86ba5ff29831a42b7a845adb970e311c0c1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.anvil.log",
+      "migration_relative": "evidence/other-sources/probe-public.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.anvil.log",
+      "bytes": 11549,
+      "sha256": "bbf830165c5b65949ade20a5b4ddf97ab6d256030d63d7cec01612a2c28a6eac"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.json",
+      "migration_relative": "evidence/other-sources/probe-public.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.json",
+      "bytes": 423633,
+      "sha256": "08ef79c307261c41100478a428fbc8c66faec55c842af9780866fcdc32f0251f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.sources.json",
+      "migration_relative": "evidence/other-sources/probe-public.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.sources.json",
+      "bytes": 410724,
+      "sha256": "b37dba5694002ea1d231910d527c84c2d15de98e2970fe4fdab8ef1078286f88"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe.json",
+      "migration_relative": "evidence/other-sources/probe.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe.json",
+      "bytes": 1656,
+      "sha256": "1d82221c63c26ee53aebc12d25a15617af450cf5bfe28ea57cdbb42b7ca423f2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe.sources.json",
+      "migration_relative": "evidence/other-sources/probe.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe.sources.json",
+      "bytes": 38,
+      "sha256": "5e48ede21a504f9094d83f80eff817b5960e58aa1b5049d9a3848dbbea392d87"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+      "migration_relative": "evidence/other-sources/report.md",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+      "bytes": 22598,
+      "sha256": "11362d36c9463a6b1c00a182c4873e687d93df72f31b95da46bae354ada302f8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json",
+      "migration_relative": "evidence/provenance/reconciliation.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json",
+      "bytes": 1626442,
+      "sha256": "874eb99734cb6f06a6c75982fbe9dcfc52f84e535c3666fb8d2f2f23b11f684f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+      "migration_relative": "evidence/provenance/report.md",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+      "bytes": 17922,
+      "sha256": "7f523d563ca30a5d103a96a3f6dc8f860bfd06683e37cefec8eeb16b88c958c1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/cleanup-audit.json",
+      "migration_relative": "evidence/weighted/cleanup-audit.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/cleanup-audit.json",
+      "bytes": 4269,
+      "sha256": "f0f90c782621ae535b896c9c7f40a3866fb22426020a36f5fdaec36a8f92a2db"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "migration_relative": "evidence/weighted/deployed-source-extracts.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "bytes": 17837,
+      "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json",
+      "migration_relative": "evidence/weighted/direct-first-run.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json",
+      "bytes": 3471018,
+      "sha256": "c11cebea5bf57f314d2bd8260af25fe3d810e970c0bb95a06170363458244359"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/initial-run.results.json",
+      "migration_relative": "evidence/weighted/initial-run.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/initial-run.results.json",
+      "bytes": 1716870,
+      "sha256": "4c6765ed95a91f972ec23c93a4371319e94d3a774d6cf8836593fe7b5c201cf5"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/loopback-rate-run.results.json",
+      "migration_relative": "evidence/weighted/loopback-rate-run.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/loopback-rate-run.results.json",
+      "bytes": 3315409,
+      "sha256": "a59272d2c6539bf4c8b75dc18e1d45af55d340e0ececd9bd5c9d500b4426582a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.anvil.log",
+      "migration_relative": "evidence/weighted/probe.anvil.log",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.anvil.log",
+      "bytes": 15010,
+      "sha256": "ec1e5604e77545837201bdf2d78b0e416619dcbe9a900b6da777c17d82dcf48e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "migration_relative": "evidence/weighted/probe.historical-receipts.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "bytes": 1525716,
+      "sha256": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "migration_relative": "evidence/weighted/probe.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "bytes": 3520079,
+      "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "migration_relative": "evidence/weighted/probe.sources.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "bytes": 6447942,
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/rate-limited-run.results.json",
+      "migration_relative": "evidence/weighted/rate-limited-run.results.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/rate-limited-run.results.json",
+      "bytes": 1981560,
+      "sha256": "d2356a0d7a0803a5a44cd8e0acda8cb2d3c2e4bf12dc23fc4a26e1177a3b6760"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+      "migration_relative": "evidence/weighted/report.md",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+      "bytes": 20568,
+      "sha256": "1df2d1b6bffbe6cd241f89b9533cb5cea3f14b431df6593861bd44e4c6fa0440"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+      "migration_relative": "evidence/weighted/source-comparison.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+      "bytes": 2404,
+      "sha256": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+      "migration_relative": "evidence/weighted/source-state-summary.json",
+      "worktree_relative": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+      "bytes": 261163,
+      "sha256": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8"
+    }
+  ],
+  "evidence_index_rollup_sha256": "e83e07fa56cbb909535895205a9c455c02a90390c0db4978f1c14b468f23274f",
+  "evidence_index_count": 84,
+  "requirement_sources": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md"
+  ],
+  "non_claims": [
+    "E1 is not closed.",
+    "E2 is not closed.",
+    "Task 1 is not complete.",
+    "No category is supported because an address or selector exists.",
+    "Fresh-pin results are not historical-pin results.",
+    "Producer PASS tokens are not migration readiness.",
+    "This file does not choose a pricing, attribution, or recovery policy."
+  ],
+  "amount_confirmation": {
+    "direct_first_run_contains_reported_amounts": {
+      "38283506": true,
+      "4308806205": true,
+      "24312424763253115621623": true,
+      "216228659430800592372": true,
+      "52221256856930805": true
+    },
+    "pinned_journals_contain_reported_transactions": {
+      "nftCustody": true,
+      "matureClose": true,
+      "redeemClaim": true,
+      "receiptRedeem": true,
+      "reassign": true,
+      "withdrawClaim": true
+    },
+    "note": "Confirmed by substring search in the named producer JSON before this file was written. Not a new probe."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "monitor": {
+    "id": "mon_VFTABKR9PRK11ZDC",
+    "bashId": "bash_1",
+    "completion": "watcher completed (exit code 0)",
+    "pending": false
+  },
+  "createdResources": "One finite monitored Bash recorder and child commands; test fixtures own their temporary loopback servers and directories.",
+  "createdPersistentProcesses": [],
+  "newTemporaryDirectories": [],
+  "priorTempDirectories": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "priorTempDirectoriesAfter": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "removedPriorDirectories": [],
+  "manualResourcesRecreated": false,
+  "cacheOrArtifactsRemoved": false,
+  "cleanupAction": "Recorder and all three required commands exited naturally. No new dtf-prefixed temporary directory remained. No directory deletion or process kill was needed.",
+  "limitations": [
+    "The inventory observes dtf-prefixed directories in the actual OS temp root; it is not a global resource census.",
+    "Pre-existing checkpoint directory ownership is unknown and both directories are preserved."
+  ]
+}

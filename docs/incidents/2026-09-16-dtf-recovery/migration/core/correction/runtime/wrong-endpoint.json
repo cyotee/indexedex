@@ -1,0 +1,7 @@
+{
+  "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04 && MIGRATION_FOUNDRY_BIN=/Users/cyotee/.foundry/bin MIGRATION_NODE_INSTANCE=0x86c73d741983bdf3fbff119692d28fb7951dd9b3b335e8105e9dd94a00fd477a bash scripts/recovery/dtf-migration/core-local-qa-guard.sh script --use solar scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol:MigrationCoreLocalQA --sig 'deployAndIssue()' --rpc-url http://127.0.0.1:18549 --broadcast --unlocked --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+  "result": "MIGRATION_QA_ENDPOINT_REJECTED: require the actual CLI endpoint http://127.0.0.1:18548\n\nCommand exited with code 64",
+  "nonceBefore": "0xe6",
+  "nonceAfter": "0xe6",
+  "expectedExit": 64
+}

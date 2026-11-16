@@ -1,0 +1,13 @@
+# Immutable verification support
+
+This directory is new audit support, not a replacement preservation baseline. The original baseline is ../precommit/. Every preservation JSONL line contains the complete original baseline row, the independently reproduced observed row, and explicit mismatchedFields. Files ending .json are complete JSON objects. Source/tested-mode omissions are qualified in ../verification.md.
+
+Roots are exactly ../precommit/roots.json: worktree trees are relative to its worktree; original recovery/pre-exploit trees to its originalRecoveryParent; recovered-input to its recoveredParent; refs to gitCommon with the .git/ prefix removed; index paths are original absolute metadata paths. No held09 worktree path is opened. Host symlink targets are not opened.
+
+Reproduction method: read each original inventory completely, authenticate its raw byte length and SHA-256 against original summary.json, parse every row, lstat its original path without following symlinks, hash regular-file raw bytes or UTF-8 symlink-target bytes, retain null directory hashes, and compare every original field individually. The content Git mode is the recorded executable-bit collapse, not permission evidence. Permission rows include directories; full st_mode, permission and st_size are compared separately. The only tree-row difference is the recorded data-candidates directory size 192 to 224. Exact own-index and own-branch-ref commit deltas are separately preserved.
+
+Original inventory membership is compared, not just row counts. All original rows are present; out, cache_forge, original recovery/pre-exploit and recovered trees have no additions. Initial additive docs/incidents membership is recorded in git-evidence.json: all 41 additions are within commit/. This audit's own additions also stay there and do not become original rows. Reflogs are outside the original baseline. cache/ is absent; cache_forge is the real cache.
+
+The six final canonical candidate bodies were directly byte-compared and hashed. Existing JSON evidence was read and parsed completely, including all 18044 candidate records, 39507 quantity fields, 1240 unresolved records, original/recovered declarations and all seal members. Runtime commands, derivation and both Python oracles were NOT rerun. Counts in executed-evidence.json distinguish observed retained-document structure from recorded historical oracle results.
+
+All writes use apply_patch. No source fixes, tests/builds/derivation/oracle replay, Git mutation, provider, held09, public action or configuration change is part of this audit. Support manifest.json records support identities; final-state.json records stopped state. Unavailable Biome diagnostics are not passing diagnostics.

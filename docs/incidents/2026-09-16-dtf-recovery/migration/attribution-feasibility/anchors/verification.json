@@ -1,0 +1,124 @@
+{
+  "recordedAt": "2026-11-11T01:38:42.192Z",
+  "verdict": "anchor-capability-contract-delivered; E2 construction not established",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2",
+  "branch": "work/dtf-migration-phase-06-e2",
+  "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "validation": {
+    "jsonParse": true,
+    "requestCount": 57,
+    "uniqueRequestIds": 57,
+    "recordedCheckCount": 11,
+    "allRecordedChecksPassed": true,
+    "secretAbsent": true,
+    "historyHashRecomputed": true,
+    "headerHashesRecomputed": [
+      "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+      "0x309c2f18fbdfc1ae225dd123693dfc66157dbce50640cc0ed040198fcfe5af42"
+    ],
+    "receiptRootRecomputed": true,
+    "exactPrimarySourceFiles": 12
+  },
+  "ownedHashes": [
+    {
+      "name": "contract.md",
+      "sha256": "0da4818b6f35ae947d17949c259271d80f9d8df9e12773122049d9bee4b61356",
+      "bytes": 20835
+    },
+    {
+      "name": "commands.md",
+      "sha256": "48094c1e24512b1b49bf3a28c73c20731f25bb337fc9cb74da69992954713301",
+      "bytes": 6851
+    },
+    {
+      "name": "rpc.json",
+      "sha256": "de29563f9ecf6ef080269ed85569afd8f62310ea5cd0672d217063713d6ca855",
+      "bytes": 51166
+    },
+    {
+      "name": "primary-sources.json",
+      "sha256": "48a9a8676e262f189f96199feabb9e044c03e05790e4b37f21979f2d033508a3",
+      "bytes": 48691
+    },
+    {
+      "name": "calculations.json",
+      "sha256": "1ce1c106afe83e66ebcf19ec5095f937c9d26b45a463b4599bc70044473ec1b4",
+      "bytes": 11291
+    }
+  ],
+  "rawByteFingerprintCheck": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors && shasum -a 256 contract.md commands.md rpc.json primary-sources.json calculations.json && wc -c contract.md commands.md rpc.json primary-sources.json calculations.json",
+    "monitor": "mon_F2R04NKPQBVPEKH3",
+    "bashId": "bash_4",
+    "exitCode": 0,
+    "allFiveHashesAndSizesMatched": true,
+    "totalBytesExcludingThisReceipt": 138834,
+    "readerNormalization": "Bounded reads omitted the terminal LF for two JSON files. These final hashes and sizes were corrected against shasum/wc on actual file bytes, not formatted reader text."
+  },
+  "localLinkChecks": [
+    {
+      "target": "rpc.json",
+      "existsNow": true,
+      "expectedFinalReceipt": false
+    },
+    {
+      "target": "calculations.json",
+      "existsNow": true,
+      "expectedFinalReceipt": false
+    },
+    {
+      "target": "primary-sources.json",
+      "existsNow": true,
+      "expectedFinalReceipt": false
+    },
+    {
+      "target": "commands.md",
+      "existsNow": true,
+      "expectedFinalReceipt": false
+    },
+    {
+      "target": "verification.json",
+      "existsNow": false,
+      "expectedFinalReceipt": true
+    }
+  ],
+  "scopeCheck": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2 && GIT_MASTER=1 git -c diff.ignoreSubmodules=all diff --exit-code --ignore-submodules=all && GIT_MASTER=1 git diff --cached --exit-code --ignore-submodules=all && GIT_MASTER=1 git -c diff.ignoreSubmodules=all status --porcelain=v1 --untracked-files=all --ignore-submodules=all && GIT_MASTER=1 git branch --show-current && GIT_MASTER=1 git rev-parse HEAD; printf \"PORT18551_LISTENERS\\n\"; lsof -nP -iTCP:18551 -sTCP:LISTEN; printf \"PORT_QUERY_EXIT=%s\\n\" \"$?\"",
+    "monitor": "mon_P6MG5HXGX8FZBYBG",
+    "bashId": "bash_3",
+    "exitCode": 0,
+    "trackedDiff": "empty",
+    "stagedDiff": "empty",
+    "untrackedAtCheck": [
+      "anchors/contract.md",
+      "anchors/commands.md",
+      "anchors/rpc.json",
+      "anchors/primary-sources.json",
+      "anchors/calculations.json",
+      "freshness/protocol-sources.json",
+      "freshness/runtime-evidence.json",
+      "freshness/witness.mjs"
+    ],
+    "siblingFiles": "Freshness lane files were neither read nor changed by this lane."
+  },
+  "cleanup": {
+    "allocatedPorts": [],
+    "allocatedTemporaryRoots": [],
+    "spawnedNodes": [],
+    "ownedLongRunningProcesses": [],
+    "port18551Query": "lsof -nP -iTCP:18551 -sTCP:LISTEN",
+    "port18551QueryExit": 1,
+    "port18551Listeners": "none observed",
+    "remainingOwnedRuntime": "none",
+    "cleanupDeletionPerformed": false
+  },
+  "limits": {
+    "lsp": "biome not installed; no install authorized or performed",
+    "forge": "not run; compilation prohibited and unnecessary",
+    "ethGetProof": "R53 request failed, not claimed successful",
+    "publicBuild": "960ca0a source resolution HTTP 422; not relabeled archive build",
+    "proofSystem": "No Migration verifier, current-prefix proof, finality verifier or bounded continuation implementation is asserted."
+  },
+  "scope": "Only the five hashed files and this final receipt were authored under anchors/. This receipt is not self-hashed."
+}

@@ -1,0 +1,27 @@
+{
+  "version": "dtf-phase27-r2-final-seal-v1",
+  "status": "offline-preparation-increment-complete",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 37014,
+    "sha256": "2722d54910c9609e28497deb4fee2586f2bed578d9a621189fdb5570cc14b3db"
+  },
+  "report": {
+    "path": "report.md",
+    "bytes": 19047,
+    "sha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa"
+  },
+  "canonicalCandidates": {
+    "path": "proof02/full-a/candidates.json",
+    "bytes": 16570240,
+    "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+  },
+  "cleanupComplete": true,
+  "pendingOperations": 0,
+  "writtenLast": true,
+  "nonIssuable": true,
+  "migrationImplementationComplete": false,
+  "fullTask9": "open",
+  "independentR2VerificationClaimed": false,
+  "operationalAuthorization": false
+}

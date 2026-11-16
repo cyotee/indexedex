@@ -52,7 +52,7 @@ contract MigrationRecoveryWeightedReceiptTest is MigrationWeightedReceiptForkBas
         a_[0] = Migration.WeightedSyEntitlementInput(
             bytes32("distinct synthetic WY"), holder_, Legacy.WEIGHTED_SY, 30, 0.01 ether, 0, bytes32("WY"), true
         );
-        vm.prank(migrationOwner); allocation.configureWeightedSyEntitlements(a_);
+        vm.prank(migrationOwner); allocation.configureWeightedSyEntitlements(a_, pricingId);
         _activate();
         (uint256 bond_,) = _surrenderWs(101);
         vm.startPrank(holder_);

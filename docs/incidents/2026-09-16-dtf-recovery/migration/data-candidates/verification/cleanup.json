@@ -1,0 +1,105 @@
+{
+  "version": "dtf-phase27-independent-cleanup-v1",
+  "status": "complete",
+  "ownedSessions": [
+    {
+      "id": "bash_1",
+      "purpose": "initial source identity and allowed diff",
+      "exit": 0
+    },
+    {
+      "id": "bash_2",
+      "purpose": "strict types and complete operator suite",
+      "exit": 0,
+      "monitor": "mon_C03V7319HJHSN6VT"
+    },
+    {
+      "id": "bash_3",
+      "purpose": "full tracked/staged diff",
+      "exit": 0
+    },
+    {
+      "id": "bash_4",
+      "purpose": "CLI help and blocked-document schema rejection",
+      "exit": 0,
+      "monitor": "mon_W54HZRENF6Y20DNA"
+    },
+    {
+      "id": "bash_5",
+      "purpose": "final pre-seal source/write-scope check",
+      "exit": 0
+    }
+  ],
+  "pendingOperations": [],
+  "pendingSubagents": [],
+  "pendingMonitors": [],
+  "temporaryCandidateTreesCreated": [],
+  "temporaryRelocationTreesCreated": [],
+  "deletedPaths": [],
+  "rejectedPrepareOutputDirectory": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/rejected-prepare-output",
+    "exists": false,
+    "check": "lstat returned ENOENT after CLI rejection"
+  },
+  "tests": {
+    "invocations": 1,
+    "result": "109 pass; 0 fail; 11 files",
+    "temporaryData": "existing fixture close/finally removes its own temporary data and closes synthetic loopback HTTP server; no verifier broad deletion"
+  },
+  "preservation": {
+    "rawAndProducerFiles": 33,
+    "operatorTypeScriptFiles": 53,
+    "allBeforeAfterIdentitiesMatch": true,
+    "trackedAndStagedDiffsEmpty": true,
+    "head": "0856a5c56e5d09b81c669f59b613efef79133e19",
+    "producerEvidenceModified": false,
+    "frozenInputsModified": false
+  },
+  "writes": {
+    "directory": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification",
+    "sourceFilesChanged": [],
+    "oldEvidenceFilesChanged": [],
+    "ignoredRetainedEvidence": [
+      "cli-boundary.log"
+    ],
+    "finalNewFilesAfterThisGitSnapshot": [
+      "cleanup.json",
+      "manifest.json",
+      "seal.json"
+    ]
+  },
+  "evidenceJsonParsing": [
+    {
+      "file": "binding-audit.json",
+      "validJson": true,
+      "version": "dtf-phase27-independent-binding-audit-v1"
+    },
+    {
+      "file": "producer-audit.json",
+      "validJson": true,
+      "version": "dtf-phase27-independent-producer-audit-v1"
+    },
+    {
+      "file": "unchanged-inputs.json",
+      "validJson": true,
+      "version": "dtf-phase27-independent-unchanged-v1"
+    },
+    {
+      "file": "source-manifest.json",
+      "validJson": true,
+      "version": "dtf-phase27-independent-source-manifest-v1"
+    },
+    {
+      "file": "coverage.json",
+      "validJson": true,
+      "version": "dtf-phase27-independent-verification-coverage-v1"
+    }
+  ],
+  "finalStateCommand": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates' && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager status --short --untracked-files=all --ignore-submodules=all && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager rev-parse HEAD && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager diff --exit-code --ignore-submodules=all 0856a5c56e5d09b81c669f59b613efef79133e19 && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat git --no-pager diff --cached --exit-code --ignore-submodules=all",
+  "finalStateOutput": "status: completed exit_code: 0\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation/binding-audit.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation/manifest.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation/seal.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation/source-manifest.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/binding-audit.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/commands.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/coverage.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/operator-final-screen.txt\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/producer-audit.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/source-manifest.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/unchanged-inputs.json\n0856a5c56e5d09b81c669f59b613efef79133e19",
+  "limitations": [
+    "No global audit of unrelated shared processes or temporary directories",
+    "No candidate derivation or relocation tree existed to clean",
+    "No P1 raw bytes were searched for or reconstructed"
+  ]
+}

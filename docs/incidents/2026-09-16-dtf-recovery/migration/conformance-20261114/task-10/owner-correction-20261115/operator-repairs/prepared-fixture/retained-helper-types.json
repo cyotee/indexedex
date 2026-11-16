@@ -1,0 +1,263 @@
+{
+  "argv": [
+    "bun",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--target",
+    "ES2022",
+    "--module",
+    "ESNext",
+    "--moduleResolution",
+    "Bundler",
+    "--strict",
+    "--noUncheckedIndexedAccess",
+    "--exactOptionalPropertyTypes",
+    "--verbatimModuleSyntax",
+    "--skipLibCheck",
+    "--types",
+    "node",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "closure": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "bytes": 20293,
+      "recordedSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "bytes": 2869,
+      "recordedSha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "sha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912",
+      "bytes": 5380,
+      "recordedSha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+      "bytes": 13749,
+      "recordedSha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "bytes": 31166,
+      "recordedSha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2",
+      "bytes": 7181,
+      "recordedSha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "sha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+      "bytes": 8321,
+      "recordedSha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+      "bytes": 8114,
+      "recordedSha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+      "sha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+      "bytes": 2346,
+      "recordedSha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+      "sha256": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+      "bytes": 10369,
+      "recordedSha256": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+      "sha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+      "bytes": 2929,
+      "recordedSha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "sha256": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+      "bytes": 5522,
+      "recordedSha256": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+      "bytes": 19500,
+      "recordedSha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3",
+      "bytes": 17608,
+      "recordedSha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "sha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+      "bytes": 12513,
+      "recordedSha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "bytes": 4636,
+      "recordedSha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "sha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+      "bytes": 9123,
+      "recordedSha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "bytes": 15624,
+      "recordedSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+      "bytes": 21123,
+      "recordedSha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+      "bytes": 6855,
+      "recordedSha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "bytes": 19008,
+      "recordedSha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "bytes": 30326,
+      "recordedSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "sha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61",
+      "bytes": 11414,
+      "recordedSha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-deployment.ts",
+      "sha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+      "bytes": 4485,
+      "recordedSha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+      "bytes": 8522,
+      "recordedSha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+      "bytes": 18846,
+      "recordedSha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+      "sha256": "a97cd3c41d282ec3aa22229cb819cb8e637262dfac22d8da43d4c258a1138ceb",
+      "bytes": 8971,
+      "recordedSha256": null,
+      "matchesRecorded": false,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "bytes": 6757,
+      "recordedSha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "bytes": 7120,
+      "recordedSha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "matchesRecorded": true,
+      "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256"
+    }
+  ],
+  "affectedByFixtureChange": false,
+  "rerun": false,
+  "provenanceLimit": "28 of 29 reachable local source hashes match admitted older source records. The task-11 recovery.ts dependency was not separately listed in those historical records; its current hash is captured before/after this adaptation. The user states helper inputs are unchanged. The adapted fixture is absent from this helper import graph. No stronger retroactive pin or redundant compiler rerun is claimed."
+}

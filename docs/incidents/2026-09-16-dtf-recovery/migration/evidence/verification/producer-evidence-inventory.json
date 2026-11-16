@@ -1,0 +1,3225 @@
+[
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/loopback-rate-run.results.json",
+    "bytes": 3315409,
+    "sha256": "a59272d2c6539bf4c8b75dc18e1d45af55d340e0ececd9bd5c9d500b4426582a",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "startedAt",
+      "addresses",
+      "runtime",
+      "resources",
+      "rpc",
+      "sources",
+      "selectors",
+      "reads",
+      "checks",
+      "identity",
+      "history",
+      "fixture",
+      "finishedAt",
+      "binaryPass",
+      "migrationReady",
+      "sourceArchive"
+    ],
+    "verdict": false,
+    "checks": [
+      {
+        "name": "authenticated_chain_and_runtime_source",
+        "verdict": "PASS"
+      },
+      {
+        "name": "original_principal_and_claimed_descendant_receipts",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_unauthorized_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "unauthorized_transfer",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_whole_nft",
+        "verdict": "PASS"
+      },
+      {
+        "name": "whole_nft",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_operator_redirection",
+        "verdict": "PASS"
+      },
+      {
+        "name": "operator_redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_nonexistent",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nonexistent",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_failed_safe_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed_safe_transfer",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "stale_identity_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_reward_only",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reward_only",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_reserved_zero_principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reserved_zero_principal",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "migration_zero_reward_only_eligibility_guard",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_detf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_custody_and_conversion",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_sdetf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sdetf_custody_and_conversion",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_sy_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sy_custody_and_conversion",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "fungible_descendant_authenticated_entitlement",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "clean_teardown",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+    "bytes": 3520079,
+    "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "startedAt",
+      "addresses",
+      "runtime",
+      "resources",
+      "rpc",
+      "sources",
+      "selectors",
+      "reads",
+      "checks",
+      "identity",
+      "history",
+      "fixture",
+      "finishedAt",
+      "binaryPass",
+      "migrationReady",
+      "sourceArchive"
+    ],
+    "verdict": true,
+    "checks": [
+      {
+        "name": "authenticated_chain_and_runtime_source",
+        "verdict": "PASS"
+      },
+      {
+        "name": "original_principal_and_claimed_descendant_receipts",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong_owner_transfer_rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_unauthorized_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong_owner_claim_redirection_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_unauthorized_claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved_actual_whole_nft_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied_nft_actual_claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "burn_and_repeat_claim_rejection",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt_to_detf_actual_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_to_dtf_actual_harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_whole_nft",
+        "verdict": "PASS"
+      },
+      {
+        "name": "legacy_operator_recipient_redirection_protection",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "rollback_operator_redirection",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nonexistent_claim_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_nonexistent",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed_transfer_rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_failed_safe_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale_identity_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reward_only_source_persists_after_principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_reward_only",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reserved_zero_principal_claim_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_reserved_zero_principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration_zero_reward_only_eligibility_guard",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "detf_actual_fungible_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_detf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sdetf_actual_fungible_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt_to_detf_actual_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_to_dtf_actual_harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_sdetf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sy_actual_fungible_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sy_actual_redeem_to_receipt",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt_to_detf_actual_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_to_dtf_actual_harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_sy_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "fungible_descendant_authenticated_entitlement",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "clean_teardown",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+    "bytes": 17837,
+    "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+    "keys": [
+      "0",
+      "1",
+      "2",
+      "3"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/rate-limited-run.results.json",
+    "bytes": 1981560,
+    "sha256": "d2356a0d7a0803a5a44cd8e0acda8cb2d3c2e4bf12dc23fc4a26e1177a3b6760",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "startedAt",
+      "addresses",
+      "runtime",
+      "resources",
+      "rpc",
+      "sources",
+      "selectors",
+      "reads",
+      "checks",
+      "identity",
+      "fixture",
+      "finishedAt",
+      "binaryPass",
+      "migrationReady",
+      "sourceArchive"
+    ],
+    "verdict": false,
+    "checks": [
+      {
+        "name": "authenticated_chain_and_runtime_source",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong_owner_transfer_rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_unauthorized_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_whole_nft",
+        "verdict": "PASS"
+      },
+      {
+        "name": "whole_nft",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_operator_redirection",
+        "verdict": "PASS"
+      },
+      {
+        "name": "operator_redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_nonexistent",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nonexistent",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_failed_safe_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed_safe_transfer",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "stale_identity_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_reward_only",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reward_only",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_reserved_zero_principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reserved_zero_principal",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "migration_zero_reward_only_eligibility_guard",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_detf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_custody_and_conversion",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_sdetf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sdetf_custody_and_conversion",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "rollback_sy_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sy_custody_and_conversion",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "fungible_descendant_authenticated_entitlement",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "clean_teardown",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+    "bytes": 20568,
+    "sha256": "1df2d1b6bffbe6cd241f89b9533cb5cea3f14b431df6593861bd44e4c6fa0440"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+    "bytes": 6447942,
+    "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+    "keys": [
+      "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "0xde5a691cefe1830e8ff2b65f6657738b0d9b9279",
+      "0x3a07364eaba092472d40f0e6788b8891a31fad4d",
+      "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "0x1d38189b5f3548bc86838061f4318dbfa2f77680",
+      "0x4886f86cd0dfff8b8a836f858925ed4de3a2b291",
+      "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "0xb7581fe833a2b2380dd786b345d61ffb734d36eb",
+      "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "0x4b6e65cfc9a16aae0dfa4257a680f4697275e5fc"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/initial-run.results.json",
+    "bytes": 1716870,
+    "sha256": "4c6765ed95a91f972ec23c93a4371319e94d3a774d6cf8836593fe7b5c201cf5",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "startedAt",
+      "addresses",
+      "runtime",
+      "resources",
+      "rpc",
+      "sources",
+      "selectors",
+      "reads",
+      "checks",
+      "identity",
+      "fixture",
+      "finishedAt",
+      "binaryPass",
+      "sourceArchive",
+      "note"
+    ],
+    "verdict": false,
+    "checks": [
+      {
+        "name": "authenticated_chain_and_runtime_source",
+        "verdict": "PASS"
+      },
+      {
+        "name": "fork_custody_suite",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "clean_teardown",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json",
+    "bytes": 3471018,
+    "sha256": "c11cebea5bf57f314d2bd8260af25fe3d810e970c0bb95a06170363458244359",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "startedAt",
+      "addresses",
+      "runtime",
+      "resources",
+      "rpc",
+      "sources",
+      "selectors",
+      "reads",
+      "checks",
+      "identity",
+      "history",
+      "fixture",
+      "finishedAt",
+      "binaryPass",
+      "migrationReady",
+      "sourceArchive"
+    ],
+    "verdict": true,
+    "checks": [
+      {
+        "name": "authenticated_chain_and_runtime_source",
+        "verdict": "PASS"
+      },
+      {
+        "name": "original_principal_and_claimed_descendant_receipts",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong_owner_transfer_rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_unauthorized_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved_actual_whole_nft_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied_nft_actual_claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "burn_and_repeat_claim_rejection",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt_to_detf_actual_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_to_dtf_actual_harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_whole_nft",
+        "verdict": "PASS"
+      },
+      {
+        "name": "legacy_operator_recipient_redirection_protection",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "rollback_operator_redirection",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nonexistent_claim_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_nonexistent",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed_transfer_rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_failed_safe_transfer",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale_identity_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reward_only_source_persists_after_principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_reward_only",
+        "verdict": "PASS"
+      },
+      {
+        "name": "reserved_zero_principal_claim_rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_reserved_zero_principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration_zero_reward_only_eligibility_guard",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "detf_actual_fungible_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_detf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sdetf_actual_fungible_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt_to_detf_actual_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_to_dtf_actual_harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_sdetf_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sy_actual_fungible_custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "sy_actual_redeem_to_receipt",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt_to_detf_actual_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "detf_to_dtf_actual_harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "rollback_sy_custody_and_conversion",
+        "verdict": "PASS"
+      },
+      {
+        "name": "fungible_descendant_authenticated_entitlement",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "clean_teardown",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/cleanup-audit.json",
+    "bytes": 4269,
+    "sha256": "f0f90c782621ae535b896c9c7f40a3866fb22426020a36f5fdaec36a8f92a2db",
+    "keys": [
+      "at",
+      "invocation",
+      "exitCode",
+      "binaryPass",
+      "scriptSha256",
+      "executedSha256",
+      "executable",
+      "reportWordCount",
+      "cleanAudit",
+      "failedLaunch",
+      "scope",
+      "languageServer",
+      "scriptContentUnchangedByModeChange",
+      "changedFiles",
+      "reportUnder5000Words"
+    ],
+    "verdict": true,
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.anvil.log",
+    "bytes": 15010,
+    "sha256": "ec1e5604e77545837201bdf2d78b0e416619dcbe9a900b6da777c17d82dcf48e"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+    "bytes": 261163,
+    "sha256": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8",
+    "keys": [
+      "identity",
+      "units",
+      "positions",
+      "history",
+      "selectors",
+      "probeSha256"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+    "bytes": 1525716,
+    "sha256": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+    "keys": [
+      "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+      "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe",
+      "0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293",
+      "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917",
+      "0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296",
+      "0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb",
+      "0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a",
+      "0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651",
+      "0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b",
+      "0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1",
+      "0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb",
+      "0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd",
+      "0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27",
+      "0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1",
+      "0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b",
+      "0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd",
+      "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9",
+      "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71",
+      "0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d",
+      "0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac",
+      "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a",
+      "0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352",
+      "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970",
+      "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d",
+      "0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0",
+      "0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737",
+      "0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1",
+      "0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9",
+      "0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04",
+      "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914",
+      "0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc",
+      "0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92",
+      "0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b",
+      "0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb",
+      "0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6",
+      "0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f",
+      "0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47",
+      "0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9",
+      "0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4",
+      "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba",
+      "0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27",
+      "0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd",
+      "0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731",
+      "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52",
+      "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f",
+      "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b",
+      "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289",
+      "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd",
+      "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83",
+      "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+    "bytes": 2404,
+    "sha256": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510",
+    "keys": [
+      "baselineHashes",
+      "sourceDifferences",
+      "provenance"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.anvil.log",
+    "bytes": 28659,
+    "sha256": "29d57ea521ab0a93cd3501117201ea638ce9afad6b44ff371aa0a737c5a5556d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.anvil.log",
+    "bytes": 37579,
+    "sha256": "c69d825116d4b3f6ce287b8173a943f70046847b05e5e628061c90e4ae0af881"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.sources.json",
+    "bytes": 137805,
+    "sha256": "1e30ff19638b0346971c43f853a1dca5641adce14139827ec7767bcc3c94a9c1",
+    "keys": [
+      "schema",
+      "pin",
+      "identities",
+      "registry",
+      "graph",
+      "inputs"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/report.md",
+    "bytes": 22598,
+    "sha256": "11362d36c9463a6b1c00a182c4873e687d93df72f31b95da46bae354ada302f8"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe.sources.json",
+    "bytes": 38,
+    "sha256": "5e48ede21a504f9094d83f80eff817b5960e58aa1b5049d9a3848dbbea392d87",
+    "keys": [
+      "schema",
+      "identities"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.anvil.log",
+    "bytes": 37309,
+    "sha256": "e270f0b91b7e424c98e9f249ee5812976e320d96f5868025dd8e6ae9902c6b7d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.sources.json",
+    "bytes": 410724,
+    "sha256": "b37dba5694002ea1d231910d527c84c2d15de98e2970fe4fdab8ef1078286f88",
+    "keys": [
+      "schema",
+      "pin",
+      "identities",
+      "registry",
+      "graph"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.json",
+    "bytes": 443633,
+    "sha256": "e781005f6420c385ca9aad423efcd7f5bb706c9450362113845157da9e4526e1",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "inputs",
+      "pin",
+      "scope",
+      "graph",
+      "identityInput",
+      "resources",
+      "finished"
+    ],
+    "verdict": "FAIL",
+    "checks": [
+      {
+        "name": "earlier fungible LP: native staged harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: native staged harvest",
+        "verdict": "FAIL"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.sources.json",
+    "bytes": 411755,
+    "sha256": "103f12072b07df00f81387fba6725d18e965e5a021dc51780947e40135ff09a6",
+    "keys": [
+      "schema",
+      "pin",
+      "identities",
+      "registry",
+      "graph",
+      "inputs"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.sources.json",
+    "bytes": 411755,
+    "sha256": "d6717adb89d115e4f9d8f2ff61ce6219cf6f15aad3624b78ba5c9576dcb283db",
+    "keys": [
+      "schema",
+      "pin",
+      "identities",
+      "registry",
+      "graph",
+      "inputs"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.summary.json",
+    "bytes": 157076,
+    "sha256": "8fe24814089b95a386bc1dc17204b86ba5ff29831a42b7a845adb970e311c0c1",
+    "keys": [
+      "invocation",
+      "generated",
+      "input",
+      "sha256",
+      "pin",
+      "runtime",
+      "overall",
+      "cleanup",
+      "resources",
+      "disabled",
+      "sources",
+      "cases"
+    ],
+    "verdict": "FAIL",
+    "checks": [
+      {
+        "name": "stale runtime identity rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "local source runtime matches upstream pin",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking atomic source-right surrender",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking claim extinguishment into SY custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claimed position rejects second exercise",
+        "verdict": "PASS"
+      },
+      {
+        "name": "zero claim and wrong operator cannot redirect victim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "successful inner claim rolled back by failed outer transaction",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier underlying SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier fungible LP: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted WETH-leg SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "integrated atomic Migration issuance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "postactivation fungible provenance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "complete exposure and source absence",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.json",
+    "bytes": 423633,
+    "sha256": "08ef79c307261c41100478a428fbc8c66faec55c842af9780866fcdc32f0251f",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "pin",
+      "registry",
+      "graph",
+      "resources",
+      "finished"
+    ],
+    "verdict": "UNPROVEN",
+    "checks": [
+      {
+        "name": "stale runtime identity rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking custody and harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "staking zero and unauthorized redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "staking failed outer claim rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "claim-vault shares: custody and harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "claim-vault shares: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier underlying SE: custody and harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier underlying SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier fungible LP: custody and harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier fungible LP: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted WETH-leg SE: custody and harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted WETH-leg SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted DTF custody SE: custody and harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted DTF custody SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted fungible LP: custody and harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted fungible LP: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "integrated atomic Migration issuance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "postactivation fungible provenance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "complete exposure and source absence",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.summary.json",
+    "bytes": 149252,
+    "sha256": "cfdc08253e79ad47c38c6a82cdb2545d2fae4890401697fd6b8dcdcf1cca6151",
+    "keys": [
+      "invocation",
+      "generated",
+      "input",
+      "sha256",
+      "pin",
+      "runtime",
+      "overall",
+      "cleanup",
+      "resources",
+      "disabled",
+      "sources",
+      "cases"
+    ],
+    "verdict": "FAIL",
+    "checks": [
+      {
+        "name": "stale runtime identity rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "local source runtime matches upstream pin",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking atomic source-right surrender",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking claim extinguishment into SY custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claimed position rejects second exercise",
+        "verdict": "PASS"
+      },
+      {
+        "name": "zero claim and wrong operator cannot redirect victim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking failed outer claim rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "claim-vault shares: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier underlying SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier underlying SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier fungible LP: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted WETH-leg SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted WETH-leg SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted DTF custody SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "integrated atomic Migration issuance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "postactivation fungible provenance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "complete exposure and source absence",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.json",
+    "bytes": 558213,
+    "sha256": "a7cee70b5253fb0a3292fa27bbeb36105ab8b33c2a3664143e1886c137a86fd0",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "inputs",
+      "pin",
+      "registry",
+      "graph",
+      "resources",
+      "finished"
+    ],
+    "verdict": "FAIL",
+    "checks": [
+      {
+        "name": "stale runtime identity rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "local source runtime matches upstream pin",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking atomic source-right surrender",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking claim extinguishment into SY custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claimed position rejects second exercise",
+        "verdict": "PASS"
+      },
+      {
+        "name": "zero claim and wrong operator cannot redirect victim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "successful inner claim rolled back by failed outer transaction",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "claim-vault shares: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: failed transfer outer rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier underlying SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier underlying SE: failed transfer outer rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: harvest",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier fungible LP: failed transfer outer rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted WETH-leg SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted WETH-leg SE: failed transfer outer rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted DTF custody SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: failed transfer outer rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: failed transfer outer rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "integrated atomic Migration issuance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "postactivation fungible provenance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "complete exposure and source absence",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/alchemy-retry-receipt.json",
+    "bytes": 4892,
+    "sha256": "c8f8efce10625522d6379f190fbf4a8638e49576e4bd6038967410093401fbdf",
+    "keys": [
+      "lane",
+      "date",
+      "worktree",
+      "credentialCheck",
+      "runRoot",
+      "invocations",
+      "authenticatedHistoricalRead",
+      "blockerForOrchestrator",
+      "preservedPublicFailure",
+      "cleanupReceipt"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r3.json",
+    "bytes": 658712,
+    "sha256": "85f54e572c6dafa501e42894da95ef3a6c8e0f3730abc5bcbcd2c62536786c18",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "inputs",
+      "pin",
+      "registry",
+      "graph",
+      "resources",
+      "finished"
+    ],
+    "verdict": "FAIL",
+    "checks": [
+      {
+        "name": "stale runtime identity rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "local source runtime matches upstream pin",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking atomic source-right surrender",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking claim extinguishment into SY custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claimed position rejects second exercise",
+        "verdict": "PASS"
+      },
+      {
+        "name": "zero claim and wrong operator cannot redirect victim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking failed outer claim rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "claim-vault shares: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier underlying SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier underlying SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "earlier fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier fungible LP: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted WETH-leg SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted WETH-leg SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted DTF custody SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "weighted fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: transfer rollback",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "integrated atomic Migration issuance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "postactivation fungible provenance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "complete exposure and source absence",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe.json",
+    "bytes": 1656,
+    "sha256": "1d82221c63c26ee53aebc12d25a15617af450cf5bfe28ea57cdbb42b7ca423f2",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "harnessError",
+      "finished"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "ProbeError: ALCHEMY_KEY absent; RPC alias robinhood_mainnet_alchemy cannot be expanded",
+    "checks": [
+      {
+        "name": "probe harness",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r2.sources.json",
+    "bytes": 411755,
+    "sha256": "6f5c7d373eb0f48e0ef29885c5f8ce5e7d57685f10bbf5426c01229e707adca3",
+    "keys": [
+      "schema",
+      "pin",
+      "identities",
+      "registry",
+      "graph",
+      "inputs"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/cleanup-alchemy.json",
+    "bytes": 1349,
+    "sha256": "6b0f909400761cb44f5d4321b39f043d61fa231e9d0e02b41a77e771728cd2fe",
+    "keys": [
+      "lane",
+      "date",
+      "runRoot",
+      "probeProcessReadback",
+      "anvilChildrenStarted",
+      "ownedPortsOpened",
+      "perRunCacheReadback",
+      "finalRunRootEntries",
+      "finalSourceChecks",
+      "cleanupOperation",
+      "cleanupShell",
+      "cleanupStdout",
+      "cleanupExitCode",
+      "runRootAbsent",
+      "sharedResourcesRemoved",
+      "keyOrExpandedSecretUrlPrinted"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy.json",
+    "bytes": 142238,
+    "sha256": "8d31448e571d6e176b7db3a112f16f45b3c01a7f796e15f741411884d3de2b64",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "inputs",
+      "pin",
+      "registry",
+      "graph",
+      "harnessError",
+      "finished"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "ProbeError: eth_getCode: HTTP 429",
+    "checks": [
+      {
+        "name": "probe harness",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public.anvil.log",
+    "bytes": 11549,
+    "sha256": "bbf830165c5b65949ade20a5b4ddf97ab6d256030d63d7cec01612a2c28a6eac"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.json",
+    "bytes": 188646,
+    "sha256": "e88b5165e46d5b90997842c5119294902248b5a03947e28f095f307f57c95909",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "inputs",
+      "pin",
+      "registry",
+      "graph",
+      "harnessError",
+      "finished"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "ProbeError: eth_call: HTTP 429",
+    "checks": [
+      {
+        "name": "probe harness",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-public-r4.json",
+    "bytes": 701785,
+    "sha256": "a08bef6a8d769925e9b61560774d82d23b0dfa01f5a9e2a84856585a36c8a7b8",
+    "keys": [
+      "schema",
+      "started",
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "sourceObservations",
+      "cases",
+      "attempts",
+      "cleanup",
+      "overall",
+      "inputs",
+      "pin",
+      "registry",
+      "graph",
+      "resources",
+      "finished"
+    ],
+    "verdict": "FAIL",
+    "checks": [
+      {
+        "name": "stale runtime identity rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "local source runtime matches upstream pin",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking atomic source-right surrender",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking claim extinguishment into SY custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claimed position rejects second exercise",
+        "verdict": "PASS"
+      },
+      {
+        "name": "zero claim and wrong operator cannot redirect victim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "successful inner claim rolled back by failed outer transaction",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier underlying SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier fungible LP: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted WETH-leg SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "integrated atomic Migration issuance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "postactivation fungible provenance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "complete exposure and source absence",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/cleanup-receipt.json",
+    "bytes": 2000,
+    "sha256": "2f50c9cc55f389104eeb28af937c9c93fc8a6b7664ec1e099cc0fa29c57dabc4",
+    "keys": [
+      "lane",
+      "date",
+      "worktree",
+      "runRoot",
+      "processAndPortReadback",
+      "readbackMethod",
+      "perRunCleanup",
+      "finalCacheFinding",
+      "cleanupCommand",
+      "cleanupStdout",
+      "cleanupExitCode",
+      "runRootAbsent",
+      "finalSourceChecks",
+      "sharedResourcesRemoved"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.summary.json",
+    "bytes": 123919,
+    "sha256": "836fd3d58972a3b971c7feaea8a7ec94fefcf6e3235e18a5d7ad77b0018ada15",
+    "keys": [
+      "invocation",
+      "generated",
+      "input",
+      "sha256",
+      "pin",
+      "runtime",
+      "overall",
+      "cleanup",
+      "resources",
+      "disabled",
+      "sources",
+      "cases"
+    ],
+    "verdict": "FAIL",
+    "checks": [
+      {
+        "name": "earlier fungible LP: native staged harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: native staged harvest",
+        "verdict": "FAIL"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.sources.json",
+    "bytes": 184216,
+    "sha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+    "keys": [
+      "schema",
+      "pin",
+      "identities",
+      "registry",
+      "graph",
+      "inputs"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.anvil.log",
+    "bytes": 6459,
+    "sha256": "809f150f985d6928ba704cdeeada5f38b7e7adbd524614448b36dbb247440c0e"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.sources.json",
+    "bytes": 411189,
+    "sha256": "29c15af7c6ef4998142c242548e24d16c8455d58e2052e85be9151ece7dfa0fb",
+    "keys": [
+      "schema",
+      "pin",
+      "identities",
+      "graph",
+      "inputs"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/reconciliation.json",
+    "bytes": 1626442,
+    "sha256": "874eb99734cb6f06a6c75982fbe9dcfc52f84e535c3666fb8d2f2f23b11f684f",
+    "keys": [
+      "account_ledger_directly_uploadable",
+      "address_normalization",
+      "allocations_approved",
+      "blank_numeric_encoding",
+      "category_coverage",
+      "chain_id",
+      "contribution_joins",
+      "coverage",
+      "gaps",
+      "held_lower_bound_is_full_proportional_attribution",
+      "historical_diagnostics",
+      "malformed_quantity_policy",
+      "policy_revision",
+      "recorded_source_addresses",
+      "schema_version",
+      "status",
+      "unknown_values",
+      "unresolved_relationships"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+    "bytes": 17922,
+    "sha256": "7f523d563ca30a5d103a96a3f6dc8f860bfd06683e37cefec8eeb16b88c958c1"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.results.json",
+    "bytes": 941,
+    "sha256": "e828dfbb18e3c301542675323cd4133fe1a628fb649eba4b71fab80c1302d79f",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "resources",
+      "rpc",
+      "checks",
+      "cleanup",
+      "failure",
+      "binaryPass",
+      "e2Verdict"
+    ],
+    "verdict": "FAIL_CURRENT_INTERFACES",
+    "failure": "AssertionError: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   1667n,\n+   2333n\n-   1334n,\n-   2666n\n  ]\n",
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.anvil.log",
+    "bytes": 3596,
+    "sha256": "e154534f91c0ddeea580fd5077865c5ab846e5e524918489ded3d9fec4b99569"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/cleanup.stdout.log",
+    "bytes": 284,
+    "sha256": "8f15b0a821aee5f6a53ef9005bc3647d904933eea42f3d4880681e84bd680677"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.stdout.log",
+    "bytes": 421,
+    "sha256": "d6622b10f4948fb3b22754cf2cd990e62cff54c22f438839215017483e41922d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.stdout.log",
+    "bytes": 277,
+    "sha256": "326bc2fa49d299be79dc2c8d7b1a4e90a989a9c2e895462b2e01434cc88e2fa7"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.results.json",
+    "bytes": 77917,
+    "sha256": "7078269eb681dd32895651cb2cdd9f135eabe97aa4ee410f456f3fe713df2506",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "resources",
+      "rpc",
+      "checks",
+      "cleanup",
+      "arithmetic",
+      "pin",
+      "facet",
+      "initial",
+      "setupReceipts",
+      "histories",
+      "binaryPass",
+      "e2Verdict"
+    ],
+    "verdict": "FAIL_CURRENT_INTERFACES",
+    "checks": [
+      {
+        "name": "same_balances_distinct_credit_deployed_counterexample",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.anvil.log",
+    "bytes": 3596,
+    "sha256": "89195c7526b665e937aa987b42c87109bd8f694ac779cd3f5982df8f9b0b4a49"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/producer-audit.json",
+    "bytes": 1099885,
+    "sha256": "26eaf0f019d15f3545beb891ade9d4c4f96268f17cefff03531d7e4c57e4c8c5",
+    "keys": [
+      "inputs",
+      "producerChecks",
+      "sourceExcerpts",
+      "producerShapes",
+      "integrity"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.results.json",
+    "bytes": 78249,
+    "sha256": "d5e19ace9cb08bf17107e4c91e97cbe0e025971591588efd7bd1bfd397f504f2",
+    "keys": [
+      "invocation",
+      "binaryPassObservable",
+      "runtime",
+      "resources",
+      "rpc",
+      "checks",
+      "cleanup",
+      "arithmetic",
+      "pin",
+      "facet",
+      "initial",
+      "setupReceipts",
+      "histories",
+      "binaryPass",
+      "e2Verdict"
+    ],
+    "verdict": "FAIL_CURRENT_INTERFACES",
+    "checks": [
+      {
+        "name": "same_balances_distinct_credit_deployed_counterexample",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.anvil.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/cleanup.json",
+    "bytes": 12976,
+    "sha256": "02839e4599c3b83783c03d54f604b159b5154adbca4664a25f2f9ee5857f41c8",
+    "keys": [
+      "invocation",
+      "passObservable",
+      "runRoot",
+      "resources",
+      "inputIntegrity",
+      "checks",
+      "files",
+      "reportWords",
+      "runRootBefore",
+      "runRootAfter",
+      "pass"
+    ],
+    "checks": [
+      {
+        "name": "six_mined_transfers_distinct_credit_same_balances"
+      },
+      {
+        "name": "public_rpc_read_only"
+      },
+      {
+        "name": "arithmetic_partitions"
+      },
+      {
+        "name": "weighted_producer_verdicts_preserved"
+      },
+      {
+        "name": "earlier_producer_verdicts_preserved"
+      },
+      {
+        "name": "other_producer_verdicts_preserved"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/invocations.md",
+    "bytes": 7580,
+    "sha256": "33fbd4beaea79c9e0d517efe5766ef17c48976b9a6ad7b4f0c674a203d313532"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.producer-audit.json",
+    "bytes": 1101363,
+    "sha256": "077720f23cd88360037eb6ff5223de688f2935722d4a85abba72c90adbacb0ef",
+    "keys": [
+      "inputs",
+      "producerChecks",
+      "sourceExcerpts",
+      "producerShapes",
+      "integrity"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r2.producer-audit.json",
+    "bytes": 1101363,
+    "sha256": "077720f23cd88360037eb6ff5223de688f2935722d4a85abba72c90adbacb0ef",
+    "keys": [
+      "inputs",
+      "producerChecks",
+      "sourceExcerpts",
+      "producerShapes",
+      "integrity"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness-r3.stdout.log",
+    "bytes": 282,
+    "sha256": "91f64c2687825e9eaa333764d765416f7efa2ae341ed561a836f754c1c07848d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/verify-cleanup.mjs",
+    "bytes": 5191,
+    "sha256": "fa6186bb01db5242609b9f45a7cd9875100234dc56ced498b998d11bd7f7bdb5"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs",
+    "bytes": 17668,
+    "sha256": "6b2d4ffcb16f28a586124e9664226224fc7d8b87575a8f813584086a3a857ff7"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh1.source.json",
+    "bytes": 4711975,
+    "sha256": "d30c68d4aae48d5c1741683fd03dabd3eaf847c4880ee50af9373d4cd9e1eeea",
+    "keys": [
+      "provider",
+      "chainId",
+      "contracts",
+      "proxies"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/syntax-check.log",
+    "bytes": 72,
+    "sha256": "dbf1343b95c9bedb43b3f0cb6f8a71b9c0504b252a6b9bd4b24784877227a3e4"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy429.json",
+    "bytes": 541701,
+    "sha256": "b1b80899416e60afa1ec4404bcc0ec6dfd8f7c04a19539f121e85b4d3a50c051",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "inputHash",
+      "purchaseRouting",
+      "purchases",
+      "execution",
+      "anvilStartup",
+      "forkIdentity",
+      "fatal",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "eth_call: {\n  \"code\": -32603,\n  \"message\": \"failed to get storage for 0xaf0E1967c8F755c747615c5427108Bc549CA1122 at 23890442962173393619258174500738214328494900246771105732273200892927514929182: Max retries exceeded HTTP error 429 with body: {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":57,\\\"error\\\":{\\\"code\\\":429,\\\"message\\\":\\\"Your app has exceeded its compute units per second capacity. If you have retries enabled, you can safely ignore this message. If not, check out https://docs.alchemy.com/reference/throughput\\\"}}\\n\\nHTTP diagnostics:\\nserver: istio-envoy\"\n}",
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-public429.summary.json",
+    "bytes": 11679,
+    "sha256": "7e883efab233fb0d5ad5c416ba18a88bee305fa4cf85d3b22784966780eb7d11",
+    "keys": [
+      "invocation",
+      "runtime",
+      "historical",
+      "execution",
+      "checks",
+      "purchases",
+      "cleanup",
+      "resources",
+      "fatal",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "eth_call: {\n  \"code\": -32603,\n  \"message\": \"failed to get storage for 0xaf0E1967c8F755c747615c5427108Bc549CA1122 at 36753460589827863971641182242972585546245821461512788533512751561181329875000: Max retries exceeded HTTP error 429 with body: {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"error\\\":{\\\"code\\\":429,\\\"message\\\":\\\"Too Many Requests\\\"}}\\n\\n\\nHTTP diagnostics:\\ncf-ray: a584d63e99acdfd2-PDX\\nserver: cloudflare\"\n}",
+    "checks": [
+      {
+        "name": "requested-alias",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.summary.json",
+    "bytes": 858,
+    "sha256": "cc1f3984474c1cce1c99b1e778b9963fd20e9d28edd7cb55c2411f60bb1b47ee",
+    "keys": [
+      "invocation",
+      "runtime",
+      "historical",
+      "checks",
+      "cleanup",
+      "resources",
+      "fatal",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "eth_getCode: HTTP 429",
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+    "bytes": 22872,
+    "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+    "bytes": 4711975,
+    "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+    "keys": [
+      "provider",
+      "chainId",
+      "contracts",
+      "proxies"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-public429.json",
+    "bytes": 541549,
+    "sha256": "3700c658904914d97f37f9666a9be128d85312ad5ae72e67828c64f292c9b727",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "fallbackAlias",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "inputHash",
+      "purchaseRouting",
+      "purchases",
+      "execution",
+      "anvilStartup",
+      "forkIdentity",
+      "fatal",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "eth_call: {\n  \"code\": -32603,\n  \"message\": \"failed to get storage for 0xaf0E1967c8F755c747615c5427108Bc549CA1122 at 36753460589827863971641182242972585546245821461512788533512751561181329875000: Max retries exceeded HTTP error 429 with body: {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"error\\\":{\\\"code\\\":429,\\\"message\\\":\\\"Too Many Requests\\\"}}\\n\\n\\nHTTP diagnostics:\\ncf-ray: a584d63e99acdfd2-PDX\\nserver: cloudflare\"\n}",
+    "checks": [
+      {
+        "name": "requested-alias",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.json",
+    "bytes": 2683545,
+    "sha256": "30276751742549bd0a82f7bf94e6734434cb6523d66e4996d48e1138f10ba098",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "inputHash",
+      "purchaseRouting",
+      "purchases",
+      "execution",
+      "anvilStartup",
+      "forkIdentity",
+      "units",
+      "positions",
+      "fixture",
+      "transactions",
+      "nftRewardClaim",
+      "nftSale",
+      "nftMatureClose",
+      "wrongOwnerClose",
+      "receiptCustody",
+      "receiptRedemption",
+      "directReceiptRedemption",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-mature-close-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-mature-close-redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "zero-principal-standing-position-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "locked-NFT-custody-retains-lock-and-principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-and-conversions",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "direct-receipt-to-pair-redemption",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy429.summary.json",
+    "bytes": 11760,
+    "sha256": "f4d89c29ebd22c1cb06c6986de3d76e7641bf5212d74808f6b856c4b6de885ea",
+    "keys": [
+      "invocation",
+      "runtime",
+      "historical",
+      "execution",
+      "checks",
+      "purchases",
+      "cleanup",
+      "resources",
+      "fatal",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "eth_call: {\n  \"code\": -32603,\n  \"message\": \"failed to get storage for 0xaf0E1967c8F755c747615c5427108Bc549CA1122 at 23890442962173393619258174500738214328494900246771105732273200892927514929182: Max retries exceeded HTTP error 429 with body: {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":57,\\\"error\\\":{\\\"code\\\":429,\\\"message\\\":\\\"Your app has exceeded its compute units per second capacity. If you have retries enabled, you can safely ignore this message. If not, check out https://docs.alchemy.com/reference/throughput\\\"}}\\n\\nHTTP diagnostics:\\nserver: istio-envoy\"\n}",
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-attempt01.json",
+    "bytes": 7810,
+    "sha256": "050f70e1c4dcf84cfed80edb204e7c08c14995828fc0abb05cdf0f09d849c157",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "fallbackAlias",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "fatal",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "Source HTTP 404: 0x67ed019eC3f8b77Bc51ED1e6403Fc90E0aBb15bE",
+    "checks": [
+      {
+        "name": "requested-alias",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh2.json",
+    "bytes": 892109,
+    "sha256": "9d0ff37dd52d38ad0fa3f80af8e6d72b480e31bab6ab02546764426275c958a7",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "fallbackAlias",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "inputHash",
+      "purchaseRouting",
+      "purchases",
+      "execution",
+      "anvilStartup",
+      "forkIdentity",
+      "units",
+      "positions",
+      "fixture",
+      "receiptCustody",
+      "receiptRedemption",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "checks": [
+      {
+        "name": "requested-alias",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.summary.json",
+    "bytes": 29918,
+    "sha256": "2611f29a1630bc3a8c882168309f5bb9757e1226dfb4747ed0afa72d5af9960c",
+    "keys": [
+      "invocation",
+      "runtime",
+      "historical",
+      "execution",
+      "units",
+      "fixture",
+      "checks",
+      "purchases",
+      "transactions",
+      "receiptCustody",
+      "rewards",
+      "sale",
+      "close",
+      "cleanup",
+      "resources",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-mature-close-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-mature-close-redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "zero-principal-standing-position-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "locked-NFT-custody-retains-lock-and-principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-and-conversions",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "direct-receipt-to-pair-redemption",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh2.source.json",
+    "bytes": 4711975,
+    "sha256": "26aec2b89c51698a6b0317b0738f3a3a555402dfc0158ed71a6bccdb073e6ad7",
+    "keys": [
+      "provider",
+      "chainId",
+      "contracts",
+      "proxies"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/cleanup.log",
+    "bytes": 543,
+    "sha256": "8285b192ae4c00e0472561be2b3ba2cb3a1ec1248954f384c40bfb627096ed37"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh1.json",
+    "bytes": 557129,
+    "sha256": "09966262d169c70df07ad1c3c7f7e0220db7a01fe37cfada8d4f60f0bd4e0e72",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "fallbackAlias",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "inputHash",
+      "purchases",
+      "execution",
+      "anvilStartup",
+      "forkIdentity",
+      "units",
+      "positions",
+      "fixture",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "checks": [
+      {
+        "name": "requested-alias",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+    "bytes": 2683989,
+    "sha256": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "inputHash",
+      "purchaseRouting",
+      "purchases",
+      "execution",
+      "anvilStartup",
+      "forkIdentity",
+      "units",
+      "positions",
+      "fixture",
+      "transactions",
+      "nftRewardClaim",
+      "nftSale",
+      "nftMatureClose",
+      "wrongOwnerClose",
+      "receiptCustody",
+      "receiptRedemption",
+      "directReceiptRedemption",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-mature-close-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-mature-close-redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "zero-principal-standing-position-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "locked-NFT-custody-retains-lock-and-principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-and-conversions",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "direct-receipt-to-pair-redemption",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.json",
+    "bytes": 3959,
+    "sha256": "0d7dcefbd5db4d610ec549ed20d266fd1dfdb9a192498f79b88e3178906d4de1",
+    "keys": [
+      "invocation",
+      "cwd",
+      "passObservable",
+      "startedAt",
+      "runtime",
+      "runRoot",
+      "alias",
+      "attempts",
+      "checks",
+      "resources",
+      "cleanup",
+      "chainId",
+      "historical",
+      "sourceDiscoveryBlock",
+      "fatal",
+      "finishedAt",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "failure": "eth_getCode: HTTP 429",
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/cleanup-alchemy-retry.log",
+    "bytes": 219,
+    "sha256": "8d64b3a39b30c4697b6d9679418b21ae138c4346f8bbd4d7db87ad5247c41912"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-attempt01.source.json",
+    "bytes": 4122689,
+    "sha256": "1432142204da5501ed19d766c8388fd321a17150897f4098233477bf51097fcd",
+    "keys": [
+      "provider",
+      "chainId",
+      "contracts",
+      "proxies"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-fresh3.source.json",
+    "bytes": 4711975,
+    "sha256": "7d43ebafe4c3151e99a9c8efb4c235d76b7e52366821797ea9c971b8d1573b5f",
+    "keys": [
+      "provider",
+      "chainId",
+      "contracts",
+      "proxies"
+    ],
+    "checks": []
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.summary.json",
+    "bytes": 29927,
+    "sha256": "937b93df2351fb000839e3cd075d52b3bf53c5feff6e98843f608715f8262576",
+    "keys": [
+      "invocation",
+      "runtime",
+      "historical",
+      "execution",
+      "units",
+      "fixture",
+      "checks",
+      "purchases",
+      "transactions",
+      "receiptCustody",
+      "rewards",
+      "sale",
+      "close",
+      "cleanup",
+      "resources",
+      "overall"
+    ],
+    "verdict": "UNPROVEN",
+    "checks": [
+      {
+        "name": "source-runtime-authentication",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "original-contributions-and-NewLock",
+        "verdict": "PASS"
+      },
+      {
+        "name": "18-decimal-units",
+        "verdict": "PASS"
+      },
+      {
+        "name": "stale-identity-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "approved-operator-claim-redirection-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-safe-transfer-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "nft-custody-and-reward-claim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-to-receipt-and-consumed-identity",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-mature-close-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "custodied-nft-mature-withdrawal",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "nonexistent-position-withdrawal-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "wrong-owner-mature-close-redirection",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "zero-principal-standing-position-rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "locked-NFT-custody-retains-lock-and-principal",
+        "verdict": "PASS"
+      },
+      {
+        "name": "liquid-DETF-custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-and-conversions",
+        "verdict": "PASS"
+      },
+      {
+        "name": "failed-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "receipt-custody-conversions-and-redemption",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "zero-receipt-redemption-rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "direct-receipt-to-pair-redemption",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "case-isolation-restored",
+        "verdict": "PASS"
+      },
+      {
+        "name": "migration-credit-and-fixed-donation-destination",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe.source.json",
+    "bytes": 30359,
+    "sha256": "7c7b71f9a38fd163b4f7da1071be5a8bda572cd458d35a3a78b0291b3c016502",
+    "keys": [
+      "provider",
+      "chainId",
+      "contracts",
+      "proxies"
+    ],
+    "checks": []
+  }
+]

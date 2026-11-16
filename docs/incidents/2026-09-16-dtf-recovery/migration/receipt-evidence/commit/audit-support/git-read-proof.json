@@ -1,0 +1,614 @@
+{
+  "environment": {
+    "GIT_MASTER": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_PAGER": "cat",
+    "PAGER": "cat"
+  },
+  "prefix": "git --no-pager",
+  "commands": [
+    {
+      "args": [
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "stdout": "work/dtf-migration-phase-28-receipt-evidence\n",
+      "stderr": "",
+      "stdoutBytes": 45,
+      "stdoutSha256": "feb8408a46974a51fd797087e43973af4218afe81acf8d9452454d336cdd5d01"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "lib/crane"
+      ],
+      "exit": 0,
+      "stdout": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0\tlib/crane\n",
+      "stderr": "",
+      "stdoutBytes": 60,
+      "stdoutSha256": "a36d5fbed5f667bc9edf4ad6f3d3b5fbe55c59c8fabae0a3398312326f5988ab"
+    },
+    {
+      "args": [
+        "rev-list",
+        "--parents",
+        "-n",
+        "1",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "07d54b9a3d20d98aee24e75235bbf16b650a8028 789fced820ed494d9651c598fb8f75c646d727a7\n",
+      "stderr": "",
+      "stdoutBytes": 82,
+      "stdoutSha256": "f591a6c8af3f6941f135d4cd2544f64c81319f58fee1309601241bc7058eb6a3"
+    },
+    {
+      "args": [
+        "rev-parse",
+        "--git-common-dir",
+        "--git-dir"
+      ],
+      "exit": 0,
+      "stdout": "/Users/cyotee/Projects/indexedex/.git\n/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-28-receipt-evidence\n",
+      "stderr": "",
+      "stdoutBytes": 126,
+      "stdoutSha256": "8a6e5ef9c0a2a0e34db83a2ca6e376f4e28c89d44835aee1c5fedfe326cfbacc"
+    },
+    {
+      "args": [
+        "diff",
+        "--cached",
+        "--ignore-submodules=all",
+        "--exit-code"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "-r",
+        "HEAD",
+        "--",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "show-ref"
+      ],
+      "exit": 0,
+      "stdout": "90ff0307a7a8e084aa073e02eff125e9c7973933 refs/heads/main\n6e27ecaa242c4acca132e3575a160514aad07b11 refs/heads/work/dtf-migration\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/heads/work/dtf-migration-phase-01\n215c2bba6aa75e3e79bf68b7980b730927a85817 refs/heads/work/dtf-migration-phase-02\n6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd refs/heads/work/dtf-migration-phase-03\n5021e8d4a62bcbddc555f580ef98f8666d993aab refs/heads/work/dtf-migration-phase-04\n6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31 refs/heads/work/dtf-migration-phase-05\n5021e8d4a62bcbddc555f580ef98f8666d993aab refs/heads/work/dtf-migration-phase-06-e2\n421072a7630a0d3d47a6f36e1062d9eae98c93e2 refs/heads/work/dtf-migration-phase-07-recovery\n3f577eeca049c1bd70a812d130941c8a38dd4781 refs/heads/work/dtf-migration-phase-08-operator\n421072a7630a0d3d47a6f36e1062d9eae98c93e2 refs/heads/work/dtf-migration-phase-09-deployment-gas\n3f577eeca049c1bd70a812d130941c8a38dd4781 refs/heads/work/dtf-migration-phase-11-same-wallet-sources\n2c2b3370ded30cae1662329025d4fb58f7197330 refs/heads/work/dtf-migration-phase-12-wallet-admission\n75d513cb8b36e53f14c8aa3a352f21703ad91ba1 refs/heads/work/dtf-migration-phase-13-weighted-liquid\n2baab6e58dafcc3fe5f9a94570d99987d58bf42b refs/heads/work/dtf-migration-phase-14-weighted-sy\n4a53299b490343ed904d70c92ecbc7360fcb7659 refs/heads/work/dtf-migration-phase-15-dtf-custody-se\na96f0fd26c1a1fdba35750cff74d866afa3a9796 refs/heads/work/dtf-migration-phase-16-claim-vault\nacdbe319f3a20c3af6bea594c62461b6c7988717 refs/heads/work/dtf-migration-phase-17-weighted-receipt\n1df9076c73b94a4f63172395763fa8cdd48fe060 refs/heads/work/dtf-migration-phase-18-earlier-receipt\n3ec0912bafebf9c0aa66770a72f04501e5c11865 refs/heads/work/dtf-migration-phase-19-earlier-liquid\nacdbe319f3a20c3af6bea594c62461b6c7988717 refs/heads/work/dtf-migration-phase-19-earlier-liquid-source\n1df9076c73b94a4f63172395763fa8cdd48fe060 refs/heads/work/dtf-migration-phase-20-se-lp-source\n4eaa7decab80d24cf37cb3781eff5ffaf9362942 refs/heads/work/dtf-migration-phase-21-held-se-lp\n4eaa7decab80d24cf37cb3781eff5ffaf9362942 refs/heads/work/dtf-migration-phase-22-claimed-sy-source\n15fd629375edeb361f6a39262795bdc66723ca3a refs/heads/work/dtf-migration-phase-23-claimed-sy-integration\n8db3f5ee6310e8a700dad2d6a33e21d0955e63ca refs/heads/work/dtf-migration-phase-24-stateful-invariants\n137fa0c8749165087c7d1d0156788f58a1dbf1b8 refs/heads/work/dtf-migration-phase-25-full-hermetic\n0856a5c56e5d09b81c669f59b613efef79133e19 refs/heads/work/dtf-migration-phase-26-portable-operator\n789fced820ed494d9651c598fb8f75c646d727a7 refs/heads/work/dtf-migration-phase-27-data-candidates\n07d54b9a3d20d98aee24e75235bbf16b650a8028 refs/heads/work/dtf-migration-phase-28-receipt-evidence\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/remotes/origin/HEAD\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/codex/robinhood-release-review\n0c3558b2ec9571873a787eef4becbdddafc6ce7b refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0\na1a2b239593a90a062a8d477395f6b7fc3a473f7 refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6\n3a4001f8a017be2b8b3e988b3fb1fcff454b6a01 refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9\n41bbe4eec3ce9279b205058063b3b69f6be2b149 refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6\n8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570 refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8\n3a8205815ac3f4307de10ab27e813a56847d779c refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21\n92eeb98dad898aa12b83191e029a9e74112c295b refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21\n27de3dc71df885634fda1b1fea448e3b499898c3 refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7\nf0d69de54820d1b844f304dc0c7bcf990f0b57a1 refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13\n74ef9f247f0b1a661fb338738e8300bd0c7f05eb refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea\nbdd8e74ea3902897ca98d8312e5c195d9dbd5a33 refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731\n92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb\nf4f3a424d8b286c5b0940694835e958f91d24c74 refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18\n1319a76e08a306e77926a20feb6b95250e64b348 refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8\n549159d0b0c86fc0818f9e628315ddfef984ae4c refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2\nfb6f85b84a9f85dbb6dcb368b75111ecb6257a6c refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9\n05de656fd06346486bec9e9c7c17ce58508f5aac refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2\n924b83b300fb1e3938cc48e3ecd474a855775a3e refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24\nad6c641aa4dcb582185a136fda6f342ffd8fb103 refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1\nffb2652457d73cb8ced157853b9fd7b1ca883065 refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18\n4db81ae56cec60663566fd79f82c08bcf15859d7 refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8\neae337a55ff219b56208c6eff11bf9cdb45d6a34 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8\n98c7f0ac0cbf5c08666680a411a4b4a836fb0b73 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7\n27d0cbfada90a5f6b546ed712e04dc0c5d8e4154 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5\nf149ade544a68566d09a3ab3b7f6000873be6de8 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26\n950e6b32ea8efff73226a0adf6a7e0b75828127a refs/remotes/origin/docs/agent-inventory-navigation\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/feat/uniswap-v4-upper-lower-wings\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/feature/crane-ethereum-staking-ports\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/fix/legacy-v4-erc5115-interface\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/fix/uniswap-se-v2-delivery\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/frontend/multi-app-monorepo\n6724a5e5c762394797c3508ae1db7d6c0dbdac78 refs/remotes/origin/gh-pages\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/remotes/origin/main\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/refactor/frontend-shared-deployment-root\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/upgrade/nextjs-16\n7321b70c984423699475cfb45907b6dd70bb8ef4 refs/stash\n",
+      "stderr": "",
+      "stdoutBytes": 6579,
+      "stdoutSha256": "5d67d05f7dbb04f97ed7a3256e3095644323f92b263b7511a7a7cda6b113b2db"
+    },
+    {
+      "args": [
+        "diff-tree",
+        "--no-commit-id",
+        "--name-status",
+        "-r",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "M\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\nM\tscripts/recovery/dtf-migration/cli.ts\nA\tscripts/recovery/dtf-migration/receipt-association.ts\nA\tscripts/recovery/dtf-migration/receipt-evidence.ts\nA\tscripts/recovery/dtf-migration/receipt-input.ts\nA\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\nA\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\nA\tscripts/recovery/dtf-migration/receipt-rpc.ts\nA\tscripts/recovery/dtf-migration/receipt.fixture.ts\nA\tscripts/recovery/dtf-migration/receipt.test.ts\n",
+      "stderr": "",
+      "stdoutBytes": 542,
+      "stdoutSha256": "aaaa2ba17ea536c2fa3fb7035e525df70896ab2b0e362ceff2b437ebfca3779b"
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--check",
+        "789fced820ed494d9651c598fb8f75c646d727a7",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "show",
+        "--check",
+        "--format=",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "show",
+        "-s",
+        "--format=fuller",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "commit 07d54b9a3d20d98aee24e75235bbf16b650a8028\nAuthor:     Cyotee Doge <not_cyotee@proton.me>\nAuthorDate: Thu Nov 12 21:59:13 2026 -0800\nCommit:     Cyotee Doge <not_cyotee@proton.me>\nCommitDate: Thu Nov 12 21:59:13 2026 -0800\n\n    Add verified bounded finite receipt evidence collector\n    \n    Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\n",
+      "stderr": "",
+      "stdoutBytes": 372,
+      "stdoutSha256": "4ebe2ba93e25c7ccaf265fe3491a6f907c43de2dc2e605b27ed6df0561678725"
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--exit-code"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutBytes": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "status",
+        "--short",
+        "--ignore-submodules=all"
+      ],
+      "exit": 0,
+      "stdout": "?? docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/\n",
+      "stderr": "",
+      "stdoutBytes": 70,
+      "stdoutSha256": "aea0cfea29945d385bf8b5d9c544a48fbac30fab390037bf562ea99e91089b74"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n",
+      "stderr": "",
+      "stdoutBytes": 122,
+      "stdoutSha256": "0bd7e8aeddb6ab15729ca6e888c8bb88f2f0822e6a4adc08ed0faf89c80b5eea"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md"
+      ],
+      "exit": 0,
+      "stdout": "100644 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b 0\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n",
+      "stderr": "",
+      "stdoutBytes": 119,
+      "stdoutSha256": "1ef5aa0ea73e9f0da0bd480f3b7b2ae0b39faa12ea08af3432e5b825c4b728d6"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/cli.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob a747e8e821487792ef99c4ff2c7d04631d0cb6d2\tscripts/recovery/dtf-migration/cli.ts\n",
+      "stderr": "",
+      "stdoutBytes": 91,
+      "stdoutSha256": "d713b935cc48d7646ae9c3904bf9221c4b51ca46b51d6bf5c7468ee9d8f1a785"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/cli.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 a747e8e821487792ef99c4ff2c7d04631d0cb6d2 0\tscripts/recovery/dtf-migration/cli.ts\n",
+      "stderr": "",
+      "stdoutBytes": 88,
+      "stdoutSha256": "7dd551f0e277775165dc3b288938851b361c9027db1347e7c6b3caa73fc5fa84"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-input.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e\tscripts/recovery/dtf-migration/receipt-input.ts\n",
+      "stderr": "",
+      "stdoutBytes": 101,
+      "stdoutSha256": "fa22f458a4e3a1b53bd900d8b615e107bc2ca0e1b1c8a1f151526d58c464be52"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-input.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e 0\tscripts/recovery/dtf-migration/receipt-input.ts\n",
+      "stderr": "",
+      "stdoutBytes": 98,
+      "stdoutSha256": "f6f682dbad467521a2865930d12ee4ba8c3946b22981048a52c6e12ac7250c59"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 05cbdb06d1691e079538a8ed8d91107f23eb7240\tscripts/recovery/dtf-migration/receipt-evidence.ts\n",
+      "stderr": "",
+      "stdoutBytes": 104,
+      "stdoutSha256": "63360c8a9b0018636824ab78a3e6a2f21caf9ad6faa3310c09880550e13bc77c"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 05cbdb06d1691e079538a8ed8d91107f23eb7240 0\tscripts/recovery/dtf-migration/receipt-evidence.ts\n",
+      "stderr": "",
+      "stdoutBytes": 101,
+      "stdoutSha256": "70f1137605411147e652c8a886ed39bb069c7aff5d79f9a50a0b1cfe0777193d"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 7ab4e13f921746162b7a55f3a1ba04f65db65660\tscripts/recovery/dtf-migration/receipt-rpc.ts\n",
+      "stderr": "",
+      "stdoutBytes": 99,
+      "stdoutSha256": "75aa05b6e435a7e9bd5ec4c4ed6978b0cf21d9584531d1d24cbce9339048fb4e"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 7ab4e13f921746162b7a55f3a1ba04f65db65660 0\tscripts/recovery/dtf-migration/receipt-rpc.ts\n",
+      "stderr": "",
+      "stdoutBytes": 96,
+      "stdoutSha256": "35f6e3df311269f4eac1ffed2422d3896c2b6ff5f94c8bfe3f77f154e29dfd93"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-association.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob adf0801a0cefe4f459b94b0e4dfe5a0976378254\tscripts/recovery/dtf-migration/receipt-association.ts\n",
+      "stderr": "",
+      "stdoutBytes": 107,
+      "stdoutSha256": "0a0b9138ed71bf1d5f803fda2bd984c539517cc64eb3738437eb6c9891a08069"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-association.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 adf0801a0cefe4f459b94b0e4dfe5a0976378254 0\tscripts/recovery/dtf-migration/receipt-association.ts\n",
+      "stderr": "",
+      "stdoutBytes": 104,
+      "stdoutSha256": "a24441043f4d5a02541cc617019828f6d813d74471860857437103db8fb122e5"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob defd60ad74e0bab892edaa4796ee454e63996fa0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n",
+      "stderr": "",
+      "stdoutBytes": 110,
+      "stdoutSha256": "2aa96dcee8794fea44eb995dc3390d5ee095a9e182bf7cbdd8b11555f675ed69"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 defd60ad74e0bab892edaa4796ee454e63996fa0 0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n",
+      "stderr": "",
+      "stdoutBytes": 107,
+      "stdoutSha256": "748fd0183f252757a118bcd8585bed20cff12a4c498fa47a62c2d62cb9391f84"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt.test.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd\tscripts/recovery/dtf-migration/receipt.test.ts\n",
+      "stderr": "",
+      "stdoutBytes": 100,
+      "stdoutSha256": "966ccf40b83e736e42622f7484de7ce5379d8321d87abce21b94d467872f6be2"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt.test.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd 0\tscripts/recovery/dtf-migration/receipt.test.ts\n",
+      "stderr": "",
+      "stdoutBytes": 97,
+      "stdoutSha256": "0e13b066e5c579b0d501a0410145c368ade122b61cbb7ab290a8de8ade94b2ab"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 3ba48a4b42cda20db7ec30c48bdf94469222e941\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n",
+      "stderr": "",
+      "stdoutBytes": 115,
+      "stdoutSha256": "2b4ea6386be768376d5f617bb9a6687cc5b70f904d92b983b1f6606509d4cfc5"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 3ba48a4b42cda20db7ec30c48bdf94469222e941 0\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n",
+      "stderr": "",
+      "stdoutBytes": 112,
+      "stdoutSha256": "c83f8b70238fb1e6a2ee131abfb56e7064d40cb9965c67951870c7e5a9b42afc"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 2032aba6449fd1c9e59e25e8d571addadf1d4622\tscripts/recovery/dtf-migration/receipt.fixture.ts\n",
+      "stderr": "",
+      "stdoutBytes": 103,
+      "stdoutSha256": "d73280340d8f540eda127888507f1e1f06aa5fb7bba53251ae3f9b9e1dea91a0"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts"
+      ],
+      "exit": 0,
+      "stdout": "100644 2032aba6449fd1c9e59e25e8d571addadf1d4622 0\tscripts/recovery/dtf-migration/receipt.fixture.ts\n",
+      "stderr": "",
+      "stdoutBytes": 100,
+      "stdoutSha256": "265746caf1ea4f3b210106fdf1969120c39ac306fc6736e7a7b154d74c15255a"
+    },
+    {
+      "args": [
+        "ls-tree",
+        "HEAD",
+        "--",
+        "scripts/recovery/dtf-migration/schema.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "scripts/recovery/dtf-migration/preparation.ts",
+        "scripts/recovery/dtf-migration/bundle-files.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "scripts/recovery/dtf-migration/receipt-input.ts",
+        "scripts/recovery/dtf-migration/candidates.ts",
+        "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "scripts/recovery/dtf-migration/provenance.ts",
+        "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "scripts/recovery/dtf-migration/quotes.ts",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "scripts/recovery/dtf-migration/execution-domain.ts",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "scripts/recovery/dtf-migration/payloads.ts",
+        "scripts/recovery/dtf-migration/execution-plan.ts",
+        "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "scripts/recovery/dtf-migration/execution-schema.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "scripts/recovery/dtf-migration/execution.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+        "scripts/recovery/dtf-migration/receipt-association.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "scripts/recovery/dtf-migration/candidate-input.ts",
+        "scripts/recovery/dtf-migration/preparation.test.ts",
+        "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "scripts/recovery/dtf-migration/candidates.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "scripts/recovery/dtf-migration/rehearse.ts",
+        "scripts/recovery/dtf-migration/execution.ts",
+        "scripts/recovery/dtf-migration/receipt.test.ts",
+        "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "scripts/recovery/dtf-migration/journal.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "scripts/recovery/dtf-migration/execution-state.ts",
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/bundle.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md"
+      ],
+      "exit": 0,
+      "stdout": "100644 blob 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n100644 blob 2ac3478398e43f46ab9f583bc1709aa4d36aa16b\tscripts/recovery/dtf-migration/bundle-files.ts\n100644 blob 8c2ab4b4f3c9ef65401e65df7e42e5acabd686c9\tscripts/recovery/dtf-migration/bundle-materialize.ts\n100644 blob 0ee88a5c7112df8c8a155e2b3028c58d2e7282c4\tscripts/recovery/dtf-migration/bundle.test.ts\n100644 blob dd325cb9fc6c82e9109d6aa5cb44b321a5a1b31a\tscripts/recovery/dtf-migration/bundle.ts\n100644 blob 9a5ea3a851be61c97fd74d09b1436e4aebb90ea5\tscripts/recovery/dtf-migration/candidate-input.ts\n100644 blob cc7754c688cb3a202482aa281cb9a82e9f8f44e6\tscripts/recovery/dtf-migration/candidate-inventory.test.ts\n100644 blob 4ee78fc33a4bbbfaa6c768ae5064dddd8f37eca6\tscripts/recovery/dtf-migration/candidate-inventory.ts\n100644 blob 5261db209027d291f77550798f4ba8dae4bde1b2\tscripts/recovery/dtf-migration/candidate-nfts.ts\n100644 blob b2f742233e0104dbce4f914fcc49013de8aa99cd\tscripts/recovery/dtf-migration/candidate-proofs.ts\n100644 blob d74309f1d74c83b694f098f0f16ee3c1388ac595\tscripts/recovery/dtf-migration/candidate-reconciliation.ts\n100644 blob 4853a4dcb6f2acc61bc5c25b720b76e25532c43c\tscripts/recovery/dtf-migration/candidates.test.ts\n100644 blob 78b22a5ac86ffa5c4f0ca803d67564bd78daf12f\tscripts/recovery/dtf-migration/candidates.ts\n100644 blob 0900d108b61881dcdb5deb013c33988fcadd3569\tscripts/recovery/dtf-migration/claim-vault.test.ts\n100644 blob dac63dba7b3b33369e16ee068588cb2dc1eae367\tscripts/recovery/dtf-migration/claimed-sy.ts\n100644 blob a747e8e821487792ef99c4ff2c7d04631d0cb6d2\tscripts/recovery/dtf-migration/cli.ts\n100644 blob 29d53e57fce815bf603b484443b5b5ef00eec568\tscripts/recovery/dtf-migration/dtf-custody-se.test.ts\n100644 blob b8487ac105bccf59367fa66c3ec42b98e388f1de\tscripts/recovery/dtf-migration/earlier-liquid.test.ts\n100644 blob 42315eac8ae7bbc30922e13b22b0d3526c2aba4c\tscripts/recovery/dtf-migration/earlier-receipt.test.ts\n100644 blob 455f3429977130583d5acf57320417903c04f5dd\tscripts/recovery/dtf-migration/execution-domain.ts\n100644 blob e112eb59525755fceda366594b9c654308d38388\tscripts/recovery/dtf-migration/execution-owner-bond.ts\n100644 blob 7589ebcacd33ff002079b0db9b826b3fac36b88c\tscripts/recovery/dtf-migration/execution-plan.ts\n100644 blob 7fb6f90438e08fb10f9d8d77ceb03172ac0027a1\tscripts/recovery/dtf-migration/execution-rpc.ts\n100644 blob 80b3371eb6e3940af9c7a77bf630aeed5c9f9b42\tscripts/recovery/dtf-migration/execution-schema.ts\n100644 blob 23486c37816a82811fec29433eaca20493d65b0b\tscripts/recovery/dtf-migration/execution-state.ts\n100644 blob 98595b8060347c0f3493cf1e586f8913b8310c81\tscripts/recovery/dtf-migration/execution.test.ts\n100644 blob 979ecd30b0b741ddb14b0795d8dbecf33b5da609\tscripts/recovery/dtf-migration/execution.ts\n100644 blob 225e9a25e06e4935100f7dbb7f8217fca092119a\tscripts/recovery/dtf-migration/held-se-lp.test.ts\n100644 blob 3e5fb35d883a17cbb9b22ae5da7a567b2b728dde\tscripts/recovery/dtf-migration/journal.ts\n100644 blob 19d4982bee43b378598da810d4ab823fb760286b\tscripts/recovery/dtf-migration/payloads.ts\n100644 blob 15ebadb313c799f088024ecaf334ba3acef01528\tscripts/recovery/dtf-migration/preparation.fixture.ts\n100644 blob be1065eec79b3d3079b5ec1c0d5a42362341062e\tscripts/recovery/dtf-migration/preparation.test.ts\n100644 blob 6b2dead748f9de1274db1ec86b268db514dc02e4\tscripts/recovery/dtf-migration/preparation.ts\n100644 blob aac39702ddf39107e9da220cd88fa4ec15aed04c\tscripts/recovery/dtf-migration/provenance.ts\n100644 blob 822f4e3d0ada3dd759e59c40335cd4a6135777f9\tscripts/recovery/dtf-migration/quotes.ts\n100644 blob adf0801a0cefe4f459b94b0e4dfe5a0976378254\tscripts/recovery/dtf-migration/receipt-association.ts\n100644 blob 05cbdb06d1691e079538a8ed8d91107f23eb7240\tscripts/recovery/dtf-migration/receipt-evidence.ts\n100644 blob 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e\tscripts/recovery/dtf-migration/receipt-input.ts\n100644 blob 3ba48a4b42cda20db7ec30c48bdf94469222e941\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n100644 blob defd60ad74e0bab892edaa4796ee454e63996fa0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n100644 blob 7ab4e13f921746162b7a55f3a1ba04f65db65660\tscripts/recovery/dtf-migration/receipt-rpc.ts\n100644 blob 2032aba6449fd1c9e59e25e8d571addadf1d4622\tscripts/recovery/dtf-migration/receipt.fixture.ts\n100644 blob 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd\tscripts/recovery/dtf-migration/receipt.test.ts\n100644 blob e19c2f608b18d614100cd94ce26b502be93897f7\tscripts/recovery/dtf-migration/rehearsal-admission.ts\n100644 blob 0a6d1b1cf7ad08862176df7dade258c68977a1f3\tscripts/recovery/dtf-migration/rehearsal-chain.ts\n100644 blob 2248543b7834e21dae1622ae02808b73a127efa1\tscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n100644 blob d997345b8cd339488058a54198ede2c453cb9fd8\tscripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n100644 blob 85d1e7a6e9161ed28008bbf734429c99b0806e91\tscripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts\n100644 blob 3d01999b546fddd916288d873187709c3bcbd8b0\tscripts/recovery/dtf-migration/rehearsal-claimed-sy.ts\n100644 blob bbf1848aca57cf63edac9daa05c8caa914813aa3\tscripts/recovery/dtf-migration/rehearsal-data.ts\n100644 blob 241ee76fb2c44981a5b3b41eaeb69fb1c74b33a9\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts\n100644 blob e8f36d1bc0aebc18a524a43d8b49c6fbd0918674\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts\n100644 blob 15977454d6e75bd5ca912541b89ac5ac043fc7c6\tscripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts\n100644 blob 31939ec1bb91aa56eb318deb09a10a04b7ee045c\tscripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts\n100644 blob 00eb2e49dd8f58e6f7c541d180021c0e257388a1\tscripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts\n100644 blob af64447222b513b019a458a0f51507fc215c8c24\tscripts/recovery/dtf-migration/rehearsal-held-se-lp.ts\n100644 blob 0dc292969626fe4173201899704d491a04bbe25e\tscripts/recovery/dtf-migration/rehearsal-owner-bond.ts\n100644 blob 4799b455c43a6b05ec9da6ccb07b50bbdcf859cf\tscripts/recovery/dtf-migration/rehearsal-portable.ts\n100644 blob 6adbe9ce6298cc6def91b706a417b3cc00c8dd3d\tscripts/recovery/dtf-migration/rehearsal-process.ts\n100644 blob 7bca623af81c29de0b137da14c156bf979e6ca7c\tscripts/recovery/dtf-migration/rehearsal-proof.ts\n100644 blob 3f3b701bb08f2f9b87215e0e32c3f9e3d7a08317\tscripts/recovery/dtf-migration/rehearsal-recovery.ts\n100644 blob 523e5c0b0626c1eb7a08b428eba00e0d47b05146\tscripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts\n100644 blob 0df5d8acc9393d15ec5d20cf96c2c0f2c984fd72\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts\n100644 blob 45d3a029ff51d3a5685f9bd6081ef26f77449a13\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts\n100644 blob b78de4f15371b2aa1290e2ec9d508d9cde9d8604\tscripts/recovery/dtf-migration/rehearsal-weighted-sy.ts\n100644 blob b83ac93332feeaa45e3a02955c7410b69c154e87\tscripts/recovery/dtf-migration/rehearse.ts\n100644 blob d150bb70658165bd5eb191b256d2aa84ab18ce76\tscripts/recovery/dtf-migration/schema.ts\n100644 blob f422f37744baa3344aa1c57d9cdd2c3528136c65\tscripts/recovery/dtf-migration/weighted-liquid.test.ts\n100644 blob e59985ccd562254fa582ef517743f5362e8d5f20\tscripts/recovery/dtf-migration/weighted-receipt.test.ts\n100644 blob 5f61ccca9f832f33c38ded94c3b9322b67751858\tscripts/recovery/dtf-migration/weighted-sy.test.ts\n",
+      "stderr": "",
+      "stdoutBytes": 7365,
+      "stdoutSha256": "e9a9b874469d06fecc0e5ecb3692441b1f971d2cef22befd2f166346b0db4b13"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage",
+        "--",
+        "scripts/recovery/dtf-migration/schema.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "scripts/recovery/dtf-migration/preparation.ts",
+        "scripts/recovery/dtf-migration/bundle-files.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "scripts/recovery/dtf-migration/receipt-input.ts",
+        "scripts/recovery/dtf-migration/candidates.ts",
+        "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "scripts/recovery/dtf-migration/provenance.ts",
+        "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "scripts/recovery/dtf-migration/quotes.ts",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "scripts/recovery/dtf-migration/execution-domain.ts",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "scripts/recovery/dtf-migration/payloads.ts",
+        "scripts/recovery/dtf-migration/execution-plan.ts",
+        "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "scripts/recovery/dtf-migration/execution-schema.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "scripts/recovery/dtf-migration/execution.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+        "scripts/recovery/dtf-migration/receipt-association.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "scripts/recovery/dtf-migration/candidate-input.ts",
+        "scripts/recovery/dtf-migration/preparation.test.ts",
+        "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "scripts/recovery/dtf-migration/candidates.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "scripts/recovery/dtf-migration/rehearse.ts",
+        "scripts/recovery/dtf-migration/execution.ts",
+        "scripts/recovery/dtf-migration/receipt.test.ts",
+        "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "scripts/recovery/dtf-migration/journal.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "scripts/recovery/dtf-migration/execution-state.ts",
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/bundle.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md"
+      ],
+      "exit": 0,
+      "stdout": "100644 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b 0\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n100644 2ac3478398e43f46ab9f583bc1709aa4d36aa16b 0\tscripts/recovery/dtf-migration/bundle-files.ts\n100644 8c2ab4b4f3c9ef65401e65df7e42e5acabd686c9 0\tscripts/recovery/dtf-migration/bundle-materialize.ts\n100644 0ee88a5c7112df8c8a155e2b3028c58d2e7282c4 0\tscripts/recovery/dtf-migration/bundle.test.ts\n100644 dd325cb9fc6c82e9109d6aa5cb44b321a5a1b31a 0\tscripts/recovery/dtf-migration/bundle.ts\n100644 9a5ea3a851be61c97fd74d09b1436e4aebb90ea5 0\tscripts/recovery/dtf-migration/candidate-input.ts\n100644 cc7754c688cb3a202482aa281cb9a82e9f8f44e6 0\tscripts/recovery/dtf-migration/candidate-inventory.test.ts\n100644 4ee78fc33a4bbbfaa6c768ae5064dddd8f37eca6 0\tscripts/recovery/dtf-migration/candidate-inventory.ts\n100644 5261db209027d291f77550798f4ba8dae4bde1b2 0\tscripts/recovery/dtf-migration/candidate-nfts.ts\n100644 b2f742233e0104dbce4f914fcc49013de8aa99cd 0\tscripts/recovery/dtf-migration/candidate-proofs.ts\n100644 d74309f1d74c83b694f098f0f16ee3c1388ac595 0\tscripts/recovery/dtf-migration/candidate-reconciliation.ts\n100644 4853a4dcb6f2acc61bc5c25b720b76e25532c43c 0\tscripts/recovery/dtf-migration/candidates.test.ts\n100644 78b22a5ac86ffa5c4f0ca803d67564bd78daf12f 0\tscripts/recovery/dtf-migration/candidates.ts\n100644 0900d108b61881dcdb5deb013c33988fcadd3569 0\tscripts/recovery/dtf-migration/claim-vault.test.ts\n100644 dac63dba7b3b33369e16ee068588cb2dc1eae367 0\tscripts/recovery/dtf-migration/claimed-sy.ts\n100644 a747e8e821487792ef99c4ff2c7d04631d0cb6d2 0\tscripts/recovery/dtf-migration/cli.ts\n100644 29d53e57fce815bf603b484443b5b5ef00eec568 0\tscripts/recovery/dtf-migration/dtf-custody-se.test.ts\n100644 b8487ac105bccf59367fa66c3ec42b98e388f1de 0\tscripts/recovery/dtf-migration/earlier-liquid.test.ts\n100644 42315eac8ae7bbc30922e13b22b0d3526c2aba4c 0\tscripts/recovery/dtf-migration/earlier-receipt.test.ts\n100644 455f3429977130583d5acf57320417903c04f5dd 0\tscripts/recovery/dtf-migration/execution-domain.ts\n100644 e112eb59525755fceda366594b9c654308d38388 0\tscripts/recovery/dtf-migration/execution-owner-bond.ts\n100644 7589ebcacd33ff002079b0db9b826b3fac36b88c 0\tscripts/recovery/dtf-migration/execution-plan.ts\n100644 7fb6f90438e08fb10f9d8d77ceb03172ac0027a1 0\tscripts/recovery/dtf-migration/execution-rpc.ts\n100644 80b3371eb6e3940af9c7a77bf630aeed5c9f9b42 0\tscripts/recovery/dtf-migration/execution-schema.ts\n100644 23486c37816a82811fec29433eaca20493d65b0b 0\tscripts/recovery/dtf-migration/execution-state.ts\n100644 98595b8060347c0f3493cf1e586f8913b8310c81 0\tscripts/recovery/dtf-migration/execution.test.ts\n100644 979ecd30b0b741ddb14b0795d8dbecf33b5da609 0\tscripts/recovery/dtf-migration/execution.ts\n100644 225e9a25e06e4935100f7dbb7f8217fca092119a 0\tscripts/recovery/dtf-migration/held-se-lp.test.ts\n100644 3e5fb35d883a17cbb9b22ae5da7a567b2b728dde 0\tscripts/recovery/dtf-migration/journal.ts\n100644 19d4982bee43b378598da810d4ab823fb760286b 0\tscripts/recovery/dtf-migration/payloads.ts\n100644 15ebadb313c799f088024ecaf334ba3acef01528 0\tscripts/recovery/dtf-migration/preparation.fixture.ts\n100644 be1065eec79b3d3079b5ec1c0d5a42362341062e 0\tscripts/recovery/dtf-migration/preparation.test.ts\n100644 6b2dead748f9de1274db1ec86b268db514dc02e4 0\tscripts/recovery/dtf-migration/preparation.ts\n100644 aac39702ddf39107e9da220cd88fa4ec15aed04c 0\tscripts/recovery/dtf-migration/provenance.ts\n100644 822f4e3d0ada3dd759e59c40335cd4a6135777f9 0\tscripts/recovery/dtf-migration/quotes.ts\n100644 adf0801a0cefe4f459b94b0e4dfe5a0976378254 0\tscripts/recovery/dtf-migration/receipt-association.ts\n100644 05cbdb06d1691e079538a8ed8d91107f23eb7240 0\tscripts/recovery/dtf-migration/receipt-evidence.ts\n100644 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e 0\tscripts/recovery/dtf-migration/receipt-input.ts\n100644 3ba48a4b42cda20db7ec30c48bdf94469222e941 0\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n100644 defd60ad74e0bab892edaa4796ee454e63996fa0 0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n100644 7ab4e13f921746162b7a55f3a1ba04f65db65660 0\tscripts/recovery/dtf-migration/receipt-rpc.ts\n100644 2032aba6449fd1c9e59e25e8d571addadf1d4622 0\tscripts/recovery/dtf-migration/receipt.fixture.ts\n100644 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd 0\tscripts/recovery/dtf-migration/receipt.test.ts\n100644 e19c2f608b18d614100cd94ce26b502be93897f7 0\tscripts/recovery/dtf-migration/rehearsal-admission.ts\n100644 0a6d1b1cf7ad08862176df7dade258c68977a1f3 0\tscripts/recovery/dtf-migration/rehearsal-chain.ts\n100644 2248543b7834e21dae1622ae02808b73a127efa1 0\tscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n100644 d997345b8cd339488058a54198ede2c453cb9fd8 0\tscripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n100644 85d1e7a6e9161ed28008bbf734429c99b0806e91 0\tscripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts\n100644 3d01999b546fddd916288d873187709c3bcbd8b0 0\tscripts/recovery/dtf-migration/rehearsal-claimed-sy.ts\n100644 bbf1848aca57cf63edac9daa05c8caa914813aa3 0\tscripts/recovery/dtf-migration/rehearsal-data.ts\n100644 241ee76fb2c44981a5b3b41eaeb69fb1c74b33a9 0\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts\n100644 e8f36d1bc0aebc18a524a43d8b49c6fbd0918674 0\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts\n100644 15977454d6e75bd5ca912541b89ac5ac043fc7c6 0\tscripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts\n100644 31939ec1bb91aa56eb318deb09a10a04b7ee045c 0\tscripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts\n100644 00eb2e49dd8f58e6f7c541d180021c0e257388a1 0\tscripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts\n100644 af64447222b513b019a458a0f51507fc215c8c24 0\tscripts/recovery/dtf-migration/rehearsal-held-se-lp.ts\n100644 0dc292969626fe4173201899704d491a04bbe25e 0\tscripts/recovery/dtf-migration/rehearsal-owner-bond.ts\n100644 4799b455c43a6b05ec9da6ccb07b50bbdcf859cf 0\tscripts/recovery/dtf-migration/rehearsal-portable.ts\n100644 6adbe9ce6298cc6def91b706a417b3cc00c8dd3d 0\tscripts/recovery/dtf-migration/rehearsal-process.ts\n100644 7bca623af81c29de0b137da14c156bf979e6ca7c 0\tscripts/recovery/dtf-migration/rehearsal-proof.ts\n100644 3f3b701bb08f2f9b87215e0e32c3f9e3d7a08317 0\tscripts/recovery/dtf-migration/rehearsal-recovery.ts\n100644 523e5c0b0626c1eb7a08b428eba00e0d47b05146 0\tscripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts\n100644 0df5d8acc9393d15ec5d20cf96c2c0f2c984fd72 0\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts\n100644 45d3a029ff51d3a5685f9bd6081ef26f77449a13 0\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts\n100644 b78de4f15371b2aa1290e2ec9d508d9cde9d8604 0\tscripts/recovery/dtf-migration/rehearsal-weighted-sy.ts\n100644 b83ac93332feeaa45e3a02955c7410b69c154e87 0\tscripts/recovery/dtf-migration/rehearse.ts\n100644 d150bb70658165bd5eb191b256d2aa84ab18ce76 0\tscripts/recovery/dtf-migration/schema.ts\n100644 f422f37744baa3344aa1c57d9cdd2c3528136c65 0\tscripts/recovery/dtf-migration/weighted-liquid.test.ts\n100644 e59985ccd562254fa582ef517743f5362e8d5f20 0\tscripts/recovery/dtf-migration/weighted-receipt.test.ts\n100644 5f61ccca9f832f33c38ded94c3b9322b67751858 0\tscripts/recovery/dtf-migration/weighted-sy.test.ts\n",
+      "stderr": "",
+      "stdoutBytes": 7155,
+      "stdoutSha256": "4cfce359483902337001d36bb7a8eea0edcdc961ae1da725b47cdf1532fd1f9c"
+    }
+  ],
+  "all70GitModes": {
+    "tree": "100644 blob 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n100644 blob 2ac3478398e43f46ab9f583bc1709aa4d36aa16b\tscripts/recovery/dtf-migration/bundle-files.ts\n100644 blob 8c2ab4b4f3c9ef65401e65df7e42e5acabd686c9\tscripts/recovery/dtf-migration/bundle-materialize.ts\n100644 blob 0ee88a5c7112df8c8a155e2b3028c58d2e7282c4\tscripts/recovery/dtf-migration/bundle.test.ts\n100644 blob dd325cb9fc6c82e9109d6aa5cb44b321a5a1b31a\tscripts/recovery/dtf-migration/bundle.ts\n100644 blob 9a5ea3a851be61c97fd74d09b1436e4aebb90ea5\tscripts/recovery/dtf-migration/candidate-input.ts\n100644 blob cc7754c688cb3a202482aa281cb9a82e9f8f44e6\tscripts/recovery/dtf-migration/candidate-inventory.test.ts\n100644 blob 4ee78fc33a4bbbfaa6c768ae5064dddd8f37eca6\tscripts/recovery/dtf-migration/candidate-inventory.ts\n100644 blob 5261db209027d291f77550798f4ba8dae4bde1b2\tscripts/recovery/dtf-migration/candidate-nfts.ts\n100644 blob b2f742233e0104dbce4f914fcc49013de8aa99cd\tscripts/recovery/dtf-migration/candidate-proofs.ts\n100644 blob d74309f1d74c83b694f098f0f16ee3c1388ac595\tscripts/recovery/dtf-migration/candidate-reconciliation.ts\n100644 blob 4853a4dcb6f2acc61bc5c25b720b76e25532c43c\tscripts/recovery/dtf-migration/candidates.test.ts\n100644 blob 78b22a5ac86ffa5c4f0ca803d67564bd78daf12f\tscripts/recovery/dtf-migration/candidates.ts\n100644 blob 0900d108b61881dcdb5deb013c33988fcadd3569\tscripts/recovery/dtf-migration/claim-vault.test.ts\n100644 blob dac63dba7b3b33369e16ee068588cb2dc1eae367\tscripts/recovery/dtf-migration/claimed-sy.ts\n100644 blob a747e8e821487792ef99c4ff2c7d04631d0cb6d2\tscripts/recovery/dtf-migration/cli.ts\n100644 blob 29d53e57fce815bf603b484443b5b5ef00eec568\tscripts/recovery/dtf-migration/dtf-custody-se.test.ts\n100644 blob b8487ac105bccf59367fa66c3ec42b98e388f1de\tscripts/recovery/dtf-migration/earlier-liquid.test.ts\n100644 blob 42315eac8ae7bbc30922e13b22b0d3526c2aba4c\tscripts/recovery/dtf-migration/earlier-receipt.test.ts\n100644 blob 455f3429977130583d5acf57320417903c04f5dd\tscripts/recovery/dtf-migration/execution-domain.ts\n100644 blob e112eb59525755fceda366594b9c654308d38388\tscripts/recovery/dtf-migration/execution-owner-bond.ts\n100644 blob 7589ebcacd33ff002079b0db9b826b3fac36b88c\tscripts/recovery/dtf-migration/execution-plan.ts\n100644 blob 7fb6f90438e08fb10f9d8d77ceb03172ac0027a1\tscripts/recovery/dtf-migration/execution-rpc.ts\n100644 blob 80b3371eb6e3940af9c7a77bf630aeed5c9f9b42\tscripts/recovery/dtf-migration/execution-schema.ts\n100644 blob 23486c37816a82811fec29433eaca20493d65b0b\tscripts/recovery/dtf-migration/execution-state.ts\n100644 blob 98595b8060347c0f3493cf1e586f8913b8310c81\tscripts/recovery/dtf-migration/execution.test.ts\n100644 blob 979ecd30b0b741ddb14b0795d8dbecf33b5da609\tscripts/recovery/dtf-migration/execution.ts\n100644 blob 225e9a25e06e4935100f7dbb7f8217fca092119a\tscripts/recovery/dtf-migration/held-se-lp.test.ts\n100644 blob 3e5fb35d883a17cbb9b22ae5da7a567b2b728dde\tscripts/recovery/dtf-migration/journal.ts\n100644 blob 19d4982bee43b378598da810d4ab823fb760286b\tscripts/recovery/dtf-migration/payloads.ts\n100644 blob 15ebadb313c799f088024ecaf334ba3acef01528\tscripts/recovery/dtf-migration/preparation.fixture.ts\n100644 blob be1065eec79b3d3079b5ec1c0d5a42362341062e\tscripts/recovery/dtf-migration/preparation.test.ts\n100644 blob 6b2dead748f9de1274db1ec86b268db514dc02e4\tscripts/recovery/dtf-migration/preparation.ts\n100644 blob aac39702ddf39107e9da220cd88fa4ec15aed04c\tscripts/recovery/dtf-migration/provenance.ts\n100644 blob 822f4e3d0ada3dd759e59c40335cd4a6135777f9\tscripts/recovery/dtf-migration/quotes.ts\n100644 blob adf0801a0cefe4f459b94b0e4dfe5a0976378254\tscripts/recovery/dtf-migration/receipt-association.ts\n100644 blob 05cbdb06d1691e079538a8ed8d91107f23eb7240\tscripts/recovery/dtf-migration/receipt-evidence.ts\n100644 blob 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e\tscripts/recovery/dtf-migration/receipt-input.ts\n100644 blob 3ba48a4b42cda20db7ec30c48bdf94469222e941\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n100644 blob defd60ad74e0bab892edaa4796ee454e63996fa0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n100644 blob 7ab4e13f921746162b7a55f3a1ba04f65db65660\tscripts/recovery/dtf-migration/receipt-rpc.ts\n100644 blob 2032aba6449fd1c9e59e25e8d571addadf1d4622\tscripts/recovery/dtf-migration/receipt.fixture.ts\n100644 blob 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd\tscripts/recovery/dtf-migration/receipt.test.ts\n100644 blob e19c2f608b18d614100cd94ce26b502be93897f7\tscripts/recovery/dtf-migration/rehearsal-admission.ts\n100644 blob 0a6d1b1cf7ad08862176df7dade258c68977a1f3\tscripts/recovery/dtf-migration/rehearsal-chain.ts\n100644 blob 2248543b7834e21dae1622ae02808b73a127efa1\tscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n100644 blob d997345b8cd339488058a54198ede2c453cb9fd8\tscripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n100644 blob 85d1e7a6e9161ed28008bbf734429c99b0806e91\tscripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts\n100644 blob 3d01999b546fddd916288d873187709c3bcbd8b0\tscripts/recovery/dtf-migration/rehearsal-claimed-sy.ts\n100644 blob bbf1848aca57cf63edac9daa05c8caa914813aa3\tscripts/recovery/dtf-migration/rehearsal-data.ts\n100644 blob 241ee76fb2c44981a5b3b41eaeb69fb1c74b33a9\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts\n100644 blob e8f36d1bc0aebc18a524a43d8b49c6fbd0918674\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts\n100644 blob 15977454d6e75bd5ca912541b89ac5ac043fc7c6\tscripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts\n100644 blob 31939ec1bb91aa56eb318deb09a10a04b7ee045c\tscripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts\n100644 blob 00eb2e49dd8f58e6f7c541d180021c0e257388a1\tscripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts\n100644 blob af64447222b513b019a458a0f51507fc215c8c24\tscripts/recovery/dtf-migration/rehearsal-held-se-lp.ts\n100644 blob 0dc292969626fe4173201899704d491a04bbe25e\tscripts/recovery/dtf-migration/rehearsal-owner-bond.ts\n100644 blob 4799b455c43a6b05ec9da6ccb07b50bbdcf859cf\tscripts/recovery/dtf-migration/rehearsal-portable.ts\n100644 blob 6adbe9ce6298cc6def91b706a417b3cc00c8dd3d\tscripts/recovery/dtf-migration/rehearsal-process.ts\n100644 blob 7bca623af81c29de0b137da14c156bf979e6ca7c\tscripts/recovery/dtf-migration/rehearsal-proof.ts\n100644 blob 3f3b701bb08f2f9b87215e0e32c3f9e3d7a08317\tscripts/recovery/dtf-migration/rehearsal-recovery.ts\n100644 blob 523e5c0b0626c1eb7a08b428eba00e0d47b05146\tscripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts\n100644 blob 0df5d8acc9393d15ec5d20cf96c2c0f2c984fd72\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts\n100644 blob 45d3a029ff51d3a5685f9bd6081ef26f77449a13\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts\n100644 blob b78de4f15371b2aa1290e2ec9d508d9cde9d8604\tscripts/recovery/dtf-migration/rehearsal-weighted-sy.ts\n100644 blob b83ac93332feeaa45e3a02955c7410b69c154e87\tscripts/recovery/dtf-migration/rehearse.ts\n100644 blob d150bb70658165bd5eb191b256d2aa84ab18ce76\tscripts/recovery/dtf-migration/schema.ts\n100644 blob f422f37744baa3344aa1c57d9cdd2c3528136c65\tscripts/recovery/dtf-migration/weighted-liquid.test.ts\n100644 blob e59985ccd562254fa582ef517743f5362e8d5f20\tscripts/recovery/dtf-migration/weighted-receipt.test.ts\n100644 blob 5f61ccca9f832f33c38ded94c3b9322b67751858\tscripts/recovery/dtf-migration/weighted-sy.test.ts\n",
+    "index": "100644 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b 0\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n100644 2ac3478398e43f46ab9f583bc1709aa4d36aa16b 0\tscripts/recovery/dtf-migration/bundle-files.ts\n100644 8c2ab4b4f3c9ef65401e65df7e42e5acabd686c9 0\tscripts/recovery/dtf-migration/bundle-materialize.ts\n100644 0ee88a5c7112df8c8a155e2b3028c58d2e7282c4 0\tscripts/recovery/dtf-migration/bundle.test.ts\n100644 dd325cb9fc6c82e9109d6aa5cb44b321a5a1b31a 0\tscripts/recovery/dtf-migration/bundle.ts\n100644 9a5ea3a851be61c97fd74d09b1436e4aebb90ea5 0\tscripts/recovery/dtf-migration/candidate-input.ts\n100644 cc7754c688cb3a202482aa281cb9a82e9f8f44e6 0\tscripts/recovery/dtf-migration/candidate-inventory.test.ts\n100644 4ee78fc33a4bbbfaa6c768ae5064dddd8f37eca6 0\tscripts/recovery/dtf-migration/candidate-inventory.ts\n100644 5261db209027d291f77550798f4ba8dae4bde1b2 0\tscripts/recovery/dtf-migration/candidate-nfts.ts\n100644 b2f742233e0104dbce4f914fcc49013de8aa99cd 0\tscripts/recovery/dtf-migration/candidate-proofs.ts\n100644 d74309f1d74c83b694f098f0f16ee3c1388ac595 0\tscripts/recovery/dtf-migration/candidate-reconciliation.ts\n100644 4853a4dcb6f2acc61bc5c25b720b76e25532c43c 0\tscripts/recovery/dtf-migration/candidates.test.ts\n100644 78b22a5ac86ffa5c4f0ca803d67564bd78daf12f 0\tscripts/recovery/dtf-migration/candidates.ts\n100644 0900d108b61881dcdb5deb013c33988fcadd3569 0\tscripts/recovery/dtf-migration/claim-vault.test.ts\n100644 dac63dba7b3b33369e16ee068588cb2dc1eae367 0\tscripts/recovery/dtf-migration/claimed-sy.ts\n100644 a747e8e821487792ef99c4ff2c7d04631d0cb6d2 0\tscripts/recovery/dtf-migration/cli.ts\n100644 29d53e57fce815bf603b484443b5b5ef00eec568 0\tscripts/recovery/dtf-migration/dtf-custody-se.test.ts\n100644 b8487ac105bccf59367fa66c3ec42b98e388f1de 0\tscripts/recovery/dtf-migration/earlier-liquid.test.ts\n100644 42315eac8ae7bbc30922e13b22b0d3526c2aba4c 0\tscripts/recovery/dtf-migration/earlier-receipt.test.ts\n100644 455f3429977130583d5acf57320417903c04f5dd 0\tscripts/recovery/dtf-migration/execution-domain.ts\n100644 e112eb59525755fceda366594b9c654308d38388 0\tscripts/recovery/dtf-migration/execution-owner-bond.ts\n100644 7589ebcacd33ff002079b0db9b826b3fac36b88c 0\tscripts/recovery/dtf-migration/execution-plan.ts\n100644 7fb6f90438e08fb10f9d8d77ceb03172ac0027a1 0\tscripts/recovery/dtf-migration/execution-rpc.ts\n100644 80b3371eb6e3940af9c7a77bf630aeed5c9f9b42 0\tscripts/recovery/dtf-migration/execution-schema.ts\n100644 23486c37816a82811fec29433eaca20493d65b0b 0\tscripts/recovery/dtf-migration/execution-state.ts\n100644 98595b8060347c0f3493cf1e586f8913b8310c81 0\tscripts/recovery/dtf-migration/execution.test.ts\n100644 979ecd30b0b741ddb14b0795d8dbecf33b5da609 0\tscripts/recovery/dtf-migration/execution.ts\n100644 225e9a25e06e4935100f7dbb7f8217fca092119a 0\tscripts/recovery/dtf-migration/held-se-lp.test.ts\n100644 3e5fb35d883a17cbb9b22ae5da7a567b2b728dde 0\tscripts/recovery/dtf-migration/journal.ts\n100644 19d4982bee43b378598da810d4ab823fb760286b 0\tscripts/recovery/dtf-migration/payloads.ts\n100644 15ebadb313c799f088024ecaf334ba3acef01528 0\tscripts/recovery/dtf-migration/preparation.fixture.ts\n100644 be1065eec79b3d3079b5ec1c0d5a42362341062e 0\tscripts/recovery/dtf-migration/preparation.test.ts\n100644 6b2dead748f9de1274db1ec86b268db514dc02e4 0\tscripts/recovery/dtf-migration/preparation.ts\n100644 aac39702ddf39107e9da220cd88fa4ec15aed04c 0\tscripts/recovery/dtf-migration/provenance.ts\n100644 822f4e3d0ada3dd759e59c40335cd4a6135777f9 0\tscripts/recovery/dtf-migration/quotes.ts\n100644 adf0801a0cefe4f459b94b0e4dfe5a0976378254 0\tscripts/recovery/dtf-migration/receipt-association.ts\n100644 05cbdb06d1691e079538a8ed8d91107f23eb7240 0\tscripts/recovery/dtf-migration/receipt-evidence.ts\n100644 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e 0\tscripts/recovery/dtf-migration/receipt-input.ts\n100644 3ba48a4b42cda20db7ec30c48bdf94469222e941 0\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n100644 defd60ad74e0bab892edaa4796ee454e63996fa0 0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n100644 7ab4e13f921746162b7a55f3a1ba04f65db65660 0\tscripts/recovery/dtf-migration/receipt-rpc.ts\n100644 2032aba6449fd1c9e59e25e8d571addadf1d4622 0\tscripts/recovery/dtf-migration/receipt.fixture.ts\n100644 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd 0\tscripts/recovery/dtf-migration/receipt.test.ts\n100644 e19c2f608b18d614100cd94ce26b502be93897f7 0\tscripts/recovery/dtf-migration/rehearsal-admission.ts\n100644 0a6d1b1cf7ad08862176df7dade258c68977a1f3 0\tscripts/recovery/dtf-migration/rehearsal-chain.ts\n100644 2248543b7834e21dae1622ae02808b73a127efa1 0\tscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n100644 d997345b8cd339488058a54198ede2c453cb9fd8 0\tscripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n100644 85d1e7a6e9161ed28008bbf734429c99b0806e91 0\tscripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts\n100644 3d01999b546fddd916288d873187709c3bcbd8b0 0\tscripts/recovery/dtf-migration/rehearsal-claimed-sy.ts\n100644 bbf1848aca57cf63edac9daa05c8caa914813aa3 0\tscripts/recovery/dtf-migration/rehearsal-data.ts\n100644 241ee76fb2c44981a5b3b41eaeb69fb1c74b33a9 0\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts\n100644 e8f36d1bc0aebc18a524a43d8b49c6fbd0918674 0\tscripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts\n100644 15977454d6e75bd5ca912541b89ac5ac043fc7c6 0\tscripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts\n100644 31939ec1bb91aa56eb318deb09a10a04b7ee045c 0\tscripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts\n100644 00eb2e49dd8f58e6f7c541d180021c0e257388a1 0\tscripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts\n100644 af64447222b513b019a458a0f51507fc215c8c24 0\tscripts/recovery/dtf-migration/rehearsal-held-se-lp.ts\n100644 0dc292969626fe4173201899704d491a04bbe25e 0\tscripts/recovery/dtf-migration/rehearsal-owner-bond.ts\n100644 4799b455c43a6b05ec9da6ccb07b50bbdcf859cf 0\tscripts/recovery/dtf-migration/rehearsal-portable.ts\n100644 6adbe9ce6298cc6def91b706a417b3cc00c8dd3d 0\tscripts/recovery/dtf-migration/rehearsal-process.ts\n100644 7bca623af81c29de0b137da14c156bf979e6ca7c 0\tscripts/recovery/dtf-migration/rehearsal-proof.ts\n100644 3f3b701bb08f2f9b87215e0e32c3f9e3d7a08317 0\tscripts/recovery/dtf-migration/rehearsal-recovery.ts\n100644 523e5c0b0626c1eb7a08b428eba00e0d47b05146 0\tscripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts\n100644 0df5d8acc9393d15ec5d20cf96c2c0f2c984fd72 0\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts\n100644 45d3a029ff51d3a5685f9bd6081ef26f77449a13 0\tscripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts\n100644 b78de4f15371b2aa1290e2ec9d508d9cde9d8604 0\tscripts/recovery/dtf-migration/rehearsal-weighted-sy.ts\n100644 b83ac93332feeaa45e3a02955c7410b69c154e87 0\tscripts/recovery/dtf-migration/rehearse.ts\n100644 d150bb70658165bd5eb191b256d2aa84ab18ce76 0\tscripts/recovery/dtf-migration/schema.ts\n100644 f422f37744baa3344aa1c57d9cdd2c3528136c65 0\tscripts/recovery/dtf-migration/weighted-liquid.test.ts\n100644 e59985ccd562254fa582ef517743f5362e8d5f20 0\tscripts/recovery/dtf-migration/weighted-receipt.test.ts\n100644 5f61ccca9f832f33c38ded94c3b9322b67751858 0\tscripts/recovery/dtf-migration/weighted-sy.test.ts\n"
+  },
+  "fullDiff": {
+    "bytes": 60758,
+    "sha256": "0dc99cf2d51910fd855e20b20505dc518c14e9de6668feacdaf8fb2e15d41f54",
+    "originalStagedEqual": true
+  },
+  "rawCommit": {
+    "bytes": 1202,
+    "sha256": "2647508e86a5a742aece5b7aff0e5dc23731122ad6cae1149e9d52a254acb686",
+    "message": "Add verified bounded finite receipt evidence collector\n\nCo-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\n"
+  }
+}

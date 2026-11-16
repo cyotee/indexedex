@@ -1,0 +1,55 @@
+Precommit inventory recipe v1
+Captured before staging or committing the claimed-SY source delivery.
+The walks completed before any file existed under migration/claimed-sy-integration/commit/.
+Inventory files written afterward are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, artifact restoration, or runtime rerun is part of this recipe.
+Every Git invocation uses GIT_MASTER=1. Status and diff use --ignore-submodules=all.
+
+Git-mode inventory
+Walk: lstat walk, followlinks false. Symlinked directories are recorded and not descended. Filenames and symlink entries are recorded; ordinary directories are not entries.
+Fields, fixed key order: path, kind, mode, size, sha256, target.
+path: POSIX relative to worktree root, sorted ascending by UTF-16 code unit order.
+kind: file, symlink, or other from lstat.
+mode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the raw symlink target string encoded UTF-8 for symlinks; null otherwise.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, JSON.stringify, one record per line, each line ending in \n, no extra trailing blank line beyond the last record newline.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the JSONL.
+Applies to docs-incidents.jsonl, out.jsonl and cache_forge.jsonl.
+The git-mode field collapses 0o400, 0o444, 0o600 and 0o644 regular files to 100644. It is not a read-only-mode proof.
+
+Permission inventory recipe
+File: docs-incidents-perms.jsonl.
+Walk: same root, followlinks false. Ordinary directories are recorded, including the walk root. Symlinked directories are recorded and not descended.
+Fields, fixed key order: path, kind, perm, size, sha256.
+path: POSIX relative to worktree root, sorted ascending. Directory paths have no trailing slash.
+kind: dir, file, symlink, or other from lstat.
+perm: oct(st_mode & 0o777), including 0o400, 0o444, 0o555, 0o600, 0o644 and 0o755.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null for directories and other.
+Serialization: same UTF-8 JSON Lines rules as the git-mode inventory.
+This permission inventory is the preservation encoding for sealed read-only modes. Do not chmod to make a later walk match.
+
+Host dependencies
+File: host-dependencies.jsonl.
+Members: every implementation/source-manifest.json authority, immutable, and parentPreserved entry whose path is outside this worktree. The in-worktree immutable entries are not repeated here; they are members of the docs/incidents walks.
+Fields, fixed key order: path, kind, mode, perm, size, sha256, target, role.
+path: absolute. role is authority, immutable, or parentPreserved.
+mode/perm/size/sha256/target use the same rules as the inventories above.
+Sorted by absolute path, then role, UTF-16 code unit order.
+Do not relocate, delete, or rewrite these host/archive dependencies.
+Producer immutable and authority rows may omit mode. Observed perm is recorded here and is not a mismatch against an absent binding mode. Bytes and lengths were compared to the producer binding before this file was written.
+Path is not a unique key when one absolute path has more than one role. Reproduce each JSONL row, including role. Do not collapse rows by path.
+
+Other baselines
+show-ref.txt: exact UTF-8 bytes of GIT_MASTER=1 git show-ref, captured before staging. Per-entry ref identity is the object id and refname on each line. Refs have no filesystem mode.
+status-before.txt: exact porcelain short status before staging, with --ignore-submodules=all.
+indexes.json: SHA-256 of each linked worktree index file, with worktree, branch, HEAD, size, mode and perm. foreign is true for every worktree other than this one. Only this worktree index may change after the commit. count and foreignCount are explicit integers.
+source-identity-before.json: the 28 accepted paths, current/accepted/producer/audit hashes and modes, captured before staging. acceptedMode 420 is decimal st_mode & 0o777 (0o644). Full st_mode 33188 is 0o100644. Those encodings agree; they are not a mode mismatch.
+tracked-diff.txt: exact GIT_MASTER=1 git diff --ignore-submodules=all bytes inspected before staging. It does not include the three untracked additions; those are in source-identity-before.json.
+whitespace-before.txt: exit code line for GIT_MASTER=1 git diff --ignore-submodules=all --check. Empty stdout is not appended. It does not cover untracked additions.
+whitespace-staged.txt: exit lines for the staged parent-to-candidate check and the staged check, both after staging only the 28 paths.
+gate-result.json: staged-set comparison result. It is not a substitute for the per-entry inventories.
+extra.json: aggregate hashes of the other precommit files, symlink records, listener/checkpoint observation, and exclusions. It does not claim its own raw digest.
+Reproduce a walk by executing the same field rules against the same roots and comparing each JSONL record, not only the aggregate hash.

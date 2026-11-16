@@ -1,0 +1,22 @@
+{
+  "alias": "robinhood_mainnet_alchemy",
+  "start": "2026-11-13T15:42:56.230Z",
+  "stop": "2026-11-13T15:42:56.263Z",
+  "requests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 314,
+      "method": "eth_getTransactionCount",
+      "params": [
+        "0xbab6a03be445094a10695772a79777407dcdc0e7",
+        "0x445cb59"
+      ]
+    }
+  ],
+  "httpStatus": 200,
+  "responseText": "[{\"jsonrpc\":\"2.0\",\"id\":314,\"result\":\"0x45\"}]",
+  "responseUtf8Bytes": 44,
+  "responseSha256": "77364a5e499a908307e29c67b73f5aa1a5d593af1e614e46bd86ebb869c8e1a2",
+  "raw": true,
+  "transportFailure": null
+}

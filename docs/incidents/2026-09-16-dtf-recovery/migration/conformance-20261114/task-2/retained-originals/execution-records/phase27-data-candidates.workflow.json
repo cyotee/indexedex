@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase27-data-candidates",
+  "name": "Migration DETF phase 27: deterministic historical review candidates",
+  "nodes": [
+    {
+      "id": "derive-historical-candidates",
+      "label": "Implement historical candidate derivation",
+      "category": "deep-low",
+      "task_summary": "Build a reproducible offline candidate pipeline from the complete frozen evidence",
+      "prompt": "TASK: Implement the actual missing historical-data preparation increment in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-brief.md. Read that entire brief, complete current plan/PRD/F1 report and real source formats before editing. DELIVERABLE: Functional typed offline CLI derivation, source tests/runbook, complete real-data proof and stopped implementation/report.md, manifest, cleanup and final seal under /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates at0856a5c56e5d09b81c669f59b613efef79133e19; only existing operator directory and runbook source, owned evidence/temp outputs. No frozen input edits, Solidity/config/dependency changes, RPC/signer/provider/held09/public work or commits. VERIFY: Every declared raw binding before parsing; all weighted/CP NFT observations and complete historical position/account/custody/recovery/conversion inventory links; exact integers/unknowns, no duplicate attribution, no obsolete policy or fabricated origin/credit. Genuine deterministic/relocated full-data outputs, strict types, one final complete operator-test invocation and meaningful failure tests. Candidates remain non-issuable, not live loader inputs; missing data/coverage must stay explicit. Preserve all failed attempts and actual source bytes. No unchanged Forge/chain/full-suite replay. STOP WHEN: Complete functional implementation and actual full-data evidence sealed LAST after cleanup; no pending operation. A status-only promise or running command is not a finished handoff. Follow all detailed scope and preservation rules in the brief."
+    },
+    {
+      "id": "verify-historical-candidates",
+      "label": "Verify real historical candidate derivation",
+      "category": "deep-low",
+      "dependsOn": [
+        "derive-historical-candidates"
+      ],
+      "task_summary": "Independently check real-data joins, unknown quantities, deterministic output and non-issuability",
+      "prompt": "TASK: Independently verify the stopped historical candidate implementation against /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-brief.md. Read it fully and require actual producer report/source/seal/cleanup. DELIVERABLE: Complete confirmed/needs-fix /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/report.md, exact evidence/seal and cleanup. SCOPE: Read current candidate in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates, current plan/PRD/F1 and complete frozen sources; write only verification/ and owned temporary outputs. No source fixes, old evidence edits, commits, RPC/provider/signer/held09/public actions or configuration/dependency changes. VERIFY: Full diff/code, every raw input binding, every actual candidate/unresolved record, exact quantities and source units, original-wallet observations, direct-versus-routed amounts and transaction attribution. Independently derive real weighted/CP joins and source/category coverage rather than trust the root or producer output; retain missing receipts/refunds/native/recovery/current state/claim and alias questions. Run strict types, one complete operator-test invocation and actual offline CLI against all declared frozen inputs; prove repeated/relocated deterministic outputs and unchanged inputs. Verify candidate files cannot be treated as approved operational loader records. No new eligibility/pricing policy, no historical ancestry runtime gate, no standalone native/WETH surrender invention. No old chain/Forge/full-suite replay unless a justified runtime source change is separately admitted. Preserve producer failures and P1 qualification. STOP WHEN: Complete independent report/seal and cleanup with no owned operation pending; not a status-only final. All details in the brief remain binding."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "chainId": 31337,
+    "address": "0x3a7A4ebD85074fF40eF418e555aE0d9A2A7C871d",
+    "name": "Uniswap V2",
+    "symbol": "abUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x8175D9A3dD51C2d185E771B33BAE5831e132e444",
+    "name": "Uniswap V2",
+    "symbol": "acUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x27b9952feb84253385Cf867df4aa40d90b4be5dC",
+    "name": "Uniswap V2",
+    "symbol": "bcUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0xb9C1A3fD5A73409740564c591B496bb1507b94c8",
+    "name": "Uniswap V2",
+    "symbol": "wethcUniV2Pool",
+    "decimals": 18
+  }
+]

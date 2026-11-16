@@ -1,0 +1,90 @@
+{
+  "verifier": "F3",
+  "task": "Real manual QA",
+  "date": "2026-11-15",
+  "disposition": "NOT-APPROVE",
+  "classification": "known-task-10-13-evidence-gap",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/F3-real-qa.md",
+  "reason": "Task 10 cli.ts rehearse was not run because no admissible donor in the bound authority evidence covers 10000 DTF. Existing task 11 gas receipts and task 13 suite outputs do not establish the required real operator lifecycle. This is the known task 10/13 gap, not a new product defect.",
+  "reviewCompleted": true,
+  "realLifecycleVerified": false,
+  "newProductDefects": [],
+  "missingArtifacts": {
+    "base": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10",
+    "locationRecord": "rehearsal-location.json",
+    "runtimeRoot": "runtime/",
+    "requiredRecordsInActualRuntimeChild": [
+      "mixed-pricing.json",
+      "same-block-config-a-then-b.json",
+      "same-recipient-config-b-issuance-a.json",
+      "unset-pricing-owner-bond-activation.json",
+      "donation-identity-resume.json",
+      "nft-three-two-bonds.json",
+      "nft-three-rollback.json"
+    ],
+    "additionalMissingEvidence": [
+      "Actual successful rehearsal command/result and its returned runtime location",
+      "Signed intents, canonical headers and ordered receipts for the missing scenarios",
+      "Captured owner-first purchase, post-purchase setter and complete postactivation state",
+      "Authenticated original-wallet surrender, two funded NFT 3 bonds and second-callback rollback",
+      "Complete runtime source lifecycle and recovery records"
+    ]
+  },
+  "existingEvidence": {
+    "task10": {
+      "fundingBlocker": "task-10/funding-blocker.json",
+      "transactionsSent": 0,
+      "qualification": "Covering holders outside the fixed authority bundle are not admissible donors merely because balances exist."
+    },
+    "task11": {
+      "signedTransactionRecords": 299,
+      "constructionReceipts": 4,
+      "operationRecoverySamples": 51,
+      "measuredReceiptJoinsChecked": 55,
+      "measuredReceiptJoinMismatches": 0,
+      "setterReceiptsPresent": 2,
+      "activationReceiptPresent": true,
+      "qualification": "Saved local gas-fixture receipts support bounded operations only. Receipt joins are local consistency checks, not fresh chain queries or independent signature verification. Recovery samples are separate historical snapshot branches."
+    },
+    "task13": {
+      "productionBuildExit": 0,
+      "hermetic": {
+        "exit": 0,
+        "passed": 28641,
+        "failed": 0,
+        "skipped": 0
+      },
+      "fork": {
+        "exit": 0,
+        "passed": 183,
+        "failed": 0,
+        "skipped": 0
+      },
+      "operatorTypecheckExit": 0,
+      "operator": {
+        "exit": 1,
+        "completed": false,
+        "passed": 240,
+        "failed": 1,
+        "knownFailure": "claimed-sy-witness.test.ts:92 compiled witness code hash differs from the fixed authentication pin"
+      },
+      "qualification": "Existing outputs were read, not rerun. The known operator failure and missing task 10/12 lifecycle evidence remain incomplete."
+    }
+  },
+  "actionsPerformed": [
+    "Read plan and existing local evidence",
+    "Check named missing artifact paths",
+    "Join saved measured receipts to transaction records",
+    "Inspect raw suite summaries and retained operator failure",
+    "Write F3 report before this verdict JSON"
+  ],
+  "implementationPerformed": false,
+  "delegationPerformed": false,
+  "forgeOrBunCommandsRun": false,
+  "task10RehearsalRun": false,
+  "rpcCallsMade": false,
+  "publicTransactionsMade": false,
+  "commitsCreated": false
+}

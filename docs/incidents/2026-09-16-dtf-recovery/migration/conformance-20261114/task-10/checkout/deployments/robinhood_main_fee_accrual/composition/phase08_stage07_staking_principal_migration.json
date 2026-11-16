@@ -1,0 +1,16 @@
+{
+  "configHash": "0x711c124542accd49211e09a778a8cbfe85a840b39af68df2b87efa6c7a396579",
+  "receiptVerified": false,
+  "chunks": [
+    {
+      "afterRemaining": 0,
+      "amountIn": "4617217876829490028053739",
+      "beforeRemaining": "4617217876829490028053739",
+      "claimOut": 1506575755,
+      "deadline": 1789361808,
+      "minClaimOut": 1499042876,
+      "principalBefore": "151880363724304760071838006",
+      "sharesOut": 15065757550000000000
+    }
+  ]
+}

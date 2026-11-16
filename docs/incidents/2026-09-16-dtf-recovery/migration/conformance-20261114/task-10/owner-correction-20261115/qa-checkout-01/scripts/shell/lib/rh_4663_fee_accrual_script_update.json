@@ -1,0 +1,5 @@
+{
+  "from": "10c68a9dbee00498e2bc071f8ab50795194c931be24f7c70be5327d18891c942",
+  "to": "268a34b602629cb0580f6344c2fd3d8ea8308c9489ce8c4f1171ae0e51f498ca",
+  "reason": "Recover a confirmed successful migration prefix with an unsent tail only after verifying receipts, contiguous nonces and no later or pending sender transactions. Archive the original batch and reconcile before fresh migration automatically. No contract, sizing, slippage, deadline or signing changes."
+}

@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-12",
+  "command": "git status --short --ignore-submodules=all; git diff --ignore-submodules=all --exit-code; git diff --cached --ignore-submodules=all --exit-code; git diff --ignore-submodules=all --check; test ! -e .omo-runtime/dtf-migration-claim-vault/checkpoints; lsof -nP -iTCP:18566 -sTCP:LISTEN",
+  "output": "CHECKPOINT_ABSENT\nPORT18566_NO_LISTENER",
+  "successfulCompoundCheck": true,
+  "ownedRuntimesStarted": 0,
+  "ownedImpersonationsStarted": 0,
+  "ownedSubscriptionsStarted": 0,
+  "pendingOperations": 0,
+  "port18566": "no listener",
+  "checkpoint": "absent",
+  "productionTestOperatorEdits": 0,
+  "commits": 0,
+  "merges": 0,
+  "publicWrites": 0,
+  "sourceOrBalanceFabrication": false,
+  "held09Inspected": false,
+  "providerBypass": false,
+  "buildsAndTestsRun": false,
+  "scope": "Only this implementation evidence directory is authored; no source changes to clean up"
+}

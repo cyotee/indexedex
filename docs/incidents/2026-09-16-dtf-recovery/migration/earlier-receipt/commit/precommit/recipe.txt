@@ -1,0 +1,48 @@
+Precommit inventory recipe v1
+Captured before staging or committing the earlier-receipt source delivery.
+The walks completed before any file existed under migration/earlier-receipt/commit/.
+Inventory files written afterward are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, artifact restoration, or runtime rerun is part of this recipe.
+Every Git invocation uses GIT_MASTER=1. Status and diff use --ignore-submodules=all.
+
+Git-mode inventory
+Walk: os.walk(root, followlinks=False). Symlinked directories are recorded and not descended. Filenames and symlink directory entries are recorded; ordinary directories are not entries.
+Fields, fixed key order: path, kind, mode, size, sha256, target.
+path: POSIX relative to worktree root, sorted ascending by Python str order.
+kind: file, symlink, or other from lstat.
+mode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the raw symlink target string encoded UTF-8 for symlinks; null otherwise.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, json.dumps(separators=(',', ':'), ensure_ascii=False), one record per line, each line ending in \n, no extra trailing blank line beyond the last record newline.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the JSONL.
+Applies to docs-incidents.jsonl, out.jsonl and cache_forge.jsonl.
+The git-mode field collapses 0o400, 0o444, 0o600 and 0o644 regular files to 100644. It is not a read-only-mode proof.
+
+Permission inventory recipe
+File: docs-incidents-perms.jsonl.
+Walk: os.walk(docs/incidents, followlinks=False). Ordinary directories are recorded, including the walk root. Symlinked directories are recorded and not descended.
+Fields, fixed key order: path, kind, perm, size, sha256.
+path: POSIX relative to worktree root, sorted ascending. Directory paths have no trailing slash.
+kind: dir, file, symlink, or other from lstat.
+perm: oct(st_mode & 0o777), including 0o400, 0o444, 0o555, 0o600, 0o644 and 0o755.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null for directories and other.
+Serialization: same UTF-8 JSON Lines rules as the git-mode inventory.
+This permission inventory is the preservation encoding for sealed read-only modes. Do not chmod to make a later walk match.
+
+Other baselines
+show-ref.txt: exact UTF-8 bytes of GIT_MASTER=1 git show-ref, captured before staging. Per-entry ref identity is the object id and refname on each line. Refs have no filesystem mode.
+status-before.txt: exact porcelain status before staging, with --ignore-submodules=all.
+indexes.json: SHA-256 of each linked worktree index file at <git-dir>/index, with worktree, branch, HEAD, size, mode and perm. foreign is true for every worktree other than this one. Only this worktree index may change after the commit.
+host-dependencies.jsonl: external producer-seal authority/input files, absolute path, kind, mode, perm, size, sha256, target. These host/archive dependencies are not relocated.
+links are recorded in extra.json: lib/crane and node_modules symlink target, inode and mode. They are not descended.
+source-identity-before.json: the 34 accepted paths, current/accepted/producer/audit hashes and modes, captured before staging.
+tracked-diff.txt: exact GIT_MASTER=1 git diff --ignore-submodules=all bytes inspected before staging. It does not include the four untracked additions; those are in source-identity-before.json.
+whitespace-before.txt: exact GIT_MASTER=1 git diff --ignore-submodules=all --check output and exit. It does not cover untracked additions.
+extra.json: aggregate hashes, symlink records, listener/checkpoint observation, and exclusions.
+Reproduce a walk by executing the same field rules against the same roots and comparing each JSONL record, not only the aggregate hash.
+New commit evidence under docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/commit/ is excluded from preservation comparison.
+Current out/ and cache_forge are the post-verification baseline. Do not restore earlier compiler outputs.
+Four raw ABI JSON files differ from producer-sealed original hashes only by the terminal Solar source-unit id. artifact-id-drift.json records current and recovered original hashes. The recovered strings are not preserved files.
+No held09 path is read, imported, or committed. No source byte is rewritten to satisfy a later walk.

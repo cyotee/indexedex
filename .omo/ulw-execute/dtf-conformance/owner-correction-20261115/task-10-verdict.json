@@ -1,0 +1,361 @@
+{
+  "type": "AdversarialVerify",
+  "task": 10,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "scope": "Independent bounded real-lifecycle evidence closeout; no implementation or QA resumption",
+  "verifier": "st_01a1e077",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "task10Complete": false,
+  "task10LifecycleAccepted": false,
+  "independentFullLifecycleAccepted": false,
+  "productDefectEstablished": false,
+  "closeoutOnly": true,
+  "acceptanceReopened": false,
+  "parentReportedClosedTasks": {
+    "status": "[~]",
+    "tasks": [10, 12, 13, 14, 15],
+    "requeueAuthorized": false
+  },
+  "reason": "The original 240-minute bound expired without the required complete real lifecycle. Attempt 52 was forcibly stopped and the genuine producer claim explicitly reports INCOMPLETE/BOUNDED-STOP. Partial economic receipts and the settled unit/CLI gate cannot certify unexecuted scenarios.",
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-10-done.json",
+    "sha256": "f2eb4c3859fd5a93a51cff82395b7db80055e7d1798a9eea9dfc521342eb2084",
+    "bytes": 25079,
+    "producerStatus": "INCOMPLETE/BOUNDED-STOP",
+    "producerComplete": false,
+    "recordedAt": "2026-11-15T19:08:01.515Z"
+  },
+  "clock": {
+    "openedAt": "2026-11-15T14:55:25.715Z",
+    "bound": "2026-11-15T18:55:25.715Z",
+    "reset": false,
+    "incompleteBoundObservationAt": "2026-11-15T18:56:48.717Z",
+    "terminationRecordAt": "2026-11-15T19:06:05.503Z",
+    "laterPartialObservationsDoNotCloseBound": true
+  },
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/independent/bounded-lifecycle-review.md",
+    "sha256": "ceb85cce6de49339a839e88bb814bbe50903b6521b20b6bb1b87c423267cc7f5",
+    "bytes": 13893,
+    "containsExactTwentyGroupMapping": true
+  },
+  "finalCloseoutInputs": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-outcomes.json",
+      "sha256": "216130005942583d93da59c9b8cbcef83f9b0781b729edea5aa93b4bdeeb49b8",
+      "readCompletely": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-source-inventory.json",
+      "sha256": "eb671ff58bdd27e9d72c43c0ba11b76d103fdef5cedf77147451165620c0c6f6",
+      "readCompletely": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json",
+      "sha256": "452b794af56192555eaf21185eb54ee8c8ff7131e5251bd4f737d5033808f822",
+      "readCompletely": true
+    }
+  ],
+  "retainedWork": {
+    "disposition": "Unverified cohesive rehearsal WIP retained in the requested worktree, separately from independently confirmed operator repairs",
+    "unverifiedRehearsalPathCount": 10,
+    "unverifiedRehearsalPaths": [
+      "scripts/recovery/dtf-migration/rehearse.ts",
+      "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+      "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol"
+    ],
+    "mixedOwnership": {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "confirmedPart": "Generated pricing-ABI source binding",
+      "unverifiedPart": "Broader task-10 fixture changes as a cohesive real lifecycle",
+      "blindRevertAuthorized": false
+    },
+    "separatelyConfirmedProductionRepairs": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "sha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "sha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution.ts",
+        "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f"
+      }
+    ],
+    "confirmedRepairScope": "Settled operator/unit-CLI scope only; no full-lifecycle acceptance",
+    "mergedOrLandedByVerifier": false,
+    "sourceOrWipModifiedDuringCloseout": false
+  },
+  "settledUnitCliGate": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-repairs-verdict.json",
+    "sha256": "2aaa161c9d6cf2e65ff95e0af63a1010b10d3a045f4e4955dcae53b031798f8b",
+    "verdict": "confirmed",
+    "testsPassed": 336,
+    "testsFailed": 0,
+    "timeoutMs": 15000,
+    "strictOperatorTypes": "passed",
+    "retainedHelperTypes": "passed",
+    "historicalHelperInventory": "28 of 29 reachable files; no retroactive identity claim for task-11/recovery.ts",
+    "rerunByVerifier": false,
+    "realLifecycleExcluded": true
+  },
+  "runtime": {
+    "attempt49": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207",
+    "attempt52": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770",
+    "pathsDiscoveredFromMetadataAndClaim": true,
+    "successfulRehearsalLocationEmitted": false,
+    "attempt52NormalResultEmitted": false,
+    "attempt52NormalExit": null
+  },
+  "coverage": [
+    {
+      "group": "mixed-pricing",
+      "status": "unmet",
+      "metSubcriteria": [
+        "Authentic configure-A signature, canonical successful receipt/header/index/trace and original domain; intentional interruption before completion",
+        "Separate-root owner-B signature, successful receipt, event and original-domain completion in the later partial run"
+      ],
+      "missing": [
+        "Historical A recovery after B without resend",
+        "Completed mixed A/B accepted state",
+        "Post-purchase setter and activation"
+      ]
+    },
+    {
+      "group": "same-recipient-config-b-issuance-a",
+      "status": "unmet",
+      "missing": [
+        "Actual B replacement with immutable A issuance, original history and unchanged supply"
+      ]
+    },
+    {
+      "group": "same-block",
+      "status": "unmet",
+      "missing": [
+        "Actual signed A then B in one canonical block",
+        "Transaction-prefix recovery preserving B",
+        "Runtime index/log/credit/event tamper rejection"
+      ]
+    },
+    {
+      "group": "unset-pricing-owner",
+      "status": "unmet",
+      "missing": [
+        "Genuine paid owner purchase and receipt recovery",
+        "Activation with pricing and preparation unset",
+        "Retained unset getter and removed selector census"
+      ]
+    },
+    {
+      "group": "donation-identities",
+      "status": "retained-narrow-evidence-supported",
+      "facts": [
+        "Two explicit distinct donation identities and six separate approval/donation operations",
+        "Identical donation calldata",
+        "All six signatures, transactions, successful receipts, original funding domain and canonical-object completion hashes agree",
+        "Retained original receipt recovery and zero completed resends with equal completed-resume nonce"
+      ],
+      "doesNotAcceptFullLifecycle": true
+    },
+    {
+      "group": "nft-three-original-wallet",
+      "status": "unmet",
+      "missing": [
+        "Actual original-wallet surrender with exact two component credits",
+        "One source consumption and two distinct exactly funded principal/gon records",
+        "Aggregate supply/backing conservation and fresh 90-day clocks",
+        "Cliff-minus/exact/plus-one principal claim observations"
+      ]
+    },
+    {
+      "group": "synthetic-receiver",
+      "status": "unmet",
+      "missing": [
+        "Distinct real proxy and source NFT receiver case",
+        "Second-callback failure trace with both bonds and source custody rolled back",
+        "Subsequent marked and funded two-bond success"
+      ]
+    },
+    {
+      "group": "negative-cases",
+      "status": "partial-unmet",
+      "metSubcriteria": [
+        "Seven retained actual preparation command failures with controlled errors and unchanged nonces"
+      ],
+      "missing": [
+        "Signed stale A after B atomic on-chain rejection",
+        "Complete final wrong-domain/artifact/history/chain/proxy corpus"
+      ]
+    },
+    {
+      "group": "baseline-source-recovery-ordinary-portability",
+      "status": "partial-unmet",
+      "metSubcriteria": [
+        "Actual setup funding, source acquisition, initial deployment/configuration/issuance and initial portability observations retained"
+      ],
+      "missing": [
+        "All post-activation source admission/surrender branches",
+        "Repeated reward-only recovery preserving old principal and custody",
+        "Ordinary-deposit and delayed-clock followthrough",
+        "Complete portable mixed-book and issuance-history lifecycle"
+      ]
+    }
+  ],
+  "requiredFinalScenarioFilesAbsent": [
+    "mixed-pricing.json",
+    "same-recipient-config-b-issuance-a.json",
+    "same-block-config-a-then-b.json",
+    "unset-pricing-owner-bond-activation.json",
+    "nft-three-two-bonds.json",
+    "nft-three-rollback.json"
+  ],
+  "partialReceiptIdentities": {
+    "configureA": "0x8614d4e76a949cd7414587de30b88f9605b108f8b35fad31643ec3e00c8494d7",
+    "configureANonce": 2230,
+    "ownerB": "0x6a0fe35c9f274e05d7043e4c7e734d742ea46cb94f93462ac9563cd1c66f1fcb",
+    "ownerBNonce": 2231,
+    "setupDtfTransfer": "0x32c40dbe164f2578efc8693bd4ac11f6c80562d527aedae62a9904d255108327",
+    "firstDonation52": "0x9855a1646ff910da4cdb96e9b3fc7c98364a6eb49428e7117b220db413ff69a0",
+    "secondDonation52": "0x7c367d4e52ffcbe806215af93f654d487c9702ce5557e9a03e2b661b8e986895",
+    "noCrossRunDomainRebinding": true,
+    "sameDeterministicHashesAcrossForkRunsNotTreatedAsOneRun": true
+  },
+  "prerequisites": {
+    "forkChainId": 4663,
+    "forkBlock": 108944663,
+    "forkBlockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "containedFundingCsvSha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+    "containedFundingCsvBytes": 4535122,
+    "containedFundingCsvHashAndBytesMatch": true,
+    "selectedDonor": "0x0da0877ab57a89e5db9125069fa8cd3702536e37",
+    "donorAppearsInContainedCsv": true,
+    "setupRawDtf": "10000000000000000000000",
+    "capturedPinnedAndImmediatelyBeforeDonorBalancesAgree": true,
+    "capturedActualDonorAndDeveloperDeltasEqualBudget": true,
+    "compensationExclusionRecorded": true,
+    "sourceNftPrincipalBeforeSetupRecorded": true,
+    "publicFundingOrAllocationApproval": false,
+    "fullNoManufacturedHistoryLifecycleCertification": false
+  },
+  "integrity": {
+    "attempt49SourceFiles": 160,
+    "attempt49CurrentMatches": 159,
+    "attempt49OnlyChangedFile": "scripts/recovery/dtf-migration/rehearse.ts",
+    "attempt52SourceFiles": 160,
+    "attempt52CurrentAndRuntimeMatches": 160,
+    "preservedCheckpointFiles": 107,
+    "preservedCheckpointBytes": 677799,
+    "preservedCheckpointHashMismatches": 0,
+    "terminationRawOutputBindingsChecked": 3,
+    "terminationRawOutputBindingMismatches": 0,
+    "globalHistoricalArchiveIntegrityIndependentlyCertified": false,
+    "originalSignedDomainsRewrittenByVerifier": false
+  },
+  "commandsAndExits": [
+    {
+      "evidence": "attempts/49-portable-cli/command.json and result.json",
+      "command": "bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <recorded-complete-bundle> --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575 --checkpoint .omo-runtime/dtf-migration-portable/checkpoints --evidence <recorded-runtime-attempt-09>",
+      "exit": 1
+    },
+    {
+      "evidence": "R49/044-configure.log.command.json",
+      "command": "configure with original manifest/checkpoint and --execute-local --instance-id <recorded> --fault-after-mined",
+      "exit": null,
+      "signal": "SIGKILL",
+      "intentionalMinedInterruption": true
+    },
+    {
+      "evidence": "R49/045-set-pricing.log.command.json",
+      "command": "set-pricing under the incorrectly shared owner root",
+      "exit": 1,
+      "error": "LOCK: second active execution under operator root"
+    },
+    {
+      "evidence": "attempts/52-portable-cli/command.json and bounded-stop-termination.json",
+      "command": "Same recorded real rehearse surface after separate-owner-root harness repair",
+      "exit": null,
+      "forcedTermination": true,
+      "monitorExitIsNotNormalRehearsalExit": true
+    },
+    {
+      "evidence": "Seven exact command/rejection paths in producer claim and independent report",
+      "command": "Retained preparation negatives",
+      "exit": 1,
+      "cases": 7,
+      "controlledErrorsAndUnchangedNonces": true
+    }
+  ],
+  "adversarialClasses": [
+    {"class": "replay-and-duplication", "status": "partial", "limit": "Donation records supported; historical A recovery and same-block case absent"},
+    {"class": "concurrency-and-order", "status": "unmet", "limit": "Shared-root LOCK observed and isolated B partial success; same-block ordering not reached"},
+    {"class": "domain-and-source-forgery", "status": "partial", "limit": "Original A/domain signatures and seven negatives checked; final corpus incomplete"},
+    {"class": "custody-and-issuance-atomicity", "status": "unmet", "limit": "No second-callback rollback or completed original-wallet surrender"},
+    {"class": "funding-solvency-and-rounding", "status": "partial", "limit": "Setup/donation facts supported; exact two-bond principal/gon conservation absent"},
+    {"class": "lifecycle-and-access-control", "status": "unmet", "limit": "Paid-first/unset activation and complete removed/retained surface not proved"},
+    {"class": "source-wrapper-and-admission", "status": "partial", "limit": "Acquisition/intake observations do not close all source branches"},
+    {"class": "recovery-and-accounting", "status": "unmet", "limit": "Repeated reward-only harvest and protected backing followthrough not reached"},
+    {"class": "failure-cancellation-and-resources", "status": "retained-evidence-only", "limit": "Interruption and termination records inspected; no new process or RPC probe"}
+  ],
+  "cleanup": {
+    "producerTerminationEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json",
+    "producerReportedOwnedProcessesRemaining": [],
+    "producerReportedOwnedMonitorsRemaining": [],
+    "actualProducerSession": "bash_37",
+    "actualProducerTermination": "Retained tool receipt: Killed bash_37.",
+    "deadlineSession": "bash_38",
+    "deadlineCancellation": "Retained tool receipt: Killed bash_38.",
+    "normalResultOrExitClaimed": false,
+    "producerPortProbe": {"argv": ["/usr/sbin/lsof", "-nP", "-iTCP:18575", "-sTCP:LISTEN"], "exit": 1, "stdout": "", "stderr": ""},
+    "checkpointBytePreservationIndependentlyChecked": true,
+    "originalCheckpointRemoval": "Producer-reported; no redundant fresh removal/probe",
+    "claimSubscription": "Fired and completed",
+    "claimSubscriptionCloseout": {
+      "monitorId": "mon_TZ24NMTAGW90CY5G",
+      "returnedWatchHandle": "watch_1",
+      "delivery": "create event delivered; watcher completed",
+      "teardownAttempts": [
+        {
+          "id": "mon_TZ24NMTAGW90CY5G",
+          "result": "No terminal session found with id: mon_TZ24NMTAGW90CY5G"
+        },
+        {
+          "id": "watch_1",
+          "result": "No terminal session found with id: watch_1"
+        }
+      ],
+      "state": "Resolved; no live subscription session available to terminate",
+      "rearmed": false
+    },
+    "verifierStartedRuntimeProcesses": false,
+    "verifierPendingRuntimeProcesses": [],
+    "priorUnknownResourcesTouched": false
+  },
+  "limits": [
+    "JSON LSP diagnostics unavailable because Biome is not installed; no installation was authorized or performed.",
+    "This is evidence closeout after an explicit incomplete handoff, not a successful acceptance run.",
+    "No new tests, builds, QA processes, RPC reads, transactions, installs or delegation were performed.",
+    "Saved actual receipts and original signatures were inspected offline; no new external canonical-chain query was made.",
+    "Producer's eight scenario groups contain one narrow donation-evidence group and seven unmet groups; same-recipient history is separately enumerated here for exact plan coverage.",
+    "The late owner-B partial observation does not close the original deadline or the missing A-after-B recovery.",
+    "The historical helper inventory covers 28/29 reachable inputs; current hashes do not prove the omitted historical file.",
+    "No complete no-mint/etch/snapshot-duplication audit or manager/registry/activation surface is inferred from the genuine setup prerequisite.",
+    "The removed claimWitnessCodeHash remains removed; no replacement pin or extra price-policy condition was added.",
+    "Unverified rehearsal changes remain isolated in the requested worktree. Mixed-ownership files must not be blindly reverted.",
+    "No implementation resumption, merge, landing, commit, plan closure, public transaction or financial allocation is authorized."
+  ],
+  "sourceOrTestsEdited": false,
+  "settledTestsRerun": false,
+  "wholePlanAccepted": false,
+  "verdictWrittenLast": true
+}

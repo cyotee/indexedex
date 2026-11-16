@@ -32,6 +32,8 @@ import {IUniswapV4DetfMigrationBondNFTVault as Bonds} from "contracts/vaults/det
 import {IUniswapV4DetfMigrationSY as SY} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol";
 import {IUniswapV4DetfMigrationRewardToken as RT} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol";
 
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+
 /// @notice A real contract owner for local QA, controlled by the unlocked dev account.
 /// @dev It calls only the production administration API. It cannot mint, supply credit, impersonate
 /// the parent, change its storage, or bypass a child. Reading the configuration identity on-chain
@@ -50,11 +52,11 @@ contract MigrationCoreLocalOwner {
     function bootstrap(Migration.GenesisLeg[] calldata legs_) external onlyController {
         Allocation(address(parent)).bootstrapMigrationReserve(legs_, 0, 1, block.timestamp);
     }
-    function captureConfigureIssue(uint256 originalEth_, uint256 originalDtf_)
+    function setConfigureIssue(uint256 originalEth_, uint256 originalDtf_, Pricing.Inputs calldata pricing_)
         external onlyController returns (uint256 credit_, uint256 id_)
     {
         Allocation admin_ = Allocation(address(parent));
-        admin_.captureMigrationSnapshot();
+        bytes32 bookId_ = admin_.setMigrationWeightedPricing(pricing_);
         Migration.IndependentAllocationInput[] memory inputs_ = new Migration.IndependentAllocationInput[](1);
         inputs_[0].recipient = controller;
         inputs_[0].evidenceId = keccak256("external QA fixture; not historical provenance");
@@ -63,7 +65,7 @@ contract MigrationCoreLocalOwner {
             bytes32("local-original"), originalEth_, originalDtf_, bytes32("fixture")
         );
         uint256 supply_ = IERC20(address(parent)).totalSupply();
-        admin_.configureIndependentAllocations(inputs_);
+        admin_.configureIndependentAllocations(inputs_, bookId_);
         require(IERC20(address(parent)).totalSupply() == supply_, "configuration mints nothing");
         Migration.IndependentAllocation memory configured_ = parent.independentAllocation(controller);
         credit_ = configured_.totalCredit;
@@ -96,6 +98,87 @@ contract MigrationCoreLocalQA is TestBase_UniswapV4DetfMigration {
     event CorePrincipalPaid(address indexed parent, uint256 amount, uint256 deferredBondRewards);
     event CoreRewardsPaid(address indexed parent, uint256 bondRewards, uint256 nativeRT, uint256 redeemed, uint256 remainder);
     function setUp() public override {}
+
+    /// @notice Real registry/proxy mixed-book rehearsal; no legacy custody or public transaction.
+    function runMixedRecordRehearsal() external {
+        vm.chainId(4663);
+        TestBase_UniswapV4DetfMigration.setUp();
+        _fundReserve();
+        Pricing.Inputs memory inputs_;
+        inputs_.swapFeeWad = 3e15;
+        inputs_.seigniorage = 5e16;
+        inputs_.dtfIndex = 1;
+        inputs_.detfIndex = 2;
+        inputs_.legs = new Pricing.Leg[](3);
+        inputs_.legs[0].token = pairA;
+        inputs_.legs[1].token = pairB;
+        inputs_.legs[2].token = detf;
+        for (uint256 i_; i_ < 3; ++i_) {
+            inputs_.legs[i_].weight = i_ == 2 ? 4e17 : 3e17;
+            inputs_.legs[i_].invScale = i_ == 2 ? 1e27 : 1e18;
+            inputs_.legs[i_].ratedScale = inputs_.legs[i_].invScale;
+            inputs_.legs[i_].rawReserve = i_ == 2 ? 1000000e9 : 1000000 ether;
+        }
+        vm.prank(migrationOwner);
+        pricingId = allocation.setMigrationWeightedPricing(inputs_);
+        bytes32 a_ = pricingId;
+        _configure(address(0xA11CE), 1 ether, bytes32("issued original"));
+        _configure(address(0xBEEF), 2 ether, bytes32("retained original"));
+        Migration.IndependentAllocation memory original_ = migration.independentAllocation(address(0xA11CE));
+        bytes32 retained_ = migration.independentAllocation(address(0xBEEF)).configurationId;
+        uint256 issuedBond_ = _issue(address(0xA11CE));
+        console2.log("STATE_TRACE", string.concat(
+            '{"state":"issued-A","bookId":"', vm.toString(a_),
+            '","configurationId":"', vm.toString(original_.configurationId),
+            '","bondId":"', vm.toString(issuedBond_), '"}'));
+
+        address collection_ = 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E;
+        Migration.NftEntitlementInput[] memory nft_ = new Migration.NftEntitlementInput[](1);
+        nft_[0] = Migration.NftEntitlementInput(collection_, 3, address(0xCAFE), 3772281649,
+            999999000000000, 362893857600000000000, bytes32("synthetic NFT3 source"), true);
+        vm.prank(migrationOwner);
+        allocation.configureNftContributionEntitlements(nft_, a_);
+        bytes32 origin_ = migration.nftEntitlement(collection_, 3).originalId;
+        inputs_.swapFeeWad = 1e17;
+        vm.prank(migrationOwner);
+        pricingId = allocation.setMigrationWeightedPricing(inputs_);
+        bytes32 b_ = pricingId;
+        require(a_ != b_, "distinct manual books");
+        require(migration.independentAllocation(address(0xBEEF)).configurationId == retained_, "retained A");
+        vm.prank(migrationOwner);
+        vm.expectRevert(abi.encodeWithSelector(Pricing.MigrationWeightedPricingBookMismatch.selector, a_, b_));
+        allocation.configureNftContributionEntitlements(nft_, a_);
+        _configure(address(0xA11CE), 1 ether, bytes32("issued original"));
+        _configure(address(0xD00D), 3 ether, bytes32("new B original"));
+        vm.prank(migrationOwner);
+        allocation.configureNftContributionEntitlements(nft_, b_);
+        Migration.IndependentIssuance memory issued_ = migration.independentIssuance(address(0xA11CE));
+        require(issued_.configurationId == original_.configurationId && issued_.credit == original_.totalCredit,
+            "issuance A remains immutable after configuration B");
+        require(migration.independentAllocation(address(0xA11CE)).configurationId != issued_.configurationId,
+            "configuration and issuance identities are independent");
+        require(bonds.positionOf(issuedBond_).principal == original_.totalCredit, "issued funded principal unchanged");
+        require(migration.nftEntitlement(collection_, 3).originalId == origin_, "stable NFT origin");
+        require(origin_ == keccak256(abi.encode("migration.nft", block.chainid, detf, collection_, uint256(3))),
+            "exact stable origin preimage");
+        Migration.NftContribution[] memory parts_ = migration.nftContributions(collection_, 3);
+        require(parts_.length == 2 && parts_[0].originalEth == 999999000000000 && parts_[0].originalDtf == 0
+            && parts_[1].originalEth == 0 && parts_[1].originalDtf == 362893857600000000000, "separate NFT3 components");
+        console2.log("STATE_TRACE", string.concat(
+            '{"state":"mixed-A-B","bookId":"', vm.toString(b_), '","stableNftOrigin":"', vm.toString(origin_),
+            '","nft3":[{"originalEth":"999999000000000","originalDtf":"0","credit":"', vm.toString(parts_[0].credit),
+            '"},{"originalEth":"0","originalDtf":"362893857600000000000","credit":"', vm.toString(parts_[1].credit), '"}]}'));
+        _buyOwnerFirstBond();
+        vm.prank(migrationOwner);
+        allocation.activateMigration();
+        require(migration.migrationActivated(), "terminal activation");
+        require(IDiamondLoupe(detf).facetAddress(Allocation.setMigrationWeightedPricing.selector) == address(0),
+            "terminal setter removed");
+        console2.log("STATE_TRACE", string.concat(
+            '{"state":"complete","terminal":true,"bookId":"', vm.toString(b_),
+            '","stableNftOrigin":"', vm.toString(origin_), '","historicalJournalImported":false,"nft3Mode":"separate-contributions"}'));
+    }
+
     function _localInfrastructure() internal {
         (create3Factory, diamondPackageFactory) = InitDevService.initEnv(DEV);
         diamondFactory = diamondPackageFactory;
@@ -201,7 +284,7 @@ contract MigrationCoreLocalQA is TestBase_UniswapV4DetfMigration {
         legs_[0] = Migration.GenesisLeg(IERC20(pairA), 100 ether, 1);
         legs_[1] = Migration.GenesisLeg(IERC20(pairB), 100 ether, 1);
         account_.bootstrap(legs_);
-        (uint256 credit_, uint256 id_) = account_.captureConfigureIssue(1 ether, 1 ether);
+        (uint256 credit_, uint256 id_) = account_.setConfigureIssue(1 ether, 1 ether, _manualInputs());
         require(id_ == 3 && bonds.positionOf(id_).principal == credit_, "actual independent principal");
         require(receipt.stakingState().accountedBacking == credit_, "measured backing");
         require(IERC20(detf).balanceOf(address(receipt)) == credit_, "actual backing custody");
@@ -238,7 +321,7 @@ contract MigrationCoreLocalQA is TestBase_UniswapV4DetfMigration {
         require(IDiamondLoupe(address(parent_)).facetAddress(Allocation.activateMigration.selector) == address(0), "atomic removal");
         uint256 rewards_ = bond_.claimRewards(3, DEV);
         require(rewards_ >= oldRewards_, "old bond owns old rewards");
-        address input_ = parent_.migrationSnapshotSource().weth;
+        address input_ = parent_.migrationWeightedPricing().weth;
         IERC20(input_).approve(address(parent_), 1 ether);
         parent_.bond(IERC20(input_), 1 ether, 90 days, DEV, false, block.timestamp + 1 hours);
         uint256 shares_ = sy_.balanceOf(DEV);

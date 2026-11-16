@@ -1,0 +1,222 @@
+{
+  "run": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/stage2-correction/rehearsal-1794428263929",
+  "proxy": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+  "snapshot": "0xe9e1a480070cff37ffb3743aec30de6008affbd3e49ca7d286655114495868ce",
+  "activation": {
+    "transactionHash": "0x0ee958d7e91516160a7365b73ea0dd9225abde29fb469ec917353a0d374a63d5",
+    "block": "108944935",
+    "gas": "181100",
+    "removedSelectors": [
+      "0xec55c474",
+      "0x161d9afc",
+      "0xccff9894",
+      "0x787642e8",
+      "0xe9dc9e6d",
+      "0x12076202",
+      "0x256c417b"
+    ]
+  },
+  "counts": {
+    "operatorReceipts": 39,
+    "fixtureReceipts": 120,
+    "negativeReceiptChecks": 43,
+    "successfulSurrenders": 7
+  },
+  "ordering": {
+    "lastConfigurationBlock": "108944917",
+    "configurationAndIndependentIssuanceBeforeActivation": true,
+    "positiveSurrendersAfterActivation": true
+  },
+  "positiveNfts": [
+    {
+      "bondTokenId": "7",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "credit": "13872781",
+      "exactSupplyAndBackingDelta": "13872781",
+      "originalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "remainingUnits": "281387179",
+      "stakingGons": "13872781000000000000000000000000000000000000",
+      "startTimestamp": "1794111251",
+      "tokenId": "4",
+      "transactionHash": "0x9534421ca626a809beee8dedd889e69e444a8afc2032879ea46c741339664678",
+      "vestingDuration": "7776000"
+    },
+    {
+      "bondTokenId": "8",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "credit": "22233172691",
+      "exactSupplyAndBackingDelta": "22233172691",
+      "originalWallet": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "remainingUnits": "56299",
+      "stakingGons": "22233172691000000000000000000000000000000000000",
+      "startTimestamp": "1794111266",
+      "tokenId": "26",
+      "transactionHash": "0xcd694ad92377dede191deee99c87db1999b9a7bd8ebfc1f74b2baed07adeae3c",
+      "vestingDuration": "7776000"
+    },
+    {
+      "bondTokenId": "9",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "credit": "923391925",
+      "exactSupplyAndBackingDelta": "923391925",
+      "originalWallet": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+      "remainingUnits": "562524912595035608166",
+      "stakingGons": "923391925000000000000000000000000000000000000",
+      "startTimestamp": "1794111278",
+      "tokenId": "3",
+      "transactionHash": "0xffe6f4467872aa0c6f39eca1682d0afe96c8f150ae56180241cfcf0d79b7cef0",
+      "vestingDuration": "7776000"
+    },
+    {
+      "bondTokenId": "10",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "credit": "36992599",
+      "exactSupplyAndBackingDelta": "36992599",
+      "originalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "remainingUnits": "740825635",
+      "stakingGons": "17994195273930684334531570841976891507238097",
+      "startTimestamp": "1825676106",
+      "tokenId": "6",
+      "transactionHash": "0x75ec859db994bc681594a8d5081ed43b84f5b2b3907f6b4dca90aa7c9d31f416",
+      "vestingDuration": "7776000"
+    },
+    {
+      "bondTokenId": "11",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "credit": "46243",
+      "exactSupplyAndBackingDelta": "46243",
+      "originalWallet": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      "remainingUnits": "26355776123062198039",
+      "stakingGons": "22493839160973162109581525495019622545829",
+      "startTimestamp": "1825676118",
+      "tokenId": "9",
+      "transactionHash": "0xa5b768482a5c6181c0ac5b25079fece9a65f12649db675a74dea2a419c0531a6",
+      "vestingDuration": "7776000"
+    }
+  ],
+  "positiveWeightedLiquid": [
+    {
+      "bondTokenId": "6",
+      "configurationId": "0x839755df6affccd27064e81b39ddd8dda027d68054c752fdf81ab4ed01d2088f",
+      "consumedUnits": "7075176",
+      "credit": "924869",
+      "deliveredCredit": "924869",
+      "duration": "7776000",
+      "gons": "924869000000000000000000000000000000000000",
+      "kind": "surrender",
+      "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+      "quantity": "7075176",
+      "remainingCredit": "1849739",
+      "remainingUnits": "14150354",
+      "startTimestamp": "1794111232",
+      "transactionHash": "0xd03a3739b69471f98c94ab1fb8b42686564c2c98d41c3bd1b048859bdd94c162",
+      "wallet": "0x082cb14f04d9c485473dedc00d604d7e9abca303"
+    },
+    {
+      "bondTokenId": "12",
+      "configurationId": "0x839755df6affccd27064e81b39ddd8dda027d68054c752fdf81ab4ed01d2088f",
+      "consumedUnits": "21225530",
+      "credit": "1849739",
+      "deliveredCredit": "2774608",
+      "duration": "7776000",
+      "gons": "899762808550036457570123508155441939067517",
+      "kind": "surrender",
+      "originalId": "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+      "quantity": "14150354",
+      "remainingCredit": "0",
+      "remainingUnits": "0",
+      "startTimestamp": "1825676127",
+      "transactionHash": "0x19dea92e20715ffce7ade6039fdfa3ff93bac7cd535e0688168d27e6b7c49276",
+      "wallet": "0x082cb14f04d9c485473dedc00d604d7e9abca303"
+    }
+  ],
+  "resumeChecks": [
+    {
+      "kind": "donation",
+      "transactionHash": "0xdb46df60da2b4bf178d4ba387f8ccd5217756808cf58e94f5d08d135059b23f3",
+      "nonce": "2118",
+      "completionAbsentAtInterruption": true,
+      "identicalMinedReceiptRecovered": true
+    },
+    {
+      "kind": "issuance",
+      "transactionHash": "0xf221e0e31a4b80f6e4cd9a2377c006c626bfa84a073171cf1bf33b6a9576c340",
+      "nonce": "2131",
+      "completionAbsentAtInterruption": true,
+      "identicalMinedReceiptRecovered": true
+    }
+  ],
+  "reorderedIssuance": {
+    "actual": [
+      {
+        "bondTokenId": "3",
+        "credit": "461",
+        "nonce": "2131",
+        "recipient": "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+        "transactionHash": "0xf221e0e31a4b80f6e4cd9a2377c006c626bfa84a073171cf1bf33b6a9576c340"
+      },
+      {
+        "bondTokenId": "4",
+        "credit": "461",
+        "nonce": "2132",
+        "recipient": "0x9586a4833970847aef259ad5bfb7aa8901ddf746",
+        "transactionHash": "0xa9972320647920ef4dd4e74b214c143f27459a552d4dee339849d5f1dda3d568"
+      },
+      {
+        "bondTokenId": "5",
+        "credit": "461",
+        "nonce": "2133",
+        "recipient": "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d",
+        "transactionHash": "0xba8eacd2e5a0fad8491f94a836ba13c928f318a4e7c8123d6e49eadde3a0d894"
+      }
+    ],
+    "expectedAfterInterruption": [
+      "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+      "0x9586a4833970847aef259ad5bfb7aa8901ddf746",
+      "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d"
+    ],
+    "originalOrder": [
+      "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+      "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d",
+      "0x9586a4833970847aef259ad5bfb7aa8901ddf746"
+    ]
+  },
+  "unclaimed": {
+    "supplyAfter": "1000000001383",
+    "supplyBefore": "1000000000000",
+    "unclaimedBond": "0",
+    "unclaimedIssued": false
+  },
+  "runtime": [
+    {
+      "address": "0x0a69db3b30b7cb13eaff786832e062d157630bb2",
+      "artifact": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xf8cc608fb1269f46fcf368d5d30a5a3234b9c2e7c3ea408df886b780a507ef68"
+    },
+    {
+      "address": "0xcd29f772d1c9dbdbafdb0e54504160a5a977c0e8",
+      "artifact": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xa3d43bb6328c9ae47a95afa2845235c97f235045e7518f7d8d6642ce700febe2"
+    },
+    {
+      "address": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+      "artifact": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0x7c970009268015b229ed977b83a3104fc65679cf92fd540e40441d934b12f1de"
+    },
+    {
+      "address": "0x2f0c891b4e9a1c9833dd3f7814d1a76f684797e9",
+      "artifact": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xb632ce74ecb444335db79f7bddd4463edd448725000b259f586ffa4bac6ff90b"
+    },
+    {
+      "address": "0xb084b225aa4395b47cc7affd375b8f56fc26083f",
+      "artifact": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "actualRuntimeEqualsBoundProducer": true,
+      "hash": "0xc061aa636c86664f207e7786b0efbe0b6858f69f6cdc11228e797134712d58b2"
+    }
+  ]
+}

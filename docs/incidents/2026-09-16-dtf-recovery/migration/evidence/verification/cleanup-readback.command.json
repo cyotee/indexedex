@@ -1,0 +1,21 @@
+{
+  "invocation": [
+    "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cleanup-readback.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "started": "2026-11-10T13:27:55.388Z",
+  "binaryPassObservable": "All recorded PIDs ESRCH, six TCP endpoints ECONNREFUSED, prior roots ENOENT; final own root removed with ENOENT",
+  "environment": {
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ",
+    "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ/bun-cache",
+    "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ/node-cache",
+    "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ/cache",
+    "NODE_COMPILE_CACHE": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ/node-compile",
+    "BUN_RUNTIME_TRANSPILER_CACHE_PATH": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ/bun-transpiler"
+  },
+  "processes": [],
+  "ports": [],
+  "directories": [],
+  "originalRootRemovedByThisRun": false
+}

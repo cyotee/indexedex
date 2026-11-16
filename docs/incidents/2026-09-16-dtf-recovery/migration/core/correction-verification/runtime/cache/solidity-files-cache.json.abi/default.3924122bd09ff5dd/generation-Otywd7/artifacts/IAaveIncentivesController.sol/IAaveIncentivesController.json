@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"handleAction","inputs":[{"name":"user","type":"address","internalType":"address"},{"name":"totalSupply","type":"uint256","internalType":"uint256"},{"name":"userBalance","type":"uint256","internalType":"uint256"}],"outputs":[],"stateMutability":"nonpayable"}],"id":1669}

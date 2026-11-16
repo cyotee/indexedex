@@ -1,0 +1,5 @@
+Retained root: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/source
+Destination root: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/destination
+Source entries: 2; destination entries: 3
+EOF-only	eof.txt	unresolved; delivery must fail until restored or source-qualified
+Additional historical-source differences and exact archived destinations: conformance-20261114/task-2/recovery-differences.json (when present).

@@ -1,0 +1,23 @@
+{
+  "savedBytes": 29288,
+  "savedSha256": "8d39259f16511b8e655c6d716a87ae948bb83e1a0f936739fbde999a661f10ac",
+  "manifestBytes": 29288,
+  "manifestSha256": "8d39259f16511b8e655c6d716a87ae948bb83e1a0f936739fbde999a661f10ac",
+  "savedMatchesManifest": true,
+  "currentBytes": 28723,
+  "currentSha256": "24489d1a61812c9d7b91d03bf874cffb85a36cb6d10821636fbb56ea80533829",
+  "currentLinesMissingFromSaved": 0,
+  "savedOnlyLines": [
+    " M docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+    " M scripts/recovery/dtf-migration/cli.ts",
+    " M scripts/recovery/dtf-migration/receipt-evidence.ts",
+    " M scripts/recovery/dtf-migration/receipt-input.ts",
+    " M scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+    " M scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+    " M scripts/recovery/dtf-migration/receipt.fixture.ts",
+    " M scripts/recovery/dtf-migration/receipt.test.ts",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/",
+    "?? out",
+    "07d54b9a3d20d98aee24e75235bbf16b650a8028"
+  ]
+}

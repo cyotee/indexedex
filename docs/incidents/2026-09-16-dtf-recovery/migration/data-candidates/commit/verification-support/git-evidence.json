@@ -1,0 +1,580 @@
+{
+  "environment": {
+    "GIT_MASTER": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_PAGER": "cat",
+    "PAGER": "cat"
+  },
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+  "commands": [
+    {
+      "args": [
+        "status",
+        "--short",
+        "--untracked-files=normal",
+        "--ignore-submodules=all"
+      ],
+      "exit": 0,
+      "out": "?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/\n",
+      "err": ""
+    },
+    {
+      "args": [
+        "rev-list",
+        "--parents",
+        "-n",
+        "1",
+        "HEAD"
+      ],
+      "exit": 0,
+      "out": "789fced820ed494d9651c598fb8f75c646d727a7 0856a5c56e5d09b81c669f59b613efef79133e19\n",
+      "err": ""
+    },
+    {
+      "args": [
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "out": "work/dtf-migration-phase-27-data-candidates\n",
+      "err": ""
+    },
+    {
+      "args": [
+        "diff-tree",
+        "--no-commit-id",
+        "--name-status",
+        "-r",
+        "--ignore-submodules=all",
+        "HEAD"
+      ],
+      "exit": 0,
+      "out": "M\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\nA\tscripts/recovery/dtf-migration/candidate-input.ts\nA\tscripts/recovery/dtf-migration/candidate-inventory.test.ts\nA\tscripts/recovery/dtf-migration/candidate-inventory.ts\nA\tscripts/recovery/dtf-migration/candidate-nfts.ts\nA\tscripts/recovery/dtf-migration/candidate-proofs.ts\nA\tscripts/recovery/dtf-migration/candidate-reconciliation.ts\nA\tscripts/recovery/dtf-migration/candidates.test.ts\nA\tscripts/recovery/dtf-migration/candidates.ts\nM\tscripts/recovery/dtf-migration/cli.ts\n",
+      "err": ""
+    },
+    {
+      "args": [
+        "cat-file",
+        "commit",
+        "HEAD"
+      ],
+      "exit": 0,
+      "out": "tree cbdb3081d1264ba05c3b9f1345aaff3c66cacf2e\nparent 0856a5c56e5d09b81c669f59b613efef79133e19\nauthor Cyotee Doge <not_cyotee@proton.me> 1794543292 -0800\ncommitter Cyotee Doge <not_cyotee@proton.me> 1794543292 -0800\ngpgsig -----BEGIN PGP SIGNATURE-----\n \n iQIzBAABCAAdFiEEVetCiJUTBRJnvFWjlSBkBKePt/MFAmr2jrwACgkQlSBkBKeP\n t/MNqRAAjdznsL9dWehGrXh8F2ARNtOfEwNgzG+Utrm1rJIS3QHR7ca9vhf0YC+P\n 0anAwoUEEw1i/M1hhWfvmnn0J4Q1jNGKwj5dTciJybA07n76nEcYfERvoWG1AEF5\n DHrJGDAi+mf43YH1+NF1iLxGGL7S4tRbn1dWCvDVeKgNkh7LSlRSvmr/aeelG2fw\n sEcbNlbZ3Wm/IFNdF2+fmz3y6nBa7Cb+Sxv5JLNAdNAAtDYFtJXj5b2V9UUf5yFs\n lqvSO8FJkMhuwpAGfLScCFN5ZLr/7hL6mlnD7vbMRVuexwqc3DIY7B5GaZYEjJfo\n 9AnBQ/hTqdFfyf80UKYL44CH8LHHpAvvtQuh1w6wRfwJXryypeRd6tUS0AhTsVmY\n nttR0tpyLDzIlFGBA5f5+WjoIKT2bFB8fT4Vzi4LFpIPmF6Rk5/4svTnLtHkNU5T\n EIRa4VW+ZUmvkaz5370wfHIA5JqORBYVwyMfBz2P9sF77XWrJvQqAyYPQS5BtNOW\n r5ZMALgEKUxkX8e7xgkswZL3OduJKRi0dwKaCF83/Cz+97s0fTbyQxrvnFT1JTCZ\n uug58I9N4IIMGxJt59ia9XjqYjJIoLdpDhUgOYPT5vVPVuIOUe5hFbzQkQFxyWis\n /aSW8kl3CTXBd2JygvF5uTcxlsmM3Qip3w9aLSQc+tyf6a5XfwY=\n =rCwy\n -----END PGP SIGNATURE-----\n\nAdd verified bounded historical review candidate derivation\n\nCo-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\n",
+      "err": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--check",
+        "0856a5c56e5d09b81c669f59b613efef79133e19",
+        "HEAD"
+      ],
+      "exit": 0,
+      "out": "",
+      "err": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--cached",
+        "--ignore-submodules=all",
+        "--exit-code"
+      ],
+      "exit": 0,
+      "out": "",
+      "err": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--exit-code"
+      ],
+      "exit": 0,
+      "out": "",
+      "err": ""
+    },
+    {
+      "args": [
+        "show",
+        "--check",
+        "--format=",
+        "HEAD"
+      ],
+      "exit": 0,
+      "out": "",
+      "err": ""
+    },
+    {
+      "args": [
+        "diff-tree",
+        "--numstat",
+        "--no-commit-id",
+        "-r",
+        "--ignore-submodules=all",
+        "HEAD"
+      ],
+      "exit": 0,
+      "out": "79\t0\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n144\t0\tscripts/recovery/dtf-migration/candidate-input.ts\n88\t0\tscripts/recovery/dtf-migration/candidate-inventory.test.ts\n166\t0\tscripts/recovery/dtf-migration/candidate-inventory.ts\n99\t0\tscripts/recovery/dtf-migration/candidate-nfts.ts\n79\t0\tscripts/recovery/dtf-migration/candidate-proofs.ts\n95\t0\tscripts/recovery/dtf-migration/candidate-reconciliation.ts\n139\t0\tscripts/recovery/dtf-migration/candidates.test.ts\n56\t0\tscripts/recovery/dtf-migration/candidates.ts\n10\t0\tscripts/recovery/dtf-migration/cli.ts\n",
+      "err": ""
+    },
+    {
+      "args": [
+        "show-ref"
+      ],
+      "exit": 0,
+      "out": "90ff0307a7a8e084aa073e02eff125e9c7973933 refs/heads/main\n6e27ecaa242c4acca132e3575a160514aad07b11 refs/heads/work/dtf-migration\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/heads/work/dtf-migration-phase-01\n215c2bba6aa75e3e79bf68b7980b730927a85817 refs/heads/work/dtf-migration-phase-02\n6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd refs/heads/work/dtf-migration-phase-03\n5021e8d4a62bcbddc555f580ef98f8666d993aab refs/heads/work/dtf-migration-phase-04\n6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31 refs/heads/work/dtf-migration-phase-05\n5021e8d4a62bcbddc555f580ef98f8666d993aab refs/heads/work/dtf-migration-phase-06-e2\n421072a7630a0d3d47a6f36e1062d9eae98c93e2 refs/heads/work/dtf-migration-phase-07-recovery\n3f577eeca049c1bd70a812d130941c8a38dd4781 refs/heads/work/dtf-migration-phase-08-operator\n421072a7630a0d3d47a6f36e1062d9eae98c93e2 refs/heads/work/dtf-migration-phase-09-deployment-gas\n3f577eeca049c1bd70a812d130941c8a38dd4781 refs/heads/work/dtf-migration-phase-11-same-wallet-sources\n2c2b3370ded30cae1662329025d4fb58f7197330 refs/heads/work/dtf-migration-phase-12-wallet-admission\n75d513cb8b36e53f14c8aa3a352f21703ad91ba1 refs/heads/work/dtf-migration-phase-13-weighted-liquid\n2baab6e58dafcc3fe5f9a94570d99987d58bf42b refs/heads/work/dtf-migration-phase-14-weighted-sy\n4a53299b490343ed904d70c92ecbc7360fcb7659 refs/heads/work/dtf-migration-phase-15-dtf-custody-se\na96f0fd26c1a1fdba35750cff74d866afa3a9796 refs/heads/work/dtf-migration-phase-16-claim-vault\nacdbe319f3a20c3af6bea594c62461b6c7988717 refs/heads/work/dtf-migration-phase-17-weighted-receipt\n1df9076c73b94a4f63172395763fa8cdd48fe060 refs/heads/work/dtf-migration-phase-18-earlier-receipt\n3ec0912bafebf9c0aa66770a72f04501e5c11865 refs/heads/work/dtf-migration-phase-19-earlier-liquid\nacdbe319f3a20c3af6bea594c62461b6c7988717 refs/heads/work/dtf-migration-phase-19-earlier-liquid-source\n1df9076c73b94a4f63172395763fa8cdd48fe060 refs/heads/work/dtf-migration-phase-20-se-lp-source\n4eaa7decab80d24cf37cb3781eff5ffaf9362942 refs/heads/work/dtf-migration-phase-21-held-se-lp\n4eaa7decab80d24cf37cb3781eff5ffaf9362942 refs/heads/work/dtf-migration-phase-22-claimed-sy-source\n15fd629375edeb361f6a39262795bdc66723ca3a refs/heads/work/dtf-migration-phase-23-claimed-sy-integration\n8db3f5ee6310e8a700dad2d6a33e21d0955e63ca refs/heads/work/dtf-migration-phase-24-stateful-invariants\n137fa0c8749165087c7d1d0156788f58a1dbf1b8 refs/heads/work/dtf-migration-phase-25-full-hermetic\n0856a5c56e5d09b81c669f59b613efef79133e19 refs/heads/work/dtf-migration-phase-26-portable-operator\n789fced820ed494d9651c598fb8f75c646d727a7 refs/heads/work/dtf-migration-phase-27-data-candidates\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/remotes/origin/HEAD\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/codex/robinhood-release-review\n0c3558b2ec9571873a787eef4becbdddafc6ce7b refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0\na1a2b239593a90a062a8d477395f6b7fc3a473f7 refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6\n3a4001f8a017be2b8b3e988b3fb1fcff454b6a01 refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9\n41bbe4eec3ce9279b205058063b3b69f6be2b149 refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6\n8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570 refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8\n3a8205815ac3f4307de10ab27e813a56847d779c refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21\n92eeb98dad898aa12b83191e029a9e74112c295b refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21\n27de3dc71df885634fda1b1fea448e3b499898c3 refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7\nf0d69de54820d1b844f304dc0c7bcf990f0b57a1 refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13\n74ef9f247f0b1a661fb338738e8300bd0c7f05eb refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea\nbdd8e74ea3902897ca98d8312e5c195d9dbd5a33 refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731\n92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb\nf4f3a424d8b286c5b0940694835e958f91d24c74 refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18\n1319a76e08a306e77926a20feb6b95250e64b348 refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8\n549159d0b0c86fc0818f9e628315ddfef984ae4c refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2\nfb6f85b84a9f85dbb6dcb368b75111ecb6257a6c refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9\n05de656fd06346486bec9e9c7c17ce58508f5aac refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2\n924b83b300fb1e3938cc48e3ecd474a855775a3e refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24\nad6c641aa4dcb582185a136fda6f342ffd8fb103 refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1\nffb2652457d73cb8ced157853b9fd7b1ca883065 refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18\n4db81ae56cec60663566fd79f82c08bcf15859d7 refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8\neae337a55ff219b56208c6eff11bf9cdb45d6a34 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8\n98c7f0ac0cbf5c08666680a411a4b4a836fb0b73 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7\n27d0cbfada90a5f6b546ed712e04dc0c5d8e4154 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5\nf149ade544a68566d09a3ab3b7f6000873be6de8 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26\n950e6b32ea8efff73226a0adf6a7e0b75828127a refs/remotes/origin/docs/agent-inventory-navigation\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/feat/uniswap-v4-upper-lower-wings\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/feature/crane-ethereum-staking-ports\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/fix/legacy-v4-erc5115-interface\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/fix/uniswap-se-v2-delivery\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/frontend/multi-app-monorepo\n6724a5e5c762394797c3508ae1db7d6c0dbdac78 refs/remotes/origin/gh-pages\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/remotes/origin/main\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/refactor/frontend-shared-deployment-root\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/upgrade/nextjs-16\n7321b70c984423699475cfb45907b6dd70bb8ef4 refs/stash\n",
+      "err": ""
+    },
+    {
+      "args": [
+        "rev-list",
+        "--count",
+        "0856a5c56e5d09b81c669f59b613efef79133e19..HEAD"
+      ],
+      "exit": 0,
+      "out": "1\n",
+      "err": ""
+    }
+  ],
+  "largeReadOnlyResults": [
+    {
+      "args": [
+        "ls-tree",
+        "-r",
+        "HEAD"
+      ],
+      "exit": 0,
+      "bytes": 1795910,
+      "sha256": "a6830c7c6781a518905e894cd8076745ef8b674256b79f30204c8b3e17f7df8f",
+      "err": ""
+    },
+    {
+      "args": [
+        "ls-files",
+        "--stage"
+      ],
+      "exit": 0,
+      "bytes": 1756647,
+      "sha256": "d4160b782637efecc8bda8dc8338d83130f2d8ed289686a1e95c21503c00d9b9",
+      "err": ""
+    }
+  ],
+  "fullTreeIndexEqual": true,
+  "fullTreeIndexEntries": 13087,
+  "parentAudit": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "exit": 0,
+      "parentEntry": "100644 blob 9202bed8ea7d8ade48c95f38a81b07ea46daffe7\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "claimedParentBlob": "9202bed8ea7d8ade48c95f38a81b07ea46daffe7",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "exit": 0,
+      "parentEntry": "",
+      "claimedParentBlob": null,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "exit": 0,
+      "parentEntry": "100644 blob 28784724aa049e128b70f693081f04418d18af9c\tscripts/recovery/dtf-migration/cli.ts",
+      "claimedParentBlob": "28784724aa049e128b70f693081f04418d18af9c",
+      "match": true
+    }
+  ],
+  "showRefAudit": {
+    "before": {
+      "bytes": 6482,
+      "sha256": "5558b8c41004e4f12b5adf710b79b5a00e429f866743f42846c421d34f78d25c"
+    },
+    "after": {
+      "bytes": 6482,
+      "sha256": "0565f2c0aa53f484bfe936d7089bb24ebdee7ce37a9a0dd69d9b3d82134969d3"
+    },
+    "removed": [
+      "0856a5c56e5d09b81c669f59b613efef79133e19 refs/heads/work/dtf-migration-phase-27-data-candidates"
+    ],
+    "added": [
+      "789fced820ed494d9651c598fb8f75c646d727a7 refs/heads/work/dtf-migration-phase-27-data-candidates"
+    ]
+  },
+  "membershipAudit": [
+    {
+      "name": "docs-incidents",
+      "missing": [],
+      "added": [
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit",
+          "kind": "dir"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/source-manifest.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/receipt.md",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/preservation-compare.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit",
+          "kind": "dir"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/diff.patch",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/diff-stat.txt",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/summary.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/recovered-input.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/stderr.log",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/preservation-compare-before-support.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/docs-incidents.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/ls-files.txt",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/cache_forge.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/original-recovery.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/show-ref.txt",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/gpg-test.sig",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/capture.mjs",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/cache-absent.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/roots.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/stdout.log",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/original-recovery-perms.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/out-perms.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/cached.diff",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/staged.diff",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/out.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/source-bindings.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/original-pre-exploit-perms.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/recipe.txt",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/refs.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/host-deps.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/recovered-input-perms.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/cache_forge-perms.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/original-pre-exploit.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/frozen-source-modes.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/seal-check.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/status.txt",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/CAPTURE_COMPLETE",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/docs-incidents-perms.jsonl",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/indexes.json",
+          "kind": "file"
+        },
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/precommit/authorities.json",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "name": "out",
+      "missing": [],
+      "added": []
+    },
+    {
+      "name": "cache_forge",
+      "missing": [],
+      "added": []
+    },
+    {
+      "name": "original-recovery",
+      "missing": [],
+      "added": []
+    },
+    {
+      "name": "original-pre-exploit",
+      "missing": [],
+      "added": []
+    },
+    {
+      "name": "recovered-input",
+      "missing": [],
+      "added": []
+    }
+  ],
+  "originalInventoryIdentities": {
+    "docs-incidents.jsonl": {
+      "bytes": 101196,
+      "sha256": "c53b6a14a58564f8254508490a35ff5d2300ba12cb8deecfbf9da1fa60d02a2d"
+    },
+    "docs-incidents-perms.jsonl": {
+      "bytes": 101235,
+      "sha256": "eb2e996d05c5ab9433cc30039f61c2babe7b62220c3f75111f28b729d8ef21a9"
+    },
+    "out.jsonl": {
+      "bytes": 1960530,
+      "sha256": "6673598e3a68c4b3dd7d747ffea0027f9c55f566c259faff4453b299a9db1771"
+    },
+    "out-perms.jsonl": {
+      "bytes": 2721030,
+      "sha256": "6c69936bfe945823dca2d1b60a81897870c422a976d4b8a9d638e4c2c9dfb72a"
+    },
+    "cache_forge.jsonl": {
+      "bytes": 2297269,
+      "sha256": "167a70ddc88be51f57510a8ed99510b778850e635a26f64009b0c64c73750744"
+    },
+    "cache_forge-perms.jsonl": {
+      "bytes": 3518453,
+      "sha256": "ad05142c9779921a1abba60f51f25985a4caf985568a18a64702422e24237e4c"
+    },
+    "original-recovery.jsonl": {
+      "bytes": 5668,
+      "sha256": "a29c461c60b788748e935c485444eec646d677becabf9f967752f8bceada12de"
+    },
+    "original-recovery-perms.jsonl": {
+      "bytes": 5438,
+      "sha256": "ab1a9b57ce7c852fcbcd67ac75e24e6c8f14923e50922f8859f80e7486f6ac25"
+    },
+    "original-pre-exploit.jsonl": {
+      "bytes": 2692,
+      "sha256": "236335672b9491a04f5eef60bf3542e49bef7cbf145a1aea918d36aea36acf3f"
+    },
+    "original-pre-exploit-perms.jsonl": {
+      "bytes": 2585,
+      "sha256": "e6d6c3b596584a8f76be9d62bd9a3cf3a09228a77f1862174de63c9b168d119b"
+    },
+    "recovered-input.jsonl": {
+      "bytes": 7898,
+      "sha256": "a28a29eb85372bf3c41c3f4d461475b7b0aaba7d9bfbdb8ead12b2f222c44800"
+    },
+    "recovered-input-perms.jsonl": {
+      "bytes": 8076,
+      "sha256": "1caf7f698a7113d62eed6c92b73d4f70115c89439137a5a9e311b13291145e73"
+    }
+  },
+  "comparison": "All original baseline rows are reproduced in preservation-* support; no replacement baseline.",
+  "baselineDifferences": [
+    {
+      "name": "docs-incidents-perms.jsonl",
+      "baseline": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates",
+        "kind": "dir",
+        "perm": "0o755",
+        "st_mode": 16877,
+        "size": 192,
+        "sha256": null,
+        "target": null
+      },
+      "observed": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates",
+        "kind": "dir",
+        "perm": "0o755",
+        "st_mode": 16877,
+        "size": 224,
+        "sha256": null,
+        "target": null
+      },
+      "mismatchedFields": [
+        "size"
+      ]
+    },
+    {
+      "name": "indexes.json",
+      "baseline": {
+        "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-27-data-candidates/index",
+        "foreign": false,
+        "own": true,
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 2076635,
+        "bytes": 2076635,
+        "sha256": "3f65220769feadf707b9ddfa503bb70d78d9520666fe414f7220e51c47814937"
+      },
+      "observed": {
+        "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-27-data-candidates/index",
+        "foreign": false,
+        "own": true,
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 2077579,
+        "bytes": 2077579,
+        "sha256": "6a2e636d68083c83d543b6518661ad323f07faa728dcdcb9f58f9717302d543b"
+      },
+      "mismatchedFields": [
+        "size",
+        "bytes",
+        "sha256"
+      ]
+    },
+    {
+      "name": "refs.jsonl",
+      "baseline": {
+        "path": ".git/refs/heads/work/dtf-migration-phase-27-data-candidates",
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 41,
+        "sha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401",
+        "target": null
+      },
+      "observed": {
+        "path": ".git/refs/heads/work/dtf-migration-phase-27-data-candidates",
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 41,
+        "sha256": "dcd150d26b0ed9bfa44f3993987b3b3257ee4c57cd500a55f785cd5cd86890a5",
+        "target": null
+      },
+      "mismatchedFields": [
+        "sha256"
+      ]
+    }
+  ]
+}

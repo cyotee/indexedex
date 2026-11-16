@@ -1,0 +1,35 @@
+{
+  "comparedContent": 14293,
+  "comparedPerms": 26682,
+  "contentOrPermMismatches": 0,
+  "mismatches": [],
+  "indexMismatches": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-27-data-candidates/index",
+      "own": true,
+      "expectedSha": "3f65220769feadf707b9ddfa503bb70d78d9520666fe414f7220e51c47814937",
+      "actualSha": "6a2e636d68083c83d543b6518661ad323f07faa728dcdcb9f58f9717302d543b",
+      "expectedBytes": 2076635,
+      "actualBytes": 2077579,
+      "expectedMode": 33188,
+      "actualMode": 33188
+    }
+  ],
+  "refMismatches": [
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-27-data-candidates",
+      "expectedSha": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401",
+      "actualSha": "dcd150d26b0ed9bfa44f3993987b3b3257ee4c57cd500a55f785cd5cd86890a5",
+      "expectedSize": 41,
+      "actualSize": 41,
+      "expectedMode": 33188,
+      "actualMode": 33188
+    }
+  ],
+  "hostMismatches": [],
+  "authorityMismatches": [],
+  "showRefEqual": false,
+  "showRefBytes": 6482,
+  "oldShowBytes": 6482,
+  "commitDirExists": false
+}

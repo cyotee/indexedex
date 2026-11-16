@@ -1,0 +1,73 @@
+{
+  "task": "Verify bootstrap identity and prepare only local dependency links",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "branch": "work/dtf-conformance-20261115-wave-1",
+  "baseline": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+  "result": "setup prerequisites confirmed; compilation not run",
+  "identity": {
+    "commands": [
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' branch --show-current",
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' rev-parse HEAD",
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex' rev-parse main",
+      "cmp -s '/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/plans/dtf-migration-conformance-remediation-20261114.md'"
+    ],
+    "result": "branch work/dtf-conformance-20261115-wave-1; task HEAD and primary main both c33f70683cbaabfedc2dbce1142fdd65660d4cf3; plan comparison exited 0."
+  },
+  "parent_checkout": {
+    "command": "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' status --porcelain=v1",
+    "result": "Exited 0. Existing worktree untracked/user files remain present and were not changed by this setup."
+  },
+  "node_modules": {
+    "command": "readlink '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/node_modules'",
+    "result": "/Users/cyotee/Projects/indexedex/node_modules"
+  },
+  "crane_copy": {
+    "source": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "target": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/lib/crane",
+    "parent_gitlink_oid": "fc0618bf5c34d0564f4367130feff443bd4efc89",
+    "source_head": "fc0618bf5c34d0564f4367130feff443bd4efc89",
+    "commands": [
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' rev-parse HEAD:lib/crane",
+      "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex/lib/crane' rev-parse HEAD",
+      "diff -qr --no-dereference --exclude=.git --exclude=out --exclude=cache_forge '/Users/cyotee/Projects/indexedex/lib/crane' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/lib/crane'"
+    ],
+    "result": "Parent gitlink and source HEAD match. diff exited 0 with no differences outside Git metadata and deferred generated artifacts. The task dependency is a populated plain copy; it has no Crane .git metadata and is not claimed to be an initialized submodule.",
+    "nested_gitlinks": {
+      "command": "For each listed path, compare GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex/lib/crane' rev-parse 'HEAD:<path>' with GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex/lib/crane/<path>' rev-parse HEAD",
+      "result": {
+        "lib/battlechain-lib": "c33885dcb1ed8aff311207a1b89c4ef3032c2f65; pin and source HEAD match",
+        "lib/chainlink-local": "f8c0efe8685660dac07e08f4558f1b578ae991aa; pin and source HEAD match",
+        "lib/forge-std": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b; pin and source HEAD match",
+        "lib/gitlawb-contracts": "e7cb6313660e9e8f903185f93800236cc35f0e30; pin and source HEAD match",
+        "lib/openzeppelin-contracts": "a22c8862f3fd80cd2bd5fab703b4e93ef3830040; pin and source HEAD match"
+      }
+    }
+  },
+  "symlinks": {
+    "inventory_command": "Read symlink entries and link text with Python os.walk(followlinks=False) and os.readlink; resolve relative paths from each link's containing directory without traversing arbitrary targets.",
+    "result": "278 symlinks with identical entries/link text in source and task copy. 199 relative dangling links are under .agents/skills and .grok/skills, matching source tooling aliases to unavailable .opencode/.claude skill targets; they are not Solidity import paths. Four absolute LayerZero targets are dangling in both source and copy. No source-side shared target was changed or created.",
+    "layerzero_import_check": {
+      "command": "Scan Solidity import directives containing layerzero, oft-evm, or @layerzerolabs; resolve relative imports and configured remappings against the task-local copy.",
+      "result": "All 10 matching Solidity import directives resolved to task-local source files. None references the four pre-existing dangling absolute LayerZero symlink targets."
+    }
+  },
+  "remappings": {
+    "command": "Parse lib/crane/remappings.txt and test each target directory in the task copy.",
+    "result": "9 remappings checked; 0 missing targets."
+  },
+  "git_metadata_cleanup": {
+    "command": "Find task-local .git entries; for each regular .git pointer file verify byte equality with its copied source counterpart, then unlink only that task-local pointer.",
+    "result": "Removed 53 copied nested .git pointer files after exact source-byte comparison. A final find reported 0 .git metadata entries under task lib/crane. Primary metadata was not written."
+  },
+  "primary_preservation": {
+    "command": "GIT_MASTER=1 git -C '/Users/cyotee/Projects/indexedex/lib/crane' status --short --untracked-files=all",
+    "result": "Final source Crane status was clean; no primary source or dependency writes were performed."
+  },
+  "deferred": {
+    "forge": "No Forge command was run.",
+    "cache_seeding": "Deferred. Task out/ and cache_forge remain unseeded; seed both from a warm checkout before the first Forge compile.",
+    "install_or_network": "Not run; no network access or package installation."
+  },
+  "scope_note": "Confirmed means checkout identity, local Crane copy content, Git status, node_modules target, symlink classification, and configured remapping/import paths were checked. It does not claim compilation or test success."
+}

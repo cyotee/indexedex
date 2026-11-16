@@ -1,0 +1,192 @@
+{
+  "walks": {
+    "docs-incidents": {
+      "content": {
+        "before": 1482,
+        "after": 1482,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "perms": {
+        "before": 1493,
+        "after": 1493,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "dirs": {
+        "before": 11,
+        "after": 11,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      }
+    },
+    "out": {
+      "content": {
+        "before": 7376,
+        "after": 7376,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "perms": {
+        "before": 13856,
+        "after": 13856,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "dirs": {
+        "before": 6480,
+        "after": 6480,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      }
+    },
+    "cache_forge": {
+      "content": {
+        "before": 6502,
+        "after": 6502,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "perms": {
+        "before": 12368,
+        "after": 12368,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "dirs": {
+        "before": 5866,
+        "after": 5866,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      }
+    },
+    "recovered-input": {
+      "content": {
+        "before": 30,
+        "after": 30,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "perms": {
+        "before": 35,
+        "after": 35,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "dirs": {
+        "before": 5,
+        "after": 5,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      }
+    },
+    "original-incident": {
+      "content": {
+        "before": 25,
+        "after": 25,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "perms": {
+        "before": 27,
+        "after": 27,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      },
+      "dirs": {
+        "before": 2,
+        "after": 2,
+        "missing": 0,
+        "extra": 0,
+        "changed": 0
+      }
+    }
+  },
+  "indexes": {
+    "count": 30,
+    "foreignChanged": 0,
+    "ownChanged": 1,
+    "missing": [],
+    "extra": [],
+    "own": [
+      {
+        "path": "worktrees/dtf-migration-phase-28-receipt-evidence/index",
+        "before": {
+          "path": "worktrees/dtf-migration-phase-28-receipt-evidence/index",
+          "foreign": false,
+          "bytes": 2077579,
+          "sha256": "47760b282e13f83c77f8be9a22b49b06bb5f9fd92bf21239728341cbb6c8b570",
+          "perm": "0o644",
+          "st_mode": 33188
+        },
+        "after": {
+          "path": "worktrees/dtf-migration-phase-28-receipt-evidence/index",
+          "foreign": false,
+          "bytes": 2078515,
+          "sha256": "64f80d782c15e24157675abb4b0057a32bd7e46001789077028743aa60ac391d",
+          "perm": "0o644",
+          "st_mode": 33188
+        }
+      }
+    ]
+  },
+  "refs": {
+    "count": 56,
+    "changed": [
+      "refs/heads/work/dtf-migration-phase-28-receipt-evidence"
+    ],
+    "unexpected": [],
+    "missing": [],
+    "extra": [],
+    "branch": {
+      "path": "refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+      "before": {
+        "path": "refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+        "bytes": 41,
+        "sha256": "dcd150d26b0ed9bfa44f3993987b3b3257ee4c57cd500a55f785cd5cd86890a5",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "text": "789fced820ed494d9651c598fb8f75c646d727a7\n"
+      },
+      "after": {
+        "path": "refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+        "bytes": 41,
+        "sha256": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "text": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n"
+      }
+    }
+  },
+  "showRef": {
+    "beforeBytes": 6579,
+    "afterBytes": 6579,
+    "beforeSha256": "04d7ac6af4a4ca0be07c8ef7427d3f497ff80d1931953ea36fd414024df1f82f",
+    "afterSha256": "5d67d05f7dbb04f97ed7a3256e3095644323f92b263b7511a7a7cda6b113b2db",
+    "removed": [
+      "789fced820ed494d9651c598fb8f75c646d727a7 refs/heads/work/dtf-migration-phase-28-receipt-evidence"
+    ],
+    "added": [
+      "07d54b9a3d20d98aee24e75235bbf16b650a8028 refs/heads/work/dtf-migration-phase-28-receipt-evidence"
+    ],
+    "exit": 0
+  },
+  "hostUnchanged": true,
+  "authoritiesUnchanged": true,
+  "contentPermDirMismatches": 0,
+  "commitDirExists": false
+}

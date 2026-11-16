@@ -1,0 +1,21 @@
+{
+  "green": true,
+  "staged": 28,
+  "additions": 3,
+  "modifications": 25,
+  "unexpected": [],
+  "missing": [],
+  "blobMismatches": 0,
+  "modeMismatches": 0,
+  "shortstat": "28 files changed, 1170 insertions(+), 33 deletions(-)",
+  "insertions": 1170,
+  "deletions": 33,
+  "whitespace": {
+    "parentToCandidate": 0,
+    "staged": 0,
+    "parentOutputBytes": 0,
+    "stagedOutputBytes": 0
+  },
+  "headBeforeCommit": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+  "unstagedTracked": ""
+}

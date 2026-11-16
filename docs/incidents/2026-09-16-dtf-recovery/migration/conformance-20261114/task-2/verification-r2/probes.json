@@ -1,0 +1,733 @@
+{
+  "commands": [
+    {
+      "label": "happy-inventory",
+      "argv": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/happy-inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "stdout": "INVENTORY_COMPLETE source=1 destination=1 divergent=0\n",
+      "stderr": "",
+      "before": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553087,
+          "mtimeMs": 1794705478779.1758
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        }
+      ],
+      "after": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553087,
+          "mtimeMs": 1794705478779.1758
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        }
+      ],
+      "inputsUnchanged": true
+    },
+    {
+      "label": "happy-delivery",
+      "argv": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/happy-inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/happy-delivery"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "stdout": "DELIVERY_COMPLETE entries=2 failures=0\n",
+      "stderr": "",
+      "before": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553087,
+          "mtimeMs": 1794705478779.1758
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        }
+      ],
+      "after": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553087,
+          "mtimeMs": 1794705478779.1758
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        }
+      ],
+      "inputsUnchanged": true
+    },
+    {
+      "label": "stale-state",
+      "argv": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/happy-inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/stale-delivery"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 1,
+      "stdout": "DELIVERY_FAILED entries=4 failures=3\n",
+      "stderr": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt: stale source inventory; source bytes/type changed or missing\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt: stale inventory; unrecorded retained entry\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt: stale inventory; unrecorded retained entry\n",
+      "before": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "after": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "inputsUnchanged": true
+    },
+    {
+      "label": "negative-inventory",
+      "argv": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/negative-inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "stdout": "INVENTORY_COMPLETE source=4 destination=4 divergent=4\n",
+      "stderr": "",
+      "before": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link",
+          "type": "symlink",
+          "size": 25,
+          "sha256": "f294a5a11618c2684067b366fcf2b821a416c882fea367381a275b7c04cb5973",
+          "ino": 21554224,
+          "mtimeMs": 1794705558759.8242
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "after": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link",
+          "type": "symlink",
+          "size": 25,
+          "sha256": "f294a5a11618c2684067b366fcf2b821a416c882fea367381a275b7c04cb5973",
+          "ino": 21554224,
+          "mtimeMs": 1794705558759.8242
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "inputsUnchanged": true
+    },
+    {
+      "label": "missing-tampered-symlink-misleading-success",
+      "argv": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/negative-inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/negative-delivery"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 1,
+      "stdout": "DELIVERY_FAILED entries=4 failures=4\n",
+      "stderr": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/missing.txt: missing task-owned entry\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/outward-link: unresolved symlink; no traversal or implicit exclusion\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt: different retained bytes/type; unresolved divergence\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt: different retained bytes/type; unresolved divergence\n",
+      "before": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link",
+          "type": "symlink",
+          "size": 25,
+          "sha256": "f294a5a11618c2684067b366fcf2b821a416c882fea367381a275b7c04cb5973",
+          "ino": 21554224,
+          "mtimeMs": 1794705558759.8242
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "after": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link",
+          "type": "symlink",
+          "size": 25,
+          "sha256": "f294a5a11618c2684067b366fcf2b821a416c882fea367381a275b7c04cb5973",
+          "ino": 21554224,
+          "mtimeMs": 1794705558759.8242
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "inputsUnchanged": true
+    },
+    {
+      "label": "outward-root",
+      "argv": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/outward-root-output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "70 | };\n71 | async function noSymlinkAncestors(file: string) {\n72 |   let cursor: string = sep;\n73 |   for (const component of resolve(file).split(sep).filter(Boolean)) {\n74 |     cursor = join(cursor, component);\n75 |     if ((await inspect(cursor))?.isSymbolicLink()) throw new InventoryError(cursor, \"symlink boundary\");\n                                                              ^\nerror: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link: symlink boundary\n entry: \"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link\",\n\n      at noSymlinkAncestors (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:75:58)\n      at async tree (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:83:9)\n      at async inventory (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:134:24)\n\nBun v1.4.2 (macOS arm64)\n",
+      "before": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link",
+          "type": "symlink",
+          "size": 25,
+          "sha256": "f294a5a11618c2684067b366fcf2b821a416c882fea367381a275b7c04cb5973",
+          "ino": 21554224,
+          "mtimeMs": 1794705558759.8242
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "after": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/missing.txt",
+          "type": "file",
+          "size": 18,
+          "sha256": "ce8b580f512df4c2dafbc48f972c8cad16e7018e2194d65d6dfe97d7a9be40ea",
+          "ino": 21554076,
+          "mtimeMs": 1794705550424.5032
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/outward-link",
+          "type": "symlink",
+          "size": 25,
+          "sha256": "f294a5a11618c2684067b366fcf2b821a416c882fea367381a275b7c04cb5973",
+          "ino": 21554224,
+          "mtimeMs": 1794705558759.8242
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/preserved.txt",
+          "type": "file",
+          "size": 53,
+          "sha256": "0fc76f38a9bb9ce972feec805428eadf0552d265867328bd1c0100678bbf590e",
+          "ino": 21554075,
+          "mtimeMs": 1794705550423.7449
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/source/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "25718360e05d3c2d0963d1381e9dd4dae5fca789244ee4b9f861adcc0cc96218",
+          "ino": 21554077,
+          "mtimeMs": 1794705550424.9814
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/generated.json",
+          "type": "file",
+          "size": 23,
+          "sha256": "c17affbee66310e6d8a765147cc5999893c3bfc6ca96559db800b038b9a97299",
+          "ino": 21553495,
+          "mtimeMs": 1794705507353.7246
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/preserved.txt",
+          "type": "file",
+          "size": 32,
+          "sha256": "a9bb773c74a64a7e2ac939522a070d2a3a4d74c5aec5855e12ceb1bec1696f85",
+          "ino": 21553089,
+          "mtimeMs": 1794705478779.7434
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/success.log",
+          "type": "file",
+          "size": 44,
+          "sha256": "d35b2bfbd760d167bdd60e103985ad49aaf9155061ca6e905bc01b909845ac22",
+          "ino": 21554079,
+          "mtimeMs": 1794705550432.647
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/fixtures/destination/tampered.txt",
+          "type": "file",
+          "size": 9,
+          "sha256": "92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f",
+          "ino": 21554078,
+          "mtimeMs": 1794705550431.9265
+        }
+      ],
+      "inputsUnchanged": true
+    }
+  ],
+  "typecheck": {
+    "argv": [
+      "bun",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--target",
+      "ES2022",
+      "--module",
+      "ESNext",
+      "--moduleResolution",
+      "Bundler",
+      "--strict",
+      "--noUncheckedIndexedAccess",
+      "--exactOptionalPropertyTypes",
+      "--verbatimModuleSyntax",
+      "--skipLibCheck",
+      "--types",
+      "node",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "expectedExitVector": [
+    0,
+    0,
+    1,
+    0,
+    1,
+    1
+  ],
+  "allInputsUnchanged": true,
+  "generatedArtifactHashVerified": true
+}

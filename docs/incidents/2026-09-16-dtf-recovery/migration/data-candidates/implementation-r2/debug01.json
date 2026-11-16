@@ -1,0 +1,13 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+  "executable": "bun",
+  "args": [
+    "-e",
+    "import {deriveCandidates} from \"./scripts/recovery/dtf-migration/candidates.ts\"; import {loadCandidateInput} from \"./scripts/recovery/dtf-migration/candidate-input.ts\"; deriveCandidates(await loadCandidateInput(process.argv[1]));",
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/debug01.stdout",
+  "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/debug01.stderr"
+}

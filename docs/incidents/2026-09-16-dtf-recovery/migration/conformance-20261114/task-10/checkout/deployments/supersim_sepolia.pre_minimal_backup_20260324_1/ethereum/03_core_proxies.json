@@ -1,0 +1,6 @@
+{
+  "feeCollector": "0x04adFFD14fE3A9B4c2214f6425d239D06EA95855",
+  "indexedexManager": "0x6fe7Ea8a4901F9b29342Bdee13eDA204DB5104D0",
+  "vaultFeeOracle": "0x6fe7Ea8a4901F9b29342Bdee13eDA204DB5104D0",
+  "vaultRegistry": "0x6fe7Ea8a4901F9b29342Bdee13eDA204DB5104D0"
+}

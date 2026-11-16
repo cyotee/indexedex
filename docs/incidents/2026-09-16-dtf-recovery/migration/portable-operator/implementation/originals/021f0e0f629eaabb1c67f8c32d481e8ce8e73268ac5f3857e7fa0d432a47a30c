@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"roleRegistry","inputs":[],"outputs":[{"name":"","type":"address","internalType":"contract IRoleRegistry"}],"stateMutability":"view"}],"id":2056}

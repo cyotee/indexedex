@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"percentageOfWAD","inputs":[{"name":"total","type":"uint256","internalType":"uint256"},{"name":"percentage","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"pure"}],"id":3445}

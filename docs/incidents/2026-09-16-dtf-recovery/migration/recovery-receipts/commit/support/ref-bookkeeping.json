@@ -1,0 +1,238 @@
+{
+  "qualification": "show-ref changed only refs/heads/work/dtf-migration-phase-30-recovery-receipts from the parent to this commit. Other show-ref lines were unchanged. Loose ref files listed here were absent after the commit and packed-refs bytes changed. This delivery did not run pack-refs, gc, or update those branches. Loose-file bytes are not claimed preserved. Branch tips other than this branch are unchanged in show-ref.",
+  "showRefAdded": [
+    "1694e68a4bd66dd67d3b5e3f145f1da23074ff48 refs/heads/work/dtf-migration-phase-30-recovery-receipts"
+  ],
+  "showRefRemoved": [
+    "07d54b9a3d20d98aee24e75235bbf16b650a8028 refs/heads/work/dtf-migration-phase-30-recovery-receipts"
+  ],
+  "ownIndex": [
+    {
+      "path": ".git/worktrees/dtf-migration-phase-30-recovery-receipts/index",
+      "before": "32cba2775feb98fee6b8ea2e4cad7e5ca913a70f1f4b3bc326da5f78b2d5533b",
+      "after": "8e55be0964db3e0446ca4664d70e67c4391a5962887cd0651c72ee6f9503b42f",
+      "modeBefore": 33188,
+      "modeAfter": 33188,
+      "bytesBefore": 2078515,
+      "bytesAfter": 2078515
+    }
+  ],
+  "refDiff": [
+    {
+      "path": ".git/packed-refs",
+      "beforeText": null,
+      "afterText": null,
+      "shaBefore": "c9b82b77265bae5c48a14f51d7f5f2e00a223688b420889aee5b79a98bf6771d",
+      "shaAfter": "d4eaea5282d2f7e72f8eedd07e617823fb095218f60756366b17a7eccdaf4711",
+      "looseFileGone": false
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-05",
+      "beforeText": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31\n",
+      "afterText": null,
+      "shaBefore": "edb739ece2625919fa727b5f4dfc42b203235c1ef4b59dd71111024ce9266c3e",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-06-e2",
+      "beforeText": "5021e8d4a62bcbddc555f580ef98f8666d993aab\n",
+      "afterText": null,
+      "shaBefore": "b2bb51cf93d31af93769cc7d5a31016e8663ddf9309b4f7d86f7f0e2af69ddaf",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-07-recovery",
+      "beforeText": "421072a7630a0d3d47a6f36e1062d9eae98c93e2\n",
+      "afterText": null,
+      "shaBefore": "c2463823deab2b92f87fb7093509d9e7fa7daafeb6729674f91ba862f9f2198f",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-08-operator",
+      "beforeText": "3f577eeca049c1bd70a812d130941c8a38dd4781\n",
+      "afterText": null,
+      "shaBefore": "38a2374f42f21c7b4d8e1758eb093e042a63df5acd071193fb28c0db75b17f78",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-09-deployment-gas",
+      "beforeText": "421072a7630a0d3d47a6f36e1062d9eae98c93e2\n",
+      "afterText": null,
+      "shaBefore": "c2463823deab2b92f87fb7093509d9e7fa7daafeb6729674f91ba862f9f2198f",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-11-same-wallet-sources",
+      "beforeText": "3f577eeca049c1bd70a812d130941c8a38dd4781\n",
+      "afterText": null,
+      "shaBefore": "38a2374f42f21c7b4d8e1758eb093e042a63df5acd071193fb28c0db75b17f78",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-12-wallet-admission",
+      "beforeText": "2c2b3370ded30cae1662329025d4fb58f7197330\n",
+      "afterText": null,
+      "shaBefore": "451f07cae19ca79a11ba85c21faec3caa72becb91ba46a1b4aa38c81c1a02e25",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-13-weighted-liquid",
+      "beforeText": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1\n",
+      "afterText": null,
+      "shaBefore": "2fe5906f23eef90c72aeedc3a3217ac72955bb76015294bc9d8ebd759531c8d4",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-14-weighted-sy",
+      "beforeText": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b\n",
+      "afterText": null,
+      "shaBefore": "708418ff2231e8856c35a30c7c94cd24cf3ffb0664d6a335a5adad35102e1559",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-15-dtf-custody-se",
+      "beforeText": "4a53299b490343ed904d70c92ecbc7360fcb7659\n",
+      "afterText": null,
+      "shaBefore": "d8d38e4012dc345bbbc2a91f2afda3e05e2836576c69bf3e69227797d20dbd6f",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-16-claim-vault",
+      "beforeText": "a96f0fd26c1a1fdba35750cff74d866afa3a9796\n",
+      "afterText": null,
+      "shaBefore": "3461d7732f066ca97f4fc3a69ce2b863571bc5535e6907c550329bdd6273bc0e",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-17-weighted-receipt",
+      "beforeText": "acdbe319f3a20c3af6bea594c62461b6c7988717\n",
+      "afterText": null,
+      "shaBefore": "5d62d75633ee1f0028faffa72d87698aea97cb5bb31d5a34f8ba191ec48aad39",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-18-earlier-receipt",
+      "beforeText": "1df9076c73b94a4f63172395763fa8cdd48fe060\n",
+      "afterText": null,
+      "shaBefore": "404f1334d7521e8484ee1e75d6c9e64bc61b3b3d0d4ff6361e959e51623eb854",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-19-earlier-liquid",
+      "beforeText": "3ec0912bafebf9c0aa66770a72f04501e5c11865\n",
+      "afterText": null,
+      "shaBefore": "df16cdbdf12193dd191acd02aae7e0aecd63f42c55be906392cc0758baa4d8f3",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-19-earlier-liquid-source",
+      "beforeText": "acdbe319f3a20c3af6bea594c62461b6c7988717\n",
+      "afterText": null,
+      "shaBefore": "5d62d75633ee1f0028faffa72d87698aea97cb5bb31d5a34f8ba191ec48aad39",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-20-se-lp-source",
+      "beforeText": "1df9076c73b94a4f63172395763fa8cdd48fe060\n",
+      "afterText": null,
+      "shaBefore": "404f1334d7521e8484ee1e75d6c9e64bc61b3b3d0d4ff6361e959e51623eb854",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-21-held-se-lp",
+      "beforeText": "4eaa7decab80d24cf37cb3781eff5ffaf9362942\n",
+      "afterText": null,
+      "shaBefore": "e58e63b0db95446c132506cac6e055cbae9e6915345000c561f5a3c6cdeae5e1",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-22-claimed-sy-source",
+      "beforeText": "4eaa7decab80d24cf37cb3781eff5ffaf9362942\n",
+      "afterText": null,
+      "shaBefore": "e58e63b0db95446c132506cac6e055cbae9e6915345000c561f5a3c6cdeae5e1",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-23-claimed-sy-integration",
+      "beforeText": "15fd629375edeb361f6a39262795bdc66723ca3a\n",
+      "afterText": null,
+      "shaBefore": "1fc8fc83c08ffea454b82ae5312aa8a5ba769c5cd6ee1ab2520b9f3d423526fc",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-24-stateful-invariants",
+      "beforeText": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca\n",
+      "afterText": null,
+      "shaBefore": "bbad16e5c6ca428ad8c6deeb8792560a9e2bf7c70aeb20c9b87b35f6fa3fb30c",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-25-full-hermetic",
+      "beforeText": "137fa0c8749165087c7d1d0156788f58a1dbf1b8\n",
+      "afterText": null,
+      "shaBefore": "9f631241fe1d82ef6d8e279442be85e640fd477ee94da3690c0ef01ba31e76c4",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-26-portable-operator",
+      "beforeText": "0856a5c56e5d09b81c669f59b613efef79133e19\n",
+      "afterText": null,
+      "shaBefore": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-27-data-candidates",
+      "beforeText": "789fced820ed494d9651c598fb8f75c646d727a7\n",
+      "afterText": null,
+      "shaBefore": "dcd150d26b0ed9bfa44f3993987b3b3257ee4c57cd500a55f785cd5cd86890a5",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-28-receipt-evidence",
+      "beforeText": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n",
+      "afterText": null,
+      "shaBefore": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-29-delegated-source",
+      "beforeText": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n",
+      "afterText": null,
+      "shaBefore": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+      "shaAfter": null,
+      "looseFileGone": true
+    },
+    {
+      "path": ".git/refs/heads/work/dtf-migration-phase-30-recovery-receipts",
+      "beforeText": "07d54b9a3d20d98aee24e75235bbf16b650a8028\n",
+      "afterText": null,
+      "shaBefore": "957bfa3eeff5c1c75edc6fbffc95941f78611a736614eb6df7f1fb0235225e26",
+      "shaAfter": null,
+      "looseFileGone": true
+    }
+  ]
+}

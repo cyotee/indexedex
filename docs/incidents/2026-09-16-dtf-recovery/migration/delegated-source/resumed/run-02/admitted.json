@@ -1,0 +1,75 @@
+{
+  "full": {
+    "transactionHash": "0xcf78608c1378114dcf644ae7fca06f5fb53f292a05c390d026f92d73967d3a02",
+    "sourcePath": [],
+    "sourceCaller": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+    "outerCaller": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+    "weight": "10013000000000000000017",
+    "shares": "180773969307098861",
+    "received": "18077396",
+    "weightRemainder": "5183411095209026995953490",
+    "vaultFloor": "18077396",
+    "vaultRemainder": "263165049625847633715"
+  },
+  "split": [
+    {
+      "transactionHash": "0x5f4e6e4a39377b9cb81aebe55d487369dab8e40bc8cefe4fe71b520a88f68b8e",
+      "sourcePath": [
+        0
+      ],
+      "sourceCaller": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "outerCaller": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "weight": "3337000000000000000005",
+      "shares": "60245953817815729",
+      "received": "6024595",
+      "weightRemainder": "8891495132663117882763546",
+      "vaultFloor": "6024595",
+      "vaultRemainder": "107520067844104807452"
+    },
+    {
+      "transactionHash": "0xe075c5e9d4fce4966224b4106bbb39d6875d45275bf5a6359641d3e72b676d7e",
+      "sourcePath": [
+        0
+      ],
+      "sourceCaller": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "outerCaller": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "weight": "1",
+      "shares": "0",
+      "received": "0",
+      "weightRemainder": "276671509755956724204",
+      "vaultFloor": "0",
+      "vaultRemainder": "0"
+    },
+    {
+      "transactionHash": "0x88fafabc3d4e34a6d83359c36260b7fcd06c9787a802977023a0358764eed9ff",
+      "sourcePath": [
+        0
+      ],
+      "sourceCaller": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+      "outerCaller": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "weight": "6676000000000000000011",
+      "shares": "120528015489283131",
+      "received": "12052801",
+      "weightRemainder": "11621046838061203315159689",
+      "vaultFloor": "12052801",
+      "vaultRemainder": "155657926419601350644"
+    }
+  ],
+  "completeFull": {
+    "wallet": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+    "w0": "10013000000000000000017",
+    "q0": "18077396",
+    "weightFloor": "7000000000000000000",
+    "syFloor": "100"
+  },
+  "completeSplit": {
+    "wallet": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+    "w0": "10013000000000000000017",
+    "q0": "18077396",
+    "weightFloor": "7000000000000000000",
+    "syFloor": "101"
+  },
+  "originalWeightForRemainingExample": "30039000000000000000051",
+  "eligibleWeightForRemainingExample": "10013000000000000000017",
+  "qualification": "Only measured source quantities. Full quote C0 is not evaluated; eligible credit would be floor(C0/3) for the synthetic remaining example."
+}

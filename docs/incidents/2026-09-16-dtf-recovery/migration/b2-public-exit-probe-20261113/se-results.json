@@ -1,0 +1,72 @@
+{
+  "scope": "Conditional local source enablement; no public governance action",
+  "fork": {
+    "chainId": 4663,
+    "block": 108944663
+  },
+  "runs": [
+    {
+      "monitor": "mon_T2EXXR04V3Z8ZCGX",
+      "bash": "bash_170",
+      "exitCode": 1,
+      "passed": [
+        "test_weightedSePublicExitAfterLocalEnablement"
+      ],
+      "failed": [
+        {
+          "test": "test_earlierSePublicExitAfterLocalEnablement",
+          "reason": "UniswapV4ExchangeIn_SlippageExceeded()",
+          "quantity": "2021090200239501983",
+          "qualification": "Known EOA holding is below one raw DTF output unit; not proof that all earlier-SE exits fail."
+        }
+      ]
+    },
+    {
+      "monitor": "mon_PAYN6DV1TZW6D55V",
+      "bash": "bash_172",
+      "exitCode": 0,
+      "passed": [
+        "test_earlierSePublicExitAfterLocalEnablement",
+        "test_earlierSeDustRejectsWithoutBurningAfterLocalEnablement"
+      ],
+      "qualification": "Positive fixture buys non-dust SE shares using DTF obtained through genuine existing weighted NFT claim/unstake/conversion. Original positive output assertions retained; dust explicitly gets rejection/rollback coverage."
+    },
+    {
+      "monitor": "mon_33CPD0951C98AZCE",
+      "bash": "bash_171",
+      "exitCode": 0,
+      "test": "test_typedRecoveryAfterLocalLegacyEnablementPreservesUnbookedShares",
+      "gas": 17901699,
+      "operatorTests": 6
+    },
+    {
+      "monitor": "mon_S056KER43X4YBMQC",
+      "bash": "bash_174",
+      "exitCode": 0,
+      "test": "test_typedEarlierSeRecoveryAfterPaidAcquisitionAndLocalEnablement",
+      "gas": 19715358
+    }
+  ],
+  "stages": {
+    "EarlierConvert": 11,
+    "WeightedWethSeConvert": 12,
+    "EarlierSeConvert": 13
+  },
+  "actualMigrationCoverage": [
+    "original-wallet configured surrender",
+    "actual disabled-source rejection",
+    "external legacy-enable prerequisite",
+    "source conversion",
+    "late-batch failure restores source supply, custody, inventory and allowances",
+    "100 unsolicited source units preserved",
+    "measured DTF output booked once",
+    "fixed-parent donation",
+    "funded bond state preserved"
+  ],
+  "unresolved": [
+    "Earlier DETF/receipt internal withdrawal transfer failure",
+    "Physical LP source authority",
+    "Full generic indirect funded rehearsal and final regression gates"
+  ],
+  "sourceOnlyFailureTrace": "Ran 2 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol:MigrationLegacySeExitTest\n[FAIL: custom error 0x5a1dcbd5] test_earlierSePublicExitAfterLocalEnablement() (block: 108944663) (gas: 361089)\nTraces:\n  [361089] MigrationLegacySeExitTest::test_earlierSePublicExitAfterLocalEnablement()\n    ├─ [8610] 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7::balanceOf(0xbAb6A03be445094a10695772a79777407DcdC0E7) [staticcall]\n    │   ├─ [3105] 0x1d17acA0e0717d90cea916372070a1BE4652223F::balanceOf(0xbAb6A03be445094a10695772a79777407DcdC0E7) [delegatecall]\n    │   │   └─ ← [Return] 2021090200239501983 [2.021e18]\n    │   └─ ← [Return] 2021090200239501983 [2.021e18]\n    ├─ [13009] 0x09682b00D873D913ada0bB69B4D4c9631810d0bc::isDisabledDetailed(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   ├─ [7498] 0x10E1211a99126304d4daDaeC39146c2ac45F7F91::isDisabledDetailed(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   └─ ← [Return] true, false, true\n    │   └─ ← [Return] true, false, true\n    ├─ [8383] 0x09682b00D873D913ada0bB69B4D4c9631810d0bc::owner() [staticcall]\n    │   ├─ [2881] 0xF03FAD914Ec73b6A7D41cEce447656aE97b8B16F::owner() [delegatecall]\n    │   │   └─ ← [Return] 0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B\n    │   └─ ← [Return] 0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B\n    ├─ [0] VM::startPrank(0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B)\n    │   └─ ← [Return]\n    ├─ [8308] 0x09682b00D873D913ada0bB69B4D4c9631810d0bc::packageOfVault(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   ├─ [2803] 0x10E1211a99126304d4daDaeC39146c2ac45F7F91::packageOfVault(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   └─ ← [Return] 0x72b0243E3806eab5E30412cc93682f98f0d20eaE\n    │   └─ ← [Return] 0x72b0243E3806eab5E30412cc93682f98f0d20eaE\n    ├─ [48678] 0x09682b00D873D913ada0bB69B4D4c9631810d0bc::setPackageDisabled(0x72b0243E3806eab5E30412cc93682f98f0d20eaE, false)\n    │   ├─ [21610] 0xD1fd586d785E9D150A86306Bdca9DeAA0C202CEe::setPackageDisabled(0x72b0243E3806eab5E30412cc93682f98f0d20eaE, false) [delegatecall]\n    │   │   ├─ emit PackageDisabled(package: 0x72b0243E3806eab5E30412cc93682f98f0d20eaE, disabled: false)\n    │   │   └─ ← [Return] true\n    │   └─ ← [Return] true\n    ├─ [0] VM::stopPrank()\n    │   └─ ← [Return]\n    ├─ [12810] 0x09682b00D873D913ada0bB69B4D4c9631810d0bc::isDisabled(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   ├─ [7305] 0x10E1211a99126304d4daDaeC39146c2ac45F7F91::isDisabled(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   └─ ← [Return] false\n    │   └─ ← [Return] false\n    ├─ [2573] 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01::balanceOf(0xbAb6A03be445094a10695772a79777407DcdC0E7) [staticcall]\n    │   └─ ← [Return] 0\n    ├─ [0] VM::startPrank(0xbAb6A03be445094a10695772a79777407DcdC0E7)\n    │   └─ ← [Return]\n    ├─ [34996] 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7::approve(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, 2021090200239501983 [2.021e18])\n    │   ├─ [7832] 0x1d17acA0e0717d90cea916372070a1BE4652223F::approve(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, 2021090200239501983 [2.021e18]) [delegatecall]\n    │   │   ├─ emit Approval(owner: 0xbAb6A03be445094a10695772a79777407DcdC0E7, spender: 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, amount: 2021090200239501983 [2.021e18])\n    │   │   └─ ← [Return] true\n    │   └─ ← [Return] true\n    ├─ [192201] 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7::exchangeIn(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, 2021090200239501983 [2.021e18], 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01, 1, 0xbAb6A03be445094a10695772a79777407DcdC0E7, false, 1794110901 [1.794e9])\n    │   ├─ [163841] 0x461D94f18AfeF2C82bBffBDb63270e37c322da07::exchangeIn(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, 2021090200239501983 [2.021e18], 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01, 1, 0xbAb6A03be445094a10695772a79777407DcdC0E7, false, 1794110901 [1.794e9]) [delegatecall]\n    │   │   ├─ [12810] 0x09682b00D873D913ada0bB69B4D4c9631810d0bc::isDisabled(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   ├─ [7305] 0x10E1211a99126304d4daDaeC39146c2ac45F7F91::isDisabled(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   │   │   └─ ← [Return] false\n    │   │   │   └─ ← [Return] false\n    │   │   ├─ [8610] 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   ├─ [3105] 0x1d17acA0e0717d90cea916372070a1BE4652223F::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   │   │   └─ ← [Return] 0\n    │   │   │   └─ ← [Return] 0\n    │   │   ├─ [39096] 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7::transferFrom(0xbAb6A03be445094a10695772a79777407DcdC0E7, 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, 2021090200239501983 [2.021e18])\n    │   │   │   ├─ [36085] 0x1d17acA0e0717d90cea916372070a1BE4652223F::transferFrom(0xbAb6A03be445094a10695772a79777407DcdC0E7, 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, 2021090200239501983 [2.021e18]) [delegatecall]\n    │   │   │   │   ├─ emit Approval(owner: 0xbAb6A03be445094a10695772a79777407DcdC0E7, spender: 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, amount: 0)\n    │   │   │   │   ├─ emit Transfer(from: 0xbAb6A03be445094a10695772a79777407DcdC0E7, to: 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7, amount: 2021090200239501983 [2.021e18])\n    │   │   │   │   └─ ← [Return] true\n    │   │   │   └─ ← [Return] true\n    │   │   ├─ [2110] 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   ├─ [1105] 0x1d17acA0e0717d90cea916372070a1BE4652223F::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   │   │   └─ ← [Return] 2021090200239501983 [2.021e18]\n    │   │   │   └─ ← [Return] 2021090200239501983 [2.021e18]\n    │   │   ├─ [81769] 0x6f59D7F54617b2C3413c091E5cA430614b1a6F21::executeZapOutExactIn(0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01, 2021090200239501983 [2.021e18], 1, 0xbAb6A03be445094a10695772a79777407DcdC0E7) [delegatecall]\n    │   │   │   ├─ [5716] 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7::totalSupply() [staticcall]\n    │   │   │   │   ├─ [2714] 0x1d17acA0e0717d90cea916372070a1BE4652223F::totalSupply() [delegatecall]\n    │   │   │   │   │   └─ ← [Return] 240208335094234316503663860544238124591 [2.402e38]\n    │   │   │   │   └─ ← [Return] 240208335094234316503663860544238124591 [2.402e38]\n    │   │   │   ├─ [859] 0x8366a39CC670B4001A1121B8F6A443A643e40951::exttload(0xc090fc4683624cfc3884e9d8de5eca132f2d0ec062aff75d43c0465d5ceeab23) [staticcall]\n    │   │   │   │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000000\n    │   │   │   ├─ [9787] 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   ├─ [2648] 0xC6B81b429797E0f555440b70cD99e032D7AE947e::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   │   │   │   └─ ← [Return] 0\n    │   │   │   │   └─ ← [Return] 0\n    │   │   │   ├─ [2573] 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   └─ ← [Return] 118850873190003046246 [1.188e20]\n    │   │   │   ├─ [1287] 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   ├─ [648] 0xC6B81b429797E0f555440b70cD99e032D7AE947e::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   │   │   │   └─ ← [Return] 0\n    │   │   │   │   └─ ← [Return] 0\n    │   │   │   ├─ [573] 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   └─ ← [Return] 118850873190003046246 [1.188e20]\n    │   │   │   ├─ [6949] 0x8366a39CC670B4001A1121B8F6A443A643e40951::extsload(0xe0ae0a4781a7f46b367034d6246d9839d003a83e78f6fe1f960d6c24cd3ebd48, 3) [staticcall]\n    │   │   │   │   └─ ← [Return] 0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000053300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n    │   │   │   ├─ [1287] 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   ├─ [648] 0xC6B81b429797E0f555440b70cD99e032D7AE947e::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   │   │   │   └─ ← [Return] 0\n    │   │   │   │   └─ ← [Return] 0\n    │   │   │   ├─ [1287] 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   ├─ [648] 0xC6B81b429797E0f555440b70cD99e032D7AE947e::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [delegatecall]\n    │   │   │   │   │   └─ ← [Return] 0\n    │   │   │   │   └─ ← [Return] 0\n    │   │   │   ├─ [949] 0x8366a39CC670B4001A1121B8F6A443A643e40951::extsload(0xe0ae0a4781a7f46b367034d6246d9839d003a83e78f6fe1f960d6c24cd3ebd48, 3) [staticcall]\n    │   │   │   │   └─ ← [Return] 0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000053300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n    │   │   │   ├─ [573] 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   └─ ← [Return] 118850873190003046246 [1.188e20]\n    │   │   │   ├─ [573] 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01::balanceOf(0xb7D4Bb379D361AD442CddEE53eA71a33957826A7) [staticcall]\n    │   │   │   │   └─ ← [Return] 118850873190003046246 [1.188e20]\n    │   │   │   └─ ← [Revert] UniswapV4ExchangeIn_SlippageExceeded()\n    │   │   └─ ← [Revert] UniswapV4ExchangeIn_SlippageExceeded()\n    │   └─ ← [Revert] UniswapV4ExchangeIn_SlippageExceeded()\n    └─ ← [Revert] UniswapV4ExchangeIn_SlippageExceeded()\n\nBacktrace:\n  at 0x6f59D7F54617b2C3413c091E5cA430614b1a6F21.executeZapOutExactIn\n  at 0x461D94f18AfeF2C82bBffBDb63270e37c322da07.exchangeIn\n  at 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7.exchangeIn\n  at MigrationLegacySeExitTest.test_earlierSePublicExitAfterLocalEnablement\n\n[PASS] test_weightedSePublicExitAfterLocalEnablement() (gas: 949911)\nSuite result: FAILED. 1 passed; 1 failed; 0 skipped; finished in 2.01s (1.65s CPU time)\n\nRan 1 test suite in 2.02s (2.01s CPU time): 1 tests passed, 1 failed, 0 skipped (2 total tests)\n\nFailing tests:\nEncountered 1 failing test in test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol:MigrationLegacySeExitTest\n[FAIL: custom error 0x5a1dcbd5] test_earlierSePublicExitAfterLocalEnablement() (block: 108944663) (gas: 361089)\n\nEncountered a total of 1 failing tests, 1 tests succeeded\n\nTip: Run `forge test --rerun` to retry only the 1 failed test\nTip: Run `forge test --debug --match-test <TEST_NAME>` to inspect one failing test in the debugger"
+}

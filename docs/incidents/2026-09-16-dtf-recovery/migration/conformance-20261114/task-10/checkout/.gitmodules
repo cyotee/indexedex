@@ -1,0 +1,3 @@
+[submodule "lib/crane"]
+	path = lib/crane
+	url = https://github.com/cyotee/crane

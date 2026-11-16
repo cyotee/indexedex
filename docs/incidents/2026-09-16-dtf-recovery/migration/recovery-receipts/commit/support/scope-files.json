@@ -1,0 +1,52 @@
+[
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/foundry.toml",
+    "bytes": 3814,
+    "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+    "expectedBytes": 3814,
+    "expectedSha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+    "match": true,
+    "st_mode": 33188,
+    "perm": "0o644"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/package.json",
+    "bytes": 3138,
+    "sha256": "a3d0d97074012a183156abf0134370f1f8bc69b2e69aeaa7babebbd0644a651d",
+    "expectedBytes": 3138,
+    "expectedSha256": "a3d0d97074012a183156abf0134370f1f8bc69b2e69aeaa7babebbd0644a651d",
+    "match": true,
+    "st_mode": 33188,
+    "perm": "0o644"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "bytes": 79305,
+    "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+    "expectedBytes": 79305,
+    "expectedSha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+    "match": true,
+    "st_mode": 33188,
+    "perm": "0o644"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+    "bytes": 108022,
+    "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+    "expectedBytes": 108022,
+    "expectedSha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+    "match": true,
+    "st_mode": 33188,
+    "perm": "0o644"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-brief.md",
+    "bytes": 6132,
+    "sha256": "b60f15ef7e7ced0d67bc71065185ed29f8047c1319f03d334597cbed545a4da5",
+    "expectedBytes": 6132,
+    "expectedSha256": "b60f15ef7e7ced0d67bc71065185ed29f8047c1319f03d334597cbed545a4da5",
+    "match": true,
+    "st_mode": 33188,
+    "perm": "0o644"
+  }
+]

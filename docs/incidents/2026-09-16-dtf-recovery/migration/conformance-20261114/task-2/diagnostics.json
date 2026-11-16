@@ -1,0 +1,122 @@
+{
+  "initial": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "result": {
+        "text": "hint[typescript] (6133) at 4:9: 'dirname' is declared but its value is never read.\nhint[typescript] (6196) at 33:5: 'Supersession' is declared but never used.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [
+            {
+              "file": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+              "diagnostic": {
+                "range": {
+                  "start": {
+                    "line": 3,
+                    "character": 9
+                  },
+                  "end": {
+                    "line": 3,
+                    "character": 16
+                  }
+                },
+                "message": "'dirname' is declared but its value is never read.",
+                "severity": 4,
+                "code": 6133,
+                "source": "typescript"
+              }
+            },
+            {
+              "file": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+              "diagnostic": {
+                "range": {
+                  "start": {
+                    "line": 32,
+                    "character": 5
+                  },
+                  "end": {
+                    "line": 32,
+                    "character": 17
+                  }
+                },
+                "message": "'Supersession' is declared but never used.",
+                "severity": 4,
+                "code": 6196,
+                "source": "typescript"
+              }
+            }
+          ],
+          "totalDiagnostics": 2,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recover.ts",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recover.ts",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts",
+      "result": {
+        "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts within 3000ms.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false,
+          "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts within 3000ms.",
+          "errorKind": "freshness_timeout"
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/fixture-qa.ts",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/fixture-qa.ts",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    }
+  ],
+  "finalRecorder": {
+    "text": "No diagnostics found",
+    "details": {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "severity": "all",
+      "mode": "file",
+      "diagnostics": [],
+      "totalDiagnostics": 0,
+      "truncated": false
+    },
+    "images": [],
+    "hasError": false
+  }
+}

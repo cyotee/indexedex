@@ -1,0 +1,54 @@
+{
+  "source": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-08/rehearsal-1794759445911/donation-identity-resume.json",
+  "sourceSha256": "55c540f4300d05fa5e87d67d9a8e56287ebe19d24c5906e28f558e5ed4d3d12d",
+  "donationIds": [
+    "0x3cb1c3ed3241f76b2b818a4af2aac960e1ff821a935e3bc2a52f5078b1d8e450",
+    "0xf4845dc45c94688159ae2f3571014b12efd9526467ebbe0d88714de30bb875fb"
+  ],
+  "sameCalldata": true,
+  "operations": [
+    {
+      "id": "047c0169ad03e45a33e23187cf8eb101f3a42872cf9cdc402e62bb7c65cba1b9",
+      "exactPreimage": true,
+      "transactionHash": "0x18c1886fc9fb080b9589852bfd39a3409588a4c1bfa08b0c09766e57d03673b6",
+      "status": "0x1"
+    },
+    {
+      "id": "8e39a929e252b2f5fe9be46dd10b2f651dc365d92cd4d492939bdfa105300d7d",
+      "exactPreimage": true,
+      "transactionHash": "0xb886564e3dc29e1d01b1f57b0dbca21ecd4d6bf6fd9be9c15de502f0e835ae07",
+      "status": "0x1"
+    },
+    {
+      "id": "4b453e49a2861283996b6249bb19815efa35dd40cd3aceb6fef6d73817a69bb7",
+      "exactPreimage": true,
+      "transactionHash": "0x576bd2f3fe87777021574d1b9001c01a2ffc388750ebf09a3ede9dc16d238cfb",
+      "status": "0x1"
+    },
+    {
+      "id": "0841baefabe6d3e704bf77a07a41f0af1533b7f7decce22e968b18351940b3bb",
+      "exactPreimage": true,
+      "transactionHash": "0xb7a5129850e0c031695ba63075cb89c51e51fb3aeaa5624b29092e60dfef7580",
+      "status": "0x1"
+    },
+    {
+      "id": "fd466a232839e2f25b1ee010b2ceacc2df5c3c5d240b640f7a8e0018fa97d627",
+      "exactPreimage": true,
+      "transactionHash": "0x5dcafa563cc470a1c351a1a8d01862d614b74fffdab02c6d84523c1f15ef5110",
+      "status": "0x1"
+    },
+    {
+      "id": "10f5b3f002847058d08fca1165434f2a7626cc7d09a08153178dc1be4aab8ae5",
+      "exactPreimage": true,
+      "transactionHash": "0xef8c5c75544f3ee887063fb1beb082e97c190af93374b56b55bccf88059bca3c",
+      "status": "0x1"
+    }
+  ],
+  "completedResends": 0,
+  "exactReceiptRecovered": true,
+  "nonces": {
+    "interrupted": "0x890",
+    "completed": "0x894",
+    "resumed": "0x894"
+  }
+}

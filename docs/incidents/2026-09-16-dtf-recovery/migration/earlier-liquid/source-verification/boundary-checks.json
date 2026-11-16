@@ -1,0 +1,141 @@
+{
+  "abi": [
+    {
+      "name": "exchangeIn",
+      "selector": "0xd02d3063",
+      "signature": "function exchangeIn(address tokenIn_, uint256 amountIn_, address tokenOut_, uint256 minAmountOut_, address recipient_, bool pretransferred_, uint256 deadline_) returns (uint256 amountOut_)",
+      "outputs": [
+        "uint256"
+      ]
+    },
+    {
+      "name": "transfer",
+      "selector": "0xa9059cbb",
+      "signature": "function transfer(address recipient, uint256 amount) returns (bool)",
+      "outputs": [
+        "bool"
+      ]
+    },
+    {
+      "name": "transferFrom",
+      "selector": "0x23b872dd",
+      "signature": "function transferFrom(address owner, address recipient, uint256 amount) returns (bool)",
+      "outputs": [
+        "bool"
+      ]
+    },
+    {
+      "name": "approve",
+      "selector": "0x095ea7b3",
+      "signature": "function approve(address spender, uint256 amount) returns (bool)",
+      "outputs": [
+        "bool"
+      ]
+    },
+    {
+      "name": "balanceOf",
+      "selector": "0x70a08231",
+      "signature": "function balanceOf(address account) view returns (uint256)",
+      "outputs": [
+        "uint256"
+      ]
+    },
+    {
+      "name": "allowance",
+      "selector": "0xdd62ed3e",
+      "signature": "function allowance(address owner, address spender) view returns (uint256)",
+      "outputs": [
+        "uint256"
+      ]
+    },
+    {
+      "name": "decimals",
+      "selector": "0x313ce567",
+      "signature": "function decimals() view returns (uint8)",
+      "outputs": [
+        "uint8"
+      ]
+    }
+  ],
+  "conservation": {
+    "Q0": "101000000000000000003",
+    "C0": "1001",
+    "q1": "40000000000000000001",
+    "d1": "396",
+    "q2": "61000000000000000002",
+    "d2": "605",
+    "arithmeticOnly": true
+  },
+  "inputBindings": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "bytes": 4541,
+      "sha256": "aa73702d1b7cb6644ff9020ddb9faeb220aa11562cf3c2d73a801d0a7984b0b6"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 6513,
+      "sha256": "39c0a63fb4b536d8882436aac7677738a3e2bf7519a2da756595bfe316f19d11"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/execution-schema.ts",
+      "bytes": 4957,
+      "sha256": "f71a8a00f17914a198a65d33e61654cfd378ba69ab8e8a97ff1e10aed92e3141"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "bytes": 8426,
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "bytes": 2857,
+      "sha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 19254,
+      "sha256": "d23a5d74e05d19a7aa12ee83445bb4c4f1daab0c9d6f79951711f5c96ae0de6a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 4306,
+      "sha256": "9ebca91d33298cf28bd0d4624368a30080b3734ee629abd3f880768c80202a38"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/scripts/recovery/dtf-migration/payloads.ts",
+      "bytes": 12469,
+      "sha256": "d44ae9f28f4801f326ca6f4add794be96775db934f94cf72d50bc94bdf0e71c8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/node_modules/ethers/package.json",
+      "bytes": 4945,
+      "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f",
+      "version": "6.17.0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/node_modules/zod/package.json",
+      "bytes": 3284,
+      "sha256": "f2d8e294bb39f78a945cd602ee5635781f66081f032d991f61548f7e550ae74d",
+      "version": "3.25.74"
+    }
+  ],
+  "binaries": [
+    {
+      "path": "/Users/cyotee/.foundry/bin/anvil",
+      "bytes": 44555424,
+      "sha256": "477284d89d9f18a52466a40d98b3942486afbc4bf3d9d1baef77072d6f615f04"
+    },
+    {
+      "path": "/Users/cyotee/.foundry/bin/forge",
+      "bytes": 99347312,
+      "sha256": "cec404017b1883a50c3e32b00661dbe5754cb0d9ae8902513efc4286004ffc4f"
+    },
+    {
+      "path": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bytes": 58063056,
+      "sha256": "b36d2e9d9bd50e3a3b6a8f2d481839417d6600d4c1753411b094ee0da3222cef"
+    }
+  ],
+  "qualifications": "Package metadata and local runtime modules bound; not a complete dependency supply-chain audit."
+}

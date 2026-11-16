@@ -1,0 +1,9 @@
+{
+  "name": "stages",
+  "command": "forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+  "bootstrap": "/bin/zsh -lc; approved existing login environment",
+  "code": 0,
+  "signal": null,
+  "bytes": 359,
+  "sha256": "86809c33d785da16ee48e91eeb84c82d95131d6fea6490cccc550e187574c037"
+}

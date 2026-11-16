@@ -66,7 +66,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](1);
         rows_[0] = _original(WEIGHTED, 3);
         vm.prank(migrationOwner);
-        allocation.configureNftContributionEntitlements(rows_);
+        allocation.configureNftContributionEntitlements(rows_, pricingId);
         Migration.NftContribution[] memory parts_ = migration.nftContributions(WEIGHTED, 3);
         assertEq(parts_.length, 2);
         assertEq(parts_[0].originalEth, 999999000000000);
@@ -136,7 +136,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         rows_[0].originalEth = 999999000000000;
         rows_[0].evidenceId = keccak256("two-original partial-principal fixture");
         vm.prank(migrationOwner);
-        allocation.configureNftContributionEntitlements(rows_);
+        allocation.configureNftContributionEntitlements(rows_, pricingId);
         IMigrationWeightedNft.Position memory p_ = IMigrationWeightedNft(WEIGHTED).positionOf(32);
         assertGt(p_.claimedPrincipal, 0);
         uint256 remaining_ = p_.principal - p_.claimedPrincipal;
@@ -165,7 +165,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         rows_[0].originalWallet = address(holder_);
         rows_[0].evidenceId = keccak256("two-original rejecting receiver fixture");
         vm.prank(migrationOwner);
-        allocation.configureNftContributionEntitlements(rows_);
+        allocation.configureNftContributionEntitlements(rows_, pricingId);
         address old_ = IERC721(WEIGHTED).ownerOf(3);
         vm.prank(old_);
         IERC721(WEIGHTED).safeTransferFrom(old_, address(holder_), 3);
@@ -219,11 +219,11 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         a_[0].originalWallet = makeAddr("corrected consumed wallet");
         bytes32 configuration_ = migration.nftEntitlement(WEIGHTED, 32).configurationId;
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureNftEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureNftEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         a_[0] = _original(WEIGHTED, 32);
         vm.prank(migrationOwner);
-        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureNftEntitlements, (a_)));
+        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureNftEntitlements, (a_, pricingId)));
         assertFalse(replayed_);
         assertEq(migration.nftEntitlement(WEIGHTED, 32).configurationId, configuration_);
         assertEq(abi.encode(migration.nftSurrender(WEIGHTED, 32)), history_);
@@ -238,7 +238,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         independent_[0].entitlements = new Migration.OriginalEntitlement[](1);
         independent_[0].entitlements[0] = Migration.OriginalEntitlement(origin_, 1 ether, 0, bytes32("duplicate"));
         vm.prank(migrationOwner);
-        (bool independentOk_,) = detf.call(abi.encodeCall(Allocation.configureIndependentAllocations, (independent_)));
+        (bool independentOk_,) = detf.call(abi.encodeCall(Allocation.configureIndependentAllocations, (independent_, pricingId)));
         assertFalse(independentOk_);
         assertFalse(migration.independentIssuance(address(this)).issued);
     }
@@ -313,7 +313,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         rows_[0].originalWallet = wallet_;
         rows_[0].evidenceId = keccak256("synthetic contract-wallet callback fixture");
         vm.prank(migrationOwner);
-        allocation.configureNftEntitlements(rows_);
+        allocation.configureNftEntitlements(rows_, pricingId);
     }
 
     function test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender() public {

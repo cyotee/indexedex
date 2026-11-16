@@ -1,0 +1,100 @@
+{
+  "scope": "Read-only source follow-up; not admission or eligibility approval",
+  "transaction": "0x6ece614ad85798eef4244cc58262b3edafce211f135a66f68e0354bbf57a12bb",
+  "wallet": "0x2c0400cf47e5ea01364e44c237aed22d7ae86199",
+  "claimBlock": "71862410",
+  "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/archive.json",
+  "requests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "eth_chainId",
+      "params": []
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "eth_getCode",
+      "params": [
+        "0x2c0400cf47e5ea01364e44c237aed22d7ae86199",
+        "0x4488889"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "eth_getCode",
+      "params": [
+        "0x2c0400cf47e5ea01364e44c237aed22d7ae86199",
+        "0x448888a"
+      ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "method": "eth_getCode",
+      "params": [
+        "0x2c0400cf47e5ea01364e44c237aed22d7ae86199",
+        "0x67e5d17"
+      ]
+    }
+  ],
+  "httpStatus": 200,
+  "responses": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": "0x1237"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "result": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c"
+    }
+  ],
+  "codeObservations": [
+    {
+      "block": "0x4488889",
+      "code": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c",
+      "bytes": 23
+    },
+    {
+      "block": "0x448888a",
+      "code": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c",
+      "bytes": 23
+    },
+    {
+      "block": "0x67e5d17",
+      "code": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c",
+      "bytes": 23
+    }
+  ],
+  "interpretation": {
+    "standard": "EIP-7702",
+    "source": "https://eips.ethereum.org/EIPS/eip-7702",
+    "rule": "Delegation indicator is 0xef0100 followed by the20byte delegate address; it is not empty-code EOA state or ordinary contract bytecode.",
+    "delegate": "0x7702cb554e6bfb442cb743a7df23154544a7176c",
+    "boundary": "The observed designation is identical before the claim block, after it, and at the historical anchor. This does not identify or authenticate delegate implementation behavior, prove current control/eligibility, or authenticate an inner source invocation."
+  },
+  "observedSourceClaim": "The accepted archive retains a real ClaimWithdrawn for this wallet:20000000000000000000000weight and36107853SY; outer caller/callee differ and direct weight decoding remainsnull.",
+  "remaining": "Current claimed-SY intake excludes delegated/indirect claims. Establish actual source caller/effects and controlled delegated-wallet custody/conservation before extending admission; do not merely remove code/signature checks.",
+  "otherSourceLead": {
+    "esTransferEventsInKnownArchive": 34,
+    "esCounterparties": [
+      "0x0000000000000000000000000000000000000000",
+      "0x923877336b14662cfb5b3a60b14e7d716d54a888"
+    ],
+    "qualification": "Only zero and known earlier LP appear in these34events; this is not a full holder census and does not explain all outstanding supply."
+  },
+  "operations": "Only existing-provider eth_chainId/eth_getCode reads; no source changes, signing, role mutation, traces, range query or public transaction."
+}

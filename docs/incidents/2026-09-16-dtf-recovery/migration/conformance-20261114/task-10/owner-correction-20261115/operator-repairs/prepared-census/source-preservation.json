@@ -1,0 +1,64 @@
+{
+  "files": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "before": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+      "after": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "changed": true,
+      "pureLines": 234
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "before": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "after": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "changed": false,
+      "pureLines": 242
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "before": "c86ed48392ad0c6909df77eb867b83b64d52dc9979f573dde30a29de847c1e47",
+      "after": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "changed": true,
+      "pureLines": 426
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "before": "31cfec3cfb1c1e032f4a5f6159600d17300f75a7b24d07b91e9ac0bea5b9d785",
+      "after": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+      "changed": true,
+      "pureLines": 350
+    }
+  ],
+  "sections": [
+    {
+      "name": "domain loading, bound pricing and deployment",
+      "before": "9263aebe49f9d65fa72864a5d45c91a78a07f3247400cab5a7f478c57007b558",
+      "after": "9263aebe49f9d65fa72864a5d45c91a78a07f3247400cab5a7f478c57007b558",
+      "unchanged": true
+    },
+    {
+      "name": "historical domain and intent authentication",
+      "before": "d3c05a619795e13052e9ee7850c7ae72a7d7e9da84958989cfcfdd37acab45ec",
+      "after": "d3c05a619795e13052e9ee7850c7ae72a7d7e9da84958989cfcfdd37acab45ec",
+      "unchanged": true
+    },
+    {
+      "name": "transaction-local receipts, issuance, pricing and full-row checks",
+      "before": "c61c3bb0ddc8197a43d955d24e699668ff7b25c74f8f939f5becf65ddf468ce4",
+      "after": "c61c3bb0ddc8197a43d955d24e699668ff7b25c74f8f939f5becf65ddf468ce4",
+      "unchanged": true
+    },
+    {
+      "name": "range receipt identity, membership, current state and issuance history",
+      "before": "1d4ec13a904d21617897c86e66bf7ba631d57b35b89bf1394219f243b3153056",
+      "after": "1d4ec13a904d21617897c86e66bf7ba631d57b35b89bf1394219f243b3153056",
+      "unchanged": true
+    }
+  ],
+  "dependency": "execution-state already imports execution-domain; the classifier adds an export on that existing edge. Domain imports state only dynamically inside authenticateHistory.",
+  "manualReplayDecision": {
+    "empty": "Rerun: shared classifier extraction affects this path.",
+    "historicalCurrent": "Rerun with range-filter transport adapted to the narrower query; signed bytes unchanged.",
+    "issuanceAndSetter": "Retained: receipt-local and source-bound loader sections are byte-identical, no new module dependency edge, and full current regression tests exercise them."
+  }
+}

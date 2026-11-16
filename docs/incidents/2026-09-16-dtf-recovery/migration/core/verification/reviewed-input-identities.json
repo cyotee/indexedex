@@ -1,0 +1,218 @@
+[
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+    "sha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+    "sha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+    "sha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+    "sha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+    "sha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+    "sha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+    "sha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+    "sha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+    "sha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+    "sha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+    "sha256": "c3e7d28ef1532a8056dbf7261e73439bef506830f2d20c01ae2f59fd36b63da6"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+    "sha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+    "sha256": "8596d6bd54cd2e6eb57df05982385cf200bbdb3520db478597285b181e6e2f79"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+    "sha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+    "sha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+    "sha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+    "sha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+    "sha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+    "sha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+    "sha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+    "sha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+    "sha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+    "sha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+    "sha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+    "sha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+    "sha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+    "sha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+    "sha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+    "sha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+    "sha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+    "sha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+    "sha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+    "sha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+    "sha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+    "sha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+    "sha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+    "sha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+    "sha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1"
+  },
+  {
+    "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+    "sha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920"
+  },
+  {
+    "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+    "sha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87"
+  },
+  {
+    "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+    "sha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b"
+  },
+  {
+    "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol",
+    "sha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af"
+  },
+  {
+    "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadata.sol",
+    "sha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6"
+  },
+  {
+    "path": "contracts/vaults/detf/common/sy/DETFSYTarget.sol",
+    "sha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324"
+  },
+  {
+    "path": "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol",
+    "sha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+    "sha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+    "sha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+    "sha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+    "sha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+    "sha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+    "sha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+    "sha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3"
+  },
+  {
+    "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+    "sha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777"
+  },
+  {
+    "path": "scripts/recovery/dtf-migration/core-local-qa-guard.sh",
+    "sha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6"
+  }
+]

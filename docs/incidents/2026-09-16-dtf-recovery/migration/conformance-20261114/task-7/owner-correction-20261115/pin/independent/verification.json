@@ -1,0 +1,84 @@
+{
+  "AdversarialVerify": {
+    "verdict": "confirmed",
+    "failure_class": "none",
+    "confidence": 0.96,
+    "scope": {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "task": "renewed task 7, completed pin-removal lane only",
+      "files": [
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts"
+      ],
+      "approves_lane_only": true,
+      "closes_plan_task": false,
+      "certifies_sibling_lanes": false
+    },
+    "claim": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/pin-done.json",
+    "authority": ".omo/plans/dtf-migration-conformance-remediation-20261114.md:23-29",
+    "evidence": [
+      "Independent inspection of all four scoped sources, claimed-sy-source.ts, and pin/manual-trace.ts.",
+      "Scoped git diff: only rejected pin removals and earlier pricingSet changes. In-memory reconstruction of HEAD with only earlier pricing changes matched all four producer baseline hashes.",
+      "All five claimed final SHA-256 values independently matched actual file bytes.",
+      "Producer pin/verification.md records focused exact argv, CWD, exit 0, 3 pass, 0 fail; pin-done.json corroborates the run and source bindings.",
+      "Producer pin/verification.md records manual-trace.ts exact argv, CWD, exit 0, valid before/after books and asserted WITNESS_SHAPE and TRACE_FAILED rejections.",
+      "GIT_MASTER=1 git status --short: exit 0; dirty shared worktree acknowledged and preserved.",
+      "GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/claimed-sy-witness.ts scripts/recovery/dtf-migration/claimed-sy-member.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts scripts/recovery/dtf-migration/claimed-sy-witness.test.ts: exit 0, empty stdout/stderr.",
+      "Detailed independent evidence and limitations: report.md in this directory."
+    ],
+    "source_sha256": {
+      "scripts/recovery/dtf-migration/claimed-sy-witness.ts": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+      "scripts/recovery/dtf-migration/claimed-sy-member.ts": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts": "7971fe65ec2a25d8b5bebe1b1203a6955ef89f3bf73e046e0652c81e3cf78a25",
+      "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts": "5d89132aaa379ecd04f5bd1b7ada7fa4db9ec24957935ebd0f09187da19a61df",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts": "f9892aa3417ab15f112f2c68171f61e4ea5b1f226e18439bf55ce03f9c83b05d"
+    },
+    "retained_runs": [
+      {
+        "argv": ["bun", "test", "--timeout", "15000", "./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts"],
+        "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "recorded_exit": 0,
+        "pass": 3,
+        "fail": 0,
+        "rerun_by_verifier": false
+      },
+      {
+        "argv": ["bun", "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts"],
+        "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "recorded_exit": 0,
+        "classification": "offline fixture proof; not real EVM execution",
+        "before": ["17", "100", "300", "400", "5", "80", "90"],
+        "after": ["7", "90", "270", "370", "8", "77", "90"],
+        "book_order": ["weight", "supply", "shares", "vaultSupply", "sy", "vaultSy", "sySupply"],
+        "negative_results": {
+          "first_staticcall_changed_to_call": "WITNESS_SHAPE",
+          "caught_nested_error": "TRACE_FAILED"
+        },
+        "rerun_by_verifier": false
+      }
+    ],
+    "adversarial_classes": {
+      "stale_state": {"status": "probed", "result": "Five current hashes match; reconstructed baseline separates prior pricingSet changes."},
+      "dirty_worktree": {"status": "probed", "result": "Dirty shared state recorded; scoped diff reviewed; no sibling certification or modification."},
+      "misleading_success_output": {"status": "probed", "result": "Recorded argv/CWD/exits/source bindings and assertion-before-print flow support only focused and offline claims."},
+      "malformed_input": {"status": "probed", "result": "Retained tests and manual assertions reject malformed observation shape, nested failure, and conservation/floor corruption."},
+      "prompt_injection": {"status": "inapplicable", "reason": "No external instruction execution introduced; evidence treated as untrusted data."},
+      "cancel_resume": {"status": "inapplicable", "reason": "No resumable flow or persistence transition changed by pin removal."},
+      "hung_or_long_commands": {"status": "inapplicable", "reason": "Retained focused runs completed; no new long command started."},
+      "flaky_tests": {"status": "inapplicable", "reason": "Unchanged deterministic in-memory tests; no timing or network dependency added."},
+      "repeated_interruptions": {"status": "inapplicable", "reason": "No interrupted operation or recovery behavior changed in this lane."}
+    },
+    "limitations": [
+      "Producer LSP diagnostics unavailable/timed out; no claim of fresh successful LSP diagnostics.",
+      "Verifier JSON LSP reports Biome is not installed; no installation attempted.",
+      "Full strict TypeScript verification deferred to task-7 integration after sibling lanes finish; not run here.",
+      "Recorded focused tests and manual proof inspected, not rerun.",
+      "Offline fixture does not establish real EVM execution.",
+      "Census lane, unrelated original-field tests, shared integration and whole-plan completion are not certified."
+    ],
+    "concrete_fix": null,
+    "cleanup": "No product/tests edited, no delegation, Forge, installs, commits or transactions. Producer evidence preserved. Only independent/report.md, independent/verification.json and final pin-verdict.json are written."
+  }
+}

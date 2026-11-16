@@ -1,0 +1,196 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas",
+  "nodeCommand": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && /bin/zsh -lic 'exec /Users/cyotee/.foundry/bin/anvil --host 127.0.0.1 --port 18561 --chain-id 4663 --fork-url \"https://robinhood-mainnet.g.alchemy.com/v2/$ALCHEMY_KEY\" --fork-block-number 108944663 --gas-limit 100000000 --disable-min-priority-fee --balance 1000000 --silent'",
+  "commands": [
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vv",
+      "attempt": 1,
+      "exit": 1,
+      "reason": "Incorrect factory-interface cast; retained compile-first-cast-failure.log"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vv",
+      "attempt": 2,
+      "exit": 0,
+      "result": "Original two gas regressions pass"
+    },
+    {
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol",
+      "exit": 0
+    },
+    {
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol:MigrationDeploymentGasLocalQA --sig 0x56e041fb000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000e68f9de49c682fdb3f5b4b302f896da93da7bee7000000000000000000000000ecd6e45d2938a6d434a8a051201853706f84619e0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de00000000000000000000000004022629690473e24fc5cf641694a6feb8a4516af000000000000000000000000ddd1e0cde46b5c90cd1b93b91352a7dc00c24009000000000000000000000000b084b225aa4395b47cc7affd375b8f56fc26083f000000000000000000000000046402db2a88b54da34dec0fdd0f9ae549b43cc000000000000000000000000077be20724af3f142979fc53af037b5738df07d3a000000000000000000000000c6b7b81dfd59e97337bbca6f5e7d6b3baa7724530000000000000000000000008f06dd279099a5d11ac504dec681c851f1abb223000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed800000000000000000000000075170821c0f42c76871925b807e4b5f1d3d18c23000000000000000000000000758be53e89c90bb594bfd5963458910685bc67ee0000000000000000000000008f50fb05f59191482d6ad32f5811730830359705000000000000000000000000d1d56864ab234ff18cb7279362e50a2b7960bb59000000000000000000000000cd29f772d1c9dbdbafdb0e54504160a5a977c0e80000000000000000000000000a69db3b30b7cb13eaff786832e062d157630bb20000000000000000000000002f0c891b4e9a1c9833dd3f7814d1a76f684797e9000000000000000000000000918b025c58621b1e893685acbc110c02a737b34f0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de0000000000000000000000000306be37febb704cbb482c36c0c65a7f03e415c7b000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8 --rpc-url http://127.0.0.1:18561 --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 --legacy --gas-price 2000000000 -vv",
+      "exit": 0,
+      "result": "Corrected FactoryService package simulation"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vvvv",
+      "exit": 1,
+      "result": "Nine pass, one chain-restoration harness failure; verbose output exceeded terminal tail"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vv --rerun",
+      "exit": 1,
+      "log": "matrix-before-chain-restoration.log"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vv",
+      "exit": 0,
+      "result": "Eleven construction cases pass"
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+      "exit": 0,
+      "log": "spec-current.log",
+      "passes": 107
+    },
+    {
+      "command": "FOUNDRY_PROFILE=fork PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv",
+      "shell": "/bin/zsh -lic",
+      "exit": 0,
+      "log": "fork-current.log",
+      "passes": 40
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+      "exit": 0,
+      "log": "spec-final.log",
+      "passes": 108
+    },
+    {
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+      "exit": 0,
+      "log": "spec-complete.log",
+      "passes": 109
+    }
+  ],
+  "rpcSource": "async(method,params=[])=>{const response=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:AbortSignal.timeout(120000)}); const body=await response.json(); if(body.error)throw new Error(JSON.stringify({method,error:body.error})); return body.result;}",
+  "submissionSource": "async(item,label,expectedStatus='0x1',trace=false)=>{const t=item.transaction??item; const envelope={from:t.from,to:t.to,data:t.input??t.data,value:t.value??'0x0',gas:bound,gasPrice:'0x77359400'}; const timestamp=item.receipt?.blockTimestamp; if(timestamp!==undefined)await rpc('evm_setNextBlockTimestamp',[Number(timestamp)]); let simulation;try{simulation={ok:true,result:await rpc('eth_call',[envelope,'pending'])};}catch(error){simulation={ok:false,error:String(error)};} const hash=await rpc('eth_sendTransaction',[envelope]);await rpc('evm_mine'); const receipt=await rpc('eth_getTransactionReceipt',[hash]);const transaction=await rpc('eth_getTransactionByHash',[hash]);const block=await rpc('eth_getBlockByNumber',[receipt.blockNumber,false]); const result={label,simulation,transaction,receipt,canonical:block.hash===receipt.blockHash};ownedTransactions.push(result);if(trace)result.trace=await rpc('debug_traceTransaction',[hash,{tracer:'callTracer'}]);if(!result.canonical||receipt.status!==expectedStatus||transaction.gas!==bound)throw new Error('Receipt gate '+JSON.stringify({label,hash,status:receipt.status,gas:transaction.gas}));return result;}",
+  "lifecycleSubmissionSource": "async(to,abi,method,args=[],from=dev,expected='0x1')=>submit({from,to,data:abi.encodeFunctionData(method,args),value:'0x0'},'lifecycle-'+method,expected,true)",
+  "holderScopeSource": "async(holder,fn)=>{await rpc('anvil_setBalance',[holder,'0x3635c9adc5dea00000']);await rpc('anvil_impersonateAccount',[holder]);const record={address:holder,started:true,stopped:false};impersonations.push(record);try{return await fn();}finally{await rpc('anvil_stopImpersonatingAccount',[holder]);record.stopped=true;}}",
+  "stateInspectionSource": "async(address)=>{const pkg=(await query(factory,factoryABI,'pkgOfAccount',[address]))[0];const args=(await query(factory,factoryABI,'pkgArgsOfAccount',[address]))[0];const config=(await query(address,configABI,'vaultConfig'))[0];const r={address,pkg,args,config:clean(config),indexes:[],facets:clean((await query(address,loupeABI,'facets'))[0]),interfaces:[]};const requests=[['vaults',[]],['vaultsOfPackage',[pkg]],['vaultsOfContentsId',[config.contentsId]],['vaultsOfPkgOfContentsId',[pkg,config.contentsId]]];for(const token of config.tokens)requests.push(['vaultsOfToken',[token]],['vaultsOfPkgOfToken',[pkg,token]]);for(const type of config.vaultTypes){requests.push(['vaultsOfType',[type]],['vaultsOfTypeOfContentsId',[type,config.contentsId]]);for(const token of config.tokens)requests.push(['vaultsOfTypeOfToken',[type,token]]);}for(const[name,params]of requests){const values=(await query(registry,vaultQueryABI,name,params))[0];ensure(contains(values,address),'Missing actual published index '+name);r.indexes.push({name,args:params,values:Array.from(values)});}const canonicalContents=(await query(registry,vaultQueryABI,'calcContentsId',[Array.from(config.tokens)]))[0];const tokenQueries=[['vaultsOfTokens',[Array.from(config.tokens)]],['vaultsOfPkgOfTokens',[pkg,Array.from(config.tokens)]]];for(const type of config.vaultTypes)tokenQueries.push(['vaultsOfTypeOfTokens',[type,Array.from(config.tokens)]]);r.tokenArrayQueries=[];for(const[name,params]of tokenQueries){const values=(await query(registry,vaultQueryABI,name,params))[0];const matched=contains(values,address);r.tokenArrayQueries.push({name,args:params,values:Array.from(values),matched});if(!matched){ensure(canonicalContents!==config.contentsId,'Missing canonical query');registryExceptions.push({address,name,publishedContents:config.contentsId,sortedContents:canonicalContents});}}const expected=new Map();for(const source of[factory,pkg]){for(const cut of(await query(source,packageABI,'facetCuts'))[0])for(const sel of cut.functionSelectors){if(cut.action===2n)expected.delete(sel);else expected.set(sel,cut.facetAddress.toLowerCase());}for(const type of(await query(source,packageABI,'facetInterfaces'))[0]){const supported=(await query(address,viewABI,'supportsInterface',[type]))[0];ensure(supported,'Missing interface');r.interfaces.push({type,supported});}}expected.delete(ethers.id('postDeploy()').slice(0,10));let actualCount=0;for(const facet of r.facets)for(const sel of facet.functionSelectors){ensure(expected.get(sel)===facet.facetAddress.toLowerCase(),'Incorrect ordered routing '+sel);actualCount++;}ensure(actualCount===expected.size,'Extra/missing selector');r.selectorCount=actualCount;return r;}",
+  "runtimeBindingSource": "async(address,name,file=name+'.sol')=>{const key=address.toLowerCase()+':'+name;if(completeBindingKeys.has(key))return;const artifact=JSON.parse(await read(wt+'/out/'+file+'/'+name+'.json'));const code=await rpc('eth_getCode',[address,'latest']);let actual=code.slice(2),expected=artifact.deployedBytecode.object.slice(2);const links=[],immutables=[];for(const[id,ranges]of Object.entries(artifact.deployedBytecode.immutableReferences??{})){for(const{start,length}of ranges){immutables.push({id,start,length,value:'0x'+actual.slice(start*2,(start+length)*2)});actual=actual.slice(0,start*2)+'0'.repeat(length*2)+actual.slice((start+length)*2);}}for(const[source,names]of Object.entries(artifact.deployedBytecode.linkReferences??{})){for(const[library,ranges]of Object.entries(names)){let linked;for(const{start,length}of ranges){const value='0x'+code.slice(2+start*2,2+(start+length)*2);if(linked)ensure(value===linked,'Inconsistent library link');linked=value;actual=actual.slice(0,start*2)+'0'.repeat(length*2)+actual.slice((start+length)*2);expected=expected.slice(0,start*2)+'0'.repeat(length*2)+expected.slice((start+length)*2);}links.push({source,library,address:linked,ranges});await bindCurrentRuntime(linked,library,source.split('/').at(-1));}}ensure(actual===expected,'Normalized runtime mismatch '+name);allRuntimeBindings.push({address,name,file,runtimeHash:ethers.keccak256(code),runtime:code,artifactRuntimeObject:artifact.deployedBytecode.object,links,immutables,match:true});completeBindingKeys.add(key);}",
+  "cleanup": {
+    "initialNode": {
+      "monitor": "mon_FBR729GRRTZ7P9BE",
+      "session": "bash_4",
+      "exit": 0,
+      "cause": "Not exposed; no stop request was issued by this worker before that completion."
+    },
+    "finalNode": {
+      "monitor": "mon_6MD5H9NCTS81BVMZ",
+      "session": "bash_15",
+      "exit": 1,
+      "stoppedWith": "kill_bash",
+      "terminalBookkeepingError": "EPERM removing owned monitor metadata; process termination delivered watcher killed exit 1 and closed-port verification exited 0."
+    },
+    "impersonations": [
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x2e69E40C4a4Ab5CA6826850F347acf8076a8063e",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+        "started": true,
+        "stopped": true
+      }
+    ],
+    "cleanupCommand": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas && if lsof -nP -iTCP:18561 -sTCP:LISTEN; then printf 'OWNED_PORT_STILL_OPEN\n'; exit 1; else printf 'OWNED_PORT_CLOSED\n'; fi && test -d out && test -d cache_forge && printf 'WARM_ARTIFACTS_AND_CACHE_PRESERVED\n' && GIT_MASTER=1 git diff --check && GIT_MASTER=1 git status --short --ignore-submodules=all && GIT_MASTER=1 git rev-parse HEAD",
+    "cleanupReceipt": "status: completed exit_code: 0\nOWNED_PORT_CLOSED\nWARM_ARTIFACTS_AND_CACHE_PRESERVED\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol\n?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol\n?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/\n?? scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol\n?? test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol\n?? test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol\n421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+    "port18560": "Not used or changed",
+    "caches": "out and cache_forge preserved",
+    "git": {
+      "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "commits": false,
+      "merges": false
+    },
+    "diagnostics": [
+      "No diagnostics found",
+      "No diagnostics found",
+      "No diagnostics found",
+      "No diagnostics found",
+      "No diagnostics found",
+      "No diagnostics found",
+      "No diagnostics found",
+      "No diagnostics found"
+    ],
+    "jsonDiagnostics": "Biome unavailable; no installation attempted. Evidence serialized from parsed actual objects.",
+    "pendingRuntime": false
+  }
+}

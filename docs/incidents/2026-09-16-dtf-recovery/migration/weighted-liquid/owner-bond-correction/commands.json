@@ -1,0 +1,881 @@
+{
+  "version": "owner-first-bond-correction-commands-v1",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+  "final": [
+    {
+      "name": "complete Migration specs",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol -- -vv",
+      "exit": 0,
+      "passed": 109,
+      "failed": 0,
+      "skipped": 0,
+      "log": "specs.log"
+    },
+    {
+      "name": "complete Migration forks",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv",
+      "shell": "/bin/zsh -lc (existing ALCHEMY_KEY inherited without disclosure)",
+      "exit": 0,
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "log": "forks-final.log"
+    },
+    {
+      "name": "both operator stages",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "exit": 0,
+      "log": "operator-stages.log"
+    },
+    {
+      "name": "three operator tests",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "exit": 0,
+      "passed": 57,
+      "failed": 0,
+      "log": "operator-tests-runtime.log"
+    },
+    {
+      "name": "strict operator types",
+      "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts",
+      "exit": 0,
+      "log": "operator-types-runtime.log"
+    },
+    {
+      "name": "actual fixed18563 CLI",
+      "command": "bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18563 --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid",
+      "shell": "/bin/zsh -lc",
+      "exit": 0,
+      "log": "rehearsal.log",
+      "run": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985"
+    }
+  ],
+  "earlierAttempts": [
+    {
+      "log": "specs-first.log",
+      "exit": 1,
+      "passed": 105,
+      "failed": 4,
+      "reason": "New-test next-call getter ordering and exact SY error; existing extreme-index fixture required a correspondingly small genuine paid purchase."
+    },
+    {
+      "log": "forks-first.log",
+      "exit": 1,
+      "reason": "bash login shell lacked ALCHEMY_KEY; zsh inherited the existing credential without provider changes."
+    },
+    {
+      "log": "forks.log",
+      "exit": 1,
+      "passed": 50,
+      "failed": 2,
+      "reason": "W-L exact assertions needed the real owner-bond backing and measured pre-conversion residual balance."
+    },
+    {
+      "log": "operator-tests.log",
+      "exit": 1,
+      "passed": 56,
+      "failed": 1,
+      "reason": "Typed ownerFirstBond stage artifact not yet explicitly rebuilt; explicit both-stage build fixed it without changing the test."
+    },
+    {
+      "log": "operator-tests-final.log",
+      "exit": 0,
+      "passed": 57,
+      "failed": 0
+    },
+    {
+      "log": "operator-types.log",
+      "exit": 0
+    },
+    {
+      "log": "operator-types-final.log",
+      "exit": 0
+    },
+    {
+      "kind": "tool rejection",
+      "reason": "One invalid monitor regex rejected before spawning; corrected subscription started the single run."
+    },
+    {
+      "kind": "read-only Git",
+      "exit": 128,
+      "reason": "Preserved Crane symlink requires --ignore-submodules=all; no dependency was changed."
+    },
+    {
+      "kind": "read-only Git pager",
+      "exit": 1,
+      "reason": "Killed only an owned pager after diff --check had completed; repeated nonpaged scope check exited 0."
+    }
+  ],
+  "runtimeCommands": [
+    {
+      "path": "032-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-03-WeightedRewards-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-03-WeightedRewards"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "036-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-05-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-05-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "011-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/configure",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "environment-stage.log.command.json",
+      "command": [
+        "/Users/cyotee/.foundry/bin/forge",
+        "script",
+        "--use",
+        "solar",
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
+        "--sig",
+        "prepareEnvironment()",
+        "--rpc-url",
+        "http://127.0.0.1:18563/",
+        "--sender",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--unlocked",
+        "--broadcast",
+        "--slow",
+        "--legacy",
+        "--gas-price",
+        "2000000000",
+        "--gas-limit",
+        "1000000000",
+        "--gas-estimate-multiplier",
+        "200"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "027-activate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "activate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/activate",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "028-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-01-WeightedClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-01-WeightedClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "014-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "025-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/owner-bond",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "042-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-08-EarlierClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-08-EarlierClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "007-capture.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "capture",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/capture",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "009-validate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "validate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/prepared/manifest.json"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "017-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/reject-proxy.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "022-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/replacement",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "039-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-06-WeightedConvert-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-06-WeightedConvert",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "018-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/reject-package.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "026-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/owner-bond",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "021-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "035-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-04-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-04-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "004-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "031-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-02-WeightedPrincipal-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-02-WeightedPrincipal",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "041-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-07-Donate-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-07-Donate",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "013-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "045-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-09-EarlierSale-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-09-EarlierSale",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "003-fund.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "fund",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "008-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/prepared"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "023-owner-bond.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "owner-bond",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/owner-bond",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "024-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/owner-bond"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "033-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-03-WeightedRewards-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-03-WeightedRewards",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "001-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/deploy"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "037-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-05-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-05-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "006-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d",
+        "--reverse"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "010-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/reordered-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/prepared-reordered"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "012-independent-issue.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "independent-issue",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "020-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/reject-payload.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "029-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-01-WeightedClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-01-WeightedClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "043-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-08-EarlierClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-08-EarlierClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "046-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/verify-after"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "038-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-06-WeightedConvert-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-06-WeightedConvert"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "034-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-04-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-04-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "015-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/verify"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "030-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-02-WeightedPrincipal-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-02-WeightedPrincipal"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "005-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "040-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-07-Donate-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-07-Donate"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "044-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-09-EarlierSale-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/harvest-09-EarlierSale"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "019-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/reject-snapshotId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "002-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/deploy",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "016-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-correction/rehearsal-1794433089985/reject-chainId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x5eb17ec10b8ae9bda66045d001583ae63439f2ec436961c3d997f296bd90d33d"
+      ],
+      "code": 1,
+      "signal": null
+    }
+  ],
+  "diagnostics": {
+    "solidity": [
+      "BondFacet no diagnostics",
+      "BondNFTVaultTarget no diagnostics",
+      "OwnerFirstBond spec no diagnostics",
+      "OwnerBondCallbacks spec no diagnostics"
+    ],
+    "typescript": [
+      "execution-owner-bond no diagnostics",
+      "rehearsal-owner-bond fresh LSP diagnostics timeout; strict TypeScript exit 0"
+    ],
+    "json": "Biome absent; no install/config changes; evidence is JSON serialization"
+  }
+}

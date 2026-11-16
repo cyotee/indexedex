@@ -1,0 +1,58 @@
+
+scripts/recovery/dtf-migration/candidates.test.ts:
+(pass) joins exact multiple asset inputs to one collection ID and preserves observations [1.30ms]
+(pass) shared purchase transactions never attribute their entire input to each NFT [0.20ms]
+(pass) payer conflicts remain unresolved instead of being assigned to the recipient [0.14ms]
+(pass) earlier LP accounting shares keep direct WETH distinct from routed DTF and missing receipts [0.11ms]
+(pass) unknown integer is distinct from observed zero and rejects decimal or malformed encodings [0.19ms]
+(pass) CSV parser preserves quoted delimiters and rejects truncation, bad widths and duplicate keys [0.14ms]
+(pass) source units distinguish native19 vault shares, native28 SE, raw weights, gons and accounting LP [0.12ms]
+(pass) candidate documents are unsupported by every live input schema and preparation CLI [1.92ms]
+123 |     "prose.md": { bytes: 8, sha256: fingerprint("original") },
+124 |   } }));
+125 |   await writeFile(join(dir, "raw.csv"), raw);
+126 |   await writeFile(join(dir, "prose.md"), "changed!");
+127 |   try {
+128 |     await assert.rejects(loadCandidateInput(dir), /raw binding differs: prose.md/);
+                       ^
+AssertionError: The input did not match the regular expression /raw binding differs: prose.md/. Input:
+
+'PreparationError: candidates: symlink input: manifest.json'
+
+ generatedMessage: true,
+   expected: /raw binding differs: prose.md/,
+   operator: "rejects",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at expectedException (node:assert:327:33)
+      at expectsError (node:assert:395:20)
+      at assert.rejects (node:assert:434:17)
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidates.test.ts:128:18
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+
+25 |   readonly sources: z.infer<typeof sourceIndex>;
+26 |   readonly bindings: readonly CandidateBinding[];
+27 |   readonly bytes: ReadonlyMap<string, Uint8Array>;
+28 | };
+29 | export function candidateError(message: string): never {
+30 |   throw new PreparationError("PROVENANCE", `candidates: ${message}`);
+             ^
+PreparationError: candidates: symlink input: manifest.json
+ code: "PROVENANCE"
+
+      at candidateError (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-input.ts:30:9)
+      at <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-input.ts:44:34)
+      at async loadCandidateInput (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-input.ts:52:31)
+      at async waitForActual (node:assert:359:24)
+      at async assert.rejects (node:assert:434:77)
+      at async <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidates.test.ts:128:18)
+      at async <anonymous> (node:test:1445:26)
+      at async executeTestNode (node:test:1448:63)
+(fail) all declared bytes authenticate before malformed raw CSV parsing and fail closed on missing files [2.41ms]
+(pass) offline candidate command rejects signing, broadcast and duplicate input flags [0.13ms]
+
+ 9 pass
+ 1 fail
+Ran 10 tests across 1 file. [62.00ms]

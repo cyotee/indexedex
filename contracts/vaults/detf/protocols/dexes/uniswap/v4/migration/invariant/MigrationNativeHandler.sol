@@ -14,6 +14,7 @@ import {IUniswapV4StandardExchangeWeightedBufferHook as Hook} from
     "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation,
     IUniswapV4DetfMigrationAccounting as Accounting} from "../interfaces/IUniswapV4DetfMigration.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "../interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
 
 /// @notice Bounded native lifecycle actions over real proxies with an independent ledger.
 /// @dev Market inputs are bounded and the fixture's mint threshold is 100 WAD.
@@ -27,9 +28,21 @@ contract MigrationNativeHandler is MigrationNativeLedger {
     uint256[6] internal issuedTime;
     uint256 public marketActions;
     uint256 public ownershipActions;
+    bytes32[6] internal configuredBook;
+    uint256[6] internal configuredCredit;
+    bytes32 internal previousBook;
+    uint256 public pricingActions;
+    uint256 public configurationActions;
+    uint256 public issuanceActions;
+    uint256 public activationActions;
+    uint256 public staleBookRejections;
 
     constructor(Seed memory s_) MigrationNativeLedger(s_) {
-        for (uint256 i_; i_ < 6; ++i_) configured[i_] = i_ % 3;
+        for (uint256 i_; i_ < 6; ++i_) {
+            configured[i_] = i_ % 3;
+            configuredBook[i_] = snapshotId;
+            configuredCredit[i_] = frozenQuotes[i_ % 3];
+        }
         delivered[0] = s_.firstCredit;
         delivered[1] = s_.secondCredit;
         issuedId[0] = 3; issuedId[1] = 4;
@@ -51,9 +64,54 @@ contract MigrationNativeHandler is MigrationNativeLedger {
     }
 
     function _configuration(uint256 i_) internal view returns (bytes32) {
-        return keccak256(abi.encode(block.chainid, address(parent), snapshotId, _input(i_)));
+        return keccak256(abi.encode(block.chainid, address(parent), configuredBook[i_], _input(i_)));
     }
 
+    /// @notice Catches repricing that mutates any existing original, credit, issuance, funding or supply.
+    function setPricing(uint256 choice_) public {
+        Pricing.Inputs memory next_ = parent.migrationWeightedPricing().inputs;
+        next_.swapFeeWad = choice_ % 2 == 0 ? 1e16 : 2e16;
+        bytes32 records_ = _records();
+        vm.prank(currentOwner);
+        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.setMigrationWeightedPricing.selector));
+        bytes32 id_ = Allocation(address(parent)).setMigrationWeightedPricing(next_);
+        if (active) ++rejections;
+        else {
+            previousBook = snapshotId;
+            snapshotId = id_;
+            snapshotHash = keccak256(abi.encode(parent.migrationWeightedPricing()));
+            for (uint256 i_; i_ < 3; ++i_)
+                frozenQuotes[i_] = parent.previewOriginalCredit((i_ + 1) * 1e15, (i_ + 1) * 1e15);
+            ++pricingActions; ++successes;
+        }
+        assertEq(_records(), records_, "set never rewrites loaded originals or immutable issuance");
+        _count(this.setPricing.selector);
+        assertAll();
+    }
+
+    /// @notice Catches A-prepared configuration silently executing against B, including full rollback.
+    function staleBook(uint256 actor_) public {
+        uint256 i_ = actor_ % 6;
+        Migration.IndependentAllocationInput[] memory a_ = new Migration.IndependentAllocationInput[](1);
+        a_[0] = _input(i_);
+        bytes32 stale_ = previousBook == snapshotId ? bytes32("stale-book") : previousBook;
+        bytes32 records_ = _records();
+        vm.prank(currentOwner);
+        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.configureIndependentAllocations.selector));
+        else vm.expectRevert(abi.encodeWithSelector(Pricing.MigrationWeightedPricingBookMismatch.selector, stale_, snapshotId));
+        Allocation(address(parent)).configureIndependentAllocations(a_, stale_);
+        assertEq(_records(), records_, "stale-book full rollback");
+        ++rejections; ++staleBookRejections;
+        _count(this.staleBook.selector);
+        assertAll();
+    }
+
+    function _records() internal view returns (bytes32 result_) {
+        for (uint256 i_; i_ < 6; ++i_) result_ = keccak256(abi.encode(result_,
+            parent.independentAllocation(actors[i_]), parent.independentIssuance(actors[i_])));
+    }
+
+    /// @notice Catches a replacement issuing tokens or resizing a previously delivered A bond.
     function configure(uint256 actor_, uint256 amount_) public {
         uint256 i_ = actor_ % 6;
         uint256 previous_ = configured[i_];
@@ -62,9 +120,13 @@ contract MigrationNativeHandler is MigrationNativeLedger {
         a_[0] = _input(i_);
         vm.prank(currentOwner);
         if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.configureIndependentAllocations.selector));
-        Allocation(address(parent)).configureIndependentAllocations(a_);
+        Allocation(address(parent)).configureIndependentAllocations(a_, snapshotId);
         if (active) { configured[i_] = previous_; ++rejections; }
-        else ++successes;
+        else {
+            configuredBook[i_] = snapshotId;
+            configuredCredit[i_] = frozenQuotes[configured[i_]];
+            ++configurationActions; ++successes;
+        }
         _count(this.configure.selector);
         assertAll();
     }
@@ -81,14 +143,14 @@ contract MigrationNativeHandler is MigrationNativeLedger {
         uint256[] memory ids_ = Allocation(address(parent)).issueIndependentAllocations(r_);
         if (active || delivered[i_] != 0) ++rejections;
         else {
-            uint256 credit_ = frozenQuotes[configured[i_]];
+            uint256 credit_ = configuredCredit[i_];
             delivered[i_] = credit_;
             issuedConfiguration[i_] = _configuration(i_);
             issuedId[i_] = ids_[0];
             issuedTime[i_] = block.timestamp;
             _recordPosition(ids_[0], actors[i_], credit_, true);
             expectedSupply += credit_;
-            ++successes;
+            ++issuanceActions; ++successes;
         }
         _count(this.issue.selector);
         assertAll();
@@ -122,7 +184,7 @@ contract MigrationNativeHandler is MigrationNativeLedger {
         if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.activateMigration.selector));
         Allocation(address(parent)).activateMigration();
         if (active) ++rejections;
-        else { active = true; ++successes; }
+        else { active = true; ++activationActions; ++successes; }
         _count(this.activate.selector);
         assertAll();
     }
@@ -273,7 +335,7 @@ contract MigrationNativeHandler is MigrationNativeLedger {
 
     /// @notice Interface-derived administration set, not copied facet output.
     function administrationSelectors() public pure returns (bytes4[16] memory) {
-        return [Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
+        return [Allocation.bootstrapMigrationReserve.selector, Allocation.setMigrationWeightedPricing.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
             Allocation.configureWeightedSyEntitlements.selector, Allocation.configureDtfCustodySeEntitlements.selector,
@@ -288,13 +350,15 @@ contract MigrationNativeHandler is MigrationNativeLedger {
         assertEq(parent.owner(), currentOwner);
         assertEq(IMultiStepOwnable(seed.registry).owner(), seed.registryOwner);
         assertEq(parent.migrationActivated(), active);
-        assertEq(keccak256(abi.encode(parent.migrationSnapshot())), snapshotHash);
+        assertEq(keccak256(abi.encode(parent.migrationWeightedPricing())), snapshotHash);
         assertEq(isolatedBook(seed.isolated), seed.isolatedBook, "separate proxy book");
         for (uint256 i_; i_ < 3; ++i_) assertEq(parent.previewOriginalCredit((i_ + 1) * 1e15, (i_ + 1) * 1e15), frozenQuotes[i_]);
         for (uint256 i_; i_ < 6; ++i_) {
             Migration.IndependentAllocation memory a_ = parent.independentAllocation(actors[i_]);
             assertEq(a_.configurationId, _configuration(i_));
-            assertEq(a_.totalCredit, frozenQuotes[configured[i_]]);
+            assertEq(a_.totalCredit, configuredCredit[i_], "keep credit until explicitly reloaded");
+            assertEq(abi.encode(a_.entitlements[0].original), abi.encode(_input(i_).entitlements[0]),
+                "economic original is independent of current pricing book");
             Migration.IndependentIssuance memory x_ = parent.independentIssuance(actors[i_]);
             assertEq(x_.credit, delivered[i_]);
             assertEq(x_.bondTokenId, issuedId[i_]);

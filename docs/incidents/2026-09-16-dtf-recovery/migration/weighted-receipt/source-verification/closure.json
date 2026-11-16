@@ -1,0 +1,240 @@
+{
+  "date": "2026-11-12",
+  "verdict": "admitted",
+  "report": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md",
+    "bytes": 15387,
+    "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56"
+  },
+  "audit": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/audit.json",
+    "bytes": 79442,
+    "sha256": "108df5ba582a7c76d97917c41b07e853bbc119224d123688a5c7754f0765f621"
+  },
+  "producerFinalFileCount": 104,
+  "allProducerBytesUnchangedSinceAdmissionAudit": true,
+  "producerContract": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md",
+    "bytes": 18779,
+    "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6"
+  },
+  "producerQualifiedSeal": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/qualification-seal.json",
+    "bytes": 99145,
+    "sha256": "c5e24a3ec1774a94a8c1924286da195023ad99d2bbb294f34385368a24ddc7ee"
+  },
+  "verificationFiles": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/audit.json",
+      "bytes": 79442,
+      "sha256": "108df5ba582a7c76d97917c41b07e853bbc119224d123688a5c7754f0765f621"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md",
+      "bytes": 15387,
+      "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-2.json",
+      "bytes": 7730,
+      "sha256": "70db5854067a50d8499e24e076580ed4e80a2b557c0b7b4c97f07b0454836b03"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/result.json",
+      "bytes": 71,
+      "sha256": "924ac4f0b2f389f3beb1c0789e17db996560e27a0da61cf3c51010ffc955307a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/representable-terminal.json",
+      "bytes": 5504,
+      "sha256": "5e9a715908385d0e8c3609580012ce4dcf9d975ff89888841aed7efb218d18ab"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-3.json",
+      "bytes": 4819,
+      "sha256": "9604b642aef662e496c8d1a4c6a27e17e1ba38431c2a244f3486f4681b880926"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/missing-allowance.json",
+      "bytes": 126004,
+      "sha256": "275ccc16428ad45198f92f8dc26f98115ce355c2a0b773b5bd889a9acc17e985"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-11.json",
+      "bytes": 12145,
+      "sha256": "5c4b958888e9d55275d19947416cf539b8dfdf272cfe2eac4ccde9027df869bc"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-8.json",
+      "bytes": 7806,
+      "sha256": "feece4413a9a404b8ec4ff1d8b075baea6d5b5b8b3628476ae68678dfb44d021"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-4.json",
+      "bytes": 127137,
+      "sha256": "06e9037d1fbbeff8779e9143540ef8a4ffb2a7b40278541730d4246e29b9d6cb"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/anvil.log",
+      "bytes": 18567,
+      "sha256": "f42708954863f56ab1feaf3744949897aa484f5fdf0e99759f887f8e2ffe754b"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-5.json",
+      "bytes": 4825,
+      "sha256": "abd6ba2196dcd423165452c1325f1eb216954cb043e05e0a2058bc7efc1e8965"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-9.json",
+      "bytes": 14964,
+      "sha256": "70050b4de641737bccd9ec71d7073bb86a8d9a4ef7403edee85141c0bb71d0da"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/unstake-boundary.json",
+      "bytes": 14146,
+      "sha256": "a8c72cf93714ffc562fb09df82254ea212e8722855c3e024e2c95f24b8307270"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-10.json",
+      "bytes": 130291,
+      "sha256": "217abea3d7f6ac311c911767de0adbef1b1f2d1652636654fc3d72128892d058"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/cleanup.json",
+      "bytes": 94,
+      "sha256": "a0d1232e9fc29493b819b533195b55cda04c8ed33e28d306186170be28929343"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-13.json",
+      "bytes": 14931,
+      "sha256": "16981d66b7fcf280ea5dd7440171c25affeb550536ab69d6dde7c7e22219d1cf"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/identity.json",
+      "bytes": 107177,
+      "sha256": "db577f55dfea8329e635d4fff8357aeaffe1859ca452132b364fe51d837a3261"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-6.json",
+      "bytes": 7807,
+      "sha256": "fc033c5a90dd0649260cca1a7b5da2bbeab4ea098f79ba7ec859cbebd380a88d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-7.json",
+      "bytes": 7504,
+      "sha256": "76e38b8f2bcb6f7f3685c03bbcc80cb347de123f340eb65270fea011e494a7f1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-12.json",
+      "bytes": 13969,
+      "sha256": "d41844ba5bf48059de8c940a70b469ad9a05c06dc4b5455efbdb3b4b73d6b9ee"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-0.json",
+      "bytes": 4740,
+      "sha256": "c74d14f52328f6baddd23257e4dae8efa81719c62ecd683786196a3a49f708c4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/genuine-wd-funding.json",
+      "bytes": 1652,
+      "sha256": "cd49cca6377618061a3397ce4b99abf5e9f93e7cc4ff1f859c3c75854138d2ae"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/synchronized-pull.json",
+      "bytes": 132089,
+      "sha256": "6b31251dd382a573368c0bdd49b3fc470e9763d2698c7afd812d0278c377d1aa"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x2bac2e5a4f39c32ed16205591ba26e307414ca9e-1.json",
+      "bytes": 132782,
+      "sha256": "6d12e4d2a4054ea3c91f1fc0f26badcfc16c9fd1d7783e487ab345a38faa9be7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/boundary.json",
+      "bytes": 681,
+      "sha256": "0830dc98836b9f3c38e7d9436d53ee036703d84dd06faba8185c8b048bcfd7fb"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-14.json",
+      "bytes": 7811,
+      "sha256": "c9265830c22ae5aec05e2b71c4ae823ed5d0be08ce930e27b603300b2cd24809"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x2bac2e5a4f39c32ed16205591ba26e307414ca9e-0.json",
+      "bytes": 126004,
+      "sha256": "275ccc16428ad45198f92f8dc26f98115ce355c2a0b773b5bd889a9acc17e985"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/signed-0x83781cf2371117aac856621805fb83c9ca439bad-1.json",
+      "bytes": 138930,
+      "sha256": "b20ce4b043e4edcb47b093f0fa624715880440db852fc6811656dd720baca8b8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-01/helper-runtime.json",
+      "bytes": 1250,
+      "sha256": "85cc56fb2009f714ac33b67a5b4d7f0b1ff47e7044ee5bba17284f0096b1e86f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/archive-origin.json",
+      "bytes": 1181,
+      "sha256": "af81ba1847863166d541dc21d623343a2cbd5934e36a10eff09d3806a1b9edbe"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/replay-command.md",
+      "bytes": 1264,
+      "sha256": "099600e04b9447058a0d0627b657bcf92a4fd90917fe6bbd91e5c0dc0e1ad9dd"
+    }
+  ],
+  "selfExcluded": "closure.json",
+  "jsonParse": "All owned JSON parsed successfully",
+  "cleanup": {
+    "commands": [
+      {
+        "label": "port",
+        "command": "lsof -nP -iTCP:18567 -sTCP:LISTEN",
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "process",
+        "command": "ps -p 5075,99301,382,1820 -o pid=,command=",
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "tracked",
+        "command": "git diff --ignore-submodules=all --exit-code",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "index",
+        "command": "git diff --cached --ignore-submodules=all --exit-code",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "whitespace",
+        "command": "git diff --ignore-submodules=all --check",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ],
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/.omo-runtime/dtf-migration-weighted-receipt/checkpoints",
+    "checkpointState": "ENOENT",
+    "replayCleanup": {
+      "checkpointCreated": false,
+      "pid": 5075,
+      "port": 18567,
+      "stopped": true,
+      "subscriptionsClosed": true
+    },
+    "ownedRuntimePending": false
+  },
+  "notes": "Report and source bindings are the implementation gate. No inherited unrelated-suite replay. No new runtime after completed replay."
+}

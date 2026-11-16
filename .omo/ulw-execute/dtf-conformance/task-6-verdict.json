@@ -1,0 +1,159 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 6,
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-6-done.json",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/verification/report.md",
+  "independent": true,
+  "summary": "Raw execution evidence supports task 6. The exact prescribed helper invocation precedes helper output, with exit 0 and 182 individually named passes. Executed tests reject reserved earlier IDs 0-2 at configuration and Stage 2 surrender. All fourteen authenticated source categories have positive, rejection and conservation witnesses. Existing source eligibility and conditional recovery rules remain intact; no authenticated mismatch requiring a production recovery change was identified.",
+  "claim_read": {
+    "size": 9081,
+    "mtime_ms": 1794713556901.8728,
+    "sha256": "f9bb159af48de755f1657b55869665501d7d6ac3ce4cfae6ce06ce2cef12e340",
+    "stable_during_reads": true,
+    "size_rechecked_before_verdict": true
+  },
+  "checks": [
+    {
+      "id": 1,
+      "result": "PASS",
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/fork-qa-1.log:1-10,23-25,6380-6382,7840-7842"
+      ],
+      "observation": "The exact outer forge-artifacts.py argv is at line 7 before helper output at line 8. The log contains 182 individual PASS records, a 30-suite zero-failure/zero-skip summary and TASK6_EXIT=0. Task 4 H1's missing-command defect is absent."
+    },
+    {
+      "id": 2,
+      "result": "PASS",
+      "evidence": [
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol:17-57",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol:27-38",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol:48-64",
+        "scripts/recovery/dtf-migration/schema.ts:38",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/fork-qa-1.log:7148"
+      ],
+      "observation": "The executed reserved-role test authenticates exact source owners/tuples and loops over IDs 0, 1 and 2 for typed configuration and Stage 2 surrender rejection with unchanged economic state. Solidity and TS minimum-ID guards remain. Task 3 source facts and current behavior expose no unclosed authenticated recovery mismatch."
+    },
+    {
+      "id": 3,
+      "result": "PASS",
+      "required_categories": 14,
+      "covered_categories": 14,
+      "witness_locator_mismatches": 0,
+      "assertion_text_mismatches": 0,
+      "observation": "All fourteen task 3 categories and addresses match source-results.json. All 42 positive/rejection/conservation source bodies were inspected, including inherited implementations and TokenStaking wrapper helpers. Every embedded raw line agrees with the execution log. Reserved IDs are non-qualifying. Earlier LP permanent custody and other external-authority conditions remain source-specific.",
+      "category_raw_lines": [
+        {"category": "weighted-nft", "positive": 7130, "rejection": 7131, "conservation": 7182},
+        {"category": "earlier-nft", "positive": 7123, "rejection": 7126, "conservation": 7181},
+        {"category": "weighted-liquid", "positive": 7796, "rejection": 7794, "conservation": 7795},
+        {"category": "earlier-liquid", "positive": 6402, "rejection": 6400, "conservation": 6405},
+        {"category": "weighted-receipt", "positive": 7806, "rejection": 7805, "conservation": 7220},
+        {"category": "earlier-receipt", "positive": 6414, "rejection": 6415, "conservation": 6419},
+        {"category": "weighted-sy", "positive": 7825, "rejection": 7824, "conservation": 7225},
+        {"category": "claim-vault", "positive": 6454, "rejection": 6453, "conservation": 7173},
+        {"category": "dtf-custody-se", "positive": 7833, "rejection": 7832, "conservation": 7191},
+        {"category": "weighted-weth-se", "positive": 6482, "rejection": 6479, "conservation": 6485},
+        {"category": "earlier-se", "positive": 6444, "rejection": 6439, "conservation": 6448},
+        {"category": "weighted-lp", "positive": 6468, "rejection": 6465, "conservation": 6471},
+        {"category": "earlier-lp", "positive": 6431, "rejection": 6428, "conservation": 7102},
+        {"category": "token-staking-preparation", "positive": 7819, "rejection": 7816, "conservation": 7815}
+      ]
+    },
+    {
+      "id": 4,
+      "result": "PASS",
+      "excerpt_rows_checked": 160,
+      "excerpt_mismatches": 0,
+      "failure_witnesses_checked": 13,
+      "observation": "rollback-and-custody.log explicitly labels a verbatim excerpt rather than a trace. Every numbered row matches the raw log. Wrong-wallet, Stage 1, unauthorized exit and middle-batch rollback resolve at lines 7152, 7149, 7102 and 7212, with actual rollback assertions inspected."
+    },
+    {
+      "id": 5,
+      "result": "PASS with attribution limit",
+      "preflight_bindings_checked": 104,
+      "current_hash_mismatches": 0,
+      "saved_status_section_sha256": "880db3cb0ff1d5e6b7594a87d486fb9a81673f81182f3f61df50aaac86001913",
+      "tracked_status_entries_missing_or_changed": 0,
+      "observation": "Saved before/after status sections are byte-identical; current tracked dirty/deleted entries preserve the baseline. All 104 preflight bindings match current files, including pricing and four task 5 files. The fifth task 5 file, preparation.fixture.ts, is outside those bindings; its inspected diff matches the previously confirmed task 5 fixture change. No task 6 pricing or task 5 edit was identified. Owned-test diff/check preserves prior expected-book adaptations and adds the reserved-role witness; independent scoped whitespace check exited 0.",
+      "limit": "Git status and shared diffs do not prove historical authorship. The unbound fixture was checked by its actual diff and prior confirmed task 5 report, not claimed to have a pre-QA hash."
+    }
+  ],
+  "raw_execution": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/fork-qa-1.log",
+    "size": 3884899,
+    "sha256": "ec59e2ca0e0f6c936b848ed226571e303cd9a37a7d9fc674b22c3eeca7cee238",
+    "command_line": 7,
+    "helper_first_output_line": 8,
+    "summary_line": 7840,
+    "exit_line": 7842,
+    "exit_code": 0,
+    "suites": 30,
+    "named_passes": 182,
+    "failed": 0,
+    "skipped": 0,
+    "executed_by_verifier": false
+  },
+  "adversarial": {
+    "misleading_success_output": {
+      "result": "PASS",
+      "observation": "Validated exact argv, raw bytes/hash, suite identities, individual cases and exit marker; did not accept the completion status or count alone."
+    },
+    "stale_state": {
+      "result": "PASS",
+      "observation": "All 104 current file bindings match. Executed source-role, live-principal-race, repeated mature reward-only harvest and prior committed-preparation witnesses were inspected."
+    },
+    "dirty_worktree": {
+      "result": "PASS with attribution limit",
+      "observation": "Preserved tracked status entries and prior pricing/task 5 changes. This verifier writes only the report and verdict. See check 5 for the unbound fixture limitation."
+    },
+    "malformed_input": {
+      "result": "PASS",
+      "observation": "Inspected executed typed rejects and rollback assertions for reserved IDs, wrong wallets, absent configuration, inconsistent originals, stale minima, zero credit and invalid recovery selections. Evidence JSON parses and all source witnesses resolve."
+    },
+    "generated_or_cached_artifacts": {
+      "result": "PASS",
+      "observation": "Raw evidence records Solar build-before-test compilation of 892 and 32 files. Current bound sources match the run's preflight. No independent rebuild or stronger whole-tree artifact attestation is claimed."
+    },
+    "untrusted_external_text": {
+      "result": "PASS",
+      "observation": "Claim and archived source records were treated as data and reconciled to actual source/raw evidence. No embedded instruction, external query, historical scan or provider change was executed."
+    },
+    "hung_or_long_commands": {
+      "result": "not-applicable",
+      "reason": "No Forge or test run was started by this verifier."
+    },
+    "flaky_tests": {
+      "result": "not-applicable",
+      "reason": "No test reruns or retries were performed."
+    },
+    "cancel_resume": {
+      "result": "not-applicable",
+      "reason": "No test run or operator execution was resumed or cancelled."
+    },
+    "repeated_interruptions": {
+      "result": "not-applicable",
+      "reason": "No test interruption scenario was run. An initial read-only Git PTY pager was terminated; replacement non-PTY status and scoped diff/check commands completed with exit 0."
+    }
+  },
+  "findings": [],
+  "limits": [
+    "No Forge, test suite, RPC, install, commit, implementation or delegation was performed by this verifier.",
+    "This confirms task 6 only, not subsequent tasks or whole-tree migration readiness.",
+    "Conditional local fork authority and synthetic contributions authorize no public operation or financial allocation.",
+    "Unemitted local quantities remain exact source-assertion expressions, not fabricated trace values.",
+    "Existing producer compiler/config warnings and failed automatic dependency-initialization attempts remain disclosed in raw evidence.",
+    "No product file, task-6-done.json or fork-qa-1.log was overwritten."
+  ],
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-6/verification/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-6-verdict.json"
+  ]
+}

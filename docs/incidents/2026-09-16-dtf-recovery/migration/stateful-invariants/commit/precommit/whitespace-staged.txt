@@ -1,0 +1,4 @@
+GIT_MASTER=1 git diff --cached --ignore-submodules=all --check 15fd629375edeb361f6a39262795bdc66723ca3a
+exit 0
+GIT_MASTER=1 git diff --cached --ignore-submodules=all --check
+exit 0

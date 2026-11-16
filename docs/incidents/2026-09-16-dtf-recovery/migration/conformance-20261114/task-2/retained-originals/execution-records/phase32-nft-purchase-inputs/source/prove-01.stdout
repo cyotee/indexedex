@@ -1,0 +1,1019 @@
+{
+  "verdict": "producer-proof-passed-not-independent-verifier-verdict",
+  "checks": 4915,
+  "rows": [
+    {
+      "locator": "evidence/weighted-bonds.csv#row=2",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:3",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=3",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:4",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=4",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:5",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=5",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:6",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=6",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:7",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=7",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:8",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=8",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:9",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=9",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:10",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=10",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:11",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=11",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:12",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=12",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:13",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=13",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:14",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=14",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:15",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=15",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:16",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=16",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:17",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=17",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:18",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=18",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:19",
+      "disposition": "unknown-components-indirect-purchase-retained",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=19",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:20",
+      "disposition": "unknown-components-indirect-purchase-retained",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=20",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:21",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=21",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:22",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=22",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:23",
+      "disposition": "unknown-components-indirect-purchase-retained",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=23",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:24",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=24",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:25",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=25",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:26",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=26",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:27",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=27",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:28",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=28",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:29",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=29",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:30",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=30",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:31",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=31",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:32",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=32",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:33",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=33",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:34",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=34",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:35",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=35",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:36",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=36",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:37",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=37",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:38",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=38",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:39",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=39",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:40",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=40",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:41",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=41",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:42",
+      "disposition": "unknown-components-indirect-purchase-retained",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=42",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:43",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=43",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:44",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=44",
+      "key": "4663:0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:45",
+      "disposition": "unknown-components-historical-purchase-body-gap",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": null,
+          "state": "unknown"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=2",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:3",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "2000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=3",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:4",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "7215852540309913726431",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=4",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:5",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "14939945008882434692090",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=5",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:6",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "55026060195080703684401",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=6",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:7",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "320000000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=7",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:8",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "10000000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=8",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:9",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "100000000000000",
+          "state": "evidenced-proposed-paid-input"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=9",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:10",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "1000000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=10",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:11",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "100000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=11",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:12",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "75081277576132719227716",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=12",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:13",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "22000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=13",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:14",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "100000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=14",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:15",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "600000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=15",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:16",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "1063674247110000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=16",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:17",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "117496434189960639589934",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=17",
+      "key": "4663:0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:18",
+      "disposition": "qualified-original-token-inputs-supported",
+      "proposed": [
+        {
+          "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "proposedPaidRaw": "0",
+          "state": "source-and-call-supported-zero"
+        },
+        {
+          "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "proposedPaidRaw": "1000000000000000000",
+          "state": "evidenced-proposed-paid-input"
+        }
+      ]
+    }
+  ],
+  "requestCount": 363,
+  "allRequestsReferenced": true,
+  "sourceManifestReauthenticated": true,
+  "unproved": [
+    "weighted purchase facet source/ABI",
+    "indirect inner invocations",
+    "internal native refunds",
+    "eligibility and prior compensation",
+    "independent downstream verification"
+  ]
+}

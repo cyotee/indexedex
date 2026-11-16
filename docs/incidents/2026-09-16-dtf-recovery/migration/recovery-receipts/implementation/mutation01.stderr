@@ -1,0 +1,114 @@
+
+scripts/recovery/dtf-migration/receipt.test.ts:
+(pass) complete wire collection authenticates and associates each known reference [24.79ms]
+(pass) collection stops before named requests on wrong-chain [7.24ms]
+(pass) collection stops before named requests on malformed-chain [7.10ms]
+(pass) wrong canonical anchor blocks every named collection [6.82ms]
+(pass) partial null failure stays explicit while unaffected transaction completes [14.92ms]
+(pass) partial missing failure stays explicit while unaffected transaction completes [12.94ms]
+(pass) partial rpc error failure stays explicit while unaffected transaction completes [13.85ms]
+(pass) partial wrong id failure stays explicit while unaffected transaction completes [12.51ms]
+(pass) partial wrong version failure stays explicit while unaffected transaction completes [12.84ms]
+(pass) partial malformed quantity failure stays explicit while unaffected transaction completes [12.60ms]
+(pass) contradictory association identifies transaction-hash [0.04ms]
+(pass) contradictory association identifies block-hash [0.05ms]
+(pass) contradictory association identifies block-number [0.02ms]
+(pass) contradictory association identifies transaction-index
+(pass) contradictory association identifies receipt-endpoints
+(pass) contradictory association identifies block-membership
+(pass) contradictory association identifies canonical-header
+(pass) contradictory association identifies after-anchor [0.01ms]
+(pass) contradictory association identifies transaction-reverted
+(pass) every log identity and strict ordering are verified [0.07ms]
+(pass) distinct references to one transaction deduplicate requests without losing rows [4.12ms]
+(pass) credential-bearing wire errors retain sanitized bytes and never claim raw capture [2.26ms]
+(pass) fresh exclusive publication refuses an existing directory before network requests [4.49ms]
+(pass) CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs [0.18ms]
+(pass) explicit conversion selection collects complete tables without purchasing references [12.32ms]
+(pass) conversion selection retains every row unavailable on anchor failure [6.92ms]
+(pass) selection rejects unknown values and cannot leak into execution commands [0.22ms]
+
+scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:
+(pass) source purchase basis is independently required in addition to the mint [3.73ms]
+(pass) routed input stays separate and cannot be attributed as a direct contribution [3.72ms]
+(pass) a shared transaction never assigns its entire direct inputs to each original [3.32ms]
+(pass) canonical association conflicts prohibit otherwise matching input attribution [3.31ms]
+(pass) wrong mint recipient is a conflict even with matching direct payment [3.55ms]
+(pass) indirect calls retain calldata and never receive direct claim decoding [3.40ms]
+(pass) receipt archive format cannot enter preparation, validation or execution loaders [0.26ms]
+(pass) conversion reconciliation preserves exact native output and blank historical principal [3.13ms]
+103 |   const output = purchaseReceipt.logs[1]; assert.ok(output);
+104 |   const result = reconcileReference(ref, { ...observation,
+105 |     receipt: { ...purchaseReceipt, logs: [...purchaseReceipt.logs, { ...output, logIndex: "0x4" }] } }, 2);
+106 |   assert.ok("outputs" in result);
+107 |   assert.equal(result.outputs.length, 2);
+108 |   assert.ok(result.conflicts.includes("ambiguous-exact-output"));
+               ^
+AssertionError: false == true
+ generatedMessage: true,
+     actual: false,
+   expected: true,
+   operator: "==",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:108:10
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at processTicksAndRejections (native:7:39)
+(fail) conversion ambiguity retains individual matches and never assigns aggregate output [4.11ms]
+(pass) unknown output remains null and missing rather than matching a zero transfer [3.17ms]
+(pass) recovery matching requires the exact declared asset [3.48ms]
+(pass) recovery matching requires the exact declared recipient [3.05ms]
+126 |   assert.ok(ref && ref.kind === "recovery");
+127 |   const b = { ...purchaseBlock, hash: claimTx.blockHash, number: "0xb", transactions: [claimTx.hash] };
+128 |   const result = reconcileReference({ ...ref, ...change }, {
+129 |     transaction: claimTx, receipt: claimReceipt, byHash: b, byNumber: b,
+130 |   }, 1);
+131 |   assert.ok(result.conflicts.includes(label === "block" ? "declared-output-block" : "missing-exact-output"));
+               ^
+AssertionError: false == true
+ generatedMessage: true,
+     actual: false,
+   expected: true,
+   operator: "==",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:131:10
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at processTicksAndRejections (native:7:39)
+(fail) recovery matching requires the exact declared amount [3.26ms]
+126 |   assert.ok(ref && ref.kind === "recovery");
+127 |   const b = { ...purchaseBlock, hash: claimTx.blockHash, number: "0xb", transactions: [claimTx.hash] };
+128 |   const result = reconcileReference({ ...ref, ...change }, {
+129 |     transaction: claimTx, receipt: claimReceipt, byHash: b, byNumber: b,
+130 |   }, 1);
+131 |   assert.ok(result.conflicts.includes(label === "block" ? "declared-output-block" : "missing-exact-output"));
+               ^
+AssertionError: false == true
+ generatedMessage: true,
+     actual: false,
+   expected: true,
+   operator: "==",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:131:10
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at processTicksAndRejections (native:7:39)
+(fail) recovery matching requires the exact declared index [3.18ms]
+(pass) recovery matching requires the exact declared block [3.04ms]
+(pass) conversion canonical contradiction remains a conflict with a matching output [3.20ms]
+(pass) selection parses native integers and rejects declared blocks beyond the anchor [3.47ms]
+
+3 tests failed:
+(fail) conversion ambiguity retains individual matches and never assigns aggregate output [4.11ms]
+(fail) recovery matching requires the exact declared amount [3.26ms]
+(fail) recovery matching requires the exact declared index [3.18ms]
+
+ 41 pass
+ 3 fail
+Ran 44 tests across 2 files. [267.00ms]

@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-11",
+  "AdversarialVerify": "needs-fix",
+  "finding": "R1",
+  "classification": "Missing legitimate attributed-accrual conversion path within requested bounded recovery; implementation defect requiring correction",
+  "requirement": "Original task8: newly accrued assets remain harvestable",
+  "sequence": {
+    "log": "sequence-independent.log",
+    "range": "16580-16631",
+    "gons": "8569202768080137873356303538242130618948",
+    "divisor": "875382550842690052048542616171208246",
+    "redeemableNative": "9789",
+    "unbookedGons": "0",
+    "nativeInventory": "0",
+    "oneUnitFailure": "RecoveryInventoryInsufficient(WS,1,0)"
+  },
+  "terminalWitness": {
+    "source": "docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/RecoveryAccrualWitness.s.sol",
+    "log": "accrual-independent.log",
+    "sha256": "b616c45fcc7708ad251a0b47977ae68a999aef2d2a0338f7fc50cac9124fce2e",
+    "command": "/bin/zsh -lic 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery && export PATH=/Users/cyotee/.foundry/bin:$PATH; set -o pipefail; (FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py build contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol --consumer '\\''docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/RecoveryAccrualWitness.s.sol'\\'' && FOUNDRY_PROFILE=fork forge script --use solar docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/RecoveryAccrualWitness.s.sol:RecoveryAccrualWitnessRunner --compute-units-per-second 10 --rpc-timeout 120 -vvvv) 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/accrual-independent.log; rc=$?; printf '\\''\nVERIFY_RECOVERY_ACCRUAL_EXIT=%s\n'\\'' \"$rc\"; exit \"$rc\"'",
+    "monitor": "mon_XW4MGAYDN7GQK74H",
+    "exit": 0,
+    "meaning": "Successful reproduction of a product acceptance failure, not passing harvestability",
+    "event": {
+      "line": 16508,
+      "text": "│   ├─ emit RecoveryGrowthStranded(parent: MinimalDiamondCallBackProxy: [0x2328d231C43A15940f5E312dDEc0e720a8ACdF37], originalClaim: 4308806205 [4.308e9], gons: 427882030360010419822646177042295082020945 [4.278e41], divisor: 875382550842670612356981754173735900 [8.753e35], redeemableNative: 488794 [4.887e5], nativeBudget: 0, controlGrowthRedeemed: 7919334 [7.919e6])"
+    },
+    "originalClaim": "4308806205",
+    "attributedAndActualGons": "427882030360010419822646177042295082020945",
+    "divisor": "875382550842670612356981754173735900",
+    "redeemableNative": "488794",
+    "nativeInventory": "0",
+    "unbookedGons": "0",
+    "weightedNft3Burned": true,
+    "oneUnitFailure": "RecoveryInventoryInsufficient(WS,1,0)",
+    "claimRepeatFailure": "InvalidRecoveryCustody(weightedNft,3)",
+    "control": "A separate genuine legacy holder directly unstaked its full displayed balance, including 7919334 newly accrued native units; measured WD equals output and control gons become zero."
+  },
+  "artifactPreservation": [
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "creationUnchanged": true,
+      "runtimeUnchanged": true,
+      "metadataUnchanged": true
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "creationUnchanged": true,
+      "runtimeUnchanged": true,
+      "metadataUnchanged": true
+    }
+  ],
+  "correction": "Authorize/reconcile synchronized redemption value from attributed recovery gons separately from fresh NFT claims; retain actual-gon debit and unbooked-gon floor, fixed recipient, measured WD, shared lock and atomicity.",
+  "notEquivalent": [
+    "Unbooked sub-native fraction protection can legitimately require a smaller exit or fail closed.",
+    "Own attributed whole-unit growth is not unbooked and need not be stranded.",
+    "No raw total-balance revaluation or second NFT claim/compensation should be credited."
+  ],
+  "precedence": "Source-gate native-budget restriction is an engineering interpretation, not owner authority to override original task8.",
+  "preservation": {
+    "productionFixes": false,
+    "existingTestFixes": false,
+    "producerEvidenceEdits": false,
+    "sourcePolicyChanges": false,
+    "trackedDiffUnchanged": true,
+    "privateRpcStrings": 0
+  },
+  "runtime": {
+    "runnerComplete": true,
+    "ownedNodeOrPort": false,
+    "warmArtifactsRetained": true
+  },
+  "validation": {
+    "solidityLsp": "No diagnostics found",
+    "jsonLsp": "Biome not installed; no dependency change",
+    "json": "Resident serialization/parsing"
+  }
+}

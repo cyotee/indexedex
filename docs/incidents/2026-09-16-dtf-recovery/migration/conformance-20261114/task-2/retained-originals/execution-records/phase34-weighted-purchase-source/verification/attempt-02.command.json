@@ -1,0 +1,36 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/verify.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification",
+  "pid": 10355,
+  "startedAt": "2026-11-13T12:20:07.678Z",
+  "finishedAt": "2026-11-13T12:20:08.470Z",
+  "exit": 1,
+  "stdoutBytes": 0,
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrBytes": 809,
+  "stderrSha256": "f3d7b8557a87928539621f2bf9c7b51ac047904413b46330a4de9e86fb3b2b9c",
+  "stderrInline": "22 | export class VerificationError extends Error {\n23 |   constructor(label) { super(label); this.name = \"VerificationError\"; }\n24 | }\n25 | export function requireFact(value, label) {\n26 |   totals.assertions++;\n27 |   if (!value) throw new VerificationError(label);\n                         ^\nVerificationError: protocol-owned LP not caller capital\n      at requireFact (/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/auth.mjs:27:21)\n      at same (/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/auth.mjs:30:3)\n      at verify (/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/verify.mjs:12:3)\n\nBun v1.4.2 (macOS arm64)\n",
+  "sources": [
+    {
+      "path": "auth.mjs",
+      "bytes": 8865,
+      "sha256": "54ddfaacea1e48302685d5ec47a479583f93b9342ff908ea7f8603def2d0eba9",
+      "pureLines": 141
+    },
+    {
+      "path": "rows.mjs",
+      "bytes": 14024,
+      "sha256": "c2b801df4bbcc7621d30620e85611ecd9a3ad7d268a184440fb115b8217fd765",
+      "pureLines": 180
+    },
+    {
+      "path": "verify.mjs",
+      "bytes": 7258,
+      "sha256": "084b17375d495d756ff9337f3bdb8fadcf16fd208abc5286c87c40351d6e47c2",
+      "pureLines": 87
+    }
+  ]
+}

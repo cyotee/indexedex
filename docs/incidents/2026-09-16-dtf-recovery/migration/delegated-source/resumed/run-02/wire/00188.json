@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":188,\"method\":\"eth_getTransactionCount\",\"params\":[\"0x00dd7939597bc43820ffb2b4e834f26924012b3d\",\"latest\"]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":188,\"result\":\"0x1\"}",
+  "httpStatus": 200,
+  "raw": true
+}

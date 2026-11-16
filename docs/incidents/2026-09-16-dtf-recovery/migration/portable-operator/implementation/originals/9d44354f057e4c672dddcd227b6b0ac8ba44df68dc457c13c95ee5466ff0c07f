@@ -1,0 +1,1 @@
+{"abi":[{"type":"constructor","inputs":[{"name":"params","type":"tuple","internalType":"struct PaymentsParameters","components":[{"name":"permit2","type":"address","internalType":"address"},{"name":"weth9","type":"address","internalType":"address"}]}],"stateMutability":"nonpayable"}],"id":2697}

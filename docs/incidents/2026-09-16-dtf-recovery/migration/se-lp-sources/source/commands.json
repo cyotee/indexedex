@@ -1,0 +1,72 @@
+{
+  "format": "transcribed session command/result receipts; not substituted for raw RPC/transaction evidence",
+  "bootstrapFailure": {
+    "command": "login-shell forge config --json | jq extraction passed unresolved alias template to Anvil",
+    "exit": 1,
+    "error": "Error: failed to fetch network chain ID; HTTP error401: Must be authenticated!",
+    "meaning": "template interpolation failure; existing authenticated alias subsequently worked"
+  },
+  "authentication": {
+    "command": "/bin/zsh -lc: cast chain-id --rpc-url robinhood_mainnet_alchemy",
+    "exit": 0,
+    "observed": "ARCHIVE_KEY_PRESENT;4663; existing nightly/fmt warnings"
+  },
+  "readOnlyFork": {
+    "session": "bash_13",
+    "pid": 33577,
+    "instance": "0x33e9ba90ae5c388e9c8138bd62d1790cb627a9ba19ecb402908d1cbad4c42ac5",
+    "result": "monitor killed at deadline before any transaction"
+  },
+  "executionFork": {
+    "session": "bash_17",
+    "pid": 37578,
+    "argv": [
+      "anvil",
+      "--silent",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "18570",
+      "--chain-id",
+      "4663",
+      "--fork-url",
+      "robinhood_mainnet_alchemy",
+      "--fork-block-number",
+      "108944663"
+    ],
+    "result": "stopped using kill_bash after all transactions; session completion exit0"
+  },
+  "compileFailure": {
+    "session": "bash_15",
+    "exit": 1,
+    "error": "Error: `solc` \"solar\" does not exist",
+    "command": "forge build --use solar --root . --contracts . --out build --cache-path cache CustodyProbe.sol without login PATH"
+  },
+  "compileSuccess": {
+    "session": "bash_16",
+    "exit": 0,
+    "command": "/bin/zsh -lc: export PATH=/Users/cyotee/.foundry/bin:$PATH; forge build --use solar --root . --contracts . --out build --cache-path cache CustodyProbe.sol",
+    "output": [
+      "Compiling 1 files with Solar 0.8.38",
+      "Solar 0.8.38 finished in 4.26ms",
+      "Compiler run successful!"
+    ]
+  },
+  "receiptRace": {
+    "hash": "0x1c5e9b4dc8b3c946f0a90ef272586fadef4411e24d517f3197ca7a8450b6d075",
+    "result": "first immediate receipt query null; later exact canonical receipt success, no resend; then repository subscribeReceipt before all sends"
+  },
+  "immutableAudit": {
+    "initialError": "unexpected immutable span",
+    "correction": "compiler has five20-byte wallet spans; exact substitution matches deployed bytes"
+  },
+  "lsp": {
+    "biome": "not installed; no install authorized or attempted"
+  },
+  "sourceDiscovery": {
+    "readFailure": "contracts/fee/collector/FeeCollectorRepo.sol does not exist",
+    "inspectionVariableFailure": "loupe is not defined",
+    "corrected": "read actual manager/push targets and define actual loupe ABI"
+  },
+  "noExistingTestsRun": true
+}

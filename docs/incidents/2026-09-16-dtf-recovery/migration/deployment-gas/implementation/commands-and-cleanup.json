@@ -1,0 +1,1529 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas",
+  "commands": [
+    {
+      "id": "mon_NH78DNR68EZTH84S",
+      "exit": 0,
+      "command": "bun -e 'const { reproduce } = await import(\"./docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/diagnosis/reproduce.ts\"); const r = await reproduce(); console.log(JSON.stringify({setup:r.infrastructure.length,failure:r.failure,success:r.success}));'"
+    },
+    {
+      "id": "mon_BSW4FJ9BPCT0GQCX",
+      "exit": 0,
+      "log": "build-01.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py build contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --consumer test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol"
+    },
+    {
+      "id": "mon_TWVHRPPR46PEMC40",
+      "exit": 0,
+      "log": "core-02.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol -- -vvv"
+    },
+    {
+      "id": "mon_78ST1R6MF2E63YKB",
+      "exit": 1,
+      "log": "gas-spec-03.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vvvv"
+    },
+    {
+      "id": "mon_T0HNV4N5QQVP5T4F",
+      "exit": 0,
+      "log": "witness-build-04.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py build contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --consumer scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol"
+    },
+    {
+      "id": "mon_KBFG6WKDNB73KX0N",
+      "exit": 1,
+      "log": "packages-simulation-05.log",
+      "command": "/Users/cyotee/.foundry/bin/forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol:MigrationDeploymentGasLocalQA --sig 0x56e041fb000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000e68f9de49c682fdb3f5b4b302f896da93da7bee7000000000000000000000000ecd6e45d2938a6d434a8a051201853706f84619e0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de00000000000000000000000004022629690473e24fc5cf641694a6feb8a4516af000000000000000000000000ddd1e0cde46b5c90cd1b93b91352a7dc00c24009000000000000000000000000b084b225aa4395b47cc7affd375b8f56fc26083f000000000000000000000000046402db2a88b54da34dec0fdd0f9ae549b43cc000000000000000000000000077be20724af3f142979fc53af037b5738df07d3a000000000000000000000000c6b7b81dfd59e97337bbca6f5e7d6b3baa7724530000000000000000000000008f06dd279099a5d11ac504dec681c851f1abb223000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed800000000000000000000000075170821c0f42c76871925b807e4b5f1d3d18c23000000000000000000000000758be53e89c90bb594bfd5963458910685bc67ee0000000000000000000000008f50fb05f59191482d6ad32f5811730830359705000000000000000000000000d1d56864ab234ff18cb7279362e50a2b7960bb59000000000000000000000000cd29f772d1c9dbdbafdb0e54504160a5a977c0e80000000000000000000000000a69db3b30b7cb13eaff786832e062d157630bb20000000000000000000000002f0c891b4e9a1c9833dd3f7814d1a76f684797e9000000000000000000000000918b025c58621b1e893685acbc110c02a737b34f0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de0000000000000000000000000306be37febb704cbb482c36c0c65a7f03e415c7b000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8 --rpc-url http://127.0.0.1:18561 --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 --legacy --gas-price 2000000000 -vv"
+    },
+    {
+      "id": "mon_YDHW20B3EXV43VK3",
+      "exit": 1,
+      "log": "witness-compile-06.log",
+      "command": "/Users/cyotee/.foundry/bin/forge build --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol"
+    },
+    {
+      "id": "mon_78TPD5FQ2KVCAJSR",
+      "exit": 0,
+      "log": "witness-compile-07.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH /Users/cyotee/.foundry/bin/forge build --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol"
+    },
+    {
+      "id": "mon_TYRQKR2NJYXFJTNM",
+      "exit": 0,
+      "log": "packages-simulation-08.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol:MigrationDeploymentGasLocalQA --sig 0x56e041fb000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000e68f9de49c682fdb3f5b4b302f896da93da7bee7000000000000000000000000ecd6e45d2938a6d434a8a051201853706f84619e0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de00000000000000000000000004022629690473e24fc5cf641694a6feb8a4516af000000000000000000000000ddd1e0cde46b5c90cd1b93b91352a7dc00c24009000000000000000000000000b084b225aa4395b47cc7affd375b8f56fc26083f000000000000000000000000046402db2a88b54da34dec0fdd0f9ae549b43cc000000000000000000000000077be20724af3f142979fc53af037b5738df07d3a000000000000000000000000c6b7b81dfd59e97337bbca6f5e7d6b3baa7724530000000000000000000000008f06dd279099a5d11ac504dec681c851f1abb223000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed800000000000000000000000075170821c0f42c76871925b807e4b5f1d3d18c23000000000000000000000000758be53e89c90bb594bfd5963458910685bc67ee0000000000000000000000008f50fb05f59191482d6ad32f5811730830359705000000000000000000000000d1d56864ab234ff18cb7279362e50a2b7960bb59000000000000000000000000cd29f772d1c9dbdbafdb0e54504160a5a977c0e80000000000000000000000000a69db3b30b7cb13eaff786832e062d157630bb20000000000000000000000002f0c891b4e9a1c9833dd3f7814d1a76f684797e9000000000000000000000000918b025c58621b1e893685acbc110c02a737b34f0000000000000000000000005816d71d52c79844388bcbeadb13f26d52f031ee000000000000000000000000d5641a39250e0a4bc648e490ac5efa8cc0fd8de0000000000000000000000000306be37febb704cbb482c36c0c65a7f03e415c7b000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8000000000000000000000000aa66038ae217b246f5bf7537104342672e56fed8 --rpc-url http://127.0.0.1:18561 --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 --legacy --gas-price 2000000000 -vv"
+    },
+    {
+      "id": "mon_84R1JPV4G7JE0612",
+      "exit": 0,
+      "log": "first-simulation-09.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol:MigrationDeploymentGasLocalQA --sig 0x40674095000000000000000000000000642fa76f2f7a6b97ec0822d67a785379a92df347000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000000000000151800000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000000000000000000000000000000000000000002c000000000000000000000000000000000000000000000000000000000000003000000000000000000000000004d48367dfa6300587c45fb2c841c18bc1abfaaa80000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000034000000000000000000000000000000000000000000000000000000000000003a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003c000000000000000000000000000000000000000000000000000000000000003e000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000420000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000046000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000480000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004a0000000000000000000000000000000000000000000000000000000000000000e4d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 --rpc-url http://127.0.0.1:18561 --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 --legacy --gas-price 2000000000 -vv"
+    },
+    {
+      "id": "mon_ATASMWM8NJA78Y7P",
+      "exit": 0,
+      "log": "second-simulation-10.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasLocalQA.s.sol:MigrationDeploymentGasLocalQA --sig 0x40674095000000000000000000000000642fa76f2f7a6b97ec0822d67a785379a92df347000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000151800000000000000000000000008096e26a26059c5240ab23d69157e121b28d326a000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb0100000000000000000000000000000000000000000000000000000000000002c00000000000000000000000000000000000000000000000000000000000000300000000000000000000000000789372b0f44f40fa217ee186ee52661700c5eaa80000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000034000000000000000000000000000000000000000000000000000000000000003a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003c000000000000000000000000000000000000000000000000000000000000003e000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000420000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000046000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000480000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004a0000000000000000000000000000000000000000000000000000000000000000e4d6967726174696f6e20444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004444554460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 --rpc-url http://127.0.0.1:18561 --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 --legacy --gas-price 2000000000 -vv"
+    },
+    {
+      "id": "mon_65AB4PMH6QTSTCC3",
+      "exit": 1,
+      "log": "spec-current-11.log",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv"
+    },
+    {
+      "id": "mon_7RVJM7E34QCC8H1M",
+      "exit": 0,
+      "log": "fork-current-12.log",
+      "command": "FOUNDRY_PROFILE=fork PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv",
+      "shell": "Existing archive credentials inherited from /bin/zsh -lic; no resolved URL retained."
+    }
+  ],
+  "logWrapper": "set -o pipefail; COMMAND 2>&1 | tee docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/LOG",
+  "nodeCommand": "exec /Users/cyotee/.foundry/bin/anvil --host 127.0.0.1 --port 18561 --chain-id 4663 --fork-url \"https://robinhood-mainnet.g.alchemy.com/v2/$ALCHEMY_KEY\" --fork-block-number 108944663 --gas-limit 100000000 --disable-min-priority-fee --balance 1000000",
+  "transactionSubmission": "async(tx)=>{const envelope={from:tx.from,to:tx.to,data:tx.input??tx.data,value:tx.value??'0x0',gas:'0x1e84800',gasPrice:'0x77359400'};let simulation;try{simulation={ok:true,result:await rpc('eth_call',[envelope,'latest'])};}catch(e){simulation={ok:false,error:String(e)};}const hash=await rpc('eth_sendTransaction',[envelope]);await rpc('evm_mine');const receipt=await rpc('eth_getTransactionReceipt',[hash]);return {simulation,transaction:await rpc('eth_getTransactionByHash',[hash]),receipt,trace:await rpc('debug_traceTransaction',[hash,{tracer:'callTracer'}])};}",
+  "replayOrder": [
+    "infrastructure-replay.json.transactions in array order",
+    "first-current.json.packageReceipts in array order",
+    "first-current.json.transactions in array order",
+    "second-current.json.hookReceipts in array order",
+    "second-current.json.transactions in array order"
+  ],
+  "cleanup": {
+    "ownedNodes": [
+      "bash_3",
+      "bash_8"
+    ],
+    "stoppedWith": "kill_bash individually; both termination notifications received",
+    "holders": "All five legacy-holder funding operations bracketed by anvil_impersonateAccount and anvil_stopImpersonatingAccount in finally; no SUT impersonation.",
+    "subscriptions": "No WebSocket subscription created; all command monitors completed or were stopped.",
+    "probe": {
+      "bash": "bash_21",
+      "exit": 0,
+      "output": "OWNED_PORT_CLOSED\nWARM_ARTIFACTS_AND_CACHE_PRESERVED"
+    },
+    "sharedPort18560": "Never used or altered",
+    "warmCaches": "Preserved",
+    "generatedWitnessArtifacts": "Dedicated Foundry broadcast/dry-run and cache_forge records retained; no cache deletion."
+  },
+  "diagnostics": [
+    {
+      "index": 0,
+      "result": "No diagnostics found"
+    },
+    {
+      "index": 1,
+      "result": "No diagnostics found"
+    },
+    {
+      "index": 2,
+      "result": "No diagnostics found"
+    },
+    {
+      "index": 3,
+      "result": "No diagnostics found"
+    },
+    {
+      "index": 4,
+      "result": "No diagnostics found"
+    }
+  ],
+  "scopeCheck": {
+    "bash": "bash_20",
+    "exit": 0,
+    "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+    "gitDiffCheck": "passed",
+    "commits": false
+  },
+  "finalBaselineComparisons": [
+    {
+      "path": "contracts/fee/collector/IFeeCollectorManager.sol",
+      "baseline": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "actual": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "changed": false
+    },
+    {
+      "path": "contracts/fee/collector/IFeeCollectorSingleTokenPush.sol",
+      "baseline": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "actual": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "changed": false
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol",
+      "baseline": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "actual": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "changed": false
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+      "baseline": "0xc8d9e0e326801ecb5848a12d16fb712b33d38cd045371304bfb234cad2bab073",
+      "actual": "0xc8d9e0e326801ecb5848a12d16fb712b33d38cd045371304bfb234cad2bab073",
+      "changed": false
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "baseline": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "actual": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IBasicVault.sol",
+      "baseline": "0xf4c9fe3326e1e121f5f2eeff13dc5e3536d405e91a481653e99906fa82f03935",
+      "actual": "0xf4c9fe3326e1e121f5f2eeff13dc5e3536d405e91a481653e99906fa82f03935",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IDETFNFTVault.sol",
+      "baseline": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "actual": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IDETFStandardizedYield.sol",
+      "baseline": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "actual": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IDetfBondNFT.sol",
+      "baseline": "0x95472254b83651ba35d96a54d998f035b00147674bec62c207f8abd70cbb7dbd",
+      "actual": "0x95472254b83651ba35d96a54d998f035b00147674bec62c207f8abd70cbb7dbd",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IFeeCollectorManager.sol",
+      "baseline": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "actual": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IFeeCollectorSingleTokenPush.sol",
+      "baseline": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "actual": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IRebasingClaimToken.sol",
+      "baseline": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "actual": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStakedDETF.sol",
+      "baseline": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "actual": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchange.sol",
+      "baseline": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "actual": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "baseline": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "actual": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardVault.sol",
+      "baseline": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "actual": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardVaultPkg.sol",
+      "baseline": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "actual": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IVaultFeeOracleQuery.sol",
+      "baseline": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "actual": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IVaultRegistryDeployment.sol",
+      "baseline": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "actual": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IVaultRegistryEvents.sol",
+      "baseline": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "actual": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/VaultFeeTypes.sol",
+      "baseline": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "actual": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/detf/IDetf.sol",
+      "baseline": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "actual": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/proxies/IFeeCollectorProxy.sol",
+      "baseline": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "actual": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "changed": false
+    },
+    {
+      "path": "contracts/registries/vault/VaultTypeUtils.sol",
+      "baseline": "0xcb6b9e05fa7da9f3ad8a2ee14e35a670477e44310b2416ffd719fb1d7b17178f",
+      "actual": "0xcb6b9e05fa7da9f3ad8a2ee14e35a670477e44310b2416ffd719fb1d7b17178f",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/basic/IBasicVault.sol",
+      "baseline": "0xc0b6df6ada52539111db6db3c926f51d878d5765f61823a3432cc5e5c0ddd021",
+      "actual": "0xc0b6df6ada52539111db6db3c926f51d878d5765f61823a3432cc5e5c0ddd021",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol",
+      "baseline": "0xf1f673e78dd519145fedfa180ec8f107e3e2f29fd8095a4f20175abfcc478462",
+      "actual": "0xf1f673e78dd519145fedfa180ec8f107e3e2f29fd8095a4f20175abfcc478462",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol",
+      "baseline": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "actual": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol",
+      "baseline": "0x2d7b05214575bb9055bf008f0f6dcbd0580e379a8c06eb5ba7ca3b16a47e5cfd",
+      "actual": "0x2d7b05214575bb9055bf008f0f6dcbd0580e379a8c06eb5ba7ca3b16a47e5cfd",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol",
+      "baseline": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "actual": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol",
+      "baseline": "0x17e1889cc88f6339e6d3342f27c06e71db088bcac0adea14ef0a9aac30429763",
+      "actual": "0x17e1889cc88f6339e6d3342f27c06e71db088bcac0adea14ef0a9aac30429763",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "baseline": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+      "actual": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol",
+      "baseline": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "actual": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/inventory/IDetfBondInventoryPolicy.sol",
+      "baseline": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "actual": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol",
+      "baseline": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "actual": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol",
+      "baseline": "0x23e9f71a2607aac7a509c90bfb4bfe2959e91f3f0134bf0c93883de4eb9ed005",
+      "actual": "0x23e9f71a2607aac7a509c90bfb4bfe2959e91f3f0134bf0c93883de4eb9ed005",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol",
+      "baseline": "0xed29d53498a59c0ce6e7917ab536df26ed502d9749651d0823f8591ec169e2e6",
+      "actual": "0xed29d53498a59c0ce6e7917ab536df26ed502d9749651d0823f8591ec169e2e6",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol",
+      "baseline": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "actual": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol",
+      "baseline": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "actual": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol",
+      "baseline": "0x3cf91c2b5498d326ae7672e2da07a3fe6667c5a17e26696284f71cf686abd1ba",
+      "actual": "0x3cf91c2b5498d326ae7672e2da07a3fe6667c5a17e26696284f71cf686abd1ba",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+      "baseline": "0xb1f689d9c2c05bea3a2ceaa4e00038018d0d2b00e1a61678eb9a83c7df8ae59a",
+      "actual": "0xb1f689d9c2c05bea3a2ceaa4e00038018d0d2b00e1a61678eb9a83c7df8ae59a",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "baseline": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "actual": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol",
+      "baseline": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "actual": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "baseline": "0xb92e468ba1c167cd118687ba999360abf988d0ed472d111951d84731ecbb2aef",
+      "actual": "0xc76db3e8fd3b6d36fb43b4c1dc4631e9722e693f84552c3aa7b3ff0cd2f5d3e2",
+      "changed": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "baseline": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+      "actual": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "baseline": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+      "actual": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "baseline": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "actual": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "baseline": "0xc973c63cccb227d0147c495bf9e85f39e1b18d743d563cfa542a03487695cd13",
+      "actual": "0xf72952d452fac37fcfd0e909389e1eae53a64a47e2ac880f010421b866db5ee2",
+      "changed": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "baseline": "0xc41b2b53d463ff9a8383fd409a0d40bf321ebf712065879ce37ea7d8da57a978",
+      "actual": "0xc41b2b53d463ff9a8383fd409a0d40bf321ebf712065879ce37ea7d8da57a978",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "baseline": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "actual": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "baseline": "0x67468ed4d7ddb966004c8d9652c438c7a7b267f8f28d36611407cc5f8a802de6",
+      "actual": "0x67468ed4d7ddb966004c8d9652c438c7a7b267f8f28d36611407cc5f8a802de6",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/standard/StandardVaultRepo.sol",
+      "baseline": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "actual": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/GeneralErrors.sol",
+      "baseline": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "actual": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/access/ERC8023/IMultiStepOwnable.sol",
+      "baseline": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "actual": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol",
+      "baseline": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "actual": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/constants/Constants.sol",
+      "baseline": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "actual": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/external/solady/utils/LibSort.sol",
+      "baseline": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "actual": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/factories/diamondPkg/IDiamondFactoryPackage.sol",
+      "baseline": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "actual": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/factories/diamondPkg/IFacet.sol",
+      "baseline": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "actual": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/BetterIERC20.sol",
+      "baseline": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "actual": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IDiamond.sol",
+      "baseline": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "actual": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IDiamondFactoryPackage.sol",
+      "baseline": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "actual": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol",
+      "baseline": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "actual": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20.sol",
+      "baseline": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "actual": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Errors.sol",
+      "baseline": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "actual": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Events.sol",
+      "baseline": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "actual": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Metadata.sol",
+      "baseline": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "actual": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20MintBurn.sol",
+      "baseline": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "actual": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Permit.sol",
+      "baseline": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "actual": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC5267.sol",
+      "baseline": "0xf7e0a2ca4b40c8bf24934d8c05c13aa0e6b34399560ad5746094b5808d6ad2d8",
+      "actual": "0xf7e0a2ca4b40c8bf24934d8c05c13aa0e6b34399560ad5746094b5808d6ad2d8",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC721.sol",
+      "baseline": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "actual": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC721Events.sol",
+      "baseline": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "actual": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC721Receiver.sol",
+      "baseline": "0x7a52be93ddb450f0975a5d878c34890643ff60157e1ef792f01858358d7f1a0c",
+      "actual": "0x7a52be93ddb450f0975a5d878c34890643ff60157e1ef792f01858358d7f1a0c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IFacet.sol",
+      "baseline": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "actual": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IMultiStepOwnable.sol",
+      "baseline": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "actual": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IPostDeployAccountHook.sol",
+      "baseline": "0xb1a447fc2eeb4dc533bb4278c9e92458565893000d7c8597a71f096eeb67891e",
+      "actual": "0xb1a447fc2eeb4dc533bb4278c9e92458565893000d7c8597a71f096eeb67891e",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeErrors.sol",
+      "baseline": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "actual": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeIn.sol",
+      "baseline": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "actual": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeOut.sol",
+      "baseline": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "actual": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/introspection/ERC2535/IDiamond.sol",
+      "baseline": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "actual": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol",
+      "baseline": "0x454d0c476a65e5127dc068c3737de4d3a3235dce17bf8ba9d7f26a79e1bd5240",
+      "actual": "0x454d0c476a65e5127dc068c3737de4d3a3235dce17bf8ba9d7f26a79e1bd5240",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/ERC20Repo.sol",
+      "baseline": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "actual": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20.sol",
+      "baseline": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "actual": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Errors.sol",
+      "baseline": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "actual": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Events.sol",
+      "baseline": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "actual": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Metadata.sol",
+      "baseline": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "actual": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Permit.sol",
+      "baseline": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "actual": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol",
+      "baseline": "0x10283bc7aa8390e61ef7fcecb36e234e978ab7c17d373a22cff8d37a1b430d78",
+      "actual": "0x10283bc7aa8390e61ef7fcecb36e234e978ab7c17d373a22cff8d37a1b430d78",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol",
+      "baseline": "0x489dca56d51231482f63cc1dbf6a7b1d482e99fabc9cd9c4e64061e9a27d9bf8",
+      "actual": "0x489dca56d51231482f63cc1dbf6a7b1d482e99fabc9cd9c4e64061e9a27d9bf8",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721.sol",
+      "baseline": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "actual": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721Events.sol",
+      "baseline": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "actual": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Address.sol",
+      "baseline": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "actual": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/BetterAddress.sol",
+      "baseline": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "actual": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/BetterEfficientHashLib.sol",
+      "baseline": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "actual": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Bytecode.sol",
+      "baseline": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "actual": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Bytes32.sol",
+      "baseline": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "actual": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/FixedPointMathLib.sol",
+      "baseline": "0x047bfd9230031503f75a91beeafb8f1d96f08081278c6c96e74d357f6301e1fc",
+      "actual": "0x047bfd9230031503f75a91beeafb8f1d96f08081278c6c96e74d357f6301e1fc",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Math.sol",
+      "baseline": "0x59dbc1b53ab6574064b429a50941e79909ff3a7dcbb2e6751af2ad4ced339dfb",
+      "actual": "0x59dbc1b53ab6574064b429a50941e79909ff3a7dcbb2e6751af2ad4ced339dfb",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Panic.sol",
+      "baseline": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "actual": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/SafeCast.sol",
+      "baseline": "0xff9ea583785b83681f2f9fb4126f016b4827f2d57186442502e774cc3c2f39c1",
+      "actual": "0xff9ea583785b83681f2f9fb4126f016b4827f2d57186442502e774cc3c2f39c1",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/SafeCastLib.sol",
+      "baseline": "0xa31d9ea5dc8c5666429d6adff23aa21a983d215261be333027de0043dd13088d",
+      "actual": "0xa31d9ea5dc8c5666429d6adff23aa21a983d215261be333027de0043dd13088d",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/SafeERC20.sol",
+      "baseline": "0x952a27339881b81420c525ad856971cf6bb14eaf0e1ccc5f374a9d29f52c681b",
+      "actual": "0x952a27339881b81420c525ad856971cf6bb14eaf0e1ccc5f374a9d29f52c681b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/ShortStrings.sol",
+      "baseline": "0x73e35d254e10e817e049e1d874946e5af1b4f0baabf199eaaee56cba9f682bac",
+      "actual": "0x73e35d254e10e817e049e1d874946e5af1b4f0baabf199eaaee56cba9f682bac",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/UInt256.sol",
+      "baseline": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "actual": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/collections/BetterArrays.sol",
+      "baseline": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "actual": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol",
+      "baseline": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "actual": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/collections/sets/Bytes4SetRepo.sol",
+      "baseline": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "actual": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol",
+      "baseline": "0x723368ed28c7f421784c3aebebcb0b1703d9009dc616a72425fd4f297bae3f7a",
+      "actual": "0x723368ed28c7f421784c3aebebcb0b1703d9009dc616a72425fd4f297bae3f7a",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/cryptography/hash/MessageHashUtils.sol",
+      "baseline": "0x2213cc63b46b88a0ecd55224452aaffd575dbf90beeb377d3df8d5b47e16356d",
+      "actual": "0x2213cc63b46b88a0ecd55224452aaffd575dbf90beeb377d3df8d5b47e16356d",
+      "changed": false
+    },
+    {
+      "path": "contracts/fee/collector/IFeeCollectorManager.sol",
+      "baseline": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "actual": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+      "changed": false
+    },
+    {
+      "path": "contracts/fee/collector/IFeeCollectorSingleTokenPush.sol",
+      "baseline": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "actual": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+      "changed": false
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol",
+      "baseline": "0x05437a534d91ab65ecb4aedf3b0cbeeab820f27aafedcc546a43f0e7f70b866c",
+      "actual": "0x05437a534d91ab65ecb4aedf3b0cbeeab820f27aafedcc546a43f0e7f70b866c",
+      "changed": false
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol",
+      "baseline": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "actual": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+      "changed": false
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "baseline": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "actual": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IDETFNFTVault.sol",
+      "baseline": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "actual": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IDETFStandardizedYield.sol",
+      "baseline": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "actual": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IDetfBondNFT.sol",
+      "baseline": "0x95472254b83651ba35d96a54d998f035b00147674bec62c207f8abd70cbb7dbd",
+      "actual": "0x95472254b83651ba35d96a54d998f035b00147674bec62c207f8abd70cbb7dbd",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IFeeCollectorManager.sol",
+      "baseline": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "actual": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IFeeCollectorSingleTokenPush.sol",
+      "baseline": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "actual": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IRebasingClaimToken.sol",
+      "baseline": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "actual": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/ISecurePullErrors.sol",
+      "baseline": "0xa36b66e4e106b8d628c633c122d6e034c4010b1d4f318a3922027b4cc9197d24",
+      "actual": "0xa36b66e4e106b8d628c633c122d6e034c4010b1d4f318a3922027b4cc9197d24",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStakedDETF.sol",
+      "baseline": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "actual": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchange.sol",
+      "baseline": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "actual": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol",
+      "baseline": "0x835972fbbdd9588189c3083b5c8f7cc7798c9533c6298c7e6c62f37a1b408d9c",
+      "actual": "0x835972fbbdd9588189c3083b5c8f7cc7798c9533c6298c7e6c62f37a1b408d9c",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "baseline": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "actual": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardVault.sol",
+      "baseline": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "actual": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IStandardVaultPkg.sol",
+      "baseline": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "actual": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IVaultFeeOracleQuery.sol",
+      "baseline": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "actual": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IVaultRegistryDeployment.sol",
+      "baseline": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "actual": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IVaultRegistryDisableQuery.sol",
+      "baseline": "0x3c79685d7c709df59575af516c7f31cfd253a1c6ce31332e276ed93093535b1e",
+      "actual": "0x3c79685d7c709df59575af516c7f31cfd253a1c6ce31332e276ed93093535b1e",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/IVaultRegistryEvents.sol",
+      "baseline": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "actual": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/VaultFeeTypes.sol",
+      "baseline": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "actual": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/detf/IDetf.sol",
+      "baseline": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "actual": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+      "changed": false
+    },
+    {
+      "path": "contracts/interfaces/proxies/IFeeCollectorProxy.sol",
+      "baseline": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "actual": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+      "changed": false
+    },
+    {
+      "path": "contracts/utils/ExchangeInAmount.sol",
+      "baseline": "0x3bcf5d905f20f680051e992f5dc24616d5727e77c854079a52bb3e6cd55ea6d2",
+      "actual": "0x3bcf5d905f20f680051e992f5dc24616d5727e77c854079a52bb3e6cd55ea6d2",
+      "changed": false
+    },
+    {
+      "path": "contracts/utils/LocalCreditLib.sol",
+      "baseline": "0xc9b69dd7f6594b6eeb09067e9cfd08e854b59fd9909883cd7e0e7e1680860299",
+      "actual": "0xc9b69dd7f6594b6eeb09067e9cfd08e854b59fd9909883cd7e0e7e1680860299",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol",
+      "baseline": "0xf1f673e78dd519145fedfa180ec8f107e3e2f29fd8095a4f20175abfcc478462",
+      "actual": "0xf1f673e78dd519145fedfa180ec8f107e3e2f29fd8095a4f20175abfcc478462",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol",
+      "baseline": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "actual": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol",
+      "baseline": "0x2d7b05214575bb9055bf008f0f6dcbd0580e379a8c06eb5ba7ca3b16a47e5cfd",
+      "actual": "0x2d7b05214575bb9055bf008f0f6dcbd0580e379a8c06eb5ba7ca3b16a47e5cfd",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol",
+      "baseline": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "actual": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol",
+      "baseline": "0xc5d343c5d5ad24a54914e2c38b077936ad8b121ba5c7f1bc0fcbf38d4d8f8685",
+      "actual": "0xc5d343c5d5ad24a54914e2c38b077936ad8b121ba5c7f1bc0fcbf38d4d8f8685",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol",
+      "baseline": "0x6e1161ad205ee512467420a48d2e5fd5a2b6029894eb58c6a238ea3b3bc3f712",
+      "actual": "0x6e1161ad205ee512467420a48d2e5fd5a2b6029894eb58c6a238ea3b3bc3f712",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol",
+      "baseline": "0x17e1889cc88f6339e6d3342f27c06e71db088bcac0adea14ef0a9aac30429763",
+      "actual": "0x17e1889cc88f6339e6d3342f27c06e71db088bcac0adea14ef0a9aac30429763",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "baseline": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+      "actual": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFMintSplit.sol",
+      "baseline": "0x04605bbafcc291d39c5264ea330890f37ffe92e03151fa4da3a894f47f2a1c25",
+      "actual": "0x04605bbafcc291d39c5264ea330890f37ffe92e03151fa4da3a894f47f2a1c25",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFMintSplitLib.sol",
+      "baseline": "0xd12bf334f6b6b4b5cf5a37221bd1140d181a971b87b424135907f3ed853205dd",
+      "actual": "0xd12bf334f6b6b4b5cf5a37221bd1140d181a971b87b424135907f3ed853205dd",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol",
+      "baseline": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "actual": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/inventory/IDetfBondInventoryPolicy.sol",
+      "baseline": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "actual": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol",
+      "baseline": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "actual": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol",
+      "baseline": "0x23e9f71a2607aac7a509c90bfb4bfe2959e91f3f0134bf0c93883de4eb9ed005",
+      "actual": "0x23e9f71a2607aac7a509c90bfb4bfe2959e91f3f0134bf0c93883de4eb9ed005",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol",
+      "baseline": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "actual": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol",
+      "baseline": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "actual": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "baseline": "0xf101973d353a03fa95b4f73d8a02c5a0998253d919a7c0386e87ad122b0f6cfb",
+      "actual": "0xf101973d353a03fa95b4f73d8a02c5a0998253d919a7c0386e87ad122b0f6cfb",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "baseline": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "actual": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol",
+      "baseline": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "actual": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol",
+      "baseline": "0x4e074fd1983ec908ad440bf18d2d3aeaaf8eb82afd85977cc7d9e14d69e887c0",
+      "actual": "0x4e074fd1983ec908ad440bf18d2d3aeaaf8eb82afd85977cc7d9e14d69e887c0",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+      "baseline": "0x3e6b081d3d289b3c28073fa882c078a868b6fa6fb5711687275308d7209d61be",
+      "actual": "0x3e6b081d3d289b3c28073fa882c078a868b6fa6fb5711687275308d7209d61be",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "baseline": "0x848485958b940c3b6a9bcfc93df94caf8004d3d3cbdf74b9660f6402877ca08c",
+      "actual": "0x848485958b940c3b6a9bcfc93df94caf8004d3d3cbdf74b9660f6402877ca08c",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "baseline": "0x726b883ef4a117abb5e94c68e56e75fa2675a9a8d34e6336fa8dc440c25647df",
+      "actual": "0x726b883ef4a117abb5e94c68e56e75fa2675a9a8d34e6336fa8dc440c25647df",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "baseline": "0xdee21ca305757f2a9b70415d2747a7d25279abbe100d3a5db323e32dcbbd4b18",
+      "actual": "0xdee21ca305757f2a9b70415d2747a7d25279abbe100d3a5db323e32dcbbd4b18",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "baseline": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+      "actual": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "baseline": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+      "actual": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "baseline": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "actual": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "baseline": "0xc41b2b53d463ff9a8383fd409a0d40bf321ebf712065879ce37ea7d8da57a978",
+      "actual": "0xc41b2b53d463ff9a8383fd409a0d40bf321ebf712065879ce37ea7d8da57a978",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "baseline": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "actual": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol",
+      "baseline": "0xa31029e1e95d644002ae81617154dac3c101a7d2af6ebb10faf7179c53d75f6e",
+      "actual": "0xa31029e1e95d644002ae81617154dac3c101a7d2af6ebb10faf7179c53d75f6e",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "baseline": "0x91dd2d49135d9cf66f3450116e75f04a448701928e246368741e2c9610851ad6",
+      "actual": "0x91dd2d49135d9cf66f3450116e75f04a448701928e246368741e2c9610851ad6",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "baseline": "0x3333cb9218571276b0b364b6e0818c6aa0d59b031cad57b3d37954a79bb26c22",
+      "actual": "0x3333cb9218571276b0b364b6e0818c6aa0d59b031cad57b3d37954a79bb26c22",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "baseline": "0x91655aa4937c8e557b119851f2751ce2448685aacf7aedfe00312f52f2e5cd3c",
+      "actual": "0x91655aa4937c8e557b119851f2751ce2448685aacf7aedfe00312f52f2e5cd3c",
+      "changed": false
+    },
+    {
+      "path": "contracts/vaults/standard/StandardVaultRepo.sol",
+      "baseline": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "actual": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/GeneralErrors.sol",
+      "baseline": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "actual": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/access/ERC8023/IMultiStepOwnable.sol",
+      "baseline": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "actual": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol",
+      "baseline": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "actual": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/access/reentrancy/IReentrancyLock.sol",
+      "baseline": "0xfe933deb5fb0df1b1f77bc88d4b106a8c885bebb55c943c5c558af2fa5e2a2bb",
+      "actual": "0xfe933deb5fb0df1b1f77bc88d4b106a8c885bebb55c943c5c558af2fa5e2a2bb",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol",
+      "baseline": "0xbffa485333e463a66711993f8a44485829fcc557c550a78dfaf1bd43923e9e10",
+      "actual": "0xbffa485333e463a66711993f8a44485829fcc557c550a78dfaf1bd43923e9e10",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/access/reentrancy/ReentrancyLockRepo.sol",
+      "baseline": "0x7c7e0bc3e38267508c28ece289e9329bb4ec37dd0b2b416a601bbc03b8c264ae",
+      "actual": "0x7c7e0bc3e38267508c28ece289e9329bb4ec37dd0b2b416a601bbc03b8c264ae",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/constants/Constants.sol",
+      "baseline": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "actual": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/external/solady/utils/LibSort.sol",
+      "baseline": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "actual": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/factories/diamondPkg/IDiamondFactoryPackage.sol",
+      "baseline": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "actual": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/factories/diamondPkg/IFacet.sol",
+      "baseline": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "actual": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/BetterIERC20.sol",
+      "baseline": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "actual": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IDiamond.sol",
+      "baseline": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "actual": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IDiamondFactoryPackage.sol",
+      "baseline": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "actual": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol",
+      "baseline": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "actual": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC165.sol",
+      "baseline": "0x820f72b2179f2008ba6af46a19ebbbdfd48a9d561a64ec3d849975e6b30dfdba",
+      "actual": "0x820f72b2179f2008ba6af46a19ebbbdfd48a9d561a64ec3d849975e6b30dfdba",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20.sol",
+      "baseline": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "actual": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Errors.sol",
+      "baseline": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "actual": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Events.sol",
+      "baseline": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "actual": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Metadata.sol",
+      "baseline": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "actual": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20MintBurn.sol",
+      "baseline": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "actual": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC20Permit.sol",
+      "baseline": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "actual": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC721.sol",
+      "baseline": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "actual": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IERC721Events.sol",
+      "baseline": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "actual": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IFacet.sol",
+      "baseline": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "actual": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IMultiStepOwnable.sol",
+      "baseline": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "actual": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IReentrancyLock.sol",
+      "baseline": "0x614c39b296b98652913b734d89660b28a502ba5c029b09e35f36259270396804",
+      "actual": "0x614c39b296b98652913b734d89660b28a502ba5c029b09e35f36259270396804",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeErrors.sol",
+      "baseline": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "actual": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeIn.sol",
+      "baseline": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "actual": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/interfaces/IStandardExchangeOut.sol",
+      "baseline": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "actual": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/introspection/ERC165/IERC165.sol",
+      "baseline": "0xf1ac930ce8516a0aaf27de84a1328e78cbb90ea0baf773ca30bc0559722288ec",
+      "actual": "0xf1ac930ce8516a0aaf27de84a1328e78cbb90ea0baf773ca30bc0559722288ec",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/introspection/ERC2535/IDiamond.sol",
+      "baseline": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "actual": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/ERC20Repo.sol",
+      "baseline": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "actual": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20.sol",
+      "baseline": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "actual": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Errors.sol",
+      "baseline": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "actual": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Events.sol",
+      "baseline": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "actual": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Metadata.sol",
+      "baseline": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "actual": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/IERC20Permit.sol",
+      "baseline": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "actual": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol",
+      "baseline": "0x10283bc7aa8390e61ef7fcecb36e234e978ab7c17d373a22cff8d37a1b430d78",
+      "actual": "0x10283bc7aa8390e61ef7fcecb36e234e978ab7c17d373a22cff8d37a1b430d78",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol",
+      "baseline": "0x489dca56d51231482f63cc1dbf6a7b1d482e99fabc9cd9c4e64061e9a27d9bf8",
+      "actual": "0x489dca56d51231482f63cc1dbf6a7b1d482e99fabc9cd9c4e64061e9a27d9bf8",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721.sol",
+      "baseline": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "actual": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/tokens/ERC721/IERC721Events.sol",
+      "baseline": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "actual": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Address.sol",
+      "baseline": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "actual": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/BetterAddress.sol",
+      "baseline": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "actual": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/BetterEfficientHashLib.sol",
+      "baseline": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "actual": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Bytecode.sol",
+      "baseline": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "actual": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Bytes32.sol",
+      "baseline": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "actual": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/FixedPointMathLib.sol",
+      "baseline": "0x047bfd9230031503f75a91beeafb8f1d96f08081278c6c96e74d357f6301e1fc",
+      "actual": "0x047bfd9230031503f75a91beeafb8f1d96f08081278c6c96e74d357f6301e1fc",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Math.sol",
+      "baseline": "0x59dbc1b53ab6574064b429a50941e79909ff3a7dcbb2e6751af2ad4ced339dfb",
+      "actual": "0x59dbc1b53ab6574064b429a50941e79909ff3a7dcbb2e6751af2ad4ced339dfb",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/Panic.sol",
+      "baseline": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "actual": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/SafeCast.sol",
+      "baseline": "0xff9ea583785b83681f2f9fb4126f016b4827f2d57186442502e774cc3c2f39c1",
+      "actual": "0xff9ea583785b83681f2f9fb4126f016b4827f2d57186442502e774cc3c2f39c1",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/SafeCastLib.sol",
+      "baseline": "0xa31d9ea5dc8c5666429d6adff23aa21a983d215261be333027de0043dd13088d",
+      "actual": "0xa31d9ea5dc8c5666429d6adff23aa21a983d215261be333027de0043dd13088d",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/SafeERC20.sol",
+      "baseline": "0x952a27339881b81420c525ad856971cf6bb14eaf0e1ccc5f374a9d29f52c681b",
+      "actual": "0x952a27339881b81420c525ad856971cf6bb14eaf0e1ccc5f374a9d29f52c681b",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/TransientSlot.sol",
+      "baseline": "0xd488d6689005d4d4d38d05080a931df96249efd9e6763e4664d2160c530f76f0",
+      "actual": "0xd488d6689005d4d4d38d05080a931df96249efd9e6763e4664d2160c530f76f0",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/UInt256.sol",
+      "baseline": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "actual": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/collections/BetterArrays.sol",
+      "baseline": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "actual": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol",
+      "baseline": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "actual": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+      "changed": false
+    },
+    {
+      "path": "lib/crane/contracts/utils/collections/sets/Bytes4SetRepo.sol",
+      "baseline": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "actual": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+      "changed": false
+    }
+  ],
+  "historyPreservation": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/rehearsal/report.md",
+      "sha256": "1eb22188bf731a122beada8c1ed69ef845380c2b2a8acbe4672544416bfe3e69",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/report.md",
+      "sha256": "e0741ca43ea6ee2d9da07149f36c765cdcac77f89752f3f5a86518e1f43a2232",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/report.md",
+      "sha256": "c3a1b60b8f9cbbf8edfde2b79c669f6aea3cdf9916a433fad78bd445316ecf2c",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/correction-verification/report.md",
+      "sha256": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/commit/verification.md",
+      "sha256": "ff8ab4583c38b1f5da8975e04d1a24321866105b8af64c16d10882e8661c1a31",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/implementation/chain-gas-limits.log",
+      "sha256": "8c6e29f6470180b1f429f737586a6048b121a1200029d3bc9759eb50af04485f",
+      "unchanged": true
+    }
+  ]
+}

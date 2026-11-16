@@ -1,0 +1,1352 @@
+{
+  "type": "DoneClaim",
+  "status": "complete-scoped-qa",
+  "completion": true,
+  "scope": "Authorized task-12 fixture transport adaptation inside task-10 blocking acceptance, with affected QA only.",
+  "completedAt": "2026-11-15T18:20:47.340Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "changedFile": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+    "allowedChanges": [
+      "Import compensationEventTopics from the existing execution-domain module.",
+      "Replace suffix-derived topics with compensationEventTopics(migration, \"configuration\") for the existing response key."
+    ],
+    "beforeSha256": "aa68ed246ee0e135860c1cf79b9712468cb05327dabc8496f9cf2adbbf9d37c4",
+    "afterSha256": "ef79cad27c4b6fd351f583c6c75d96560fb6b9d99ba3c887058ff1e1ef558bf8",
+    "beforeBytes": 18388,
+    "afterBytes": 18281,
+    "originalBytes": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/mixed-fixture.before.txt",
+    "exactAuthorizedAdaptation": true,
+    "responseRowsUnchanged": true,
+    "omissionFixturesUnchanged": true,
+    "signedHistoryConstructionUnchanged": true,
+    "assertionsUnchanged": true,
+    "productionClassifierChanged": false
+  },
+  "repairClaimRead": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-done.json",
+  "diagnosisRead": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis",
+  "results": {
+    "focused": {
+      "pass": 3,
+      "fail": 0,
+      "filtered": 45,
+      "raw": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stderr.log"
+    },
+    "full": {
+      "pass": 336,
+      "fail": 0,
+      "files": 21,
+      "duration": "105.22s",
+      "runs": 1,
+      "timeoutMs": 15000,
+      "raw": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log",
+      "allSelectedFilesObserved": true,
+      "formerlyFailedCases": [
+        "(pass) complete mixed A-SY/B-configuration and immutable A-issuance relocate twice without native fallback or new prices [10887.80ms]",
+        "(pass) default validate on a relocated retained-A preparation stays read-only without current pricing [6141.39ms]",
+        "(pass) omitting old configured SY from a relocated complete preparation rejects the census [5020.32ms]"
+      ]
+    },
+    "operatorTypes": {
+      "exit": 0,
+      "files": 87,
+      "stdoutBytes": 0,
+      "stderrBytes": 0
+    },
+    "retainedHelper": {
+      "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types",
+      "binding": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/retained-helper-types.json",
+      "exit": 0,
+      "rerun": false,
+      "fixtureInImportGraph": false,
+      "provenanceLimit": "28 of 29 reachable local source hashes match admitted older source records. The task-11 recovery.ts dependency was not separately listed in those historical records; its current hash is captured before/after this adaptation. The user states helper inputs are unchanged. The adapted fixture is absent from this helper import graph. No stronger retroactive pin or redundant compiler rerun is claimed."
+    },
+    "manual": {
+      "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual",
+      "exit": 0,
+      "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/result.json",
+      "syntheticTransport": true,
+      "completeValidateAndVerify": "returned",
+      "omittedConfiguration": "expected ExecutionError: configured original omitted from complete deployment census",
+      "responseRows": 3,
+      "responseSha256": "09a1d6f304ed67f58acca3c84ddf7ab0e927b4c9c054aafbcaf1329d0badafd1",
+      "responseRowsUnchanged": true,
+      "originalRawInputsPreserved": 27,
+      "nonceRequests": 0,
+      "sends": 0,
+      "negativeIsThrownCliErrorNotProcessExit": true
+    },
+    "portable": {
+      "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/portable-integrity.json",
+      "freshDomains": 2,
+      "rawInputsPerDomain": 27,
+      "historicalContextsPerDomain": 4,
+      "signedHistoricalDomainsUnchanged": true
+    },
+    "previousFailedFullRun": {
+      "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests",
+      "pass": 333,
+      "fail": 3,
+      "exit": 1,
+      "preserved": true,
+      "isolated9979msDidNotClearIt": true
+    }
+  },
+  "exactCommands": [
+    {
+      "name": "00-bun-path",
+      "argv": [
+        "/usr/bin/which",
+        "bun"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/source-after.sha256"
+    },
+    {
+      "name": "00-bun-version",
+      "argv": [
+        "bun",
+        "--version"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/source-after.sha256"
+    },
+    {
+      "name": "00-bun-revision",
+      "argv": [
+        "bun",
+        "--revision"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/source-after.sha256"
+    },
+    {
+      "name": "00-ts-version",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--version"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/source-after.sha256"
+    },
+    {
+      "name": "01-focused",
+      "argv": [
+        "env",
+        "TASK12_EVIDENCE=/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused",
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/bundle.test.ts",
+        "-t",
+        "complete mixed A-SY/B-configuration|default validate on a relocated retained-A|omitting old configured SY"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:36Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/source-after.sha256"
+    },
+    {
+      "name": "02-full-tests",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/bundle.test.ts",
+        "./scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "./scripts/recovery/dtf-migration/candidates.test.ts",
+        "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts",
+        "./scripts/recovery/dtf-migration/execution.test.ts",
+        "./scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "./scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "./scripts/recovery/dtf-migration/preparation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt.test.ts",
+        "./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:15:36Z",
+      "finished": "2026-11-15T18:17:22Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/source-after.sha256"
+    },
+    {
+      "name": "03-operator-types",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "scripts/recovery/dtf-migration/bundle-files.ts",
+        "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/bundle.ts",
+        "scripts/recovery/dtf-migration/candidate-input.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "scripts/recovery/dtf-migration/candidates.test.ts",
+        "scripts/recovery/dtf-migration/candidates.ts",
+        "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "scripts/recovery/dtf-migration/execution-domain.ts",
+        "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "scripts/recovery/dtf-migration/execution-plan.ts",
+        "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "scripts/recovery/dtf-migration/execution-schema.ts",
+        "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "scripts/recovery/dtf-migration/execution-state.ts",
+        "scripts/recovery/dtf-migration/execution.fixture.ts",
+        "scripts/recovery/dtf-migration/execution.test.ts",
+        "scripts/recovery/dtf-migration/execution.ts",
+        "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "scripts/recovery/dtf-migration/journal.ts",
+        "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "scripts/recovery/dtf-migration/payloads.ts",
+        "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "scripts/recovery/dtf-migration/preparation.test.ts",
+        "scripts/recovery/dtf-migration/preparation.ts",
+        "scripts/recovery/dtf-migration/provenance.ts",
+        "scripts/recovery/dtf-migration/quotes.ts",
+        "scripts/recovery/dtf-migration/receipt-association.ts",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "scripts/recovery/dtf-migration/receipt-input.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "scripts/recovery/dtf-migration/receipt.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+        "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "scripts/recovery/dtf-migration/rehearse.ts",
+        "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "scripts/recovery/dtf-migration/schema.ts",
+        "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:17:22Z",
+      "finished": "2026-11-15T18:17:25Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/source-after.sha256"
+    },
+    {
+      "name": "04-manual",
+      "argv": [
+        "env",
+        "PREPARED_FIXTURE_EVIDENCE=/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual",
+        "bun",
+        "--eval",
+        "import assert from \"node:assert/strict\";\nimport { readFile, writeFile, access } from \"node:fs/promises\";\nimport { join } from \"node:path\";\nimport { mixedFixture } from \"./docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts\";\nimport { main } from \"./scripts/recovery/dtf-migration/cli.js\";\nimport { exportBundle } from \"./scripts/recovery/dtf-migration/bundle.js\";\nimport { readBundle } from \"./scripts/recovery/dtf-migration/bundle-files.js\";\nimport { materializeBundle } from \"./scripts/recovery/dtf-migration/bundle-materialize.js\";\nimport { assemble, normalize } from \"./scripts/recovery/dtf-migration/preparation.js\";\nimport { loadExecution, compensationEventTopics } from \"./scripts/recovery/dtf-migration/execution-domain.js\";\nimport { canonical, fingerprint } from \"./scripts/recovery/dtf-migration/provenance.js\";\nconst f = await mixedFixture();\nconst commands = [];\nconst cli = async (argv) => { console.log(canonical({kind:\"cli-start\",argv})); await main(argv); commands.push({argv,status:\"returned\"}); };\ntry {\n  const native = await loadExecution(f.manifestPath);\n  const query = {address:native.manifest.proxy,fromBlock:\"0x\"+BigInt(native.manifest.deploymentBlockNumber).toString(16),toBlock:\"latest\",topics:[compensationEventTopics(native.abis.migration,\"configuration\")]};\n  const rows = f.changes.logs.get(canonical(query));\n  assert.ok(rows); assert.equal(rows.length,3);\n  const responseBefore = canonical(rows);\n  const completeBundle = await exportBundle(f.manifestPath,join(f.root,\"manual-complete-bundle\"));\n  const saved = await readBundle(completeBundle);\n  const originals = await Promise.all(saved.manifest.files.map(async item => { const raw = await readFile(item.originalPath); return {...item,sha256:fingerprint(raw),rawBase64:raw.toString(\"base64\")}; }));\n  const complete = await materializeBundle(completeBundle,join(f.root,\"manual-complete-relocated\"));\n  assert.equal(complete.kind,\"execution\");\n  const completeDomain = await loadExecution(complete.manifest);\n  await cli([\"validate\",\"--manifest\",completeDomain.manifest.preparedManifest]);\n  await cli([\"verify\",\"--manifest\",complete.manifest,\"--checkpoint\",join(f.root,\"complete-must-not-create\")]);\n  const omitted = assemble(normalize({...f.finalPrepared.input,weightedSy:[],exposures:f.finalPrepared.input.exposures.filter(r=>r.category!==\"weighted-sy\")}),f.finalPrepared.quoteEvidence);\n  const prepared = await f.save(\"manual-omitted-sy-prepared.json\",omitted);\n  const execution = await f.save(\"manual-omitted-sy-execution.json\",{...native.manifest,preparedManifest:prepared.path});\n  const omittedBundle = await exportBundle(execution.path,join(f.root,\"manual-omitted-sy-bundle\"));\n  const relocated = await materializeBundle(omittedBundle,join(f.root,\"manual-omitted-sy-relocated\"));\n  assert.equal(relocated.kind,\"execution\");\n  const negativeArgv = [\"verify\",\"--manifest\",relocated.manifest,\"--checkpoint\",join(f.root,\"omitted-must-not-create\")];\n  let rejection;\n  console.log(canonical({kind:\"cli-start\",argv:negativeArgv}));\n  try { await main(negativeArgv); } catch (error) { if (!(error instanceof Error)) throw error; assert.match(error.message,/configured original omitted from complete deployment census/); rejection={name:error.name,message:error.message}; }\n  assert.ok(rejection); commands.push({argv:negativeArgv,status:\"expected-throw\",rejection});\n  assert.equal(canonical(f.changes.logs.get(canonical(query))),responseBefore);\n  for (const original of originals) assert.equal(fingerprint(await readFile(original.originalPath)),original.sha256);\n  assert.equal(f.methods.includes(\"eth_getTransactionCount\"),false); assert.equal(f.methods.includes(\"eth_sendRawTransaction\"),false);\n  const result = {scope:\"Synthetic task-12 loopback transport; production CLI main invoked in-process; no EVM or public RPC\",query,responseRows:rows,responseSha256:fingerprint(responseBefore),responseRowsUnchanged:true,commands,completeRelocated:{manifest:complete.manifest,prepared:completeDomain.manifest.preparedManifest,status:\"validate-and-verify-returned\"},omittedRelocated:{manifest:relocated.manifest,status:\"rejected\",rejection},originalInputs:originals,originalInputsUnchanged:true,methods:f.methods,limits:[\"Expected rejection is a thrown production CLI error, not a separate process exit.\",\"No live census, Anvil transaction, activation or readiness proof.\"]};\n  await writeFile(join(process.env.PREPARED_FIXTURE_EVIDENCE,\"result.json\"),JSON.stringify(result,null,2)+\"\\n\",{flag:\"wx\"});\n  console.log(canonical({kind:\"manual-complete\",complete:\"accepted\",omitted:\"rejected\",responseRows:rows.length,originalInputs:originals.length,noSends:true}));\n} finally { await f.close(); console.log(canonical({kind:\"cleanup\",fixtureRoot:f.root,closed:true})); }\n"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T18:17:25Z",
+      "finished": "2026-11-15T18:17:40Z",
+      "exitCode": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stderr.log",
+      "sourceBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/source-before.sha256",
+      "sourceAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/source-after.sha256"
+    }
+  ],
+  "strictOperatorCommand": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts",
+  "strictHelperCommand": [
+    "bun",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--target",
+    "ES2022",
+    "--module",
+    "ESNext",
+    "--moduleResolution",
+    "Bundler",
+    "--strict",
+    "--noUncheckedIndexedAccess",
+    "--exactOptionalPropertyTypes",
+    "--verbatimModuleSyntax",
+    "--skipLibCheck",
+    "--types",
+    "node",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+  ],
+  "versions": {
+    "bunPath": "/opt/homebrew/bin/bun",
+    "bunRevision": "1.4.2+50a8a8387",
+    "typescript": "5.9.2"
+  },
+  "manualProof": {
+    "outerCommand": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/command.txt",
+    "rawStdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stdout.log",
+    "rawStderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stderr.log",
+    "actualExit": 0,
+    "implementation": "Recorded inline driver calling existing production CLI main, existing mixedFixture, exportBundle and materializeBundle.",
+    "transport": "Synthetic task-12 loopback transport; no public RPC or EVM.",
+    "query": {
+      "address": "0x000000000000000000000000000000000000000a",
+      "fromBlock": "0x5a",
+      "toBlock": "latest",
+      "topics": [
+        [
+          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+          "0x286c5cc5454dd5423791286ff6d0889b2f1a236b36653c8362d3f45c7a83a3b6",
+          "0xaa6b30bf9a69ad8b85c9d0d99f86b818a231717ca2a48ec168034aec8d1dc202",
+          "0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2",
+          "0xd1c2bd2d7e34aef74f5c3777f0ab7d0f582179408134c8d7e6306695e026673a",
+          "0x59306009aea8a6c83c64e203653e34d719cab2ea6cda18efa00ed8c25d8d400b",
+          "0x33e0d7611cd01ac585b56590f0e06f294b7f66f0ee6604c70a99a2322721f7b5",
+          "0x85d95872fb01c95b5c79ec368bf9ca44bec41bcd0cfe91e2cf2749ae0b79e232",
+          "0xc50f03b2667f754f048eb2d07be8528842bb6b437806e66b53a8d2c3d09096f9",
+          "0xefcccb4ed1d365a1bfebc8e2a0dbc11034fad586b6ee762949c5fd15fa5e1ac6"
+        ]
+      ]
+    },
+    "responseRows": [
+      {
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000cb0000000000000000000000000000000000000000000000007d0000000000046d",
+        "topics": [
+          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+          "0x0000000000000000000000000000000000000000000000000000000000000014",
+          "0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05"
+        ],
+        "address": "0x000000000000000000000000000000000000000a",
+        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+        "blockNumber": "0x65",
+        "transactionHash": "0xdabc9d8fddbf66045d063a177d7c8c08236985f4c47749f0576bcbc3be3dc5a5",
+        "transactionIndex": "0x0",
+        "logIndex": "0x0"
+      },
+      {
+        "data": "0x0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000c",
+        "topics": [
+          "0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2",
+          "0x00000000000000000000000000000000000000000000000000000000000000cf",
+          "0xeaaa66ad9fa89fead5359c9d9c0d46e40f589be2ba3e327b7db4a3a1e5edbe49",
+          "0x0000000000000000000000000000000000000000000000000000000000000016"
+        ],
+        "address": "0x000000000000000000000000000000000000000a",
+        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000066",
+        "blockNumber": "0x66",
+        "transactionHash": "0x456095128017cfef6d7bb7df7b706acf3fb5cb410f36ef8a80376f06939595f7",
+        "transactionIndex": "0x0",
+        "logIndex": "0x0"
+      },
+      {
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000cb0000000000000000000000000000000000000000000000007d0000000000046d",
+        "topics": [
+          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+          "0x0000000000000000000000000000000000000000000000000000000000000014",
+          "0x4c6e895a8083b06c120fa58069efdb5fc609699505395d531d7775f47b4ea33d"
+        ],
+        "address": "0x000000000000000000000000000000000000000a",
+        "blockHash": "0x000000000000000000000000000000000000000000000000000000000000006a",
+        "blockNumber": "0x6a",
+        "transactionHash": "0x0d2907f64a8472c5a103865b59e10b8d8edc40a04a950f21bbc9fd868d3b56f3",
+        "transactionIndex": "0x0",
+        "logIndex": "0x0"
+      }
+    ],
+    "responseSha256": "09a1d6f304ed67f58acca3c84ddf7ab0e927b4c9c054aafbcaf1329d0badafd1",
+    "responseRowsUnchanged": true,
+    "cliCommands": [
+      {
+        "argv": [
+          "validate",
+          "--manifest",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-complete-relocated/prepared/manifest.json"
+        ],
+        "status": "returned"
+      },
+      {
+        "argv": [
+          "verify",
+          "--manifest",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-complete-relocated/execution.json",
+          "--checkpoint",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/complete-must-not-create"
+        ],
+        "status": "returned"
+      },
+      {
+        "argv": [
+          "verify",
+          "--manifest",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-omitted-sy-relocated/execution.json",
+          "--checkpoint",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/omitted-must-not-create"
+        ],
+        "status": "expected-throw",
+        "rejection": {
+          "name": "ExecutionError",
+          "message": "configured original omitted from complete deployment census"
+        }
+      }
+    ],
+    "completeRelocated": {
+      "manifest": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-complete-relocated/execution.json",
+      "prepared": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-complete-relocated/prepared/manifest.json",
+      "status": "validate-and-verify-returned"
+    },
+    "omittedRelocated": {
+      "manifest": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-omitted-sy-relocated/execution.json",
+      "status": "rejected",
+      "rejection": {
+        "name": "ExecutionError",
+        "message": "configured original omitted from complete deployment census"
+      }
+    },
+    "originalInputFiles": [
+      {
+        "path": "data/4ab2ca89aa40b0570d7cd4623c0710c22fc6699a4fa6f041af919b9ce9a5a019",
+        "sha256": "4ab2ca89aa40b0570d7cd4623c0710c22fc6699a4fa6f041af919b9ce9a5a019",
+        "bytes": "1376",
+        "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/deployment.json"
+      },
+      {
+        "path": "data/261a4c204848bbfde38c61636d32d38a2245cdf9023eee6271486eacb424df2c",
+        "sha256": "261a4c204848bbfde38c61636d32d38a2245cdf9023eee6271486eacb424df2c",
+        "bytes": "4507",
+        "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/evidence.json"
+      },
+      {
+        "path": "data/a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+        "sha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+        "bytes": "365399",
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json"
+      },
+      {
+        "path": "data/3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "bytes": "302108",
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json"
+      },
+      {
+        "path": "data/05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "bytes": "123210",
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json"
+      },
+      {
+        "path": "data/41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "bytes": "60558",
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"
+      },
+      {
+        "path": "data/4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "bytes": "128972",
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"
+      },
+      {
+        "path": "data/2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "bytes": "124637",
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json"
+      },
+      {
+        "path": "data/f8e4f14e87ee25b25f8d432714475bf312404f54616c723ee899a3e500815006",
+        "sha256": "f8e4f14e87ee25b25f8d432714475bf312404f54616c723ee899a3e500815006",
+        "bytes": "5303",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/book-a.json"
+      },
+      {
+        "path": "data/b57bec7f82c4c366fe70d268942f84e7c0c3cd962936b66d45c92b3725ec3f1f",
+        "sha256": "b57bec7f82c4c366fe70d268942f84e7c0c3cd962936b66d45c92b3725ec3f1f",
+        "bytes": "2329",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/inputs-a.json"
+      },
+      {
+        "path": "data/46b77bf7945631b61f7548ecd7e9f9af52d32c26821b38847a51f0e7e461acf6",
+        "sha256": "46b77bf7945631b61f7548ecd7e9f9af52d32c26821b38847a51f0e7e461acf6",
+        "bytes": "5303",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/book-b.json"
+      },
+      {
+        "path": "data/0e981c5450c61df24b3890accadb8b8a828f3b9890999c0998a83b0b7ccd706c",
+        "sha256": "0e981c5450c61df24b3890accadb8b8a828f3b9890999c0998a83b0b7ccd706c",
+        "bytes": "2329",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/inputs-b.json"
+      },
+      {
+        "path": "data/be8843a4c3876f75fa296c6fd73a33bd278d5e252e4d6b016318ba2083678070",
+        "sha256": "be8843a4c3876f75fa296c6fd73a33bd278d5e252e4d6b016318ba2083678070",
+        "bytes": "37126",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/prepared-mixed.json"
+      },
+      {
+        "path": "data/ada5f64f38bbd1e22f5c0c1c348186351ec938736393135832f03382fba9735b",
+        "sha256": "ada5f64f38bbd1e22f5c0c1c348186351ec938736393135832f03382fba9735b",
+        "bytes": "1959",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-10.json"
+      },
+      {
+        "path": "data/285c53853cbf02c4a5ee543b79087dac34a5c7461ec17adace2bc0622026328b",
+        "sha256": "285c53853cbf02c4a5ee543b79087dac34a5c7461ec17adace2bc0622026328b",
+        "bytes": "5562",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/execution-b.json"
+      },
+      {
+        "path": "data/438209cbe5e4608a84f50e5e298e513aff7b5fee923f50ba3dce8fd6d14e4a10",
+        "sha256": "438209cbe5e4608a84f50e5e298e513aff7b5fee923f50ba3dce8fd6d14e4a10",
+        "bytes": "2330",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-10.json"
+      },
+      {
+        "path": "data/81ff8d18944e3df6d62bcb0617c860c50a9c353dfc9971fa799bb7fcd81ba807",
+        "sha256": "81ff8d18944e3df6d62bcb0617c860c50a9c353dfc9971fa799bb7fcd81ba807",
+        "bytes": "5738",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/journal-b.json"
+      },
+      {
+        "path": "data/dc3573e237a0baa2ce7f87416ad7b91891e12728a294f4d3a1af422698c26e5d",
+        "sha256": "dc3573e237a0baa2ce7f87416ad7b91891e12728a294f4d3a1af422698c26e5d",
+        "bytes": "37118",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/prepared-b.json"
+      },
+      {
+        "path": "data/27e934c44e2852aac6d3b50aeed589d583a883a6e09bd43f72055b2d5c7cbed6",
+        "sha256": "27e934c44e2852aac6d3b50aeed589d583a883a6e09bd43f72055b2d5c7cbed6",
+        "bytes": "1959",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-7.json"
+      },
+      {
+        "path": "data/dca38e4d850225be7561a02989db705096992ecbba90532bda8898560dd69604",
+        "sha256": "dca38e4d850225be7561a02989db705096992ecbba90532bda8898560dd69604",
+        "bytes": "5562",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/execution-a.json"
+      },
+      {
+        "path": "data/b2b6aa4c9493e79285324d919640df0a9ef554534e83d077077ab2993f3b8c33",
+        "sha256": "b2b6aa4c9493e79285324d919640df0a9ef554534e83d077077ab2993f3b8c33",
+        "bytes": "2329",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-7.json"
+      },
+      {
+        "path": "data/f255c2068e4366dc225ff13a0af72e676a7d3bd1ba0f5d2d7ec25bfbea94f7d5",
+        "sha256": "f255c2068e4366dc225ff13a0af72e676a7d3bd1ba0f5d2d7ec25bfbea94f7d5",
+        "bytes": "5738",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/journal-a.json"
+      },
+      {
+        "path": "data/ff2a1d6c0a99af150b754fd22d320bfb93dd0626af6bfc1a02c8525b16b98085",
+        "sha256": "ff2a1d6c0a99af150b754fd22d320bfb93dd0626af6bfc1a02c8525b16b98085",
+        "bytes": "24231",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/prepared-a.json"
+      },
+      {
+        "path": "data/59e926bd011d6e48f7018820149d40da46b79ce3ea12a28d45aad261fe6a44d1",
+        "sha256": "59e926bd011d6e48f7018820149d40da46b79ce3ea12a28d45aad261fe6a44d1",
+        "bytes": "3176",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-9.json"
+      },
+      {
+        "path": "data/ba2853eaf59d7e326e2f83e1c552408a6059b78441c530fe73ba28e25b946b04",
+        "sha256": "ba2853eaf59d7e326e2f83e1c552408a6059b78441c530fe73ba28e25b946b04",
+        "bytes": "1305",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-9.json"
+      },
+      {
+        "path": "data/389ea4763ef34de920f11d5b7deadf2d551d0060692f4363fa58c19273adb97c",
+        "sha256": "389ea4763ef34de920f11d5b7deadf2d551d0060692f4363fa58c19273adb97c",
+        "bytes": "1907",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-8.json"
+      },
+      {
+        "path": "data/41c4d524f515ac23192661cc8be04ddddaa72809c76b420ebd46769e0ba1f7d1",
+        "sha256": "41c4d524f515ac23192661cc8be04ddddaa72809c76b420ebd46769e0ba1f7d1",
+        "bytes": "2201",
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-8.json"
+      }
+    ],
+    "originalRawBytesRetained": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/result.json",
+    "originalInputBytesUnchanged": true,
+    "nonceRequests": 0,
+    "sends": 0,
+    "negativeBoundary": "Expected thrown ExecutionError from production CLI; no separate negative process exit is claimed."
+  },
+  "sourceBindings": {
+    "before": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/source-before.json",
+    "after": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/source-after.json",
+    "sourceFiles": 97,
+    "sourceChanges": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+        "sha256": "ef79cad27c4b6fd351f583c6c75d96560fb6b9d99ba3c887058ff1e1ef558bf8",
+        "bytes": 18281,
+        "before": {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+          "sha256": "aa68ed246ee0e135860c1cf79b9712468cb05327dabc8496f9cf2adbbf9d37c4",
+          "bytes": 18388
+        }
+      }
+    ],
+    "allRunInputsIdentical": true,
+    "commandSourceConsistency": [
+      {
+        "name": "00-bun-path",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      },
+      {
+        "name": "00-bun-version",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      },
+      {
+        "name": "00-bun-revision",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      },
+      {
+        "name": "00-ts-version",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      },
+      {
+        "name": "01-focused",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      },
+      {
+        "name": "02-full-tests",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      },
+      {
+        "name": "03-operator-types",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      },
+      {
+        "name": "04-manual",
+        "beforeSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "afterSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+        "unchanged": true,
+        "matchesOtherRuns": true
+      }
+    ],
+    "frozenDomainState": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "expected": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "current": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "matches": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "expected": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+        "current": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+        "matches": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "expected": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "current": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "matches": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "expected": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+        "current": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+        "matches": true
+      }
+    ],
+    "protectedEvidenceFiles": 35,
+    "protectedChanges": [],
+    "originalFixtureArchiveMatches": true,
+    "artifactBindings": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+        "sha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+        "bytes": 365399,
+        "currentSha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+        "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "bytes": 302108,
+        "currentSha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+        "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "bytes": 123210,
+        "currentSha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+        "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "bytes": 60558,
+        "currentSha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+        "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "bytes": 128972,
+        "currentSha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+        "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "bytes": 124637,
+        "currentSha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "matches": true
+      }
+    ]
+  },
+  "cleanup": {
+    "monitor": "mon_K37ZF2YPMMT5V6E2",
+    "session": "bash_1",
+    "completion": "PREPARED_FIXTURE_COMPLETE exit=0; watcher completed (exit code 0)",
+    "pendingProcesses": 0,
+    "fixtureCleanup": [
+      {
+        "closed": true,
+        "fixtureRoot": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr",
+        "kind": "cleanup",
+        "rootStillExists": false
+      }
+    ],
+    "tempBefore": [
+      "dtf-prepare-test-6ABTvq",
+      "dtf-prepare-test-sSyY0e"
+    ],
+    "tempAfter": [
+      "dtf-prepare-test-6ABTvq",
+      "dtf-prepare-test-sSyY0e"
+    ],
+    "newTempDirectories": [],
+    "unknownPriorDirectoriesPreserved": true,
+    "removedResources": "Existing fixture finally/afterEach cleanup only; no manual blanket deletion or unknown-resource kill.",
+    "anvil": false,
+    "forge": false,
+    "publicRpc": false,
+    "installs": false,
+    "commits": false,
+    "delegation": false
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/report.md",
+  "ledger": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/results.json",
+  "met": [
+    "Read the frozen A1 repair claim and its exact portable-fixture diagnosis.",
+    "Preserved the failed 333/3 full run, diagnostic/helper receipts, and byte-identical original fixture.",
+    "Changed only the authorized fixture import and configuration response topic selection.",
+    "Ran all three previously failed cases through their existing tests: 3 pass, 0 fail.",
+    "Ran the full operator suite once: 336 pass, 0 fail across all 21 files, at the unchanged 15000-ms timeout.",
+    "Ran the exact strict operator compiler once: 87 files; exit zero and empty diagnostics.",
+    "Retained the earlier helper compiler exit zero with source bindings, instead of a signature rerun.",
+    "Observed complete relocated validation and verification succeed and the unchanged omitted-SY variant reject via the production CLI over explicit synthetic transport.",
+    "Confirmed three response rows and 27 raw original inputs unchanged; saved their bytes and hashes.",
+    "Verified only the fixture differs among captured inputs, frozen domain/state and 35 protected records are unchanged, and cleanup leaves no owned process or temporary directory."
+  ],
+  "unmet": [],
+  "limitations": [
+    "28 of 29 reachable local source hashes match admitted older source records. The task-11 recovery.ts dependency was not separately listed in those historical records; its current hash is captured before/after this adaptation. The user states helper inputs are unchanged. The adapted fixture is absent from this helper import graph. No stronger retroactive pin or redundant compiler rerun is claimed.",
+    "Synthetic loopback transport, no fresh EVM transaction, public RPC, activation or lifecycle proof.",
+    "One full suite run passed at the unchanged 15000-ms timeout; no general flake-free guarantee.",
+    "No broad audit, source-classifier change, test/assertion edit, test skip, readiness marker or plan closure.",
+    "Missing Bash/Biome editor servers were not installed; exact strict compiler output is the delivered diagnostic gate."
+  ],
+  "readinessClaim": false,
+  "readinessMarker": false,
+  "planClosure": false,
+  "task10LifecycleComplete": false,
+  "independentA1Review": "Separate; not performed or released by this executor.",
+  "constraints": {
+    "newSourceChangesElsewhere": false,
+    "testOrAssertionEdits": false,
+    "skips": false,
+    "timeoutIncreased": false,
+    "productionValidationReplaced": false,
+    "classifierEdited": false,
+    "forge": false,
+    "anvil": false,
+    "publicRpc": false,
+    "install": false,
+    "commit": false,
+    "delegation": false
+  },
+  "inventory": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/argv.nul",
+      "sha256": "8a9921f4f5dcc9b80e57f8b65351f952d08bb72349adec0dcfa0bd0ea60889e1",
+      "bytes": 19
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/command.txt",
+      "sha256": "5930367f05d9d372f1553ab065aa4a90afc0ccffab6a146cd6289e0dab565f9f",
+      "bytes": 20
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stdout.log",
+      "sha256": "b8852309b79933c7e655033693bdd9a0089dd7a64135b0a900a3fa717d1d9916",
+      "bytes": 22
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/argv.nul",
+      "sha256": "74dfd4090835c6e694d7f7373b750aa0ffd367bb4f42c97cb5d8db061d3387eb",
+      "bytes": 15
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/command.txt",
+      "sha256": "b6ce41cea50761ec55c77eac61cfc3aab653c297bcba7328fbf43e608e5081ad",
+      "bytes": 16
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stdout.log",
+      "sha256": "43c92ee3266e71a3576a0c901180eceb18343004b4074f3363702ab3a6efec10",
+      "bytes": 16
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/argv.nul",
+      "sha256": "196fb6f2e8ca9c28fcb314f1a77974ab4c4cbc3e5dd69fedbc50512f24658a28",
+      "bytes": 14
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/command.txt",
+      "sha256": "a52b57d3b6521e053640e9f292cb91fbad5c06b760cd5d62b55a7dfd16817310",
+      "bytes": 15
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stdout.log",
+      "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
+      "bytes": 6
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/argv.nul",
+      "sha256": "cc7407ae7a51948907af531ae19aa090a636f71e26f41e62b5bb82dd8511e165",
+      "bytes": 46
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/command.txt",
+      "sha256": "66649645b9646f6d102789d898a051e359371b1aadf337937122e32d03d59d4d",
+      "bytes": 47
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stdout.log",
+      "sha256": "4c7ae79542506418b516a1a9f6e91321e9464f88a2130bfa070aca57929b2eb5",
+      "bytes": 14
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/argv.nul",
+      "sha256": "04e14c2e402490d4e5b812c97313797d857baf019d5ac8b5be41838ad74433a5",
+      "bytes": 419
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/command.txt",
+      "sha256": "f93fe559ccf388338a0d593fb688d4145495419b9d21670877724c1e29052ebe",
+      "bytes": 432
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/finished.txt",
+      "sha256": "710c4d3938abec3116e03d3f1bda5a78503447eb8cdf2fc0b10e4b52ea540608",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/portable-integrity.json",
+      "sha256": "f36f674b9d154bd4a0a284da00024665d20ff5d4c560f0bd618024146a630f78",
+      "bytes": 1768165
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stderr.log",
+      "sha256": "ac527df16148c99d2699129cea7ff3d7ac129d974d14b466a0c5a784b61d7388",
+      "bytes": 469
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stdout.log",
+      "sha256": "89fbbcbb0416444d7833d2199f22e505b4cf3d764bc8876002ccb6c0184588a3",
+      "bytes": 1124
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/tamper-rejections.log",
+      "sha256": "5e0318495f1a1399773c41997fedd936088d45de44ac0ba7a2259fc5b03a3542",
+      "bytes": 96
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/argv.nul",
+      "sha256": "d4567f10b58595b1ac8f0355c76526033cf59a2557a606b09dcc1b7331abdd2d",
+      "bytes": 1199
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/command.txt",
+      "sha256": "80ce0567e4363449c924fb71910f473e1aa867e843e1a369e5203598a3c61ad5",
+      "bytes": 1200
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/finished.txt",
+      "sha256": "e4c94a5a948953ddafeec749a0e3edf0fecbaa8259f58e69a0101ae23bfa99fc",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/started.txt",
+      "sha256": "710c4d3938abec3116e03d3f1bda5a78503447eb8cdf2fc0b10e4b52ea540608",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log",
+      "sha256": "2db6f464e2f0aa628e81f4084612975f13f8d054132670ad5f4331c222838f74",
+      "bytes": 34752
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stdout.log",
+      "sha256": "711d04fb3854e2033e02fb4ddb52d00e6ac9cd34dd5af8af7b9c6a1dcf17f48a",
+      "bytes": 3492
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/argv.nul",
+      "sha256": "7bca625d3c93d4639207075a0ab1cc02341448aaf7ff252342be873f19df1cee",
+      "bytes": 4839
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/command.txt",
+      "sha256": "911bab9857ce78401ddd62e8a19930d0defe0be660afe96cd9061edcdaf5d6e1",
+      "bytes": 4840
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/finished.txt",
+      "sha256": "3b6fb4bbccb1d0320b31688603eedff5c701e2ced3f2522c1769e23a96be38c1",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/started.txt",
+      "sha256": "e4c94a5a948953ddafeec749a0e3edf0fecbaa8259f58e69a0101ae23bfa99fc",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/argv.nul",
+      "sha256": "4e6dd308a053bedf8d2bae169d5d55ebbf9b32c11ddf2ec867b8d72e8df292c5",
+      "bytes": 5056
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/command.txt",
+      "sha256": "738bcd95456191724ce02a398c69fafe3e0a554d1ba482142fac9d65c61d6c87",
+      "bytes": 5107
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/finished.txt",
+      "sha256": "3e51f09110a82dfa78a963292b6febc802a4e0031377a7d5ce2b3aee3581d972",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/result.json",
+      "sha256": "99275c3bb3b9b9597dff098c7b63d3ea175710dfbd6806b0a621d9a3ecdc12ac",
+      "bytes": 1776548
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/started.txt",
+      "sha256": "3b6fb4bbccb1d0320b31688603eedff5c701e2ced3f2522c1769e23a96be38c1",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stdout.log",
+      "sha256": "dacd1b25b05124c2194e590c44d4f6c1290e537330ce6a2014b83aca8a2d0626",
+      "bytes": 1372
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/cleanup.json",
+      "sha256": "1f15be8aa9183bd606a4bf7230fe599452aa24165a3fb18e960ca623c029e875",
+      "bytes": 883
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/mixed-fixture.before.txt",
+      "sha256": "aa68ed246ee0e135860c1cf79b9712468cb05327dabc8496f9cf2adbbf9d37c4",
+      "bytes": 18388
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/overall.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/report.md",
+      "sha256": "4a67599850447dc08097e486f592e052ab5e0e515de9f9493631430c70eca33b",
+      "bytes": 6621
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/results.json",
+      "sha256": "1e87650b8128934daed76ab59f62f87f500e58af8df9d34b8e66a6062247eb79",
+      "bytes": 27043
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/retained-helper-types.json",
+      "sha256": "ebaf1c3432b7b1fa4d8a4e2b59396a3c7e088cbf102c0824d1d31fae8408d55a",
+      "bytes": 16015
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/run-checks.sh",
+      "sha256": "72f5c9acb0179132c2a3eaeb4a24c2bb57ef15bffa638ce61d31ef77c1ab86d9",
+      "bytes": 12242
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/source-after.json",
+      "sha256": "90342474e840606547634bfa8fa6259b486e53d92e9f19ce318765ef7b15d3e8",
+      "bytes": 35578
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/source-before.json",
+      "sha256": "4219181ea6f1fd984d3f4eea28b75009a45a04dffc54bcc688cb4f8d81f8d7d6",
+      "bytes": 34838
+    }
+  ],
+  "writtenLast": true
+}

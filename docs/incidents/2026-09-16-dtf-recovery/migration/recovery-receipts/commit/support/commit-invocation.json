@@ -1,0 +1,10 @@
+{
+  "command": "GIT_MASTER=1 GIT_PAGER=cat PAGER=cat GIT_OPTIONAL_LOCKS=0 git -c trailer.ifexists=addIfDifferent -c gpg.program=/usr/local/bin/gpg commit -m \"Add verified bounded conversion and recovery receipt collection\" --trailer \"Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\"",
+  "trailerPassedWithTrailerFlag": true,
+  "trailerEmbeddedInMessage": false,
+  "returnedText": "[work/dtf-migration-phase-30-recovery-receipts 1694e68a] Add verified bounded conversion and recovery receipt collection\n 8 files changed, 206 insertions(+), 17 deletions(-)",
+  "separateStderrNotCaptured": true,
+  "hooksPath": ".husky/_",
+  "hooksPathExists": false,
+  "note": "The commit tool result contained only the success summary. No hook output was present in that result. core.hooksPath .husky/_ does not exist in this worktree. Stored gpg.program remains unset."
+}

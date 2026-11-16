@@ -1,0 +1,14 @@
+{
+  "session": "bash_112",
+  "monitor": "mon_HDNAACMXH77Z1SZ6",
+  "finding": "The runner was alive but blocked before the build at WARNING: terminal is not fully functional / Press RETURN to continue. Earlier foreground claims that tests were running were incorrect.",
+  "recovery": "Sent one Enter to the existing session. Did not launch a duplicate or alter the running recipe.",
+  "verifiedAfterRecovery": [
+    "HERMETIC_R2_PROFILE=default RPC_CREDENTIALS=not-forwarded",
+    "HERMETIC_R2_BUILD_STARTED",
+    "Actual Forge nightly and configuration warnings appeared."
+  ],
+  "testStatusAtThisObservation": "Not started yet; build phase active.",
+  "prevention": "Future noninteractive validation launches must disable paging explicitly. Preserve the executed recipes and logs rather than editing them during execution.",
+  "scope": "Terminal/workflow correction only. No source, configuration, dependency or test assertion change."
+}

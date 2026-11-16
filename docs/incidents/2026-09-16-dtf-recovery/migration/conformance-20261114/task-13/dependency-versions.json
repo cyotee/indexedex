@@ -1,0 +1,270 @@
+{
+  "capturedAt": "2026-11-15T08:18:37.283Z",
+  "dependencies": {
+    "@anthropic-ai/sdk": {
+      "requested": "^0.39.0",
+      "installed": "0.39.0",
+      "packageJsonSha256": "14ebfce75c1883e518016392a936f5f36ba67f15e327f2791f408dbd4bc44be6"
+    },
+    "@babel/core": {
+      "requested": "^7.28.3",
+      "installed": "7.29.7",
+      "packageJsonSha256": "6c2893db41b54a1c03ba68e676aa3ea987db9a5c9b9a3a3aa2e8d0d9a63066c4"
+    },
+    "@babel/runtime": {
+      "requested": "^7.28.3",
+      "installed": "7.28.3",
+      "packageJsonSha256": "09f1a00ed841ddd3811471dbe4e0aa4f7bf95e636fda643849099109a4340323"
+    },
+    "@nomicfoundation/hardhat-ethers": {
+      "requested": "^4.2.1",
+      "installed": "4.2.1",
+      "packageJsonSha256": "9fb8d52b9df6d41af15eb754427dfdb6db4116c5008e308dc9030d40418f0f17"
+    },
+    "@nomicfoundation/hardhat-ethers-chai-matchers": {
+      "requested": "^3.0.13",
+      "installed": "3.0.13",
+      "packageJsonSha256": "873df6c743a6fb4e317c808d84e110e13ebc11da6a50adfa9d5a063d94278d5a"
+    },
+    "@nomicfoundation/hardhat-foundry": {
+      "requested": "^3.0.5",
+      "installed": "3.0.5",
+      "packageJsonSha256": "ea3e6ad7318097d4492cb08ca8a2017ff01e28c36effe050dfbf3113ec9cd595"
+    },
+    "@nomicfoundation/hardhat-ignition": {
+      "requested": "^3.1.9",
+      "installed": "3.1.9",
+      "packageJsonSha256": "d86c7452965e84f050827c91d3c9a88e7ead088c2d1e621e6a5708e25f17de86"
+    },
+    "@nomicfoundation/hardhat-ignition-ethers": {
+      "requested": "^3.1.6",
+      "installed": "3.1.6",
+      "packageJsonSha256": "8fc27fd5bd64a8163f8e8a8fd8cd5260ea370e4d8666cadaeec07e60a6d0d802"
+    },
+    "@nomicfoundation/hardhat-ignition-viem": {
+      "requested": "^3.1.6",
+      "installed": "3.1.6",
+      "packageJsonSha256": "da7417c33be2b59b0c8b22743ae65cd9c59c61faf2e0c52c7256ace09011e003"
+    },
+    "@nomicfoundation/hardhat-keystore": {
+      "requested": "^3.1.2",
+      "installed": "3.1.2",
+      "packageJsonSha256": "d22ca73a0da56f50f4bfdb284ab27ef94182551d55ac3955c8067dec0e30c2d8"
+    },
+    "@nomicfoundation/hardhat-mocha": {
+      "requested": "^4.0.1",
+      "installed": "4.0.1",
+      "packageJsonSha256": "9eb90a6d5c665117c6f012d13b43379cd213506467fa40cb2058e3701f0f35cc"
+    },
+    "@nomicfoundation/hardhat-network-helpers": {
+      "requested": "^3.0.12",
+      "installed": "3.0.12",
+      "packageJsonSha256": "c7c7d371cfb9d86f60c104c029fbd5cc7c3ba822f6d815dd6b78b808ed58dc88"
+    },
+    "@nomicfoundation/hardhat-node-test-runner": {
+      "requested": "^3.1.1",
+      "installed": "3.1.1",
+      "packageJsonSha256": "05c055570809be55a31a8780ae89d2ad6e38d3d521e8a67f76f8fc25412c6c94"
+    },
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": {
+      "requested": "^4.0.0",
+      "installed": "4.0.0",
+      "packageJsonSha256": "1464480d273f1147593656794ad0a9046a2c8ccf4f776d75ec350a44b8b209f3"
+    },
+    "@nomicfoundation/hardhat-toolbox-viem": {
+      "requested": "^5.0.7",
+      "installed": "5.0.7",
+      "packageJsonSha256": "07fa422a3212a2bb19bae7d0e0ccca0d274ccc67e8f3594132f584e4f35fcc10"
+    },
+    "@nomicfoundation/hardhat-typechain": {
+      "requested": "^3.1.2",
+      "installed": "3.1.2",
+      "packageJsonSha256": "11335c1d6fba6807ffd1b65ef5e11925048bcf72c9214c707a9760890d5efe06"
+    },
+    "@nomicfoundation/hardhat-verify": {
+      "requested": "^3.1.3",
+      "installed": "3.1.3",
+      "packageJsonSha256": "afd3585c653f24836d9720357fbbfd76bb69a229362718eeba165663fecd9a75"
+    },
+    "@nomicfoundation/hardhat-viem": {
+      "requested": "^3.0.10",
+      "installed": "3.0.10",
+      "packageJsonSha256": "767610280238e9ef7deadbf4049948dd335e97003c400318b4534fa2805bd8d5"
+    },
+    "@nomicfoundation/hardhat-viem-assertions": {
+      "requested": "^3.1.4",
+      "installed": "3.1.4",
+      "packageJsonSha256": "9d3c08a61c6154684eb3004afb3890287a9a2bfd2b7fd0641e3380eafd72322d"
+    },
+    "@nomicfoundation/ignition-core": {
+      "requested": "^3.1.11",
+      "installed": "3.1.11",
+      "packageJsonSha256": "d340e1e9646a03711144c4bba08a420d5494719967c5167b66264063a44640c5"
+    },
+    "@opengsn/contracts": {
+      "requested": "^3.0.0-beta.6",
+      "installed": "3.0.0-beta.6",
+      "packageJsonSha256": "0d3e6777730553e8766e48d704e18bc1efa1a401302850dfea3393e3e8677ac4"
+    },
+    "@types/chai": {
+      "requested": "^5.2.3",
+      "installed": "5.2.3",
+      "packageJsonSha256": "273a3159a592826cc068b22356e9a3e968dffe88a0f99892032a889f28c567a7"
+    },
+    "@types/chai-as-promised": {
+      "requested": "^8.0.2",
+      "installed": "8.0.2",
+      "packageJsonSha256": "ee0d1061bafc570033097ba81278d58e245a69bee16c70b98d1e8d4dd744c821"
+    },
+    "@types/mocha": {
+      "requested": "^10.0.10",
+      "installed": "10.0.10",
+      "packageJsonSha256": "5f3f8e3fb971af2a613803d1a5d35b41aa3b68dab8e6e616ce1c94147231e863"
+    },
+    "@types/node": {
+      "requested": "^26.6.5",
+      "installed": "26.6.5",
+      "packageJsonSha256": "e9bf302124358d90ec233c509c4f9fb2223129b988da8147b5c1bf835f652e86"
+    },
+    "@wagmi/cli": {
+      "requested": "^2.4.0",
+      "installed": "2.4.0",
+      "packageJsonSha256": "138f8a26ec23f415703676a14ccaeb3a3d252f8f4fec0d2ddf0015d6450bbf7c"
+    },
+    "axios": {
+      "requested": "^1.11.0",
+      "installed": "1.20.0",
+      "packageJsonSha256": "cc221510be6315b0ebf648d7e4346680e47a828fafcbb9cc141922d2d219761e"
+    },
+    "boxen": {
+      "requested": "^8.0.1",
+      "installed": "8.0.1",
+      "packageJsonSha256": "e0b1939dd53428414a94848b36b6b4f8d1d0b1139484b821a9f16417b7b5fb58"
+    },
+    "chai": {
+      "requested": "^6.3.0",
+      "installed": "6.3.0",
+      "packageJsonSha256": "1cfe6961e9484f378c906b58303884f71f591aa53a55fb58acfe9f48585d050e"
+    },
+    "chalk": {
+      "requested": "^4.1.2",
+      "installed": "4.1.2",
+      "packageJsonSha256": "9cd907d34a45cb73b5c8a459d5602a36ccd456794665c529a3a5b0f02e196f26"
+    },
+    "cli-table3": {
+      "requested": "^0.6.5",
+      "installed": "0.6.5",
+      "packageJsonSha256": "01b02a357f85512f725bdb668b08567a2217695c2ef0e43cc6ee9678db3b979e"
+    },
+    "commander": {
+      "requested": "^11.1.0",
+      "installed": "11.1.0",
+      "packageJsonSha256": "8e9ff6486b38e3d21662211cf5c1bae2b199035889f19bb7b4168a155e417c9a"
+    },
+    "cors": {
+      "requested": "^2.8.5",
+      "installed": "2.8.5",
+      "packageJsonSha256": "696bc0da9976d31a421ad5598bdb8fc0364645ab1473b4271850171728e35f47"
+    },
+    "dotenv": {
+      "requested": "^16.3.1",
+      "installed": "16.6.1",
+      "packageJsonSha256": "922be338d27d6b0b3a238f8da99daeb1f42ef972e71b4568d5104bbef661f5f5"
+    },
+    "ethers": {
+      "requested": "^6.17.0",
+      "installed": "6.17.0",
+      "packageJsonSha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f"
+    },
+    "express": {
+      "requested": "^4.21.2",
+      "installed": "4.22.3",
+      "packageJsonSha256": "0a1770344ae7215b2a8e4f31be9f08d726253d4ded2c8b820ec1db8c7c00d000"
+    },
+    "figlet": {
+      "requested": "^1.8.0",
+      "installed": "1.12.0",
+      "packageJsonSha256": "ab66744c15554c3efb30763fb0bb5badfc11922ee28adc5dfc1bf83e1e6529c4"
+    },
+    "form-data": {
+      "requested": "^4.0.4",
+      "installed": "4.0.6",
+      "packageJsonSha256": "d5222c863d975ddefb3ec2c012d3c3ab92f51ef8f3f5c3080dee02c79d217665"
+    },
+    "fuse.js": {
+      "requested": "^7.0.0",
+      "installed": "7.1.0",
+      "packageJsonSha256": "ef3ec2fe3e9badd40169f528b0718d0f9089b4b62494ae107b9f5f4472081243"
+    },
+    "gradient-string": {
+      "requested": "^3.0.0",
+      "installed": "3.0.0",
+      "packageJsonSha256": "1a240690e3252768553ed67244114418511973e41a5b96c0e8d31a8e01292023"
+    },
+    "hardhat": {
+      "requested": "^3.20.0",
+      "installed": "3.20.0",
+      "packageJsonSha256": "dbfe3284f4564adc47383fb66f34aea922d70f8927653ebcfb3eb8267bbbbf5f"
+    },
+    "helmet": {
+      "requested": "^8.1.0",
+      "installed": "8.1.0",
+      "packageJsonSha256": "a604937a460997f97569435aaa3b0ba96437d8c7dbec317e2f1e4b3a87350f43"
+    },
+    "husky": {
+      "requested": "^9.1.7",
+      "installed": "9.1.7",
+      "packageJsonSha256": "8f3966c3b43a59e4b8e13fdfe8eb00a7ab66dfeb235515f7c19c8e0f5ca530e1"
+    },
+    "inquirer": {
+      "requested": "^12.5.0",
+      "installed": "12.7.0",
+      "packageJsonSha256": "2a1323a8c347d2238ab808edebe0a994613d6b1b130e9ea1581343123622e313"
+    },
+    "jsonwebtoken": {
+      "requested": "^9.0.2",
+      "installed": "9.0.2",
+      "packageJsonSha256": "54849822be7522aa777ad65eb962292558c317f449d7eb098e1d0ff46a2a0486"
+    },
+    "lru-cache": {
+      "requested": "^10.2.0",
+      "installed": "10.4.3",
+      "packageJsonSha256": "a7e05794a5dc81dfc79a0f186c5219f442f2f735b08a3e9b91aba59833badc2d"
+    },
+    "mocha": {
+      "requested": "^12.0.3",
+      "installed": "12.0.3",
+      "packageJsonSha256": "b13d5d462a756ada54173625ba07aa6162be0a76d5de2b468e921c2cb8df8c9d"
+    },
+    "openai": {
+      "requested": "^4.89.0",
+      "installed": "4.104.0",
+      "packageJsonSha256": "c9fccdc76efa16a6979dbeae4c991d2c0e3983e2d546aeafc1d37fbb1510b424"
+    },
+    "ora": {
+      "requested": "^8.2.0",
+      "installed": "8.2.0",
+      "packageJsonSha256": "b80b9745ab78d256d70f04a9bb4166059efa1dfd13b090a5d654db561cbeebff"
+    },
+    "typescript": {
+      "requested": "^5.9.2",
+      "installed": "5.9.2",
+      "packageJsonSha256": "5a0bb7f286c4b3f1413a42c05f902311b161f70e5f52d9da10490443bfd595a3"
+    },
+    "typescript-language-server": {
+      "requested": "5.3.0",
+      "installed": "5.3.0",
+      "packageJsonSha256": "090384304250e5b70e2a3f54aa99c0ae8465ebbdf136b05695c6a60eadcbbbd5"
+    },
+    "viem": {
+      "requested": "^2.57.7",
+      "installed": "2.57.7",
+      "packageJsonSha256": "f8b56e28d14024166ac581f105d760965cba79ddd7640f3f668ce8bc3764244f"
+    }
+  },
+  "lockfile": {
+    "path": "bun.lock",
+    "sha256": "25c47a2ce63eef951a283eea0132611e3d6d78f40f4737fbad5f5eab7c931740",
+    "bytes": 247642
+  }
+}

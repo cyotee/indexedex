@@ -1,0 +1,60 @@
+{
+  "baselineHashes": [
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+      "bytes": 12283,
+      "expected": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+      "matchesExpected": true
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719",
+      "bytes": 3012,
+      "expected": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719",
+      "matchesExpected": true
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f",
+      "bytes": 18666,
+      "expected": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f",
+      "matchesExpected": true
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "bytes": 4535122,
+      "expected": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "matchesExpected": true
+    },
+    {
+      "path": "custody-inventory.csv",
+      "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea",
+      "bytes": 139535,
+      "expected": null,
+      "matchesExpected": null
+    }
+  ],
+  "sourceDifferences": [
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "deployedSha256": "b0d11c2c41eacf10eb23eb1935000f470e59e17da67be294d5fc17aacd354a49",
+      "currentSha256": "10cbc1b1ad0a597b29053c2e14037c0e79d5432e81a9cb52b94dfcaae43931e6",
+      "equal": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "deployedSha256": "0c42d88387a46425ca8634af4f09eee9498f450312dc6ba6415969ebaf3ca92c",
+      "currentSha256": "2c9b6ea685fa974ad0632ef831ea23e574b5250704349cd10d3d68cbad4922a6",
+      "equal": false
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYTarget.sol",
+      "deployedSha256": "a5a8975a34d6d033fd7649c859ab4b319e1317f21063d493945cca6dea882b11",
+      "currentSha256": "245a0a49e045c663c432391bafd2efd3d6778e71ae5e9b18e8855e7c9bc749c2",
+      "equal": false
+    }
+  ],
+  "provenance": "Deployed content from authenticated Sourcify facet archive; current files are references, not deployment proof."
+}

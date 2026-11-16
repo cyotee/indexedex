@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-12",
+  "base": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+  "branch": "work/dtf-migration-phase-16-claim-vault",
+  "gitDiffCheckExit": 0,
+  "sourceSnapshotCount": 40,
+  "artifactCount": 7,
+  "bindingMismatches": [],
+  "configuredForkPort": 18566,
+  "portListener": false,
+  "checkpointPath": ".omo-runtime/dtf-migration-claim-vault/checkpoints",
+  "checkpointExists": false,
+  "failedCliPid": 48079,
+  "successfulCliPid": 49746,
+  "cliPidsGone": true,
+  "sourceProbes": [
+    {
+      "path": "route-cleanup.json",
+      "cleanup": {
+        "chainClosed": true,
+        "holderImpersonationStopped": true,
+        "nodePid": 43682,
+        "stopped": true
+      }
+    },
+    {
+      "path": "route-expanded/route-cleanup.json",
+      "cleanup": {
+        "chainClosed": true,
+        "holderImpersonationStopped": true,
+        "nodePid": 44067,
+        "stopped": true
+      }
+    },
+    {
+      "path": "route-expanded-final/route-cleanup.json",
+      "cleanup": {
+        "chainClosed": true,
+        "holderImpersonationStopped": true,
+        "nodePid": 44242,
+        "stopped": true
+      }
+    }
+  ],
+  "strictFinalTypesExit": 0,
+  "publicTransactions": 0,
+  "commits": 0,
+  "merges": 0,
+  "sourceModificationsStopped": true,
+  "nextAndOnlyWrite": "final-tree.json plus read-only permissions within owned implementation-e1 evidence"
+}

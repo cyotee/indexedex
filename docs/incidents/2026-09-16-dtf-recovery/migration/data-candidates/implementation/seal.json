@@ -1,0 +1,13 @@
+{
+  "version": "dtf-phase27-stopped-seal-v1",
+  "status": "blocked-not-implemented",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 916,
+    "sha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1"
+  },
+  "writtenLast": true,
+  "cleanupComplete": true,
+  "pendingOperations": 0,
+  "implementationComplete": false
+}

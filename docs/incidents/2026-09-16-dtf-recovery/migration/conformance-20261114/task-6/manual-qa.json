@@ -1,0 +1,221 @@
+{
+  "task": 6,
+  "status": "PASS",
+  "categoriesCompared": 14,
+  "categoryResults": [
+    {
+      "category": "weighted-nft",
+      "task3Row": 0,
+      "positiveRawLine": 7130,
+      "atomicRejectionRawLine": 7131,
+      "conservationRawLine": 7182,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "earlier-nft",
+      "task3Row": 1,
+      "positiveRawLine": 7123,
+      "atomicRejectionRawLine": 7126,
+      "conservationRawLine": 7181,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "weighted-liquid",
+      "task3Row": 2,
+      "positiveRawLine": 7796,
+      "atomicRejectionRawLine": 7794,
+      "conservationRawLine": 7795,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "earlier-liquid",
+      "task3Row": 3,
+      "positiveRawLine": 6402,
+      "atomicRejectionRawLine": 6400,
+      "conservationRawLine": 6405,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "weighted-receipt",
+      "task3Row": 4,
+      "positiveRawLine": 7806,
+      "atomicRejectionRawLine": 7805,
+      "conservationRawLine": 7220,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "earlier-receipt",
+      "task3Row": 5,
+      "positiveRawLine": 6414,
+      "atomicRejectionRawLine": 6415,
+      "conservationRawLine": 6419,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "weighted-sy",
+      "task3Row": 6,
+      "positiveRawLine": 7825,
+      "atomicRejectionRawLine": 7824,
+      "conservationRawLine": 7225,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "claim-vault",
+      "task3Row": 7,
+      "positiveRawLine": 6454,
+      "atomicRejectionRawLine": 6453,
+      "conservationRawLine": 7173,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "dtf-custody-se",
+      "task3Row": 8,
+      "positiveRawLine": 7833,
+      "atomicRejectionRawLine": 7832,
+      "conservationRawLine": 7191,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "weighted-weth-se",
+      "task3Row": 9,
+      "positiveRawLine": 6482,
+      "atomicRejectionRawLine": 6479,
+      "conservationRawLine": 6485,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "earlier-se",
+      "task3Row": 10,
+      "positiveRawLine": 6444,
+      "atomicRejectionRawLine": 6439,
+      "conservationRawLine": 6448,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "weighted-lp",
+      "task3Row": 11,
+      "positiveRawLine": 6468,
+      "atomicRejectionRawLine": 6465,
+      "conservationRawLine": 6471,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "earlier-lp",
+      "task3Row": 12,
+      "positiveRawLine": 6431,
+      "atomicRejectionRawLine": 6428,
+      "conservationRawLine": 7102,
+      "result": "PASS",
+      "blocker": null
+    },
+    {
+      "category": "token-staking-preparation",
+      "task3Row": 13,
+      "positiveRawLine": 7819,
+      "atomicRejectionRawLine": 7816,
+      "conservationRawLine": 7815,
+      "result": "PASS",
+      "blocker": null
+    }
+  ],
+  "reservedIds": {
+    "ids": [
+      "0",
+      "1",
+      "2"
+    ],
+    "qualifyingUserPositions": false,
+    "basis": "Task 3 exact deployed reserved initialization plus pinned wired/owner/position source facts; new witness at fork-qa-1.log:7148. The numeric guard is retained, not used as the source of this fact."
+  },
+  "adversarial": [
+    {
+      "class": "malformed_input",
+      "status": "PASS",
+      "evidence": "Reserved, missing, source-identity, wrong-wallet and zero-credit named cases passed; exact typed reverts and unspent custody assertions are bound in source-results.json."
+    },
+    {
+      "class": "stale_state",
+      "status": "PASS",
+      "evidence": "Exact task 3 initialized roles are asserted; principal-race case uses live remaining principal and rejects stale minimum. No old ID assumption supplied source classification."
+    },
+    {
+      "class": "dirty_worktree",
+      "status": "PASS",
+      "evidence": "Initial status observed before edit; saved status before/after QA identical; 104 source/config/protected prior-task byte bindings unchanged across QA. Original task-4 caller changes remain."
+    },
+    {
+      "class": "misleading_success_output",
+      "status": "PASS",
+      "evidence": "Raw log line 7 is exact requested helper invocation before helper starts; 182 unique passing records, final summary line 7840 and exit line 7842 bind one run. No historical count is substituted."
+    },
+    {
+      "class": "generated_or_cached_artifacts",
+      "status": "PASS",
+      "evidence": "Warm out/cache_forge retained; build compiled 892 files, tests compiled 32 files with Solar. No stale artifact-only claim."
+    },
+    {
+      "class": "hung_or_long_commands",
+      "status": "PASS",
+      "evidence": "Background monitor mon_XYZW4WXJSETGCX5A completed exit 0. No cancellation or silence timeout."
+    },
+    {
+      "class": "flaky_tests",
+      "status": "PASS",
+      "evidence": "One prescribed run; zero failed/skipped. No sleep added or luck-based rerun. Time advances are deterministic existing source fixtures."
+    },
+    {
+      "class": "untrusted_external_text",
+      "status": "PASS",
+      "evidence": "Authenticated chain archives used only as evidence. No archive instruction executed; no scan, provider switch or refused historical trace requested."
+    },
+    {
+      "class": "cancel_resume",
+      "status": "not applicable"
+    },
+    {
+      "class": "repeated_interruptions",
+      "status": "not applicable"
+    }
+  ],
+  "selfReview": {
+    "singleResponsibility": "Original-wallet admission against real source positions",
+    "pureTestLines": 172,
+    "productionSeamsAdded": 0,
+    "sourceMutations": 0,
+    "newHelpers": 0,
+    "scope": "Only one original-wallet test addition plus task-6 evidence; no production mismatch found",
+    "mutationTesting": "Not run: allowed production edits require a demonstrated source mismatch, and none exists. Exact reserved loader rejection is exercised with otherwise positive synthetic metadata."
+  },
+  "warnings": [
+    "Existing compiler/lint warnings are retained in the raw log.",
+    "Forge automatically attempted missing-submodule initialization despite offline/protocol restriction; each attempt failed immediately against the existing nonempty local Crane directory. No dependency installation succeeded.",
+    "Biome JSON diagnostics unavailable; installs prohibited. JSON evidence is generated structurally; Solidity compiled and all required tests passed."
+  ],
+  "cleanup": {
+    "delegated": false,
+    "committed": false,
+    "publicTransactions": false,
+    "installsRequested": false,
+    "dependencyInstallsSucceeded": false,
+    "sourceIndexesEdited": false,
+    "pricingEdited": false,
+    "task5FilesEdited": false,
+    "sourceEligibilityRuleChanged": false,
+    "buildsKilled": false,
+    "cachesDeleted": false,
+    "temporaryCodeRemaining": false
+  },
+  "blockers": []
+}

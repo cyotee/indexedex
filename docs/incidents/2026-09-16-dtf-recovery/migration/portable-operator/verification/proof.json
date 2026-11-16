@@ -1,0 +1,31 @@
+{
+  "version": "portable-operator-independent-intake-v1",
+  "verdict": "needs-fix",
+  "observedAt": "2026-11-13T00:34:59.880Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator",
+  "head": "137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+  "branch": "work/dtf-migration-phase-26-portable-operator",
+  "producerRoot": "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation",
+  "requiredProducerArtifacts": [
+    { "path": "report.md", "present": false, "error": "ENOENT" },
+    { "path": "cleanup-final.json", "present": false, "error": "ENOENT" },
+    { "path": "seal.json", "present": false, "error": "ENOENT" }
+  ],
+  "completedProbe": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat PAGER=cat git --no-pager rev-parse HEAD && GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 GIT_PAGER=cat PAGER=cat git --no-pager branch --show-current && if lsof -nP -iTCP:18575 -sTCP:LISTEN; then printf 'PORT_18575_LISTENER_PRESENT\\n'; else printf 'PORT_18575_NO_LISTENER\\n'; fi",
+    "exitCode": 0,
+    "stdout": "137fa0c8749165087c7d1d0156788f58a1dbf1b8\nwork/dtf-migration-phase-26-portable-operator\nPORT_18575_NO_LISTENER"
+  },
+  "ownedRuntime": {
+    "launched": false,
+    "processes": [],
+    "temporaryRoots": [],
+    "pendingOperations": [],
+    "producerGlobalCleanupProved": false
+  },
+  "independentExecutionChecksPerformed": false,
+  "sourceChanges": false,
+  "gitWrites": false,
+  "priorEvidenceChanges": false,
+  "P1HistoricalArtifactVersionsUnrecovered": 2
+}

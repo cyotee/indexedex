@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-11-11T19:56:49.661Z",
+  "chainId": 4663,
+  "block": 108944663,
+  "method": "read-only eth_call and eth_getCode through configured robinhood_mainnet_alchemy alias",
+  "observation": {
+    "custody": {
+      "address": "0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "codehash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+    },
+    "balance": {
+      "address": "0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "codehash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+    },
+    "exchange": {
+      "address": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "codehash": "0x1eadaa06571b1cca173491d149bab9b07d5d1b9dc83d268654e49d3179b1a460"
+    },
+    "proxyHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+    "decimals": "9"
+  },
+  "correction": {
+    "file": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+    "old": "0x4886f86cd0dff8b8a836f858925ed4de3a2b291",
+    "actual": "0x4886f86cd0dfff8b8a836f858925ed4de3a2b291"
+  },
+  "failedRehearsal": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794426697254"
+}

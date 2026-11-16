@@ -1,0 +1,741 @@
+{
+  "fixedCli": "bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18560 --checkpoint .omo-runtime/dtf-migration-operator/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/operator",
+  "wrapper": "/bin/zsh -lic",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+  "runs": [
+    {
+      "start": "2026-11-11T05:45:24.501Z",
+      "evidence": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794375924619",
+      "monitor": "mon_0QCBTFYDCZ47B1GJ",
+      "session": "bash_4",
+      "exit": 0,
+      "status": "bounded CLI complete; subsequent meaningful-reordering coverage assertion failed"
+    },
+    {
+      "start": "2026-11-11T05:48:57.387Z",
+      "evidence": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494",
+      "monitor": "mon_JSABT8WRNCWH7N31",
+      "session": "bash_6",
+      "exit": 0,
+      "status": "strengthened bounded rehearsal complete"
+    }
+  ],
+  "childCommands": [
+    {
+      "file": "001-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/deploy"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "002-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/deploy",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "003-fund.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "fund",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "file": "004-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/fund"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "005-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "006-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28",
+        "--reverse"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "007-capture.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "capture",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/capture",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "008-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/prepared"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "009-validate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "validate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/prepared/manifest.json"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "010-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/reordered-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/prepared-reordered"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "011-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/configure",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "012-independent-issue.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "independent-issue",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "file": "013-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "014-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "015-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/verify"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "016-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/reject-chainId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "017-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/reject-proxy.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "018-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/reject-package.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "019-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/reject-snapshotId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "020-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/reject-payload.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "021-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/replacement-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/replacement"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "022-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/replacement",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "023-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-01-WeightedClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-01-WeightedClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "024-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-01-WeightedClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-01-WeightedClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "025-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-02-WeightedPrincipal-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-02-WeightedPrincipal"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "026-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-02-WeightedPrincipal-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-02-WeightedPrincipal",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "027-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-03-WeightedRewards-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-03-WeightedRewards"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "028-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-03-WeightedRewards-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-03-WeightedRewards",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "029-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-04-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-04-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "030-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-04-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-04-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "031-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-05-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-05-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "032-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-05-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-05-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "033-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-06-WeightedConvert-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-06-WeightedConvert"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "034-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-06-WeightedConvert-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-06-WeightedConvert",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "035-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-07-Donate-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-07-Donate"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "036-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-07-Donate-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-07-Donate",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "037-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-08-EarlierClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-08-EarlierClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "038-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-08-EarlierClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-08-EarlierClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "039-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-09-EarlierSale-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-09-EarlierSale"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "040-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/harvest-09-EarlierSale-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-09-EarlierSale",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "041-activate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "activate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/activate",
+        "--execute-local",
+        "--instance-id",
+        "0x951d9bf63fab60ef3e0fd63a6a160e1a2036dda3dc3b88c7a853bd9e08bc6f28"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "042-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794376137494/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/verify-after"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "file": "environment-stage.log.command.json",
+      "command": [
+        "/Users/cyotee/.foundry/bin/forge",
+        "script",
+        "--use",
+        "solar",
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
+        "--sig",
+        "prepareEnvironment()",
+        "--rpc-url",
+        "http://127.0.0.1:18560/",
+        "--sender",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--unlocked",
+        "--broadcast",
+        "--slow",
+        "--legacy",
+        "--gas-price",
+        "2000000000",
+        "--gas-limit",
+        "1000000000",
+        "--gas-estimate-multiplier",
+        "200"
+      ],
+      "code": 0,
+      "signal": null
+    }
+  ],
+  "anvil": {
+    "command": [
+      "/Users/cyotee/.foundry/bin/anvil",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "18560",
+      "--chain-id",
+      "4663",
+      "--fork-url",
+      "<resolved archive alias>",
+      "--fork-block-number",
+      "108944663",
+      "--gas-limit",
+      "100000000",
+      "--disable-min-priority-fee",
+      "--balance",
+      "1000000"
+    ]
+  },
+  "cleanup": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator && test ! -e .omo-runtime/dtf-migration-operator/checkpoints && rmdir .omo-runtime/dtf-migration-operator && printf 'OWNED_RUNTIME_PARENT_REMOVED\n' && if /usr/sbin/lsof -nP -iTCP:18560 -sTCP:LISTEN; then exit 1; else printf 'PORT_18560_NO_LISTENER\n'; fi && if kill -0 65935 2>/dev/null; then exit 1; else printf 'OWNED_ANVIL_65935_ABSENT\n'; fi",
+    "output": "OWNED_RUNTIME_PARENT_REMOVED\nPORT_18560_NO_LISTENER\nOWNED_ANVIL_65935_ABSENT",
+    "exit": 0
+  }
+}

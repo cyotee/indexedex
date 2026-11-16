@@ -1,0 +1,70 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "task": "Reopened task 7 / F2-01 census lane",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "date": "2026-11-15",
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/census-done.json",
+    "sha256": "2ce914c1daf31bb1b42e47015b6c4dbf3dcd1719e22a4120b46914e5f911c9f0"
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/independent/report.md",
+  "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/independent/verification.json",
+  "summary": "Original omitted-origin failure reproduced; authenticated immutable A is preserved while complete current B validates through latest, including empty-category rejection. Source, domain, receipt and economic checks remain enforced.",
+  "findings": [],
+  "concrete_fixes": [],
+  "evidence": {
+    "focused": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 0,
+      "passed": 65,
+      "failed": 0,
+      "raw": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-14-final-focused/output.log",
+      "sha256": "bf62649a7f78c78a891f7f9cb053a3f42afe14409a36009e6a3c8b0ae429c824"
+    },
+    "manual": {
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "exit": 0,
+      "childExits": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "originalAByteIdentical": true,
+      "currentBComplete": true,
+      "missingXRejected": true,
+      "missingYRejected": true,
+      "emptyBRejected": true,
+      "newNonceRequests": 0,
+      "sends": 0,
+      "newIntents": 0,
+      "requotes": 0,
+      "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/result.json"
+    },
+    "mutationHashesVerified": 5,
+    "sourceBindingsVerified": 11,
+    "processReceipts": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1df60/sessions/st_01a1df60/2026-11-15T13-22-51.387Z_92629da0-d73c-43fe-a4f4-d1af12386029.jsonl"
+  },
+  "limitations": [
+    "No tests rerun or source edits by verifier.",
+    "Native TypeScript LSP freshness timeout and absent JSON Biome LSP; no clean diagnostics claim.",
+    "Combined strict TypeScript/full operator outcomes are independently reviewed in the subsequently authorized integration lane, not admitted by this census verdict.",
+    "Synthetic fixture/source transport facts and offline signatures do not establish an EVM lifecycle; task 10 owns that proof.",
+    "A and B in the census fixture use one book and isolate origin growth.",
+    "Read-only resumes authenticate receipts without writing completion files; writable recovery is not proven by this manual command.",
+    "RPC corpus retains requests, not every response; fixture code, child outputs and process receipts bound the synthetic evidence.",
+    "Existing quotes/preparation file-size debt is outside cause-only verification."
+  ],
+  "task_7_plan_complete": false,
+  "source_edits": false,
+  "tests_rerun": false,
+  "producer_evidence_preserved": true,
+  "written_last_in_census_lane": true
+}

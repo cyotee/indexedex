@@ -1,0 +1,8 @@
+{
+  "chainId": 4663,
+  "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+  "configHash": "0x711c124542accd49211e09a778a8cbfe85a840b39af68df2b87efa6c7a396579",
+  "observedBlock": 62142244,
+  "receiptVerified": false,
+  "reserveHook": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8"
+}

@@ -1,0 +1,853 @@
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+index 4a3852d3..9202bed8 100644
+--- a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -1,5 +1,70 @@
+ # Bounded Migration operator runbook
+ 
++## Saved-evidence bundles and fresh relocation
++
++Every rehearsal requires `--bundle "$AUTHORITY_BUNDLE"`, naming a supplied
++complete authority bundle's `bundle.json`. There is no default host inventory
++or old-worktree fallback. A strict `dtf-operator-authorities-v1` export input
++supplies all 22 distinct `authorityRoles` in `bundle.ts`, with original raw
++SHA-256, byte length and provenance. Preserve every source qualification.
++Runtime acquisition records and four actual ABI artifacts are additional
++bound inputs, not substitutes for those authorities.
++
++```sh
++bun scripts/recovery/dtf-migration/cli.ts bundle-export \
++  --input "$NATIVE_INPUT" --output "$NEW_BUNDLE_DIRECTORY"
++bun scripts/recovery/dtf-migration/cli.ts bundle-materialize \
++  --input "$BUNDLE_MANIFEST" --output "$NEW_MATERIALIZATION_DIRECTORY"
++```
++
++Export accepts a native authority input, preparation input, prepared manifest
++or execution manifest. Its raw template, explicitly referenced sources,
++snapshot ABI and bound prepared manifest are saved without changing bytes.
++Nothing else is discovered or downloaded. Do not include secrets, environment
++files or keystores in source lists. Export is offline integrity/transport,
++not chain authentication or historical eligibility. Duplicate/conflicting
++source identities, ambiguous references and missing inputs reject.
++
++Copy the complete bundle directory to another owned data root, then materialize.
++The loader reads every declared regular file, checks raw hash/byte length,
++requires exact data membership and rejects traversal and symlinks, including
++symlinked roots/ancestors. Original paths are metadata lookup keys, never
++alternate filesystem locations. Missing or changed data fails while the old
++host file still exists. Do not merge partial exports.
++
++Materialization creates new local templates/manifests, not original captures.
++Preparation retains live canonical verification. Post-capture execution
++materialization rebuilds preparation against the actual chain and compares
++all original saved payloads, configuration IDs, quotes and dispositions.
++Prepare and execution revalidate their complete bound bundle. Native absolute
++inputs and their existing hash/domain rules remain supported.
++
++Two locations on the same chain/snapshot/originals must produce identical
++onchain payload bytes, configuration IDs and frozen quotes. Normalized hashes
++and execution domains intentionally differ: locations remain hashed.
++Use fresh preparation and checkpoints after relocation. Never migrate an
++already signed journal; changed-domain resume rejects. Each genuine resume
++uses unchanged inputs in one location. Full replacements and new harvest
++selections use fresh templates/domains, not edits to prior bundles/journals.
++
++The complete portable workflow uses only owned loopback18575:
++
++```sh
++bun scripts/recovery/dtf-migration/cli.ts rehearse \
++  --bundle "$AUTHORITY_BUNDLE" \
++  --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575 \
++  --checkpoint .omo-runtime/dtf-migration-portable/checkpoints \
++  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime
++```
++
++Forge/Anvil resolve from `PATH` or explicit `FORGE_BIN`/`ANVIL_BIN` executables.
++Select a Solar-capable installation; no install or compiler fallback occurs.
++Installed source, dependencies and Foundry artifacts are prerequisites.
++The existing login-shell archive bootstrap remains; never print its resolved
++credential URL. Same-host relocation is not cold dependency reconstruction or
++cross-platform proof. P1's two historical artifact JSON versions remain
++unrecovered. Operational originals, source limits and target gas stay open.
++
+ ## Complete-original TokenStaking claims prepared into SY
+ 
+ This intake admits only a reviewed original whose entire eligible native18
+@@ -76,6 +141,7 @@ The new cumulative rehearsal is:
+ 
+ ```sh
+ /bin/zsh -lc 'bun scripts/recovery/dtf-migration/cli.ts rehearse \
++  --bundle "$AUTHORITY_BUNDLE" \
+   --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18573 \
+   --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints \
+   --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime'
+@@ -381,6 +447,7 @@ The fixed rehearsal invocation is:
+ 
+ ```sh
+ bun scripts/recovery/dtf-migration/cli.ts rehearse \
++  --bundle "$AUTHORITY_BUNDLE" \
+   --rpc-alias robinhood_mainnet_alchemy \
+   --fork-block 108944663 \
+   --port 18567 \
+@@ -412,13 +479,14 @@ Every local command and receipt is retained under an exclusive rehearsal
+ evidence directory. Journals are copied there before the owned node exits
+ and its temporary checkpoint root is removed.
+ 
+-Run from the weighted-receipt worktree on
+-`work/dtf-migration-phase-17-weighted-receipt`, based on audited
+-`a96f0fd26c1a1fdba35750cff74d866afa3a9796`. The existing archive alias is
++Run these invocations with the current bundle-capable operator. The historical
++weighted-receipt evidence was produced on `work/dtf-migration-phase-17-weighted-receipt`,
++based on audited `a96f0fd26c1a1fdba35750cff74d866afa3a9796`; that old checkout is
++not the executable for the updated commands above. The existing archive alias is
+ resolved through `forge config --json`. On this workstation its credential
+ is in the existing login environment; `/bin/zsh -lc` wraps
+ the exact command above. Do not print the resolved endpoint. The wrapper
+-uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
++uses explicitly configured or PATH-resolved Solar-capable Forge and Anvil,
+ and the existing warm `out/`, `cache_forge/` and dependency links.
+ 
+ Port 18567 must be unused and the chosen checkpoint directory absent before
+@@ -788,11 +856,13 @@ conversion, debit or donation recovery stage. Retain the actual direct ER
+ and parent ED `VaultDisabled(ES)` failures and historical labels. No
+ governance enablement, arbitrary executor or success decoder is supplied.
+ 
+-Use the current phase18 worktree at base
++Run this retained scenario with the current bundle-capable operator and a
++complete authority bundle. Its historical phase18 evidence used base
+ `acdbe319f3a20c3af6bea594c62461b6c7988717`:
+ 
+ ```sh
+ bun scripts/recovery/dtf-migration/cli.ts rehearse \
++  --bundle "$AUTHORITY_BUNDLE" \
+   --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18568 \
+   --checkpoint .omo-runtime/dtf-migration-earlier-receipt/checkpoints \
+   --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/implementation/runtime
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+index cf4dbb2d..28784724 100644
+--- a/scripts/recovery/dtf-migration/cli.ts
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -7,8 +7,12 @@ import { execute } from "./execution.js";
+ import { ExecutionError, stage } from "./execution-schema.js";
+ import type { Mode } from "./execution-schema.js";
+ import { rehearse } from "./rehearse.js";
++import { exportBundle } from "./bundle.js";
++import { materializeBundle } from "./bundle-materialize.js";
+ 
+ export const help = `Bounded Migration operator
++  bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
++  bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
+   bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
+   bun scripts/recovery/dtf-migration/cli.ts validate --manifest <file>
+   bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
+@@ -17,6 +21,11 @@ export const help = `Bounded Migration operator
+ prepare reads caller-pinned evidence and the actual immutable snapshot.
+ validate rereads evidence, code identities, snapshot and independent ETH/DTF quotes.
+ RPC comes only from the manifest's rpcEnv environment variable. No signer is loaded.
++bundle-export preserves raw bytes offline; it is not chain authentication or award approval.
++bundle-materialize creates fresh local inputs; post-capture execution reauthenticates saved preparation.
++Copy the complete bundle directory before materializing elsewhere. Never relocate a live signed journal.
++Every rehearse invocation requires --bundle <complete-authority-bundle.json>.
++Forge/Anvil resolve from PATH or explicit FORGE_BIN/ANVIL_BIN; no installation is performed.
+ All integers are decimal strings. Inputs are full replacements, not deltas.
+ Unsupported categories fail closed. Synthetic datasets are loopback-only.
+ Stages: deploy, fund, capture, configure, independent-issue, owner-bond, verify, activate, harvest.
+@@ -28,37 +37,42 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
+   --confirm-snapshot <id> --signer-key-env <selected environment variable name>.
+ --reverse reorders only independent unsettled configuration/issuance rows.
+ --fault-after-mined is restricted to synthetic-local interruption rehearsal.
+-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+     --fork-block 108944663 --port 18567
+     --checkpoint .omo-runtime/dtf-migration-weighted-receipt/checkpoints
+     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/implementation/runtime
+   Earlier ER custody/credit rehearsal (liquidation remains blocked):
+-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+     --fork-block 108944663 --port 18568
+     --checkpoint .omo-runtime/dtf-migration-earlier-receipt/checkpoints
+     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/implementation/runtime
+   Earlier liquid ED custody/credit rehearsal (conversion reaches disabled ES):
+-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+     --fork-block 108944663 --port 18569
+     --checkpoint .omo-runtime/dtf-migration-earlier-liquid/checkpoints
+     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/implementation/runtime
+   Three fixed native18 custody/credit sources (E-S and all three conversions blocked):
+-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+     --fork-block 108944663 --port 18571
+     --checkpoint .omo-runtime/dtf-migration-held-se-lp/checkpoints
+     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/runtime
+   Complete-original claimed SY (direct signed EOA preparation; not raw-weight pull):
+-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+     --fork-block 108944663 --port 18573
+     --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints
+     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime
++  Portable complete workflow:
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <complete-authority-bundle.json>
++    --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575
++    --checkpoint .omo-runtime/dtf-migration-portable/checkpoints
++    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime
+ `;
+ 
+ export async function main(args: readonly string[]): Promise<void> {
+   const { values, positionals, tokens } = parseArgs({
+     args: [...args], allowPositionals: true, strict: true, tokens: true,
+     options: { input: { type: "string" }, output: { type: "string" },
+-      manifest: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
++      manifest: { type: "string" }, bundle: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
+       "execute-local": { type: "boolean" }, "instance-id": { type: "string" },
+       broadcast: { type: "boolean" }, "confirm-chain": { type: "string" },
+       "confirm-proxy": { type: "string" }, "confirm-snapshot": { type: "string" },
+@@ -80,13 +94,23 @@ export async function main(args: readonly string[]): Promise<void> {
+     throw new PreparationError("INPUT", "preparation commands accept no execution flags");
+   }
+   switch (positionals[0]) {
++    case "bundle-export":
++    case "bundle-materialize": {
++      if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
++        throw new PreparationError("INPUT", "bundle commands require only --input and --output");
++      }
++      console.log(JSON.stringify(positionals[0] === "bundle-export"
++        ? { bundle: await exportBundle(values.input, values.output), mode: "offline-integrity-only" }
++        : await materializeBundle(values.input, values.output)));
++      return;
++    }
+     case "rehearse": {
+-      if (!values["rpc-alias"] || !values["fork-block"] || !values.port || !values.checkpoint || !values.evidence
+-        || suppliedOptions.some((name) => !["rpc-alias", "fork-block", "port", "checkpoint", "evidence"].includes(name))) {
++      if (!values.bundle || !values["rpc-alias"] || !values["fork-block"] || !values.port || !values.checkpoint || !values.evidence
++        || suppliedOptions.some((name) => !["bundle", "rpc-alias", "fork-block", "port", "checkpoint", "evidence"].includes(name))) {
+         throw new PreparationError("INPUT", "rehearse requires the exact pinned invocation");
+       }
+       console.log(JSON.stringify(await rehearse({ rpcAlias: values["rpc-alias"], forkBlock: values["fork-block"],
+-        port: values.port, checkpoint: values.checkpoint, evidence: values.evidence })));
++        port: values.port, checkpoint: values.checkpoint, evidence: values.evidence, bundle: values.bundle })));
+       return;
+     }
+     case "prepare": {
+@@ -112,7 +136,7 @@ export async function main(args: readonly string[]): Promise<void> {
+       if (!values.manifest || !values.checkpoint || values.input || values.output || values.help) {
+         throw new PreparationError("INPUT", "stage requires only manifest, checkpoint, and explicit execution options");
+       }
+-      if (values["rpc-alias"] || values["fork-block"] || values.port || values.evidence) throw new PreparationError("INPUT", "rehearsal flags require rehearse");
++      if (values.bundle || values["rpc-alias"] || values["fork-block"] || values.port || values.evidence) throw new PreparationError("INPUT", "rehearsal flags require rehearse");
+       if (values["execute-local"] && values.broadcast) throw new PreparationError("INPUT", "execution modes are exclusive");
+       let mode: Mode = { kind: "simulate" };
+       if (values["execute-local"]) {
+diff --git a/scripts/recovery/dtf-migration/execution-domain.ts b/scripts/recovery/dtf-migration/execution-domain.ts
+index 937b59e5..455f3429 100644
+--- a/scripts/recovery/dtf-migration/execution-domain.ts
++++ b/scripts/recovery/dtf-migration/execution-domain.ts
+@@ -8,6 +8,7 @@ import { address, hex } from "./schema.js";
+ import { ExecutionError, executionManifest } from "./execution-schema.js";
+ import type { ExecutionManifest } from "./execution-schema.js";
+ import type { Rpc } from "./execution-rpc.js";
++import { loadSavedBundle } from "./bundle.js";
+ 
+ export const registryAbi = new Interface(["function vaultsOfPackage(address) view returns (address[])"]);
+ export const loupeAbi = new Interface([
+@@ -17,6 +18,14 @@ export const loupeAbi = new Interface([
+ 
+ export async function loadExecution(path: string) {
+   const manifest = executionManifest.parse(JSON.parse(await readFile(resolve(path), "utf8")));
++  if (manifest.bundle) {
++    const saved = await loadSavedBundle(manifest.bundle.path, manifest.bundle);
++    if (saved.kind !== "execution"
++      || canonical(manifest) !== canonical({ ...saved.execution, preparedManifest: manifest.preparedManifest })
++      || Boolean(saved.prepared) !== Boolean(manifest.preparedManifest)) {
++      throw new ExecutionError("DOMAIN", "materialized execution differs from saved template");
++    }
++  }
+   for (const source of manifest.sources) {
+     if (!source.path.startsWith("/")) throw new ExecutionError("DOMAIN", "execution source paths must be absolute");
+     const bytes = await readFile(source.path);
+@@ -25,6 +34,9 @@ export async function loadExecution(path: string) {
+     }
+   }
+   const prepared = manifest.preparedManifest ? await validateManifest(manifest.preparedManifest) : undefined;
++  if (manifest.bundle && prepared && canonical(prepared.input.bundle) !== canonical(manifest.bundle)) {
++    throw new ExecutionError("DOMAIN", "execution and preparation bundles differ");
++  }
+   if (prepared && (prepared.input.domain.chainId !== manifest.chainId
+     || prepared.input.domain.proxy !== manifest.proxy || prepared.input.domain.snapshotId !== manifest.snapshotId
+     || prepared.input.purpose !== manifest.purpose || prepared.input.domain.rpcEnv !== manifest.rpcEnv
+diff --git a/scripts/recovery/dtf-migration/execution-schema.ts b/scripts/recovery/dtf-migration/execution-schema.ts
+index 23bd0800..80b3371e 100644
+--- a/scripts/recovery/dtf-migration/execution-schema.ts
++++ b/scripts/recovery/dtf-migration/execution-schema.ts
+@@ -1,5 +1,5 @@
+ import { z } from "zod";
+-import { address, binding, hash, hex, identity, positive, sha256, source, uint } from "./schema.js";
++import { address, binding, bundleReference, hash, hex, identity, positive, sha256, source, uint } from "./schema.js";
+ 
+ export const stages = ["deploy", "fund", "capture", "configure", "independent-issue",
+   "owner-bond", "verify", "activate", "harvest"] as const;
+@@ -48,6 +48,7 @@ export const ownerBond = z.object({
+ }).strict().readonly();
+ export const executionManifest = z.object({
+   version: z.literal("dtf-operator-execution-v1"),
++  bundle: bundleReference.optional(),
+   purpose: z.enum(["synthetic-local", "operational-review"]),
+   chainId: positive,
+   rpcEnv: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+diff --git a/scripts/recovery/dtf-migration/preparation.ts b/scripts/recovery/dtf-migration/preparation.ts
+index 90e66bfc..6b2dead7 100644
+--- a/scripts/recovery/dtf-migration/preparation.ts
++++ b/scripts/recovery/dtf-migration/preparation.ts
+@@ -1,11 +1,11 @@
+ import { mkdir, readFile, writeFile } from "node:fs/promises";
+ import { resolve } from "node:path";
+-import { z } from "zod";
+ import { buildPayloads, configurationId, dispositions, nftOrigin } from "./payloads.js";
+ import { canonical, fingerprint, loadInput, validateProvenance } from "./provenance.js";
+ import { quoteOriginals } from "./quotes.js";
+-import { PreparationError, preparationInput, sha256 } from "./schema.js";
++import { PreparationError, preparationInput } from "./schema.js";
+ import type { PreparationInput } from "./schema.js";
++import { bundledInput, preparedEnvelope } from "./bundle.js";
+ 
+ export function normalize(input: PreparationInput): PreparationInput {
+   return preparationInput.parse({
+@@ -34,6 +34,10 @@ export function normalize(input: PreparationInput): PreparationInput {
+ 
+ export async function prepareDomain(input: PreparationInput) {
+   const normalized = normalize(input);
++  const saved = await bundledInput(input);
++  if (saved && canonical(normalized) !== canonical(normalize(saved.input))) {
++    throw new PreparationError("PROVENANCE", "materialized preparation differs from saved template");
++  }
+   await validateProvenance(normalized);
+   const payloads = buildPayloads(normalized);
+   const quotes = await quoteOriginals(normalized, payloads);
+@@ -81,7 +85,7 @@ export async function prepareDomain(input: PreparationInput) {
+     if (config.quotedCredit === "0") throw new PreparationError("QUOTE", "invalid issuance credit");
+     return { recipient, configurationId: config.configurationId };
+   });
+-  return {
++  const result = {
+     version: "dtf-operator-manifest-v1" as const,
+     input: normalized,
+     normalizedHash: fingerprint(canonical(normalized)),
+@@ -95,20 +99,18 @@ export async function prepareDomain(input: PreparationInput) {
+     dispositions: dispositions(normalized),
+     fullTask9: "open" as const,
+   };
++  if (saved?.prepared) {
++    const original = saved.prepared;
++    if (canonical(original.input) !== canonical(normalize(original.input))
++      || original.normalizedHash !== fingerprint(canonical(normalize(original.input)))
++      || canonical(original) !== canonical({ ...result, input: original.input, normalizedHash: original.normalizedHash })) {
++      throw new PreparationError("DOMAIN", "saved preparation payload, quote or domain differs");
++    }
++  }
++  return result;
+ }
+ export type PreparedDomain = Awaited<ReturnType<typeof prepareDomain>>;
+ 
+-const envelope = z.object({
+-  version: z.literal("dtf-operator-manifest-v1"),
+-  input: preparationInput,
+-  normalizedHash: sha256,
+-  payloads: z.unknown(),
+-  payloadHash: sha256,
+-  quoteEvidence: z.unknown(),
+-  dispositions: z.unknown(),
+-  fullTask9: z.literal("open"),
+-}).strict();
+-
+ export async function prepareFile(inputPath: string, outputDirectory: string): Promise<PreparedDomain> {
+   const input = await loadInput(resolve(inputPath));
+   let prepared: PreparedDomain;
+@@ -152,7 +154,7 @@ export async function prepareFile(inputPath: string, outputDirectory: string): P
+ }
+ 
+ export async function validateManifest(path: string): Promise<PreparedDomain> {
+-  const supplied = envelope.parse(JSON.parse(await readFile(path, "utf8")));
++  const supplied = preparedEnvelope.parse(JSON.parse(await readFile(path, "utf8")));
+   const current = await prepareDomain(supplied.input);
+   if (canonical(supplied) !== canonical(current)) {
+     throw new PreparationError("DOMAIN", "manifest, source, snapshot, quote or payload binding differs");
+diff --git a/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts b/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+index 01210bcc..2248543b 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+@@ -24,7 +24,7 @@ export const claimVaultAbi = new Interface([
+ 
+ /** A fresh, signed controlled-wallet acquisition, not a transfer of infrastructure-held shares. */
+ export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: string) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "claim-vault acquisition is restricted to the pinned owned local node");
+   }
+   const wallet = HDNodeWallet.fromPhrase("test test test test test test test test test test test junk",
+diff --git a/scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts b/scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts
+index 7d3ce49e..85d1e7a6 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts
+@@ -22,13 +22,13 @@ const sourceAbi = new Interface([
+ export const claimedWallet = (index: number) => HDNodeWallet.fromPhrase(
+   "test test test test test test test test test test test junk", undefined, `m/44'/60'/0'/0/${index}`);
+ 
+-/** Only disposable loopback18573; signed bytes are retained before submission. */
++/** Only owned disposable loopbacks; signed bytes are retained before submission. */
+ export async function claimedSigned(chain: RehearsalChain, evidence: string, request: {
+   readonly index: number; readonly to: string; readonly data: string;
+   readonly value?: bigint; readonly gas?: bigint; readonly status?: bigint;
+ }) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || chain.endpoint.port !== "18573") {
+-    throw new ExecutionError("DOMAIN", "claimed SY signer requires owned loopback18573");
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18573", "18575"].includes(chain.endpoint.port)) {
++    throw new ExecutionError("DOMAIN", "claimed SY signer requires owned loopback18573 or18575");
+   }
+   const signer = claimedWallet(request.index);
+   const from = signer.address.toLowerCase();
+diff --git a/scripts/recovery/dtf-migration/rehearsal-data.ts b/scripts/recovery/dtf-migration/rehearsal-data.ts
+index 0ed9cf36..bbf1848a 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-data.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-data.ts
+@@ -13,6 +13,7 @@ import type { RehearsalChain } from "./rehearsal-chain.js";
+ import { LEGACY } from "./rehearsal-chain.js";
+ import { DEV } from "./execution-rpc.js";
+ import { dtfCustodySeSource, claimVaultSource, weightedReceiptSource, earlierReceiptSource, earlierLiquidSource, nftOrigin } from "./payloads.js";
++import { authorityInput } from "./bundle.js";
+ 
+ // Standard public Anvil mnemonic, derivation indices 100-103. The commonly
+ // used indices 0-2 carry historical EIP-7702 code on this fork, so cannot receive
+@@ -58,7 +59,9 @@ function nativeJson(parameter: ParamType, value: unknown): unknown {
+   if (typeof value === "bigint") return value.toString();
+   return value;
+ }
+-export async function bootstrapManifest(chain: RehearsalChain, environmentPath: string): Promise<ExecutionManifest> {
++export async function bootstrapManifest(chain: RehearsalChain, environmentPath: string,
++  authorities: z.infer<typeof authorityInput>["sources"]): Promise<ExecutionManifest> {
++  authorityInput.parse({ version: "dtf-operator-authorities-v1", sources: authorities });
+   const environment = z.object({
+     proxy: address, registry: address, package: address, weth: address,
+     pairToken: address, arguments: hex, proxyCodeHash: hash, facets: z.array(address),
+@@ -69,34 +72,13 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath:
+     sourceFile("recovery-abi", "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"),
+     sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
+     sourceFile("environment", environmentPath),
+-    sourceFile("dtf-custody-se-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md"),
+-    sourceFile("dtf-custody-source-archive", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json"),
+-    sourceFile("claim-vault-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md"),
+     sourceFile("claim-vault-acquisition", join(dirname(environmentPath), "claim-vault-acquisition.json")),
+     sourceFile("dtf-custody-acquisition", join(dirname(environmentPath), "dtf-custody-se-acquisition.json")),
+-    sourceFile("weighted-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md"),
+-    sourceFile("owner-first-bond-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md"),
+-    sourceFile("current-main-plan", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"),
+-    sourceFile("current-main-prd", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md"),
+-    sourceFile("weighted-receipt-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-implementation-brief.md"),
+-    sourceFile("weighted-receipt-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md"),
+-    sourceFile("weighted-receipt-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md"),
+     sourceFile("weighted-receipt-acquisition", join(dirname(environmentPath), "weighted-receipt-acquisition.json")),
+-    sourceFile("earlier-receipt-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/contract.md"),
+-    sourceFile("earlier-receipt-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/report.md"),
+-    sourceFile("earlier-liquid-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source/contract.md"),
+-    sourceFile("earlier-liquid-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source-verification/report.md"),
+     sourceFile("earlier-liquid-acquisition", join(dirname(environmentPath), "earlier-liquid-acquisition.json")),
+-    sourceFile("held-se-lp-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-implementation-brief.md"),
+-    sourceFile("held-se-lp-source-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/contract.md"),
+-    sourceFile("held-se-lp-source-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source-verification/report.md"),
+-    sourceFile("held-se-lp-owner-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding/contract.md"),
+-    sourceFile("held-se-lp-owner-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding-verification/report.md"),
+     sourceFile("held-se-lp-acquisition", join(dirname(environmentPath), "held-se-lp-acquisition.json")),
+     sourceFile("earlier-receipt-acquisition", join(dirname(environmentPath), "earlier-receipt-acquisition.json")),
+-    sourceFile("claimed-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md"),
+-    sourceFile("claimed-sy-source-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/contract.md"),
+-    sourceFile("claimed-sy-source-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/verification/report.md"),
++    ...authorities,
+   ]);
+   const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
+   const parameter = pkg.getFunction("deployVault")?.inputs[0];
+@@ -348,7 +330,27 @@ export async function replacementFixture(input: PreparationInput, directory: str
+     heldSeLp: heldSeLp.map((row) => row.original),
+     exposures: exposures.map(({ proof: _proof, ...exposure }) => exposure),
+   });
+-  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, heldSeLp, exposures,
++  const { bundle: _bundle, ...native } = input;
++  // The newly written document has this array order, which need not match the
++  // earlier raw document after normalization. Bind to its actual new positions.
++  const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
++  const repoint = <T extends { readonly proof: { readonly sourceId: string; readonly pointer: string } }>(
++    rows: readonly T[], field: string,
++  ) => rows.map((row, index) => ({ ...row, proof: proof(`/${field}/${index}`) }));
++  let originalIndex = 0;
++  let claimedIndex = 0;
++  const replacement = preparationInput.parse({ ...native,
++    independent: independent.map((row) => ({ ...row, entitlements: row.entitlements.map((entry) => ({
++      ...entry, proof: proof(`/originals/${originalIndex++}`),
++    })) })),
++    nfts: repoint(input.nfts, "nfts"),
++    weightedLiquid: repoint(weightedLiquid, "weightedLiquid"),
++    weightedSy: weightedSy.map((row, index) => ({ ...row,
++      proof: proof(row.claimedOrigin ? `/claimedSy/${claimedIndex++}` : `/weightedSy/${index}`) })),
++    dtfCustodySe: repoint(dtfCustodySe, "dtfCustodySe"),
++    claimVault: repoint(claimVault, "claimVault"), weightedReceipt: repoint(weightedReceipt, "weightedReceipt"),
++    earlierReceipt: repoint(earlierReceipt, "earlierReceipt"), earlierLiquid: repoint(earlierLiquid, "earlierLiquid"),
++    heldSeLp: repoint(heldSeLp, "heldSeLp"), exposures: repoint(exposures, "exposures"),
+     sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
+   await save(join(directory, "replacement-input.json"), replacement);
+   return replacement;
+diff --git a/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts b/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
+index dd680336..e8f36d1b 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
+@@ -25,7 +25,7 @@ export const custodySeAbi = new Interface([
+ 
+ /** A fresh, signed controlled-wallet acquisition, not a transfer of infrastructure-held shares. */
+ export async function acquireDtfCustodyShares(chain: RehearsalChain, evidence: string) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "W-SD acquisition is restricted to the pinned owned local node");
+   }
+   const wallet = HDNodeWallet.fromPhrase("test test test test test test test test test test test junk",
+diff --git a/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts b/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
+index c82acf4d..15977454 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
+@@ -27,7 +27,7 @@ const tuple = (value: unknown): Result => {
+   return value;
+ };
+ async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 191, status = 1n) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "ED signer requires the fixed owned loopback rehearsal");
+   }
+   const signer = wallet(index);
+diff --git a/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts b/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
+index 008f4aed..31939ec1 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
+@@ -25,7 +25,7 @@ const bondAbi = new Interface([
+   "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+ ]);
+ async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 181, status = 1n) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "ER signer requires an owned fixed loopback rehearsal");
+   }
+   const signer = wallet(index);
+diff --git a/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts b/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
+index 70629d75..00eb2e49 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
+@@ -24,7 +24,7 @@ const wallet = (index: number) => HDNodeWallet.fromPhrase(
+ 
+ /** Disposable-fork donor simulation only. Migration and the operator gain no collector authority. */
+ export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18571", "18573"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18571", "18573", "18575"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "held SE/LP acquisition requires the fixed owned loopback18571");
+   }
+   const originalWallet = wallet(201).address.toLowerCase();
+diff --git a/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts b/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
+index 7755d3eb..af644472 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
+@@ -27,7 +27,7 @@ const tuple = (value: unknown): Result => {
+   return value;
+ };
+ async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 201, status = 1n) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18571", "18573"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18571", "18573", "18575"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "held SE/LP signer requires the fixed owned loopback rehearsal");
+   }
+   const signer = wallet(index);
+diff --git a/scripts/recovery/dtf-migration/rehearsal-process.ts b/scripts/recovery/dtf-migration/rehearsal-process.ts
+index 380d2f6f..6adbe9ce 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-process.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-process.ts
+@@ -2,10 +2,10 @@ import { spawn } from "node:child_process";
+ import type { ChildProcess } from "node:child_process";
+ import { once } from "node:events";
+ import { writeFile } from "node:fs/promises";
+-import { join } from "node:path";
+ import { ExecutionError } from "./execution-schema.js";
+ 
+-export const FOUNDRY = "/Users/cyotee/.foundry/bin";
++export const FORGE = process.env["FORGE_BIN"] ?? "forge";
++export const ANVIL = process.env["ANVIL_BIN"] ?? "anvil";
+ export async function child(command: readonly string[], evidence: string, environment = process.env) {
+   const executable = command[0];
+   if (!executable) throw new ExecutionError("DOMAIN", "empty command");
+@@ -24,7 +24,7 @@ export async function child(command: readonly string[], evidence: string, enviro
+ }
+ 
+ export async function launchAnvil(args: readonly string[], evidence: string, secret: string) {
+-  const process_ = spawn(join(FOUNDRY, "anvil"), [...args], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
++  const process_ = spawn(ANVIL, [...args], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
+   let output = "";
+   const scrub = (text: string) => text.replaceAll(secret, "<redacted-upstream>");
+   const ready = new Promise<void>((resolve, reject) => {
+diff --git a/scripts/recovery/dtf-migration/rehearsal-recovery.ts b/scripts/recovery/dtf-migration/rehearsal-recovery.ts
+index bcdfbec2..3f3b701b 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-recovery.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-recovery.ts
+@@ -22,10 +22,14 @@ export async function exerciseRecovery(context: Context) {
+     const name = `harvest-${String(++sequence).padStart(2, "0")}-${step.stage}`;
+     const path = join(evidence, `${name}-input.json`);
+     const directory = join(evidence, name);
+-    await save(path, { ...input, harvest: { steps: [step], deadline: (await chain.timestamp() + 3600n).toString() } });
++    // A newly selected harvest is a fresh domain, never a mutation of the saved
++    // configuration bundle or its signed journal. Retain its relocated sources.
++    const { bundle: _inputBundle, ...nativeInput } = input;
++    const { bundle: _executionBundle, ...nativeManifest } = manifest;
++    await save(path, { ...nativeInput, harvest: { steps: [step], deadline: (await chain.timestamp() + 3600n).toString() } });
+     await cli(["prepare", "--input", path, "--output", directory]);
+     const executionPath = join(evidence, `${name}-execution.json`);
+-    await save(executionPath, { ...manifest, preparedManifest: join(directory, "manifest.json") });
++    await save(executionPath, { ...nativeManifest, preparedManifest: join(directory, "manifest.json") });
+     await cli(["harvest", "--manifest", executionPath, "--checkpoint", join(runtime, name), ...local]);
+   };
+   const nftStep = (stage: RecoveryStep["stage"], tokenId: string): RecoveryStep => ({ stage, tokenId, amount: "0", minimum: "0" });
+diff --git a/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts b/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
+index e1a13adf..0df5d8ac 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
+@@ -20,7 +20,7 @@ export const wsWallet = (index = 117) => HDNodeWallet.fromPhrase(
+ export async function signWs(chain: RehearsalChain, evidence: string, request: {
+   readonly to: string; readonly data: string; readonly index?: number; readonly status?: bigint;
+ }) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "WS signed fixture requires the fixed owned18567 node");
+   }
+   const wallet = wsWallet(request.index);
+diff --git a/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts b/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+index f043e702..b78de4f1 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+@@ -30,8 +30,9 @@ export async function exerciseWeightedSy(context: {
+   const { chain, manifest, input, evidence, phase } = context;
+   const activated = phase !== "stage1";
+   const final = phase === "final";
+-  const row = input.weightedSy[0]?.original;
+-  if (!row) throw new ExecutionError("STATE", "missing synthetic W-Y original inputs");
++  const ordinary = input.weightedSy.filter((row) => row.claimedOrigin === undefined);
++  const row = ordinary[0]?.original;
++  if (ordinary.length !== 1 || !row) throw new ExecutionError("STATE", "expected one ordinary synthetic W-Y original");
+   const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
+   const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
+   const parent = manifest.proxy;
+diff --git a/scripts/recovery/dtf-migration/rehearse.ts b/scripts/recovery/dtf-migration/rehearse.ts
+index 23ec406d..b83ac933 100644
+--- a/scripts/recovery/dtf-migration/rehearse.ts
++++ b/scripts/recovery/dtf-migration/rehearse.ts
+@@ -4,7 +4,7 @@ import { copyFile, mkdir, readFile, rm, readdir } from "node:fs/promises";
+ import { resolve, join, dirname } from "node:path";
+ import { z } from "zod";
+ import { Interface, keccak256 } from "ethers";
+-import { child, FOUNDRY, launchAnvil } from "./rehearsal-process.js";
++import { child, FORGE, ANVIL, launchAnvil } from "./rehearsal-process.js";
+ import { RehearsalChain, LEGACY, legacyAbi } from "./rehearsal-chain.js";
+ import { bootstrapManifest, captureOriginalInputBytes, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
+ import { DEV } from "./execution-rpc.js";
+@@ -28,10 +28,12 @@ import { checkClaimedSyIntake, exerciseClaimedSy } from "./rehearsal-claimed-sy.
+ import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
+ import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
+ import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt, captureLinkedLibraries } from "./rehearsal-proof.js";
++import { loadSavedBundle } from "./bundle.js";
++import { rejectChangedBundles, relocateExecution } from "./rehearsal-portable.js";
+ 
+ const PIN_HASH = "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733";
+ async function resolveAlias(): Promise<string> {
+-  const config = spawn(join(FOUNDRY, "forge"), ["config", "--json"], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
++  const config = spawn(FORGE, ["config", "--json"], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
+   const exit = once(config, "exit", { signal: AbortSignal.timeout(15000) });
+   let output = "";
+   config.stdout?.on("data", (data: Buffer) => { output += data.toString(); });
+@@ -47,15 +49,19 @@ async function resolveAlias(): Promise<string> {
+ export async function rehearse(options: {
+   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
+   readonly checkpoint: string; readonly evidence: string;
++  readonly bundle: string;
+ }) {
+   if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663"
+-    || !["18567", "18568", "18569", "18571", "18573"].includes(options.port)
+-    || options.checkpoint !== (options.port === "18573" ? ".omo-runtime/dtf-migration-claimed-sy/checkpoints"
++    || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(options.port)
++    || options.checkpoint !== (options.port === "18575" ? ".omo-runtime/dtf-migration-portable/checkpoints"
++      : options.port === "18573" ? ".omo-runtime/dtf-migration-claimed-sy/checkpoints"
+       : options.port === "18571" ? ".omo-runtime/dtf-migration-held-se-lp/checkpoints"
+       : options.port === "18569" ? ".omo-runtime/dtf-migration-earlier-liquid/checkpoints" : options.port === "18568"
+       ? ".omo-runtime/dtf-migration-earlier-receipt/checkpoints" : ".omo-runtime/dtf-migration-weighted-receipt/checkpoints")) {
+     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
+   }
++  const authorities = await loadSavedBundle(options.bundle);
++  if (authorities.kind !== "authorities") throw new ExecutionError("DOMAIN", "rehearsal requires a complete authority bundle");
+   const evidence = resolve(options.evidence, `rehearsal-${Date.now()}`);
+   const runtime = resolve(options.checkpoint);
+   await mkdir(evidence, { recursive: true });
+@@ -66,7 +72,7 @@ export async function rehearse(options: {
+   const args = ["--host", "127.0.0.1", "--port", options.port, "--chain-id", "4663",
+     "--fork-url", upstream, "--fork-block-number", options.forkBlock, "--gas-limit", "100000000",
+     "--disable-min-priority-fee", "--balance", "1000000"];
+-  await save(join(evidence, "anvil-command.json"), { command: [join(FOUNDRY, "anvil"), ...args.map((a) => a === upstream ? "<resolved archive alias>" : a)] });
++  await save(join(evidence, "anvil-command.json"), { command: [ANVIL, ...args.map((a) => a === upstream ? "<resolved archive alias>" : a)] });
+   let node: Awaited<ReturnType<typeof launchAnvil>>;
+   try { node = await launchAnvil(args, join(evidence, "anvil.log"), upstream); }
+   catch (error) {
+@@ -78,20 +84,22 @@ export async function rehearse(options: {
+   const previousRpc = process.env["DTF_OPERATOR_LOCAL_RPC"];
+   process.env["DTF_OPERATOR_LOCAL_RPC"] = chain.endpoint.toString();
+   let sequence = 0;
+-  const cli = async (args: readonly string[], expected: "success" | "fault" | "reject" = "success") => {
+-    const nonceBefore = expected === "reject" ? await chain.send("eth_getTransactionCount", [DEV, "latest"]) : undefined;
++  const cli = async (args: readonly string[], expected: "success" | "fault" | "reject" | "reject-bundle" = "success") => {
++    const rejecting = expected === "reject" || expected === "reject-bundle";
++    const nonceBefore = rejecting ? await chain.send("eth_getTransactionCount", [DEV, "latest"]) : undefined;
+     const result = await child([process.execPath, "scripts/recovery/dtf-migration/cli.ts", ...args],
+       join(evidence, `${String(++sequence).padStart(3, "0")}-${args[0]}.log`));
+     if (expected === "success" && result.code !== 0) throw new ExecutionError("STATE", `CLI ${args[0]} failed; see command evidence`);
+     if (expected === "fault" && (result.signal !== "SIGKILL" || !result.output.includes('"fault":"mined-before-checkpoint"'))) {
+       throw new ExecutionError("STATE", "expected actual mined interruption did not occur");
+     }
+-    if (expected === "reject") {
++    if (rejecting) {
+       if (result.code !== 1) throw new ExecutionError("STATE", "negative did not fail with a controlled rejection");
+-      z.object({ error: z.literal("DOMAIN") }).passthrough().parse(JSON.parse(result.output.trim()));
++      const rejected = z.object({ error: expected === "reject" ? z.literal("DOMAIN")
++        : z.enum(["DOMAIN", "PROVENANCE", "INPUT"]) }).passthrough().parse(JSON.parse(result.output.trim()));
+       const nonceAfter = await chain.send("eth_getTransactionCount", [DEV, "latest"]);
+       if (nonceBefore !== nonceAfter) throw new ExecutionError("STATE", "rejected command submitted a transaction");
+-      await save(join(evidence, `${String(sequence).padStart(3, "0")}-rejection.json`), { nonceBefore, nonceAfter, error: "DOMAIN" });
++      await save(join(evidence, `${String(sequence).padStart(3, "0")}-rejection.json`), { nonceBefore, nonceAfter, error: rejected.error });
+     }
+     return result;
+   };
+@@ -100,7 +108,7 @@ export async function rehearse(options: {
+       await chain.send("eth_getBlockByNumber", ["0x67e5d17", false]));
+     if (pin.hash !== PIN_HASH) throw new ExecutionError("DOMAIN", "historical header does not match");
+     await save(join(evidence, "historical-header.json"), pin);
+-    const claimedAcquisition = options.port === "18573" ? await acquireClaimedSy(chain, evidence) : [];
++    const claimedAcquisition = ["18573", "18575"].includes(options.port) ? await acquireClaimedSy(chain, evidence) : [];
+     await chain.withHolder("3", async (holder) => {
+       await chain.transact(LEGACY.weighted, { from: holder, data: legacyAbi.encodeFunctionData("claimBond", ["3", holder]) });
+       const held = String((await chain.call(LEGACY.receipt, legacyAbi, "balanceOf", [holder]))[0]);
+@@ -114,10 +122,9 @@ export async function rehearse(options: {
+         data: legacyAbi.encodeFunctionData("transfer", [DEV, "10000000000000000000000"]) });
+     });
+     const environmentPath = join(evidence, "environment.json");
+-    const environment: NodeJS.ProcessEnv = { ...process.env, SENDER: DEV, OPERATOR_ENVIRONMENT_OUTPUT: environmentPath,
+-      PATH: `${FOUNDRY}:${process.env["PATH"] ?? ""}` };
++    const environment: NodeJS.ProcessEnv = { ...process.env, SENDER: DEV, OPERATOR_ENVIRONMENT_OUTPUT: environmentPath };
+     delete environment["PRIVATE_KEY"];
+-    const setup = await child([join(FOUNDRY, "forge"), "script", "--use", "solar",
++    const setup = await child([FORGE, "script", "--use", "solar",
+       "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
+       "--sig", "prepareEnvironment()", "--rpc-url", chain.endpoint.toString(), "--sender", DEV,
+       "--unlocked", "--broadcast", "--slow", "--legacy", "--gas-price", "2000000000",
+@@ -131,13 +138,16 @@ export async function rehearse(options: {
+     const receiptAcquisition = await acquireWeightedReceipt(chain, evidence);
+     const earlierAcquisition = await acquireEarlierReceipt(chain, evidence);
+     const earlierLiquidAcquisition = await acquireEarlierLiquid(chain, evidence);
+-    const heldSeLpAcquisition = ["18571", "18573"].includes(options.port) ? await acquireHeldSeLp(chain, evidence) : [];
+-    if (!["18571", "18573"].includes(options.port)) await save(join(evidence, "held-se-lp-acquisition.json"), {
++    const heldSeLpAcquisition = ["18571", "18573", "18575"].includes(options.port) ? await acquireHeldSeLp(chain, evidence) : [];
++    if (!["18571", "18573", "18575"].includes(options.port)) await save(join(evidence, "held-se-lp-acquisition.json"), {
+       rows: [], disposition: "not selected on the retained earlier rehearsal ports",
+     });
+-    const manifest = await bootstrapManifest(chain, environmentPath);
+-    const pre = join(evidence, "pre-capture.json");
++    const manifest = await bootstrapManifest(chain, environmentPath, authorities.sources);
++    let pre = join(evidence, "pre-capture.json");
+     await save(pre, manifest);
++    if (options.port === "18575") {
++      pre = (await relocateExecution({ manifestPath: pre, evidence, label: "funding", cli })).path;
++    }
+     const local = ["--execute-local", "--instance-id", manifest.local?.instanceId ?? ""];
+     await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy")]);
+     await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy"), ...local]);
+@@ -206,10 +216,22 @@ export async function rehearse(options: {
+     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
+     await cli(["validate", "--manifest", join(prepared, "manifest.json")]);
+     await checkPreparation({ input, evidence, cli });
+-    if (options.port === "18573") await checkClaimedSyIntake(chain, input, evidence);
++    if (["18573", "18575"].includes(options.port)) await checkClaimedSyIntake(chain, input, evidence);
+     let post = { ...manifest, snapshotId: input.domain.snapshotId, preparedManifest: join(prepared, "manifest.json") };
+     let postPath = join(evidence, "post-capture.json");
+     await save(postPath, post);
++    const originalPostPath = postPath;
++    if (options.port === "18575") {
++      const relocated = await relocateExecution({ manifestPath: postPath, evidence, label: "configuration", cli });
++      if (!relocated.domain.prepared || !relocated.domain.manifest.preparedManifest || !relocated.domain.manifest.snapshotId) {
++        throw new ExecutionError("STATE", "relocated post-capture domain lacks preparation");
++      }
++      postPath = relocated.path;
++      post = { ...relocated.domain.manifest, preparedManifest: relocated.domain.manifest.preparedManifest,
++        snapshotId: relocated.domain.manifest.snapshotId };
++      input = relocated.domain.prepared.input;
++      await rejectChangedBundles({ manifestPath: postPath, evidence, local, cli });
++    }
+     await cli(["configure", "--manifest", postPath, "--checkpoint", join(runtime, "configure"), ...local, "--reverse"]);
+     const supplyBefore = String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]);
+     if (supplyBefore !== genesisSupply) throw new ExecutionError("STATE", "configuration minted supply");
+@@ -221,6 +243,11 @@ export async function rehearse(options: {
+     if (await chain.send("eth_getTransactionCount", [DEV, "latest"]) !== issueNonce) throw new ExecutionError("STATE", "default issuance resume sent");
+     await cli(["resume", "--manifest", postPath, "--checkpoint", issue, ...local, "--reverse"]);
+     await recoveredReceipt(issueFault, issue, join(evidence, "issuance-resumed.json"));
++    if (options.port === "18575") {
++      await cli(["resume", "--manifest", originalPostPath, "--checkpoint", issue, ...local], "reject");
++      const firstPath = join(evidence, "relocation-configuration/materialized-a/execution.json");
++      await cli(["resume", "--manifest", firstPath, "--checkpoint", issue, ...local], "reject");
++    }
+     await checkRemainingOrder(input, issue, join(evidence, "reordered-issuance.json"));
+     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify")]);
+     const unclaimed = (await chain.call(manifest.proxy, migration, "independentIssuance",
+@@ -246,9 +273,20 @@ export async function rehearse(options: {
+     await captureOriginalInputBytes(input, join(evidence, "replacement-original-input-bytes.json"));
+     const replacement = join(evidence, "replacement");
+     await cli(["prepare", "--input", join(evidence, "replacement-input.json"), "--output", replacement]);
+-    post = { ...post, preparedManifest: join(replacement, "manifest.json") };
++    const { bundle: _oldBundle, ...nativePost } = post;
++    post = { ...nativePost, preparedManifest: join(replacement, "manifest.json") };
+     postPath = join(evidence, "replacement-execution.json");
+     await save(postPath, post);
++    if (options.port === "18575") {
++      const relocated = await relocateExecution({ manifestPath: postPath, evidence, label: "replacement", cli });
++      if (!relocated.domain.prepared || !relocated.domain.manifest.preparedManifest || !relocated.domain.manifest.snapshotId) {
++        throw new ExecutionError("STATE", "relocated replacement domain lacks preparation");
++      }
++      postPath = relocated.path;
++      post = { ...relocated.domain.manifest, preparedManifest: relocated.domain.manifest.preparedManifest,
++        snapshotId: relocated.domain.manifest.snapshotId };
++      input = relocated.domain.prepared.input;
++    }
+     await cli(["configure", "--manifest", postPath, "--checkpoint", join(runtime, "replacement"), ...local]);
+     if ((await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString() !== issuedBeforeReplacement
+       || String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]) !== replacementSupply) {
+@@ -277,7 +315,7 @@ export async function rehearse(options: {
+     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+     await chain.send("evm_mine", []);
+     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "final" });
+-    if (options.port === "18573") {
++    if (["18573", "18575"].includes(options.port)) {
+       await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "partial" });
+       await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+       await chain.send("evm_mine", []);
+diff --git a/scripts/recovery/dtf-migration/schema.ts b/scripts/recovery/dtf-migration/schema.ts
+index c374e264..d150bb70 100644
+--- a/scripts/recovery/dtf-migration/schema.ts
++++ b/scripts/recovery/dtf-migration/schema.ts
+@@ -8,6 +8,9 @@ export const address = z.string().regex(/^0x[0-9a-fA-F]{40}$/).transform((v) =>
+ export const hash = z.string().regex(/^0x[0-9a-fA-F]{64}$/).transform((v) => v.toLowerCase());
+ export const identity = hash.refine((v) => v !== `0x${"0".repeat(64)}`, "zero identity");
+ export const sha256 = z.string().regex(/^[0-9a-f]{64}$/);
++export const bundleReference = z.object({
++  path: z.string().min(1), sha256, bytes: uint,
++}).strict().readonly();
+ export const hex = z.string().regex(/^0x(?:[0-9a-fA-F]{2})*$/).transform((v) => v.toLowerCase());
+ export const categories = [
+   "independent", "weighted-nft", "earlier-nft", "weighted-liquid", "earlier-liquid",
+@@ -165,6 +168,7 @@ export const recoveryStep = z.object({
+ }).strict().readonly();
+ export const preparationInput = z.object({
+   version: z.literal("dtf-operator-preparation-v1"),
++  bundle: bundleReference.optional(),
+   purpose: z.enum(["synthetic-local", "operational-review"]),
+   domain,
+   sources: z.array(source).min(1).readonly(),

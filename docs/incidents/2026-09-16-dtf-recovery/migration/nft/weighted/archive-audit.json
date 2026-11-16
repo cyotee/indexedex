@@ -1,0 +1,1410 @@
+{
+  "schema": "weighted-nft-source-contract-audit-v1",
+  "date": "2026-11-11",
+  "kind": "offline archived-byte audit; no new RPC or fork execution",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+  "branch": "work/dtf-migration-phase-05",
+  "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "baselineStatus": "",
+  "chainId": 4663,
+  "block": 108944663,
+  "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+  "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "sha256": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+      "sha256": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+      "sha256": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+      "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.exit.json",
+      "sha256": "e3b11df38b89338f99a02ecf0d33a7bfd3d13d789a3b6b9bb5d9d13de88fd241"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+    }
+  ],
+  "proxy": {
+    "address": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+    "runtimeKeccak256": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+    "rawCodeJournalIndex": 2
+  },
+  "bindings": [
+    {
+      "selector": "0x6352211e",
+      "signature": "ownerOf(uint256) view returns (address)",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "abi": {
+        "name": "ownerOf",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      "rawLoupeJournalIndex": 3,
+      "rawCodeJournalIndexes": [
+        4,
+        10,
+        12,
+        14,
+        16
+      ]
+    },
+    {
+      "selector": "0x46f96023",
+      "signature": "positionOf(uint256) view returns ((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "positionOf",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "tokenId_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "tuple",
+            "components": [
+              {
+                "name": "principal",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "claimedPrincipal",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "stakingGons",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "startTimestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "vestingDuration",
+                "type": "uint256",
+                "internalType": "uint256"
+              }
+            ],
+            "internalType": "struct DETFFundedStakingMath.BondPosition"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      "rawLoupeJournalIndex": 5,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0xae648e90",
+      "signature": "previewClaim(uint256) view returns ((uint256 vestedPrincipal,uint256 principalRemaining,uint256 principalDue,uint256 rewardsDue))",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "previewClaim",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "tokenId_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "claim_",
+            "type": "tuple",
+            "components": [
+              {
+                "name": "vestedPrincipal",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "principalRemaining",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "principalDue",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "rewardsDue",
+                "type": "uint256",
+                "internalType": "uint256"
+              }
+            ],
+            "internalType": "struct DETFFundedStakingMath.BondClaim"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      "rawLoupeJournalIndex": 7,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0x095ea7b3",
+      "signature": "approve(address,uint256)",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "abi": {
+        "name": "approve",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [],
+        "stateMutability": "payable"
+      },
+      "rawLoupeJournalIndex": 9,
+      "rawCodeJournalIndexes": [
+        4,
+        10,
+        12,
+        14,
+        16
+      ]
+    },
+    {
+      "selector": "0x081812fc",
+      "signature": "getApproved(uint256) view returns (address)",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "abi": {
+        "name": "getApproved",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      "rawLoupeJournalIndex": 11,
+      "rawCodeJournalIndexes": [
+        4,
+        10,
+        12,
+        14,
+        16
+      ]
+    },
+    {
+      "selector": "0xa22cb465",
+      "signature": "setApprovalForAll(address,bool)",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "abi": {
+        "name": "setApprovalForAll",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "approved",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+      },
+      "rawLoupeJournalIndex": 13,
+      "rawCodeJournalIndexes": [
+        4,
+        10,
+        12,
+        14,
+        16
+      ]
+    },
+    {
+      "selector": "0xe985e9c5",
+      "signature": "isApprovedForAll(address,address) view returns (bool)",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "runtimeMatch": "match",
+      "abi": {
+        "name": "isApprovedForAll",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      "rawLoupeJournalIndex": 15,
+      "rawCodeJournalIndexes": [
+        4,
+        10,
+        12,
+        14,
+        16
+      ]
+    },
+    {
+      "selector": "0x23b872dd",
+      "signature": "transferFrom(address,address,uint256)",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "transferFrom",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "from_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+      },
+      "rawLoupeJournalIndex": 17,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0x42842e0e",
+      "signature": "safeTransferFrom(address,address,uint256)",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "safeTransferFrom",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "from_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+      },
+      "rawLoupeJournalIndex": 19,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0xf400c743",
+      "signature": "claimPrincipal(uint256,address)",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "claimPrincipal",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "tokenId_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "recipient_",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "principal_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      "rawLoupeJournalIndex": 21,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0x6c7b69cb",
+      "signature": "claimRewards(uint256,address)",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "claimRewards",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "tokenId_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "recipient_",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "rewards_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      "rawLoupeJournalIndex": 23,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0x084c59ae",
+      "signature": "claimBond(uint256,address)",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "claimBond",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "tokenId_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "recipient_",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "principal_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "rewards_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      "rawLoupeJournalIndex": 25,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0x8a91f8bc",
+      "signature": "detf() view returns (address)",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "detf",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      "rawLoupeJournalIndex": 27,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    },
+    {
+      "selector": "0x5fcbd285",
+      "signature": "lpToken() view returns (address)",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "runtimeMatch": "exact_match",
+      "abi": {
+        "name": "lpToken",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      "rawLoupeJournalIndex": 29,
+      "rawCodeJournalIndexes": [
+        6,
+        8,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30
+      ]
+    }
+  ],
+  "sourceRanges": [
+    {
+      "address": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "ranges": [
+        [
+          40,
+          54
+        ],
+        [
+          127,
+          200
+        ],
+        [
+          210,
+          243
+        ]
+      ],
+      "sourceSha256": "b0d11c2c41eacf10eb23eb1935000f470e59e17da67be294d5fc17aacd354a49",
+      "excerpts": [
+        {
+          "start": 40,
+          "end": 54,
+          "lines": [
+            "    modifier onlyDetf() {",
+            "        if (msg.sender != Repo._layoutStruct().detf) revert NotAuthorized(msg.sender);",
+            "        _;",
+            "    }",
+            "",
+            "    modifier synchronized() {",
+            "        IDETFFundedRewards(Repo._layoutStruct().detf).synchronizeRewards();",
+            "        _;",
+            "    }",
+            "",
+            "    /// @notice Owning DETF.",
+            "    function detf() external view returns (address) { return Repo._layoutStruct().detf; }",
+            "",
+            "    /// @notice Custodied reserve LP, entirely owned by the DETF.",
+            "    function lpToken() external view returns (IERC20) { return Repo._layoutStruct().lpToken; }"
+          ]
+        },
+        {
+          "start": 127,
+          "end": 200,
+          "lines": [
+            "    /// @notice Fixed purchase terms and remaining attributed gons.",
+            "    function positionOf(uint256 tokenId_) external view returns (StakingMath.BondPosition memory) {",
+            "        _requireExists(tokenId_);",
+            "        return Repo._layoutStruct().positions[tokenId_];",
+            "    }",
+            "",
+            "    /// @notice Funded claims at the stored staking index; unminted expansion is excluded.",
+            "    function previewClaim(uint256 tokenId_) public view returns (StakingMath.BondClaim memory claim_) {",
+            "        _requireExists(tokenId_);",
+            "        if (tokenId_ < 3) return claim_;",
+            "        return StakingMath._claim(",
+            "            Repo._layoutStruct().positions[tokenId_], block.timestamp, _staking().stakingState().gonsPerUnit",
+            "        );",
+            "    }",
+            "",
+            "    /// @notice Claim vested principal as sDETF without claiming its separate staking rewards.",
+            "    function claimPrincipal(uint256 tokenId_, address recipient_)",
+            "        external synchronized nonReentrant returns (uint256 principal_)",
+            "    {",
+            "        (principal_,) = _claim(tokenId_, recipient_, true, false);",
+            "    }",
+            "",
+            "    /// @notice Claim funded sDETF growth while keeping all remaining principal staked.",
+            "    function claimRewards(uint256 tokenId_, address recipient_)",
+            "        external synchronized nonReentrant returns (uint256 rewards_)",
+            "    {",
+            "        (, rewards_) = _claim(tokenId_, recipient_, false, true);",
+            "    }",
+            "",
+            "    /// @notice Claim both available components; retire a fully paid purchased position.",
+            "    function claimBond(uint256 tokenId_, address recipient_)",
+            "        external synchronized nonReentrant returns (uint256 principal_, uint256 rewards_)",
+            "    {",
+            "        return _claim(tokenId_, recipient_, true, true);",
+            "    }",
+            "",
+            "    function _claim(uint256 tokenId_, address recipient_, bool principalClaim_, bool rewardClaim_)",
+            "        internal returns (uint256 principal_, uint256 rewards_)",
+            "    {",
+            "        if (tokenId_ < 3) revert ReservedBond(tokenId_);",
+            "        address owner_ = _requireExists(tokenId_);",
+            "        if (msg.sender != owner_ && ERC721Repo._getApproved(tokenId_) != msg.sender",
+            "            && !ERC721Repo._isApprovedForAll(owner_, msg.sender)) revert NotAuthorized(msg.sender);",
+            "        if (recipient_ == address(0)) recipient_ = owner_;",
+            "        _checkRecipient(recipient_);",
+            "        Repo.Storage storage s_ = Repo._layoutStruct();",
+            "        StakingMath.BondPosition storage position_ = s_.positions[tokenId_];",
+            "        IStakedDETF staking_ = _staking();",
+            "        uint256 k_ = staking_.stakingState().gonsPerUnit;",
+            "        StakingMath.BondClaim memory claim_ = StakingMath._claim(position_, block.timestamp, k_);",
+            "        principal_ = principalClaim_ ? claim_.principalDue : 0;",
+            "        rewards_ = rewardClaim_ ? claim_.rewardsDue : 0;",
+            "        uint256 amount_ = principal_ + rewards_;",
+            "        uint256 debit_ = StakingMath._toGons(amount_, k_);",
+            "        position_.claimedPrincipal += principal_;",
+            "        position_.stakingGons -= debit_;",
+            "        s_.attributedGons -= debit_;",
+            "        if (amount_ != 0) IERC20(address(staking_)).safeTransfer(recipient_, amount_);",
+            "        _retireIfPaid(tokenId_, staking_, k_);",
+            "        Repo._requireFunded(s_, staking_.gonsOf(address(this)));",
+            "        emit IDetfBondNFT.BondClaimed(tokenId_, recipient_, principal_, rewards_);",
+            "    }",
+            "",
+            "    function _retireIfPaid(uint256 tokenId_, IStakedDETF staking_, uint256 k_) internal {",
+            "        Repo.Storage storage s_ = Repo._layoutStruct();",
+            "        StakingMath.BondPosition storage position_ = s_.positions[tokenId_];",
+            "        if (position_.claimedPrincipal == position_.principal && position_.stakingGons < k_) {",
+            "            uint256 fraction_ = position_.stakingGons;",
+            "            s_.attributedGons -= fraction_;",
+            "            delete s_.positions[tokenId_];",
+            "            if (fraction_ != 0) staking_.retireEscrowDust(fraction_);",
+            "            ERC721Repo._burn(tokenId_);",
+            "        }",
+            "    }"
+          ]
+        },
+        {
+          "start": 210,
+          "end": 243,
+          "lines": [
+            "    /// @notice Settle the old owner's due rewards before conveying the entire remaining bond.",
+            "    function transferFrom(address from_, address to_, uint256 tokenId_) external synchronized nonReentrant {",
+            "        _checkRecipient(to_);",
+            "        ERC721Repo._transferFrom(from_, to_, tokenId_);",
+            "    }",
+            "",
+            "    /// @notice Guarded safe transfer, including receiver acceptance.",
+            "    function safeTransferFrom(address from_, address to_, uint256 tokenId_) external synchronized nonReentrant {",
+            "        _checkRecipient(to_);",
+            "        ERC721Repo._safeTransferFrom(from_, to_, tokenId_);",
+            "    }",
+            "",
+            "    /// @notice Guarded safe transfer with receiver data.",
+            "    function safeTransferFrom(address from_, address to_, uint256 tokenId_, bytes calldata data_)",
+            "        external synchronized nonReentrant",
+            "    {",
+            "        _checkRecipient(to_);",
+            "        ERC721Repo._safeTransferFrom(from_, to_, tokenId_, data_);",
+            "    }",
+            "",
+            "    function _staking() internal view returns (IStakedDETF) {",
+            "        return IStakedDETF(address(IDetfStakingToken(Repo._layoutStruct().detf).rebasingClaimToken()));",
+            "    }",
+            "",
+            "    function _requireExists(uint256 tokenId_) internal view returns (address owner_) {",
+            "        owner_ = ERC721Repo._ownerOf(tokenId_);",
+            "        if (owner_ == address(0)) revert IERC721Errors.ERC721NonexistentToken(tokenId_);",
+            "    }",
+            "",
+            "    function _checkRecipient(address recipient_) internal view {",
+            "        if (recipient_ == address(0) || recipient_ == Repo._layoutStruct().detf || recipient_ == address(this)) {",
+            "            revert IERC721Errors.ERC721InvalidReceiver(recipient_);",
+            "        }",
+            "    }"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "lib/crane/contracts/tokens/ERC721/ERC721Repo.sol",
+      "ranges": [
+        [
+          153,
+          170
+        ],
+        [
+          199,
+          215
+        ],
+        [
+          229,
+          254
+        ],
+        [
+          281,
+          291
+        ]
+      ],
+      "sourceSha256": "65728a533e1523f1e60fceccdfbe9a86fc3d65f4a23d33ea2ec7f8b53f119dfc",
+      "excerpts": [
+        {
+          "start": 153,
+          "end": 170,
+          "lines": [
+            "    function _safeTransferFrom(",
+            "        Storage storage layoutStruct,",
+            "        address from_,",
+            "        address to_,",
+            "        uint256 tokenId_,",
+            "        bytes memory data_",
+            "    ) internal {",
+            "        if (to_.code.length > 0) {",
+            "            try IERC721Receiver(to_).onERC721Received(msg.sender, from_, tokenId_, data_) returns (bytes4 response) {",
+            "                if (response != IERC721Receiver.onERC721Received.selector) {",
+            "                    revert IERC721Errors.ERC721InvalidReceiver(to_);",
+            "                }",
+            "            } catch {",
+            "                revert IERC721Errors.ERC721InvalidReceiver(to_);",
+            "            }",
+            "        }",
+            "        _transferFrom(layoutStruct, from_, to_, tokenId_);",
+            "    }"
+          ]
+        },
+        {
+          "start": 199,
+          "end": 215,
+          "lines": [
+            "    function _safeTransferFrom(Storage storage layoutStruct, address from_, address to_, uint256 tokenId_) internal {",
+            "        _safeTransferFrom(layoutStruct, from_, to_, tokenId_, \"\");",
+            "    }",
+            "",
+            "    // end::_safeTransferFrom(Storage-address-address-uint256)[]",
+            "",
+            "    // tag::_safeTransferFrom(address-address-uint256)[]",
+            "    /**",
+            "     * @dev Default version of _safeTransferFrom binding to the standard STORAGE_SLOT.",
+            "     * @param from_ The current owner.",
+            "     * @param to_ The recipient.",
+            "     * @param tokenId_ The token id.",
+            "     * @custom:emits IERC721Events.Transfer (via _transferFrom)",
+            "     */",
+            "    function _safeTransferFrom(address from_, address to_, uint256 tokenId_) internal {",
+            "        _safeTransferFrom(_layoutStruct(), from_, to_, tokenId_, \"\");",
+            "    }"
+          ]
+        },
+        {
+          "start": 229,
+          "end": 254,
+          "lines": [
+            "    function _transferFrom(Storage storage layoutStruct, address from_, address to_, uint256 tokenId_) internal {",
+            "        if (from_ == address(0)) {",
+            "            revert IERC721Errors.ERC721InvalidOwner(from_);",
+            "        }",
+            "        if (to_ == address(0)) {",
+            "            revert IERC721Errors.ERC721InvalidOwner(to_);",
+            "        }",
+            "        if (!layoutStruct.allTokenIds._contains(tokenId_)) {",
+            "            revert IERC721Errors.ERC721NonexistentToken(tokenId_);",
+            "        }",
+            "        address owner_ = layoutStruct.ownerOfTokenId[tokenId_];",
+            "        if (owner_ != from_) {",
+            "            revert IERC721Errors.ERC721IncorrectOwner(from_, tokenId_, owner_);",
+            "        }",
+            "        if (",
+            "            from_ != address(msg.sender) && layoutStruct.approvedForTokenId[tokenId_] != msg.sender",
+            "                && !layoutStruct.operatorApprovals[from_][msg.sender]",
+            "        ) {",
+            "            revert IERC721Errors.ERC721InsufficientApproval(msg.sender, tokenId_);",
+            "        }",
+            "        delete layoutStruct.approvedForTokenId[tokenId_];",
+            "        layoutStruct.ownerOfTokenId[tokenId_] = to_;",
+            "        layoutStruct.balanceOfAccount[from_]--;",
+            "        layoutStruct.balanceOfAccount[to_]++;",
+            "        emit IERC721Events.Transfer(from_, to_, tokenId_);",
+            "    }"
+          ]
+        },
+        {
+          "start": 281,
+          "end": 291,
+          "lines": [
+            "    function _approve(Storage storage layoutStruct, address operator_, uint256 tokenId_) internal {",
+            "        if (operator_ == address(0)) {",
+            "            revert IERC721Errors.ERC721InvalidOperator(operator_);",
+            "        }",
+            "        address owner_ = _ownerOf(layoutStruct, tokenId_);",
+            "        if (owner_ != msg.sender) {",
+            "            revert IERC721Errors.ERC721IncorrectOwner(msg.sender, tokenId_, owner_);",
+            "        }",
+            "        layoutStruct.approvedForTokenId[tokenId_] = operator_;",
+            "        emit IERC721Events.Approval(owner_, operator_, tokenId_);",
+            "    }"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "ranges": [
+        [
+          28,
+          43
+        ],
+        [
+          96,
+          117
+        ]
+      ],
+      "sourceSha256": "3ec13e4bb20549f5e3055e63212d6518cdc011bb616bab2783e22e5c7a20ba06",
+      "excerpts": [
+        {
+          "start": 28,
+          "end": 43,
+          "lines": [
+            "    /// @notice Fixed purchase terms and current attributed staking inventory for one NFT.",
+            "    struct BondPosition {",
+            "        uint256 principal;",
+            "        uint256 claimedPrincipal;",
+            "        uint256 stakingGons;",
+            "        uint256 startTimestamp;",
+            "        uint256 vestingDuration;",
+            "    }",
+            "",
+            "    /// @notice Native DETF-equivalent amounts; both claim amounts are paid in sDETF.",
+            "    struct BondClaim {",
+            "        uint256 vestedPrincipal;",
+            "        uint256 principalRemaining;",
+            "        uint256 principalDue;",
+            "        uint256 rewardsDue;",
+            "    }"
+          ]
+        },
+        {
+          "start": 96,
+          "end": 117,
+          "lines": [
+            "    /// @notice Quote vested principal and independent funded rewards without changing the clock.",
+            "    function _claim(BondPosition memory position_, uint256 timestamp_, uint256 gonsPerUnit_)",
+            "        internal",
+            "        pure",
+            "        returns (BondClaim memory claim_)",
+            "    {",
+            "        if (position_.vestingDuration == 0) revert InvalidVestingDuration();",
+            "        uint256 elapsed_ = timestamp_ > position_.startTimestamp ? timestamp_ - position_.startTimestamp : 0;",
+            "        claim_.vestedPrincipal = elapsed_ >= position_.vestingDuration",
+            "            ? position_.principal",
+            "            : Math.mulDiv(position_.principal, elapsed_, position_.vestingDuration);",
+            "        if (position_.claimedPrincipal > claim_.vestedPrincipal) {",
+            "            revert PrincipalAlreadyClaimed(position_.claimedPrincipal, claim_.vestedPrincipal);",
+            "        }",
+            "        claim_.principalRemaining = position_.principal - position_.claimedPrincipal;",
+            "        claim_.principalDue = claim_.vestedPrincipal - position_.claimedPrincipal;",
+            "        uint256 stakingValue_ = _toAmount(position_.stakingGons, gonsPerUnit_);",
+            "        if (stakingValue_ < claim_.principalRemaining) {",
+            "            revert UnfundedBondPrincipal(stakingValue_, claim_.principalRemaining);",
+            "        }",
+            "        claim_.rewardsDue = stakingValue_ - claim_.principalRemaining;",
+            "    }"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "path": "ERC721Facet.sol",
+      "ranges": [
+        [
+          2754,
+          2756
+        ],
+        [
+          2813,
+          2815
+        ],
+        [
+          2827,
+          2829
+        ],
+        [
+          2840,
+          2842
+        ],
+        [
+          2854,
+          2856
+        ]
+      ],
+      "sourceSha256": "6034c1d3b5072019c06970998f10646a56a0aea5b26258398b2333531bab4f72",
+      "excerpts": [
+        {
+          "start": 2754,
+          "end": 2756,
+          "lines": [
+            "    function ownerOf(uint256 tokenId) public view virtual returns (address) {",
+            "        return ERC721Repo._ownerOf(tokenId);",
+            "    }"
+          ]
+        },
+        {
+          "start": 2813,
+          "end": 2815,
+          "lines": [
+            "    function approve(address to, uint256 tokenId) public payable virtual {",
+            "        ERC721Repo._approve(to, tokenId);",
+            "    }"
+          ]
+        },
+        {
+          "start": 2827,
+          "end": 2829,
+          "lines": [
+            "    function setApprovalForAll(address operator, bool approved) public virtual {",
+            "        ERC721Repo._setApprovalForAll(operator, approved);",
+            "    }"
+          ]
+        },
+        {
+          "start": 2840,
+          "end": 2842,
+          "lines": [
+            "    function getApproved(uint256 tokenId) public view virtual returns (address) {",
+            "        return ERC721Repo._getApproved(tokenId);",
+            "    }"
+          ]
+        },
+        {
+          "start": 2854,
+          "end": 2856,
+          "lines": [
+            "    function isApprovedForAll(address owner, address operator) public view virtual returns (bool) {",
+            "        return ERC721Repo._isApprovedForAll(owner, operator);",
+            "    }"
+          ]
+        }
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "id": 0,
+      "owner": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "position": {
+        "principal": "0",
+        "claimedPrincipal": "0",
+        "stakingGons": "0",
+        "startTimestamp": "0",
+        "vestingDuration": "0"
+      },
+      "preview": {
+        "vestedPrincipal": "0",
+        "principalRemaining": "0",
+        "principalDue": "0",
+        "rewardsDue": "0"
+      }
+    },
+    {
+      "id": 1,
+      "owner": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+      "position": {
+        "principal": "0",
+        "claimedPrincipal": "0",
+        "stakingGons": "0",
+        "startTimestamp": "0",
+        "vestingDuration": "0"
+      },
+      "preview": {
+        "vestedPrincipal": "0",
+        "principalRemaining": "0",
+        "principalDue": "0",
+        "rewardsDue": "0"
+      }
+    },
+    {
+      "id": 2,
+      "owner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+      "position": {
+        "principal": "0",
+        "claimedPrincipal": "0",
+        "stakingGons": "0",
+        "startTimestamp": "0",
+        "vestingDuration": "0"
+      },
+      "preview": {
+        "vestedPrincipal": "0",
+        "principalRemaining": "0",
+        "principalDue": "0",
+        "rewardsDue": "0"
+      }
+    },
+    {
+      "id": 3,
+      "owner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+      "position": {
+        "principal": "3772281649",
+        "claimedPrincipal": "0",
+        "stakingGons": "3772281649000000000000000000000000000000000000",
+        "startTimestamp": "1789321770",
+        "vestingDuration": "2592000"
+      },
+      "preview": {
+        "vestedPrincipal": "3772281649",
+        "principalRemaining": "3772281649",
+        "principalDue": "3772281649",
+        "rewardsDue": "529197267"
+      }
+    },
+    {
+      "id": 4,
+      "owner": "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+      "position": {
+        "principal": "281387179",
+        "claimedPrincipal": "0",
+        "stakingGons": "261791856370923794511485487961491956362989152",
+        "startTimestamp": "1789341594",
+        "vestingDuration": "15552000"
+      },
+      "preview": {
+        "vestedPrincipal": "86292556",
+        "principalRemaining": "281387179",
+        "principalDue": "86292556",
+        "rewardsDue": "17130337"
+      }
+    },
+    {
+      "id": 25,
+      "owner": "0x0000000000000000000000000000000000000000",
+      "positionError": "{\n  \"method\": \"eth_call\",\n  \"status\": 200,\n  \"error\": {\n    \"code\": 3,\n    \"message\": \"execution reverted\",\n    \"data\": \"0x7e2732890000000000000000000000000000000000000000000000000000000000000019\"\n  }\n}",
+      "previewError": "{\n  \"method\": \"eth_call\",\n  \"status\": 200,\n  \"error\": {\n    \"code\": 3,\n    \"message\": \"execution reverted\",\n    \"data\": \"0x7e2732890000000000000000000000000000000000000000000000000000000000000019\"\n  }\n}"
+    },
+    {
+      "id": 26,
+      "owner": "0x2e69E40C4a4Ab5CA6826850F347acf8076a8063e",
+      "position": {
+        "principal": "56299",
+        "claimedPrincipal": "0",
+        "stakingGons": "52459819993299340272568633160568566648246",
+        "startTimestamp": "1789421422",
+        "vestingDuration": "15552000"
+      },
+      "preview": {
+        "vestedPrincipal": "16976",
+        "principalRemaining": "56299",
+        "principalDue": "16976",
+        "rewardsDue": "3520"
+      }
+    },
+    {
+      "id": 32,
+      "owner": "0x4dfeBb21D855115d4019819393e514977E490E5d",
+      "position": {
+        "principal": "54436459",
+        "claimedPrincipal": "8071216",
+        "stakingGons": "41062834499417785941044116460172046082113827",
+        "startTimestamp": "1789448266",
+        "vestingDuration": "15552000"
+      },
+      "preview": {
+        "vestedPrincipal": "16320559",
+        "principalRemaining": "46365243",
+        "principalDue": "8249343",
+        "rewardsDue": "458121"
+      }
+    },
+    {
+      "id": 34,
+      "owner": "0xBa9B369A75e216cC9d73C9f3f916C939a5755A08",
+      "position": {
+        "principal": "59081498",
+        "claimedPrincipal": "7942358",
+        "stakingGons": "45717820078274902327505585136087412911256944",
+        "startTimestamp": "1789453427",
+        "vestingDuration": "2592000"
+      },
+      "preview": {
+        "vestedPrincipal": "59081498",
+        "principalRemaining": "51139140",
+        "principalDue": "51139140",
+        "rewardsDue": "992237"
+      }
+    },
+    {
+      "id": 36,
+      "owner": "0x3B7137Ef234e0A6Bce37b19d3E1c4bB4584E0866",
+      "position": {
+        "principal": "1642192630",
+        "claimedPrincipal": "3247321",
+        "stakingGons": "1484919705460206686302023890260071573586215236",
+        "startTimestamp": "1789457634",
+        "vestingDuration": "15552000"
+      },
+      "preview": {
+        "vestedPrincipal": "491355502",
+        "principalRemaining": "1638945309",
+        "principalDue": "488108181",
+        "rewardsDue": "54287434"
+      }
+    },
+    {
+      "id": 42,
+      "owner": "0x0000000000000000000000000000000000000000",
+      "positionError": "{\n  \"method\": \"eth_call\",\n  \"status\": 200,\n  \"error\": {\n    \"code\": 3,\n    \"message\": \"execution reverted\",\n    \"data\": \"0x7e273289000000000000000000000000000000000000000000000000000000000000002a\"\n  }\n}",
+      "previewError": "{\n  \"method\": \"eth_call\",\n  \"status\": 200,\n  \"error\": {\n    \"code\": 3,\n    \"message\": \"execution reverted\",\n    \"data\": \"0x7e273289000000000000000000000000000000000000000000000000000000000000002a\"\n  }\n}"
+    },
+    {
+      "id": 44,
+      "owner": "0xd221EeA1c0ca823F57a96FDfe1D392A367384fdd",
+      "position": {
+        "principal": "81035885",
+        "claimedPrincipal": "73745125",
+        "stakingGons": "6450518112778863832845046591406259725590392",
+        "startTimestamp": "1789565294",
+        "vestingDuration": "2592000"
+      },
+      "preview": {
+        "vestedPrincipal": "81035885",
+        "principalRemaining": "7290760",
+        "principalDue": "7290760",
+        "rewardsDue": "64673"
+      }
+    },
+    {
+      "id": 45,
+      "owner": "0xd221EeA1c0ca823F57a96FDfe1D392A367384fdd",
+      "position": {
+        "principal": "12596732131",
+        "claimedPrincipal": "11460965662",
+        "stakingGons": "1004872188867337075769100410084397321476223537",
+        "startTimestamp": "1789565776",
+        "vestingDuration": "2592000"
+      },
+      "preview": {
+        "vestedPrincipal": "12596732131",
+        "principalRemaining": "1135766469",
+        "principalDue": "1135766469",
+        "rewardsDue": "10074943"
+      }
+    },
+    {
+      "id": 46,
+      "owner": "0x0000000000000000000000000000000000000000",
+      "positionError": "{\n  \"method\": \"eth_call\",\n  \"status\": 200,\n  \"error\": {\n    \"code\": 3,\n    \"message\": \"execution reverted\",\n    \"data\": \"0x7e273289000000000000000000000000000000000000000000000000000000000000002e\"\n  }\n}",
+      "previewError": "{\n  \"method\": \"eth_call\",\n  \"status\": 200,\n  \"error\": {\n    \"code\": 3,\n    \"message\": \"execution reverted\",\n    \"data\": \"0x7e273289000000000000000000000000000000000000000000000000000000000000002e\"\n  }\n}"
+    }
+  ],
+  "independentReceipts": [
+    {
+      "checkName": "approved_actual_whole_nft_custody",
+      "verdict": "PASS",
+      "transactionHash": "0x0f344ce9310c30f5a50be14b9f69a7ba2110deb33254a612ff6a3f92b1fc043e",
+      "status": "0x1",
+      "from": "0x000000000000000000000000000000000000c057",
+      "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "blockHash": "0x727dc4e5a929e5fff60d00b9d7635e483b0d9b3cefadec5b0ec72360f55e5af3",
+      "before": {
+        "principal": "3772281649",
+        "claimedPrincipal": "0",
+        "stakingGons": "3772281649000000000000000000000000000000000000",
+        "startTimestamp": "1789321770",
+        "vestingDuration": "2592000"
+      },
+      "after": {
+        "principal": "3772281649",
+        "claimedPrincipal": "0",
+        "stakingGons": "3772281649000000000000000000000000000000000000",
+        "startTimestamp": "1789321770",
+        "vestingDuration": "2592000"
+      },
+      "ownerAfter": "0x000000000000000000000000000000000000c057"
+    },
+    {
+      "checkName": "custodied_nft_actual_claim",
+      "verdict": "PASS",
+      "transactionHash": "0x40049b8b180aaf28d770b96a0b607bce5cd181b3efa5489b00cfa60db9c27cb8",
+      "status": "0x1",
+      "from": "0x000000000000000000000000000000000000c057",
+      "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "blockHash": "0xdb8b3566cb8370b1b617c57da402964137efd754dfe92336fe810b513b377f29",
+      "balanceBefore": "0",
+      "balanceAfter": "4308806205",
+      "delta": "4308806205"
+    },
+    {
+      "checkName": "legacy_operator_recipient_redirection_protection",
+      "verdict": "FAIL",
+      "transactionHash": "0xcadefebefd78638594f2c8a2434c08d6baf16e832708bc877a5387a960fafbce",
+      "status": "0x1",
+      "from": "0x0000000000000000000000000000000000000a11",
+      "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "blockHash": "0xf162905559162a2b2ad83d4fb5ee21c96cf314af8b36b4c55b0b63e3a3977f86",
+      "before": "0",
+      "after": "4308806205"
+    },
+    {
+      "checkName": "failed_transfer_rollback",
+      "verdict": "PASS",
+      "transactionHash": "0xc91c76fb89632f6b8fc60c311d47fbee4b4246a58f0c1454aa9385af4fa04baf",
+      "status": "0x0",
+      "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "blockHash": "0xd3db028b4c606357022cd83ab975e1c408e0beb70520db243c9ba1d39f062080",
+      "before": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+      "after": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B"
+    },
+    {
+      "checkName": "reward_only_source_persists_after_principal",
+      "verdict": "PASS",
+      "transactionHash": "0x4f1b70c3cf0b3392db950f428d63dd6897b5362bb7358f367d4a44706f033d78",
+      "status": "0x1",
+      "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "blockHash": "0xc998fcdeeff2d1dab5e6af2cfc8e840c09d16b710d72612eedede8f987b13fa6",
+      "position": {
+        "principal": "3772281649",
+        "claimedPrincipal": "3772281649",
+        "stakingGons": "469717513647742174174809819095640627244883279",
+        "startTimestamp": "1789321770",
+        "vestingDuration": "2592000"
+      },
+      "remainingPrincipal": "0"
+    }
+  ],
+  "audit": {
+    "checks": 385,
+    "failures": [],
+    "scope": "14 NFT signatures recomputed; raw pinned routes and code equality; terminal-CBOR-stripped published recompilation equality; 47 owner/position/preview rows redecoded; independent archive/route agreement; collection code identity"
+  },
+  "priorReplay": {
+    "exitCode": 0,
+    "checks": {
+      "PASS": 34,
+      "FAIL": 1,
+      "UNPROVEN": 2
+    },
+    "cleanup": {
+      "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/weighted-replay.NrIfF7",
+      "impersonated": [
+        "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+        "0x000000000000000000000000000000000000c057",
+        "0x0000000000000000000000000000000000000a11",
+        "0x0000000000000000000000000000000000000bad",
+        "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+        "0x01b0b538d0201efacdde7bb0397abb2133723009",
+        "0x11c17f25e958e4637dd26ca362adeae12e24ed5b"
+      ],
+      "anvilInvocation": [
+        "/opt/homebrew/bin/anvil",
+        "--fork-url",
+        "robinhood_mainnet_alchemy",
+        "--fork-block-number",
+        "108944663",
+        "--chain-id",
+        "4663",
+        "--port",
+        "0",
+        "--host",
+        "127.0.0.1",
+        "--accounts",
+        "0",
+        "--compute-units-per-second",
+        "20",
+        "--no-fork-node-info"
+      ],
+      "anvilPid": 83441,
+      "localUrl": "http://127.0.0.1:59294",
+      "baseSnapshotRestored": true,
+      "anvilExitCode": 0,
+      "pidGone": true,
+      "portClosed": true,
+      "runRootRemoved": true
+    }
+  },
+  "thisLaneRuntime": {
+    "anvilStarted": false,
+    "RPCRequests": 0,
+    "port18549Used": false,
+    "compilerInvoked": false,
+    "temporaryRootsCreated": [],
+    "cleanup": "No owned node, listener, or temporary runtime root was created."
+  }
+}

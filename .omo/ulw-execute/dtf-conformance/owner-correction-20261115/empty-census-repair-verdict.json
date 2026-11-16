@@ -1,0 +1,136 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none-in-empty-census-repair",
+  "exact_scope": "verifyEmptyCensus compensation-event classification in execution-domain.ts and execution-domain.test.ts; separately requested adjacent verifyConfiguration assessment is advisory only",
+  "confidence": "high",
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+      "bytes": 15361,
+      "pureLines": 229
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "bytes": 15178,
+      "pureLines": 242
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts",
+      "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+      "bytes": 6624,
+      "pureLines": 103
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+      "bytes": 5375,
+      "pureLines": 83
+    }
+  ],
+  "evidence": {
+    "claim": {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-done.json",
+      "sha256": "65fca422038e5c893799ba76ffbe8087d27c7bbdf3202ee7913229e6f1d98108"
+    },
+    "blocker": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-empty-census-blocker.json",
+      "sha256": "06d00236e66221e5e4fdaedaca0e7aa4560821543dd79e3c99965dc6a32a9621"
+    },
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/independent/report.md",
+    "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/independent/verification.json",
+    "beforeFix": {
+      "exit": 1,
+      "passed": 32,
+      "failed": 1,
+      "reason": "Actual mandatory ThresholdsConfigured rejected as nonempty compensation census"
+    },
+    "focused": {
+      "exit": 0,
+      "passed": 33,
+      "failed": 0
+    },
+    "affected": {
+      "exit": 0,
+      "passed": 81,
+      "failed": 0
+    },
+    "manual": {
+      "exit": 0,
+      "outcomes": 28,
+      "acceptedEmptyPreflights": 3,
+      "omittedCompensationRejections": 22,
+      "malformedRejected": true,
+      "staleDeploymentRejected": true,
+      "missingRequiredIssuanceAbiRejected": true,
+      "originalFilesUnchanged": 41,
+      "contractCalls": 0,
+      "nonceRequests": 0,
+      "sends": 0,
+      "transport": "Synthetic isolated HTTP; exact original saved deployment transaction/header/receipt; explicitly injected singleton compensation probes"
+    },
+    "mutationEvidence": {
+      "singletonGuard": {
+        "exit": 1,
+        "failed": 22
+      },
+      "deploymentCutoff": {
+        "exit": 1,
+        "failed": 11
+      },
+      "deploymentAuthentication": {
+        "exit": 1,
+        "assertion": "stale deployment header must reject"
+      },
+      "allExactMutantHashesAuthenticated": true,
+      "restoredSourceMatchesFirstGreen": true
+    },
+    "allTenConfigurationKindsPlusIssuanceCovered": true,
+    "mandatoryInitializationExcluded": true,
+    "requiredBoundEventAbisFailClosed": true,
+    "fullDeploymentToLatestRangePreserved": true,
+    "originalDeploymentHeaderAuthenticationPreserved": true,
+    "historicalPreparationCutoffPreserved": true,
+    "missingXMissingYCurrentEmptyNegativesPreserved": true,
+    "pricingSourceBindingPreserved": true,
+    "ownedSourceAndOriginalIntegrityChecks": 45,
+    "allIntegrityChecksMatched": true,
+    "producerCommandsExitsAndMonitorReceiptsAuthenticated": true,
+    "settledChecksRerunByVerifier": false
+  },
+  "adjacentAdvisories": [
+    {
+      "id": "A1",
+      "severity": "P1",
+      "verdict": "needs-fix",
+      "failure_class": "prepared-range-census-initialization-misclassification",
+      "location": "scripts/recovery/dtf-migration/execution-state.ts:384-405",
+      "trigger": "A prepared verification/activation on the real initialized proxy, with its source-bound migration ABI and original deployment-to-latest range, selects the archived ThresholdsConfigured deployment log. After canonical receipt authentication, no admitted compensation row can represent it, so the verifier throws configured original omitted from complete deployment census.",
+      "evidenceBasis": "Read source plus offline decoding of authentic saved deployment receipt/artifact. No newly prepared real manifest, RPC, or live end-to-end reproduction is claimed.",
+      "receiptBoundary": "The transaction-local configure completion branch is different: exact signed configure calldata and its own canonical receipt exclude the separate package construction transaction. Matching suffix text at line 81 alone establishes no configure receipt defect. The prepared range branch has no such boundary.",
+      "fixDirection": "In separately authorized work, classify only actual admitted compensation configuration events in the prepared range branch, retaining complete origin coverage and deployment-to-latest authentication. Add an initialized-deployment prepared verification regression. Do not weaken the transaction-local configure receipt check or move the range past deployment.",
+      "blocks": [
+        "prepared verify",
+        "prepared activate"
+      ],
+      "doesNotBlock": "The repaired no-preparation owner-bond census preflight",
+      "implementationAuthorized": false
+    }
+  ],
+  "fixesInReviewedRepair": [],
+  "limits": [
+    "No live RPC, new prepared real execution, or end-to-end runtime reproduction of A1; its trigger follows from actual archived deployment, source-bound ABI and exhaustive source branches.",
+    "No settled producer check rerun or new process/fixture started by verifier.",
+    "Native LSP freshness timeout and missing JSON Biome are not clean diagnostics.",
+    "Full current suite and strict typechecks remain a separate parent integration gate.",
+    "Saved fact regressions use retained absolute source-bound files; clean-checkout portability unverified.",
+    "No source edits, installs, Anvil, Forge, public RPC, delegation, readiness marker or task-10 closure."
+  ],
+  "issuanceVerdictUnchanged": true,
+  "combinedGateAccepted": false,
+  "readinessMarkerWritten": false,
+  "task10Complete": false,
+  "writtenLast": true
+}

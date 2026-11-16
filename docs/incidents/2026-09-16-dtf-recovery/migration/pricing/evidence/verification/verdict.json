@@ -1,0 +1,76 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "needs-fix",
+  "date": "2026-11-10",
+  "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/verification/report.md",
+  "scope": "Bounded direct-pair contributions, exact recognized ordinary V3 buffering deposits, raw DETF output, and the required local QA surface.",
+  "boundedPricingBehavior": "confirmed-on-the-demonstrated-real-proxy-configuration",
+  "fullTask2ActualConfigurationE3": "not-closed",
+  "findings": [
+    {
+      "id": "F1",
+      "status": "needs-fix",
+      "location": "scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol:93-97",
+      "finding": "The hard-coded loopback anvil_nodeInfo probe does not bind or validate the selected broadcast RPC endpoint.",
+      "evidenceKind": "Source observation and control-flow inference; the authorized verification broadcast itself was local.",
+      "fixOwner": "root"
+    },
+    {
+      "id": "F2",
+      "status": "needs-fix",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/quote-evidence.md:107-115",
+      "finding": "The producer's exact named-test receipt returned zero while executing no tests; the valid 111-test regression receipt is distinct.",
+      "independentCoverageRepair": "Exact ABI-signature regex with an exact contract filter executed the requested case: 1 passed, 0 failed, 0 skipped.",
+      "fixOwner": "root"
+    }
+  ],
+  "checks": {
+    "sourceHashesMatched": 17,
+    "currentUniqueDependencyHashesChecked": 599,
+    "checkedArtifactMetadataMismatches": 0,
+    "acceptedCurrentRegressionPassed": 111,
+    "acceptedCurrentRegressionFailed": 0,
+    "originalExactFilterExecutedTests": 0,
+    "independentExactSignaturePassed": 1,
+    "independentExactSignatureFailed": 0,
+    "scriptCommandExit": 0,
+    "scriptActualSuccessfulReceipts": 233,
+    "additionalSuccessfulMutationReceipts": 2,
+    "captureBlock": 226,
+    "captureGas": 3842683,
+    "maximumActualTransactionGas": 33584353,
+    "frozenSnapshotBytes": 5632,
+    "frozenOriginalSum": "2966110100",
+    "evaluationChildCalls": 8,
+    "evaluationLiveSourceCalls": 0,
+    "evaluationTraceGas": 451403,
+    "checkedRuntimeSizesWithinEip170": true,
+    "sourceTestProductPlanEditsByVerifier": 0,
+    "commitsByVerifier": 0,
+    "publicChainActions": 0
+  },
+  "cleanup": {
+    "time": "2026-11-10T15:30:59Z",
+    "ownedNodePid": 81860,
+    "ownedNodePidAbsent": true,
+    "ownedRecorderPid": 81858,
+    "ownedRecorderPidAbsent": true,
+    "port": 18546,
+    "listenerAbsent": true,
+    "endpointProbeExit": 7,
+    "temporaryRootAbsent": true,
+    "sharedDependenciesPreserved": true,
+    "originalImplementationEvidencePreserved": true,
+    "originalBroadcastPreserved": true
+  },
+  "unsupported": [
+    "Unidentified production recovery bindings",
+    "ERC4626 receipt models including SimpleYield admission",
+    "Native nested receipts and Morpho",
+    "Nonzero-refund families",
+    "Buffered DETF output",
+    "V3 conversion, redemption, transition and full-curve recipes",
+    "Final Migration lifecycle integration",
+    "Untested target-chain deployment gas caps"
+  ]
+}

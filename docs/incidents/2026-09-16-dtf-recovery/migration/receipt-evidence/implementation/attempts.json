@@ -1,0 +1,88 @@
+{
+  "status": "Retained actual attempts; summaries are not relabeled raw outputs",
+  "entries": [
+    {
+      "id": "pre-recorder-types",
+      "monitor": "mon_T4G7GK10M7H8XCRS",
+      "exit": 2,
+      "recording": "Original tool completion remains in this task session; this entry is a diagnostic summary, not raw compiler bytes",
+      "diagnostic": "TS2345 receipt-reconciliation.ts:25: flatMap inferred ERC20/ERC721 branch incompatibility; fixed with explicit Transfer result type"
+    },
+    {
+      "id": "focused01",
+      "commandRecord": "focused01.command.json",
+      "exit": 0,
+      "summary": "30 pass, 0 fail"
+    },
+    {
+      "id": "types01",
+      "commandRecord": "types01.command.json",
+      "exit": 2,
+      "diagnostic": "TS7022 receipt.test.ts:71 inferred spread; fixed by explicit Associated type"
+    },
+    {
+      "id": "mutation01",
+      "commandRecord": "mutation01.command.json",
+      "exit": 1,
+      "summary": "Deliberately broken guards: 26 pass, 4 intended fail; restored before final gates"
+    },
+    {
+      "id": "types-final",
+      "commandRecord": "types-final.command.json",
+      "exit": 0
+    },
+    {
+      "id": "operator-tests-final",
+      "commandRecord": "operator-tests-final.command.json",
+      "exit": 0,
+      "summary": "159 pass, 0 fail, 15 files; single final complete invocation"
+    },
+    {
+      "id": "collect",
+      "commandRecord": "collect.command.json",
+      "exit": 0,
+      "summary": "Sole complete actual collection; 77 canonical associations, 310 RPC successes, 20 conservative reference flags"
+    },
+    {
+      "id": "independent",
+      "commandRecord": "independent.command.json",
+      "exit": 0,
+      "summary": "77 references, 36 bindings, 310 captures; no saved Transfer or association mismatch"
+    },
+    {
+      "id": "rendered-read-parse",
+      "recording": "Tool call failed to parse the truncated display of actual/reconciliation.json; original file unchanged",
+      "diagnostic": "JSON Parse error: Unexpected identifier \"Line\"",
+      "remedy": "Complete raw-byte parsing and independent proof succeeded; no replacement collection or source change"
+    },
+    {
+      "id": "credential-scan",
+      "monitor": "mon_ZB59ABQ46EWBFDWJ",
+      "exit": 0,
+      "output": {
+        "files": 727,
+        "credentialMatches": 0
+      },
+      "recording": "Observed monitor output; only ALCHEMY_KEY selected, no credential value retained"
+    },
+    {
+      "id": "native-lsp",
+      "status": "unavailable",
+      "diagnostic": "Fresh TypeScript diagnostics timed out; JSON Biome not installed; no install/configuration change"
+    },
+    {
+      "id": "read-only-git",
+      "sessions": [
+        "bash_1",
+        "bash_9",
+        "bash_13"
+      ],
+      "exits": [
+        0,
+        0,
+        0
+      ],
+      "summary": "Pinned parent/branch; only allowed source/runbook additions; diff --check passes; staged diff empty"
+    }
+  ]
+}

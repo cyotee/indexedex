@@ -1,0 +1,555 @@
+{
+  "canonicalSha256": "ee0b648825b46404cba4e8702c76f783aadf428eb08e9aad67f1fe1dc6cba28e",
+  "canonicalBytes": 16325019,
+  "identicalRepeat": true,
+  "identicalRelocationAndCwd": true,
+  "weightedNfts": [
+    {
+      "tokenId": "3",
+      "tx": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "4",
+      "tx": "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "5",
+      "tx": "0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "6",
+      "tx": "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "7",
+      "tx": "0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "8",
+      "tx": "0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "9",
+      "tx": "0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "10",
+      "tx": "0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "11",
+      "tx": "0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "12",
+      "tx": "0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "13",
+      "tx": "0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "14",
+      "tx": "0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "15",
+      "tx": "0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "16",
+      "tx": "0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "17",
+      "tx": "0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "18",
+      "tx": "0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "19",
+      "tx": "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "20",
+      "tx": "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "21",
+      "tx": "0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "22",
+      "tx": "0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "23",
+      "tx": "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "24",
+      "tx": "0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "25",
+      "tx": "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "26",
+      "tx": "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "27",
+      "tx": "0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "28",
+      "tx": "0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "29",
+      "tx": "0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "30",
+      "tx": "0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "31",
+      "tx": "0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "32",
+      "tx": "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "33",
+      "tx": "0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "34",
+      "tx": "0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "35",
+      "tx": "0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "36",
+      "tx": "0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "37",
+      "tx": "0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "38",
+      "tx": "0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "39",
+      "tx": "0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "40",
+      "tx": "0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "41",
+      "tx": "0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "42",
+      "tx": "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "43",
+      "tx": "0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "pre_incident"
+    },
+    {
+      "tokenId": "44",
+      "tx": "0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "post_incident"
+    },
+    {
+      "tokenId": "45",
+      "tx": "0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731",
+      "mintMatched": true,
+      "directInputsMatched": true,
+      "period": "post_incident"
+    }
+  ],
+  "earlierNfts": 16,
+  "census": [
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "parsed": 819,
+      "output": 819,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "parsed": 244,
+      "output": 244,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "parsed": 200,
+      "output": 200,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+      "parsed": 92,
+      "output": 92,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "parsed": 18,
+      "output": 18,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "account-ledger.csv",
+      "parsed": 435,
+      "output": 435,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "conversions.csv",
+      "parsed": 250,
+      "output": 250,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "custody-inventory.csv",
+      "parsed": 403,
+      "output": 403,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "parsed": 1077,
+      "output": 1077,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "parsed": 57,
+      "output": 57,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "parsed": 16,
+      "output": 16,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "parsed": 13,
+      "output": 13,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "parsed": 847,
+      "output": 847,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "parsed": 7,
+      "output": 7,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "parsed": 12191,
+      "output": 12191,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "parsed": 43,
+      "output": 43,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "parsed": 422,
+      "output": 422,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "exceptions.csv",
+      "parsed": 14,
+      "output": 14,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "held-exclusions.csv",
+      "parsed": 411,
+      "output": 411,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "observed-recoveries.csv",
+      "parsed": 69,
+      "output": 69,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "positions.csv",
+      "parsed": 411,
+      "output": 411,
+      "everyRecordMatched": true
+    },
+    {
+      "path": "rounding.csv",
+      "parsed": 5,
+      "output": 5,
+      "everyRecordMatched": true
+    }
+  ],
+  "unresolvedCount": 1240,
+  "unresolvedClasses": {
+    "aggregate-source-reference": 34,
+    "conversion-origin-unresolved": 250,
+    "earlier-receipt-discrepancy": 1,
+    "historical-policy-not-authority": 1,
+    "incomplete-WETH-native-recovery": 1,
+    "independent-basis-unresolved": 435,
+    "missing-earlier-raw-receipts": 1,
+    "missing-original-inputs-wallet-review": 1,
+    "original-contribution-unknown": 411,
+    "partial-claims-prior-delivery": 1,
+    "raw-claim-event-archive-missing": 18,
+    "recovery-attribution-unresolved": 69,
+    "representation-overlap-aliases": 1,
+    "review-acquisition-funded-snapshot-open": 1,
+    "stale-current-state": 1,
+    "unknown-recovery-count": 13,
+    "unobserved-accepted-categories": 1
+  },
+  "commands": [
+    {
+      "label": "full-a-command",
+      "args": [
+        "derive-candidates",
+        "--input",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/full-a"
+      ],
+      "expected": 0,
+      "actual": 0,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates"
+    },
+    {
+      "label": "full-b-command",
+      "args": [
+        "derive-candidates",
+        "--input",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/full-b"
+      ],
+      "expected": 0,
+      "actual": 0,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates"
+    },
+    {
+      "label": "full-relocated-command",
+      "args": [
+        "derive-candidates",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/raw-input-tree/2026-09-16-dtf-recovery",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/full-relocated"
+      ],
+      "expected": 0,
+      "actual": 0,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/other-cwd"
+    },
+    {
+      "label": "primary-negative",
+      "args": [
+        "derive-candidates",
+        "--input",
+        "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/rejected-primary"
+      ],
+      "expected": 1,
+      "actual": 1,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates"
+    },
+    {
+      "label": "prepare-negative",
+      "args": [
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/full-a/candidates.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/rejected-prepare"
+      ],
+      "expected": 1,
+      "actual": 1,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates"
+    },
+    {
+      "label": "validate-negative",
+      "args": [
+        "validate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/full-a/candidates.json"
+      ],
+      "expected": 1,
+      "actual": 1,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates"
+    },
+    {
+      "label": "execution-negative",
+      "args": [
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/full-a/candidates.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof01/rejected-execution"
+      ],
+      "expected": 1,
+      "actual": 1,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates"
+    }
+  ]
+}

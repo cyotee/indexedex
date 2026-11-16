@@ -1,0 +1,229 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 4,
+  "finding": "H1",
+  "verdict": "confirmed",
+  "failure_class": null,
+  "confidence": "high",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-4-repair-done.json",
+  "independent": true,
+  "scope": "Only H1 harness repair; prior product inspection is context, not a new product pass.",
+  "summary": "Both new raw logs bind the exact plan commands before helper output. Pre-execution wrapper and monitor events corroborate genuine new runs, with 229 happy and 29 failure cases passing and exit 0. All four hashes match; originals are preserved. No repair product/test edit identified.",
+  "same_signature_recurred": false,
+  "findings": [],
+  "checks": [
+    {
+      "id": 1,
+      "result": "PASS",
+      "evidence": [
+        "repair-attempt-1/happy.log:1-7",
+        "repair-attempt-1/failures.log:1-7"
+      ],
+      "observation": "Exact four-source python3 scripts/forge-artifacts.py test argv and --test-root occur on line 2 before helper output on line 5. Failure command includes the complete match-test pattern."
+    },
+    {
+      "id": 2,
+      "result": "PASS",
+      "observation": "SHA-256 recomputed from complete raw bytes of both new and both original logs; all claim hashes match, including both original before/after values and prior verdict hashes."
+    },
+    {
+      "id": 3,
+      "result": "PASS",
+      "evidence": [
+        "repair-attempt-1/happy.log:7969-7971",
+        "repair-attempt-1/failures.log:50749-50751"
+      ],
+      "observation": "229 and 29 anchored named PASS lines; aggregate summaries show 33/15 suites, zero failed or skipped, with HAPPY_EXIT=0 and FAILURE_QA_EXIT=0."
+    },
+    {
+      "id": 4,
+      "result": "PASS with attribution limit",
+      "observation": "Read-only Git diff --stat: 67 files, 1176 insertions, 1443 deletions. All 134 current status entries exactly match prior verification report. All 67 nondeleted dirty product/test/script paths examined predate repair. Repair transcript contains no product/test write.",
+      "limit": "Status and mtimes alone cannot establish historical authorship; the repair tool inventory and execution wrapper corroborate scope."
+    },
+    {
+      "id": 5,
+      "result": "PASS",
+      "observation": "Producer session lines 375-376 create sidecar before launch; line 377 prints command then executes the same variable into new tee logs. Monitor events at lines 390,392,402 independently record commands, summaries, and completion. Stripped new log bodies differ from originals; headers were not merely prepended to old logs."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/happy.log",
+      "bytes": 6134774,
+      "sha256": "2bb12559d2f9179db99115db30430fad387ab32e6fab89566015a6723a71f4f0",
+      "helper_occurrences": 1
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/failures.log",
+      "bytes": 9474596,
+      "sha256": "b58ca87e782c3f1e9c64279587975a58c689dd70de699449113ddfb043aec131",
+      "helper_occurrences": 1
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log",
+      "bytes": 6133246,
+      "sha256": "13bb4a68ee715d1fad56d62967b5a00d89ca6ab03fb18abb447b72c3bcb4a429",
+      "helper_occurrences": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "bytes": 9473559,
+      "sha256": "b562ffaddfffb18dbcac47f45d4e9e3fe2b71dd145ba22881a38d6508a6dd662",
+      "helper_occurrences": 0
+    }
+  ],
+  "pre_execution_provenance": {
+    "sidecar": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/preflight.json",
+    "sha256": "2a79f6c645ecde3d1e1bf1778b452389e2535e4b2381586a939e9933dd26ccdc",
+    "hash_independently_matched": true,
+    "session": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1dd11/sessions/st_01a1dd11/2026-11-15T02-37-34.936Z_729fdd1f-0d38-4a85-aee3-602494af3e7c.jsonl",
+    "sidecar_records": [
+      375,
+      376
+    ],
+    "launch_records": [
+      377,
+      380
+    ],
+    "monitor_event_records": [
+      390,
+      392,
+      402
+    ],
+    "monitor_id": "mon_TCEJP508685GDDJJ",
+    "terminal_id": "bash_9",
+    "watcher_exit": 0,
+    "order": "sidecar at 03:15:02 UTC, launch at 03:15:27 UTC, command/result events by 03:15:57 UTC"
+  },
+  "recorded_runs": [
+    {
+      "kind": "happy",
+      "argv": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration",
+        "--",
+        "-vv"
+      ],
+      "exact_command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+      "raw_log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/happy.log",
+      "sha256": "2bb12559d2f9179db99115db30430fad387ab32e6fab89566015a6723a71f4f0",
+      "exit_code": 0,
+      "named_passes": 229,
+      "failed": 0,
+      "skipped": 0,
+      "command_header_line": 2,
+      "helper_output_start_line": 5,
+      "summary_line": 7969,
+      "exit_line": 7971
+    },
+    {
+      "kind": "failures",
+      "argv": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration",
+        "--",
+        "--match-test",
+        "test.*(StaleBook|InvalidManual|UnsetPricing|UnauthorizedPricing|PricingRollback|OriginCollision|MaxIn|ZeroOutput|ActivationCut)",
+        "-vvvv"
+      ],
+      "exact_command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- --match-test 'test.*(StaleBook|InvalidManual|UnsetPricing|UnauthorizedPricing|PricingRollback|OriginCollision|MaxIn|ZeroOutput|ActivationCut)' -vvvv",
+      "raw_log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/failures.log",
+      "sha256": "b58ca87e782c3f1e9c64279587975a58c689dd70de699449113ddfb043aec131",
+      "exit_code": 0,
+      "named_passes": 29,
+      "failed": 0,
+      "skipped": 0,
+      "command_header_line": 2,
+      "helper_output_start_line": 5,
+      "summary_line": 50749,
+      "exit_line": 50751
+    }
+  ],
+  "adversarial": {
+    "misleading_success_output": {
+      "result": "PASS",
+      "observation": "Raw command headers, named cases, aggregate results and terminal exit markers verified independently of claim."
+    },
+    "generated_or_cached_artifacts": {
+      "result": "PASS",
+      "observation": "Happy log line 20 compiles 2 production files; line 4892 compiles 25 test files with Solar. Failure log lines 20 and 4877 skip compilation. Incremental production compile plus cached execution, not full clean rebuild; exact-command binding remains established."
+    },
+    "stale_state": {
+      "result": "PASS",
+      "observation": "Old happy-final.log remains unbound with zero helper occurrences. The new logs are the accepting receipts. Both original hashes unchanged."
+    },
+    "dirty_worktree": {
+      "result": "PASS with attribution limit",
+      "observation": "All 134 prior status entries preserved. No repair-period mtime among 67 nondeleted dirty product/test/script paths examined, and no repair product/test write in transcript. No concurrent work reverted."
+    },
+    "hung_or_long_commands": {
+      "result": "not-applicable",
+      "reason": "No Forge rerun or long command launched by verifier."
+    },
+    "flaky_tests": {
+      "result": "not-applicable",
+      "reason": "No tests rerun or retried by verifier."
+    },
+    "malformed_input": {
+      "result": "not-applicable",
+      "reason": "Product input behavior is outside H1 receipt verification."
+    },
+    "untrusted_external_text": {
+      "result": "not-applicable",
+      "reason": "Only local evidence inspected."
+    },
+    "cancel_resume": {
+      "result": "not-applicable",
+      "reason": "Operator journal behavior is outside H1."
+    },
+    "repeated_interruptions": {
+      "result": "not-applicable",
+      "reason": "No interruption scenario exercised."
+    }
+  },
+  "repro": {
+    "executed_by_verifier": false,
+    "method": "Read complete raw bytes; recompute SHA-256; compare line-2 commands to expanded plan task 4; inspect named PASS and aggregate/exit lines; read contemporaneous wrapper and events; compare prefixed Git status with prior report.",
+    "expected": "Exact pre-execution command binding, 229/29 passing cases, exit 0, preserved original hashes, no repair product edit.",
+    "actual": "All checks satisfied.",
+    "read_only_git_commands": [
+      "GIT_MASTER=1 git -C /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1 diff --stat",
+      "GIT_MASTER=1 git -C /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1 status --short"
+    ],
+    "git_exit_codes": [
+      0,
+      0
+    ]
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/verification-r2/report.md",
+  "limits": [
+    "Confirms only the H1 repair receipt, not a new product conformance or migration readiness verdict.",
+    "No Forge, RPC, installs, commits, delegation or implementation performed by verifier.",
+    "Producer logs retain nightly/configuration/submodule-install/compiler warnings; no clean full rebuild asserted.",
+    "Local execution receipts are corroborated by local session events, not external cryptographic attestation."
+  ],
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/verification-r2/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-4-verdict-r2.json"
+  ]
+}

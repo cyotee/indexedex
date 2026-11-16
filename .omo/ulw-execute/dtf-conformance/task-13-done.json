@@ -1,0 +1,252 @@
+{
+  "task": 13,
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "recordedAt": "2026-11-15T09:11:23.430Z",
+  "completed": false,
+  "status": "incomplete",
+  "verificationExecutionDelivered": true,
+  "commit": "N",
+  "planCheckboxChanged": false,
+  "evidenceDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13",
+  "evidenceIndex": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/evidence-index.json",
+    "sha256": "9a4a0a81fb8050bcb2b707c8280b18daece3620f040cef08c248bd961babe265",
+    "indexedFiles": 63
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/report.md",
+  "failureDispositions": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/failure-dispositions.md",
+  "completionAudit": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/completion-audit.json",
+  "met": [
+    {
+      "item": "Production build",
+      "command": [
+        "forge",
+        "build",
+        "--use",
+        "solar"
+      ],
+      "exitCode": 0,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log.command.json",
+      "commandProvenance": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+      "rawLogQualification": "Exact recorded argv/exit are quoted from existing sidecars; supplemental provenance is not new historical stdout."
+    },
+    {
+      "item": "Full hermetic test command",
+      "command": [
+        "forge",
+        "test",
+        "--use",
+        "solar",
+        "-vv",
+        "--no-match-path",
+        "**/fork/**",
+        "--no-match-contract",
+        "Fork"
+      ],
+      "exitCode": 0,
+      "passed": 28641,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 2691,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/results.json",
+      "commandProvenance": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+      "rawLogQualification": "Exact recorded argv/exit are quoted from existing sidecars; supplemental provenance is not new historical stdout."
+    },
+    {
+      "item": "Actual ordinary family coverage",
+      "uniswapV4Detf": {
+        "suites": 559,
+        "passed": 9560,
+        "failed": 0,
+        "skipped": 0
+      },
+      "weightedNamedSubset": {
+        "suites": 103,
+        "passed": 2272,
+        "failed": 0,
+        "skipped": 0
+      },
+      "common": {
+        "suites": 30,
+        "passed": 372,
+        "failed": 0,
+        "skipped": 0
+      },
+      "migration": {
+        "suites": 34,
+        "passed": 236,
+        "failed": 0,
+        "skipped": 0
+      },
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-suite-summary.json",
+      "fallbackFocusedCommandsRequired": false
+    },
+    {
+      "item": "All K pinned forks through delivered artifact-helper command",
+      "exitCode": 0,
+      "passed": 183,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 30,
+      "selectedTestFiles": 26,
+      "missingTestFiles": 0,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork-suite-summary.json",
+      "commandProvenance": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+      "rawLogQualification": "Exact recorded argv/exit are quoted from existing sidecars; supplemental provenance is not new historical stdout."
+    },
+    {
+      "item": "Operator TypeScript compiler check",
+      "exitCode": 0,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/03.log.command.json",
+      "commandProvenance": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+      "rawLogQualification": "Exact recorded argv/exit are quoted from existing sidecars; supplemental provenance is not new historical stdout."
+    },
+    {
+      "item": "Reported helper typecheck result bound to retained inventory and exit marker",
+      "exitCode": 0,
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/helper-typecheck.log",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/helper-typecheck.exit.log",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/invocation-inventory.json"
+      ],
+      "qualification": "Reported command and exit 0 are separate historical records; strict raw-log argv acceptance remains unmet. No rerun occurred."
+    },
+    {
+      "item": "Full operator tests executed without exclusions or weakening",
+      "exitCode": 1,
+      "passed": 240,
+      "failed": 1,
+      "total": 241,
+      "files": 21,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log",
+      "qualification": "Execution met; passing acceptance unmet below."
+    },
+    {
+      "item": "Final source content hashes and versions",
+      "sourceEntries": 16409,
+      "changedEntries": 0,
+      "removedEntries": 0,
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/source-before.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/source-final.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/dependency-versions.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/invocation-inventory.json"
+      ]
+    },
+    {
+      "item": "Task 11 signed gas evidence qualified for bounded reuse",
+      "acceptingSourceMapEntries": 221,
+      "unchanged": 219,
+      "changedNonaffecting": [
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts"
+      ],
+      "reachableLocalModules": 28,
+      "changedReachable": 0,
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/task-11-reuse-audit.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/task-11-receipt-hashes.json"
+      ],
+      "qualification": "Historical snapshot-branch gas evidence only, not task 10 receipts or a fresh complete lifecycle."
+    },
+    {
+      "item": "Failure QA, preserved initial attempts and independent pre-existing failure binding",
+      "evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/failure-dispositions.md",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/witness-preexisting-audit.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/build-artifact-audit.json"
+      ],
+      "qualification": "Initial inherited PATH attempts failed before tests; preserved at hermetic and operator. Corrected PATH in additive r2 attempts. Actual failure outputs retained."
+    },
+    {
+      "item": "Original claim archived byte-for-byte before replacement",
+      "evidence": ".omo/ulw-execute/dtf-conformance/task-13-done-attempt-1.json",
+      "bytes": 8737,
+      "sha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd"
+    },
+    {
+      "item": "Requested additive command provenance delivered",
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+      "qualification": "Quotes existing sidecar argv/exit and the helper inventory command plus separate exit marker; preserves missing raw-log provenance as qualified."
+    },
+    {
+      "item": "Claim expectedPin transcription corrected through unchanged test import and source definition",
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/approved-bytecode-investigation.json",
+      "value": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899"
+    }
+  ],
+  "unmet": [
+    {
+      "item": "Required full operator command exit 0",
+      "exitCode": 1,
+      "failedTest": "fixed witness pin matches the concrete compiled router used by the rehearsal",
+      "testFile": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:89-93",
+      "expectedPin": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actualCompiledHash": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "classification": "Independently established pre-existing task 7 authentication failure, still in scope and incomplete; pin unchanged. Bounded approved-bytecode investigation established no source-backed matching recipe; product failure not repaired.",
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/witness-preexisting-audit.json",
+      "repairEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/approved-bytecode-investigation.json"
+    },
+    {
+      "item": "Task 10 complete current-chain rehearsal and reuse",
+      "reason": "Task 10 did not bind an admissible 10000 DTF donor through its authority bundle and produced no complete current-chain rehearsal. This is a provenance/bundle blocker, not evidence of global DTF scarcity. Rehearsal and missing receipts were not run or invented."
+    },
+    {
+      "item": "Task 12 real portable current-chain and current-owner purchase/donation lifecycle proofs",
+      "reason": "These require the missing task 10 real lifecycle. Offline relocation and 23 tamper rejections are qualified only and do not substitute."
+    },
+    {
+      "item": "Task 13 conjunctive acceptance",
+      "reason": "The required operator command failed and required lifecycle proofs remain missing. Passing build/hermetic/fork/typecheck subsets cannot establish complete acceptance."
+    },
+    {
+      "item": "Strict historical raw-log command-bearing evidence",
+      "reason": "Historical build, hermetic, fork and operator argv/exit are retained in sidecars and recorder records, rather than co-located in numbered raw stdout. The helper has a reported command in the inventory and a separate exit marker, but no native argv receipt. New additive provenance quotes and hashes those records without retroactively filling the raw-log gaps.",
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json"
+    }
+  ],
+  "restrictions": {
+    "delegated": false,
+    "committed": false,
+    "publicTransactions": false,
+    "financialAllocations": false,
+    "task10RehearsalRun": false,
+    "dtfMintedOrEtched": false,
+    "nftThreeSpent": false,
+    "witnessPinRetuned": false,
+    "testsSuppressedSkippedOrWeakened": false,
+    "secondFullTreeRunStarted": false
+  },
+  "qualifications": [
+    "Forge raw logs retain automatic unsuccessful submodule bootstrap diagnostics and compiler/lint warnings; top-level production build and fork helper nonetheless exited 0.",
+    "Configured Biome LSP executable is absent; no installation or LSP diagnostics are claimed. Evidence JSON was locally parsed; required TypeScript checks passed.",
+    "The build lint-warning tail is not its exit receipt. The exact exit-0 command sidecar exists; the original full hermetic test completed without a restart.",
+    "No task 10 synthetic wire fixture is represented as real chain proof.",
+    "This file is the final task file write, after all three modes were classified.",
+    "Repair attempt 1 adds documentary provenance only: no approved-bytecode recipe matching the unchanged pin was established, no product or artifact changed, and the full operator command remains red.",
+    "New supplemental records do not rewrite or manufacture historical stdout; strict raw-log gaps remain identified."
+  ],
+  "originalReport": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/report.md",
+  "archivedClaim": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-13-done-attempt-1.json",
+    "bytes": 8737,
+    "sha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd"
+  },
+  "repair": {
+    "attempt": 1,
+    "verdictRead": ".omo/ulw-execute/dtf-conformance/task-13-verdict.json",
+    "productFixed": false,
+    "approvedBuildRecipeEstablished": false,
+    "buildOrTestRerun": false,
+    "investigation": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/approved-bytecode-investigation.json",
+    "commandProvenance": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+    "originalFailurePreserved": true,
+    "validation": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/validation.json"
+  },
+  "supplementalEvidenceIndex": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/evidence-index.json",
+    "sha256": "f5a433ca0ca9189951afffcad12dbccc33d295dca21192c7e3db5f58a1cd7416",
+    "indexedFiles": 7
+  }
+}

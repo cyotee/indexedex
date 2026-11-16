@@ -1,0 +1,216 @@
+{
+  "sealBytes": 4627,
+  "sealSha256": "30e624d82df639fc1fc55bd862c9de12365d3c98090ec57a35539a15f16c927e",
+  "members": [
+    {
+      "path": "build-r2.log",
+      "declaredBytes": 4196845,
+      "actualBytes": 4196845,
+      "declaredSha256": "aaebb435602ec04a18219d8e6e7442b2f92a2c912f78a55b7e8e536ac40d0bce",
+      "actualSha256": "aaebb435602ec04a18219d8e6e7442b2f92a2c912f78a55b7e8e536ac40d0bce",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "build.log",
+      "declaredBytes": 4288091,
+      "actualBytes": 4288091,
+      "declaredSha256": "27622889892823759778b371ea411079503dd6181fda31d9bff954541fe21cfa",
+      "actualSha256": "27622889892823759778b371ea411079503dd6181fda31d9bff954541fe21cfa",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "final-source-diff.txt",
+      "declaredBytes": 2456,
+      "actualBytes": 2456,
+      "declaredSha256": "1be5ebc4dab1c4dd01fe183228144bdf224189e7afc7560aaba6ca7a6b169689",
+      "actualSha256": "1be5ebc4dab1c4dd01fe183228144bdf224189e7afc7560aaba6ca7a6b169689",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "focused-r2.log",
+      "declaredBytes": 761,
+      "actualBytes": 761,
+      "declaredSha256": "54b85cae4a92f5b7d224543e33ae28d8e867618c207c7a7c4bc653c179e9312d",
+      "actualSha256": "54b85cae4a92f5b7d224543e33ae28d8e867618c207c7a7c4bc653c179e9312d",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "forge-version.log",
+      "declaredBytes": 163,
+      "actualBytes": 163,
+      "declaredSha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc",
+      "actualSha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "initial-failure-and-fix.json",
+      "declaredBytes": 1235,
+      "actualBytes": 1235,
+      "declaredSha256": "331df6176da706a881636d26b0f25e11572d81fdefbaadf39b6131878fd4a144",
+      "actualSha256": "331df6176da706a881636d26b0f25e11572d81fdefbaadf39b6131878fd4a144",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "initial-run-seal.json",
+      "declaredBytes": 2106,
+      "actualBytes": 2106,
+      "declaredSha256": "1d2805092b67cefbf264c0dea7b074dd7fa0f037e640b46c298e4a587e71f97f",
+      "actualSha256": "1d2805092b67cefbf264c0dea7b074dd7fa0f037e640b46c298e4a587e71f97f",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "launch-command-r2.txt",
+      "declaredBytes": 445,
+      "actualBytes": 445,
+      "declaredSha256": "aaae612da058533b056465b1cd6e53bc267d54208b93cb2fe92b4df6e67f5d43",
+      "actualSha256": "aaae612da058533b056465b1cd6e53bc267d54208b93cb2fe92b4df6e67f5d43",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "launch-command.txt",
+      "declaredBytes": 442,
+      "actualBytes": 442,
+      "declaredSha256": "a035e2c2db0244329a43369cb4c056be69394042e134611a4395545dab807ed6",
+      "actualSha256": "a035e2c2db0244329a43369cb4c056be69394042e134611a4395545dab807ed6",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "metadata-change-history.txt",
+      "declaredBytes": 396,
+      "actualBytes": 396,
+      "declaredSha256": "a5c07f44dc0151d31bcb3b6fcc65707e82b29e1cc787afd6158c9ef2a7f1bf46",
+      "actualSha256": "a5c07f44dc0151d31bcb3b6fcc65707e82b29e1cc787afd6158c9ef2a7f1bf46",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "metadata-failure-diagnosis.md",
+      "declaredBytes": 1877,
+      "actualBytes": 1877,
+      "declaredSha256": "3bf5043b136d7aa89e5d36b3188b2bedfd7b0a65aefdb4697721206fcedea2ce",
+      "actualSha256": "3bf5043b136d7aa89e5d36b3188b2bedfd7b0a65aefdb4697721206fcedea2ce",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "raw-log-identities.json",
+      "declaredBytes": 263244,
+      "actualBytes": 263244,
+      "declaredSha256": "f131d5a332a7803da6e0d7807eada7e2ac13cd623e02a9d19c772d9fd04f267f",
+      "actualSha256": "f131d5a332a7803da6e0d7807eada7e2ac13cd623e02a9d19c772d9fd04f267f",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "report.md",
+      "declaredBytes": 5346,
+      "actualBytes": 5346,
+      "declaredSha256": "b770077ac6cd17595926686236eb1e9d288def95e7fd3fe736128eb54dfb07c4",
+      "actualSha256": "b770077ac6cd17595926686236eb1e9d288def95e7fd3fe736128eb54dfb07c4",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "run-gate-r2.sh",
+      "declaredBytes": 2142,
+      "actualBytes": 2142,
+      "declaredSha256": "3490474552e69018bcfa31e762af678b284b092fed0ebe1eb580e547589c1781",
+      "actualSha256": "3490474552e69018bcfa31e762af678b284b092fed0ebe1eb580e547589c1781",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "run-gate.sh",
+      "declaredBytes": 1719,
+      "actualBytes": 1719,
+      "declaredSha256": "79a01f23e8ae79d95dcb27941d162e7de66212e29c4b974b86055dd736735c54",
+      "actualSha256": "79a01f23e8ae79d95dcb27941d162e7de66212e29c4b974b86055dd736735c54",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "RUN.md",
+      "declaredBytes": 1258,
+      "actualBytes": 1258,
+      "declaredSha256": "388e528a3157e03016f1b86e8fe2e50ac1d474298c52c212c28a0ecc49c426be",
+      "actualSha256": "388e528a3157e03016f1b86e8fe2e50ac1d474298c52c212c28a0ecc49c426be",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "runtime-artifacts-r2.log",
+      "declaredBytes": 680540,
+      "actualBytes": 680540,
+      "declaredSha256": "0ca291074c6ad4c6b64e17fdfd6a13f3439b93aa7079bca1983d578416a9b11d",
+      "actualSha256": "0ca291074c6ad4c6b64e17fdfd6a13f3439b93aa7079bca1983d578416a9b11d",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "runtime-artifacts.log",
+      "declaredBytes": 680598,
+      "actualBytes": 680598,
+      "declaredSha256": "d2c171486b0548a98dc798aaba97e021582efb8a15617adc1ff93d25b4be1caf",
+      "actualSha256": "d2c171486b0548a98dc798aaba97e021582efb8a15617adc1ff93d25b4be1caf",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "terminal-prompt-incident.json",
+      "declaredBytes": 939,
+      "actualBytes": 939,
+      "declaredSha256": "a417748517625563b921eb3ec2f4a7b2daa65ee60873e28f383550ca7433573b",
+      "actualSha256": "a417748517625563b921eb3ec2f4a7b2daa65ee60873e28f383550ca7433573b",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "tests-r2.log",
+      "declaredBytes": 9115917,
+      "actualBytes": 9115917,
+      "declaredSha256": "64a7a9471b133c02bd1d81d18d14843d101ad0c19dca258544faa01edf34490a",
+      "actualSha256": "64a7a9471b133c02bd1d81d18d14843d101ad0c19dca258544faa01edf34490a",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    },
+    {
+      "path": "tests.log",
+      "declaredBytes": 9213506,
+      "actualBytes": 9213506,
+      "declaredSha256": "90e37cc56b7441e156c38ac8460af96e984ede7b960752bf82f3fb43afe5944b",
+      "actualSha256": "90e37cc56b7441e156c38ac8460af96e984ede7b960752bf82f3fb43afe5944b",
+      "declaredMode": 33188,
+      "actualMode": 33188,
+      "match": true
+    }
+  ]
+}

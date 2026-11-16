@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 79305,
+    "bytes": 79305,
+    "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+    "openedAsRegularFile": true
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 108022,
+    "bytes": 108022,
+    "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+    "openedAsRegularFile": true
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 41316,
+    "bytes": 41316,
+    "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349",
+    "openedAsRegularFile": true
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md",
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 57366,
+    "bytes": 57366,
+    "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4",
+    "openedAsRegularFile": true
+  }
+]

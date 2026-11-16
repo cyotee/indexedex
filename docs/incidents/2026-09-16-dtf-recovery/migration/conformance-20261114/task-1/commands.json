@@ -1,0 +1,197 @@
+{
+  "task": 1,
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "source_content_fingerprints": {
+    "original_p_sha256": "f5816a8810961ad311bd221fe6e3bbb3b599fa9ad43b76d4c403f48de4aa6d5c",
+    "amended_p_sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+    "approved_plan_sha256": "31a0f3daff03b0e51830f5428168656eaeb19f81f40dee6f3e7f619be7230683"
+  },
+  "runtime_versions": {
+    "git": "git version 2.54.0 (Apple Git-157)",
+    "python": "Python 3.15.2",
+    "forge_compiler": "not invoked; documentation-only task",
+    "grep_engine": "rg through tool.grep; version not separately invoked",
+    "biome_lsp": "not installed; no install attempted; JSON validated with Python"
+  },
+  "test_commands": [],
+  "test_disposition": "No prose unit tests, contract tests, builds, RPC or deployments; approved task requires document consistency inspection only.",
+  "commands": [
+    {
+      "id": "baseline-status",
+      "command": "set -euo pipefail\ncd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\nset -o noclobber\nmkdir -p docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1\nGIT_MASTER=1 git status --short --untracked-files=all > docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-git-status.txt\nGIT_MASTER=1 git diff -- docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md > docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-p.diff\nGIT_MASTER=1 git diff --stat > docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-tracked-diff.stat\nwc -l docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-git-status.txt docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-p.diff docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-tracked-diff.stat",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "source_content_fingerprint": "f5816a8810961ad311bd221fe6e3bbb3b599fa9ad43b76d4c403f48de4aa6d5c",
+      "exit_code": 0,
+      "case_counts": {
+        "status_lines": 60270,
+        "baseline_p_diff_lines": 0,
+        "baseline_tracked_diff_stat_lines": 0
+      },
+      "artifact_paths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-git-status.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-p.diff",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-tracked-diff.stat"
+      ]
+    },
+    {
+      "id": "apply-patch-availability",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && command -v apply_patch && GIT_MASTER=1 git --version && python3 --version",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "source_content_fingerprint": "f5816a8810961ad311bd221fe6e3bbb3b599fa9ad43b76d4c403f48de4aa6d5c",
+      "exit_code": 1,
+      "case_counts": {
+        "apply_patch_shell_executables_found": 0,
+        "p_changes": 0
+      },
+      "artifact_paths": [],
+      "disposition": "The chained command stopped at command -v. Versions were captured later. The deferred harness apply_patch also returned inactive without changing P; the active exact-replacement editor applied the validated patch."
+    },
+    {
+      "id": "document-diff-and-environment",
+      "command": "set -euo pipefail\ncd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\nset -o noclobber\nE=docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1\nP=docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md\nGIT_MASTER=1 git diff --check > \"$E/git-diff-check.txt\"\nGIT_MASTER=1 git diff -- \"$P\" > \"$E/p.diff\"\nGIT_MASTER=1 git diff --stat -- \"$P\" > \"$E/p-diff.stat\"\nshasum -a 256 \"$P\" .omo/plans/dtf-migration-conformance-remediation-20261114.md > \"$E/source-hashes.txt\"\n{\n  GIT_MASTER=1 git --version\n  python3 --version\n  printf 'Forge/compiler: not invoked; documentation-only task.\\n'\n  printf 'Tests: not invoked; document consistency inspection only.\\n'\n} > \"$E/environment.txt\"\nwc -l \"$E/p.diff\" \"$E/git-diff-check.txt\"\nshasum -a 256 \"$P\" .omo/plans/dtf-migration-conformance-remediation-20261114.md",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": 0,
+      "case_counts": {
+        "diff_lines": 495,
+        "diff_check_output_lines": 0
+      },
+      "artifact_paths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p.diff",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p-diff.stat",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/git-diff-check.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/source-hashes.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/environment.txt"
+      ]
+    },
+    {
+      "id": "final-status",
+      "command": "set -euo pipefail\ncd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\nset -o noclobber\nE=docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1\nGIT_MASTER=1 git status --short --untracked-files=all > \"$E/final-git-status.txt\"\nGIT_MASTER=1 git diff --name-only > \"$E/final-tracked-files.txt\"\nGIT_MASTER=1 git diff --stat > \"$E/final-tracked-diff.stat\"\nwc -l \"$E/final-tracked-files.txt\"\nwc -l \"$E/final-git-status.txt\"",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": 0,
+      "case_counts": {
+        "status_lines": 60322,
+        "tracked_diff_files": 1,
+        "concurrent_added_status_lines": 128,
+        "concurrent_removed_status_lines": 88,
+        "outside_task_1_2_3_delta": 0
+      },
+      "artifact_paths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-git-status.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-files.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-diff.stat",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json"
+      ]
+    },
+    {
+      "id": "json-validation",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && python3 - <<'PY'\nimport json\nfrom pathlib import Path\nroot = Path('docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1')\nfor path in sorted(root.glob('*.json')):\n    with path.open() as f:\n        value = json.load(f)\n    print(f'VALID {path} type={type(value).__name__}')\nqa = json.loads((root / 'qa-summary.json').read_text())\npreservation = json.loads((root / 'preservation-check.json').read_text())\nexternal = json.loads((root / 'external-status-delta.json').read_text())\nassert qa['section_1_10_operative_exact'] is True\nassert qa['acceptance_table_rows'] == 53\nassert qa['arithmetic_examples'] == 13\nassert qa['required_obsolete_pattern_matches'] == 0\nassert preservation['tracked_diff_only_p'] is True\nassert preservation['outside_task_1_2_3_status_preserved'] is True\nassert len(external['added_status_lines']) == 128\nassert len(external['removed_status_lines']) == 88\nprint('QA_ASSERTIONS_OK')\nPY",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": 0,
+      "case_counts": {
+        "json_files_validated_at_execution": 3,
+        "qa_assertions": "QA_ASSERTIONS_OK"
+      },
+      "artifact_paths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json"
+      ]
+    }
+  ],
+  "tool_checks": [
+    {
+      "invocation": "functions.read complete approved plan (lines 1-369, 370-550, 551-729), complete original P (lines 1-408, 409-726), and complete amended P with overlapping coverage of every line; functions.read p.diff lines 1-260 and 261-495",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": null,
+      "result": "All content read; every diff hunk inspected against the approved task.",
+      "case_counts": {
+        "approved_plan_lines": 729,
+        "original_p_lines": 726,
+        "diff_lines": 495
+      }
+    },
+    {
+      "invocation": "tool.edit(path=P, edits=57 validated unique ordered non-overlapping replacements), then tool.edit(path=P, edits=4 full-read consistency replacements)",
+      "source_content_fingerprint": "f5816a8810961ad311bd221fe6e3bbb3b599fa9ad43b76d4c403f48de4aa6d5c -> 93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": null,
+      "result": "57 blocks and then 4 blocks replaced successfully. Inactive apply_patch made no prior change; original hash was confirmed before the first successful edit.",
+      "case_counts": {
+        "initial_replacements": 57,
+        "consistency_replacements": 4
+      }
+    },
+    {
+      "invocation": "tool.grep({pattern:\"no contribution-price setter|no price setter|capture once|Capture once|captureMigrationSnapshot|snapshot immutability\",path:P,context:2})",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": null,
+      "result": "No matches found",
+      "case_counts": {
+        "matches": 0
+      },
+      "artifact_paths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md"
+      ]
+    },
+    {
+      "invocation": "tool.grep({pattern:\"snapshot|Snapshot|capture|Capture|UniswapV4DetfMigrationSnapshot|UniswapV4DetfMigrationTarget\\.sol|migrationSnapshot\\(\",path:P,context:2})",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": null,
+      "result": "Three explicit precedence/supersession capture references; no removed artifact or active capture clause.",
+      "case_counts": {
+        "precedence_matches": 3,
+        "removed_artifact_matches": 0
+      },
+      "artifact_paths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md"
+      ]
+    },
+    {
+      "invocation": "Python document inspection: exact approved operative section 1.10 containment, MIG-P/E/MIG-AC counts, section 8.1 original-byte comparison and final SHA-256",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": null,
+      "result": "section_1_10_operative_exact=true; 15 P rows; five E rows; 53 acceptance rows and complete IDs; 13 examples byte-identical to original.",
+      "case_counts": {
+        "mig_p": 15,
+        "e_gates": 5,
+        "mig_ac": 53,
+        "examples": 13
+      },
+      "artifact_paths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json"
+      ]
+    },
+    {
+      "invocation": "functions.write LSP notification for qa-summary.json",
+      "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "exit_code": null,
+      "result": "Optional biome LSP not installed. No install attempted; direct Python JSON validation passed.",
+      "case_counts": {
+        "lsp_diagnostics_available": 0,
+        "python_json_validation_failures": 0
+      }
+    }
+  ],
+  "artifact_paths": [
+    "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/requirements-reconciliation.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/commands.json",
+    ".omo/ulw-execute/dtf-conformance/task-1-done.json"
+  ],
+  "cleanup": {
+    "temporary_resources_created": [],
+    "background_processes_or_monitors_started": [],
+    "resources_requiring_teardown": [],
+    "evidence_retained_intentionally": true,
+    "dependencies_edited": false,
+    "commits_created": false
+  }
+}

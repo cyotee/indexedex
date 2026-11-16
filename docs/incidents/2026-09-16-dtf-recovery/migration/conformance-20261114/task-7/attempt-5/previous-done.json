@@ -1,0 +1,223 @@
+{
+  "kind": "DoneClaim",
+  "task": 7,
+  "title": "Implement book-aware preparation and mixed-record reconciliation",
+  "status": "blocked",
+  "implementation": "delivered; task acceptance remains blocked",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "completedAt": "2026-11-15T05:07:43.682Z",
+  "sourceFingerprint": "5dfb2a5436f7a5ecee47c35d0b98a45ca23d03d1e96bda4746bfd8ac1b180be5",
+  "authoritativeEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/qa.json",
+  "supersedesEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/qa.json",
+  "changedFiles": [
+    "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+    "scripts/recovery/dtf-migration/bundle-files.ts",
+    "scripts/recovery/dtf-migration/bundle.test.ts",
+    "scripts/recovery/dtf-migration/bundle.ts",
+    "scripts/recovery/dtf-migration/claim-vault.test.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+    "scripts/recovery/dtf-migration/claimed-sy.ts",
+    "scripts/recovery/dtf-migration/cli.ts",
+    "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+    "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+    "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+    "scripts/recovery/dtf-migration/execution-domain.test.ts",
+    "scripts/recovery/dtf-migration/execution-domain.ts",
+    "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+    "scripts/recovery/dtf-migration/execution-plan.ts",
+    "scripts/recovery/dtf-migration/execution-rpc.ts",
+    "scripts/recovery/dtf-migration/execution-schema.ts",
+    "scripts/recovery/dtf-migration/execution-state.test.ts",
+    "scripts/recovery/dtf-migration/execution-state.ts",
+    "scripts/recovery/dtf-migration/execution.test.ts",
+    "scripts/recovery/dtf-migration/execution.ts",
+    "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+    "scripts/recovery/dtf-migration/journal.ts",
+    "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+    "scripts/recovery/dtf-migration/payloads.ts",
+    "scripts/recovery/dtf-migration/preparation.fixture.ts",
+    "scripts/recovery/dtf-migration/preparation.test.ts",
+    "scripts/recovery/dtf-migration/preparation.ts",
+    "scripts/recovery/dtf-migration/provenance.ts",
+    "scripts/recovery/dtf-migration/quotes.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+    "scripts/recovery/dtf-migration/rehearsal-data.ts",
+    "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+    "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+    "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+    "scripts/recovery/dtf-migration/rehearse.ts",
+    "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+    "scripts/recovery/dtf-migration/schema.ts",
+    "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+    "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+    "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+  ],
+  "result": [
+    "Fresh dtf-operator preparation, manifest, execution, and intent v2 formats; manual-book ABI hashing and row-specific pricing directives.",
+    "Stable NFT origin independent of book, all twelve loader book scalars, and the required separate NFT 3 contribution path.",
+    "Immutable saved-manifest rehydration and independent reconstruction of original configure and issuance execution/preparation/journal domains.",
+    "Canonical receipt/log ordering and transaction-prefix state for historical A completion after B, including intra-block overwritten book proof through the exact setter and subsequent canonical loader.",
+    "Current B configuration verified separately from immutable A issuance, its funded creation, preserved terms, current claims/retirement, and solvency.",
+    "Full original-input, component-credit and Q/C verification; claimed-SY pricing-set evidence and deployment-start configured-origin census.",
+    "set-pricing and confirm-book CLI routing, operation-sensitive preflight, unchanged donation-specific operation IDs, and authenticated empty-census owner-bond/activation without preparation.",
+    "One active execution per operator root, durable signed intents, nonce/gas/domain/plan checks, explicit completion, and terminal unsigned blocking without trapping the root."
+  ],
+  "tests": {
+    "required": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution-domain.test.ts ./scripts/recovery/dtf-migration/execution-state.test.ts",
+      "exitCode": 0,
+      "passed": 56,
+      "failed": 0,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/happy.log",
+      "preflight": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/happy.preflight.json",
+      "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/happy.command.json"
+    },
+    "rejections": {
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/rejection.log",
+      "requestedPathAlsoPresent": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/rejection.log",
+      "cases": [
+        "mismatched book",
+        "changed quote",
+        "stale journal",
+        "duplicate batch",
+        "wrong nonce",
+        "changed gas",
+        "second active checkpoint",
+        "forged historical domainHash with surrounding hashes recomputed",
+        "same-block receipt/log order and full preimages",
+        "altered immutable A issuance principal",
+        "NFT consumed component floors",
+        "v1 execution and combined NFT 3 mode"
+      ],
+      "beforeSigning": "Execution preflight precedes nonce allocation and wallet creation; transport tests assert no submission and the book/quote cases assert no nonce request."
+    },
+    "types": {
+      "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/bundle-files.ts scripts/recovery/dtf-migration/bundle-materialize.ts scripts/recovery/dtf-migration/bundle.test.ts scripts/recovery/dtf-migration/bundle.ts scripts/recovery/dtf-migration/candidate-input.ts scripts/recovery/dtf-migration/candidate-inventory.test.ts scripts/recovery/dtf-migration/candidate-inventory.ts scripts/recovery/dtf-migration/candidate-nfts.ts scripts/recovery/dtf-migration/candidate-proofs.ts scripts/recovery/dtf-migration/candidate-reconciliation.ts scripts/recovery/dtf-migration/candidates.test.ts scripts/recovery/dtf-migration/candidates.ts scripts/recovery/dtf-migration/claim-vault.test.ts scripts/recovery/dtf-migration/claimed-sy-member.ts scripts/recovery/dtf-migration/claimed-sy-source.ts scripts/recovery/dtf-migration/claimed-sy-state.test.ts scripts/recovery/dtf-migration/claimed-sy-state.ts scripts/recovery/dtf-migration/claimed-sy-witness.test.ts scripts/recovery/dtf-migration/claimed-sy-witness.ts scripts/recovery/dtf-migration/claimed-sy.ts scripts/recovery/dtf-migration/cli.ts scripts/recovery/dtf-migration/dtf-custody-se.test.ts scripts/recovery/dtf-migration/earlier-liquid.test.ts scripts/recovery/dtf-migration/earlier-receipt.test.ts scripts/recovery/dtf-migration/execution-deployment.ts scripts/recovery/dtf-migration/execution-domain.test.ts scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-owner-bond.ts scripts/recovery/dtf-migration/execution-plan.ts scripts/recovery/dtf-migration/execution-rpc.ts scripts/recovery/dtf-migration/execution-schema.ts scripts/recovery/dtf-migration/execution-state.test.ts scripts/recovery/dtf-migration/execution-state.ts scripts/recovery/dtf-migration/execution.test.ts scripts/recovery/dtf-migration/execution.ts scripts/recovery/dtf-migration/held-se-lp.test.ts scripts/recovery/dtf-migration/journal.ts scripts/recovery/dtf-migration/nft-contributions.test.ts scripts/recovery/dtf-migration/payloads.ts scripts/recovery/dtf-migration/preparation.fixture.ts scripts/recovery/dtf-migration/preparation.test.ts scripts/recovery/dtf-migration/preparation.ts scripts/recovery/dtf-migration/provenance.ts scripts/recovery/dtf-migration/quotes.ts scripts/recovery/dtf-migration/receipt-association.ts scripts/recovery/dtf-migration/receipt-evidence.ts scripts/recovery/dtf-migration/receipt-input.ts scripts/recovery/dtf-migration/receipt-reconciliation.test.ts scripts/recovery/dtf-migration/receipt-reconciliation.ts scripts/recovery/dtf-migration/receipt-rpc.ts scripts/recovery/dtf-migration/receipt.fixture.ts scripts/recovery/dtf-migration/receipt.test.ts scripts/recovery/dtf-migration/rehearsal-admission.ts scripts/recovery/dtf-migration/rehearsal-chain.ts scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts scripts/recovery/dtf-migration/rehearsal-claim-vault.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts scripts/recovery/dtf-migration/rehearsal-data.ts scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts scripts/recovery/dtf-migration/rehearsal-owner-bond.ts scripts/recovery/dtf-migration/rehearsal-portable.ts scripts/recovery/dtf-migration/rehearsal-process.ts scripts/recovery/dtf-migration/rehearsal-proof.ts scripts/recovery/dtf-migration/rehearsal-recovery.ts scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts scripts/recovery/dtf-migration/rehearse.ts scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts scripts/recovery/dtf-migration/schema.ts scripts/recovery/dtf-migration/weighted-liquid.test.ts scripts/recovery/dtf-migration/weighted-receipt.test.ts scripts/recovery/dtf-migration/weighted-sy.test.ts docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/record-qa.ts",
+      "exitCode": 0,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/types.log"
+    },
+    "dependent": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/bundle.test.ts ./scripts/recovery/dtf-migration/candidate-inventory.test.ts ./scripts/recovery/dtf-migration/candidates.test.ts ./scripts/recovery/dtf-migration/claim-vault.test.ts ./scripts/recovery/dtf-migration/claimed-sy-state.test.ts ./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts ./scripts/recovery/dtf-migration/dtf-custody-se.test.ts ./scripts/recovery/dtf-migration/earlier-liquid.test.ts ./scripts/recovery/dtf-migration/earlier-receipt.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/held-se-lp.test.ts ./scripts/recovery/dtf-migration/nft-contributions.test.ts ./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts ./scripts/recovery/dtf-migration/receipt.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts ./scripts/recovery/dtf-migration/weighted-receipt.test.ts ./scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "exitCode": 1,
+      "passed": 162,
+      "failed": 1,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/dependent.log",
+      "failure": {
+        "id": "B2",
+        "status": "blocked",
+        "requirement": "Existing claimed-SY fixed witness runtime identity agrees with freshly compiled artifact",
+        "test": "fixed witness pin matches the concrete compiled router used by the rehearsal",
+        "testLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:89-92",
+        "pinLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.ts:11",
+        "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+        "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+        "compiler": {
+          "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+        },
+        "pinUnchangedFromHead": true,
+        "evidence": "dependent-acceptance.log",
+        "disposition": "Preserved the source pin and the failing assertion. No artifact substitution, expected-value update, skip, or installation."
+      }
+    },
+    "mutation": {
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/mutation-domain.log",
+      "expectedFailure": "Missing expected rejection after removing the historical domainHash comparison; original bytes restored and final test passes."
+    },
+    "diffCheck": {
+      "exitCode": 0
+    }
+  },
+  "manualQa": {
+    "status": "pass",
+    "surface": "Real registry/proxy hermetic Solar script, without broadcast",
+    "requiredCommand": {
+      "command": "python3 scripts/forge-artifacts.py script scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --sig 'runMixedRecordRehearsal()' -vv",
+      "exitCode": 2,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/required-forge.log"
+    },
+    "alternativeCommand": "forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --tc MigrationCoreLocalQA --sig 'runMixedRecordRehearsal()' -vv",
+    "environment": {
+      "PATH": "/Users/cyotee/.foundry/bin:$PATH",
+      "FOUNDRY_SCRIPT_EXECUTION_PROTECTION": "false"
+    },
+    "alternativeExitCode": 0,
+    "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/rehearsal-3.log",
+    "trace": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/state-trace.json",
+    "sourceBindings": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/rehearsal-source-bindings.json",
+    "soliditySourcesMatched": 585,
+    "terminalState": "complete",
+    "manualBookId": "0xe0cba792faa25f4e78a0ba1db34f886e3709ed02d00a38bf08b61a8dd6c4ac1a",
+    "stableNftOrigin": "0xa232b06040c523ffaa7d2a90c2a3fd80ea2c594bc18142163beb1b89b8936fe7",
+    "nft3Components": [
+      {
+        "originalEth": "999999000000000",
+        "originalDtf": "0",
+        "credit": "673302"
+      },
+      {
+        "originalEth": "0",
+        "originalDtf": "362893857600000000000",
+        "credit": "244267674654"
+      }
+    ],
+    "historicalJournalImported": false,
+    "combinedNft3ModeAccepted": false,
+    "nft3LegacySurrenderExecuted": false,
+    "qualification": "The trace proves the requested mixed-record terminal state and separate configuration components; task 10 owns the actual legacy surrender/two-bond lifecycle witness."
+  },
+  "blockers": [
+    {
+      "id": "B1",
+      "status": "blocked",
+      "requirement": "Exact requested Forge helper command succeeds",
+      "command": "python3 scripts/forge-artifacts.py script scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --sig 'runMixedRecordRehearsal()' -vv",
+      "exitCode": 2,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/required-forge.log",
+      "cause": "scripts/forge-artifacts.py accepts audit, plan, build, and test only; script is not a supported action.",
+      "scope": "The helper is outside task 7 allowed writes. It was not changed.",
+      "alternative": "Supported helper artifact build and explicit Solar script both succeeded; this does not turn the required command into a pass."
+    },
+    {
+      "id": "B2",
+      "status": "blocked",
+      "requirement": "Existing claimed-SY fixed witness runtime identity agrees with freshly compiled artifact",
+      "test": "fixed witness pin matches the concrete compiled router used by the rehearsal",
+      "testLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:89-92",
+      "pinLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.ts:11",
+      "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "pinUnchangedFromHead": true,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/dependent.log",
+      "disposition": "Preserved the source pin and the failing assertion. No artifact substitution, expected-value update, skip, or installation."
+    }
+  ],
+  "unmetItems": [
+    "The exact required forge-artifacts.py script command cannot pass because that action is unsupported, and the helper lies outside allowed writes.",
+    "The dependent witness identity assertion remains red: the freshly built Solar runtime differs from its unchanged fixed hash. No pin was changed and no failing assertion was skipped or weakened."
+  ],
+  "adversarial": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/adversarial.json",
+  "sourceInventory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/source-inventory.json",
+  "commands": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-4/commands.json",
+  "decisions": {
+    "chosen": "Keep replaceable configuration and immutable issuance facts separate, authenticate each original domain and transaction, and resolve all persisted intents before checking a new load against current pricing.",
+    "rejected": "Regenerating old credits at current prices, treating block-end B state as historical A, adopting an unknown replacement, migrating v1 journals, merging loader batches, or changing a source pin to make QA green.",
+    "terminalPolicy": "Only an unsigned blocked attempt releases its active reservation; signed uncertainty must reconcile before another execution can proceed."
+  },
+  "assumptions": [
+    "The task 7 and operator reconciliation sections of the named plan are the specification; tasks 1-6 are preserved.",
+    "The existing wire fixtures test the real TypeScript operator boundary, while the hermetic script tests real deployed contracts. Neither is presented as a public deployment or a full real-RPC portable lifecycle run."
+  ],
+  "limits": [
+    "No public transaction, installation, commit, delegation, source-index write, operator/recovery documentation edit, or pricing Solidity edit was performed.",
+    "Full real-RPC lifecycle and portable scenario runs assigned to tasks 10-12 were not executed.",
+    "Native LSP requests sometimes timed out and the JSON Biome server is absent; the full strict TypeScript checker passed, and no installation or suppression was used."
+  ],
+  "cleanup": "All task-owned commands exited. Wire fixtures closed servers and removed owned temporary directories. No Anvil or compiler was killed for silence; no task-owned long-running service remains.",
+  "forbiddenOperationsPerformed": []
+}

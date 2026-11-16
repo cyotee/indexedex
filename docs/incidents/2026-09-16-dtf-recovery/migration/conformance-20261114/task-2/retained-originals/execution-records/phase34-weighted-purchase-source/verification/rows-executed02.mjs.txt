@@ -1,0 +1,183 @@
+import { resolve } from "node:path";
+import { intake, response, json, addr, same, requireFact, totals, identities, keccak256, Interface, id,
+  SOURCE, BASE, P32, PARENT, NFT, FACET, WETH, DTF, ZERO } from "./auth.mjs";
+
+const transfer = id("Transfer(address,address,uint256)");
+const reserveLive = id("ReserveLive(uint256,uint256)");
+const purchase = new Interface(["event BondPurchased(uint256 indexed tokenId,address indexed recipient,uint256 principal,uint256 startTimestamp,uint256 vestingDuration)"]);
+const loupe = new Interface(["function facetAddress(bytes4) view returns (address)"]);
+const hook = "0x46e068c2393e189fbc86632f67210af253a42aa8";
+const staking = "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c";
+
+async function historical(d, tx) {
+  const block = tx.blockNumber;
+  const loupeAddress = "0x343590ed92498739225e351c27133bc2c11b91b9";
+  const schedule = [
+    ["header", "eth_getBlockByNumber", [block, false]],
+    ["proxy", "eth_getCode", [PARENT, block]],
+    ["loupeRoute", "eth_call", [{ to: PARENT, data: loupe.encodeFunctionData("facetAddress", ["0xcdffacc6"]) }, block]],
+    ["loupeCode", "eth_getCode", [loupeAddress, block]],
+    ["route", "eth_call", [{ to: PARENT, data: loupe.encodeFunctionData("facetAddress", ["0x7a3b1181"]) }, block]],
+    ["facetCode", "eth_getCode", [FACET, block]],
+  ];
+  const values = {}, witnesses = [];
+  for (const [role, method, params] of schedule) {
+    const hits = d.hm32.filter(e => e.method === method && JSON.stringify(e.params) === JSON.stringify(params));
+    same(hits.length, 1, `unique historical ${role}`);
+    const e = hits[0];
+    values[role] = await response(e, resolve(P32, "source"));
+    witnesses.push({ role, ...e });
+  }
+  same(values.header.hash, tx.blockHash, "historical block hash");
+  same(values.header.number, block, "historical numeric block");
+  same(values.header.transactions[Number(BigInt(tx.transactionIndex))], tx.hash, "historical index membership");
+  same(addr(values.loupeRoute), loupeAddress, "loupe self route");
+  same(addr(values.route), FACET, "actual purchase route");
+  same(keccak256(values.proxy), "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601", "proxy identity");
+  same(keccak256(values.loupeCode), "0x4ec4e7a53c6dac358a2d8af7dab6581dfd26f01fc76d02333d7caec7a44a39f4", "loupe identity");
+  same(values.facetCode, d.pkg.runtimeBytecode.onchainBytecode, "complete historical runtime bytes");
+  return { block, blockHash: tx.blockHash, facet: FACET, runtimeBytes: (values.facetCode.length - 2) / 2,
+    runtimeKeccak256: keccak256(values.facetCode), witnesses, qualification: "end-block, not transaction-prefix or universal transitive execution proof" };
+}
+
+export async function reconstruct() {
+  const d = await intake();
+  const originals = d.tables["evidence/weighted-bonds.csv"];
+  same(originals.length, 43, "all S008 rows"); same(d.tables["evidence/earlier-cp-bonds.csv"].length, 16, "all earlier context");
+  const rows = [], indirect = [];
+  for (const original of originals) {
+    const f = original.fields, tokenId = f.token_id, payer = f.purchase_recipient.toLowerCase();
+    const matches = d.archive.results.map((r, i) => ({ r, i })).filter(x => x.r.tx === f.purchase_tx);
+    same(matches.length, 1, "unique accepted purchase");
+    const { r, i: archiveIndex } = matches[0];
+    same(r.conflicts, [], "accepted conflict-free");
+    const raw = [], canonicalWitnesses = [];
+    for (const reqId of r.requestIds) {
+      const entry = d.hm28.find(e => e.id === reqId);
+      raw.push(await response(entry, d.raw28)); canonicalWitnesses.push(entry);
+    }
+    const [tx, receipt, headerHash, headerNumber] = raw;
+    same(canonicalWitnesses.map(e => e.method), ["eth_getTransactionByHash", "eth_getTransactionReceipt", "eth_getBlockByHash", "eth_getBlockByNumber"], "canonical methods");
+    same(canonicalWitnesses.map(e => e.params), [[f.purchase_tx], [f.purchase_tx], [tx.blockHash, false], [tx.blockNumber, false]], "canonical parameters");
+    same(tx, r.transactionObservation, "actual raw transaction"); same(receipt, r.receiptObservation, "actual full receipt");
+    same(headerHash, headerNumber, "canonical headers"); same(receipt.status, "0x1", "successful purchase");
+    same(tx.hash, f.purchase_tx, "original transaction"); same(tx.chainId, "0x1237", "purchase chain");
+    same(BigInt(tx.blockNumber).toString(), f.purchase_block, "original purchase block");
+    same(headerHash.hash, tx.blockHash, "header hash"); same(headerHash.number, tx.blockNumber, "header number");
+    same(headerHash.transactions[Number(BigInt(tx.transactionIndex))], tx.hash, "exact transaction index");
+    same(headerHash.transactions.filter(x => x === tx.hash).length, 1, "unique block member");
+    same(receipt.transactionHash, tx.hash, "receipt hash");
+    for (const k of ["blockHash", "blockNumber", "transactionIndex", "from", "to"]) same(receipt[k], tx[k], `receipt ${k}`);
+    let previous = -1n;
+    const logs = receipt.logs.map((log, offset) => {
+      totals.receiptLogs++;
+      for (const k of ["blockHash", "blockNumber", "transactionIndex"]) same(log[k], tx[k], `log ${k}`);
+      same(log.transactionHash, tx.hash, "log transaction");
+      requireFact(!log.removed && BigInt(log.logIndex) > previous, "unique ordered retained log"); previous = BigInt(log.logIndex);
+      requireFact(/^0x[a-f0-9]{40}$/.test(log.address) && /^0x([a-f0-9]{2})*$/.test(log.data), "log bytes");
+      requireFact(log.topics.every(t => /^0x[a-f0-9]{64}$/.test(t)), "log topics");
+      return { offset, log };
+    });
+    const mint = logs.filter(x => x.log.address === NFT && x.log.topics[0] === transfer && x.log.topics.length === 4 &&
+      addr(x.log.topics[1]) === ZERO && BigInt(x.log.topics[3]).toString() === tokenId);
+    same(mint.length, 1, "unique NFT mint"); same(addr(mint[0].log.topics[2]), payer, "original mint recipient");
+    const bought = logs.filter(x => x.log.address === NFT && x.log.topics[0] === purchase.getEvent("BondPurchased").topicHash);
+    same(bought.length, 1, "single actual purchase event");
+    const ev = purchase.decodeEventLog("BondPurchased", bought[0].log.data, bought[0].log.topics);
+    same([ev[0], ev[2], ev[3], ev[4]].map(String), [tokenId, f.original_principal_detf_raw, f.start_timestamp, f.duration_seconds], "original purchased terms");
+    same(ev[1].toLowerCase(), payer, "event recipient");
+    const prior = d.prior.rows.find(x => x.sourceId === "S008" && x.tokenId === tokenId);
+    same(prior.original.locator, original.locator, "retained original locator");
+    same(prior.original.fields, original.fields, "retained complete original fields");
+    if (tx.to !== PARENT || tx.from !== payer || tx.input.slice(0, 10) !== "0x7a3b1181") {
+      same(prior.reason, "G2", "indirect retained boundary");
+      indirect.push({ tokenId, original, transaction: tx, flags: prior.flags, proposedWeth18: null, proposedDtf18: null });
+      continue;
+    }
+    totals.directLogs += logs.length;
+    same(tx.input.length, 394, "196 bytes, no trailing bundle"); same(tx.value, "0x0", "outer value only");
+    const words = tx.input.substring(10).match(/.{64}/g);
+    const tokenIn = addr("0x" + words[0]), amountIn = BigInt("0x" + words[1]).toString();
+    same(BigInt("0x" + words[4]), 0n, "false pretransfer");
+    requireFact([WETH, DTF].includes(tokenIn), "actual lead not hook LP");
+    const recipient = addr("0x" + words[3]);
+    requireFact(recipient === payer || recipient === ZERO, "resolved original recipient");
+    const decoded = d.abi.decodeFunctionData("bond", tx.input);
+    same(decoded[0].toLowerCase(), tokenIn, "ABI token");
+    same(decoded[1].toString(), amountIn, "ABI amount");
+    same(d.abi.encodeFunctionData("bond", decoded).toLowerCase(), tx.input, "exact recovered ABI round trip");
+    const transfers = logs.filter(x => x.log.topics[0] === transfer && x.log.topics.length === 3).map(x => ({
+      ...x, asset: x.log.address, from: addr(x.log.topics[1]), to: addr(x.log.topics[2]),
+      amount: BigInt(x.log.data).toString(), logIndex: BigInt(x.log.logIndex).toString(),
+    }));
+    const named = transfers.filter(x => [WETH, DTF].includes(x.asset));
+    const debits = named.filter(x => x.from === payer), inflows = named.filter(x => x.to === payer);
+    same(inflows, [], "no named-token original-wallet refund");
+    requireFact(debits.every(x => x.to === PARENT), "all original-wallet debits to parent");
+    const lead = debits.filter(x => x.asset === tokenIn && x.amount === amountIn);
+    same(lead.length, 1, "one exact source-defined leading pull");
+    const opening = logs.filter(x => x.log.address === PARENT && x.log.topics[0] === reserveLive);
+    requireFact(opening.length <= 1, "at most one ReserveLive");
+    const first = opening.length === 1;
+    same(debits.length, first ? 2 : 1, "branch payment cardinality");
+    if (first) {
+      same(tokenId, "3", "actual first NFT");
+      same(opening[0].log.topics.length, 1, "ReserveLive layout");
+      same(BigInt(opening[0].log.data.slice(0, 66)).toString(), tokenId, "first NFT event identity");
+      const extra = debits.find(x => x !== lead[0]);
+      same([extra.asset, extra.amount], [DTF, "362893857600000000000"], "nonzero extra reserve capital");
+      for (const e of debits) requireFact(named.some(x => x.asset === e.asset && x.from === PARENT && x.to === hook && x.amount === e.amount), "first payment sent to reserve");
+    }
+    const component = [WETH, DTF].map(asset => {
+      const events = debits.filter(x => x.asset === asset);
+      return { asset, unit: "native18", proposedGross: events.reduce((n, e) => n + BigInt(e.amount), 0n).toString(), events,
+        role: events.length ? (asset === tokenIn ? "leading-priced-bond-payment" : "first-full-book-other-leg-protocol-capital") : "no-caller-payment-on-live-one-pull-path",
+        zeroReason: events.length ? null : "Successful source-bound non-LP entry; no ReserveLive excludes first branch; live seat pulls once; nested calls spend parent assets; no other caller debit or inflow in complete receipt.",
+        approvedOriginalCost: null };
+    });
+    const transferWitnesses = d.tables["evidence/transfers.csv"].filter(x => x.fields.tx === tx.hash);
+    for (const s of transferWitnesses) {
+      const f2 = s.fields, e = logs.find(x => BigInt(x.log.logIndex).toString() === f2.log_index && x.log.address === f2.asset);
+      requireFact(e && e.log.topics[0] === transfer, `S011 ${s.locator}`);
+      same([addr(e.log.topics[1]), addr(e.log.topics[2])], [f2.from, f2.to], "S011 endpoints");
+      same(e.log.topics.length === 4 ? BigInt(e.log.topics[3]).toString() : BigInt(e.log.data).toString(), f2.token_id || f2.amount_raw, "S011 units");
+    }
+    const s006 = d.tables["../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv"].filter(x => x.fields.tx === tx.hash);
+    for (const s of s006) {
+      const e = named.find(x => x.logIndex === s.fields.log_index);
+      requireFact(e, `S006 ${s.locator}`);
+      same([e.asset, e.from, e.amount, tokenId], [DTF, s.fields.transfer_from.toLowerCase(), s.fields.dtf_wei, s.fields.bond_token_id], "S006 payment");
+    }
+    const history = await historical(d, tx);
+    rows.push({ tokenId, original, payer, paymentRecipient: PARENT, transaction: tx, receipt, archiveIndex,
+      canonicalWitnesses, mint: mint[0], purchase: bought[0], words, tokenIn, amountIn,
+      branch: first ? "first-full-book" : "live-ordinary", opening, components: component, namedTransfers: named,
+      protocolTransfers: transfers.filter(x => [PARENT, hook, staking].includes(x.asset)),
+      transferWitnesses, s006, history, flags: prior.flags, priorQualifications: prior.qualifications,
+      economicOrigins: prior.economicOrigins, currentOwner: prior.currentOwner, currentPosition: prior.currentPosition,
+      currentStateEvidence: prior.currentStateEvidence, approvedE0: null, approvedD0: null, approvedC0: null,
+      netOriginalCapital: null, nativeInternalRefunds: null, priorCompensation: null, eligibility: null });
+  }
+  same(rows.length, 39, "39 independently derived direct originals");
+  same(indirect.map(x => x.tokenId), ["19", "20", "23", "42"], "four unchanged indirect originals");
+  const producer = await json(resolve(SOURCE, "direct-attribution.json"));
+  same(producer.rows.length, rows.length, "producer row population");
+  for (const row of rows) {
+    const p = producer.rows.find(x => x.tokenId === row.tokenId);
+    requireFact(p, "producer direct row exists");
+    for (const k of ["original", "payer", "paymentRecipient", "transaction", "branch", "flags", "economicOrigins", "currentOwner", "currentPosition", "currentStateEvidence"]) same(p[k], row[k], `producer ${k}/${row.tokenId}`);
+    same(p.completeReceipt, row.receipt, "producer complete receipt");
+    same(p.priorQualifications, row.priorQualifications, "old qualifications");
+    same(p.components.map(x => [x.asset, x.unit, x.proposedCallerPaidRaw, x.role]), row.components.map(x => [x.asset, x.unit, x.proposedGross, x.role]), "each producer quantity and role");
+    same(p.originalTransferWitnesses, row.transferWitnesses, "complete saved transfers"); same(p.originalS006Witnesses, row.s006, "complete S006");
+    for (const k of ["originalCostDtf18", "originalCostWeth18", "nativeInternalRefunds", "netOriginalCapital", "priorCompensation", "approvedE0", "approvedD0", "approvedC0", "eligibility"]) same(p[k], null, `unknown ${k}`);
+    same(p.financialApproval, false, "not financially approved");
+  }
+  const context = await json(resolve(SOURCE, "untouched-context.json"));
+  for (const row of indirect) {
+    const p = context.indirect.find(x => x.tokenId === row.tokenId);
+    for (const k of ["original", "transaction", "flags", "proposedWeth18", "proposedDtf18"]) same(p[k], row[k], `unchanged G2 ${k}`);
+  }
+  same(context.earlier, (await json(resolve(P32, "source/reconcile-01.stdout"))).rows.filter(x => x.sourceId === "S009"), "all earlier proposals unchanged");
+  return { d, rows, indirect, earlier: context.earlier };
+}

@@ -1,0 +1,69 @@
+{
+  "purpose": "synthetic-wire-fixture-not-evm",
+  "domain": {
+    "chainId": "4663",
+    "proxy": "0x000000000000000000000000000000000000000a",
+    "snapshotId": "0x7e4a942809f324bb12dfaaf9790cd9e5d8df724fec632c9fa91d76e3109c8768"
+  },
+  "payloads": {
+    "configure": {
+      "independent": [{
+        "input": {
+          "recipient": "0x0000000000000000000000000000000000000014",
+          "evidenceId": "0x00000000000000000000000000000000000000000000000000000000000000cb",
+          "entitlements": [{
+            "entitlementId": "0x00000000000000000000000000000000000000000000000000000000000000c8",
+            "originalEth": "90071992547409931234",
+            "originalDtf": "110",
+            "evidenceId": "0x00000000000000000000000000000000000000000000000000000000000000c9"
+          }]
+        },
+        "configurationId": "0x56c42991e51677da7111d024357756b9cf060a6a4f5a66a21e569a4c67fddb27",
+        "quotedCredit": "9007199254740993133"
+      }],
+      "nfts": [{
+        "input": {
+          "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+          "tokenId": "3",
+          "originalUnits": "2281854312954086546",
+          "originalEth": "100",
+          "originalDtf": "22",
+          "evidenceId": "0x00000000000000000000000000000000000000000000000000000000000000cc",
+          "contributionsKnown": true
+        },
+        "configurationId": "0xa7934e1e42639c7594fdfb57175c8679fb14b7d20150a4df6b295652cf33a43c",
+        "originalId": "0x122ed3bd1072cc6ad7c5405fe453fe90d826667c313536cee5bc6a7fdab71fe1",
+        "quotedCredit": "12"
+      }, {
+        "input": {
+          "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "tokenId": "3",
+          "originalUnits": "100",
+          "originalEth": "100",
+          "originalDtf": "22",
+          "evidenceId": "0x00000000000000000000000000000000000000000000000000000000000000ca",
+          "contributionsKnown": true
+        },
+        "configurationId": "0x2352b45ca38da9b58990d026374fc45574a3b56e419a0ab5a633420f19ab303c",
+        "originalId": "0x01332526ab524f588b2148fc0b55581b8cc045c19e49f8f0c84fa686454e5115",
+        "quotedCredit": "12"
+      }]
+    },
+    "independentIssue": {
+      "requests": [{
+        "recipient": "0x0000000000000000000000000000000000000014",
+        "configurationId": "0x56c42991e51677da7111d024357756b9cf060a6a4f5a66a21e569a4c67fddb27"
+      }]
+    },
+    "harvest": { "steps": [], "deadline": "0" }
+  },
+  "payloadHash": "890836bf556ac8cec25d32ea6f5e0f8b14943965cb4dd7bb4636c5504b2b68dc",
+  "quotes": [{
+    "originalEth": "100", "originalDtf": "22",
+    "ethCredit": "10", "dtfCredit": "2", "credit": "12"
+  }, {
+    "originalEth": "90071992547409931234", "originalDtf": "110",
+    "ethCredit": "9007199254740993123", "dtfCredit": "10", "credit": "9007199254740993133"
+  }],
+  "fullTask9": "open"
+}

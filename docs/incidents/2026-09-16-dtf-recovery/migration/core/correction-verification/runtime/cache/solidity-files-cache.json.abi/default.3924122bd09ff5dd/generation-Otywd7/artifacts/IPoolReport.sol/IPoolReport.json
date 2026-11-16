@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"getPoolReport","inputs":[],"outputs":[{"name":"","type":"tuple","internalType":"struct PoolReport","components":[{"name":"poolImplementation","type":"address","internalType":"address"},{"name":"poolConfiguratorImplementation","type":"address","internalType":"address"}]}],"stateMutability":"view"}],"id":1732}

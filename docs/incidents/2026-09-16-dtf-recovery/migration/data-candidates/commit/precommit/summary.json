@@ -1,0 +1,105 @@
+{
+  "capturedBeforeStaging": true,
+  "commitDirExisted": false,
+  "head": "0856a5c56e5d09b81c669f59b613efef79133e19",
+  "parents": "0856a5c56e5d09b81c669f59b613efef79133e19 137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+  "branch": "work/dtf-migration-phase-27-data-candidates",
+  "reportBytes": 25267,
+  "reportSha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5",
+  "acceptedPaths": 10,
+  "frozenSourceIdentities": 62,
+  "cacheAbsent": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/cache",
+    "exists": false,
+    "error": "ENOENT"
+  },
+  "foundryCacheLine": "cache_path = 'cache_forge'",
+  "counts": {
+    "docsContent": 348,
+    "docsPerms": 383,
+    "outContent": 7376,
+    "outPerms": 13856,
+    "cacheForgeContent": 6502,
+    "cacheForgePerms": 12368,
+    "originalRecoveryContent": 25,
+    "originalRecoveryPerms": 27,
+    "originalPreExploitContent": 12,
+    "originalPreExploitPerms": 13,
+    "recoveredContent": 30,
+    "recoveredPerms": 35,
+    "indexes": 29,
+    "foreignIndexes": 28,
+    "refs": 54,
+    "hostSymlinks": 2,
+    "authorities": 4,
+    "sealMemberMismatches": 0
+  },
+  "git": {
+    "statusExit": 0,
+    "diffExit": 0,
+    "diffBytes": 7305,
+    "cachedExit": 0,
+    "cachedBytes": 0,
+    "showRefExit": 0,
+    "showRefBytes": 6482,
+    "autocrlfExit": 1,
+    "autocrlf": "",
+    "gpgsignExit": 0,
+    "gpgsign": "true",
+    "gpgProgramExit": 1,
+    "gpgProgram": "",
+    "upstreamExit": 128,
+    "upstreamStderr": "fatal: no upstream configured for branch 'work/dtf-migration-phase-27-data-candidates'"
+  },
+  "testedManifestsOmitModes": true,
+  "inventoryHashes": {
+    "docs-incidents.jsonl": {
+      "bytes": 101196,
+      "sha256": "c53b6a14a58564f8254508490a35ff5d2300ba12cb8deecfbf9da1fa60d02a2d"
+    },
+    "docs-incidents-perms.jsonl": {
+      "bytes": 101235,
+      "sha256": "eb2e996d05c5ab9433cc30039f61c2babe7b62220c3f75111f28b729d8ef21a9"
+    },
+    "out.jsonl": {
+      "bytes": 1960530,
+      "sha256": "6673598e3a68c4b3dd7d747ffea0027f9c55f566c259faff4453b299a9db1771"
+    },
+    "out-perms.jsonl": {
+      "bytes": 2721030,
+      "sha256": "6c69936bfe945823dca2d1b60a81897870c422a976d4b8a9d638e4c2c9dfb72a"
+    },
+    "cache_forge.jsonl": {
+      "bytes": 2297269,
+      "sha256": "167a70ddc88be51f57510a8ed99510b778850e635a26f64009b0c64c73750744"
+    },
+    "cache_forge-perms.jsonl": {
+      "bytes": 3518453,
+      "sha256": "ad05142c9779921a1abba60f51f25985a4caf985568a18a64702422e24237e4c"
+    },
+    "original-recovery.jsonl": {
+      "bytes": 5668,
+      "sha256": "a29c461c60b788748e935c485444eec646d677becabf9f967752f8bceada12de"
+    },
+    "original-recovery-perms.jsonl": {
+      "bytes": 5438,
+      "sha256": "ab1a9b57ce7c852fcbcd67ac75e24e6c8f14923e50922f8859f80e7486f6ac25"
+    },
+    "original-pre-exploit.jsonl": {
+      "bytes": 2692,
+      "sha256": "236335672b9491a04f5eef60bf3542e49bef7cbf145a1aea918d36aea36acf3f"
+    },
+    "original-pre-exploit-perms.jsonl": {
+      "bytes": 2585,
+      "sha256": "e6d6c3b596584a8f76be9d62bd9a3cf3a09228a77f1862174de63c9b168d119b"
+    },
+    "recovered-input.jsonl": {
+      "bytes": 7898,
+      "sha256": "a28a29eb85372bf3c41c3f4d461475b7b0aaba7d9bfbdb8ead12b2f222c44800"
+    },
+    "recovered-input-perms.jsonl": {
+      "bytes": 8076,
+      "sha256": "1caf7f698a7113d62eed6c92b73d4f70115c89439137a5a9e311b13291145e73"
+    }
+  }
+}

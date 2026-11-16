@@ -1,0 +1,175 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+/**
+ * @title IUniswapV4SeBufferHook
+ * @notice DETF-facing discovery, swap, and liquidity surface for Uni V4 SE buffer hooks.
+ * @dev PRD DETF_INSTANCE_IO_ROUTING §15.12. Family deposit and boolean swap-preview names are not on this surface.
+ */
+interface IUniswapV4SeBufferHook {
+    /* ---------------------------------------------------------------------- */
+    /*                               Discovery                                */
+    /* ---------------------------------------------------------------------- */
+
+    function tokens() external view returns (address[] memory);
+
+    function standardExchangeOf(address token) external view returns (address);
+
+    /// @notice D60: configured rate providers in pool order (address(0) on a leg without one).
+    function rateProviders() external view returns (address[] memory);
+
+    /// @notice D60: configured rate provider for `token` (address(0) when none or unknown).
+    function rateProvider(address token) external view returns (address);
+
+    function syntheticNumeraires() external view returns (address[] memory);
+
+    function requiredFirstBondTokens() external view returns (address[] memory);
+
+    function firstJoinMustBeFullBook() external view returns (bool);
+
+    function isLive() external view returns (bool);
+
+    function tradingFeeWad() external view returns (uint256);
+
+    /* ---------------------------------------------------------------------- */
+    /*                                  Swap                                  */
+    /* ---------------------------------------------------------------------- */
+
+    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn);
+
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external returns (uint256 amountIn);
+
+    /* ---------------------------------------------------------------------- */
+    /*                               Liquidity                                */
+    /* ---------------------------------------------------------------------- */
+
+    function previewJoinProportional(uint256[] calldata amounts)
+        external
+        view
+        returns (uint256 shares, uint256[] memory usedAmounts);
+
+    function joinProportional(
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares, uint256[] memory usedAmounts);
+
+    function previewJoinUnbalanced(address[] calldata tokens, uint256[] calldata amounts)
+        external
+        view
+        returns (uint256 shares);
+
+    function joinUnbalanced(address[] calldata tokens, uint256[] calldata amounts, address to, uint256 sharesMin, uint256 deadline)
+        external
+        returns (uint256 shares);
+
+    function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
+        external
+        view
+        returns (uint256 shares);
+
+    function joinSingleAssetExactIn(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function previewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut)
+        external
+        view
+        returns (uint256 amountIn);
+
+    function joinSingleAssetExactOut(
+        address tokenIn,
+        uint256 sharesOut,
+        address to,
+        uint256 amountInMax,
+        uint256 deadline
+    ) external returns (uint256 amountIn);
+
+    function previewExitProportional(uint256 shares) external view returns (uint256[] memory amounts);
+
+    function exitProportional(
+        uint256 shares,
+        address to,
+        uint256[] calldata amountsMin,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function previewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function exitSingleAssetExactBptIn(
+        address tokenOut,
+        uint256 sharesIn,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    function previewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 sharesIn);
+
+    function exitSingleAssetExactTokenOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) external returns (uint256 sharesIn);
+}
+
+/// @notice DETF-denominated reserve claim value after a self-token join.
+interface IUniswapV4SeBufferHookClaimQuote {
+    function previewClaimAfterJoin(uint256 detfIn, uint256 lpAmount) external view returns (uint256 detfValue);
+}
+
+/// @notice Realizable DETF from a proportional reserve exit followed by ordered swaps.
+interface IUniswapV4SeBufferHookClaimExitQuote {
+    function previewClaimExit(uint256 lpAmount) external view returns (uint256 detfValue);
+}
+
+/// @notice Live liquidity funded by explicit native components in pool-token order.
+/// @dev Paid in-kind preparation precedes component-proportional acceptance.
+///      Unaccepted components are refunded to the caller; this is not a genesis route.
+interface IUniswapV4SeBufferHookNativeLiquidity {
+    function previewJoinNativeComponents(uint256[] calldata localAmounts, uint256[] calldata shareAmounts)
+        external view returns (uint256 netLp);
+
+    function joinNativeComponents(
+        uint256[] calldata localAmounts,
+        uint256[] calldata shareAmounts,
+        address to,
+        uint256 minLp,
+        uint256 deadline
+    ) external returns (uint256 netLp);
+}

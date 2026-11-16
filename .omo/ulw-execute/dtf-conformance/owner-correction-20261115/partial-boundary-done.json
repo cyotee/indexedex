@@ -1,0 +1,618 @@
+{
+  "type": "DoneClaim",
+  "task": "final-wave-bounded-partial-boundary-bookkeeping",
+  "status": "PARTIAL-BOUNDARY-RECORDED",
+  "recordedAt": "2026-11-15T19:43:30.099Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "bookkeeping_complete": true,
+  "ready_for_independent_bounded_review": true,
+  "readiness_release": false,
+  "full_goal_met": false,
+  "task15_full_acceptance": false,
+  "blocked_acceptance_requeued": false,
+  "known_unmet_tasks": [
+    10,
+    12,
+    13,
+    14,
+    15
+  ],
+  "confirmed_rows": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "16",
+    "8",
+    "9",
+    "11"
+  ],
+  "pending_final_reviews": [
+    "F1",
+    "F2",
+    "F3",
+    "F4"
+  ],
+  "boundary": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/boundary.md",
+  "inventory": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+    "sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+    "bytes": 33680555,
+    "format": "Existing recorder Audit schema; complete current migration-tree entries plus explicit exterior companion catalog.",
+    "destinationEntries": 123368,
+    "typeCounts": {
+      "directory": 25127,
+      "file": 98075,
+      "symlink": 166
+    },
+    "sourceEntries": 13613,
+    "parentInventory": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected/inventory.json",
+      "sha256": "bcbdadd8fd7b38d3a479f1a5d62ee745278bd611778e80a75b30b87b523fff36"
+    },
+    "selfReferenceException": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/ulw-execute/dtf-conformance/owner-correction-20261115/partial-boundary-done.json"
+    ],
+    "sourceCatalog": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/task-owned-files.json",
+    "sourceCatalogEntries": 311,
+    "sourceCatalogChangesAtPublication": [],
+    "allOtherOwnedBookkeepingFilesHaveRawHashes": true,
+    "missingOwnedHashes": []
+  },
+  "authentic_delivery": {
+    "input": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-input.json",
+    "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected/delivery.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/boundary-result-corrected.json",
+    "commandReceipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/result.json",
+    "actual_exit": 1,
+    "completed": false,
+    "failures": 340,
+    "failureClasses": {
+      "different retained bytes/type; unresolved divergence": 4,
+      "unresolved symlink in delivered tree": 166,
+      "different bytes/type": 4,
+      "unresolved new symlink": 166
+    },
+    "remainingDistinctGaps": {
+      "retainedSymlinks": 166,
+      "retainedByteDivergences": [
+        "recovery-route-disposition.md",
+        "resumed-integration/verify-bounded-deployments.ts",
+        "source-manifest.json",
+        "source-route-matrix.md"
+      ],
+      "messageCounting": "Two messages per preserved symlink and two checks per divergent retained file; 340 messages do not mean 340 distinct missing files."
+    },
+    "failurePreservedAsFailure": true
+  },
+  "origin": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory/inventory.json",
+    "sha256": "96f58a6617b92a2d550783cd1efaaa1fc62de10614ee25984c05599770c2dab2",
+    "retainedSourceEntries": 13613,
+    "oldDestinationEntries": 72860,
+    "currentDiscoveryEntries": 123312,
+    "destinationDifferences": 50456,
+    "oldDestinationEntriesMissing": 0,
+    "retainedSourceIdentityDifferences": 0,
+    "differenceLedger": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/origin-differences.json",
+    "oldOriginNotOverwritten": true
+  },
+  "source_and_ownership": {
+    "catalog": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/task-owned-files.json",
+    "dispositions": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/ownership-dispositions.json",
+    "unverifiedRehearsalPaths": [
+      {
+        "path": "scripts/recovery/dtf-migration/rehearse.ts",
+        "sha256": "0095635f033fde52cb4d3349333d7d61ee2c0916a09f3de0319e8c9897e18265",
+        "bytes": 51113,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+        "bytes": 31166,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Generated pricing-ABI binding independently confirmed; broader task-10 fixture changes are not independently lifecycle verified.",
+        "mixedOwnership": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "sha256": "29451c33fca5ace782a657ab942efbc6e235b94f7838ebd2881df72463e620f7",
+        "bytes": 16710,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "sha256": "15ff421c881fba204e0b8178e6992155493a97f3d89999282caae64810325962",
+        "bytes": 14462,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "sha256": "9ebf5c44cf38381da213f3c3ee6b633b9cbac93e3c111f59b8fd3fd147bea286",
+        "bytes": 14625,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+        "sha256": "0d8afc388603c7a5929540a4823a67bf4fdae4c6e78c943d33d9f889820f585b",
+        "bytes": 17437,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "sha256": "0c6c5f27baabeb61898aef7f2b74bdf3ee444f577ca6beff19af9bdf003ae628",
+        "bytes": 11342,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "sha256": "031179dad9816047f5972006f3720eed9517840b24674fb6ca45ef0afb562c67",
+        "bytes": 13370,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+        "sha256": "d5c78110ab49ca60919579358ff52adeea351d0a7dd5796382afd36fa8e71950",
+        "bytes": 7916,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+        "mixedOwnership": false
+      },
+      {
+        "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+        "sha256": "1118fe12dc84e21a6ba788a4b1ee6620bf865c93a6c4be0f76b5917cc314206c",
+        "bytes": 7610,
+        "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+        "verifiedScope": "Solar artifact build and genuine environment deployment producer evidence only.",
+        "mixedOwnership": false
+      }
+    ],
+    "mixedOwnership": "rehearsal-data.ts retains confirmed pricing-ABI binding together with unverified rehearsal changes; no blind revert.",
+    "confirmedOperatorBindings": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "sha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "admittedSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "matchesAdmitted": true,
+        "ownership": "Parent repair workers; untouched by task-10 executor.",
+        "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "sha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "admittedSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "matchesAdmitted": true,
+        "ownership": "Parent repair workers; untouched by task-10 executor.",
+        "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution.ts",
+        "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+        "admittedSha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+        "matchesAdmitted": true,
+        "ownership": "Parent repair workers; untouched by task-10 executor.",
+        "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+      }
+    ],
+    "bothDeliveredHelpers": [
+      {
+        "path": "resumed-integration/record-verification.ts",
+        "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "size": 20293,
+        "type": "file",
+        "oldOriginSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "originalTask2Sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "currentTask13Sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "disposition": "Both real delivered programs are present; retain original/archive versus current source identity distinctions."
+      },
+      {
+        "path": "resumed-integration/verify-bounded-deployments.ts",
+        "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+        "size": 18846,
+        "type": "file",
+        "oldOriginSha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed",
+        "originalTask2Sha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed",
+        "currentTask13Sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+        "disposition": "Both real delivered programs are present; retain original/archive versus current source identity distinctions."
+      }
+    ],
+    "externalSourceScopeLimit": "The existing recorder checks the migration directory; exterior file identities are the explicit companion catalog. No full-tree behavior certification is inferred.",
+    "vendorEnvironmentMaterial": "Every migration-tree entry remains included. Copied QA/vendor/environment contents are classified as retained copies rather than new authored work; external link targets are not followed.",
+    "intentionalOrObservedSourceTombstones": [
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+        "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+        "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+        "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+        "disposition": "Recorded deletion/absence; not silently excluded. No restoration is authorized."
+      }
+    ],
+    "unrelatedFiles": "Read-only Git scope captured; only owned boundary outputs and this final claim were written."
+  },
+  "controlEvidence": {
+    "snapshot": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/control-evidence.json",
+    "brief": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/final-review-brief-binding.json",
+    "liveControlLimit": "Actual raw dated observations are retained, not fabricated historical frozen-source preimages. No current plan/control was edited.",
+    "currentCatalogSourceChanges": []
+  },
+  "retained_runtime": {
+    "terminationReceipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json",
+    "checkpointFiles": 107,
+    "checkpointBytes": 677799,
+    "checkpointPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-runtime-01/checkpoints",
+    "replayReadyClaim": false,
+    "rawTerminationBindings": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/command.json",
+        "expected": "bb3c68a8eec8e768281576724ddd2933c0bd631eb21982d2e2cca4131c7482bd",
+        "current": "bb3c68a8eec8e768281576724ddd2933c0bd631eb21982d2e2cca4131c7482bd",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/stdout.log",
+        "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/stderr.log",
+        "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "matches": true
+      }
+    ],
+    "normalAttempt52Exit": null,
+    "normalAttempt52ResultInvented": false
+  },
+  "bookkeeping_attempt_history": {
+    "initialDelivery": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery/delivery.json",
+      "actualExit": 1,
+      "failures": 343,
+      "generatedOrderingIssues": 3,
+      "preserved": true
+    },
+    "inputGeneratorSyntaxFailure": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input/result.json",
+      "actualExit": 1,
+      "preserved": true
+    },
+    "successfulInputCorrection": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input-fixed/result.json",
+      "actualExit": 0
+    },
+    "ownedInputRefresh": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/refresh-input/result.json",
+      "actualExit": 0
+    },
+    "firstPublishedBaseline": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory-before-input-correction.json",
+    "disposition": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/bookkeeping-attempt-disposition.md",
+    "noExternalSourceOrAcceptanceChange": true
+  },
+  "commands": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input/result.json",
+      "argv": [
+        "bun",
+        "--eval",
+        "import {readFile,writeFile} from \"node:fs/promises\";import {createHash} from \"node:crypto\";const p=\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/current-input.json\";const b=await readFile(p);const a=JSON.parse(b.toString());a.generatedAuditRecords=[p,\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery/inventory.json\"];a.parentInventory={path:p,sha256:createHash(\"sha256\").update(b).digest(\"hex\")};a.qualification+=\" Corrected input declares only audit records that actually exist before delivery; the earlier ordering failure remains preserved.\";await writeFile(\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/corrected-input.json\",JSON.stringify(a)+\"\n\",{flag:\"wx\"});console.log(\"CURRENT_INPUT_CORRECTED\");"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T19:37:15.675Z",
+      "finished": "2026-11-15T19:37:15.682Z",
+      "exit": 1,
+      "signal": null,
+      "stdoutBytes": 0,
+      "stderrBytes": 2274,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input/stderr.log",
+      "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input/command.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery/result.json",
+      "argv": [
+        "bun",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/current-input.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T19:34:53.208Z",
+      "finished": "2026-11-15T19:35:24.938Z",
+      "exit": 1,
+      "signal": null,
+      "stdoutBytes": 44,
+      "stderrBytes": 81588,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery/stderr.log",
+      "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery/command.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/result.json",
+      "argv": [
+        "bun",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-input.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T19:41:06.528Z",
+      "finished": "2026-11-15T19:41:41.435Z",
+      "exit": 1,
+      "signal": null,
+      "stdoutBytes": 44,
+      "stderrBytes": 80842,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/stderr.log",
+      "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/command.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input-fixed/result.json",
+      "argv": [
+        "bun",
+        "--eval",
+        "import {readFile,writeFile} from \"node:fs/promises\"; import {createHash} from \"node:crypto\"; const p=\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/current-input.json\"; const b=await readFile(p); const a=JSON.parse(b.toString()); a.generatedAuditRecords=[p,\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery/inventory.json\"]; a.parentInventory={path:p,sha256:createHash(\"sha256\").update(b).digest(\"hex\")}; a.qualification+=\" Corrected self-reference ordering; prior failed attempt preserved.\"; await writeFile(\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/corrected-input.json\",JSON.stringify(a),{flag:\"wx\"}); console.log(\"CURRENT_INPUT_CORRECTED\");"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T19:38:07.996Z",
+      "finished": "2026-11-15T19:38:08.062Z",
+      "exit": 0,
+      "signal": null,
+      "stdoutBytes": 24,
+      "stderrBytes": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input-fixed/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input-fixed/stderr.log",
+      "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/correct-input-fixed/command.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/discovery/result.json",
+      "argv": [
+        "bun",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T19:24:51.106Z",
+      "finished": "2026-11-15T19:25:27.668Z",
+      "exit": 0,
+      "signal": null,
+      "stdoutBytes": 63,
+      "stderrBytes": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/discovery/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/discovery/stderr.log",
+      "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/discovery/command.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/assemble/result.json",
+      "argv": [
+        "bun",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/assemble-current-inventory.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T19:30:31.898Z",
+      "finished": "2026-11-15T19:30:32.055Z",
+      "exit": 0,
+      "signal": null,
+      "stdoutBytes": 57,
+      "stderrBytes": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/assemble/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/assemble/stderr.log",
+      "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/assemble/command.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/refresh-input/result.json",
+      "argv": [
+        "bun",
+        "--eval",
+        "import {readFile,writeFile,readdir,lstat,readlink} from \"node:fs/promises\";\nimport {join,relative} from \"node:path\"; import {createHash} from \"node:crypto\";\nconst d=\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary\"; const p=join(d,\"corrected-input.json\"); const b=await readFile(p); const a=JSON.parse(b.toString()); const hash=x=>createHash(\"sha256\").update(x).digest(\"hex\");\nconst m=new Map(a.destination.map(e=>[e.path,e])); const walk=async f=>{for(const n of (await readdir(f)).sort()){const x=join(f,n);const s=await lstat(x);const p=relative(a.destinationRoot,x);if(s.isDirectory()){m.set(p,{path:p,type:\"directory\",size:0,sha256:null});await walk(x);}else if(s.isSymbolicLink()){const link=await readlink(x);m.set(p,{path:p,type:\"symlink\",size:Buffer.byteLength(link),sha256:hash(link),link});}else if(s.isFile()){const raw=await readFile(x);m.set(p,{path:p,type:\"file\",size:raw.length,sha256:hash(raw)});}}}; await walk(d);\na.destination=[...m.values()].sort((x,y)=>x.path.localeCompare(y.path)); a.parentInventory={path:p,sha256:hash(b)}; a.generatedAuditRecords=[join(d,\"delivery-input.json\"),join(d,\"discovery/inventory.json\")]; a.qualification+=\" Owned bookkeeping hashes refreshed from actual completed outputs; no external-source entry, retained difference, symlink or acceptance is weakened.\";\nawait writeFile(join(d,\"delivery-input.json\"),JSON.stringify(a),{flag:\"wx\"}); console.log(\"DELIVERY_INPUT_READY entries=\"+a.destination.length);"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "started": "2026-11-15T19:40:06.517Z",
+      "finished": "2026-11-15T19:40:06.830Z",
+      "exit": 0,
+      "signal": null,
+      "stdoutBytes": 36,
+      "stderrBytes": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/refresh-input/stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/refresh-input/stderr.log",
+      "metadata": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/refresh-input/command.json"
+    }
+  ],
+  "readOnlyGitReceipts": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/probes",
+  "publisher": {
+    "argv": [
+      "bun",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/publish-boundary.ts",
+      "corrected"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "actualExit": 0,
+    "rawMonitorOutput": "BOUNDARY_PUBLISHED entries=123368 recorderExit=1 failures=340 sourceChanges=0",
+    "monitor": "mon_EEAR33AAXVZG00EB"
+  },
+  "cleanup": {
+    "bookkeepingCommandsFinished": true,
+    "pendingOwnedProcesses": [],
+    "pendingOwnedMonitors": [],
+    "temporaryRuntimeResourcesCreated": false,
+    "originalRuntimeTeardownNotRepeated": true,
+    "unrelatedResourcesUntouched": true,
+    "finiteBookkeepingOutputRetained": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/boundary.md",
+      "sha256": "61f43a985d9e2d1369f38c2ca507249fa80465ce610a36c0ecc1c7cddf199802",
+      "bytes": 8964
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+      "sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+      "bytes": 33680555
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/task-owned-files.json",
+      "sha256": "f8381d105ec4bef621ae7a622cf7fcdbd6cab594cc4f35bca17aac3c9e8e256e",
+      "bytes": 164873
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/control-evidence.json",
+      "sha256": "7c78608dd004206b2a758012d8ef648320090e1cab1207e0eba9b7682fa290c0",
+      "bytes": 1708411
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/final-review-brief-binding.json",
+      "sha256": "aaf18ec0109211daf9a5f81503f3df3b6e457dcfb424f37f888f44302908c1a1",
+      "bytes": 9671
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/origin-differences.json",
+      "sha256": "dcaff27c910c64ac0b50ac780fbc3dc1d6677aee9db9c19812d4bf5cec51bf96",
+      "bytes": 26594591
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/ownership-dispositions.json",
+      "sha256": "249586cb1e4e4237c3e06658a0396cbef7830c55244be9c55baadddc98efa7c8",
+      "bytes": 43996
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/current-input.json",
+      "sha256": "d92d2effb800f8c849419936f7713ff3fd1316edffa7558b3b1246f12f65d8a8",
+      "bytes": 33669826
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/corrected-input.json",
+      "sha256": "a6a6e97e2ccd5dff2c6f83c51ff6ae17a5bf01d0c7c63b888e96dfc72c65a37e",
+      "bytes": 33669365
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-input.json",
+      "sha256": "a2c48298f170ead291d3d984fc970ee060431fe7a00a71f28b38e24eb1b88f07",
+      "bytes": 33677800
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery/inventory.json",
+      "sha256": "4d8d416b7dac2bbea67d496a979a1edd09b4f296c08703bab14900e69e629049",
+      "bytes": 33668499
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/discovery/differences.txt",
+      "sha256": "d329ebf71bcf9af0cb14491fa35fdc04df8c8903dfd084b001a54b5be11b7c61",
+      "bytes": 1260
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery/inventory.json",
+      "sha256": "09c2517aea7f034f15c68a03582c587c181acc6fded449ef2c2570bdbbb73e8b",
+      "bytes": 33673323
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery/delivery.json",
+      "sha256": "d895c0dcf043d075012ab6b95435182533e7e696d55c7a1e80815f0995e1c556",
+      "bytes": 79858
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected/inventory.json",
+      "sha256": "bcbdadd8fd7b38d3a479f1a5d62ee745278bd611778e80a75b30b87b523fff36",
+      "bytes": 33679003
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected/delivery.json",
+      "sha256": "62567227331d35062e499681536c9cc7cd060a2f138fdc2db28363fdee1370a6",
+      "bytes": 78104
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/boundary-result.json",
+      "sha256": "af7bce4209fe69d6143f8e6097abdb0878fc4152da80ef22964720278df4c158",
+      "bytes": 82024
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/boundary-result-corrected.json",
+      "sha256": "4a93c3ba7ee66c25535e8ae6f9a271b93145447cf86bf3e5022ea4fb4084971b",
+      "bytes": 81351
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory-before-input-correction.json",
+      "sha256": "00848d2c9fe85ee59b56023a0ef926ca7fadbbf7c9e0dfe7c1fa44dba9c65d20",
+      "bytes": 33674792
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/bookkeeping-attempt-disposition.md",
+      "sha256": "1995ec702e11816db0fe12acceeec012d44910fdc07811d9221ec62b8098da06",
+      "bytes": 1839
+    }
+  ],
+  "met": [
+    "Read the updated bounded final-wave paragraph, stable incomplete task-10 claim, needs-fix/harness verdict, source ownership and termination records.",
+    "Reused unchanged real inventory/delivery machinery with an actual current input; retained every old record and every real failure.",
+    "Published a usable Audit-schema baseline plus explicit exterior source/control identities and raw-byte control evidence.",
+    "Included both delivered helpers, original/renewed reports and claims, all migration evidence and failed attempts, copied QA/environment material and link dispositions.",
+    "Separated eleven confirmed rows from five known unmet rows, ten WIP source paths and four pending final reviews.",
+    "Preserved 107 checkpoint files and the actual forced-termination meaning without restarting runtime.",
+    "Corrected only owned bookkeeping input ordering; preserved both prior failed bookkeeping attempts."
+  ],
+  "unmet": [
+    "Strict recorder delivery remains failed: 166 preserved symlinks and four unresolved retained-byte/source-qualified differences.",
+    "Full task-10 lifecycle and dependent tasks 12-15 remain known unmet.",
+    "F1-F4 reports and verdicts are pending, not fabricated in this baseline."
+  ],
+  "limitations": [
+    "The 28/29 historical helper-source binding limit remains; no missing historical identity is invented.",
+    "Current regular-file hashes and link-text hashes are bookkeeping, not fresh product, contract, network or runtime QA.",
+    "Four current source deletion tombstones have no invented present-file bytes.",
+    "The source catalog is exterior companion scope; the migration-tree recorder does not revalidate those exterior paths itself.",
+    "No full-conformance, task-15 acceptance, landing, merge, commit, public action, financial approval, plan closure or goal completion is authorized."
+  ],
+  "pending_additive_reports": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F2-quality.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F4-fidelity.md"
+  ],
+  "pending_additive_verdicts": [
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F1-verdict.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F2-verdict.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F3-verdict.json",
+    ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F4-verdict.json"
+  ],
+  "later_additive_closeout_executed": false,
+  "plan_boxes_changed": false,
+  "code_or_tests_changed": false,
+  "tests_or_builds_rerun": false,
+  "public_rpc": false,
+  "committed": false,
+  "delegated": false,
+  "written_last": true
+}

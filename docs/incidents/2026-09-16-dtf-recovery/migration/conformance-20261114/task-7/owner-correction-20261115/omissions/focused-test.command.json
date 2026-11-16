@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "bun",
+    "test",
+    "--timeout",
+    "15000",
+    "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+    "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+    "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+    "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+  ],
+  "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/claim-vault.test.ts ./scripts/recovery/dtf-migration/dtf-custody-se.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts ./scripts/recovery/dtf-migration/weighted-sy.test.ts",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "exitCode": 0,
+  "runtime": {
+    "bun": "1.4.2",
+    "revision": "50a8a8387"
+  },
+  "passed": 15,
+  "failed": 0,
+  "elapsedMs": 300,
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "75aeece9077d5e4030344fc06d24ec11054f66a861574908cba0d5c306da4bc8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "sha256": "6e5aebb5c965959823441f8dd8d346e86166ed2901b8eedd70c0ba9f4c7e979c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "sha256": "c2af2343c48f106e1fe77d2892896c98a42ffddf80333d0dbceea805dfc604e1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "sha256": "7ab5b5e1218c7ae89de49169930ca0394cd99221f95b44f65e2db655aeadbba8"
+    }
+  ],
+  "output": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/focused-test.log"
+}

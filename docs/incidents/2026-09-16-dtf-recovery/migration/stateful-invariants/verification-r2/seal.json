@@ -1,0 +1,156 @@
+{
+  "date": "2026-11-12",
+  "head": "15fd629375edeb361f6a39262795bdc66723ca3a",
+  "branch": "work/dtf-migration-phase-24-stateful-invariants",
+  "disposition": "confirmed: complete bounded twelve-property/admitted-supported-unit stateful closure gate",
+  "candidateManifestSha256": "2767c82ada1049bfaa988407146f20a57a0441bf5f740ce4c2793949ed58862d",
+  "producerReportSha256": "bbb1dd84921fb8bf98f7b158b0e58cb560017f84cf303203a838ea7d4f7c18d4",
+  "producerSealSha256": "4a03fe2325aed85208ce9ec418d194e1cd44fa220fb63180176cdcb5466a86e1",
+  "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+  "sourceArtifactDeploymentSha256": "24b51381c83566138c68b6ccf656a0a0547cc4de0387ca0ff162d2eb62ba205c",
+  "executionResultsSha256": "270c5dc454b10c3c449d7922429b91576806f67b2ec717ce733dfbc1dc4ae2b7",
+  "preservationSha256": "7f82b18b3862ad071d1fefc084bef9d5b205bec686d463aabe16071f4ca39cd6",
+  "stoppedAt": "2026-11-12T19:10:46.421Z",
+  "cleanup": {
+    "executionMonitorExitCodes": [
+      0,
+      0,
+      0
+    ],
+    "cleanupMonitorExitCode": 0,
+    "ownedPendingOperation": false,
+    "processes": "No forge/solar/anvil in final process check",
+    "port18574": "No listener",
+    "trackedAndCachedDiff": "quiet with submodules ignored",
+    "originalEvidenceAuthoritiesCandidateIndexRefsLinks": "Raw final preservation comparisons all pass"
+  },
+  "results": {
+    "specs": 171,
+    "forks": 147,
+    "ordinary": 58,
+    "invariants": 4,
+    "runsEach": 32,
+    "depthEach": 16,
+    "selectedCallsEach": 512,
+    "totalSelectedCalls": 2048,
+    "unexpectedReverts": 0,
+    "discards": 0,
+    "closureGaps": 6,
+    "properties": 12,
+    "supportedAdditionalUnitRows": 9
+  },
+  "jsonSyntaxParsed": [
+    "admission.json",
+    "changed-artifact-bytes.json",
+    "cleanup-command.json",
+    "coverage.json",
+    "execution-plan.json",
+    "execution-results.json",
+    "identity-baseline.json",
+    "preservation-final.json",
+    "source-artifact-deployment.json",
+    "source-locators.json"
+  ],
+  "scope": "Only verification-r2 new evidence authored. No source fix, commit, ref/index mutation, public operation, held09 inspection/replay/optimization or provider workaround.",
+  "files": [
+    {
+      "path": "admission.json",
+      "bytes": 204137,
+      "sha256": "2d4a1cc0fff7df1f7de528318198aa90787bb50dd9257950150e2ea398e84391",
+      "mode": 33188
+    },
+    {
+      "path": "changed-artifact-bytes.json",
+      "bytes": 2847097,
+      "sha256": "0e7b97324e449efb09aeed18eacfec2c14c8efada53562f6d3928a99d0ba8f9f",
+      "mode": 33188
+    },
+    {
+      "path": "cleanup-command.json",
+      "bytes": 1301,
+      "sha256": "7b673092d39f336dfc30c3d59aec6b18b19390820fd116b841773637b017cd93",
+      "mode": 33188
+    },
+    {
+      "path": "cleanup-final.log",
+      "bytes": 11197,
+      "sha256": "b4d8f16319a69507833f9218d06a1f669029ff7e79ca2b98a33567f191567873",
+      "mode": 33188
+    },
+    {
+      "path": "coverage.json",
+      "bytes": 25334,
+      "sha256": "e610ee4c16afd849fe6a63c906157e208b87db5907e3c034e455771fda7f7d2a",
+      "mode": 33188
+    },
+    {
+      "path": "execution-plan.json",
+      "bytes": 156899,
+      "sha256": "149342d19ea6d649ba78a6602351b40f8cd11bbee989b0b267cc1cef27e8f4ab",
+      "mode": 33188
+    },
+    {
+      "path": "execution-results.json",
+      "bytes": 100871,
+      "sha256": "270c5dc454b10c3c449d7922429b91576806f67b2ec717ce733dfbc1dc4ae2b7",
+      "mode": 33188
+    },
+    {
+      "path": "forks-final-01.log",
+      "bytes": 3623982,
+      "sha256": "9ac3081f323f60bade37225e779fe6e1a9c137f436eb230052f6d3b632267227",
+      "mode": 33188
+    },
+    {
+      "path": "identity-baseline.json",
+      "bytes": 2766301,
+      "sha256": "73217bf3bf3ae7a9702f592dbd1d5119fde4286e94619207f106380b5ff3593a",
+      "mode": 33188
+    },
+    {
+      "path": "ordinary-final-01.log",
+      "bytes": 325269,
+      "sha256": "22503c95cfbfc31657d2fd426c32dbef8ff4f15ee742cea19e7efbb5d3dd6196",
+      "mode": 33188
+    },
+    {
+      "path": "preservation-final.json",
+      "bytes": 135191,
+      "sha256": "7f82b18b3862ad071d1fefc084bef9d5b205bec686d463aabe16071f4ca39cd6",
+      "mode": 33188
+    },
+    {
+      "path": "report.md",
+      "bytes": 30734,
+      "sha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+      "mode": 33188
+    },
+    {
+      "path": "source-artifact-deployment.json",
+      "bytes": 1057867,
+      "sha256": "24b51381c83566138c68b6ccf656a0a0547cc4de0387ca0ff162d2eb62ba205c",
+      "mode": 33188
+    },
+    {
+      "path": "source-locators.json",
+      "bytes": 33186,
+      "sha256": "a77717a8f1647db26b282f86cafee340e236da29b5f8d659c5e139737f84b2db",
+      "mode": 33188
+    },
+    {
+      "path": "specs-final-01.log",
+      "bytes": 5925231,
+      "sha256": "efd2656c4c6c3350dc6ed1eb1fed441fd605abe66a997d06fc07e33dbf85e609",
+      "mode": 33188
+    },
+    {
+      "path": "tooling-notes.md",
+      "bytes": 1353,
+      "sha256": "255b4d20b97f47423de0a1d934b44518a00f07d2df420384026359affb404c39",
+      "mode": 33188
+    }
+  ],
+  "excludes": [
+    "seal.json (no self hash)"
+  ]
+}

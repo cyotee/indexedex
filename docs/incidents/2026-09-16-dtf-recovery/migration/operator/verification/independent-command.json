@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "scripts/recovery/dtf-migration/cli.ts",
+    "rehearse",
+    "--rpc-alias",
+    "robinhood_mainnet_alchemy",
+    "--fork-block",
+    "108944663",
+    "--port",
+    "18560",
+    "--checkpoint",
+    ".omo-runtime/dtf-migration-operator/checkpoints",
+    "--evidence",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification"
+  ],
+  "pid": 67829,
+  "code": 0,
+  "signal": null,
+  "stdout": "{\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/execution/rehearsal-1794377054937\",\"fullTask9\":\"open\",\"status\":\"bounded-rehearsal-complete\"}\n",
+  "stderr": ""
+}

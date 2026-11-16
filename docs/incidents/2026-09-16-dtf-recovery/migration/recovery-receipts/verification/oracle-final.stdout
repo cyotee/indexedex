@@ -1,0 +1,1 @@
+{"conversions":250,"recoveries":69,"kinds":{"bond_to_sdetf":7,"legacy_weight_to_sy":18,"detf_to_sdetf":138,"sdetf_to_detf":87},"transactions":319,"lanes":[{"lane":"implementation","logs":2228,"savedMatches":319,"rawResponses":1278,"conflicts":0},{"lane":"verification","logs":2228,"savedMatches":319,"rawResponses":1278,"conflicts":0}]}

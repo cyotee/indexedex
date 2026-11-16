@@ -1,0 +1,28 @@
+{
+  "id": 94,
+  "method": "eth_call",
+  "params": [
+    {
+      "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "data": "0xcdffacc6cdffacc600000000000000000000000000000000000000000000000000000000"
+    },
+    "0x3bf008f"
+  ],
+  "request": {
+    "body": "{\"jsonrpc\":\"2.0\",\"id\":94,\"method\":\"eth_call\",\"params\":[{\"to\":\"0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7\",\"data\":\"0xcdffacc6cdffacc600000000000000000000000000000000000000000000000000000000\"},\"0x3bf008f\"]}",
+    "bytes": 204,
+    "sha256": "27e0a8053e8cf6f3d80f3a2960aed002122f47c1902a5cd2b7aba45e8e158c26"
+  },
+  "startedAt": "2026-11-13T11:06:48.014Z",
+  "response": {
+    "body": "{\"jsonrpc\":\"2.0\",\"id\":94,\"result\":\"0x000000000000000000000000343590ed92498739225e351c27133bc2c11b91b9\"}",
+    "bytes": 103,
+    "sha256": "02ca88925b9b550197fb3510f3afae67325c764497bccdf9ae40100d3efe5e57",
+    "raw": true,
+    "receivedBytes": 103,
+    "httpStatus": 200
+  },
+  "result": "0x000000000000000000000000343590ed92498739225e351c27133bc2c11b91b9",
+  "failure": null,
+  "finishedAt": "2026-11-13T11:06:48.104Z"
+}

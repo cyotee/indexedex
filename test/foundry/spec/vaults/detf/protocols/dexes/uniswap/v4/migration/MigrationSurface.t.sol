@@ -19,6 +19,30 @@ import {IUniswapV4DetfMigrationStakedDETF as MigrationReceipt}
     from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol";
 
 contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
+    /// @notice Catches Migration administration leaking into the ordinary registry package or shared storage.
+    function test_ordinaryRegistryPackageCannotAcquireMigrationAuthority() public {
+        _fundAndCapture();
+        _configure(address(this), 1 ether, bytes32("migration-only-original"));
+        bytes memory before_ = abi.encode(migration.migrationWeightedPricing(),
+            migration.independentAllocation(address(this)), IERC20(detf).totalSupply(), receipt.stakingState());
+        _deployBondNftVaultPkg();
+        _deployRebasingClaimTokenPkg();
+        _deployDetfPkg();
+        address ordinary_ = _deployWeightedHookThenDetf(_nLegDetfArgs(2));
+        assertNotEq(ordinary_, detf);
+        assertFalse(IERC165(ordinary_).supportsInterface(type(Allocation).interfaceId));
+        assertEq(IDiamondLoupe(ordinary_).facetAddress(Allocation.setMigrationWeightedPricing.selector), address(0));
+        assertEq(IDiamondLoupe(ordinary_).facetAddress(Allocation.issueIndependentAllocations.selector), address(0));
+        assertEq(IDiamondLoupe(ordinary_).facetAddress(Migration.surrenderMigrationNft.selector), address(0));
+        (bool ok_, bytes memory reason_) = ordinary_.call(
+            abi.encodeCall(Allocation.setMigrationWeightedPricing, (_manualInputs())));
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.setMigrationWeightedPricing.selector));
+        assertEq(abi.encode(migration.migrationWeightedPricing(), migration.independentAllocation(address(this)),
+            IERC20(detf).totalSupply(), receipt.stakingState()), before_, "ordinary deployment cannot mutate Migration");
+    }
+
+    /// @notice J2: catches a declared package selector missing or routed to a different deployed facet.
     function test_allPackageCutsReachRealProxyAndFitEip170() public {
         IDiamond.FacetCut[] memory cuts_ = migrationPkg.facetCuts();
         for (uint256 i_; i_ < cuts_.length; ++i_) {
@@ -39,10 +63,11 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
         assertLe(address(migrationPkg).code.length, 24576);
     }
 
+    /// @notice J1/J3: catches missing interface declarations and any administration route surviving the cut.
     function test_adminDeclarationMatchesInterfaceAndCannotBeRestored() public {
         bytes4[] memory expected_ = new bytes4[](8);
         expected_[0] = Allocation.bootstrapMigrationReserve.selector;
-        expected_[1] = Allocation.captureMigrationSnapshot.selector;
+        expected_[1] = Allocation.setMigrationWeightedPricing.selector;
         expected_[2] = Allocation.configureIndependentAllocations.selector;
         expected_[3] = Allocation.issueIndependentAllocations.selector;
         expected_[4] = Allocation.activateMigration.selector;
@@ -75,14 +100,22 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
         ));
         assertFalse(packageUpdate_);
         assertFalse(IERC165(detf).supportsInterface(type(Allocation).interfaceId));
-        for (uint256 i_; i_ < expected_.length; ++i_) assertEq(IDiamondLoupe(detf).facetAddress(expected_[i_]), address(0));
-        for (uint256 i_; i_ < directSelectors_.length; ++i_) assertEq(IDiamondLoupe(detf).facetAddress(directSelectors_[i_]), address(0));
+        for (uint256 i_; i_ < expected_.length; ++i_) _assertRemoved(expected_[i_]);
+        for (uint256 i_; i_ < directSelectors_.length; ++i_) _assertRemoved(directSelectors_[i_]);
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureClaimVaultEntitlements.selector), address(0));
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedReceiptEntitlements.selector), address(0));
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureEarlierReceiptEntitlements.selector), address(0));
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureHeldSeLpEntitlements.selector), address(0));
     }
 
+    function _assertRemoved(bytes4 selector_) private {
+        assertEq(IDiamondLoupe(detf).facetAddress(selector_), address(0));
+        (bool ok_, bytes memory reason_) = detf.call(abi.encodeWithSelector(selector_));
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", selector_));
+    }
+
+    /// @notice Catches metadata showing linear principal release on a compensation cliff.
     function test_realTokenUriNumericCliffBoundaries() public {
         _fundAndCapture();
         _configure(address(this), 1 ether, bytes32("metadata"));
@@ -101,6 +134,7 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
         assertEq(vm.parseJsonUint(_json(id_), ".attributes[14].value"), 10000);
     }
 
+    /// @notice Catches an arbitrary caller using stale child index arguments to manufacture backing.
     function test_wrongCustodyCallerCannotUseStaleIndexOrCreateBacking() public {
         _fundAndCapture();
         uint256 k_ = receipt.stakingState().gonsPerUnit;

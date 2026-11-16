@@ -1,0 +1,1 @@
+{"abi":[{"type":"constructor","inputs":[{"name":"vault","type":"address","internalType":"contract IVault"}],"stateMutability":"nonpayable"}],"id":1174}

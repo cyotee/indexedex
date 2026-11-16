@@ -1,0 +1,40 @@
+status: completed exit_code: 0
+✓ blocks underlying-se without forging executable config [3.02ms]
+✓ blocks fungible-lp without forging executable config [3.07ms]
+✓ blocks earlier-liquidation without forging executable config [2.87ms]
+✓ rejects a nonconserving origin partition [3.75ms]
+✓ rejects combined quotes that differ from independent frozen component quotes [20.91ms]
+✓ revalidates persisted manifest payloads and refuses overwrite [98.86ms]
+✓ actual CLI prepares and validates through read-only transport [233.52ms]
+✓ rejects missing RPC and synthetic nonlocal endpoints [5.18ms]
+✓ rejects ambiguous or executing preparation arguments prepare --input a --input b --output c [0.10ms]
+✓ rejects ambiguous or executing preparation arguments validate --manifest x --broadcast [0.04ms]
+✓ rejects ambiguous or executing preparation arguments validate --manifest x --execute-local [0.02ms]
+✓ rejects ambiguous or executing preparation arguments prepare --input a [0.01ms]
+✓ rejects invalid recovery fields and unproved multi-conversion batches [3.67ms]
+✓ preserves all category dispositions but emits no manifest for blocked exposure [4.93ms]
+
+scripts/recovery/dtf-migration/weighted-liquid.test.ts:
+✓ W-L requires known original wallet, quantity, components and origin, not current holdings [4.31ms]
+✓ W-L fixed source, original units and economic partition are required by the real payload builder [3.76ms]
+✓ W-L complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [6.04ms]
+
+scripts/recovery/dtf-migration/weighted-receipt.test.ts:
+✓ WS preparation requires complete known original gons and wallet, never floating-point or live-derived credit [4.95ms]
+✓ WS builder enforces fixed source and gon partition and rejects origin reuse [4.17ms]
+✓ WS evidence binding and frozen grouped quote survive exact preparation without scaling by gons [28.22ms]
+✓ WS Solidity configuration and stage ABI preserve eligible gons separately from native surrender [6.97ms]
+
+scripts/recovery/dtf-migration/weighted-sy.test.ts:
+✓ claimed SY uses every complete original component and exact measured split sums [4.76ms]
+✓ claimed SY rejects unknown delivery and missing original review rather than inferring zero [3.34ms]
+✓ missing claimed-origin certificate cannot use its reviewed evidence as ordinary SY [20.16ms]
+✓ W-Y requires known original wallet, quantity, components and origin, not current holdings [4.75ms]
+✓ W-Y fixed source, original units and economic partition are required by the real payload builder [3.73ms]
+✓ W-Y complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [5.01ms]
+
+ 109 pass
+ 0 fail
+Ran 109 tests across 11 files. [1455.00ms]
+VERIFIER_OPERATOR_TESTS_EXIT=0
+VERIFIER_OFFLINE_CHECKS_COMPLETE

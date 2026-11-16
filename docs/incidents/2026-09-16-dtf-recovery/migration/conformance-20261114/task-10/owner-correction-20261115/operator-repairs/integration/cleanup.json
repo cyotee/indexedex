@@ -1,0 +1,25 @@
+{
+  "monitorId": "mon_1S046DDKK7RF0R8F",
+  "session": "bash_1",
+  "completion": "REPAIR_QA_COMPLETE exit=0; watcher completed (exit code 0)",
+  "pendingProcesses": [],
+  "qaCreatedProcesses": "Finite recorder, test runner, two compiler runs and version/narrow git probes; all exited naturally.",
+  "priorTempDirectories": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "afterTempDirectories": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "addedTempDirectories": [],
+  "removedPriorDirectories": [],
+  "cleanupAction": "No additional resource removal was needed. Existing checkpoint directories and all retained lane and task-7 evidence were preserved.",
+  "anvilStartedOrRestarted": false,
+  "forgeInvoked": false,
+  "installs": false,
+  "productOrTestEdits": false,
+  "delegation": false,
+  "commits": false,
+  "parentReadinessWritten": false
+}

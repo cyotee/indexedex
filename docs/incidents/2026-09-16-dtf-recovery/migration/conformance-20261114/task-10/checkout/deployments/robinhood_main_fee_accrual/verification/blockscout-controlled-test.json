@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-09-14T21:24:24.479458+00:00",
+  "address": "0xc84999f31ea72a793a65ce73aa05ff624fdcbb51",
+  "method": "POST",
+  "url": "https://api.blockscout.com/v2/api?chain_id=4663&module=contract&action=verifysourcecode",
+  "authentication": "Authorization Bearer from inherited BLOCKSCOUT_API_KEY",
+  "encoding": "multipart/form-data",
+  "fieldNames": [
+    "contractaddress",
+    "contractname",
+    "compilerversion",
+    "codeformat",
+    "constructorArguments",
+    "sourceCode"
+  ],
+  "sourceSha256": "a6c48202ac920002a9d00e387a94015e72cad4f6542ce35464c477e8224f4687",
+  "curlExitCode": 0,
+  "httpStatus": "500",
+  "httpStatusLines": [
+    "HTTP/2 500 "
+  ],
+  "headers": {
+    "date": "Mon, 14 Sep 2026 21:24:24 GMT",
+    "content-type": "application/json; charset=utf-8",
+    "x-request-id": "25677aa8de66b95b6dfb60103d4194bb",
+    "x-ratelimit-limit": "5",
+    "x-ratelimit-remaining": "4",
+    "x-ratelimit-reset": "578",
+    "x-credits-remaining": "98580",
+    "server": "cloudflare",
+    "cf-ray": "a3b2754fdf1bb298-PDX"
+  },
+  "response": {
+    "error": "Internal server error",
+    "source": "internal"
+  }
+}

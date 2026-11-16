@@ -1,0 +1,10 @@
+{
+  "approvedMessageSenderRegistry": "0xa42900ee31476e5b3e3b5DAC60a32e1CaF6df694",
+  "bridgeTokenRegistry": "0x85B6934A81DF95332fD9A0ad76514614073Bf9Ea",
+  "localChainId": 11155111,
+  "localRelayer": "0xD298fC092991C88e1345fF5037ad91bb2C0D9929",
+  "peerChainId": 84532,
+  "peerProtocolDetf": "0xF0F85Db7508f89453DB3B298d1d6dDD0d6f4448B",
+  "peerRelayer": "0xD298fC092991C88e1345fF5037ad91bb2C0D9929",
+  "protocolDetf": "0xc9272BA6432A5e43F19572c6bE11AB63f7FE5561"
+}

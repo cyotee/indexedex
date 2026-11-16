@@ -1,0 +1,553 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
+
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
+import {TokenConfig, TokenType, PoolConfig, PoolRoleAccounts} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
+import {IVaultErrors} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVaultErrors.sol";
+import {IUnbalancedLiquidityInvariantRatioBounds} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IUnbalancedLiquidityInvariantRatioBounds.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {BalancerV3ConstantProductPool_FactoryService} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
+import {BalancerV3PoolStandardExchangeTarget} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTarget.sol";
+import {BalancerV3PoolRepo} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3PoolRepo.sol";
+
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+
+interface IMintableSYPayment { function mint(address recipient, uint256 amount) external; }
+
+
+abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAssertions {
+    function _nativePool() internal view virtual returns (address);
+    function _nativeActor() internal view virtual returns (address);
+    function _nativeVault() internal view virtual returns (IVault);
+    function _nativeVirtualBuffer(address token_) internal view virtual returns (bool);
+
+    function _sy() internal view returns (IStandardizedYield) { return IStandardizedYield(_nativePool()); }
+    function _poolApprove() internal { vm.prank(_nativeActor()); IERC20(_nativePool()).approve(_nativePool(), type(uint256).max); }
+
+    struct NativePreviewCase { uint256 amount; uint256 depositQuote; uint256 redeemQuote; }
+
+    function test_poolStoredBoundsMatchInstalledImplementation() public view {
+        address pool_ = _nativePool();
+        IUnbalancedLiquidityInvariantRatioBounds bounds_ = IUnbalancedLiquidityInvariantRatioBounds(pool_);
+        bytes32 slot_ = BalancerV3PoolRepo.STORAGE_SLOT;
+        assertEq(uint256(vm.load(pool_, slot_)), bounds_.getMinimumInvariantRatio());
+        assertEq(uint256(vm.load(pool_, bytes32(uint256(slot_) + 1))), bounds_.getMaximumInvariantRatio());
+    }
+
+    /// @notice Only caller entrypoints may reach the pool, for every advertised physical token.
+    function test_poolNativePreviewsHaveNoSelfCalls() public {
+        address pool_ = _nativePool();
+        IStandardizedYield sy_ = _sy();
+        address[] memory tokens_ = sy_.getTokensIn();
+        NativePreviewCase[] memory cases_ = new NativePreviewCase[](tokens_.length);
+        for (uint256 i_; i_ < tokens_.length; ++i_) cases_[i_].amount = _fundInput(tokens_[i_]) / 2;
+        uint256 supply_ = _nativeVault().totalSupply(pool_);
+        assertEq(sy_.totalSupply(), supply_, "BPT supply is the Vault ledger");
+        uint256 shares_ = supply_ * 45 / 100;
+        IStandardExchange se_ = IStandardExchange(pool_);
+        for (uint256 i_; i_ < tokens_.length; ++i_) {(cases_[i_].depositQuote,) = se_.previewExchangeIn(IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_));(cases_[i_].redeemQuote,) = se_.previewExchangeIn(IERC20(pool_), shares_, IERC20(tokens_[i_]));
+            assertGt(cases_[i_].depositQuote, 0);
+            assertGt(cases_[i_].redeemQuote, 0);
+        }
+
+        // Empty calldata prefix counts every CALL/STATICCALL to the pool, not just known metadata selectors.
+        vm.expectCall(pool_, bytes(""), uint64(4 * tokens_.length));
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(sy_.previewDeposit(tokens_[i_], cases_[i_].amount), cases_[i_].depositQuote);
+            assertEq(sy_.previewRedeem(tokens_[i_], shares_), cases_[i_].redeemQuote);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_)), cases_[i_].depositQuote);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(pool_), shares_, IERC20(tokens_[i_])), cases_[i_].redeemQuote);
+        }
+    }
+
+    function test_poolNativeZeroAndUnsupportedPreviewsHaveNoSelfCalls() public {
+        address pool_ = _nativePool();
+        IStandardizedYield sy_ = _sy();
+        address[] memory tokens_ = sy_.getTokensIn();
+        IStandardExchange se_ = IStandardExchange(pool_);
+        vm.expectCall(pool_, bytes(""), uint64(4 * tokens_.length + 4));
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(sy_.previewDeposit(tokens_[i_], 0), 0);
+            assertEq(sy_.previewRedeem(tokens_[i_], 0), 0);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(tokens_[i_]), 0, IERC20(pool_)), 0);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(pool_), 0, IERC20(tokens_[i_])), 0);
+        }
+        assertEq(sy_.previewDeposit(address(0), 1), 0);
+        assertEq(sy_.previewRedeem(address(0), 1), 0);
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(0), pool_));ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(address(0)), 0, IERC20(pool_));
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", pool_, address(0)));ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(pool_), 0, IERC20(address(0)));
+    }
+
+    function test_poolSYFullSupplyLiquidation_everyAsset() public {
+        IStandardizedYield sy_ = _sy();
+        address[] memory outputs_ = sy_.getTokensOut();
+        uint256 supply_ = _nativeVault().totalSupply(address(sy_));
+        vm.expectCall(address(sy_), bytes(""), uint64(2 * outputs_.length));
+        for (uint256 i_; i_ < outputs_.length; ++i_) {
+            uint256 quote_ = sy_.previewRedeem(outputs_[i_], supply_);
+            assertGt(quote_, 0, "whole native BPT supply remains quotable");
+            assertEq(quote_, ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchange(address(sy_)))), IERC20(address(sy_)), supply_, IERC20(outputs_[i_])
+            ), "SY and SE whole-supply valuation");
+        }
+    }
+
+    function test_poolSYLargeLiquidation_everyAsset() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address[] memory outputs_ = sy_.getTokensOut();
+        _poolApprove();
+        uint256 snapshot_ = vm.snapshotState();
+        for (uint256 i_; i_ < outputs_.length; ++i_) {
+            uint256 amount_ = sy_.totalSupply() * 45 / 100;
+            uint256 quote_ = sy_.previewRedeem(outputs_[i_], amount_);
+            assertGt(quote_, 0, "large native withdrawal quote");
+            uint256 before_ = IERC20(outputs_[i_]).balanceOf(actor_);
+            uint256 shares_ = sy_.balanceOf(actor_);
+            vm.prank(actor_);
+            assertEq(sy_.redeem(actor_, amount_, outputs_[i_], quote_, false), quote_, "large SY payout");
+            assertEq(IERC20(outputs_[i_]).balanceOf(actor_) - before_, quote_, "actual asset credit");
+            assertEq(shares_ - sy_.balanceOf(actor_), amount_, "actual BPT burn");
+            assertTrue(vm.revertToState(snapshot_));
+        }
+    }
+
+    /// @dev Obtain SE shares from an actual funded LP redemption, never test-mint SUT shares.
+    function _fundInput(address token_) internal returns (uint256 amount_) {
+        IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor();
+        if (sy_.isValidTokenOut(token_)) {
+            _poolApprove();
+            uint256 bpt_ = sy_.balanceOf(actor_) / 1_000;
+            uint256 q_ = sy_.previewRedeem(token_, bpt_);
+            assertGt(q_, 0, "fixture's real LP output");
+            vm.prank(actor_); amount_ = sy_.redeem(actor_, bpt_, token_, q_, false);
+            assertEq(amount_, q_, "funding redemption quote");
+        } else {
+            amount_ = 10 ** IERC20Metadata(token_).decimals();
+            IMintableSYPayment(token_).mint(actor_, amount_);
+        }
+        vm.prank(actor_); IERC20(token_).approve(address(sy_), type(uint256).max);
+    }
+
+    function test_poolSYMetadataUsesNativeVaultLedgerAndInstallsAllSelectors() public view {
+        address pool_ = _nativePool(); IStandardizedYield sy_ = _sy();
+        assertEq(sy_.decimals(), 18); assertEq(sy_.yieldToken(), address(0));
+        (IStandardizedYield.AssetType kind_, address asset_, uint8 dec_) = sy_.assetInfo();
+        assertEq(uint256(kind_), uint256(IStandardizedYield.AssetType.LIQUIDITY));
+        assertEq(asset_, pool_); assertEq(dec_, 18);
+        assertEq(sy_.exchangeRate(), _nativeVault().getBptRate(pool_));
+        assertGt(sy_.exchangeRate(), 0);
+        assertTrue(IERC165(pool_).supportsInterface(type(IStandardizedYield).interfaceId));
+        assertTrue(IERC165(pool_).supportsInterface(type(IStandardExchangeIn).interfaceId));
+        assertTrue(IERC165(pool_).supportsInterface(type(IStandardExchangeOut).interfaceId));
+        address facet_ = IDiamondLoupe(pool_).facetAddress(IStandardizedYield.deposit.selector);
+        assertLe(facet_.code.length, 24_576);
+        bytes4[] memory funcs_ = IFacet(facet_).facetFuncs();
+        for (uint256 i_; i_ < funcs_.length; ++i_) assertEq(IDiamondLoupe(pool_).facetAddress(funcs_[i_]), facet_);
+        assertEq(sy_.getRewardTokens().length, 0); assertEq(sy_.accruedRewards(_nativeActor()).length, 0);
+        IERC20[] memory tokens_ = _nativeVault().getPoolTokens(pool_);
+        uint256 expected_;
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            bool valid_ = !_nativeVirtualBuffer(address(tokens_[i_]));
+            assertEq(sy_.isValidTokenIn(address(tokens_[i_])), valid_);
+            assertEq(sy_.isValidTokenOut(address(tokens_[i_])), valid_);
+            if (valid_) ++expected_;
+        }
+        assertGt(expected_, 0);
+        assertEq(sy_.getTokensIn().length, expected_);
+        assertEq(sy_.getTokensOut().length, expected_);
+    }
+
+    function test_poolSYVirtualBuffersAreRejectedBeforeAnyAssetIsTaken() public {
+        IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor();
+        IERC20[] memory tokens_ = _nativeVault().getPoolTokens(address(sy_));
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            if (!_nativeVirtualBuffer(address(tokens_[i_]))) continue;
+            uint256 before_ = tokens_[i_].balanceOf(actor_);
+            assertEq(sy_.previewDeposit(address(tokens_[i_]), 1), 0, "unsupported buffer deposit quote");
+            assertEq(sy_.previewRedeem(address(tokens_[i_]), 1), 0, "unsupported buffer redemption quote");
+            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidSYToken(address)", address(tokens_[i_]))); sy_.deposit(actor_, address(tokens_[i_]), 1, 0);
+            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidSYToken(address)", address(tokens_[i_]))); sy_.redeem(actor_, 1, address(tokens_[i_]), 0, false);
+            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(tokens_[i_]), address(sy_)));ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchange(address(sy_)))), tokens_[i_], 1, IERC20(address(sy_)), 0, actor_, false, block.timestamp);
+            assertEq(tokens_[i_].balanceOf(actor_), before_);
+        }
+    }
+
+    /// @notice A below-minimum native BPT deposit quotes zero and reverts atomically.
+    function test_poolSYBelowMinimumRejectsWithoutTakingAssets() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address token_ = sy_.getTokensIn()[0];
+        uint256 funded_ = _fundInput(token_);
+        uint256 high_ = funded_ / 2;
+        assertGt(sy_.previewDeposit(token_, high_), 0, "funded executable upper bound");
+        uint256 low_;
+        while (high_ - low_ > 1) {
+            uint256 mid_ = low_ + (high_ - low_) / 2;
+            if (sy_.previewDeposit(token_, mid_) == 0) low_ = mid_;
+            else high_ = mid_;
+        }
+        uint256 before_ = IERC20(token_).balanceOf(actor_);
+        uint256 supply_ = sy_.totalSupply();
+        if (low_ != 0) {
+            vm.prank(actor_);
+            vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));
+            sy_.deposit(actor_, token_, low_, 0);
+            assertEq(IERC20(token_).balanceOf(actor_), before_);
+            assertEq(sy_.totalSupply(), supply_);
+        }
+        uint256 quote_ = sy_.previewDeposit(token_, high_);
+        vm.prank(actor_);
+        assertEq(sy_.deposit(actor_, token_, high_, quote_), quote_, "first payable input executes exactly");
+        assertEq(before_ - IERC20(token_).balanceOf(actor_), high_);
+        assertEq(sy_.totalSupply() - supply_, quote_);
+    }
+
+    function test_poolSYEveryAdvertisedInputQuotesActualBptAndPreservesIdleAssets() public noSelfCalls(_nativePool()) {
+        IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor();
+        address[] memory tokens_ = sy_.getTokensIn();
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            uint256 snap_ = vm.snapshotState();
+            uint256 amount_ = _fundInput(tokens_[i_]) / 2;
+            // Unsolicited assets at the pool are not the next depositor's contribution.
+            vm.prank(actor_); IERC20(tokens_[i_]).transfer(address(sy_), 7);
+            uint256 idle_ = IERC20(tokens_[i_]).balanceOf(address(sy_));
+            uint256 quote_ = sy_.previewDeposit(tokens_[i_], amount_);
+            assertGt(quote_, 0);
+            uint256 before_ = sy_.balanceOf(actor_); uint256 supply_ = sy_.totalSupply();
+            vm.prank(actor_); uint256 minted_ = sy_.deposit(actor_, tokens_[i_], amount_, quote_);
+            assertEq(minted_, quote_); assertEq(sy_.balanceOf(actor_) - before_, quote_);
+            assertEq(sy_.totalSupply() - supply_, quote_); assertEq(IERC20(tokens_[i_]).balanceOf(address(sy_)), idle_);
+            assertTrue(vm.revertToState(snap_));
+        }
+    }
+
+    function test_poolSYEveryAdvertisedOutputQuotesActualTokenAndBurnsOnlyPaidBpt() public noSelfCalls(_nativePool()) {
+        IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor(); _poolApprove();
+        address[] memory tokens_ = sy_.getTokensOut();
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            uint256 snap_ = vm.snapshotState(); uint256 shares_ = sy_.balanceOf(actor_) / 10_000;
+            uint256 quote_ = sy_.previewRedeem(tokens_[i_], shares_); assertGt(quote_, 0);
+            uint256 before_ = IERC20(tokens_[i_]).balanceOf(actor_); uint256 held_ = sy_.balanceOf(actor_); uint256 supply_ = sy_.totalSupply();
+            vm.prank(actor_); uint256 paid_ = sy_.redeem(actor_, shares_, tokens_[i_], quote_, false);
+            assertEq(paid_, quote_); assertEq(IERC20(tokens_[i_]).balanceOf(actor_) - before_, quote_);
+            assertEq(held_ - sy_.balanceOf(actor_), shares_); assertEq(supply_ - sy_.totalSupply(), shares_);
+            assertTrue(vm.revertToState(snap_));
+        }
+    }
+
+    struct ExactOutputState { uint256 inputBefore; uint256 outputBefore; uint256 quoted; }
+
+    function _assertPoolExactOutput(IERC20 in_, IERC20 out_, uint256 wanted_, uint256 maximum_) internal {
+        ExactOutputState memory state_;
+        state_.inputBefore = in_.balanceOf(_nativeActor());
+        state_.outputBefore = out_.balanceOf(_nativeActor());
+        state_.quoted = IStandardExchange(_nativePool()).previewExchangeOut(in_, out_, wanted_);
+        address pool_ = _nativePool(); address actor_ = _nativeActor();
+        vm.prank(actor_);
+        uint256 used_ = IStandardExchange(pool_).exchangeOut(in_, maximum_, out_, wanted_, actor_, false, block.timestamp);
+        assertEq(used_, state_.quoted);
+        assertEq(state_.inputBefore - in_.balanceOf(actor_), state_.quoted);
+        assertEq(out_.balanceOf(actor_) - state_.outputBefore, wanted_);
+    }
+
+    function test_poolStandardExactOutputUsesOnlyQuotedInputAndRefundsRemainder() public {
+        IStandardizedYield sy_ = _sy(); IERC20 token_ = IERC20(sy_.getTokensOut()[0]);
+        uint256 funded_ = _fundInput(address(token_));
+        uint256 wanted_ = sy_.previewDeposit(address(token_), funded_ / 4);
+        _assertPoolExactOutput(token_, IERC20(address(sy_)), wanted_, funded_);
+        _poolApprove();
+        uint256 output_ = sy_.previewRedeem(address(token_), wanted_ / 4);
+        _assertPoolExactOutput(IERC20(address(sy_)), token_, output_, wanted_);
+        assertEq(sy_.balanceOf(address(sy_)), 0);
+    }
+
+    function test_poolSYInternalBalanceConsumesOnlyRequestedShares() public noSelfCalls(_nativePool()) {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor(); address token_ = sy_.getTokensOut()[0];
+        uint256 amount_ = sy_.balanceOf(actor_) / 100; vm.prank(actor_); sy_.transfer(address(sy_), amount_ * 3);
+        uint256 before_ = sy_.balanceOf(address(sy_)); uint256 q_ = sy_.previewRedeem(token_, amount_);
+        address recipient_ = makeAddr("pool-sy-recipient");
+        vm.prank(makeAddr("pool-sy-router")); uint256 got_ = abi.decode(atomic.execute(address(sy_), abi.encodeCall(IStandardizedYield.redeem, (recipient_, amount_, token_, q_, true))), (uint256));
+        assertEq(got_, q_); assertEq(IERC20(token_).balanceOf(recipient_), q_);
+        assertEq(before_ - sy_.balanceOf(address(sy_)), amount_);
+    }
+
+    function test_poolSYLimitsPretransferAndCallbackCannotClaimExistingAssets() public {
+        IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor(); address token_ = sy_.getTokensOut()[0];
+        uint256 amount_ = _fundInput(token_) / 2; uint256 q_ = sy_.previewDeposit(token_, amount_);
+        uint256 before_ = IERC20(token_).balanceOf(actor_); uint256 supply_ = sy_.totalSupply();
+        vm.startPrank(actor_); vm.expectRevert(); sy_.deposit(actor_, token_, amount_, q_ + 1); vm.stopPrank();
+        assertEq(IERC20(token_).balanceOf(actor_), before_); assertEq(sy_.totalSupply(), supply_);
+        vm.prank(actor_); IERC20(token_).transfer(address(sy_), amount_);
+        vm.expectRevert(BalancerV3PoolStandardExchangeTarget.UnsupportedPoolPretransfer.selector);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchange(address(sy_)))), IERC20(token_), amount_, IERC20(address(sy_)), 0, address(this), true, block.timestamp);
+        BalancerV3PoolStandardExchangeTarget.LiquidityRequest memory p_ = BalancerV3PoolStandardExchangeTarget.LiquidityRequest(IERC20(token_), IERC20(address(sy_)), amount_, 0, address(this), false);
+        vm.expectRevert(BalancerV3PoolStandardExchangeTarget.UnauthorizedPoolLiquidity.selector);
+        BalancerV3PoolStandardExchangeTarget(address(sy_)).executePoolLiquidity(p_);
+        address vault_ = address(_nativeVault());
+        vm.prank(vault_); vm.expectRevert(BalancerV3PoolStandardExchangeTarget.UnauthorizedPoolLiquidity.selector);
+        BalancerV3PoolStandardExchangeTarget(address(sy_)).executePoolLiquidity(p_);
+        assertEq(IERC20(token_).balanceOf(address(sy_)), amount_);
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*                   R14.8 — packaged native-BPT joins                 */
+    /* ------------------------------------------------------------------ */
+
+    struct RollbackState {
+        uint256 actorIn;
+        uint256 actorBpt;
+        uint256 supply;
+        uint256 reserves;
+        uint256 idle;
+        uint256 allowance;
+    }
+
+    /// @dev Pause / unpause via the packaged pool's exclusive pauseManager (feeTo), read from the pool.
+    function _pauseNativePool() internal {
+        IVault v_ = _nativeVault();
+        address pm_ = v_.getPoolRoleAccounts(_nativePool()).pauseManager;
+        assertTrue(pm_ != address(0), "packaged pool has an exclusive pauseManager");
+        vm.prank(pm_);
+        v_.pausePool(_nativePool());
+    }
+
+    function _unpauseNativePool() internal {
+        IVault v_ = _nativeVault();
+        address pm_ = v_.getPoolRoleAccounts(_nativePool()).pauseManager;
+        vm.prank(pm_);
+        v_.unpausePool(_nativePool());
+    }
+
+    function _snap(IERC20 token_) internal view returns (RollbackState memory s_) {
+        IStandardizedYield sy_ = _sy();
+        s_.actorIn = token_.balanceOf(_nativeActor());
+        s_.actorBpt = sy_.balanceOf(_nativeActor());
+        s_.supply = sy_.totalSupply();
+        s_.reserves = _nativeVault().getReservesOf(token_);
+        s_.idle = token_.balanceOf(_nativePool());
+        s_.allowance = token_.allowance(_nativePool(), address(_nativeVault()));
+    }
+
+    function _assertSnapEq(IERC20 token_, RollbackState memory s_) internal view {
+        IStandardizedYield sy_ = _sy();
+        assertEq(token_.balanceOf(_nativeActor()), s_.actorIn, "rollback: actor input");
+        assertEq(sy_.balanceOf(_nativeActor()), s_.actorBpt, "rollback: actor BPT");
+        assertEq(sy_.totalSupply(), s_.supply, "rollback: BPT supply");
+        assertEq(_nativeVault().getReservesOf(token_), s_.reserves, "rollback: vault reserves");
+        assertEq(token_.balanceOf(_nativePool()), s_.idle, "rollback: idle-at-pool");
+        assertEq(token_.allowance(_nativePool(), address(_nativeVault())), s_.allowance, "rollback: allowance");
+        assertTrue(
+            token_.allowance(_nativePool(), address(_nativeVault())) != type(uint256).max,
+            "no dangling max allowance"
+        );
+    }
+
+    /// @dev R14.8: a paused packaged pool rejects both the exact-in and the exact-out join with
+    ///      `PoolPaused(pool)` and a full rollback; after unpause a funded join reconciles.
+    ///      RED (vulnerable version): a join that swallowed / mistranslated the Balancer pause revert,
+    ///      or partially settled before the vault's pause check, would fail the selector match or the
+    ///      full-rollback snapshot below.
+    function test_poolSY_pausedJoin_revertsPoolPaused_thenReconciles() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address pool_ = _nativePool();
+        IERC20 token_ = IERC20(sy_.getTokensIn()[0]);
+        uint256 amount_ = _fundInput(address(token_)) / 2;
+        assertGt(amount_, 0, "funded input");
+        uint256 wanted_ = sy_.previewDeposit(address(token_), amount_); // exact-out target while unpaused
+
+        _pauseNativePool();
+
+        RollbackState memory s1_ = _snap(token_);
+        vm.prank(actor_);
+        vm.expectRevert(abi.encodeWithSelector(IVaultErrors.PoolPaused.selector, pool_));
+        sy_.deposit(actor_, address(token_), amount_, 0);
+        _assertSnapEq(token_, s1_);
+
+        RollbackState memory s2_ = _snap(token_);
+        vm.prank(actor_);
+        vm.expectRevert(abi.encodeWithSelector(IVaultErrors.PoolPaused.selector, pool_));
+        IStandardExchange(pool_).exchangeOut(token_, type(uint256).max, IERC20(pool_), wanted_, actor_, false, block.timestamp);
+        _assertSnapEq(token_, s2_);
+
+        _unpauseNativePool();
+        _reconcileFundedJoin(token_, amount_);
+    }
+
+    /// @dev Extracted to keep the paused-join test within the stack limit (via_ir is forbidden).
+    function _reconcileFundedJoin(IERC20 token_, uint256 amount_) internal {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        uint256 quote_ = sy_.previewDeposit(address(token_), amount_);
+        uint256 supplyBefore_ = sy_.totalSupply();
+        uint256 reservesBefore_ = _nativeVault().getReservesOf(token_);
+        uint256 actorInBefore_ = token_.balanceOf(actor_);
+        uint256 actorBptBefore_ = sy_.balanceOf(actor_);
+        vm.prank(actor_);
+        uint256 minted_ = sy_.deposit(actor_, address(token_), amount_, quote_);
+        assertEq(minted_, quote_, "received == quote after unpause");
+        assertEq(sy_.balanceOf(actor_) - actorBptBefore_, minted_, "issuance to actor");
+        assertEq(sy_.totalSupply() - supplyBefore_, minted_, "BPT supply delta == issuance");
+        assertEq(actorInBefore_ - token_.balanceOf(actor_), amount_, "input taken from actor");
+        assertEq(_nativeVault().getReservesOf(token_) - reservesBefore_, amount_, "input settled to the Vault");
+        assertTrue(
+            token_.allowance(_nativePool(), address(_nativeVault())) != type(uint256).max, "no dangling max allowance"
+        );
+    }
+
+    /// @dev R14.8: a real above-max-invariant-ratio join is rejected. Exact-out BPT that lifts the
+    ///      invariant ratio past the pool's maximum reverts `InvariantRatioAboveMax` in the preview,
+    ///      before any transferFrom (the actor's input is untouched). No `vm.mockCallRevert`.
+    ///      Selector 0x3e8960dc re-derived from BasePoolMath.sol (InvariantRatioAboveMax(uint256,uint256)).
+    ///      BPT-out maps directly to the invariant ratio `(supply + bptOut)/supply`, so sizing from
+    ///      `getMaximumInvariantRatio()` is weight- and pool-type-independent.
+    function test_poolSY_aboveMaxInvariantRatio_exactOutRevertsBeforePull() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address pool_ = _nativePool();
+        IERC20 token_ = IERC20(sy_.getTokensIn()[0]);
+        uint256 maxRatio_ = IUnbalancedLiquidityInvariantRatioBounds(pool_).getMaximumInvariantRatio();
+        assertGt(maxRatio_, 1e18, "sane maximum invariant ratio");
+        uint256 supply_ = sy_.totalSupply();
+        // ratio = (supply + bptOut)/supply = 1 + maxRatio/1e18 > maxRatio.
+        uint256 bptOut_ = supply_ * maxRatio_ / 1e18;
+        uint256 actorInBefore_ = token_.balanceOf(actor_);
+
+        vm.prank(actor_);
+        vm.expectPartialRevert(bytes4(0x3e8960dc));
+        IStandardExchange(pool_).exchangeOut(token_, type(uint256).max, IERC20(pool_), bptOut_, actor_, false, block.timestamp);
+        assertEq(token_.balanceOf(actor_), actorInBefore_, "exact-out reverts before any transferFrom");
+    }
+
+    /// @dev R14.8: `disableUnbalancedLiquidity` is never reachable on a packaged path — the hooks reject
+    ///      that registration, so the packaged pool always enables unbalanced liquidity.
+    function test_poolSY_packagedPathEnablesUnbalancedLiquidity() public view {
+        PoolConfig memory cfg_ = _nativeVault().getPoolConfig(_nativePool());
+        assertFalse(cfg_.liquidityManagement.disableUnbalancedLiquidity, "packaged path enables unbalanced liquidity");
+    }
+}
+
+import {TestBase_StandardExchangeBufferPool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+contract BalancerCpBufferPoolNativeSYTest is TestBase_StandardExchangeBufferPool, BalancerPoolNativeSYBehavior {
+    function _nativeVirtualBuffer(address token_) internal view override returns (bool) { return token_ == address(tta); }
+    function _nativePool() internal view override returns (address) { return bufferPool; }
+    function _nativeActor() internal view override returns (address) { return alice; }
+    function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+}
+
+import {TestBase_MultiPairStandardExchangeBufferPool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool.sol";
+contract BalancerMultiPairPoolNativeSYTest is TestBase_MultiPairStandardExchangeBufferPool, BalancerPoolNativeSYBehavior {
+    function _nativeVirtualBuffer(address token_) internal view override returns (bool) {
+        for (uint8 i_; i_ < _targetPairCount(); ++i_) if (token_ == address(_bufferAt(i_))) return true;
+        return false;
+    }
+    function _nativePool() internal view override returns (address) { return bufferPool; }
+    function _nativeActor() internal view override returns (address) { return alice; }
+    function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+}
+
+import {TestBase_MixedLegWeightedBufferPool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool.sol";
+import {IMixedLegWeightedBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPoolPkg.sol";
+contract BalancerMixedLegPoolNativeSYTest is TestBase_MixedLegWeightedBufferPool, BalancerPoolNativeSYBehavior {
+    function _nativeVirtualBuffer(address token_) internal view override returns (bool) {
+        for (uint8 i_; i_ < _targetPairCount(); ++i_) if (token_ == address(_bufferAt(i_))) return true;
+        return false;
+    }
+    function _nativePool() internal view override returns (address) { return bufferPool; }
+    function _nativeActor() internal view override returns (address) { return alice; }
+    function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+}
+
+contract BalancerUnpairedWeightedPoolNativeSYTest is BalancerMixedLegPoolNativeSYTest {
+    function _targetPairCount() internal pure override returns (uint8) { return 0; }
+
+    function _deployBufferPool() internal override {
+        super._deployBufferPool();
+        IMixedLegWeightedBufferPoolPkg.PkgArgs memory args_ = _buildPkgArgs(_targetUnpairedCount(), 0);
+        args_.weights[0] += 1e17;
+        args_.weights[1] -= 1e17;
+        mixedLegPool = mixedLegPkg.deployPool(args_);
+        bufferPool = mixedLegPool;
+        approveForPool(IERC20(mixedLegPool));
+    }
+}
+
+contract BalancerThreeUnpairedWeightedPoolNativeSYTest is BalancerUnpairedWeightedPoolNativeSYTest {
+    function _targetUnpairedCount() internal pure override returns (uint8) { return 3; }
+}
+
+import {TestBase_CommonBufferMultiVaultWeightedPool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool.sol";
+contract BalancerCommonWeightedPoolNativeSYTest is TestBase_CommonBufferMultiVaultWeightedPool, BalancerPoolNativeSYBehavior {
+    function _nativeVirtualBuffer(address token_) internal view override returns (bool) { return token_ == address(tta); }
+    function _nativePool() internal view override returns (address) { return bufferPool; }
+    function _nativeActor() internal view override returns (address) { return alice; }
+    function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+}
+
+import {TestBase_CommonBufferMultiVaultStablePool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool.sol";
+contract BalancerCommonStablePoolNativeSYTest is TestBase_CommonBufferMultiVaultStablePool, BalancerPoolNativeSYBehavior {
+    function _nativeVirtualBuffer(address token_) internal view override returns (bool) { return token_ == address(tta); }
+    function _nativePool() internal view override returns (address) { return bufferPool; }
+    function _nativeActor() internal view override returns (address) { return alice; }
+    function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+}
+
+import {TestBase_MixedBufferMultiVaultStablePool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool.sol";
+contract BalancerMixedStablePoolNativeSYTest is TestBase_MixedBufferMultiVaultStablePool, BalancerPoolNativeSYBehavior {
+    function _nativeVirtualBuffer(address token_) internal view override returns (bool) { return token_ == address(tta); }
+    function _nativePool() internal view override returns (address) { return bufferPool; }
+    function _nativeActor() internal view override returns (address) { return alice; }
+    function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+}
+
+contract BalancerConstantProductPoolNativeSYTest is TestBase_StandardExchangeBufferPool, BalancerPoolNativeSYBehavior {
+    function _nativeVirtualBuffer(address) internal pure override returns (bool) { return false; }
+    using BalancerV3ConstantProductPool_FactoryService for IVaultRegistryDeployment;
+    function _nativePool() internal view override returns (address) { return bufferPool; }
+    function _nativeActor() internal view override returns (address) { return alice; }
+    function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+    function _deployBufferPool() internal override {
+        _deployBufferPoolFacets();
+        IBalancerV3ConstantProductPoolStandardVaultPkg.PkgInit memory p_;
+        p_.basicVaultFacet = multiAssetBasicVaultFacet;
+        p_.standardVaultFacet = multiAssetStandardVaultFacet;
+        p_.balancerV3VaultAwareFacet = balancerV3VaultAwareFacet;
+        p_.betterBalancerV3PoolTokenFacet = betterBalancerV3PoolTokenFacet;
+        p_.defaultPoolInfoFacet = defaultPoolInfoFacet;
+        p_.standardSwapFeePercentageBoundsFacet = standardSwapFeePercentageBoundsFacet;
+        p_.unbalancedLiquidityInvariantRatioBoundsFacet = unbalancedLiquidityInvariantRatioBoundsFacet;
+        p_.balancerV3AuthenticationFacet = balancerV3AuthenticationFacet;
+        p_.balancerV3ConstProdPoolFacet = BalancerV3ConstantProductPool_FactoryService.deployBalancerV3ConstantProductPoolFacet(create3Factory);
+        p_.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager)); p_.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager)); p_.balancerV3Vault = bv3Vault; p_.diamondFactory = diamondPackageFactory;
+        vm.startPrank(owner);
+        IBalancerV3ConstantProductPoolStandardVaultPkg pkg_ = IVaultRegistryDeployment(address(indexedexManager)).deployBalancerV3ConstantProductPoolStandardVaultPkg(p_);
+        vm.stopPrank();
+        TokenConfig[] memory t_ = new TokenConfig[](2);
+        t_[0] = TokenConfig(IERC20(address(dai)), TokenType.STANDARD, IRateProvider(address(0)), false);
+        t_[1] = TokenConfig(IERC20(address(usdc)), TokenType.STANDARD, IRateProvider(address(0)), false);
+        bufferPool = pkg_.deployVault(t_, address(0));
+    }
+    function _initPool() internal override {
+        dai.mint(alice, 1_000 ether); usdc.mint(alice, 1_000 ether);
+        vm.startPrank(alice); dai.approve(address(router), type(uint256).max); usdc.approve(address(router), type(uint256).max);
+        IERC20[] memory tokens_ = bv3Vault.getPoolTokens(bufferPool);
+        uint256[] memory amounts_ = new uint256[](2); amounts_[0] = 1_000 ether; amounts_[1] = 1_000 ether;
+        router.initialize(bufferPool, tokens_, amounts_, 0, false, ""); vm.stopPrank();
+    }
+}

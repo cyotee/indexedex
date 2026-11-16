@@ -52,9 +52,9 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
         Migration.WeightedLiquidEntitlementInput[] memory inputs_ = new Migration.WeightedLiquidEntitlementInput[](1);
         inputs_[0] = _input(i_, variant_);
         vm.prank(currentOwner);
-        _invoke(abi.encodeWithSelector(configSelector(i_), inputs_));
+        _invoke(abi.encodeWithSelector(configSelector(i_), inputs_, pricingId));
         rows[i_].originalC = creditAnchors[variant_]; rows[i_].c = creditAnchors[variant_];
-        rows[i_].configuration = keccak256(abi.encode(block.chainid, address(parent), parent.migrationSnapshot().id, inputs_[0]));
+        rows[i_].configuration = keccak256(abi.encode(block.chainid, address(parent), parent.migrationWeightedPricing().id, inputs_[0]));
         rows[i_].entitlementHash = keccak256(abi.encode(true, inputs_[0], rows[i_].configuration, rows[i_].originalC));
     }
 
@@ -67,7 +67,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
                 Migration.WeightedLiquidEntitlementInput[] memory inputs_ = new Migration.WeightedLiquidEntitlementInput[](1);
                 inputs_[0] = _input(i_, 0); inputs_[0].source = source(j_);
                 vm.prank(currentOwner);
-                _reject(abi.encodeWithSelector(configSelector(j_), inputs_),
+                _reject(abi.encodeWithSelector(configSelector(j_), inputs_, pricingId),
                     abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, rows[i_].origin));
                 ++enrollmentRejections;
             }
@@ -76,7 +76,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
             a_[0].entitlements = new Migration.OriginalEntitlement[](1);
             a_[0].entitlements[0] = Migration.OriginalEntitlement(rows[i_].origin, 0.01 ether, 0, bytes32("alias"));
             vm.prank(currentOwner);
-            _reject(abi.encodeCall(Allocation.configureIndependentAllocations, (a_)),
+            _reject(abi.encodeCall(Allocation.configureIndependentAllocations, (a_, pricingId)),
                 abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, rows[i_].origin));
             ++enrollmentRejections;
         }
@@ -185,7 +185,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
         a_[0] = _input(i_, 1);
         bytes32 before_ = economicState();
         vm.prank(currentOwner);
-        _reject(abi.encodeWithSelector(configSelector(i_), a_),
+        _reject(abi.encodeWithSelector(configSelector(i_), a_, pricingId),
             abi.encodeWithSignature("NoTargetFor(bytes4)", configSelector(i_)));
         assertEq(economicState(), before_); ++rejectionCounts[i_];
         assertAll();

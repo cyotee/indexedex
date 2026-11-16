@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-11-15T08:17:14.161Z",
+  "qualification": "Original receipt and supplemental evidence hashes matched the independently reviewed pins. This is reuse of gas-only historical branch evidence, not a fresh economic lifecycle.",
+  "files": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-signed-final/raw.log",
+      "expected": "8564769f3fe4ee7641327b0274c706a3d7e06528818a391d84323b5eeb9df641",
+      "actual": "8564769f3fe4ee7641327b0274c706a3d7e06528818a391d84323b5eeb9df641",
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/gas-negatives.json",
+      "expected": "37568eb59592305665dbe4bee56f65d11d28ee850b743a70192dcb6d9baa82a8",
+      "actual": "37568eb59592305665dbe4bee56f65d11d28ee850b743a70192dcb6d9baa82a8",
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/harness-repair/negative-supplement.json",
+      "expected": "6e28766f586ba48037e815a70bb817491fefc83e0b6b0c20d6f18bc82af59460",
+      "actual": "6e28766f586ba48037e815a70bb817491fefc83e0b6b0c20d6f18bc82af59460",
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/harness-repair/policy-binding.json",
+      "expected": "19f715df645b96ff57c4421654b32794b27ac5d7aa4bfa3cc52572c51ab7a3cc",
+      "actual": "19f715df645b96ff57c4421654b32794b27ac5d7aa4bfa3cc52572c51ab7a3cc",
+      "matches": true
+    }
+  ]
+}

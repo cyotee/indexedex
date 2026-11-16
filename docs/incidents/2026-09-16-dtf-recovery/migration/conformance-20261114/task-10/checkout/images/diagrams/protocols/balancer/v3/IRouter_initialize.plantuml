@@ -1,0 +1,100 @@
+@startuml IRouter_initialize
+actor User
+participant Router
+participant Vault
+participant Pool
+participant Hooks
+participant ERC4626Vault
+
+== Initiation ==
+User -> Router: initialize(pool, tokens, exactAmountsIn, minBptAmountOut, wethIsEth, userData)
+note right: User calls Router to initialize a pool, providing exact token amounts, minimum BPT output, and optional userData.\n**Code Citation**: Router.sol#L43-L69
+note left: Entry point for pool initialization, validates inputs and prepares params.
+
+== Vault Unlocking ==
+Router -> Vault: unlock(params)
+note right: Router encodes InitializeHookParams and calls Vault.unlock to enter transient state, allowing token transfers and debt management.\n**Code Citation**: Router.sol#L51-L67\n**Code Citation (Vault)**: Vault.sol#L191-L197\n**Code Citation (VaultCommon)**: VaultCommon.sol#L58-L62\n**Code Citation (VaultStateLib)**: VaultStateLib.sol#L25-L29
+note left: Enables atomic transaction with transient debt management.
+
+== Token Transfer (if wethIsEth) ==
+opt wethIsEth == true
+    Router -> Vault: wrap ETH to WETH
+    note right: If wethIsEth is true, Router sends ETH to Vault, which wraps it to WETH for token transfers.\n**Code Citation**: Router.sol#L103-L105
+    Vault -> Vault: update _reservesOf[WETH]
+    note right: Vault updates WETH reserves to reflect wrapped ETH.\n**Code Citation (Vault)**: Vault.sol#L199-L212
+end opt
+
+== Token Transfer ==
+Router -> Vault: transferFrom(sender, vault, exactAmountsIn, tokens)
+note right: Router transfers exactAmountsIn of each token (e.g., tokenA, tokenB) from user to Vault using IERC20.transferFrom.\n**Code Citation**: Router.sol#L107-L109
+Vault -> Vault: settle(tokens, exactAmountsIn)
+note right: Vault settles tokens to _reservesOf, recording credits for each token.\n**Code Citation**: Router.sol#L110\n**Code Citation (Vault)**: Vault.sol#L199-L212\n**Code Citation (VaultCommon)**: VaultCommon.sol#L71-L75
+note left: Moves user tokens to Vault, updating reserves and accounting credits.
+
+== Before Initialize Hook ==
+Vault -> Hooks: onBeforeInitialize(sender, pool, tokens, exactAmountsIn, minBptAmountOut, wethIsEth, userData)
+note right: Vault calls hook (if enabled) to perform pre-initialization checks or token processing (e.g., unwrapping ERC4626). Reverts with BeforeInitializeHookFailed if false.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L234-L242\n**Code Citation (PoolConfigConst)**: PoolConfigConst.sol#L21\n**Code Citation (WordCodec)**: WordCodec.sol#L115-L120\n**Code Citation (IVaultErrors)**: IVaultErrors.sol#L58-L61
+opt tokens include ERC4626
+    Hooks -> ERC4626Vault: previewRedeem(exactAmountsIn[i])
+    note right: If tokens include ERC4626, hook may query ERC4626 vault to preview underlying amounts.\n**Code Citation (ERC4626)**: IERC4626.sol#L95-L108
+    ERC4626Vault --> Hooks: underlyingAmount
+    Hooks -> Vault: erc4626BufferWrapOrUnwrap(wrappedToken, UNWRAP, EXACT_IN, exactAmountsIn[i])
+    note right: Hook unwraps ERC4626 to underlying tokens (e.g., tokenA, tokenB), updating _reservesOf.\n**Code Citation (Vault)**: Vault.sol#L1287-L1346\n**Code Citation (VaultTypes)**: VaultTypes.sol#L234-L242
+    Vault --> Hooks: underlyingReceived
+end opt
+Hooks --> Vault: true
+note right: Hook returns true, signaling successful pre-initialization.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L239
+note left: Allows custom pre-initialization logic, e.g., ERC4626 unwrapping.
+
+== Pool Initialization ==
+Vault -> Vault: initialize(pool, to, tokens, exactAmountsIn, minBptAmountOut, userData)
+note right: Vault initializes pool, checking config and computing BPT amount, branching based on AddLiquidityKind.CUSTOM.\n**Code Citation (VaultExtension)**: VaultExtension.sol#L208-L322
+Vault -> Vault: getPoolConfig()
+note right: Vault checks configuration (e.g., initialization status, enableAddLiquidityCustom) to ensure pool is uninitialized.\n**Code Citation (VaultExtension)**: VaultExtension.sol#L364-L390\n**Code Citation (VaultCommon)**: VaultCommon.sol#L141-L145\n**Code Citation (PoolConfigLib)**: PoolConfigLib.sol#L46-L50\n**Code Citation (PoolConfigConst)**: PoolConfigConst.sol#L17\n**Code Citation (WordCodec)**: WordCodec.sol#L115-L120\n**Code Citation (VaultTypes)**: VaultTypes.sol#L33-L50
+Vault -> Pool: getPoolTokens()
+note right: Vault queries registered tokens to validate inputs.\n**Code Citation (VaultExtension)**: VaultExtension.sol#L324-L328
+Pool --> Vault: tokens
+alt AddLiquidityKind == CUSTOM
+    Vault -> Pool: onAddLiquidityCustom(to, exactAmountsInScaled18, minBptAmountOut, balancesScaled18, userData)
+    note right: For custom pools with AddLiquidityKind.CUSTOM, Vault calls onAddLiquidityCustom.\n**Code Citation (Pool)**: IPoolLiquidity.sol#L11-L24\n**Code Citation (VaultExtension)**: VaultExtension.sol#L717-L725
+    Pool --> Vault: amountsInScaled18, bptAmountOut, swapFeeAmountsScaled18, returnData
+else Standard Proportional Initialization
+    Vault -> Pool: computeInvariant(exactAmountsInScaled18, ROUND_DOWN)
+    note right: For standard pools, Vault computes BPT amount via invariant.\n**Code Citation (Pool)**: IBasePool.sol#L34-L56\n**Code Citation (Vault)**: Vault.sol#L868-L919 (BasePoolMath)
+    Pool --> Vault: bptAmountOut
+end alt
+Vault -> Vault: mint(bptAmountOut)
+note right: Vault mints BPT to user, updating _poolTokenBalances[pool].\n**Code Citation (Vault)**: Vault.sol#L1227-L1235
+Vault -> Vault: update _poolTokenBalances[pool, tokens, +exactAmountsIn]
+note right: Vault increases pool balances for tokens added.\n**Code Citation (Vault)**: Vault.sol#L1050-L1062
+Vault -> Vault: update _poolTokenBalances[pool, BPT, +bptAmountOut]
+note right: Vault records minted BPT for user.\n**Code Citation (Vault)**: Vault.sol#L1050-L1062
+note left: Executes pool initialization, minting BPT.
+
+== After Initialize Hook ==
+Vault -> Hooks: onAfterInitialize(sender, pool, tokens, exactAmountsIn, bptAmountOut, userData)
+note right: Vault calls hook (if enabled) to perform post-initialization actions (e.g., re-wrapping ERC4626). Reverts with AfterInitializeHookFailed if false.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L244-L252\n**Code Citation (PoolConfigConst)**: PoolConfigConst.sol#L23\n**Code Citation (WordCodec)**: WordCodec.sol#L115-L120\n**Code Citation (IVaultErrors)**: IVaultErrors.sol#L62-L65
+opt tokens include ERC4626
+    Hooks -> ERC4626Vault: deposit(underlyingAmount, vault)
+    note right: If underlying tokens were unwrapped, hook may re-wrap to ERC4626 for pool balance.\n**Code Citation (ERC4626)**: IERC4626.sol#L71-L84
+    ERC4626Vault --> Hooks: shares
+    Hooks -> Vault: settle(erc4626Vault, shares)
+    note right: Hook settles ERC4626 shares to _poolTokenBalances[pool], adjusting token balances.\n**Code Citation (Vault)**: Vault.sol#L199-L212\n**Code Citation (VaultCommon)**: VaultCommon.sol#L71-L75
+end opt
+Hooks --> Vault: true
+note right: Hook returns true, confirming successful post-initialization.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L249
+note left: Finalizes initialization with custom logic, e.g., ERC4626 re-wrapping.
+
+== Vault Settlement ==
+Vault -> Vault: check _tokenDeltas == 0
+note right: Vault ensures all transient debts (tokens in, BPT out) are settled, maintaining accounting integrity.\n**Code Citation (Vault)**: Vault.sol#L167-L189\n**Code Citation (VaultCommon)**: VaultCommon.sol#L77-L103\n**Code Citation (IVaultErrors)**: IVaultErrors.sol#L50-L52
+Vault --> Router: bptAmountOut
+note right: Vault returns BPT amount to Router.\n**Code Citation**: Router.sol#L68\n**Code Citation (Vault)**: Vault.sol#L195
+note right: Returns result of functionCall to Router.
+
+== Router Finalization ==
+Router -> User: bptAmountOut
+note right: Router returns minted BPT amount to user, completing initialization.\n**Code Citation**: Router.sol#L68
+note left: Delivers BPT to user, concluding the operation.
+
+@enduml

@@ -1,0 +1,53 @@
+{
+  "version": "phase27-data-candidates-preservation-compare-v1",
+  "baseline": "commit/precommit inventories captured before staging and before commit/ existed",
+  "preSupportRehash": {
+    "path": "commit/precommit/preservation-compare-before-support.json",
+    "contentRows": 14293,
+    "permissionRows": 26682,
+    "unexpectedMismatches": 0,
+    "dataCandidatesDirectorySize": 192
+  },
+  "postSupportRehashBeforeReceipt": {
+    "contentRows": 14293,
+    "permissionRows": 26682,
+    "contentMismatches": 0,
+    "permissionMismatches": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates",
+        "kind": "dir",
+        "perm": "0o755",
+        "st_mode": 16877,
+        "sha256": null,
+        "beforeSize": 192,
+        "afterSize": 224,
+        "cause": "additive commit/ child directory; mode and kind unchanged"
+      }
+    ]
+  },
+  "ownIndex": {
+    "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-27-data-candidates/index",
+    "beforeSha256": "3f65220769feadf707b9ddfa503bb70d78d9520666fe414f7220e51c47814937",
+    "afterSha256": "6a2e636d68083c83d543b6518661ad323f07faa728dcdcb9f58f9717302d543b",
+    "beforeBytes": 2076635,
+    "afterBytes": 2077579,
+    "st_mode": 33188
+  },
+  "branchRef": {
+    "path": ".git/refs/heads/work/dtf-migration-phase-27-data-candidates",
+    "beforeSha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401",
+    "afterSha256": "dcd150d26b0ed9bfa44f3993987b3b3257ee4c57cd500a55f785cd5cd86890a5",
+    "bytes": 41,
+    "st_mode": 33188,
+    "now": "789fced820ed494d9651c598fb8f75c646d727a7\n"
+  },
+  "showRefOnlyLine": {
+    "removed": "0856a5c56e5d09b81c669f59b613efef79133e19 refs/heads/work/dtf-migration-phase-27-data-candidates",
+    "added": "789fced820ed494d9651c598fb8f75c646d727a7 refs/heads/work/dtf-migration-phase-27-data-candidates",
+    "bothFilesBytes": 6482
+  },
+  "foreignIndexesUnchanged": 28,
+  "hostDependenciesUnchanged": true,
+  "authoritiesUnchanged": true,
+  "cacheDirectoryAbsent": true
+}

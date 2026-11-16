@@ -1,0 +1,402 @@
+{
+  "checkedAt": "2026-11-12T17:19:48.733Z",
+  "sealHash": "97d7df1bb3b21d7c17f272e48c73fe0e44e5a4377d7ce9318aa125e0a450c303",
+  "files": [
+    {
+      "path": "artifact-deployment-bindings.json",
+      "expected": "0d20b9fa9e43a4768b11916c97510f3d9251738de187243c34135235fc9c6b60",
+      "actual": "0d20b9fa9e43a4768b11916c97510f3d9251738de187243c34135235fc9c6b60",
+      "bytes": 797350,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "authority-bindings.json",
+      "expected": "f5dca61a6e909f911aad3ba40f3df66f43162e423405e8f8c1816e74bc7875a9",
+      "actual": "f5dca61a6e909f911aad3ba40f3df66f43162e423405e8f8c1816e74bc7875a9",
+      "bytes": 4528,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "binding-method.md",
+      "expected": "63c277e04e1b060f9fb20f6ce9edf3d0920ede10fb92b311f1b2f141bdbd3881",
+      "actual": "63c277e04e1b060f9fb20f6ce9edf3d0920ede10fb92b311f1b2f141bdbd3881",
+      "bytes": 6216,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "candidate-01.json",
+      "expected": "84bbedeef002ee142c2cd134c4180ba6c1c6795cc483183cce401a4cc9972ef3",
+      "actual": "84bbedeef002ee142c2cd134c4180ba6c1c6795cc483183cce401a4cc9972ef3",
+      "bytes": 65657,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "candidate-01.patch",
+      "expected": "5ab0b43cedb2e9ededee532b0f0ee450621b35a6bc6c6023caafded68c17e953",
+      "actual": "5ab0b43cedb2e9ededee532b0f0ee450621b35a6bc6c6023caafded68c17e953",
+      "bytes": 66149,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "cleanup-final.log",
+      "expected": "a86123b7784072495a7488f6dada85f6a4606878d594867cc5b3a92513713cea",
+      "actual": "a86123b7784072495a7488f6dada85f6a4606878d594867cc5b3a92513713cea",
+      "bytes": 1643,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "cleanup.log",
+      "expected": "c29a564707a9a3dca0348ab8cfba30c4f956e86f35e2bf9b69a2f175bfa09fcb",
+      "actual": "c29a564707a9a3dca0348ab8cfba30c4f956e86f35e2bf9b69a2f175bfa09fcb",
+      "bytes": 397,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "design.md",
+      "expected": "025f7d5c148723734489d9830180bff5c8f68b4d50c0c58de1dc2426fb9141a9",
+      "actual": "025f7d5c148723734489d9830180bff5c8f68b4d50c0c58de1dc2426fb9141a9",
+      "bytes": 3161,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "execution-evidence.json",
+      "expected": "7758cd586faaacbdad8d51fa2e072af833a923e77e289c7229dbb4184320a989",
+      "actual": "7758cd586faaacbdad8d51fa2e072af833a923e77e289c7229dbb4184320a989",
+      "bytes": 71944,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "failed-attempts.md",
+      "expected": "8ce352c9f3fa5030d325d78a01c4204c4c1d032807bcf17872f3d388a7f813ac",
+      "actual": "8ce352c9f3fa5030d325d78a01c4204c4c1d032807bcf17872f3d388a7f813ac",
+      "bytes": 4359,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "forks-final-01.log",
+      "expected": "68bac3f8fd389b86ec63fec8ac6de64108c05f0f31e91b4c320cb3595ae6a16d",
+      "actual": "68bac3f8fd389b86ec63fec8ac6de64108c05f0f31e91b4c320cb3595ae6a16d",
+      "bytes": 1635279,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "legacy-01.log",
+      "expected": "2c35ce1a04d93db611ebfbfd3bfebf5ca5d52535a1f20574869e573018607bd7",
+      "actual": "2c35ce1a04d93db611ebfbfd3bfebf5ca5d52535a1f20574869e573018607bd7",
+      "bytes": 219292,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "legacy-02.log",
+      "expected": "4757e2edb0f4fe974140b19bf458c3de31c5fd081777e40e940d8d5f928abd6c",
+      "actual": "4757e2edb0f4fe974140b19bf458c3de31c5fd081777e40e940d8d5f928abd6c",
+      "bytes": 218494,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "legacy-donation-counterexample-01.log",
+      "expected": "816856b70ea76eced6ea7692583b0e8557d1a5b616aeb335dff3d2c6b042f370",
+      "actual": "816856b70ea76eced6ea7692583b0e8557d1a5b616aeb335dff3d2c6b042f370",
+      "bytes": 137122475,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "native-01.log",
+      "expected": "2daa0a2f071e679f10fe65f3a697a3efbd93bbdeb736bd8d424cd9d3d60c7564",
+      "actual": "2daa0a2f071e679f10fe65f3a697a3efbd93bbdeb736bd8d424cd9d3d60c7564",
+      "bytes": 215960,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "native-02.log",
+      "expected": "5a881a06914e630265b43653ad536b1a439b09bce65a08f914d3cb71af4e7a4e",
+      "actual": "5a881a06914e630265b43653ad536b1a439b09bce65a08f914d3cb71af4e7a4e",
+      "bytes": 75031822,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "native-03.log",
+      "expected": "bc8f0cf4b7b8969b2867accb6cd6de702e24086379e9584f2f24ec8ba0e41284",
+      "actual": "bc8f0cf4b7b8969b2867accb6cd6de702e24086379e9584f2f24ec8ba0e41284",
+      "bytes": 238788,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "ordinary-final-01.log",
+      "expected": "57d678f8fd449f0f80123042aa49c7c904eb44ac28f045406369afd355429fd4",
+      "actual": "57d678f8fd449f0f80123042aa49c7c904eb44ac28f045406369afd355429fd4",
+      "bytes": 325272,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "report.md",
+      "expected": "01f68baad98a430d0694ec0b0d9a8b8af83c766765d50ab2c01ea0796e3b3d55",
+      "actual": "01f68baad98a430d0694ec0b0d9a8b8af83c766765d50ab2c01ea0796e3b3d55",
+      "bytes": 17641,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "resolved-settings.json",
+      "expected": "5d7f30c925666bc68a9cedcaa4ac0740475288d041180233103fd91fee42a823",
+      "actual": "5d7f30c925666bc68a9cedcaa4ac0740475288d041180233103fd91fee42a823",
+      "bytes": 6170,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "specs-final-01.log",
+      "expected": "0ef39999b0f3e6fe6ddcdff208021b28b8d90aa8113b4099d61a21bd2d4b1f2a",
+      "actual": "0ef39999b0f3e6fe6ddcdff208021b28b8d90aa8113b4099d61a21bd2d4b1f2a",
+      "bytes": 3111215,
+      "mode": 33188,
+      "match": true
+    }
+  ],
+  "source": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "expected": "036326dac3b032ea5041058a925c1c1e473ec11ecdfa5c92117ac895315ea991",
+      "actual": "036326dac3b032ea5041058a925c1c1e473ec11ecdfa5c92117ac895315ea991",
+      "bytes": 12828,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "expected": "cf46ddab94407cf8d4666882da4547e96ad8390d342848b4fc868e01891a58e5",
+      "actual": "cf46ddab94407cf8d4666882da4547e96ad8390d342848b4fc868e01891a58e5",
+      "bytes": 9495,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "expected": "98b29c7a27484df9bfbf2c5193fac5c4b60a977a28c3552b21daff4e13169b75",
+      "actual": "98b29c7a27484df9bfbf2c5193fac5c4b60a977a28c3552b21daff4e13169b75",
+      "bytes": 14647,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "expected": "de7a91ccf5ccd4ad5ff2d577a6da91e5057bc2ac51bda7e80619501d6b8fe7d9",
+      "actual": "de7a91ccf5ccd4ad5ff2d577a6da91e5057bc2ac51bda7e80619501d6b8fe7d9",
+      "bytes": 9439,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "expected": "4a4d82bbcf31cdf10bf9d21f08b29ecc9de708ac674c61e938b4241f1300c7ca",
+      "actual": "4a4d82bbcf31cdf10bf9d21f08b29ecc9de708ac674c61e938b4241f1300c7ca",
+      "bytes": 1525,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "expected": "8860da03ba242e188a077fe5193138c25536e54c033dc0aa24cadbfc91ce0b3e",
+      "actual": "8860da03ba242e188a077fe5193138c25536e54c033dc0aa24cadbfc91ce0b3e",
+      "bytes": 6089,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "expected": "f4f78a0d2a05215cdcee3ea1e87afe2d144af945ed00812a0ecf2bdcbfbe1b48",
+      "actual": "f4f78a0d2a05215cdcee3ea1e87afe2d144af945ed00812a0ecf2bdcbfbe1b48",
+      "bytes": 6133,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "expected": "e23bf73a7b786dea75f9efb90025bc12c578cf28ed899143f1ba54014feea1b8",
+      "actual": "e23bf73a7b786dea75f9efb90025bc12c578cf28ed899143f1ba54014feea1b8",
+      "bytes": 1792,
+      "mode": 33188,
+      "match": true
+    }
+  ],
+  "authority": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants-brief.md",
+      "expected": "3eda88fd29b50b75301fb3a713c2faa5f0758c35c8f992692b38127181a4c887",
+      "actual": "3eda88fd29b50b75301fb3a713c2faa5f0758c35c8f992692b38127181a4c887",
+      "bytes": 10099,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/stateful-invariant-intake.md",
+      "expected": "30583b375708b0ff219bc7491baf533568714760287cc83630caab6fb02108c3",
+      "actual": "30583b375708b0ff219bc7491baf533568714760287cc83630caab6fb02108c3",
+      "bytes": 7791,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-source-coverage-snapshot.md",
+      "expected": "7ce2ab4274051348a09da278049d0e9f22aa0f368aeb6a3fba2b70c0af3c9667",
+      "actual": "7ce2ab4274051348a09da278049d0e9f22aa0f368aeb6a3fba2b70c0af3c9667",
+      "bytes": 7064,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "expected": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "actual": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "bytes": 79305,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "expected": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "actual": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "bytes": 108022,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/report.md",
+      "expected": "49fab644f20998227e1c30013c07e2895a8feeda1e0714ae481a860b4d11e0dd",
+      "actual": "49fab644f20998227e1c30013c07e2895a8feeda1e0714ae481a860b4d11e0dd",
+      "bytes": 13958,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/verification-r2/report.md",
+      "expected": "14750c64ed29a92ddf36b8c68fd6ec8b9fcdd39b7bc61e612662b1ff617a3f41",
+      "actual": "14750c64ed29a92ddf36b8c68fd6ec8b9fcdd39b7bc61e612662b1ff617a3f41",
+      "bytes": 24548,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/verification.md",
+      "expected": "653350b3af3d011ad068a0885461c6828d5cb1aff481ba15900a7ff2563f773b",
+      "actual": "653350b3af3d011ad068a0885461c6828d5cb1aff481ba15900a7ff2563f773b",
+      "bytes": 20461,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/claims/contract.md",
+      "expected": "a657b9e8a5a6925130a6a56f7334a26536162effac321254144063774fd98d41",
+      "actual": "a657b9e8a5a6925130a6a56f7334a26536162effac321254144063774fd98d41",
+      "bytes": 48499,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/correction-verification/report.md",
+      "expected": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+      "actual": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+      "bytes": 20175,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/CLAUDE.md",
+      "expected": "a0c6e9db00e4410cde7ccacc9aa7c793d6328544168d584fb6dea32d330fa388",
+      "actual": "a0c6e9db00e4410cde7ccacc9aa7c793d6328544168d584fb6dea32d330fa388",
+      "bytes": 15086,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/foundry.toml",
+      "expected": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "actual": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "bytes": 3814,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/remappings.txt",
+      "expected": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "actual": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "bytes": 520,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_RULES.md",
+      "expected": "897fea82d599e9b3b0dc28ff88b79a1adf090a591484769efc551290f0a67a04",
+      "actual": "897fea82d599e9b3b0dc28ff88b79a1adf090a591484769efc551290f0a67a04",
+      "bytes": 1447,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_CODING.md",
+      "expected": "ad47cf28938e8a5a28b166f89624ea931eb0eba6cc5ee891bd3f8346f5dc7a27",
+      "actual": "ad47cf28938e8a5a28b166f89624ea931eb0eba6cc5ee891bd3f8346f5dc7a27",
+      "bytes": 1112,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_DEPLOYMENT.md",
+      "expected": "5533d906697335e5328c8ec1ee6cdcb971dfd19a71513cec91118920dd63eba2",
+      "actual": "5533d906697335e5328c8ec1ee6cdcb971dfd19a71513cec91118920dd63eba2",
+      "bytes": 1578,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_TESTS.md",
+      "expected": "80f5fa64e97c22e2373d323c6b2ea9b48ef06781ef0b6f42537a09d3742933a4",
+      "actual": "80f5fa64e97c22e2373d323c6b2ea9b48ef06781ef0b6f42537a09d3742933a4",
+      "bytes": 1874,
+      "mode": 33188,
+      "match": true
+    }
+  ],
+  "membership": [
+    "execution-evidence.json",
+    "specs-final-01.log",
+    "cleanup-final.log",
+    "legacy-donation-counterexample-01.log",
+    "resolved-settings.json",
+    "candidate-01.json",
+    "authority-bindings.json",
+    "seal.json",
+    "report.md",
+    "artifact-deployment-bindings.json",
+    "native-03.log",
+    "native-02.log",
+    "ordinary-final-01.log",
+    "native-01.log",
+    "cleanup.log",
+    "failed-attempts.md",
+    "forks-final-01.log",
+    "candidate-01.patch",
+    "design.md",
+    "legacy-01.log",
+    "legacy-02.log",
+    "binding-method.md"
+  ]
+}

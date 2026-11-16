@@ -1,0 +1,3034 @@
+{
+  "run": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978",
+  "uniqueTransactions": 333,
+  "statusCounts": {
+    "0x1": 308,
+    "0x0": 25
+  },
+  "transactions": [
+    {
+      "kind": "environment",
+      "hash": "0x0a2bded7064fa9b1047f6df5350220c4638b6555302b78683b772e3c85a574b4",
+      "blockNumber": "0x67e5d1d",
+      "status": "0x1",
+      "gasUsed": "1036191"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x6c60752247945a0a739160533b1771491866325bb488e2eb7a745ebff6157e8a",
+      "blockNumber": "0x67e5d1e",
+      "status": "0x1",
+      "gasUsed": "616280"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x388e6e28edef658e2cd3fb9001119ddbd233cbb1201810e10341101b461770e6",
+      "blockNumber": "0x67e5d1f",
+      "status": "0x1",
+      "gasUsed": "1000887"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9052ecffcb2162f9949f2f0cd4d09ce359ee4c33e1853390dc87992a7e228687",
+      "blockNumber": "0x67e5d20",
+      "status": "0x1",
+      "gasUsed": "784258"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x8c93c5fe5f23a6bc36131d1b5eaa74d389ab411e9f2ef8b2d92c733b5599c2f0",
+      "blockNumber": "0x67e5d21",
+      "status": "0x1",
+      "gasUsed": "616023"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x65dc8ff8d38d20cce400891a4b3f7459e761367d53b0e5e26ff74956ed20707f",
+      "blockNumber": "0x67e5d22",
+      "status": "0x1",
+      "gasUsed": "1098139"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd2a1433b23c3a09a7316004687b9aa938a7fe36c2563b6ca6b030d875097c381",
+      "blockNumber": "0x67e5d23",
+      "status": "0x1",
+      "gasUsed": "1262371"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xecb76b4695e0257ef790da966ba9f69624dbbdda9d5f4acbb5f577f6d05a307a",
+      "blockNumber": "0x67e5d24",
+      "status": "0x1",
+      "gasUsed": "914122"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x3546a7ca5fba07f720bb66045de913f87cc1172da42ed0df1a781447784a654e",
+      "blockNumber": "0x67e5d25",
+      "status": "0x1",
+      "gasUsed": "991105"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4ae90f04b43f660c9a221ea70b58ed43ce56a89902ef8f4b346288496290c41f",
+      "blockNumber": "0x67e5d26",
+      "status": "0x1",
+      "gasUsed": "2360460"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf0a76a8bde8188617c5f125960b830361fda14d07074226db6f2bc27c3f77854",
+      "blockNumber": "0x67e5d27",
+      "status": "0x1",
+      "gasUsed": "2223942"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x35a859a4b8e507c549054d59c07e9a0fc16f86e817fe87513348ec3ad2125bf0",
+      "blockNumber": "0x67e5d28",
+      "status": "0x1",
+      "gasUsed": "703256"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5f7e7b410c87f96cf4c34ecec2e587f36baa7135dd204db94798d6992cfead29",
+      "blockNumber": "0x67e5d29",
+      "status": "0x1",
+      "gasUsed": "776705"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb23b7564e61d768002dbb60c46ae8f7ecefde3eeba10c9dfe4e9e54ca0a8b6e2",
+      "blockNumber": "0x67e5d2a",
+      "status": "0x1",
+      "gasUsed": "2230273"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7b60b5e1fbc56340245e4098ed4028c3947c54f2b524eadc2ddccaea6845a5ad",
+      "blockNumber": "0x67e5d2b",
+      "status": "0x1",
+      "gasUsed": "1946428"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xcc706687ae627c7e47a16151b65f74d8d3415c821d53d3b9f952af7ccef1ba82",
+      "blockNumber": "0x67e5d2c",
+      "status": "0x1",
+      "gasUsed": "1824402"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xafdc2c1f13056f976029b6b883b92685f47545413ca2054c0871098032583c56",
+      "blockNumber": "0x67e5d2d",
+      "status": "0x1",
+      "gasUsed": "1829176"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x6e3b5cb79acb59277989ee0093ad99a34a37e79450634852778259110ff85cef",
+      "blockNumber": "0x67e5d2e",
+      "status": "0x1",
+      "gasUsed": "1824006"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x93720918ef5d6ab80999f562960216240b77ca088d8ae3deaac71b8c9447c48e",
+      "blockNumber": "0x67e5d2f",
+      "status": "0x1",
+      "gasUsed": "1479104"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x939ce816d22355094da805d3dca493543c7a1bf48c57d72e8d26dafacba220f2",
+      "blockNumber": "0x67e5d30",
+      "status": "0x1",
+      "gasUsed": "46000"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa9a9fe2d72b8e4d05f1a750eec0d2b1b61cb8b4fdf39080403dee76c4f525dc2",
+      "blockNumber": "0x67e5d31",
+      "status": "0x1",
+      "gasUsed": "2287941"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x66f2aed18669b006c07358968d0b9567c0b34b2984f683bd4eb0a6c459f628cd",
+      "blockNumber": "0x67e5d32",
+      "status": "0x1",
+      "gasUsed": "4004878"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd676a4637570f41f84da1285a3241220410266f1daacb98a618d2866e2989d37",
+      "blockNumber": "0x67e5d33",
+      "status": "0x1",
+      "gasUsed": "1371091"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x449307b648644471b8fb26fc9a0bad83524dab43f3275e168a29632312efe8ee",
+      "blockNumber": "0x67e5d34",
+      "status": "0x1",
+      "gasUsed": "2052156"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x09d4050486009ae4719f081096f5c6855645e71112f64ef914322afc790a9e59",
+      "blockNumber": "0x67e5d35",
+      "status": "0x1",
+      "gasUsed": "102023"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x35e6764c0c554e424c04cd70150bd57e5e6f6fbc27f19a91ea632927dc2198de",
+      "blockNumber": "0x67e5d36",
+      "status": "0x1",
+      "gasUsed": "137620"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x41f9a4ecedff1229040934a6f36717c170c07092b668df2c1799510c32e3cd3d",
+      "blockNumber": "0x67e5d37",
+      "status": "0x1",
+      "gasUsed": "1025807"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf8d06a3877cdad633bb24eff127b5cd0668aa9859633957f812ecd5d6f931a3e",
+      "blockNumber": "0x67e5d38",
+      "status": "0x1",
+      "gasUsed": "615096"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa64bf965f5491019a9a43c17535082995b9b18c75b7f83a270f9487243532be3",
+      "blockNumber": "0x67e5d39",
+      "status": "0x1",
+      "gasUsed": "1356634"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5564dbf7b38a2c07b44c4111f9f55b2eaaf9f3e53ad1694820deb5e051307f7d",
+      "blockNumber": "0x67e5d3a",
+      "status": "0x1",
+      "gasUsed": "2029495"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa519ad377e4d9471246344ef6c68c32a4c810f08f0f2793d7eb3fb6599e9ba63",
+      "blockNumber": "0x67e5d3b",
+      "status": "0x1",
+      "gasUsed": "3640628"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd81e3358dbaf7a229079599aab803374f8e5224dc8ae6b7e9b261339818505c7",
+      "blockNumber": "0x67e5d3c",
+      "status": "0x1",
+      "gasUsed": "3263944"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x0b24c79b0d7504c62a72d358d961660ffecb418f4bf4f931c82fcb1967810bdd",
+      "blockNumber": "0x67e5d3d",
+      "status": "0x1",
+      "gasUsed": "1726421"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd3d3458f1d8d53ba5b87e940cbde06d72e0e1fd156ddcf1abc09c65f449b4056",
+      "blockNumber": "0x67e5d3e",
+      "status": "0x1",
+      "gasUsed": "1162397"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x8219ab370d55309fbe73edf418e7186c6a559075373b4257a6e737988d8b71db",
+      "blockNumber": "0x67e5d3f",
+      "status": "0x1",
+      "gasUsed": "1062047"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7d01dec7ae9a74e922f2fd03cafde0ae3acd6c0af5776de8ee8579fe8fce1121",
+      "blockNumber": "0x67e5d40",
+      "status": "0x1",
+      "gasUsed": "1518667"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf76a30403a1abae1d130241f247e44b35434224f8367b5eca6e6ba6c4c0f3cd0",
+      "blockNumber": "0x67e5d41",
+      "status": "0x1",
+      "gasUsed": "2569973"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9e22728dbfb62f963c5ead098e0a13ec2030271f94ddf960f8dd6b55130d5373",
+      "blockNumber": "0x67e5d42",
+      "status": "0x1",
+      "gasUsed": "1142833"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x60331e071001af212d191a2172a7470641c809fd00941ca0c3223d5cf3179664",
+      "blockNumber": "0x67e5d43",
+      "status": "0x1",
+      "gasUsed": "820342"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x3cf674c8b1132752611f554753acc887eb0c7f9712ba6f9aa8f5b308287ac5fc",
+      "blockNumber": "0x67e5d44",
+      "status": "0x1",
+      "gasUsed": "84270"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x58780a283240680cf80bf036b0b553841b34f4c3f8a7cf50d4ca73715333abe3",
+      "blockNumber": "0x67e5d45",
+      "status": "0x1",
+      "gasUsed": "2976054"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5aaba15e509b3409f11291ac3200e3638fe74aa59d7a7fc40b64f063277c4b7a",
+      "blockNumber": "0x67e5d46",
+      "status": "0x1",
+      "gasUsed": "8530259"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1a3a4c8452666997fd991ba572715fa82b5441bc969fdba3cd900c317eb08720",
+      "blockNumber": "0x67e5d47",
+      "status": "0x1",
+      "gasUsed": "52573"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2d9d7c7a4c7406e646ac1b52ffdc537007cbedd890a94d3e61259eea3309d1c8",
+      "blockNumber": "0x67e5d48",
+      "status": "0x1",
+      "gasUsed": "1534532"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb1eefc9a5ea9f7fd6ef103916430b5312f10ad91e7b42eef5b42026017796ce3",
+      "blockNumber": "0x67e5d49",
+      "status": "0x1",
+      "gasUsed": "863354"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x0942ab54cd6b7223431ce7a0995b48ca3d64b8397354ba12c0d29535ec457aea",
+      "blockNumber": "0x67e5d4a",
+      "status": "0x1",
+      "gasUsed": "675320"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xdbd176f775919c3d7b539cb496b0edc3606d2cd7f254a731bf191a10f60ca965",
+      "blockNumber": "0x67e5d4b",
+      "status": "0x1",
+      "gasUsed": "2204626"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4fa96406a018baf762cb17bdd19d9fb83678e6b96afd1646de7d1372f6dc8da8",
+      "blockNumber": "0x67e5d4c",
+      "status": "0x1",
+      "gasUsed": "747029"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4d58867cc638e8afd9fc85b05d4eb9f11d39d424f4edc4b633c7eec33861c301",
+      "blockNumber": "0x67e5d4d",
+      "status": "0x1",
+      "gasUsed": "915163"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x8164c6bb846b91298b2180fd40605951db91f464ca853a8f3205d0afba780f61",
+      "blockNumber": "0x67e5d4e",
+      "status": "0x1",
+      "gasUsed": "748322"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2dcc6cf101ac194e927cf4a04982769898706ca9b58d661f99900c0e49df0cb0",
+      "blockNumber": "0x67e5d4f",
+      "status": "0x1",
+      "gasUsed": "843752"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf2952a9b58d5aa6fe540eafec6c77ac8c13d86f8dddd22eb55e24f79db723aa4",
+      "blockNumber": "0x67e5d50",
+      "status": "0x1",
+      "gasUsed": "1239594"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9079a01065152fabc758f0a7d6f22ab4baf70a7ff5fd6e39558ce33651d6f3ad",
+      "blockNumber": "0x67e5d51",
+      "status": "0x1",
+      "gasUsed": "412730"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x883eb6fde9935ab3ba3f07f8d84527f95cdc6b78e1c08027837e3837cd848865",
+      "blockNumber": "0x67e5d52",
+      "status": "0x1",
+      "gasUsed": "465006"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5b7267f0aea37648f92f70d1da06937f94c1f6966554aebd61579d5abc18a40d",
+      "blockNumber": "0x67e5d53",
+      "status": "0x1",
+      "gasUsed": "44939"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x80cb728e6c5bf1dfe80b2756913745a5b99b29a8214561ae1a68b108aff72d1f",
+      "blockNumber": "0x67e5d54",
+      "status": "0x1",
+      "gasUsed": "68030"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5a126479f458bf4c6a3158cf4c11e2cf8b5b9b8fa4190168e95517b1a483f190",
+      "blockNumber": "0x67e5d55",
+      "status": "0x1",
+      "gasUsed": "3073470"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x3e6f5ca18376b5db379612393692aae160dc7e1044f7b907fc6b7856a51681d2",
+      "blockNumber": "0x67e5d56",
+      "status": "0x1",
+      "gasUsed": "3783200"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x11d9596447a95df114cdf888662789331ed90b2889b227f7d13875742b0d6d6d",
+      "blockNumber": "0x67e5d57",
+      "status": "0x1",
+      "gasUsed": "2053678"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd7ef4ebd6150cba3e4092eabe1b9f774884a337cb75e84adaf57daea57ffe08f",
+      "blockNumber": "0x67e5d58",
+      "status": "0x1",
+      "gasUsed": "3314049"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x406046f283e7325482123545f1f1c2216d0092781eef6dcc0592ae225e0467f5",
+      "blockNumber": "0x67e5d59",
+      "status": "0x1",
+      "gasUsed": "4579534"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xe86306d8c2abbc25fcc24989d74c4ff4e1ce7c455b07b45919bf1b73e4cb6aa3",
+      "blockNumber": "0x67e5d5a",
+      "status": "0x1",
+      "gasUsed": "2911302"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd1961eae50a96b3117ae783e9d57e5a9a47c891c071b1ac33e17c9cd4c7e40eb",
+      "blockNumber": "0x67e5d5b",
+      "status": "0x1",
+      "gasUsed": "3257804"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd4235c56e22edc5fc468c362192bccdac74a0c3273c36007310f02778599d5ba",
+      "blockNumber": "0x67e5d5c",
+      "status": "0x1",
+      "gasUsed": "4223601"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9989e0291c25afc0ee22b8e4a77d13d6d8f56d9eb6ce96048422a9348f9779a5",
+      "blockNumber": "0x67e5d5d",
+      "status": "0x1",
+      "gasUsed": "2580175"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xaefdf0adf584e550252e0fba02dc8f1823d0c0b432450cc8a7df89bfbcc71c6b",
+      "blockNumber": "0x67e5d5e",
+      "status": "0x1",
+      "gasUsed": "2230333"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1c5a08b09aa42f76b72dec59cd9931ebec13c981dd9a14e5b4355fbebc5b33db",
+      "blockNumber": "0x67e5d5f",
+      "status": "0x1",
+      "gasUsed": "2487833"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb05668317a5da02dbbae72eb61ab98bdcf3b82b4bfe2754fc77b5d87f21453b7",
+      "blockNumber": "0x67e5d60",
+      "status": "0x1",
+      "gasUsed": "2997376"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x30f08d3d92db8b792b94a79050701e0ad5d1a289e8eaa596111863281befd7a7",
+      "blockNumber": "0x67e5d61",
+      "status": "0x1",
+      "gasUsed": "2393145"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2a9012736b29c695ffeee1727b26aac1b02253510407bb1433eb424d58b6ca20",
+      "blockNumber": "0x67e5d62",
+      "status": "0x1",
+      "gasUsed": "1382977"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1d4ae99bc9a8a94316b9058f3b8e8d9e5fe4aef8163a104267dc68875ed6f776",
+      "blockNumber": "0x67e5d63",
+      "status": "0x1",
+      "gasUsed": "53087"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc36792c26073d000e06d490f320ebacf12eb3cfde756afd9036200592dc59f59",
+      "blockNumber": "0x67e5d64",
+      "status": "0x1",
+      "gasUsed": "3468977"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa68b870de62c11fa9c2c4115dc9c8e60a4749372f33fe7c9e73f95e2c392a5e3",
+      "blockNumber": "0x67e5d65",
+      "status": "0x1",
+      "gasUsed": "3063210"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5b8e867c20d3d3244d34dc6a4ad384b481715fc0e0f4f45fe894cb6bb105cb1c",
+      "blockNumber": "0x67e5d66",
+      "status": "0x1",
+      "gasUsed": "69982"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xef666b01e8c0914ebf90004853355ee930094e0ea13751ee6ccff26f34c668e4",
+      "blockNumber": "0x67e5d67",
+      "status": "0x1",
+      "gasUsed": "3063210"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb36f54ddb40882a5467552a11a956958e97e58e89562d3b88194c85756596f05",
+      "blockNumber": "0x67e5d68",
+      "status": "0x1",
+      "gasUsed": "69982"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x0dd3eaa82d148eb7f9a2a6815555850510cd1457eb2b580dfb8a27693f395f0a",
+      "blockNumber": "0x67e5d69",
+      "status": "0x1",
+      "gasUsed": "251593"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x02bc03535901821604bf4cde13575f1a18276f7dc81a9e09d7cdd969e3de5fda",
+      "blockNumber": "0x67e5d6a",
+      "status": "0x1",
+      "gasUsed": "51113"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7823e29b8831c2e72bacef11a0526a96e75323fda5b3788948d05f1fc375d800",
+      "blockNumber": "0x67e5d6b",
+      "status": "0x1",
+      "gasUsed": "51236"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb0ac54f680bb40d39a4c5e7a1caf670e528de795663086bd0d690098ea36f4b4",
+      "blockNumber": "0x67e5d6c",
+      "status": "0x1",
+      "gasUsed": "313869"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc4eea73f905a93cdf826ef9c68495deaa4c4d2a87bfdfe06037482400beca1b4",
+      "blockNumber": "0x67e5d6d",
+      "status": "0x1",
+      "gasUsed": "251593"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa2fbb3d938647cb6ed15ddb2a9f707cdda844d42c9ac7186ca3a3956ab1bc509",
+      "blockNumber": "0x67e5d6e",
+      "status": "0x1",
+      "gasUsed": "51113"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9c045031333fd00b03c2b6f5e1ddef61e31935fa0acb6be91c63ef6d68819cb9",
+      "blockNumber": "0x67e5d6f",
+      "status": "0x1",
+      "gasUsed": "51376"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf1341c86cf52e2f6db6a1135166d88cf7b84bf85c77e469d3cb5a19c5447b132",
+      "blockNumber": "0x67e5d70",
+      "status": "0x1",
+      "gasUsed": "314317"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1fa4823f2f9bc5ff2c2afcb2b19e9f7d9e16b84a9ff184cb21500c1b2c7ff184",
+      "blockNumber": "0x67e5d71",
+      "status": "0x1",
+      "gasUsed": "11862619"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc1b754615007fd42f13e91155b6bec0b9da37c93a462baf10a16ea6fcfbe625d",
+      "blockNumber": "0x67e5d72",
+      "status": "0x1",
+      "gasUsed": "11126325"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x6060b2b4bf9fb68f5a37b02c44b4c6ee5354b9e0a470d5179e7672a47d25a0bb",
+      "blockNumber": "0x67e5d73",
+      "status": "0x1",
+      "gasUsed": "45798"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa15c53fc821090692d776a37eed1b12a5955d23105408f377ecac2c3010a860c",
+      "blockNumber": "0x67e5d74",
+      "status": "0x1",
+      "gasUsed": "45822"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb4f6f0c48d4350b1091da6673f43af0791a69b154e95024620be74fabcf815d3",
+      "blockNumber": "0x67e5d75",
+      "status": "0x1",
+      "gasUsed": "478737"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb74be13757065428e63b9638bd9ffbb4fee2a471b66038653872f011e543b173",
+      "blockNumber": "0x67e5d76",
+      "status": "0x1",
+      "gasUsed": "45961"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x44ef19ebc210bec295441fc56f2dd34255141f250153059ff7b2acec7dfaedd2",
+      "blockNumber": "0x67e5d77",
+      "status": "0x1",
+      "gasUsed": "45822"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xaa561823b4a8d0a7821f1ecfd3f470c5097a21b2760df8451bdf572694620f7d",
+      "blockNumber": "0x67e5d78",
+      "status": "0x1",
+      "gasUsed": "478656"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x41b0db3a2bdd09a5992ed3b1098caed257656604072f197f64b0b166b16c5a8e",
+      "blockNumber": "0x67e5d79",
+      "status": "0x1",
+      "gasUsed": "576492"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfb393e8a23100a98f469cba6a94c71fe29f6d07bb466c06d8b087343c27d6837",
+      "blockNumber": "0x67e5d7a",
+      "status": "0x1",
+      "gasUsed": "1672136"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x66a5729af7a67244a617cfb87fe0df1c4bbd7d996fddc81e588754dc57194287",
+      "blockNumber": "0x67e5d7b",
+      "status": "0x1",
+      "gasUsed": "734521"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x0174a898881256249d86c11ffa6ae0e29150c048d409647c108a0bf12855567e",
+      "blockNumber": "0x67e5d7c",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x0c871797528a1f46cbbce7ae642c08a81ce5fa2a160cb95382e487dc7ef1edbd",
+      "blockNumber": "0x67e5d7d",
+      "status": "0x1",
+      "gasUsed": "823793"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf50d1c151aeb4ea9896058445643ba6131ae35e62af8324346f78a7c7a6bd330",
+      "blockNumber": "0x67e5d7e",
+      "status": "0x1",
+      "gasUsed": "1496893"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9ddfef2f00b7dfb59151c25c37749f63bd1ab9a0b0262c861b38832692f8bfb9",
+      "blockNumber": "0x67e5d7f",
+      "status": "0x1",
+      "gasUsed": "2613723"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfcd7fcbc133ebb54c48d01413c13817b98b5d8fdbb859a197fc995bd13f2b82d",
+      "blockNumber": "0x67e5d80",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x032de0b2f5bbbce35619e732b7dd8d6e49bb324e347be014d3994bf41ccf92f9",
+      "blockNumber": "0x67e5d81",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xdf597a16bf1b0cd8b1f882bd9b9a77126693795baa0ad6ec272eeace8e0eaa3c",
+      "blockNumber": "0x67e5d82",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa5f41abc525e759964608bdd8124d57c3a1d53f11943b90f7555ecfbe24ac5fc",
+      "blockNumber": "0x67e5d83",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfbe28f440d0ccbda99b31f717e054f4f151afe1b0b72f57e3e08c04edded18bc",
+      "blockNumber": "0x67e5d84",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xaf9e956209023a87bba531cb9052bbc3cc9571e9b065ddb44cda5ac4c2114c5d",
+      "blockNumber": "0x67e5d85",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4043dd4442542bd2bd6834698e740469558ef20c7a4a0255a9f0e7b275caa2d1",
+      "blockNumber": "0x67e5d86",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x8051ad596de3bd96770520245d1d28914b8b1945417d9178b56b30fe0d49a166",
+      "blockNumber": "0x67e5d87",
+      "status": "0x1",
+      "gasUsed": "551541"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x140bd6862398fee63a21a00e222833457948c8a6b6fe946daaedb959ee50d959",
+      "blockNumber": "0x67e5d88",
+      "status": "0x1",
+      "gasUsed": "4156966"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5bd6cbf452b2afbcd4cddcd2d87f89d2f7c3f3b13611bf5576cd613df7ef3906",
+      "blockNumber": "0x67e5d89",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x8aab24e2747810b16ce25319416f2b947ab14ae7433e678f35bcfc9b158f92ad",
+      "blockNumber": "0x67e5d8a",
+      "status": "0x1",
+      "gasUsed": "2955394"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc4af8a26a9f18ff8c20d0469aaecca19c1c57ba922eb79d592d6f3c3e76defc4",
+      "blockNumber": "0x67e5d8b",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc77f15d26b30047593ebfbd0ab755bd2f5946ba79a4bd6853d360c8de56792a5",
+      "blockNumber": "0x67e5d8c",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x435e1ca8164539dd61695c0970ac340d3751efb564764891248320f886deec59",
+      "blockNumber": "0x67e5d8d",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xffb88154cc72cf50c64cb9f559b1c96e48904101408ee1ecdff9b51f12e00886",
+      "blockNumber": "0x67e5d8e",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7d96f532ba85b0449a620a699874fa95f89090342a67d40ee117c8dc16003e09",
+      "blockNumber": "0x67e5d8f",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x37d5544fdb15a3e30ea8f6402dcabe6da951c0e9ed8eaa55ba4a298a3a560322",
+      "blockNumber": "0x67e5d90",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfda656606b0b2660a4011550d49a196b27216df4c946e46ff45eb72538f83878",
+      "blockNumber": "0x67e5d91",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa7cc5eb458ff3d63aefed6e11fb9c0b8d6438ffd7dc66ba6f3b2c5582deaa1ee",
+      "blockNumber": "0x67e5d92",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x39f8abc21b993fbb15732f01d68dea001af21c2cfdb42a76aede6868850242ba",
+      "blockNumber": "0x67e5d93",
+      "status": "0x1",
+      "gasUsed": "773320"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5ca5229c376d98ed4678b57a450cf73ae547de7a3f198714b7b50ea5871963c8",
+      "blockNumber": "0x67e5d94",
+      "status": "0x1",
+      "gasUsed": "1674894"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4b94447186e784ae99906268af1d8c2a120f5982ac41465508298fd06af0e7a1",
+      "blockNumber": "0x67e5d95",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfb798c6d870cfc3f5e5254933a91566c0ca1ff6db10b93e2cc72beb3314a4c8a",
+      "blockNumber": "0x67e5d96",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4c51c7195f287c9e1ce76967e1bc9de05d6da51798ce5a2dc220b2ce3aa95a8c",
+      "blockNumber": "0x67e5d97",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x681bf9119c14b827edffcb327974511073f89ded0fe4da39f8d0316c73c6d3d3",
+      "blockNumber": "0x67e5d98",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd6a3d3ab9faad6c214728e53f0196d4fc63612a221ae5539cc82b757556df776",
+      "blockNumber": "0x67e5d99",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x32b2c3bc27ee3141509dba3ba39c95279addf92f48daa58da533b10d9d643795",
+      "blockNumber": "0x67e5d9a",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x222211db8b603ffefacf72e4212cab2383ad83d87de543541c86f0bab3c970de",
+      "blockNumber": "0x67e5d9b",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x85e39c10286b9d7491a8ef361dfdb00c13d846a15900c7edc83a72d985169f60",
+      "blockNumber": "0x67e5d9c",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x80d8456f6c61f9797f38ee17960853ba8c11054e1b5ac0e4aeab2d170b17251b",
+      "blockNumber": "0x67e5d9d",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf63a7829e5097b93b79710beaac47214c8af12637f4977e7ad0daa2b1de81a83",
+      "blockNumber": "0x67e5d9e",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x913b208fa01127492e3e46b41a27e7b3cc58b4d6c1b5e6b67bf42afc04dc9b71",
+      "blockNumber": "0x67e5d9f",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9f3f6a58e6faf2fc841aaa850f6d51925630981b596d1ff3e0de24371c332ca4",
+      "blockNumber": "0x67e5da0",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd3761735e55794172aca3d693da81bb9d5909995c211032dc38a669ffc50d294",
+      "blockNumber": "0x67e5da1",
+      "status": "0x1",
+      "gasUsed": "773320"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb6e08726b4051dd6b1e302dd1bd456e87120d59402d56204a2ce3622f8e6a5b4",
+      "blockNumber": "0x67e5da2",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x70c2ba39cebd5a63e4d6d1bfb9541fc35367178a0bf21b8eac0aa2d0879fb25c",
+      "blockNumber": "0x67e5da3",
+      "status": "0x1",
+      "gasUsed": "4012221"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7fef803f069780540dc0670a4376fa51e6ef0c059aca0611c5fc5fc4ac55b3b5",
+      "blockNumber": "0x67e5da4",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xe854ba0f11dbfc6c73f7d0e0dfdf95e810ba4ef52ab5d59aff8a4cad09fd51ac",
+      "blockNumber": "0x67e5da5",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb9179c67933aa4f1730ffcd388eaf24c211600ee6fd909922a2bdb3db57e4764",
+      "blockNumber": "0x67e5da6",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x42db517526c9df3c58b78f05fad36fc670079195684e8ee35b3607e96da99a1b",
+      "blockNumber": "0x67e5da7",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xdd7892e5ccc4bf7b3eac8008b1d3b95b548381bae5c9b28679bb3a654531b947",
+      "blockNumber": "0x67e5da8",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7ad112cef7986c3a20a80e33533337c061083f5370f7c4c39d7567e7e8affbdd",
+      "blockNumber": "0x67e5da9",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xdc40a6fa8065bc43fb585a2450842bffe6925524736cb2945b988859c45d5c28",
+      "blockNumber": "0x67e5daa",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x5d350b2950e93af90a1d717704c07cc982a3894697967b34906904493f4aebbc",
+      "blockNumber": "0x67e5dab",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x43ec081c88c21dadeb48caa5ddcf9c97500273e3c902dd4254a9b12d26f4dc5b",
+      "blockNumber": "0x67e5dac",
+      "status": "0x1",
+      "gasUsed": "773320"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x3e6e957450d32081de6f8f50612547a3562c61e4a922cbabae874a0c5f82226a",
+      "blockNumber": "0x67e5dad",
+      "status": "0x1",
+      "gasUsed": "2008686"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa10e902e1f13856641be73c03d1097b9295c3810d3b9e090f599160f04f389fc",
+      "blockNumber": "0x67e5dae",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa2b9cf75aeca29b6c36ccaac66b8da35e22c6009406ff0779df5f5414e59cae6",
+      "blockNumber": "0x67e5daf",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7f0671a45776d54d8f69488a7c65e087b0a0027c4bd4c8ea7bfad64d4ae1872b",
+      "blockNumber": "0x67e5db0",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2588034a056cea20ecdee1d7abbd00941adf2596b8f69b2cf2b2dbf42274f8cf",
+      "blockNumber": "0x67e5db1",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x98d11838c6cf849e5165eaa13201d86f191a755d5e489bfca6b65e2aed2a8465",
+      "blockNumber": "0x67e5db2",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xb0809c7e9e87231cd08f40d6342b781ca344fdc693d65577dc2a8d79d3a81ec9",
+      "blockNumber": "0x67e5db3",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf3862699a9a8fee6c47d0a1f49ffa907edc557824ec607ae4d073c6331aa3dca",
+      "blockNumber": "0x67e5db4",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x676d7ee363f57c2eb176ecc55acd8115f925cd5e58106c4a7021da99830143da",
+      "blockNumber": "0x67e5db5",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc2c48c60ce1463d43ca057407a106674e86a36765a0249b7b8cccb9be45f7327",
+      "blockNumber": "0x67e5db6",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xda2d4555992014c248e57b9edbf59529c033252ffce0dbf2f189d17358aad6b7",
+      "blockNumber": "0x67e5db7",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfcf31d132d77021dae4b7c539b28704dc375ddb36e9169bbddaf84e7bd98612c",
+      "blockNumber": "0x67e5db8",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x660b7bebdf359b6e338585227dd190717de79fc5c0f714e3ad06431c00e9495e",
+      "blockNumber": "0x67e5db9",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x8a6c769abfb945603e245adf879f3ce50bfe3c947951a4e6c6ec3fd9545a93dd",
+      "blockNumber": "0x67e5dba",
+      "status": "0x1",
+      "gasUsed": "773320"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x98abec80656f4c9d56322fec5546345d17e5e0ed837c31df76d59a78a649e545",
+      "blockNumber": "0x67e5dbb",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x471a79cbdb56eff2b93feb68e9181f3fa623cdaebd96f2b97b771ca39d981ebe",
+      "blockNumber": "0x67e5dbc",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc7ca08a0a51aca285ac6c42813424c739fcd540b89e09b1ee7aaf10ac8373eb7",
+      "blockNumber": "0x67e5dbd",
+      "status": "0x1",
+      "gasUsed": "2750499"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2d01ab9710714ec47d0ce8e8ee682f0b7bbd34508d80b55f781b01263aeda363",
+      "blockNumber": "0x67e5dbe",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc9aa9b010d7cf7794d073a7e01cde7d26b01007171783a4a9bf8f40f37b1640c",
+      "blockNumber": "0x67e5dbf",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xdbf65362c138216df99376b99f9b8711a2e1bbb4c56625bf639c49853ecf37f2",
+      "blockNumber": "0x67e5dc0",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1fefbc38f8c29a7b0db79a6abcbf77e5afba139626f23a98f799b44c99df0274",
+      "blockNumber": "0x67e5dc1",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9e132d1fb7a86ffcb837423c1acafab06e0ffbb4f142e6e544a4a31847b8e767",
+      "blockNumber": "0x67e5dc2",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x00ebb48f3735855009a9533dcb718899c3dd98f1978d9bb4bd40e2a64312fdc7",
+      "blockNumber": "0x67e5dc3",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x6173111f012700d89abf775f8abec2c7342535abf5daf999823f86b35f909bda",
+      "blockNumber": "0x67e5dc4",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc93e8afe8d0d10a4f25409771ea6c912727aa193e2d6aa0648b286694d9a5a38",
+      "blockNumber": "0x67e5dc5",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa55c972d7bc0977ed014164f7f4d342b0f93cbd0a028ce39816befd577d75277",
+      "blockNumber": "0x67e5dc6",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xbd142fd2c54876d93702422bfc23df63ae9f2212df3463fc142f9133c260fde5",
+      "blockNumber": "0x67e5dc7",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1b66404a390151b5b4d22990e845f554d48bd5731923a4ecf59fed7d8e64bd28",
+      "blockNumber": "0x67e5dc8",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2eb706c9ba6235feb98b2364662d2525bdeb758532bda985489ff676424037f9",
+      "blockNumber": "0x67e5dc9",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x131e78fe4d65c5680d5529cb1364001060654720c3a3d733c7fb01fe2fc076ba",
+      "blockNumber": "0x67e5dca",
+      "status": "0x1",
+      "gasUsed": "773320"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x89b19ffe496dbebd0b00a62dc8dce23b428f47aa4e20e7cb7643deee90b5c85d",
+      "blockNumber": "0x67e5dcb",
+      "status": "0x1",
+      "gasUsed": "108830"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x55a7a74970f675c7945c9673839140625a020afcb233b647b0f00bbc212fc4ab",
+      "blockNumber": "0x67e5dcc",
+      "status": "0x1",
+      "gasUsed": "2475362"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7d2f80b3abf201c41b8c3fdd0c66b6c3622840cf059b06a6b4323045960312fa",
+      "blockNumber": "0x67e5dcd",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x995a69015245d1df1d016b89b9edab56e44435f020d9f2c41a34f4b85e1ac893",
+      "blockNumber": "0x67e5dce",
+      "status": "0x1",
+      "gasUsed": "142120"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xe80cf9a96d8bd09934ae10e9c2db69c00e75aeb029b7e83a739fb171ca0dc85d",
+      "blockNumber": "0x67e5dcf",
+      "status": "0x1",
+      "gasUsed": "158610"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x3b9981461c536b7999277a37da3cd6eedc33097c89dd983c89ef5ad289495efb",
+      "blockNumber": "0x67e5dd0",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xeb44d397d5a7d39da5e18917a1168c9f060fed8bc1e0343b5859ba9e92e5eef8",
+      "blockNumber": "0x67e5dd1",
+      "status": "0x1",
+      "gasUsed": "488990"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x581120826a6603cadc5dab661b13f2a958c58e0565b29aed8ce02ae530998b5a",
+      "blockNumber": "0x67e5dd2",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x69447f7383d83eb998e55672e017b5efdec5a383ad5564245c78a4c4c5e3baaa",
+      "blockNumber": "0x67e5dd3",
+      "status": "0x1",
+      "gasUsed": "6901464"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x554ae644e5e38d96dbe7f591b9307b1587195227748dc2cd015bd48c3fc5d628",
+      "blockNumber": "0x67e5dd4",
+      "status": "0x1",
+      "gasUsed": "51011"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x05d329e248fe72e7d911d88822834595fe4dae3e8c0e8dfd7bc446143e66cdba",
+      "blockNumber": "0x67e5dd5",
+      "status": "0x1",
+      "gasUsed": "4199320"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x3764cf3867d34555895acf9fd3dfb9c04d0fe0c81812324e749f07dd06f1394a",
+      "blockNumber": "0x67e5dd6",
+      "status": "0x1",
+      "gasUsed": "4346418"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x8d8eca832b336d17fc2ae146a5916bdc8e26530a89d6f04a80ff779f5f125b11",
+      "blockNumber": "0x67e5dd7",
+      "status": "0x1",
+      "gasUsed": "3233256"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa7cd4a237e611b29a3c10769b7fe448a4bd4c2ca7ba14fccd043f45839d793a5",
+      "blockNumber": "0x67e5dd8",
+      "status": "0x1",
+      "gasUsed": "1403672"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xdf4adf9922f0cd3d53c0f68ca190316bbd5932230179e1a6d6eaebb9bf29cde4",
+      "blockNumber": "0x67e5dd9",
+      "status": "0x1",
+      "gasUsed": "5602455"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x23e2e58daf3567ee6d1478c8c55d9a08d102c42540377e7205bdb22dbf746aea",
+      "blockNumber": "0x67e5dda",
+      "status": "0x1",
+      "gasUsed": "4397658"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x89831ffdfd2e512845ae6bd5f8cdc65de18566d8c84b96a7d8802eeb1da3b634",
+      "blockNumber": "0x67e5ddb",
+      "status": "0x1",
+      "gasUsed": "2217345"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x85fb824e595a59f9daf76455727ab8d511b1c5b0f14782499e5ff9351a622345",
+      "blockNumber": "0x67e5ddc",
+      "status": "0x1",
+      "gasUsed": "2205902"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x7c56e618f3af49910c7d54b439c2494e13f9ba2b0f6558a1a60037cea4f31298",
+      "blockNumber": "0x67e5ddd",
+      "status": "0x1",
+      "gasUsed": "1472292"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x6b780696a509a09d8ab4bd7f57771b0ad2f64a01641d55edf3170f806a356193",
+      "blockNumber": "0x67e5dde",
+      "status": "0x1",
+      "gasUsed": "2360228"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x817a3cd2033fbfdac0496570d86b991d473fdc56d517b6d88a837a8f3a6007ca",
+      "blockNumber": "0x67e5ddf",
+      "status": "0x1",
+      "gasUsed": "2435349"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x3dc0f9ddc6116020a735d4dd04177c44217457d0f13b1e55fec140732db1e76a",
+      "blockNumber": "0x67e5de0",
+      "status": "0x1",
+      "gasUsed": "3389626"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4f761e25061a019034d00cb8eec9d9de4eeb2f45814087bb586e502ae0be8780",
+      "blockNumber": "0x67e5de1",
+      "status": "0x1",
+      "gasUsed": "999385"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xbac5d7a398ad12a3bfe6d67f65d9acc83a33ae5a45339cddf8424b542c89bed2",
+      "blockNumber": "0x67e5de2",
+      "status": "0x1",
+      "gasUsed": "5051360"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf2154c46049203eb1422847a3a1a4f7fd14f4e020920bdd34402066f01a4c21b",
+      "blockNumber": "0x67e5de3",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd0ffb08e227a629b2f7c87ce8d49deba4c7803dffc859fc79be4c5ccb1363659",
+      "blockNumber": "0x67e5de4",
+      "status": "0x1",
+      "gasUsed": "6202456"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfd9a1c27d27244f0c5d7bc9968019981999a13a5ac7f8f89d237b90f1ca9bfc6",
+      "blockNumber": "0x67e5de5",
+      "status": "0x1",
+      "gasUsed": "279520"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2585e6ac696e110307dcc40769762b2ee7a66e75350859c7053dbe18a3ec99cf",
+      "blockNumber": "0x67e5de6",
+      "status": "0x1",
+      "gasUsed": "3584317"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x9329f3e67a1da309742eccb30df3da858638085b1f92eeb4334d942cd5ba8799",
+      "blockNumber": "0x67e5de7",
+      "status": "0x1",
+      "gasUsed": "2509222"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x23e906ae37077f8b48437ae7ee3ebb6f8969cd477910dbb3331a54079ae7ac5f",
+      "blockNumber": "0x67e5de8",
+      "status": "0x1",
+      "gasUsed": "5462149"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x6eabfe6fe895e12c65746e32ead0fc87abb8eb852f46e15bad92d7906ef44bc5",
+      "blockNumber": "0x67e5de9",
+      "status": "0x1",
+      "gasUsed": "3381411"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1b2d4d89e47862d34498bc1698336d8112cc13a99065f5acd8e919fb5588cce0",
+      "blockNumber": "0x67e5dea",
+      "status": "0x1",
+      "gasUsed": "1891927"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x4558822dafbd026a89f25bd6d06fc159f859de6d11cac7fcc10e588fb8938b92",
+      "blockNumber": "0x67e5deb",
+      "status": "0x1",
+      "gasUsed": "2042050"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xd736b480fa857735bdd366e6d6c29fb73f5ac790afc4b549d9d421479495f747",
+      "blockNumber": "0x67e5dec",
+      "status": "0x1",
+      "gasUsed": "5233066"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xfb48733f126dc0c3c15e4e74a29cbe6c0f263dd78dc2c8c29da5702bdffe3b1c",
+      "blockNumber": "0x67e5ded",
+      "status": "0x1",
+      "gasUsed": "1288761"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xed4c6ca5fc2ed8f44cf8e8d19e0a5297d4405109ad50426a4c1cea0de30f49b5",
+      "blockNumber": "0x67e5dee",
+      "status": "0x1",
+      "gasUsed": "1089163"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x99566584cb73e08bbc8d3d77c17ba7bab3dda0e08d9fb6cc336e98b7501197b7",
+      "blockNumber": "0x67e5def",
+      "status": "0x1",
+      "gasUsed": "1289057"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x1e347f42bc353c85d1bd2e0cf5da3b52516d967be4ff6f11863fa07e87392e7b",
+      "blockNumber": "0x67e5df0",
+      "status": "0x1",
+      "gasUsed": "111163"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x33ae401a652b46b5dad1d8d5b68de8b0c98e34960b2db2f55e8a5d4034073081",
+      "blockNumber": "0x67e5df1",
+      "status": "0x1",
+      "gasUsed": "124550"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x53ddbc744c694cdd54b38d8fe3d72e109f3143cdeb9bfab8d1c40e8977b9ad21",
+      "blockNumber": "0x67e5df2",
+      "status": "0x1",
+      "gasUsed": "1286992"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xf709d656ae405852ac9edd0628af1480064d745d9aaa808ca6ec3cefd01f9bbf",
+      "blockNumber": "0x67e5df3",
+      "status": "0x1",
+      "gasUsed": "108270"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x31bd2fec3ce0844c3d7e9969109651713503c36b7728787202ccf0aa16fc615b",
+      "blockNumber": "0x67e5df4",
+      "status": "0x1",
+      "gasUsed": "8081484"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xa0aa3587e2fcd30256af3ca100b9eb1137fbfb919186c15469f38bd2f7b67dad",
+      "blockNumber": "0x67e5df5",
+      "status": "0x1",
+      "gasUsed": "76582"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xc005ead7ffe4a1f1d53647eb748570c989d6df6dd457d5900a68ea2a5d2cbd4c",
+      "blockNumber": "0x67e5df6",
+      "status": "0x1",
+      "gasUsed": "79016"
+    },
+    {
+      "kind": "environment",
+      "hash": "0xe22eb07b563153c24f1424e7feb914fb28aa0e5cfaa37cbca4ac54c4d0416592",
+      "blockNumber": "0x67e5df7",
+      "status": "0x1",
+      "gasUsed": "79450"
+    },
+    {
+      "kind": "environment",
+      "hash": "0x2bbd15df9a165af0b22ab345aeac107ac74ba2ff3db1eaaf4aace9bc95b30a35",
+      "blockNumber": "0x67e5df8",
+      "status": "0x1",
+      "gasUsed": "7061275"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x5c177c514c68dc4ea643b42ffd71a7292c0c09490f7fccb74337dbe029103a15",
+      "blockNumber": "0x67e5e41",
+      "status": "0x1",
+      "gasUsed": "398855"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x45784cec63d4678051c5b11dca3ff46005b331d7cc294ec4df966db7b228b914",
+      "blockNumber": "0x67e5dfd",
+      "status": "0x1",
+      "gasUsed": "2371766"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x3cbd3c87fd42b9da61ddee3d03040d34d193ede4f5c1bd075cbfc5d4dae18ac7",
+      "blockNumber": "0x67e5dfa",
+      "status": "0x1",
+      "gasUsed": "45798"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x0c05052a391c1605e554f914cbd813c9e8bce37ea5bd0881329e3a4f2ac48af6",
+      "blockNumber": "0x67e5dfc",
+      "status": "0x1",
+      "gasUsed": "326612"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x84b631cc1ff1b5a37cc7694b145722f0c6025431fa1efa4f17c8c7a1c338d880",
+      "blockNumber": "0x67e5dfb",
+      "status": "0x1",
+      "gasUsed": "45961"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xe11f9ad3fac1b238f9b83dc07fb933b0e20b6c45219240727eb03c80f5948a5b",
+      "blockNumber": "0x67e5e4a",
+      "status": "0x1",
+      "gasUsed": "169304"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x0202e8ed7dcf9d56416570c7e114f8b762a6af7110908cf6d652f5d95b1b30c6",
+      "blockNumber": "0x67e5e46",
+      "status": "0x1",
+      "gasUsed": "19512486"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xd5cfb08f6692986aa2c3df686ca775f59026a4dbd7c45053bcb051da9d6e9a02",
+      "blockNumber": "0x67e5e44",
+      "status": "0x1",
+      "gasUsed": "331270"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x522428ae7b5a3beedc63fe6d69943c089756e98a8965a7e5fc0f09eaca2f385a",
+      "blockNumber": "0x67e5e3f",
+      "status": "0x1",
+      "gasUsed": "489619"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x42a207967cf51e543917254b4ecc3197631ae8c836d6956b3093aa8dfadd77b8",
+      "blockNumber": "0x67e5e45",
+      "status": "0x1",
+      "gasUsed": "1393725"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xca43b7f7c2b4fb9130306fe985398412d0614d514b19f8a2daffdbc4d652a204",
+      "blockNumber": "0x67e5e43",
+      "status": "0x1",
+      "gasUsed": "1592257"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xdaf5943a3c6b724747a191b37b757fd6885e2f1f759ab9d16620ab2410e3879b",
+      "blockNumber": "0x67e5e04",
+      "status": "0x1",
+      "gasUsed": "718640"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xd19cf555a4de4e4aaaf7725eac51632ed399c9cf9daa61987e7ea1c448b03eba",
+      "blockNumber": "0x67e5e02",
+      "status": "0x1",
+      "gasUsed": "807616"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x5cba1448246733b5c7f6a20cca3d7f8e4dab7b023cd82b4e99dd97fbcf649830",
+      "blockNumber": "0x67e5e03",
+      "status": "0x1",
+      "gasUsed": "807628"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xb6bbafd5a34e3398e3c6f15c6b368c51352661def15604fc38ae04116823c56a",
+      "blockNumber": "0x67e5e00",
+      "status": "0x1",
+      "gasUsed": "807546"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x0be656f84f48e18ac24263c545d212c399fda4e59bab4ee2b217383b153056a7",
+      "blockNumber": "0x67e5e01",
+      "status": "0x1",
+      "gasUsed": "807534"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xe95635bee02c767e3809e58e90a0355ca460f149b755e623dda3934bcc5fed6a",
+      "blockNumber": "0x67e5e05",
+      "status": "0x1",
+      "gasUsed": "718640"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x38981d6c0c1ea9e579ccd619c6457a90d05bf510e284cebefa3b5dc7af25b612",
+      "blockNumber": "0x67e5e07",
+      "status": "0x1",
+      "gasUsed": "718628"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xf6892a6a9256f7e2643036f14dd5b3590466df08e7d70fcf3eec5ecd34f05ac6",
+      "blockNumber": "0x67e5e06",
+      "status": "0x1",
+      "gasUsed": "718640"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xd37350f22e8bbb2e5728872fd8a1791f85c4bf97c7eeb49634f2a3ee2a621505",
+      "blockNumber": "0x67e5dff",
+      "status": "0x1",
+      "gasUsed": "807534"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xfb8e57d3bd5a43758423c752391ca60005a4108ae1aee7db204636415ab52754",
+      "blockNumber": "0x67e5e47",
+      "status": "0x1",
+      "gasUsed": "324901"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x61d876a15d6190d5818f40bc47d47df8935ffdbd1212bd66ad8f82bfb7e9219b",
+      "blockNumber": "0x67e5e49",
+      "status": "0x1",
+      "gasUsed": "991434"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x9b9d0df0e4b2524bdc4e53312108a7af18f5c8549bcc1042cdb0eaca79b5957a",
+      "blockNumber": "0x67e5e40",
+      "status": "0x1",
+      "gasUsed": "418929"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xf0f7b8fd904ec7e49fb033919b75d32b9d1a94d1baa6b1668efb9beec57dbd0c",
+      "blockNumber": "0x67e5e09",
+      "status": "0x1",
+      "gasUsed": "709947"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x2c526232ff4738f0d26589a505e8d8043fbe9129a78c7beebc99294f90c1eb18",
+      "blockNumber": "0x67e5e0a",
+      "status": "0x1",
+      "gasUsed": "709947"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x8d86deb4fac233633951e190c1c418215ef733b534ba264df3d86b5b5b230c61",
+      "blockNumber": "0x67e5e08",
+      "status": "0x1",
+      "gasUsed": "832448"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x4b8973a99f2bc0dc7cda48148e6342448db66f5be0f5d546e6694143de705465",
+      "blockNumber": "0x67e5dfe",
+      "status": "0x1",
+      "gasUsed": "3873866"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x9eceab6b54600e3668de39793899dffeef405e20d28fe7a7fcb1bca930d51540",
+      "blockNumber": "0x67e5df9",
+      "status": "0x1",
+      "gasUsed": "42985865"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x52a8aa1c912dbba54f9c35319e26d47cd1951ad4c83229aaf32edcfff4202603",
+      "blockNumber": "0x67e5e0e",
+      "status": "0x1",
+      "gasUsed": "540710"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x596bfa7041990c6637d80adf81db1eb3674cb737a9375c6e9e6e49fac18c6560",
+      "blockNumber": "0x67e5e10",
+      "status": "0x1",
+      "gasUsed": "588716"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x5ec72369acd2536dcce7421e66a1475b698093d7cf3d3477319011f212b9ba5e",
+      "blockNumber": "0x67e5e0f",
+      "status": "0x1",
+      "gasUsed": "588728"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x51e666d3d95c3864df3e39651d2ab8efee166ec1b7b6ebf15207830bc6f6dbc9",
+      "blockNumber": "0x67e5e0c",
+      "status": "0x1",
+      "gasUsed": "551949"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x3693139b2fb35b6647e7a6f9d123fb9ee32ced0ed3f73f235cafc96c71514355",
+      "blockNumber": "0x67e5e12",
+      "status": "0x1",
+      "gasUsed": "588646"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xd14e3389f592b3cdd28f3fb7c47927f8d6f83401f8e3d1ebc79b2f88461e80ce",
+      "blockNumber": "0x67e5e11",
+      "status": "0x1",
+      "gasUsed": "588634"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x8d7fda4429f6395d50b26684f4b803270a0cf4e45589933573444cbbce7c202d",
+      "blockNumber": "0x67e5e0d",
+      "status": "0x1",
+      "gasUsed": "540737"
+    },
+    {
+      "kind": "journal",
+      "hash": "0x8c507a6ed8d89c5dbeffee56b5b5aa6567c1f690a474683bc593ad4150058a85",
+      "blockNumber": "0x67e5e0b",
+      "status": "0x1",
+      "gasUsed": "540725"
+    },
+    {
+      "kind": "journal",
+      "hash": "0xbd5a1556e97c983ceacb82ccf21968eda1ea7b3d48f91fc73447b101f7bd339c",
+      "blockNumber": "0x67e5e13",
+      "status": "0x1",
+      "gasUsed": "588634"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x31ea1a256fd03b1a6d46b580c49674ca21c653f257d41dd25bd9da3dfae6caf5",
+      "blockNumber": "0x67e5d18",
+      "status": "0x1",
+      "gasUsed": "1478648"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x03378163369c4e72863f05634954806735141a53e9b9ce11cde219988c75b12f",
+      "blockNumber": "0x67e5d19",
+      "status": "0x1",
+      "gasUsed": "207354"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xeb13ca22d8a968332463d2e720637489921e0547fbbedf48599ca3140b849d8b",
+      "blockNumber": "0x67e5d1a",
+      "status": "0x1",
+      "gasUsed": "52060"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x627a9bf3b0e41befc0f931ac9bf628af291a4e787d7b35f5322e6466f4605549",
+      "blockNumber": "0x67e5d1b",
+      "status": "0x1",
+      "gasUsed": "1203827"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xec2debbd374f66d887cfc803cb6d15297c04dd64a2aca2ad4c96aff727ee4fb9",
+      "blockNumber": "0x67e5d1c",
+      "status": "0x1",
+      "gasUsed": "51388"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x359a18f5cf1aa4b7022df5c4304550c33f3215a951142e968ab45d0db03889e0",
+      "blockNumber": "0x67e5e14",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xfb1c03b79156da7455ed38028b7b7f62380aeceebe53f0b9b2fbda8b3d70499e",
+      "blockNumber": "0x67e5e15",
+      "status": "0x0",
+      "gasUsed": "109613"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x8373e6980494a82b126a039f709a3ae5e2697fe476303ac0986f35acf15e36cb",
+      "blockNumber": "0x67e5e16",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xa4080a51eb0857ef8d151c67986eb7099798e38ca492e4420c4e4c15607bfb0a",
+      "blockNumber": "0x67e5e17",
+      "status": "0x0",
+      "gasUsed": "109646"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xa780eb4ea3f63725061e7c5c421073db58dcc44b24548b0f878410150366d1e9",
+      "blockNumber": "0x67e5e18",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xe456a01846582a8e5e119540b4db59c85e40937407d865bff10287fae8518280",
+      "blockNumber": "0x67e5e19",
+      "status": "0x0",
+      "gasUsed": "161734"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xec1027b35616b0d666c5a0752061d4dd4887361d260b397f99e4044f535d91fb",
+      "blockNumber": "0x67e5e1a",
+      "status": "0x1",
+      "gasUsed": "145297"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x6b1bfbd7e5df616a346730282accc2ab615ae2277dcd795f091c55fd6e53283f",
+      "blockNumber": "0x67e5e1b",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xcc722ec73017d6c09dfe0594fd70ee180c7b7fe03e7d41f3508a6f8d06a6facf",
+      "blockNumber": "0x67e5e1c",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xa8a6864cc19bef01d791b67686fe504e4e489acf7f4b702aea74cd1ba36aadee",
+      "blockNumber": "0x67e5e1d",
+      "status": "0x0",
+      "gasUsed": "161734"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xc3a90ac1161bef5a6cde41eafe605c1d0f81497d61c83f1b575d6d5f5fbc2edb",
+      "blockNumber": "0x67e5e1e",
+      "status": "0x0",
+      "gasUsed": "161735"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xf9fe73ee406458989af92398e146feff1cca2424bc7b17e9efe51474a9f36481",
+      "blockNumber": "0x67e5e1f",
+      "status": "0x1",
+      "gasUsed": "121397"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x915ae12ba657fbb63d9c9ed1431f59ecd844adef21086d029415bd381cc324e8",
+      "blockNumber": "0x67e5e20",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x9dc70642219491b31b02b32722a6c302adbac319daca1fd61890312d84091bc3",
+      "blockNumber": "0x67e5e21",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xab86d7670847fdb91822ad7fc221ffe967ef01fcf12142d3600b39c81b60b922",
+      "blockNumber": "0x67e5e22",
+      "status": "0x1",
+      "gasUsed": "1007825"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x3dff99ae25dbd72c761445cfaf790a033b5b2030f80ce4d038e9039fafdd8746",
+      "blockNumber": "0x67e5e23",
+      "status": "0x0",
+      "gasUsed": "107296"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xf83e98e3b0aa508f2800175ce6af4a9dea0c0504622563bc4efddb46a4d08bd5",
+      "blockNumber": "0x67e5e24",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xf5494f8f5d5b8379f2d426989c4c5ac04c03717efe7b96d4ee30249540725b28",
+      "blockNumber": "0x67e5e25",
+      "status": "0x0",
+      "gasUsed": "161734"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x7e9d818bec155840e3ed112beede05aaec2c6dee85d01e9c33f1d13472bfc74f",
+      "blockNumber": "0x67e5e26",
+      "status": "0x1",
+      "gasUsed": "138497"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x64602a4841126812cff09ac7935cb6d24e0585a5f2b1e3e729866ad325eba23b",
+      "blockNumber": "0x67e5e27",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xa22f68ea2165b4715e61297ea8917b0b5cda689b5b12a08a3b9e05f2666b090d",
+      "blockNumber": "0x67e5e28",
+      "status": "0x0",
+      "gasUsed": "161734"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x96681f92789cbccde600b15097818850d1a9bdd3b39f2dce04df91a98bcbd67e",
+      "blockNumber": "0x67e5e29",
+      "status": "0x1",
+      "gasUsed": "140497"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x52a9c199df07bb71c3a17193dc904fdb2116a5c8843c7c7c2ee19110b5e8e1b5",
+      "blockNumber": "0x67e5e2a",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xbbaa92107a32e270a9ba62a66f91a90582c408d578b59b327b3017521f0c10d3",
+      "blockNumber": "0x67e5e2b",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x73be1f5fb78b5da401a86facec45f7f285b2f677bee7b033e6eccc59c978deb6",
+      "blockNumber": "0x67e5e2c",
+      "status": "0x0",
+      "gasUsed": "161734"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x751fa3c96d46eed94860621b74329f0c444d6df7bcbc7729dfe0f12cd6dba0bd",
+      "blockNumber": "0x67e5e2d",
+      "status": "0x0",
+      "gasUsed": "161735"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x88963aa82ad3f5ee4d2f00d0a984f768b232f2b663bfed3a498b3e74d39c56d3",
+      "blockNumber": "0x67e5e2e",
+      "status": "0x1",
+      "gasUsed": "138497"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xf1f536bce588bcb4a5342d2ae2e686307a495364f624b72e28b9da16a2980c40",
+      "blockNumber": "0x67e5e2f",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xb3b73d6dcf528fe7ecc5e7744879cd56a3daacc4bf26145b9785a05e931249fa",
+      "blockNumber": "0x67e5e30",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xf12965cf89a9d7c77d8d7a312176f3e5b7852336eb59ac1ea0254107b2b8ddf5",
+      "blockNumber": "0x67e5e31",
+      "status": "0x1",
+      "gasUsed": "989720"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x361c912653c7960a626891670726ff2368cb15c60ad16f913aa878f9dc56096c",
+      "blockNumber": "0x67e5e32",
+      "status": "0x0",
+      "gasUsed": "107296"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x7470bae7aca9987abd478ac4762f62b78506d2b8f701cb256df9098ae31e57a2",
+      "blockNumber": "0x67e5e33",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x2c1289eabfb845adba4c3118cfc62aa2a1361ff7712b1136285fe1bd896b7f45",
+      "blockNumber": "0x67e5e34",
+      "status": "0x0",
+      "gasUsed": "162207"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xc5c1ebc95f9781605928d6baf2fed2b906e94c6edc649673d9db4518d2391993",
+      "blockNumber": "0x67e5e35",
+      "status": "0x1",
+      "gasUsed": "70150"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x8cf022036c89d14240185cac9f43f640743ed6b973b95705c7b1858811736765",
+      "blockNumber": "0x67e5e36",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x13ebc84e796169f97480e5bc3be88f6fa349edbf1bdb475e477b59ccff60eb5e",
+      "blockNumber": "0x67e5e37",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xfd6641f3ead4e4c1b8be4b78ae633777994d2c3a03423e99a572847c0bfa3f90",
+      "blockNumber": "0x67e5e38",
+      "status": "0x0",
+      "gasUsed": "162207"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x01376cc63802af896573c515052151ca46764e308fc70f2a5bc25b04d380eef4",
+      "blockNumber": "0x67e5e39",
+      "status": "0x0",
+      "gasUsed": "162208"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xe9dfad1a42cacd2f7f2dc8ac1147b85dc4100c382c7ed54e6c784dcdddeb1c70",
+      "blockNumber": "0x67e5e3a",
+      "status": "0x1",
+      "gasUsed": "46250"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xb26ee09155148e4b0c25fcfe47d05814b1897ed7535153b63c9bf23e415cac45",
+      "blockNumber": "0x67e5e3b",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x9e2c49463cf2073366a109b68e10e063da2cc022c756a0c20a05626e36dd2b80",
+      "blockNumber": "0x67e5e3c",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x76bdeecbe32e2c81123cb22c2457ffab0702c97ce7819285c9221e4b9011776b",
+      "blockNumber": "0x67e5e3d",
+      "status": "0x1",
+      "gasUsed": "946047"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xc748f7faaab7e8cfa00cf9b2b1eacf4487421c3180bf49a7420fcf5193f7d47a",
+      "blockNumber": "0x67e5e3e",
+      "status": "0x0",
+      "gasUsed": "107329"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x8778637e7e51e737b763f4c3b0de91c9b0b03d248a4253b1036df3684a86dea5",
+      "blockNumber": "0x67e5e4b",
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xcac64244dbc0e7696d1d1ec7147bc66716b75a791e723a18d64bbc7c66c68ad2",
+      "blockNumber": "0x67e5e4c",
+      "status": "0x0",
+      "gasUsed": "109613"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xf38b6692a544799685b432bc2886610fa96605697c78c391a751268b57a6e530",
+      "blockNumber": "0x67e5e4d",
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x76f772d30c61ba19f1b6601cc1563ca4ab2f004d8968b4b35740479b0ced8349",
+      "blockNumber": "0x67e5e4e",
+      "status": "0x0",
+      "gasUsed": "109646"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xae2bbf3fa63ceb0f8b00adbff0d959a11b8fa3233ddf3cb0aac43b0ab9a82f4a",
+      "blockNumber": "0x67e5e4f",
+      "status": "0x1",
+      "gasUsed": "32272"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x35dbcffbed1bd8c9945c0e8426797ba4439797b65c09f5ce44aeb7fcc44a4ab3",
+      "blockNumber": "0x67e5e50",
+      "status": "0x0",
+      "gasUsed": "161734"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xcc0ab70a2215fa9739c7541a2df094d32354ad4bd8cbd958e0ec42f849dcf22e",
+      "blockNumber": "0x67e5e51",
+      "status": "0x1",
+      "gasUsed": "1395846"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xda90655f6b73e36bfc9b7281176b06b0bce42c018b23b5d99c96c46e05189b19",
+      "blockNumber": "0x67e5e52",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x2f4b7dbd0b9f3b504a39ce8d422ad7bc21ad72a74159b1155ce4a8fa55e832a3",
+      "blockNumber": "0x67e5e53",
+      "status": "0x1",
+      "gasUsed": "32272"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xf95444e32f48d0e4404509a42f1160fa610a60c0292a70505f236a0420417eac",
+      "blockNumber": "0x67e5e54",
+      "status": "0x0",
+      "gasUsed": "161734"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x1a8994a987f50d2a4f22bc6c37bf3ee68fca00c81c6352de97c02f4f62ea361d",
+      "blockNumber": "0x67e5e55",
+      "status": "0x0",
+      "gasUsed": "161735"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x0cdebb1b1a3dd3e782e5c6e607939a79b4997c7d366323c1fab287d5189cfd4f",
+      "blockNumber": "0x67e5e56",
+      "status": "0x1",
+      "gasUsed": "121397"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xc96b1ad64bbfe530c3ab22294614f6d4377db2ca1af81fbab7c344d9516af19b",
+      "blockNumber": "0x67e5e57",
+      "status": "0x1",
+      "gasUsed": "866738"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xa5008089b95ea5362e4dad0fccf216012e763a419ba9e475d774f9e0b517c272",
+      "blockNumber": "0x67e5e58",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xd32d1c1980ac5b96bff79a87cfce7cd422381eaf0995cc7cc29361e4ac0dbe55",
+      "blockNumber": "0x67e5e59",
+      "status": "0x1",
+      "gasUsed": "976030"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x6739b9d94fbffff8386cf72c09996da2b76193fe448468e5c897a2b3b94d9ac9",
+      "blockNumber": "0x67e5e5a",
+      "status": "0x0",
+      "gasUsed": "107296"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x16b1956ce2b171f4256e6413f6f8f7da76cfcd9c7bc95c251becb2692f0c4954",
+      "blockNumber": "0x67e5e5b",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xd6d0f95ade38aaac381e9528628582510b058b450719df209f0469ef139c85d4",
+      "blockNumber": "0x67e5e5c",
+      "status": "0x0",
+      "gasUsed": "162207"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x23d35a3c1231f507afbb662f45f2843c241e1cdd6e9e934a1eab9d93ef94e4b5",
+      "blockNumber": "0x67e5e5d",
+      "status": "0x1",
+      "gasUsed": "65350"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x999c569d2f45d9b2728bf776d1903a4af7a1bc86c2aaecff13e6cc8a0ce5cae2",
+      "blockNumber": "0x67e5e5e",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xc64e3c17bc8a00a66609becf037fcf71d42a7178d76bace1922340b62c58a3b9",
+      "blockNumber": "0x67e5e5f",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x7c3a8d75c9cf290e4dcebba0892ed4f8fe6138e50bd7b43c9c8b846c45328c06",
+      "blockNumber": "0x67e5e60",
+      "status": "0x0",
+      "gasUsed": "162207"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xa06e6088cc29ba3335643d20563e2fd8e0ea4e7072a3921f0ae8756850ee4b5b",
+      "blockNumber": "0x67e5e61",
+      "status": "0x0",
+      "gasUsed": "162208"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x3f71d17283a6bb71f28334f2b4fc48765b84832c7316de372cd472195e901675",
+      "blockNumber": "0x67e5e62",
+      "status": "0x1",
+      "gasUsed": "63350"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x7f8c6219a87b22c1c1bfa0208839ac56f0d76b6966cd35707b975b29d7532cb6",
+      "blockNumber": "0x67e5e63",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xeeafa402f6893ce3d6de8746b533ff24aeac81cf78a91c4c600fb43550f99303",
+      "blockNumber": "0x67e5e64",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0x3cf949f8067819291acb3cee79dff98b6b60a2b4251bf42bbe9649a9e515e6e9",
+      "blockNumber": "0x67e5e65",
+      "status": "0x1",
+      "gasUsed": "946028"
+    },
+    {
+      "kind": "fixture",
+      "hash": "0xc4026617ddacb861ba39bbcab8b9400e13605e7eae9067170f3d56cbbe0c53eb",
+      "blockNumber": "0x67e5e66",
+      "status": "0x0",
+      "gasUsed": "107329"
+    }
+  ],
+  "commands": [
+    {
+      "path": "040-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-09-EarlierSale-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-09-EarlierSale",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "011-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/configure",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "environment-stage.log.command.json",
+      "command": [
+        "/Users/cyotee/.foundry/bin/forge",
+        "script",
+        "--use",
+        "solar",
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
+        "--sig",
+        "prepareEnvironment()",
+        "--rpc-url",
+        "http://127.0.0.1:18562/",
+        "--sender",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--unlocked",
+        "--broadcast",
+        "--slow",
+        "--legacy",
+        "--gas-price",
+        "2000000000",
+        "--gas-limit",
+        "1000000000",
+        "--gas-estimate-multiplier",
+        "200"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "026-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-02-WeightedPrincipal-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-02-WeightedPrincipal",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "038-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-08-EarlierClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-08-EarlierClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "014-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "030-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-04-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-04-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "034-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-06-WeightedConvert-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-06-WeightedConvert",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "007-capture.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "capture",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/capture",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "009-validate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "validate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/prepared/manifest.json"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "025-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-02-WeightedPrincipal-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-02-WeightedPrincipal"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "017-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/reject-proxy.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "022-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/replacement",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "018-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/reject-package.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "021-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/replacement-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/replacement"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "004-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "029-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-04-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-04-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "037-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-08-EarlierClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-08-EarlierClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "033-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-06-WeightedConvert-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-06-WeightedConvert"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "013-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "003-fund.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "fund",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "008-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/prepared"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "041-activate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "activate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/activate",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "001-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/deploy"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "023-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-01-WeightedClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-01-WeightedClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "006-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67",
+        "--reverse"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "010-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/reordered-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/prepared-reordered"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "027-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-03-WeightedRewards-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-03-WeightedRewards"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "039-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-09-EarlierSale-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-09-EarlierSale"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "012-independent-issue.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "independent-issue",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "020-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/reject-payload.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "031-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-05-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-05-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "035-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-07-Donate-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-07-Donate"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "024-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-01-WeightedClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-01-WeightedClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "015-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/verify"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "028-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-03-WeightedRewards-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-03-WeightedRewards",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "036-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-07-Donate-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-07-Donate",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "005-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "032-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/harvest-05-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-05-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "042-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/verify-after"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "019-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/reject-snapshotId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "002-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/deploy",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "016-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/implementation/rehearsal-1794395963978/reject-chainId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x3706fb0b0b324e9846892b981dbc3055182aba60036c28cf43a08ad1d3d06e67"
+      ],
+      "code": 1,
+      "signal": null
+    }
+  ]
+}

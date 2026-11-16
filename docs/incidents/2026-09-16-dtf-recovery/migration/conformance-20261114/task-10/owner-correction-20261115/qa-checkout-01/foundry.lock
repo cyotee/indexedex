@@ -1,0 +1,8 @@
+{
+  "lib/daosys": {
+    "rev": "2210243319984df4f179320feda207ebe64c7bc3"
+  },
+  "lib/frontend-monorepo": {
+    "rev": "4516caca8a4de10aec2fde56d3f071fa55b0f5bf"
+  }
+}

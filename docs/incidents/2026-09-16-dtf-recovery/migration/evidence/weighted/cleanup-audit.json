@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-10T11:58:59.919Z",
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/weighted/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe",
+  "exitCode": 0,
+  "binaryPass": true,
+  "scriptSha256": "17e618d198559cdf6bf77674286858911fa61532ca274e04b52f753aa9249df0",
+  "executedSha256": "17e618d198559cdf6bf77674286858911fa61532ca274e04b52f753aa9249df0",
+  "executable": true,
+  "reportWordCount": 2598,
+  "cleanAudit": [
+    {
+      "name": "initial",
+      "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/weighted.oiGBtp",
+      "anvilPid": 33860,
+      "localUrl": "http://127.0.0.1:55503",
+      "directoryAbsent": true,
+      "pidAbsent": true,
+      "portClosed": true,
+      "baseSnapshotRestored": true,
+      "impersonationsStopped": 4
+    },
+    {
+      "name": "rate-limited",
+      "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/weighted.fXXtQr",
+      "anvilPid": 36632,
+      "localUrl": "http://127.0.0.1:55902",
+      "directoryAbsent": true,
+      "pidAbsent": true,
+      "portClosed": true,
+      "baseSnapshotRestored": true,
+      "impersonationsStopped": 4
+    },
+    {
+      "name": "loopback-bounded",
+      "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/weighted.AHbeNk",
+      "anvilPid": 38413,
+      "localUrl": "http://127.0.0.1:56177",
+      "directoryAbsent": true,
+      "pidAbsent": true,
+      "portClosed": true,
+      "baseSnapshotRestored": true,
+      "impersonationsStopped": 4
+    },
+    {
+      "name": "direct-first",
+      "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/weighted.XWKrPi",
+      "anvilPid": 39394,
+      "localUrl": "http://127.0.0.1:56284",
+      "directoryAbsent": true,
+      "pidAbsent": true,
+      "portClosed": true,
+      "baseSnapshotRestored": true,
+      "impersonationsStopped": 7
+    },
+    {
+      "name": "final",
+      "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/weighted.lgl5iK",
+      "anvilPid": 41477,
+      "localUrl": "http://127.0.0.1:56533",
+      "directoryAbsent": true,
+      "pidAbsent": true,
+      "portClosed": true,
+      "baseSnapshotRestored": true,
+      "impersonationsStopped": 7
+    }
+  ],
+  "failedLaunch": {
+    "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/weighted.9SjTAg",
+    "removedBy": "rmdir with test ! -e read-back in monitored run",
+    "directoryAbsent": true
+  },
+  "scope": "Only weighted script and evidence directories written; no Forge build or public transaction",
+  "languageServer": "freshness_timeout, not a clean diagnostic result",
+  "scriptContentUnchangedByModeChange": true,
+  "changedFiles": [
+    "scripts/recovery/dtf-migration/phase01/weighted/probe.mjs",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/cleanup-audit.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/direct-first-run.results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/initial-run.results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/loopback-rate-run.results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.anvil.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/rate-limited-run.results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json"
+  ],
+  "reportUnder5000Words": true
+}

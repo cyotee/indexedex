@@ -1,0 +1,9 @@
+GATE staged-parent-to-candidate
+command: GIT_MASTER=1 git diff --cached --ignore-submodules=all --check acdbe319f3a20c3af6bea594c62461b6c7988717
+EXIT=0
+
+
+GATE current-staged
+command: GIT_MASTER=1 git diff --cached --ignore-submodules=all --check
+EXIT=0
+

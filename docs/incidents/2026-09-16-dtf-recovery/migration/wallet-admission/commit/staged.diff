@@ -1,0 +1,1233 @@
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
+index e953ad8e364ffcf91979b046ec0fa65fd0928b21..6027f70f0ed50cbd2c571d792964bfb44dce9ede 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
+@@ -134,7 +134,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+         for (uint256 i_; i_ < inputs_.length; ++i_) {
+             Migration.NftEntitlementInput calldata input_ = inputs_[i_];
+             bytes32 original_ = NftLib.originalId(input_.collection, input_.tokenId);
+-            if (input_.tokenId < 3 || input_.originalUnits == 0 || !input_.contributionsKnown
++            if (input_.tokenId < 3 || input_.originalWallet == address(0)
++                || input_.originalUnits == 0 || !input_.contributionsKnown
+                 || input_.evidenceId == bytes32(0)) {
+                 revert Migration.InvalidNftEntitlement(input_.collection, input_.tokenId);
+             }
+@@ -146,7 +147,9 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+             m_.nftEntitlements[input_.collection][input_.tokenId] =
+                 Migration.NftEntitlement(input_, config_, original_, credit_);
+             m_.nftOriginal[original_] = true;
+-            emit Migration.NftEntitlementConfigured(input_.collection, input_.tokenId, config_, original_, credit_);
++            emit Migration.NftEntitlementConfigured(
++                input_.collection, input_.tokenId, config_, input_.originalWallet, original_, credit_
++            );
+         }
+     }
+ 
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol
+index 5d08568f17fe789d67b3bb42ea810c80d07ce74b..f44eb8841dbc37ae6b79fce3236a8f05d14cf1b1 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol
+@@ -70,10 +70,13 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
+         if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
+         (address holder_, uint256 remaining_, uint256 quoted_, bytes32 before_) =
+             NftLib.preview(collection_, tokenId_);
+-        if (msg.sender != holder_) revert Migration.NotNftHolder(msg.sender, holder_);
+-        if (quoted_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, quoted_);
+         Repo.Storage storage m_ = Repo._layoutStruct();
+         Migration.NftEntitlement memory config_ = m_.nftEntitlements[collection_][tokenId_];
++        if (msg.sender != config_.original.originalWallet) {
++            revert Migration.NotOriginalNftWallet(msg.sender, config_.original.originalWallet);
++        }
++        if (msg.sender != holder_) revert Migration.NotNftHolder(msg.sender, holder_);
++        if (quoted_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, quoted_);
+         // Keep the guard over legacy synchronization as well as its pre-transfer receiver call.
+         m_.expectedNft = Repo.NftReceipt(collection_, holder_, tokenId_, false);
+         IMigrationLegacyNft(collection_).safeTransferFrom(holder_, address(this), tokenId_);
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
+index 5b18890f8918458e91ab188f3f685cdfb06fa792..a01924fb56a71a3129226d99167b625dee22873d 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
+@@ -92,9 +92,11 @@ interface IUniswapV4DetfMigration is
+     /// @notice Verified original purchase inputs, never a caller-supplied output award.
+     /// @dev contributionsKnown attests that BOTH components are known (a known zero is valid).
+     /// originalUnits are weighted fixed principal or earlier NewLock accounting shares.
++    /// originalWallet is the recorded acquiring wallet, never inferred from current ownership.
+     struct NftEntitlementInput {
+         address collection;
+         uint256 tokenId;
++        address originalWallet;
+         uint256 originalUnits;
+         uint256 originalEth;
+         uint256 originalDtf;
+@@ -148,6 +150,7 @@ interface IUniswapV4DetfMigration is
+     error UnsupportedMigrationNft(uint256 chainId, address collection);
+     error InvalidNftEntitlement(address collection, uint256 tokenId);
+     error NftAlreadyConsumed(address collection, uint256 tokenId);
++    error NotOriginalNftWallet(address caller, address originalWallet);
+     error NotNftHolder(address caller, address holder);
+     error NftCustodyFailed(address collection, uint256 tokenId);
+     error UnexpectedNftCallback();
+@@ -168,7 +171,7 @@ interface IUniswapV4DetfMigration is
+     event MigrationSyRewardTokenWired(address indexed rewardToken, address indexed receipt);
+     event NftEntitlementConfigured(
+         address indexed collection, uint256 indexed tokenId, bytes32 indexed configurationId,
+-        bytes32 originalId, uint256 credit
++        address originalWallet, bytes32 originalId, uint256 credit
+     );
+     event MigrationNftSurrendered(
+         address indexed collection, uint256 indexed tokenId, address indexed holder,
+@@ -177,7 +180,8 @@ interface IUniswapV4DetfMigration is
+ 
+     /// @notice Canonical known-origin collision key, bound to chain, instance and frozen snapshot.
+     /// @dev Independent allocation IDs must use this key for this origin. Opaque aliases do not
+-    /// prove disjoint exposure; operational ancestry reconciliation remains required.
++    /// prove disjoint exposure; original economic exposure reconciliation remains required.
++    /// The key excludes the original wallet so corrections cannot create another economic origin.
+     function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32);
+     function nftEntitlement(address collection_, uint256 tokenId_) external view returns (NftEntitlement memory);
+     function nftSurrender(address collection_, uint256 tokenId_) external view returns (NftSurrender memory);
+@@ -185,7 +189,7 @@ interface IUniswapV4DetfMigration is
+     function previewNftSurrender(address collection_, uint256 tokenId_)
+         external view returns (uint256 remainingUnits_, uint256 credit_);
+ 
+-    /// @notice Current holder only; whole identity custody and one exactly funded fresh 90-day bond.
++    /// @notice Configured original wallet and current holder only; one exactly funded fresh 90-day bond.
+     /// @dev No beneficiary, historical quantity, arbitrary target or credit argument.
+     function surrenderMigrationNft(address collection_, uint256 tokenId_, uint256 minimum_, uint256 deadline_)
+         external returns (uint256 bondTokenId_, uint256 credit_);
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+index 029e927840f6839966bd84667751d222e640a45f..6320ce5f118a9eb8dcd256796609cfb11c315359 100644
+--- a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -28,9 +28,19 @@ Validation reconstructs the manifest from its pinned sources and read-only
+ RPC calls. Execution must consume the typed return of `validateManifest`,
+ not the review mirrors or a manually edited payload. `blocked.json` is
+ rejected evidence, never an executable manifest. Unknown original inputs
+-remain errors. No unresolved fungible/history/TokenStaking allocation is
++remain errors. No unimplemented fungible or TokenStaking allocation is
+ generated, and earlier claim/sale holding is not earlier liquidation.
+ 
++Every NFT original now requires a nonzero `originalWallet` from its explicit
++acquisition record. The full source proof must match that field; omission,
++zero, or a changed wallet without matching recorded proof rejects preparation.
++The configuration ABI and hash include it immediately after `tokenId`.
++The wallet-independent economic-origin key does not change. Existing payloads
++without this field must be regenerated, not filled from live `ownerOf`.
++The retained surrender caller must equal this wallet and the live owner;
++approval alone is insufficient. A transfer back permits surrender without
++transfer-history proof. Configuration correction never resets consumption.
++
+ Local script checks:
+ 
+ ```sh
+@@ -118,9 +128,9 @@ The fixed rehearsal invocation is:
+ bun scripts/recovery/dtf-migration/cli.ts rehearse \
+   --rpc-alias robinhood_mainnet_alchemy \
+   --fork-block 108944663 \
+-  --port 18560 \
+-  --checkpoint .omo-runtime/dtf-migration-operator/checkpoints \
+-  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/operator
++  --port 18562 \
++  --checkpoint .omo-runtime/dtf-migration-wallet-admission/checkpoints \
++  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission
+ ```
+ 
+ The source pin is chain4663, L2 block108944663, hash
+@@ -129,9 +139,11 @@ not the post-funding snapshot. Rehearsal retains actual registry
+ deployment and mined receipts, both mined-before-checkpoint interruptions,
+ fresh-process resume, no duplicate funding/issuance, unchanged unclaimed
+ supply, reordered remaining work, domain rejections, accrued attributed-gon
+-recovery and owned runtime cleanup. Implementation evidence remains in
+-`operator/execution/report.md`. The subsequent fixed-command rehearsal,
+-corrections, gas, source bindings and cleanup are in `operator/rehearsal/report.md`;
++recovery and owned runtime cleanup. Current original-wallet implementation
++and independent verification evidence are in
++`wallet-admission/implementation/report.md` and
++`wallet-admission/verification/report.md`. Historical baseline evidence
++remains in `operator/execution/report.md` and `operator/rehearsal/report.md`;
+ the presence of a command is not proof that its rehearsal passed.
+ 
+ The environment stage is
+@@ -145,23 +157,24 @@ Every local command and receipt is retained under an exclusive rehearsal
+ evidence directory. Journals are copied there before the owned node exits
+ and its temporary checkpoint root is removed.
+ 
+-Run from the operator worktree on `work/dtf-migration-phase-08-operator`,
+-based on independently accepted recovery commit
+-`421072a7630a0d3d47a6f36e1062d9eae98c93e2`. The existing archive alias is
++Run from the wallet-admission worktree on
++`work/dtf-migration-phase-12-wallet-admission`, based on
++`3f577eeca049c1bd70a812d130941c8a38dd4781`. The existing archive alias is
+ resolved through `forge config --json`. On this workstation its credential
+ is in the existing interactive login environment; `/bin/zsh -lic` can wrap
+ the exact command above. Do not print the resolved endpoint. The wrapper
+ uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
+ and the existing warm `out/`, `cache_forge/` and dependency links.
+ 
+-Port 18560 must be unused and the chosen checkpoint directory absent before
++Port 18562 must be unused and the chosen checkpoint directory absent before
+ starting. The command creates its own node and checkpoint directory; it
+ does not adopt an existing node or overwrite an old checkpoint. EIP-170
+ remains enabled. The local 100-million block gas cap, one-billion Forge
+ simulation budget and legacy fee selection are rehearsal parameters, not
+ target-chain transaction limits or a live funding quote.
+ 
+-The final local parent deployment consumed **42,985,843 gas**, exceeding
++The independently verified original-wallet local parent deployment consumed
++**42,985,865 gas** (the prior operator baseline used **42,985,843**), exceeding
+ the separately recorded historical `getMaxTxGasLimit()` value of
+ **32,000,000**. The permissive local fork mined it; this does not establish
+ that the same deployment can run publicly. Preserve this deployment
+@@ -177,13 +190,19 @@ feasibility issue for the separately authorized production/package lane.
+ | `prepare`, `validate` | Pinned source originals and actual captured snapshot | Separate whole independent/NFT replacements, native quotes and fingerprints |
+ | `configure` | Validated post-capture manifest | Actual replacement IDs/credits; unchanged supply |
+ | `independent-issue` | Explicit selected recipients | Actual new funded bond IDs, principal, recipient and fresh cliff |
+-| Holder surrender | Holder approval and `surrenderMigrationNft` on the real proxy | Actual old NFT custody/consumption and a separate funded new bond |
++| Original-wallet surrender | Explicit configured original wallet, actual ownership, approval and `surrenderMigrationNft` | Actual old NFT custody/consumption and a separate exactly funded fresh bond |
+ | `verify`, `activate` | Final replacement manifest and completed selected issuance | Effective configurations, atomic selector removal and postactivation verification |
+ | `harvest` | Consumed custody or attributed inventory; bounded typed selection | Measured claim/conversion/sale/donation and separate revaluation events |
+ 
+ The rehearsal performs bounded recovery before activation, then verifies
+-activation. Recovery remains a separate retained API. Earlier sale is
+-sale-and-hold, not receipt redemption or DTF liquidation.
++activation and both generations' late original-wallet surrender. Each phase
++executes approved-but-unconfigured, wrong-holder, approved-operator, and
++original-wallet-without-ownership rejections, checks unchanged custody,
++consumption and funding, and proves transfer-back success. Weighted ID26
++starts with its real transferred holder and is returned by an actual local
++source transaction to the explicitly recorded purchaser. No live owner is
++substituted into configuration. Recovery remains a separate retained API.
++Earlier sale is sale-and-hold, not receipt redemption or DTF liquidation.
+ 
+ ### Interruption and recovery procedure
+ 
+@@ -227,16 +246,18 @@ Default resumes are separately checked to leave the nonce unchanged.
+ 
+ ### Reading receipts and cleanup
+ 
+-Each `execution/rehearsal-<run>/` retains the redacted Anvil argv, Solar
++Each `wallet-admission/implementation/rehearsal-<run>/` retains the redacted Anvil argv, Solar
+ environment command, numbered CLI command/exit records and logs, actual
+ infrastructure/fixture receipts, deterministic data and `journal-*`
+ directories. `.intent.json` contains signed local-development transaction
+ bytes; `.receipt.json` contains canonical receipt and checked state.
+ Simulation/read-only output is never counted as a mined receipt.
+ 
+-Use `operator/rehearsal/transactions.json`, `gas.json` and
+-`source-evidence-bindings.json` to join commands, nonces, actual bond IDs,
++Use `wallet-admission/verification/report.md` and its referenced
++`execution-index.json`, `source-artifact-parity.json`, `cleanup.json` and
++independent rehearsal evidence to join commands, nonces, actual bond IDs,
+ native gas used, executable artifacts and source/evidence fingerprints.
++The earlier `operator/rehearsal/` records remain historical baseline evidence.
+ Receipt gas describes these specific local transactions only. Retain the
+ admitted bound of at most eight weighted claims or one other recovery step,
+ and estimate each exact selected operation against actual chain limits
+@@ -253,12 +274,15 @@ artifacts and dependency links.
+ 
+ | Category | Unclosed gate |
+ | --- | --- |
+-| Weighted and earlier liquid DETF | E2 transfer ancestry and consumption |
+-| Weighted receipt | E2 gon ancestry and proportional consumption |
+-| Earlier receipt | E2 ancestry/supply discrepancy and disabled exits |
+-| Weighted SY | E2 wrapper look-through and nonduplication |
+-| TokenStaking, claim-vault rights | E1/E2 claim composition, ancestry and custody |
+-| Underlying SE shares, fungible LP | E1/E2 complete discovery and contribution attribution |
++| Weighted liquid DETF | H3/H4 original native-unit configuration and fungible surrender ledger absent |
++| Earlier liquid DETF | H3/H6 original native-unit configuration/surrender absent; ED liquidation unproved |
++| Weighted receipt | H3/H4 original gon/credit mapping and synchronized fungible surrender absent |
++| Earlier receipt | H3/H6 original share denominator/fractional attribution unproved; earlier SE exits disabled |
++| Weighted SY | H3/H5 original share mapping and proxy surrender/recovery composition absent |
++| TokenStaking raw weight | `reassign` debits caller, with no approved pull or recipient callback; ordinary Migration atomic surrender unsupported |
++| Claim-vault rights | Direct-user 19-decimal share records/integration absent; infrastructure ownership does not prove user authority |
++| Underlying SE shares | Direct-user records/integration absent; earlier and weighted WETH SE disabled; working 28-decimal DTF SE needs its own composition |
++| Fungible LP | Original records/integration absent; owner-restricted exits and earlier `UnsupportedRoute` remain |
+ | Earlier liquidation | SB-E1/E2/E3 disabled exits; SB-E4 unproved liquid conversion |
+ 
+ These categories remain in every disposition matrix, even with zero input
+diff --git a/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+index bfaa8ea69e708ae06d4ed167a794f803eb3bc70f..8d129b37ad62ce81cd016f1e2161fb25669a46c0 100644
+--- a/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
++++ b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+@@ -55,6 +55,7 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
+         vm.stopBroadcast();
+     }
+ 
++    /// @notice Complete interface-owned inputs include the explicit original wallet; no ownerOf fallback.
+     function configureNfts(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_) external {
+         vm.startBroadcast(vm.envAddress("SENDER"));
+         proxy_.configureNftEntitlements(inputs_);
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+index 29227c55e4e2f272433a44dd349aeb6bd403cb5d..ab2e06a9887fbf1a82c47c779485cb9c29d27030 100644
+--- a/scripts/recovery/dtf-migration/cli.ts
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -27,7 +27,7 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
+ --reverse reorders only independent unsettled configuration/issuance rows.
+ --fault-after-mined is restricted to synthetic-local interruption rehearsal.
+   bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+-    --fork-block 108944663 --port 18560 --checkpoint <directory> --evidence <directory>
++    --fork-block 108944663 --port 18562 --checkpoint <directory> --evidence <directory>
+ `;
+ 
+ export async function main(args: readonly string[]): Promise<void> {
+diff --git a/scripts/recovery/dtf-migration/execution-state.ts b/scripts/recovery/dtf-migration/execution-state.ts
+index 9950b3879562a3e54ca676b91ea8e07473b32b0b..3931831632409e557b238a782f4ee36448afd056 100644
+--- a/scripts/recovery/dtf-migration/execution-state.ts
++++ b/scripts/recovery/dtf-migration/execution-state.ts
+@@ -111,6 +111,14 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
+           || String(actual.getValue(independent ? "totalCredit" : "credit")) !== expected.quotedCredit) {
+           throw new ExecutionError("STATE", "configuration state differs from full payload");
+         }
++        if (!independent) {
++          const wallet = String(r.getValue("originalWallet")).toLowerCase();
++          if (String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== wallet
++            || !events.some((e) => e.name === "NftEntitlementConfigured"
++              && e.values[2] === expected.configurationId && e.values[3]?.toLowerCase() === wallet)) {
++            throw new ExecutionError("STATE", "NFT original wallet differs between payload, storage and event");
++          }
++        }
+       }
+       break;
+     }
+@@ -198,7 +206,10 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
+     const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "nftEntitlement",
+       [row.input.collection, row.input.tokenId]))[0]);
+     if (actual.getValue("configurationId") !== row.configurationId || actual.getValue("originalId") !== row.originalId
+-      || String(actual.getValue("credit")) !== row.quotedCredit) throw new ExecutionError("STATE", "NFT configuration mismatch");
++      || String(actual.getValue("credit")) !== row.quotedCredit
++      || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
++      throw new ExecutionError("STATE", "NFT configuration mismatch");
++    }
+   }
+   return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };
+ }
+diff --git a/scripts/recovery/dtf-migration/payloads.ts b/scripts/recovery/dtf-migration/payloads.ts
+index 8e44261705b20c964c2a6aeb021d8f448e3e7f8f..01d5ae93ff75c7cc2b2ca417e7578edc03401cc9 100644
+--- a/scripts/recovery/dtf-migration/payloads.ts
++++ b/scripts/recovery/dtf-migration/payloads.ts
+@@ -4,7 +4,7 @@ import type { Domain, NftOriginal, Original, PreparationInput } from "./schema.j
+ 
+ const coder = AbiCoder.defaultAbiCoder();
+ const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
+-const nftTuple = "tuple(address collection,uint256 tokenId,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
++const nftTuple = "tuple(address collection,uint256 tokenId,address originalWallet,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
+ export const weightedCollection = "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e";
+ export const earlierCollection = "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
+ export type IndependentPayload = {
+@@ -29,15 +29,15 @@ export function nftOrigin(domain: Domain, input: NftOriginal): string {
+ }
+ 
+ const blockedGate = {
+-  "weighted-liquid": "E2: ordinary-transfer contribution ancestry and consumption unproved",
+-  "earlier-liquid": "E2: ordinary-transfer contribution ancestry and consumption unproved",
+-  "weighted-receipt": "E2: gon ancestry and proportional consumption unproved",
+-  "earlier-receipt": "E2: receipt ancestry/supply discrepancy and disabled exits",
+-  "weighted-sy": "E2: wrapper look-through ancestry and nonduplication unproved",
+-  "token-staking": "E1/E2: nontransferable claim composition and attribution unproved",
+-  "claim-vault": "E1/E2: remaining claim ancestry and custody path unproved",
+-  "underlying-se": "E1/E2: complete source discovery and contribution attribution unproved",
+-  "fungible-lp": "E1/E2: complete source discovery and contribution attribution unproved",
++  "weighted-liquid": "H3/H4: original native-unit configuration and fungible surrender ledger not implemented",
++  "earlier-liquid": "H3/H6: original native-unit configuration and surrender not implemented; ED liquidation unproved",
++  "weighted-receipt": "H3/H4: original gon/credit mapping and synchronized fungible surrender not implemented",
++  "earlier-receipt": "H3/H6: original share denominator and fractional attribution unproved; earlier SE exits disabled",
++  "weighted-sy": "H3/H5: original share/credit mapping and SY surrender/recovery composition not implemented",
++  "token-staking": "H3/H5: reassign debits caller without recipient callback or approved pull; atomic raw-weight surrender unsupported",
++  "claim-vault": "H3/H5: original direct-user 19-decimal share records and surrender integration absent; infrastructure ownership is not user authority",
++  "underlying-se": "H3/H5/H6: direct-user records and surrender absent; earlier and weighted WETH SE disabled; 28-decimal DTF SE composition not implemented",
++  "fungible-lp": "H3/H6: original records and surrender absent; legacy exits are owner-restricted, earlier exact-in unsupported",
+   "earlier-liquidation": "SB-E1/E2/E3 disabled earlier SE exits; SB-E4 liquid conversion unproved",
+ } as const;
+ 
+@@ -46,7 +46,7 @@ export function dispositions(input: PreparationInput) {
+     switch (category) {
+       case "independent": return { category, disposition: "bounded", gate: "verified disjoint originals only" };
+       case "weighted-nft":
+-      case "earlier-nft": return { category, disposition: "bounded", gate: "configuration only; real holder surrender required" };
++      case "earlier-nft": return { category, disposition: "bounded", gate: "explicit original-wallet configuration and actual same-wallet NFT surrender required" };
+       default: return { category, disposition: "blocked", gate: blockedGate[category] };
+     }
+   }).map((row) => ({ ...row, records: input.exposures.filter((e) => e.category === row.category).length.toString() }));
+diff --git a/scripts/recovery/dtf-migration/preparation.fixture.ts b/scripts/recovery/dtf-migration/preparation.fixture.ts
+index 1464966e876d8536a67a04c517094b329d22dbb7..b0934117773831a851885d2a3055b779350845c7 100644
+--- a/scripts/recovery/dtf-migration/preparation.fixture.ts
++++ b/scripts/recovery/dtf-migration/preparation.fixture.ts
+@@ -99,7 +99,7 @@ export async function fixture() {
+   };
+   const original = { entitlementId: h(200), originalEth: "90071992547409931234",
+     originalDtf: "110", evidenceId: h(201) };
+-  const nft = { collection: weightedCollection, tokenId: "3", originalUnits: "100",
++  const nft = { collection: weightedCollection, tokenId: "3", originalWallet: a(21), originalUnits: "100",
+     originalEth: "100", originalDtf: "22", evidenceId: h(202), contributionsKnown: true };
+   const earlier = { ...nft, collection: earlierCollection, originalUnits: "2281854312954086546", evidenceId: h(204) };
+   const nftId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(nft));
+diff --git a/scripts/recovery/dtf-migration/preparation.test.ts b/scripts/recovery/dtf-migration/preparation.test.ts
+index eacded58a83aa7eba9e53780db21115f86efa764..3a8d1a045f5e658b103a296049e28c22d9e139b2 100644
+--- a/scripts/recovery/dtf-migration/preparation.test.ts
++++ b/scripts/recovery/dtf-migration/preparation.test.ts
+@@ -1,16 +1,18 @@
+ import { afterEach, test } from "node:test";
+ import assert from "node:assert/strict";
+ import { writeFile } from "node:fs/promises";
++import { AbiCoder, keccak256 } from "ethers";
+ import { spawn } from "node:child_process";
+ import { once } from "node:events";
+ import { text } from "node:stream/consumers";
+ import { join } from "node:path";
+ import { fixture, h, a } from "./preparation.fixture.js";
+ import { canonical, fingerprint } from "./provenance.js";
+-import { buildPayloads, configurationId, dispositions } from "./payloads.js";
++import { buildPayloads, configurationId, dispositions, nftOrigin } from "./payloads.js";
+ import { normalize, prepareDomain, prepareFile, validateManifest } from "./preparation.js";
+ import { preparationInput, uint } from "./schema.js";
+ import { main } from "./cli.js";
++import { interfaceFile } from "./rehearsal-data.js";
+ 
+ const fixtures: Awaited<ReturnType<typeof fixture>>[] = [];
+ async function setup() {
+@@ -91,6 +93,52 @@ test("rejects originals that do not match their raw proof", async () => {
+   await assert.rejects(prepareDomain({ ...f.input, nfts: [{ ...row, original: { ...row.original, originalEth: "101" } }] }),
+     /proof does not match/);
+ });
++test("rejects missing or zero NFT original wallets at preparation boundary", async () => {
++  const f = await setup();
++  const row = f.input.nfts[0];
++  assert.ok(row);
++  const { originalWallet: _wallet, ...withoutWallet } = row.original;
++  for (const original of [withoutWallet, { ...row.original, originalWallet: a(0) }]) {
++    const parsed = preparationInput.safeParse({ ...f.input, nfts: [{ ...row, original }] });
++    assert.equal(parsed.success, false);
++    if (!parsed.success) assert.ok(parsed.error.issues.some((issue) => issue.path.includes("originalWallet")));
++  }
++});
++test("rejects a wallet differing from the full recorded NFT original", async () => {
++  const f = await setup();
++  const row = f.input.nfts[0];
++  assert.ok(row);
++  await assert.rejects(prepareDomain({ ...f.input,
++    nfts: [{ ...row, original: { ...row.original, originalWallet: a(99) } }] }),
++  { name: "PreparationError", code: "PROVENANCE" });
++});
++test("wallet correction changes full configuration but not economic origin", async () => {
++  const f = await setup();
++  for (const row of f.input.nfts) {
++    const corrected = { ...row.original, originalWallet: a(99) };
++    assert.notEqual(configurationId(f.input.domain, corrected), configurationId(f.input.domain, row.original));
++    assert.equal(nftOrigin(f.input.domain, corrected), nftOrigin(f.input.domain, row.original));
++  }
++});
++test("NFT payload and configuration identity agree with final Solidity and typed stage ABIs", async () => {
++  const f = await setup();
++  const allocation = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json");
++  const stage = await interfaceFile("out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json");
++  const array = allocation.getFunction("configureNftEntitlements")?.inputs[0];
++  const stageArray = stage.getFunction("configureNfts")?.inputs[1];
++  assert.ok(array?.arrayChildren);
++  assert.ok(stageArray?.arrayChildren);
++  assert.equal(array.format("full"), stageArray.format("full"));
++  for (const { original } of f.input.nfts) {
++    const call = allocation.encodeFunctionData("configureNftEntitlements", [[original]]);
++    const decoded = allocation.decodeFunctionData("configureNftEntitlements", call)[0][0];
++    assert.equal(decoded.originalWallet.toLowerCase(), original.originalWallet);
++    const fromAbi: string = keccak256(AbiCoder.defaultAbiCoder().encode(
++      ["uint256", "address", "bytes32", array.arrayChildren],
++      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.snapshotId, original]));
++    assert.equal(configurationId(f.input.domain, original), fromAbi);
++  }
++});
+ test("rejects unknown contributions and arbitrary credit fields at the schema boundary", async () => {
+   const f = await setup();
+   const row = f.input.nfts[0];
+diff --git a/scripts/recovery/dtf-migration/rehearsal-admission.ts b/scripts/recovery/dtf-migration/rehearsal-admission.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..921f41fc353541bbc6bfc6c8fa0e51a989825d52
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearsal-admission.ts
+@@ -0,0 +1,155 @@
++import { Interface } from "ethers";
++import { join } from "node:path";
++import { z } from "zod";
++import { address, hex } from "./schema.js";
++import type { PreparationInput } from "./schema.js";
++import type { ExecutionManifest } from "./execution-schema.js";
++import { ExecutionError, quantity } from "./execution-schema.js";
++import { LEGACY, legacyAbi } from "./rehearsal-chain.js";
++import type { RehearsalChain } from "./rehearsal-chain.js";
++import { interfaceFile, RECIPIENTS, save } from "./rehearsal-data.js";
++import { DEV } from "./execution-rpc.js";
++
++const bondAbi = new Interface([
++  "function ownerOf(uint256) view returns(address)",
++  "function balanceOf(address) view returns(uint256)",
++  "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
++  "function isMigrationPosition(uint256) view returns(bool)",
++]);
++const tokenAbi = new Interface([
++  "function totalSupply() view returns(uint256)",
++  "function balanceOf(address) view returns(uint256)",
++]);
++
++export async function exerciseAdmission(context: {
++  readonly chain: RehearsalChain; readonly manifest: ExecutionManifest; readonly input: PreparationInput;
++  readonly evidence: string; readonly activated: boolean;
++}) {
++  const { chain, manifest, input, evidence, activated } = context;
++  const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
++  const bond = address.parse((await chain.call(manifest.proxy, migration, "bondNftVault"))[0]);
++  const receipt = address.parse((await chain.call(manifest.proxy, migration, "rebasingClaimToken"))[0]);
++  const observations: unknown[] = [];
++  const wallet = async (who: string, action: () => Promise<void>) => {
++    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
++    await chain.send("anvil_impersonateAccount", [who]);
++    try { await action(); }
++    finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }
++  };
++  const state = async (collection: string, tokenId: string, who: string) => [
++    (await chain.call(collection, legacyAbi, "ownerOf", [tokenId])).toString(),
++    (await chain.call(manifest.proxy, migration, "nftEntitlement", [collection, tokenId])).toString(),
++    (await chain.call(manifest.proxy, migration, "nftSurrender", [collection, tokenId])).toString(),
++    (await chain.call(manifest.proxy, migration, "nftCustody", [collection, tokenId])).toString(),
++    (await chain.call(manifest.proxy, tokenAbi, "totalSupply")).toString(),
++    (await chain.call(manifest.proxy, tokenAbi, "balanceOf", [receipt])).toString(),
++    (await chain.call(manifest.proxy, tokenAbi, "balanceOf", [bond])).toString(),
++    (await chain.call(receipt, legacyAbi, "stakingState")).toString(),
++    (await chain.call(bond, bondAbi, "balanceOf", [who])).toString(),
++  ].join("|");
++  const reject = async (collection: string, tokenId: string, caller: string, error: string, args: readonly unknown[]) => {
++    const data = migration.encodeFunctionData("surrenderMigrationNft",
++      [collection, tokenId, "1", (await chain.timestamp() + 3600n).toString()]);
++    const expected = migration.encodeErrorResult(error, [...args]).toLowerCase();
++    const before = await state(collection, tokenId, caller);
++    let reverted = false;
++    try { await chain.send("eth_call", [{ from: caller, to: manifest.proxy, data }, "latest"]); }
++    catch (failure) {
++      const actual = z.object({ data: hex }).passthrough().parse(failure).data;
++      if (actual !== expected) throw new ExecutionError("STATE", `admission rejected with wrong error: ${actual}`);
++      reverted = true;
++    }
++    if (!reverted) throw new ExecutionError("STATE", `admission unexpectedly accepted ${error}`);
++    await wallet(caller, async () => {
++      const mined = await chain.transact(manifest.proxy, { from: caller, data }, 0n);
++      observations.push({ collection, tokenId, caller, error, revertData: expected,
++        transactionHash: mined.transactionHash, status: mined.status });
++    });
++    if (await state(collection, tokenId, caller) !== before) {
++      throw new ExecutionError("STATE", "rejected admission changed custody, configuration, consumption or funding");
++    }
++  };
++
++  if ((await chain.call(manifest.proxy, migration, "migrationActivated"))[0] !== activated) {
++    throw new ExecutionError("STATE", "admission phase differs");
++  }
++  for (const [collection, tokenId] of [[LEGACY.weighted, "5"], [LEGACY.earlier, "12"]] as const) {
++    const holder = address.parse((await chain.call(collection, legacyAbi, "ownerOf", [tokenId]))[0]);
++    await wallet(holder, async () => {
++      await chain.transact(collection, { from: holder, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
++    });
++    await reject(collection, tokenId, holder, "InvalidNftEntitlement", [collection, tokenId]);
++  }
++  for (const { original } of input.nfts) {
++    const { collection, tokenId, originalWallet } = original;
++    const late = (collection === LEGACY.weighted && tokenId === "6")
++      || (collection === LEGACY.earlier && tokenId === "9");
++    if (late !== activated) continue;
++    const holder = address.parse((await chain.call(collection, legacyAbi, "ownerOf", [tokenId]))[0]);
++    if (holder !== originalWallet) {
++      // Historical weighted ID26 is already transferred. Return by an actual source transaction.
++      await wallet(holder, async () => {
++        await chain.transact(collection, { from: holder, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
++      });
++      await reject(collection, tokenId, holder, "NotOriginalNftWallet", [holder, originalWallet]);
++      await wallet(holder, async () => {
++        await chain.transact(collection, { from: holder,
++          data: legacyAbi.encodeFunctionData("transferFrom", [holder, originalWallet, tokenId]) });
++      });
++    }
++    const other = RECIPIENTS[3];
++    await wallet(originalWallet, async () => {
++      await chain.transact(collection, { from: originalWallet,
++        data: legacyAbi.encodeFunctionData("setApprovalForAll", [other, true]) });
++    });
++    await reject(collection, tokenId, other, "NotOriginalNftWallet", [other, originalWallet]);
++    await wallet(originalWallet, async () => {
++      await chain.transact(collection, { from: originalWallet,
++        data: legacyAbi.encodeFunctionData("transferFrom", [originalWallet, other, tokenId]) });
++    });
++    await wallet(other, async () => {
++      await chain.transact(collection, { from: other, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
++      await chain.transact(collection, { from: other, data: legacyAbi.encodeFunctionData("setApprovalForAll", [originalWallet, true]) });
++    });
++    await reject(collection, tokenId, other, "NotOriginalNftWallet", [other, originalWallet]);
++    await reject(collection, tokenId, originalWallet, "NotNftHolder", [originalWallet, other]);
++    await wallet(other, async () => {
++      await chain.transact(collection, { from: other, data: legacyAbi.encodeFunctionData("transferFrom", [other, originalWallet, tokenId]) });
++    });
++    // Settle elapsed participation separately so the surrender's exact issuance delta is observable.
++    await chain.transact(manifest.proxy, { from: DEV, data: migration.encodeFunctionData("synchronizeRewards") });
++    await wallet(originalWallet, async () => {
++      await chain.transact(collection, { from: originalWallet,
++        data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
++      const preview = await chain.call(manifest.proxy, migration, "previewNftSurrender", [collection, tokenId]);
++      const expected = z.bigint().parse(preview[1]);
++      const supply = z.bigint().parse((await chain.call(manifest.proxy, tokenAbi, "totalSupply"))[0]);
++      const backing = z.bigint().parse((await chain.call(manifest.proxy, tokenAbi, "balanceOf", [receipt]))[0]);
++      const mined = await chain.transact(manifest.proxy, { from: originalWallet,
++        data: migration.encodeFunctionData("surrenderMigrationNft",
++          [collection, tokenId, expected, (await chain.timestamp() + 3600n).toString()]) });
++      const consumed = (await chain.call(manifest.proxy, migration, "nftSurrender", [collection, tokenId]))[0];
++      const position = (await chain.call(bond, bondAbi, "positionOf", [consumed.bondTokenId]))[0];
++      const owner = address.parse((await chain.call(bond, bondAbi, "ownerOf", [consumed.bondTokenId]))[0]);
++      const block = z.object({ timestamp: quantity }).passthrough().parse(
++        await chain.send("eth_getBlockByNumber", [mined.blockNumber, false]));
++      const divisor = z.bigint().parse((await chain.call(receipt, legacyAbi, "stakingState"))[0].gonsPerUnit);
++      if (!consumed.consumed || consumed.holder.toLowerCase() !== originalWallet || consumed.credit !== expected
++        || position.principal !== expected || position.claimedPrincipal !== 0n
++        || position.startTimestamp !== BigInt(block.timestamp) || position.vestingDuration !== 7776000n
++        || position.stakingGons !== expected * divisor || owner !== originalWallet
++        || (await chain.call(bond, bondAbi, "isMigrationPosition", [consumed.bondTokenId]))[0] !== true
++        || z.bigint().parse((await chain.call(manifest.proxy, tokenAbi, "totalSupply"))[0]) - supply !== expected
++        || z.bigint().parse((await chain.call(manifest.proxy, tokenAbi, "balanceOf", [receipt]))[0]) - backing !== expected
++        || address.parse((await chain.call(collection, legacyAbi, "ownerOf", [tokenId]))[0]) !== manifest.proxy) {
++        throw new ExecutionError("STATE", "original-wallet surrender lacks exact custody, credit, fresh bond or funding");
++      }
++      observations.push({ collection, tokenId, originalWallet, transactionHash: mined.transactionHash,
++        credit: expected.toString(), remainingUnits: String(consumed.remainingUnits), bondTokenId: String(consumed.bondTokenId),
++        startTimestamp: String(position.startTimestamp), vestingDuration: String(position.vestingDuration),
++        stakingGons: String(position.stakingGons), exactSupplyAndBackingDelta: expected.toString() });
++    });
++    await reject(collection, tokenId, originalWallet, "NftAlreadyConsumed", [collection, tokenId]);
++  }
++  await save(join(evidence, `admission-${activated ? "after" : "before"}-activation.json`), { activated, observations });
++}
+diff --git a/scripts/recovery/dtf-migration/rehearsal-chain.ts b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+index ccfb8d3f9f64ae0d55aeb48ed016230850ce13eb..d84882e78877a2f944be859b42890912c16480a6 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-chain.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+@@ -15,6 +15,8 @@ export const LEGACY = {
+ export const legacyAbi = new Interface([
+   "function ownerOf(uint256) view returns(address)",
+   "function approve(address,uint256)",
++  "function transferFrom(address,address,uint256)",
++  "function setApprovalForAll(address,bool)",
+   "function transfer(address,uint256) returns(bool)",
+   "function balanceOf(address) view returns(uint256)",
+   "function claimBond(uint256,address) returns(uint256,uint256)",
+@@ -43,7 +45,7 @@ export class RehearsalChain {
+     if (block.hash !== mined.blockHash) throw new ExecutionError("AMBIGUOUS", "fixture receipt is not canonical");
+     return mined;
+   }
+-  async transact(target: string, request: { readonly from: string; readonly data: string; readonly value?: string }) {
++  async transact(target: string, request: { readonly from: string; readonly data: string; readonly value?: string }, expectedStatus = 1n) {
+     // This fixture-only path uses unlocked holders, never a production key.
+     // Subscribe before submitting; a pending event triggers the exact receipt read.
+     let selected: string | undefined;
+@@ -53,7 +55,7 @@ export class RehearsalChain {
+       const gasPrice = quantity.parse(await this.send("eth_gasPrice", []));
+       selected = hash.parse(await this.send("eth_sendTransaction", [{ ...request, to: target, gas: "0x5f5e100", gasPrice, type: "0x0" }]));
+       const mined = await watch.mined();
+-      if (BigInt(mined.status) !== 1n) throw new ExecutionError("REVERT", `fixture transaction reverted: ${selected}`);
++      if (BigInt(mined.status) !== expectedStatus) throw new ExecutionError("REVERT", `fixture transaction status differs: ${selected}`);
+       this.receipts.push(mined);
+       return mined;
+     } finally { watch.close(); }
+diff --git a/scripts/recovery/dtf-migration/rehearsal-data.ts b/scripts/recovery/dtf-migration/rehearsal-data.ts
+index 7d60598bfb3b33df6daaedc7a6d607eb3f71a8db..29ef159f53cb986cdfa4096e500dab6d142617a0 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-data.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-data.ts
+@@ -110,12 +110,21 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
+   const originals = recipients.map((_, i) => ({ entitlementId: `0x${fingerprint(`synthetic independent ${i}`)}`,
+     originalEth: "1000000000000", originalDtf: "0", evidenceId: `0x${fingerprint(`synthetic proof ${i}`)}` }));
+   const nfts = [
+-    { collection: LEGACY.weighted, tokenId: "4", originalUnits: "281387179", originalEth: "30000000000000000",
++    { collection: LEGACY.weighted, tokenId: "4", originalWallet: "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
++      originalUnits: "281387179", originalEth: "30000000000000000",
+       originalDtf: "0", evidenceId: "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe", contributionsKnown: true as const },
+-    { collection: LEGACY.weighted, tokenId: "26", originalUnits: "56299", originalEth: "0",
++    { collection: LEGACY.weighted, tokenId: "26", originalWallet: "0xc379feb4182211abe71a34858265e4bf5ff35e06",
++      originalUnits: "56299", originalEth: "0",
+       originalDtf: "50000000000000000000", evidenceId: "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d", contributionsKnown: true as const },
+-    { collection: LEGACY.earlier, tokenId: "3", originalUnits: "562524912595035608166", originalEth: "2000000000000000000",
++    { collection: LEGACY.earlier, tokenId: "3", originalWallet: "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
++      originalUnits: "562524912595035608166", originalEth: "2000000000000000000",
+       originalDtf: "0", evidenceId: "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75", contributionsKnown: true as const },
++    { collection: LEGACY.weighted, tokenId: "6", originalWallet: "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
++      originalUnits: "740825635", originalEth: "80000000000000000", originalDtf: "0",
++      evidenceId: "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917", contributionsKnown: true as const },
++    { collection: LEGACY.earlier, tokenId: "9", originalWallet: "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
++      originalUnits: "26355776123062198039", originalEth: "100000000000000", originalDtf: "0",
++      evidenceId: "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55", contributionsKnown: true as const },
+   ];
+   const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
+     ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" }))];
+diff --git a/scripts/recovery/dtf-migration/rehearsal-recovery.ts b/scripts/recovery/dtf-migration/rehearsal-recovery.ts
+index a63a7df43dfd5068950332bd2ad739cfa3aaccb1..1328c9a476fb7d79f12b81a5aa128742f17c85ee 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-recovery.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-recovery.ts
+@@ -1,5 +1,4 @@
+ import { join } from "node:path";
+-import { address } from "./schema.js";
+ import type { PreparationInput, RecoveryStep } from "./schema.js";
+ import type { ExecutionManifest } from "./execution-schema.js";
+ import { ExecutionError } from "./execution-schema.js";
+@@ -7,6 +6,7 @@ import { LEGACY, legacyAbi } from "./rehearsal-chain.js";
+ import type { RehearsalChain } from "./rehearsal-chain.js";
+ import { interfaceFile, save } from "./rehearsal-data.js";
+ import { DEV } from "./execution-rpc.js";
++import { exerciseAdmission } from "./rehearsal-admission.js";
+ 
+ type Context = {
+   readonly chain: RehearsalChain; readonly manifest: ExecutionManifest; readonly input: PreparationInput;
+@@ -15,21 +15,8 @@ type Context = {
+ };
+ export async function exerciseRecovery(context: Context) {
+   const { chain, manifest, input, evidence, runtime, cli, local } = context;
+-  const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
+   const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
+-  for (const nft of input.nfts) {
+-    const { collection, tokenId } = nft.original;
+-    const holder = address.parse((await chain.call(collection, legacyAbi, "ownerOf", [tokenId]))[0]);
+-    await chain.send("anvil_setBalance", [holder, "0x3635c9adc5dea00000"]);
+-    await chain.send("anvil_impersonateAccount", [holder]);
+-    try {
+-      await chain.transact(collection, { from: holder, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
+-      await chain.transact(manifest.proxy, { from: holder, data: migration.encodeFunctionData("surrenderMigrationNft",
+-        [collection, tokenId, "1", (await chain.timestamp() + 3600n).toString()]) });
+-      const consumed = (await chain.call(manifest.proxy, migration, "nftSurrender", [collection, tokenId]))[0];
+-      if (!consumed.consumed || consumed.holder.toLowerCase() !== holder) throw new ExecutionError("STATE", "real caller surrender not consumed");
+-    } finally { await chain.send("anvil_stopImpersonatingAccount", [holder]); }
+-  }
++  await exerciseAdmission({ chain, manifest, input, evidence, activated: false });
+   let sequence = 0;
+   const harvest = async (step: RecoveryStep) => {
+     const name = `harvest-${String(++sequence).padStart(2, "0")}-${step.stage}`;
+diff --git a/scripts/recovery/dtf-migration/rehearse.ts b/scripts/recovery/dtf-migration/rehearse.ts
+index 6ca97734699365a00d1f0bc65c3a083794750335..a93156670e463f9345193a2b3459d01a60a97668 100644
+--- a/scripts/recovery/dtf-migration/rehearse.ts
++++ b/scripts/recovery/dtf-migration/rehearse.ts
+@@ -11,6 +11,7 @@ import { DEV } from "./execution-rpc.js";
+ import { ExecutionError, rpcLog } from "./execution-schema.js";
+ import { hash } from "./schema.js";
+ import { exerciseRecovery } from "./rehearsal-recovery.js";
++import { exerciseAdmission } from "./rehearsal-admission.js";
+ import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt } from "./rehearsal-proof.js";
+ 
+ const PIN_HASH = "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733";
+@@ -32,10 +33,10 @@ export async function rehearse(options: {
+   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
+   readonly checkpoint: string; readonly evidence: string;
+ }) {
+-  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18560") {
++  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18562") {
+     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
+   }
+-  const evidence = resolve(options.evidence, "execution", `rehearsal-${Date.now()}`);
++  const evidence = resolve(options.evidence, "implementation", `rehearsal-${Date.now()}`);
+   const runtime = resolve(options.checkpoint);
+   await mkdir(evidence, { recursive: true });
+   const upstream = await resolveAlias();
+@@ -196,6 +197,7 @@ export async function rehearse(options: {
+       issuedAfterReplacement: (await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString() });
+     await exerciseRecovery({ chain, manifest: post, input, evidence, runtime, cli, local });
+     await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
++    await exerciseAdmission({ chain, manifest: post, input, evidence, activated: true });
+     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
+     return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
+   } catch (error) {
+diff --git a/scripts/recovery/dtf-migration/schema.ts b/scripts/recovery/dtf-migration/schema.ts
+index ca7525de9f401bcefad06f276aec5d4eb265ca4f..5bdf67f72ec735bd85a3e33890193d89c66dce6b 100644
+--- a/scripts/recovery/dtf-migration/schema.ts
++++ b/scripts/recovery/dtf-migration/schema.ts
+@@ -32,6 +32,7 @@ export const independent = z.object({
+ export const nftOriginal = z.object({
+   collection: address,
+   tokenId: uint.refine((v) => BigInt(v) >= 3n, "reserved NFT ID"),
++  originalWallet: address,
+   originalUnits: positive,
+   originalEth: uint,
+   originalDtf: uint,
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol
+index 4c075d289693e4a59bcd3f6a818dfa9c66571222..e7df3467c8128c038ab658169dcf56df4def1d56 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol
+@@ -13,6 +13,20 @@ import {IMigrationWeightedNft, IMigrationEarlierNft} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol";
+ 
+ contract MigrationLegacySourcesTest is MigrationNftForkBase {
++    function test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement() public {
++        _configureNft(WEIGHTED, 26);
++        address holder_ = IERC721(WEIGHTED).ownerOf(26);
++        address purchaser_ = address(bytes20(hex"c379feb4182211abe71a34858265e4bf5ff35e06"));
++        assertNotEq(holder_, purchaser_);
++        uint256 supply_ = IERC20(detf).totalSupply();
++        vm.startPrank(holder_);
++        IERC721(WEIGHTED).approve(detf, 26);
++        vm.expectRevert(abi.encodeWithSignature("NotOriginalNftWallet(address,address)", holder_, purchaser_));
++        migration.surrenderMigrationNft(WEIGHTED, 26, 1, block.timestamp);
++        vm.stopPrank();
++        _assertNotConsumed(WEIGHTED, 26, holder_, supply_);
++    }
++
+     function test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote() public {
+         IMigrationWeightedNft.Position memory before_ = IMigrationWeightedNft(WEIGHTED).positionOf(32);
+         assertEq(before_.principal, 54436459);
+@@ -36,7 +50,7 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
+         assertEq(s_.credit, expected_); assertTrue(s_.consumed);
+     }
+ 
+-    function test_transferredWeightedHolderNotPurchaserOrApprovedOperatorReceivesBond() public {
++    function test_transferredWeightedHolderMustReturnToPurchaserBeforeSurrender() public {
+         _configureNft(WEIGHTED, 26);
+         address holder_ = IERC721(WEIGHTED).ownerOf(26);
+         assertEq(holder_, 0x2e69E40C4a4Ab5CA6826850F347acf8076a8063e);
+@@ -45,11 +59,13 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
+         IERC721(WEIGHTED).transferFrom(holder_, next_, 26);
+         vm.prank(next_);
+         IERC721(WEIGHTED).setApprovalForAll(holder_, true);
++        address original_ = _original(WEIGHTED, 26).originalWallet;
+         vm.prank(holder_);
+-        vm.expectRevert(abi.encodeWithSelector(Migration.NotNftHolder.selector, holder_, next_));
++        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalNftWallet.selector, holder_, original_));
+         migration.surrenderMigrationNft(WEIGHTED, 26, 0, block.timestamp);
++        _returnToOriginal(WEIGHTED, 26);
+         (uint256 id_,) = _surrender(WEIGHTED, 26);
+-        assertEq(IERC721(address(bonds)).ownerOf(id_), next_);
++        assertEq(IERC721(address(bonds)).ownerOf(id_), original_);
+         assertFalse(IERC721(WEIGHTED).isApprovedForAll(detf, holder_));
+     }
+ 
+@@ -68,9 +84,13 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
+         vm.prank(next_);
+         vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)", 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7));
+         IEarlierParent(EARLIER_PARENT).closeBondMature(4, new uint256[](2), next_, block.timestamp);
++        vm.prank(next_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalNftWallet.selector, next_, holder_));
++        migration.surrenderMigrationNft(EARLIER, 4, 1, block.timestamp);
++        _returnToOriginal(EARLIER, 4);
+         (uint256 id_, uint256 credit_) = _surrender(EARLIER, 4);
+         assertEq(credit_, c0_);
+-        assertEq(IERC721(address(bonds)).ownerOf(id_), next_);
++        assertEq(IERC721(address(bonds)).ownerOf(id_), holder_);
+         assertEq(migration.nftSurrender(EARLIER, 4).remainingUnits, 2281854312954086546);
+         assertEq(IERC20(EARLIER_PARENT).balanceOf(detf), 0);
+     }
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol
+index 491df519b835649c6f52ecba945fac44beebe12d..686770817329261472c42309e5b3be89765a5818 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol
+@@ -117,32 +117,40 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
+         a_.collection = collection_; a_.tokenId = id_; a_.contributionsKnown = true;
+         if (collection_ == WEIGHTED) {
+             if (id_ == 3) {
++                a_.originalWallet = address(bytes20(hex"72bea6fa3e68ef18c87d045aac7c4aa5249d933b"));
+                 a_.originalUnits = 3772281649;
+                 a_.originalEth = 999999000000000;
+                 a_.originalDtf = 362893857600000000000;
+                 a_.evidenceId = 0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624;
+             } else if (id_ == 4) {
++                a_.originalWallet = address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"));
+                 a_.originalUnits = 281387179;
+                 a_.originalEth = 30000000000000000;
+                 a_.evidenceId = 0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe;
+             } else if (id_ == 26) {
++                a_.originalWallet = address(bytes20(hex"c379feb4182211abe71a34858265e4bf5ff35e06"));
+                 a_.originalUnits = 56299; a_.originalDtf = 50 ether;
+                 a_.evidenceId = 0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d;
+             } else if (id_ == 32) {
++                a_.originalWallet = address(bytes20(hex"4dfebb21d855115d4019819393e514977e490e5d"));
+                 a_.originalUnits = 54436459; a_.originalDtf = 56017714220190058289217;
+                 a_.evidenceId = 0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914;
+             } else if (id_ == 25) {
++                a_.originalWallet = address(bytes20(hex"f0f80dd7e46ee7c3e7bd68f806bab1875f069530"));
+                 a_.originalUnits = 53274997; a_.originalDtf = 50000 ether;
+                 a_.evidenceId = 0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970;
+             } else revert("unlisted weighted fixture");
+         } else if (collection_ == EARLIER) {
+             if (id_ == 3) {
++                a_.originalWallet = address(bytes20(hex"495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed"));
+                 a_.originalUnits = 562524912595035608166; a_.originalEth = 2 ether;
+                 a_.evidenceId = 0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75;
+             } else if (id_ == 4) {
++                a_.originalWallet = address(bytes20(hex"230f95db9644c5b3608ba676d18426d03e435b1d"));
+                 a_.originalUnits = 2281854312954086546; a_.originalDtf = 7215852540309913726431;
+                 a_.evidenceId = 0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4;
+             } else if (id_ == 12) {
++                a_.originalWallet = address(bytes20(hex"52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497"));
+                 a_.originalUnits = 47848240999749918187208884; a_.originalDtf = 75081277576132719227716;
+                 a_.evidenceId = 0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24;
+             } else revert("unlisted earlier fixture");
+@@ -159,6 +167,7 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
+ 
+     function _surrender(address collection_, uint256 id_) internal returns (uint256 newId_, uint256 credit_) {
+         address holder_ = IERC721(collection_).ownerOf(id_);
++        assertEq(holder_, migration.nftEntitlement(collection_, id_).original.originalWallet);
+         vm.startPrank(holder_);
+         IERC721(collection_).approve(detf, id_);
+         (newId_, credit_) = migration.surrenderMigrationNft(collection_, id_, 1, block.timestamp);
+@@ -175,6 +184,14 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
+         assertEq(IERC20(detf).allowance(address(bonds), address(receipt)), 0);
+     }
+ 
++    /// @dev A real holder transaction returns a transferred fixture; it does not rewrite its entitlement.
++    function _returnToOriginal(address collection_, uint256 id_) internal {
++        address holder_ = IERC721(collection_).ownerOf(id_);
++        address original_ = migration.nftEntitlement(collection_, id_).original.originalWallet;
++        vm.prank(holder_);
++        IERC721(collection_).transferFrom(holder_, original_, id_);
++    }
++
+     function _assertNotConsumed(address collection_, uint256 id_, address holder_, uint256 supply_) internal view {
+         assertEq(IERC721(collection_).ownerOf(id_), holder_);
+         assertFalse(migration.nftSurrender(collection_, id_).consumed);
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol
+index 804646499b2b6681b28bacbcdf9fed980cecc6e9..8fd59d5054192e2cd637340cf66ef4075d336902 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol
+@@ -65,6 +65,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
+         Migration.NftEntitlementInput[] memory a_ = new Migration.NftEntitlementInput[](1);
+         a_[0] = _original(WEIGHTED, 32);
+         a_[0].originalDtf *= 2;
++        a_[0].originalWallet = makeAddr("corrected consumed wallet");
+         vm.startPrank(migrationOwner);
+         allocation.configureNftEntitlements(a_);
+         allocation.configureNftEntitlements(a_);
+@@ -93,6 +94,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
+         vm.prank(migrationOwner);
+         allocation.activateMigration();
+         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureNftEntitlements.selector), address(0));
++        _returnToOriginal(WEIGHTED, 26);
+         (uint256 third_,) = _surrender(WEIGHTED, 26);
+         (uint256 fourth_,) = _surrender(EARLIER, 3);
+         assertNotEq(first_, second_); assertNotEq(second_, third_); assertNotEq(third_, fourth_);
+@@ -110,26 +112,44 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
+     }
+ 
+     function test_contractReceiverFailureRollsBackCustodySupplyFundingAndConsumption() public {
+-        _configureNft(WEIGHTED, 4);
++        _receiverRollback(WEIGHTED);
++    }
++
++    function test_earlierContractReceiverFailureRollsBackCustodySupplyFundingAndConsumption() public {
++        _receiverRollback(EARLIER);
++    }
++
++    function _receiverRollback(address collection_) private {
+         MigrationNftHolder holder_ = new MigrationNftHolder(migration);
+-        address old_ = IERC721(WEIGHTED).ownerOf(4);
++        _configureReceiver(collection_, 4, address(holder_));
++        address old_ = IERC721(collection_).ownerOf(4);
+         vm.prank(old_);
+-        IERC721(WEIGHTED).safeTransferFrom(old_, address(holder_), 4);
++        IERC721(collection_).safeTransferFrom(old_, address(holder_), 4);
+         holder_.reject(true);
+         uint256 supply_ = IERC20(detf).totalSupply();
+-        bytes memory config_ = abi.encode(migration.nftEntitlement(WEIGHTED, 4));
++        bytes memory config_ = abi.encode(migration.nftEntitlement(collection_, 4));
+         vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(holder_)));
+-        holder_.surrender(WEIGHTED, 4);
+-        _assertNotConsumed(WEIGHTED, 4, address(holder_), supply_);
++        holder_.surrender(collection_, 4);
++        _assertNotConsumed(collection_, 4, address(holder_), supply_);
+         assertEq(IERC721(address(bonds)).ownerOf(3), address(0));
+-        assertEq(abi.encode(migration.nftEntitlement(WEIGHTED, 4)), config_);
+-        assertEq(IERC721(WEIGHTED).getApproved(4), address(0));
++        assertEq(abi.encode(migration.nftEntitlement(collection_, 4)), config_);
++        assertEq(IERC721(collection_).getApproved(4), address(0));
+         holder_.reject(false);
+-        (uint256 id_, uint256 paid_) = holder_.surrender(WEIGHTED, 4);
++        (uint256 id_, uint256 paid_) = holder_.surrender(collection_, 4);
+         assertEq(id_, 3);
+         assertEq(bonds.positionOf(id_).principal, paid_);
+         assertTrue(holder_.observedFunded());
+-        assertEq(IERC721(WEIGHTED).ownerOf(4), detf);
++        assertEq(IERC721(collection_).ownerOf(4), detf);
++    }
++
++    /// @dev Explicit synthetic receiver entitlement exercises callbacks, not historical purchaser provenance.
++    function _configureReceiver(address collection_, uint256 id_, address wallet_) private {
++        Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](1);
++        rows_[0] = _original(collection_, id_);
++        rows_[0].originalWallet = wallet_;
++        rows_[0].evidenceId = keccak256("synthetic contract-wallet callback fixture");
++        vm.prank(migrationOwner);
++        allocation.configureNftEntitlements(rows_);
+     }
+ 
+     function test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender() public {
+@@ -156,8 +176,8 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
+     }
+ 
+     function test_earlierContractHolderCallbackCannotReenterReplayOrActivate() public {
+-        _configureNft(EARLIER, 3);
+         MigrationNftHolder holder_ = new MigrationNftHolder(migration);
++        _configureReceiver(EARLIER, 3, address(holder_));
+         address old_ = IERC721(EARLIER).ownerOf(3);
+         vm.prank(old_);
+         IERC721(EARLIER).safeTransferFrom(old_, address(holder_), 3);
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol
+new file mode 100644
+index 0000000000000000000000000000000000000000..5d4c1ec72e79fa1e9b2261887490bca604e92c6d
+--- /dev/null
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol
+@@ -0,0 +1,126 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {MigrationNftForkBase} from "./MigrationNftForkBase.sol";
++import {IUniswapV4DetfMigration as Migration} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
++
++/// @notice Admission on both authenticated legacy generations and the real funded Migration proxy.
++contract MigrationOriginalWalletTest is MigrationNftForkBase {
++    function test_weightedAdmissionBeforeActivation() public { _admission(WEIGHTED, false); }
++    function test_weightedAdmissionAfterActivation() public { _admission(WEIGHTED, true); }
++    function test_earlierAdmissionBeforeActivation() public { _admission(EARLIER, false); }
++    function test_earlierAdmissionAfterActivation() public { _admission(EARLIER, true); }
++
++    function _admission(address collection_, bool activate_) private {
++        uint256 credit_ = _configureNft(collection_, 3);
++        address original_ = _original(collection_, 3).originalWallet;
++        address next_ = makeAddr("transferred wallet");
++        address operator_ = makeAddr("approved operator");
++        if (activate_) {
++            vm.prank(migrationOwner);
++            allocation.activateMigration();
++        }
++        uint256 supply_ = IERC20(detf).totalSupply();
++        bytes memory config_ = abi.encode(migration.nftEntitlement(collection_, 3));
++        vm.startPrank(original_);
++        IERC721(collection_).setApprovalForAll(operator_, true);
++        IERC721(collection_).approve(detf, 3);
++        vm.stopPrank();
++        vm.prank(operator_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalNftWallet.selector, operator_, original_));
++        migration.surrenderMigrationNft(collection_, 3, 1, block.timestamp);
++        _assertNotConsumed(collection_, 3, original_, supply_);
++        assertEq(IERC721(address(bonds)).ownerOf(3), address(0));
++
++        vm.prank(original_);
++        IERC721(collection_).transferFrom(original_, next_, 3);
++        vm.startPrank(next_);
++        IERC721(collection_).approve(detf, 3);
++        IERC721(collection_).setApprovalForAll(original_, true);
++        vm.stopPrank();
++        vm.prank(next_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalNftWallet.selector, next_, original_));
++        migration.surrenderMigrationNft(collection_, 3, 1, block.timestamp);
++        _assertNotConsumed(collection_, 3, next_, supply_);
++        vm.prank(original_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.NotNftHolder.selector, original_, next_));
++        migration.surrenderMigrationNft(collection_, 3, 1, block.timestamp);
++        _assertNotConsumed(collection_, 3, next_, supply_);
++        assertEq(abi.encode(migration.nftEntitlement(collection_, 3)), config_);
++        assertEq(IERC721(address(bonds)).ownerOf(3), address(0));
++
++        _returnToOriginal(collection_, 3);
++        (uint256 id_, uint256 paid_) = _surrender(collection_, 3);
++        assertEq(paid_, credit_);
++        assertEq(IERC20(detf).totalSupply(), supply_ + credit_);
++        assertEq(IERC20(detf).balanceOf(address(receipt)), credit_);
++        assertEq(receipt.stakingState().accountedBacking, credit_);
++        assertEq(bonds.positionOf(id_).stakingGons, credit_ * receipt.stakingState().gonsPerUnit);
++        assertEq(migration.nftSurrender(collection_, 3).holder, original_);
++        assertEq(abi.encode(migration.nftEntitlement(collection_, 3)), config_);
++        vm.prank(original_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.NftAlreadyConsumed.selector, collection_, 3));
++        migration.surrenderMigrationNft(collection_, 3, 1, block.timestamp);
++    }
++
++    function test_missingConfigurationRejectsActualApprovedOwnersBeforeAndAfterActivation() public {
++        address[2] memory collections_ = [WEIGHTED, EARLIER];
++        uint256 supply_ = IERC20(detf).totalSupply();
++        for (uint256 phase_; phase_ < 2; ++phase_) {
++            for (uint256 i_; i_ < collections_.length; ++i_) {
++                address collection_ = collections_[i_];
++                address holder_ = IERC721(collection_).ownerOf(3);
++                vm.startPrank(holder_);
++                IERC721(collection_).approve(detf, 3);
++                vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, collection_, 3));
++                migration.surrenderMigrationNft(collection_, 3, 0, block.timestamp);
++                vm.stopPrank();
++                _assertNotConsumed(collection_, 3, holder_, supply_);
++                assertEq(migration.nftEntitlement(collection_, 3).configurationId, bytes32(0));
++                assertEq(IERC721(collection_).getApproved(3), detf);
++                assertEq(IERC721(address(bonds)).ownerOf(3), address(0));
++            }
++            if (phase_ == 0) {
++                vm.prank(migrationOwner);
++                allocation.activateMigration();
++            }
++        }
++    }
++
++    function test_walletCorrectionCannotReopenEitherConsumedOriginOrIndependentCredit() public {
++        address[2] memory collections_ = [WEIGHTED, EARLIER];
++        for (uint256 i_; i_ < collections_.length; ++i_) {
++            address collection_ = collections_[i_];
++            _configureNft(collection_, 3);
++            (uint256 id_,) = _surrender(collection_, 3);
++            bytes memory surrender_ = abi.encode(migration.nftSurrender(collection_, 3));
++            bytes memory custody_ = abi.encode(migration.nftCustody(collection_, 3));
++            bytes memory bond_ = abi.encode(bonds.positionOf(id_));
++            uint256 supply_ = IERC20(detf).totalSupply();
++            Migration.NftEntitlement memory before_ = migration.nftEntitlement(collection_, 3);
++            Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](1);
++            rows_[0] = _original(collection_, 3);
++            rows_[0].originalWallet = makeAddr("corrected original");
++            vm.startPrank(migrationOwner);
++            allocation.configureNftEntitlements(rows_);
++            allocation.configureNftEntitlements(rows_);
++            vm.stopPrank();
++            Migration.NftEntitlement memory after_ = migration.nftEntitlement(collection_, 3);
++            assertNotEq(after_.configurationId, before_.configurationId);
++            assertEq(after_.originalId, before_.originalId);
++            assertEq(after_.credit, before_.credit);
++            assertEq(abi.encode(migration.nftSurrender(collection_, 3)), surrender_);
++            assertEq(abi.encode(migration.nftCustody(collection_, 3)), custody_);
++            assertEq(abi.encode(bonds.positionOf(id_)), bond_);
++            assertEq(IERC20(detf).totalSupply(), supply_);
++            vm.prank(rows_[0].originalWallet);
++            vm.expectRevert(abi.encodeWithSelector(Migration.NftAlreadyConsumed.selector, collection_, 3));
++            migration.surrenderMigrationNft(collection_, 3, 0, block.timestamp);
++            vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, before_.originalId));
++            _configure(rows_[0].originalWallet, 1 ether, before_.originalId);
++        }
++    }
++}
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol
+index d0fbeb47695ddbb606f7dd928213bc5049d560f3..37c1b86b2531067b7ffbcb1632e65e4cbaa06bd0 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol
+@@ -59,32 +59,33 @@ contract MigrationRecoveryGasTest is MigrationRecoveryForkBase {
+     /// Only direct authenticated nonzero ETH/WETH or DTF inputs; no missing value is treated as zero.
+     function _populate() private {
+         Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](24);
+-        rows_[0] = Migration.NftEntitlementInput(WEIGHTED, 5, 462445599, 50000000000000000, 0, 0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293, true);
+-        rows_[1] = Migration.NftEntitlementInput(WEIGHTED, 6, 740825635, 80000000000000000, 0, 0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917, true);
+-        rows_[2] = Migration.NftEntitlementInput(WEIGHTED, 7, 1200103129, 130000000000000000, 0, 0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296, true);
+-        rows_[3] = Migration.NftEntitlementInput(WEIGHTED, 8, 1937763154, 220000000000000000, 0, 0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb, true);
+-        rows_[4] = Migration.NftEntitlementInput(WEIGHTED, 9, 3147607863, 150000000000000000, 0, 0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a, true);
+-        rows_[5] = Migration.NftEntitlementInput(WEIGHTED, 10, 5077481904, 180000000000000000, 0, 0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651, true);
+-        rows_[6] = Migration.NftEntitlementInput(WEIGHTED, 11, 44048877, 0, 117620151493077568323998, 0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b, true);
+-        rows_[7] = Migration.NftEntitlementInput(WEIGHTED, 12, 1455956506, 0, 1000000000000000000000000, 0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1, true);
+-        rows_[8] = Migration.NftEntitlementInput(WEIGHTED, 13, 1915, 0, 1000000000000000000, 0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb, true);
+-        rows_[9] = Migration.NftEntitlementInput(WEIGHTED, 14, 191603, 0, 100000000000000000000, 0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd, true);
+-        rows_[10] = Migration.NftEntitlementInput(WEIGHTED, 15, 1915, 0, 1000000000000000000, 0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27, true);
+-        rows_[11] = Migration.NftEntitlementInput(WEIGHTED, 16, 153080136, 0, 84207000000000000000000, 0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1, true);
+-        rows_[12] = Migration.NftEntitlementInput(WEIGHTED, 17, 179696, 0, 100000000000000000000, 0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b, true);
+-        rows_[13] = Migration.NftEntitlementInput(WEIGHTED, 18, 49053117, 0, 28722838050154716955768, 0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd, true);
+-        rows_[14] = Migration.NftEntitlementInput(WEIGHTED, 21, 17650489, 0, 13638592554139803593186, 0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d, true);
+-        rows_[15] = Migration.NftEntitlementInput(WEIGHTED, 22, 1288034730, 0, 1010505832294964975193008, 0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac, true);
+-        rows_[16] = Migration.NftEntitlementInput(WEIGHTED, 24, 1300890757, 2000000000000000000, 0, 0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352, true);
+-        rows_[17] = Migration.NftEntitlementInput(WEIGHTED, 26, 56299, 0, 50000000000000000000, 0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d, true);
+-        rows_[18] = Migration.NftEntitlementInput(WEIGHTED, 27, 3302546215, 0, 3638287394965303325165504, 0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0, true);
+-        rows_[19] = Migration.NftEntitlementInput(WEIGHTED, 28, 3726336268, 0, 4646962928061246692056443, 0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737, true);
+-        rows_[20] = Migration.NftEntitlementInput(WEIGHTED, 29, 1777911406, 0, 2000000000000000000000000, 0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1, true);
+-        rows_[21] = Migration.NftEntitlementInput(WEIGHTED, 30, 457125470, 0, 500000000000000000000000, 0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9, true);
+-        rows_[22] = Migration.NftEntitlementInput(WEIGHTED, 31, 4031493805, 6190000000000000000, 0, 0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04, true);
+-        rows_[23] = Migration.NftEntitlementInput(WEIGHTED, 32, 54436459, 0, 56017714220190058289217, 0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914, true);
++        rows_[0] = Migration.NftEntitlementInput(WEIGHTED, 5, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 462445599, 50000000000000000, 0, 0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293, true);
++        rows_[1] = Migration.NftEntitlementInput(WEIGHTED, 6, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 740825635, 80000000000000000, 0, 0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917, true);
++        rows_[2] = Migration.NftEntitlementInput(WEIGHTED, 7, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 1200103129, 130000000000000000, 0, 0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296, true);
++        rows_[3] = Migration.NftEntitlementInput(WEIGHTED, 8, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 1937763154, 220000000000000000, 0, 0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb, true);
++        rows_[4] = Migration.NftEntitlementInput(WEIGHTED, 9, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 3147607863, 150000000000000000, 0, 0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a, true);
++        rows_[5] = Migration.NftEntitlementInput(WEIGHTED, 10, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 5077481904, 180000000000000000, 0, 0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651, true);
++        rows_[6] = Migration.NftEntitlementInput(WEIGHTED, 11, address(bytes20(hex"3e01a5779cfa830794dbb9c8673a61b3c5c5608a")), 44048877, 0, 117620151493077568323998, 0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b, true);
++        rows_[7] = Migration.NftEntitlementInput(WEIGHTED, 12, address(bytes20(hex"b2b12665da21fccfb9b8e4d4f2349a4c835fc669")), 1455956506, 0, 1000000000000000000000000, 0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1, true);
++        rows_[8] = Migration.NftEntitlementInput(WEIGHTED, 13, address(bytes20(hex"e8ca5d7b03204d110ff8a06753e7cd90defc544a")), 1915, 0, 1000000000000000000, 0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb, true);
++        rows_[9] = Migration.NftEntitlementInput(WEIGHTED, 14, address(bytes20(hex"5160f655bf9b567f8a47a4f107371ad938126c3c")), 191603, 0, 100000000000000000000, 0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd, true);
++        rows_[10] = Migration.NftEntitlementInput(WEIGHTED, 15, address(bytes20(hex"e8ca5d7b03204d110ff8a06753e7cd90defc544a")), 1915, 0, 1000000000000000000, 0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27, true);
++        rows_[11] = Migration.NftEntitlementInput(WEIGHTED, 16, address(bytes20(hex"03f523d7243aaf869c44322197b4fc55e0d12cd7")), 153080136, 0, 84207000000000000000000, 0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1, true);
++        rows_[12] = Migration.NftEntitlementInput(WEIGHTED, 17, address(bytes20(hex"4aa38d56933887bdba2e790fa45509bfd9d1b938")), 179696, 0, 100000000000000000000, 0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b, true);
++        rows_[13] = Migration.NftEntitlementInput(WEIGHTED, 18, address(bytes20(hex"dc7d32b21cfdf003b5467141bd67e1f68a732cce")), 49053117, 0, 28722838050154716955768, 0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd, true);
++        rows_[14] = Migration.NftEntitlementInput(WEIGHTED, 21, address(bytes20(hex"ed2e9d1e229e6a78baf74abc7314bd16b9924f33")), 17650489, 0, 13638592554139803593186, 0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d, true);
++        rows_[15] = Migration.NftEntitlementInput(WEIGHTED, 22, address(bytes20(hex"8b73c11e053581620bf5d7826d0942c50cb7b9cf")), 1288034730, 0, 1010505832294964975193008, 0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac, true);
++        rows_[16] = Migration.NftEntitlementInput(WEIGHTED, 24, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 1300890757, 2000000000000000000, 0, 0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352, true);
++        rows_[17] = Migration.NftEntitlementInput(WEIGHTED, 26, address(bytes20(hex"c379feb4182211abe71a34858265e4bf5ff35e06")), 56299, 0, 50000000000000000000, 0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d, true);
++        rows_[18] = Migration.NftEntitlementInput(WEIGHTED, 27, address(bytes20(hex"4aa38d56933887bdba2e790fa45509bfd9d1b938")), 3302546215, 0, 3638287394965303325165504, 0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0, true);
++        rows_[19] = Migration.NftEntitlementInput(WEIGHTED, 28, address(bytes20(hex"b63159deb0ed4b388b964c5eb5a9f2845e469a08")), 3726336268, 0, 4646962928061246692056443, 0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737, true);
++        rows_[20] = Migration.NftEntitlementInput(WEIGHTED, 29, address(bytes20(hex"cb2735084b4c10343e2f54c2c7573615ccf4d97f")), 1777911406, 0, 2000000000000000000000000, 0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1, true);
++        rows_[21] = Migration.NftEntitlementInput(WEIGHTED, 30, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 457125470, 0, 500000000000000000000000, 0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9, true);
++        rows_[22] = Migration.NftEntitlementInput(WEIGHTED, 31, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 4031493805, 6190000000000000000, 0, 0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04, true);
++        rows_[23] = Migration.NftEntitlementInput(WEIGHTED, 32, address(bytes20(hex"4dfebb21d855115d4019819393e514977e490e5d")), 54436459, 0, 56017714220190058289217, 0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914, true);
+         vm.prank(migrationOwner);
+         allocation.configureNftEntitlements(rows_);
++        _returnToOriginal(WEIGHTED, 26);
+         for (uint256 i_; i_ < rows_.length; ++i_) _surrender(WEIGHTED, rows_[i_].tokenId);
+     }
+ }
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol
+index 877caea59afa46836f5fb9dbc73c30a21385d870..767caf3e0db00498cb7cb5c3ece3a5c53f652293 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol
+@@ -138,6 +138,7 @@ contract MigrationRecoveryWeightedTest is MigrationRecoveryForkBase {
+         _run(Recovery.Stage.WeightedRewards, 4, 0, 0);
+         vm.prank(next_);
+         allocation.activateMigration();
++        _returnToOriginal(WEIGHTED, 26);
+         _surrender(WEIGHTED, 26);
+         _run(Recovery.Stage.WeightedClaim, 26, 0, 0);
+         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, old_));
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol
+index 81921c178cd53ac7d25461a5ee4bd7b22cc6009e..814796e76bdf8372254ff0828d887ae95a09821c 100644
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol
+@@ -93,6 +93,9 @@ abstract contract MigrationGenesisCapitalBase is TestBase_UniswapV4DetfMigration
+         assertGt(lp_, 0);
+         assertTrue(migration.isReserveLive());
+         assertEq(receipt.totalSupply(), 0);
++        assertEq(migration.independentAllocation(address(this)).configurationId, bytes32(0));
++        assertFalse(migration.independentIssuance(address(this)).issued);
++        assertEq(migration.independentIssuance(address(this)).credit, 0);
+         assertEq(IERC20(pairA).allowance(detf, se0), 0);
+         assertEq(IERC20(pairB).allowance(detf, se1), 0);
+         assertEq(migration.migrationDonationInventory(IERC20(pairA)), IERC20(pairA).balanceOf(detf));
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol
+index d73705dcba4febaae5b95d2258a2d23015c04338..c929c404274b34b62fa9770b6b80caa7e760b442 100644
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol
+@@ -27,7 +27,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
+         a_ = new Migration.NftEntitlementInput[](1);
+         // Deliberately bounded quote fixtures, not operational historical allocations.
+         a_[0] = Migration.NftEntitlementInput(
+-            collection_, 3, collection_ == WEIGHTED ? 3772281649 : 562524912595035608166,
++            collection_, 3, address(0xBEEF), collection_ == WEIGHTED ? 3772281649 : 562524912595035608166,
+             1 ether, 0, bytes32("configuration fixture"), true
+         );
+     }
+@@ -62,6 +62,34 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
+             keccak256(abi.encode("migration.nft", uint256(4663), detf, migration.migrationSnapshot().id, WEIGHTED, uint256(3))));
+     }
+ 
++    function test_zeroWalletRejectsBothSourcesAndWalletCorrectionPreservesEconomicOrigin() public {
++        address[2] memory collections_ = [WEIGHTED, EARLIER];
++        for (uint256 i_; i_ < collections_.length; ++i_) {
++            Migration.NftEntitlementInput[] memory a_ = _input(collections_[i_]);
++            a_[0].originalWallet = address(0);
++            vm.prank(migrationOwner);
++            vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, collections_[i_], 3));
++            allocation.configureNftEntitlements(a_);
++            assertEq(migration.nftEntitlement(collections_[i_], 3).configurationId, bytes32(0));
++            a_[0].originalWallet = address(0xBEEF);
++            vm.prank(migrationOwner);
++            allocation.configureNftEntitlements(a_);
++            Migration.NftEntitlement memory before_ = migration.nftEntitlement(collections_[i_], 3);
++            a_[0].originalWallet = address(0xCAFE);
++            vm.prank(migrationOwner);
++            allocation.configureNftEntitlements(a_);
++            Migration.NftEntitlement memory after_ = migration.nftEntitlement(collections_[i_], 3);
++            assertEq(after_.original.originalWallet, address(0xCAFE));
++            assertNotEq(before_.configurationId, after_.configurationId);
++            assertEq(after_.configurationId,
++                keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, a_[0])));
++            assertEq(before_.originalId, after_.originalId);
++            assertEq(before_.credit, after_.credit);
++            vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, before_.originalId));
++            _configure(address(this), 1 ether, before_.originalId);
++        }
++    }
++
+     function test_unknownComponentsAndReservedUnitsRejectWholeBatch() public {
+         Migration.NftEntitlementInput[] memory a_ = new Migration.NftEntitlementInput[](2);
+         a_[0] = _input(WEIGHTED)[0];

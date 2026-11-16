@@ -1,0 +1,10 @@
+[
+  {
+    "path": "GenesisWitness.s.sol",
+    "sha256": "b02b38aef5e42e147a9bb50beffc2db7e2c0d555934233875bb38143530686ee"
+  },
+  {
+    "path": "CallbackRollbackWitness.s.sol",
+    "sha256": "dadb327472657c81bdf58be04429c844da2450b9483ba048f3f5025900cd7c32"
+  }
+]

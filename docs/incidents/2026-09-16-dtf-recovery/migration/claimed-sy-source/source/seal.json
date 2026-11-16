@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "date": "2026-11-12",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source",
+  "base": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+  "verdict": "bounded admitted-proposal",
+  "algorithm": "SHA-256 of complete raw UTF-8 file bytes; relative POSIX paths sorted by localeCompare in this ASCII-only set; seal.json self-excluded",
+  "files": [
+    {
+      "path": "contract.md",
+      "bytes": 17571,
+      "sha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+      "mode": 420
+    },
+    {
+      "path": "method.md",
+      "bytes": 8244,
+      "sha256": "c87f9a8b9c9b588e04746b4b39e8d6332bb315b6811d7c51ab6488cf5ef271ca",
+      "mode": 420
+    },
+    {
+      "path": "raw/cleanup.json",
+      "bytes": 7855,
+      "sha256": "e7a684cdaeab7037048fe371c489b8a209ba5492252fa0190d3cb92d9cb86472",
+      "mode": 420
+    },
+    {
+      "path": "raw/input-preservation.json",
+      "bytes": 4734,
+      "sha256": "b314958801aac738c71a7f08b3fb8721d921840e5cf9b793ecb9ce6d8471c497",
+      "mode": 420
+    },
+    {
+      "path": "raw/observations.json",
+      "bytes": 29900,
+      "sha256": "a864d40a72717eca3ddd1a4601b75a613852b18c935e7cd1b36112f433dc934d",
+      "mode": 420
+    },
+    {
+      "path": "raw/offline-audit.json",
+      "bytes": 1105,
+      "sha256": "195c687c99b838fc5b0e37c3ea052834d93915046b600d5523c8ff9ffec824e0",
+      "mode": 420
+    },
+    {
+      "path": "raw/reconciliation.json",
+      "bytes": 7901,
+      "sha256": "f202a9d098dc9a5be7a717d95d39c7db0c51c185da0b65c16e02576491de81d6",
+      "mode": 420
+    },
+    {
+      "path": "raw/source-identities.json",
+      "bytes": 370968,
+      "sha256": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "mode": 420
+    },
+    {
+      "path": "raw/transactions.json",
+      "bytes": 439946,
+      "sha256": "8311e6212e77704e2494424fe4c74e3189e98326a944be509225798ed97156c6",
+      "mode": 420
+    },
+    {
+      "path": "raw/wire.json",
+      "bytes": 1144231,
+      "sha256": "800689d5a29376107378ab8648d39dfdaf8dcb03cadc68c4a33289b2c420642a",
+      "mode": 420
+    },
+    {
+      "path": "report.md",
+      "bytes": 17136,
+      "sha256": "7abf2e1c933d6f773f1864caf526f0a077336c8cc61ca4ae012b2202e9e56cfd",
+      "mode": 420
+    }
+  ],
+  "cleanup": "raw/cleanup.json",
+  "audit": "raw/offline-audit.json",
+  "boundary": "Source-only complete-original proposal. No operational admission, implementation authorization, or full raw-category closure."
+}

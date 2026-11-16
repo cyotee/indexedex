@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-13",
+  "userStatement": "I feel liike I should clarify something thart I think you missed. We're just trying to migrate hold of the old DTF DETF token and bonds. We're trying to capture their original contribution to acquiring the old DTF DETF tokens and NFTs, and awarding them a new compensation bond. We're doing this because there's no way to get their original contribution back in a timely manner. We don't care about people that hold DTF migrating, they have the asset to deposit into the new DTF DETF. So, we definitely don't care about people on the old token staking system. That can claim their DTF at any time.",
+  "economicScope": "Old DTF DETF token and bond-NFT exposure; original acquisition contributions are the compensation basis because timely recovery is unavailable.",
+  "excluded": "Plain DTF holdings and freely claimable TokenStaking DTF; use ordinary deposits.",
+  "distinction": "DTF spent to acquire an old DETF/NFT may be contribution basis; holding or withdrawing DTF is not itself a compensation claim.",
+  "implementationInterpretation": "Retain existing surrender requirements. Do not introduce independent-payout alternatives for NFT3 merely because its acquisition involved two payment assets. Wrappers/pool assets are not automatically separate eligible originals; retain only what represents or recovers the in-scope old DETF/NFT exposure.",
+  "nft3": "Prior decision: separate WETH/DTF contributions, separate quotes, two new compensation bonds. The user did not select an option in the trigger question; no independent-issuance exception is inferred.",
+  "authority": "No on-chain award, deployment or final allocation authorization is supplied by this record."
+}

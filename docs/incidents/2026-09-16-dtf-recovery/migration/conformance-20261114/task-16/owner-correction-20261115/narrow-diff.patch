@@ -1,0 +1,251 @@
+--- /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/baseline/bundle.ts.txt	2026-11-15 06:23:40
++++ /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle.ts	2026-11-15 06:24:07
+@@ -5,7 +5,7 @@
+ import { preparationInput, PreparationError, sha256, source } from "./schema.js";
+ import type { PreparationInput } from "./schema.js";
+ import { executionManifest } from "./execution-schema.js";
+-import { readBundle, writeBundle, walkReferences } from "./bundle-files.js";
++import { readBundle, writeBundle, walkReferences, rehearsalFundingEvidence } from "./bundle-files.js";
+ import type { BundleReference, SourceFile } from "./bundle-files.js";
+ 
+ export const authorityRoles = [
+@@ -20,6 +20,7 @@
+ export const authorityInput = z.object({
+   version: z.literal("dtf-operator-authorities-v1"),
+   sources: z.array(source).length(authorityRoles.length).readonly(),
++  rehearsalFundingEvidence: rehearsalFundingEvidence.optional(),
+ }).strict().readonly().refine((input) =>
+   canonical(input.sources.map((s) => s.id).sort()) === canonical([...authorityRoles].sort()),
+ "all distinct rehearsal authority roles are required");
+@@ -133,8 +134,12 @@
+   switch (value.version) {
+     case "dtf-operator-authorities-v1": {
+       const sources = remapSources(value.sources, base);
++      const rehearsalFundingEvidence = value.rehearsalFundingEvidence && {
++        ...value.rehearsalFundingEvidence,
++        path: bundle.locate(value.rehearsalFundingEvidence.path, base).path,
++      };
+       bundle.complete();
+-      return { ...details, kind: "authorities" as const, sources };
++      return { ...details, kind: "authorities" as const, sources, rehearsalFundingEvidence };
+     }
+     case "dtf-operator-preparation-v2": {
+       const input = remapInput(value, base);
+
+--- /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/baseline/bundle-files.ts.txt	2026-11-15 06:23:40
++++ /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle-files.ts	2026-11-15 06:28:20
+@@ -2,8 +2,16 @@
+ import { dirname, isAbsolute, join, resolve } from "node:path";
+ import { z } from "zod";
+ import { canonical, fingerprint } from "./provenance.js";
+-import { bundleReference, PreparationError, sha256, uint } from "./schema.js";
++import { bundleReference, PreparationError, sha256, source, uint } from "./schema.js";
+ 
++// Candidate-discovery bytes only: this reference cannot authorize an award or
++// replace a JSON historical FileRef. Absent on previously admitted v1 inputs.
++export const rehearsalFundingEvidence = source.unwrap().extend({
++  id: z.literal("rehearsal-funding-transfers"),
++  purpose: z.literal("synthetic-local"),
++  format: z.literal("transfer-csv"),
++}).strict().readonly();
++
+ const file = z.object({
+   path: z.string().regex(/^data\/[0-9a-f]{64}$/), sha256, bytes: uint,
+ }).strict();
+@@ -24,6 +32,11 @@
+   const walk = async (node: unknown): Promise<void> => {
+     if (Array.isArray(node)) { for (const item of node) await walk(item); return; }
+     if (node === null || typeof node !== "object") return;
++    const funding = rehearsalFundingEvidence.safeParse(node);
++    if (funding.success) {
++      verifyBytes(await load(funding.data), funding.data);
++      return;
++    }
+     const record = z.record(z.unknown()).parse(node);
+     const ref = bundleReference.safeParse(node);
+     if (ref.success) {
+
+--- /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/baseline/bundle-materialize.ts.txt	2026-11-15 06:23:40
++++ /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle-materialize.ts	2026-11-15 06:24:07
+@@ -21,7 +21,8 @@
+   });
+   switch (saved.kind) {
+     case "authorities":
+-      return { kind: saved.kind, bundle: saved.reference, sources: saved.sources };
++      return { kind: saved.kind, bundle: saved.reference, sources: saved.sources,
++        rehearsalFundingEvidence: saved.rehearsalFundingEvidence };
+     case "preparation": {
+       const input = await save("input.json", saved.input);
+       return { kind: saved.kind, input, bundle: saved.reference };
+
+--- /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/baseline/bundle.test.ts.txt	2026-11-15 06:23:40
++++ /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/bundle.test.ts	2026-11-15 06:26:10
+@@ -1,16 +1,16 @@
+ import { afterEach, test } from "node:test";
+ import assert from "node:assert/strict";
+-import { appendFile, cp, readFile, readdir, realpath, rename, rm, symlink, writeFile } from "node:fs/promises";
++import { appendFile, cp, mkdir, readFile, readdir, realpath, rename, rm, symlink, writeFile } from "node:fs/promises";
+ import { join } from "node:path";
+ import { fixture } from "./preparation.fixture.js";
+ import { canonical, fingerprint, loadInput } from "./provenance.js";
+-import { exportBundle, loadSavedBundle } from "./bundle.js";
++import { authorityInput, authorityRoles, exportBundle, loadSavedBundle } from "./bundle.js";
+ import { bundleManifest, readBundle, walkReferences } from "./bundle-files.js";
+ import { materializeBundle } from "./bundle-materialize.js";
+ import { assemble, normalize, prepareDomain, prepareFile, validateManifest } from "./preparation.js";
+ import { Journal } from "./journal.js";
+ import { main } from "./cli.js";
+-import { replacementFixture } from "./rehearsal-data.js";
++import { replacementFixture, sourceFile } from "./rehearsal-data.js";
+ import { mixedFixture } from "../../../docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.js";
+ import { loadExecution } from "./execution-domain.js";
+ import { relocateExecution } from "./rehearsal-portable.js";
+@@ -18,7 +18,7 @@
+ import { Rpc } from "./execution-rpc.js";
+ import { verifyConfiguration } from "./execution-state.js";
+ import { z } from "zod";
+-import { bundleReference, sha256 } from "./schema.js";
++import { acceptedConfiguration, bundleReference, preparationInput, sha256, source } from "./schema.js";
+ 
+ const fixtures: Awaited<ReturnType<typeof fixture>>[] = [];
+ async function setup() {
+@@ -32,6 +32,139 @@
+ }
+ afterEach(async () => { for (const f of fixtures.splice(0)) await f.close(); });
+ 
++async function fundingFixture() {
++  const f = await fixture();
++  fixtures.push(f);
++  const root = await realpath(f.root);
++  const native = join(root, "funding-native");
++  await mkdir(native);
++  const sources = await Promise.all(authorityRoles.map(async (id) => {
++    const path = join(native, `${id}.txt`);
++    await writeFile(path, `Distinct original authority bytes: ${id}\r\n`);
++    return sourceFile(id, path);
++  }));
++  const path = join(native, "transfers.csv");
++  const raw = Buffer.from("token,from,to,value\r\nDTF,sender,candidate,123\r\n");
++  await writeFile(path, raw);
++  const rehearsalFundingEvidence = { ...await sourceFile("rehearsal-funding-transfers", path),
++    purpose: "synthetic-local" as const, format: "transfer-csv" as const };
++  const input = { version: "dtf-operator-authorities-v1" as const, sources, rehearsalFundingEvidence };
++  const inputPath = join(native, "input.json");
++  await writeFile(inputPath, canonical(input));
++  return { ...f, root, native, preparation: f.input, input, inputPath, raw };
++}
++
++for (const funding of [false, true]) {
++  test(`authority transport retains 22 roles at two fresh locations with funding evidence ${funding}`, async () => {
++    const f = await fundingFixture();
++    const template = funding ? f.input : { version: f.input.version, sources: f.input.sources };
++    await writeFile(f.inputPath, canonical(template));
++    const expected = await Promise.all(f.input.sources.map(async (s) => ({ ...s, raw: await readFile(s.path) })));
++    await exportBundle(f.inputPath, join(f.root, "authority-export"));
++    await rename(f.native, `${f.native}.unavailable`);
++    for (const location of ["first", "second"]) {
++      const directory = join(f.root, location);
++      await cp(join(f.root, "authority-export"), directory, { recursive: true });
++      const saved = await loadSavedBundle(join(directory, "bundle.json"));
++      const materialized = await materializeBundle(join(directory, "bundle.json"), join(f.root, `${location}-materialized`));
++      if (saved.kind !== "authorities" || materialized.kind !== "authorities") throw new TypeError("expected authorities");
++      assert.deepEqual(saved.sources.map((s) => s.id), authorityRoles);
++      assert.deepEqual(materialized.sources, saved.sources);
++      assert.deepEqual(saved.originalTemplate, Buffer.from(canonical(template)));
++      for (const original of expected) {
++        const mapped: z.infer<typeof source> | undefined = saved.sources.find((s) => s.id === original.id);
++        assert.ok(mapped);
++        assert(mapped.path.startsWith(`${directory}/data/`));
++        assert.deepEqual(await readFile(mapped.path), original.raw);
++        assert.deepEqual(mapped.provenance, original.provenance);
++      }
++      assert.deepEqual(materialized.rehearsalFundingEvidence, saved.rehearsalFundingEvidence);
++      if (funding) {
++        assert.ok(saved.rehearsalFundingEvidence);
++        assert(saved.rehearsalFundingEvidence.path.startsWith(`${directory}/data/`));
++        assert.deepEqual(await readFile(saved.rehearsalFundingEvidence.path), f.raw);
++        const { path: _path, ...metadata } = saved.rehearsalFundingEvidence;
++        const { path: _originalPath, ...originalMetadata } = f.input.rehearsalFundingEvidence;
++        assert.deepEqual(metadata, originalMetadata);
++      } else assert.equal(saved.rehearsalFundingEvidence, undefined);
++    }
++    assert.equal(f.methods.includes("eth_getTransactionCount"), false);
++    assert.equal(f.methods.includes("eth_sendRawTransaction"), false);
++  });
++}
++
++for (const corruption of ["tamper", "missing", "extra", "unreferenced", "identity", "purpose", "size"] as const) {
++  test(`authority funding transport rejects ${corruption} before materialization or signing`, async () => {
++    const f = await fundingFixture();
++    const directory = join(f.root, "authority-export");
++    const bundle = await exportBundle(f.inputPath, directory);
++    const manifest = bundleManifest.parse(JSON.parse(await readFile(bundle, "utf8")));
++    const item = manifest.files.find((s) => s.originalPath === f.input.rehearsalFundingEvidence.path);
++    assert.ok(item);
++    let expected: RegExp;
++    switch (corruption) {
++      case "tamper":
++        await appendFile(join(directory, item.path), "changed");
++        expected = /bundle raw bytes differ/;
++        break;
++      case "missing":
++        await writeFile(bundle, canonical({ ...manifest, files: manifest.files.filter((s) => s !== item) }));
++        await rm(join(directory, item.path));
++        expected = /missing declared bundle reference/;
++        break;
++      case "extra":
++        await writeFile(join(directory, "data/extra"), "unreferenced");
++        expected = /bundle data membership differs/;
++        break;
++      case "unreferenced":
++        await writeFile(bundle, canonical({ ...manifest, files: [...manifest.files,
++          { ...item, originalPath: join(f.native, "undeclared.csv") }] }));
++        expected = /unreferenced bundle item/;
++        break;
++      case "identity":
++      case "purpose":
++      case "size": {
++        const evidence = f.input.rehearsalFundingEvidence;
++        const changed = corruption === "identity" ? { ...evidence, id: "current-main-plan" }
++          : corruption === "purpose" ? { ...evidence, purpose: "operational-review" } : { ...evidence, bytes: "1" };
++        const raw = Buffer.from(canonical({ ...f.input, rehearsalFundingEvidence: changed }));
++        const template = { path: `data/${fingerprint(raw)}`, sha256: fingerprint(raw), bytes: String(raw.length) };
++        await writeFile(join(directory, template.path), raw);
++        await rm(join(directory, manifest.template.path));
++        await writeFile(bundle, canonical({ ...manifest, template }));
++        expected = corruption === "size" ? /historical FileRef identity differs/ : /Invalid literal value/;
++        break;
++      }
++      default: {
++        const exhaustive: never = corruption;
++        throw new TypeError(`unhandled corruption ${exhaustive}`);
++      }
++    }
++    const output = join(f.root, "rejected");
++    await assert.rejects(materializeBundle(bundle, output), expected);
++    await assert.rejects(readdir(output), { code: "ENOENT" });
++    assert.deepEqual(await readFile(f.input.rehearsalFundingEvidence.path), f.raw);
++    assert.equal(f.methods.includes("eth_getTransactionCount"), false);
++    assert.equal(f.methods.includes("eth_sendRawTransaction"), false);
++  });
++}
++
++test("authority funding evidence cannot stand in for an authority, financial input or JSON historical FileRef", async () => {
++  const f = await fundingFixture();
++  const evidence = f.input.rehearsalFundingEvidence;
++  assert.equal(authorityInput.safeParse(f.input).success, true);
++  assert.equal(authorityInput.safeParse({ ...f.input, sources: [...f.input.sources.slice(1), evidence] }).success, false);
++  assert.equal(source.safeParse(evidence).success, false);
++  assert.equal(preparationInput.safeParse(f.preparation).success, true);
++  assert.equal(preparationInput.safeParse({ ...f.preparation, rehearsalFundingEvidence: evidence }).success, false);
++  const ref = { path: evidence.path, sha256: evidence.sha256, bytes: evidence.bytes };
++  const accepted = { manifest: ref, executionManifest: ref, journalDomain: ref,
++    configurationId: `0x${"1".repeat(64)}`, intent: ref, completion: null };
++  assert.equal(acceptedConfiguration.safeParse(accepted).success, true);
++  assert.equal(acceptedConfiguration.safeParse({ ...accepted, manifest: evidence }).success, false);
++  await assert.rejects(walkReferences(ref, async (s) => readFile(s.path)), SyntaxError);
++});
++
+ test("relocated real bundle bytes rebuild identical payloads and quotes but a fresh journal domain", async () => {
+   const f = await setup();
+   await cp(join(f.root, "bundle-a"), join(f.root, "bundle-b"), { recursive: true });

@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-13",
+  "userStatement": "Count the WETH and DTF as separate contributions producing two new compensationbond NFTs.",
+  "subject": {
+    "chainId": "4663",
+    "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "tokenId": "3"
+  },
+  "decision": "Two separate contribution originals, independently quoted, producing two new compensation bond NFTs; do not combine into one original or one bond.",
+  "contributions": [
+    {
+      "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "symbol": "WETH",
+      "amountRaw18": "999999000000000",
+      "quoteOriginalEthRaw": "999999000000000",
+      "quoteOriginalDtfRaw": "0"
+    },
+    {
+      "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+      "symbol": "DTF",
+      "amountRaw18": "362893857600000000000",
+      "quoteOriginalEthRaw": "0",
+      "quoteOriginalDtfRaw": "362893857600000000000"
+    }
+  ],
+  "issuanceTrigger": "Both bonds on one atomic Stage 2 whole-NFT surrender under the existing original-wallet and remaining-principal rules.",
+  "triggerBasis": "Existing accepted surrender requirements remain in force; the owner changed contribution grouping and bond count, not eligibility or the independent-compensation boundary.",
+  "financialBoundary": "Contribution classification approved by this statement; actual funded-snapshot credits, operational allocation approval and issuance are not performed."
+}

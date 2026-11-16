@@ -1,0 +1,50 @@
+[
+  {
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/auth.mjs"
+    ],
+    "pid": 11109,
+    "startedAt": "2026-11-13T12:21:29.054Z",
+    "finishedAt": "2026-11-13T12:21:29.099Z",
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrInline": ""
+  },
+  {
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/rows.mjs"
+    ],
+    "pid": 11110,
+    "startedAt": "2026-11-13T12:21:29.099Z",
+    "finishedAt": "2026-11-13T12:21:29.141Z",
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrInline": ""
+  },
+  {
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/verify.mjs"
+    ],
+    "pid": 11111,
+    "startedAt": "2026-11-13T12:21:29.141Z",
+    "finishedAt": "2026-11-13T12:21:29.186Z",
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrInline": ""
+  }
+]

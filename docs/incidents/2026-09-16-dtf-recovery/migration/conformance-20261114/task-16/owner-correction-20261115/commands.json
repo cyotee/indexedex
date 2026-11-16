@@ -1,0 +1,628 @@
+[
+  {
+    "attempt": "01-baseline-tests",
+    "argv": [
+      "bun",
+      "test",
+      "--timeout",
+      "15000",
+      "./scripts/recovery/dtf-migration/bundle.test.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/01-baseline-tests/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/01-baseline-tests/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/01-baseline-tests/stdout.log",
+        "bytes": 1317,
+        "sha256": "b291014bb5684f633fa40e143ab0515e5a7941adb52e423c49d6fdac844bb4b2"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/01-baseline-tests/stderr.log",
+        "bytes": 3863,
+        "sha256": "e7efcb5599e15ab3eae6b73fd90ca6a6fcd3560c50ee0620feae9976e5f5dc56"
+      }
+    ]
+  },
+  {
+    "attempt": "02-native-setup",
+    "argv": [
+      "bun",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/prepare-native.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/02-native-setup/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/02-native-setup/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/02-native-setup/stdout.log",
+        "bytes": 343,
+        "sha256": "22ada49a176817c020770118c41314b633e0832c9398e4e71a50c3661796aad1"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/02-native-setup/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "attempt": "03-initial-status",
+    "argv": [
+      "env",
+      "GIT_MASTER=1",
+      "git",
+      "--no-pager",
+      "status",
+      "--short",
+      "--untracked-files=all"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/usr/bin/env",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/03-initial-status/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/03-initial-status/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/03-initial-status/stdout.log",
+        "bytes": 11436493,
+        "sha256": "ac58e46591027bafdfaccf58f2c17aeaadca2e31be33f4153c066dbf660601a6"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/03-initial-status/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "attempt": "04-baseline-export",
+    "argv": [
+      "bun",
+      "scripts/recovery/dtf-migration/cli.ts",
+      "bundle-export",
+      "--input",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/native/authorities-input.json",
+      "--output",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/baseline-export"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 1,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/04-baseline-export/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/04-baseline-export/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/04-baseline-export/stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/04-baseline-export/stderr.log",
+        "bytes": 174,
+        "sha256": "23a0e1c90260ae958634191c5e83f05a760225f0b26cbf811be3f9d1b649c7ac"
+      }
+    ]
+  },
+  {
+    "attempt": "05-red-regression",
+    "argv": [
+      "bun",
+      "test",
+      "--timeout",
+      "15000",
+      "./scripts/recovery/dtf-migration/bundle.test.ts",
+      "--test-name-pattern",
+      "authority transport retains.*true"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 1,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/05-red-regression/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/05-red-regression/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/05-red-regression/stdout.log",
+        "bytes": 28,
+        "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/05-red-regression/stderr.log",
+        "bytes": 1334,
+        "sha256": "8b9596b1be72dc01d6c9edf9dead9dd0c3f0995a9a618bc4db475bc2147b1eef"
+      }
+    ]
+  },
+  {
+    "attempt": "06-transport-tests",
+    "argv": [
+      "bun",
+      "test",
+      "--timeout",
+      "15000",
+      "./scripts/recovery/dtf-migration/bundle.test.ts",
+      "--test-name-pattern",
+      "^authority"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/06-transport-tests/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/06-transport-tests/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/06-transport-tests/stdout.log",
+        "bytes": 28,
+        "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/06-transport-tests/stderr.log",
+        "bytes": 1116,
+        "sha256": "3aeaf6e65bd52936c214dd35a3de432fbfacf8a5c62c00ffeaad57f7833ed416"
+      }
+    ]
+  },
+  {
+    "attempt": "07-mutated-purpose-identity",
+    "argv": [
+      "bun",
+      "test",
+      "--timeout",
+      "15000",
+      "./scripts/recovery/dtf-migration/bundle.test.ts",
+      "--test-name-pattern",
+      "authority funding transport rejects (identity|purpose)"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 1,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/07-mutated-purpose-identity/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/07-mutated-purpose-identity/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/07-mutated-purpose-identity/stdout.log",
+        "bytes": 28,
+        "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/07-mutated-purpose-identity/stderr.log",
+        "bytes": 2093,
+        "sha256": "7ca97646491beaec857abf73cc12d8779bed48df0b73c2b45dcb190d94f1f18e"
+      }
+    ]
+  },
+  {
+    "attempt": "08-bundle-tests",
+    "argv": [
+      "bun",
+      "test",
+      "--timeout",
+      "15000",
+      "./scripts/recovery/dtf-migration/bundle.test.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/08-bundle-tests/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/08-bundle-tests/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/08-bundle-tests/stdout.log",
+        "bytes": 1317,
+        "sha256": "6a877d39873035f9c7518f07594eebe68a30720d3efc81327359fbe61dbc34eb"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/08-bundle-tests/stderr.log",
+        "bytes": 4860,
+        "sha256": "ceab2da85c3611aebf00c746d2d376230d5cc783d764e1480081f11867e017a7"
+      }
+    ]
+  },
+  {
+    "attempt": "09-operator-types",
+    "argv": [
+      "bun",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--target",
+      "ES2022",
+      "--module",
+      "ESNext",
+      "--moduleResolution",
+      "Bundler",
+      "--strict",
+      "--noUncheckedIndexedAccess",
+      "--exactOptionalPropertyTypes",
+      "--verbatimModuleSyntax",
+      "--skipLibCheck",
+      "--types",
+      "node",
+      "scripts/recovery/dtf-migration/bundle-files.ts",
+      "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "scripts/recovery/dtf-migration/bundle.test.ts",
+      "scripts/recovery/dtf-migration/bundle.ts",
+      "scripts/recovery/dtf-migration/candidate-input.ts",
+      "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "scripts/recovery/dtf-migration/candidates.test.ts",
+      "scripts/recovery/dtf-migration/candidates.ts",
+      "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "scripts/recovery/dtf-migration/cli.ts",
+      "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "scripts/recovery/dtf-migration/execution-deployment.ts",
+      "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "scripts/recovery/dtf-migration/execution-domain.ts",
+      "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "scripts/recovery/dtf-migration/execution-plan.ts",
+      "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "scripts/recovery/dtf-migration/execution-schema.ts",
+      "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "scripts/recovery/dtf-migration/execution-state.ts",
+      "scripts/recovery/dtf-migration/execution.fixture.ts",
+      "scripts/recovery/dtf-migration/execution.test.ts",
+      "scripts/recovery/dtf-migration/execution.ts",
+      "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "scripts/recovery/dtf-migration/journal.ts",
+      "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "scripts/recovery/dtf-migration/payloads.ts",
+      "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "scripts/recovery/dtf-migration/preparation.test.ts",
+      "scripts/recovery/dtf-migration/preparation.ts",
+      "scripts/recovery/dtf-migration/provenance.ts",
+      "scripts/recovery/dtf-migration/quotes.ts",
+      "scripts/recovery/dtf-migration/receipt-association.ts",
+      "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "scripts/recovery/dtf-migration/receipt-input.ts",
+      "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "scripts/recovery/dtf-migration/receipt.test.ts",
+      "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "scripts/recovery/dtf-migration/rehearse.ts",
+      "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "scripts/recovery/dtf-migration/schema.ts",
+      "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/09-operator-types/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/09-operator-types/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/09-operator-types/stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/09-operator-types/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "attempt": "10-public-export",
+    "argv": [
+      "bun",
+      "scripts/recovery/dtf-migration/cli.ts",
+      "bundle-export",
+      "--input",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/native/authorities-input.json",
+      "--output",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/exported"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/10-public-export/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/10-public-export/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/10-public-export/stdout.log",
+        "bytes": 245,
+        "sha256": "eebece2f3dec92bcea2b54f18cdfd59e176d0353a713bade64c1551cf3f3aaed"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/10-public-export/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "attempt": "11-evidence-types",
+    "argv": [
+      "bun",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--target",
+      "ES2022",
+      "--module",
+      "ESNext",
+      "--moduleResolution",
+      "Bundler",
+      "--strict",
+      "--noUncheckedIndexedAccess",
+      "--exactOptionalPropertyTypes",
+      "--verbatimModuleSyntax",
+      "--skipLibCheck",
+      "--types",
+      "node",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/run-attempt.ts",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/prepare-native.ts",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/manual-transport.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/bin/bun",
+    "exitCode": 2,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/11-evidence-types/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/11-evidence-types/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/11-evidence-types/stdout.log",
+        "bytes": 2016,
+        "sha256": "169acf20b44e3660e33cfa5fe9cd5ae0c8cef9f882e9375759f45ff32f37888d"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/11-evidence-types/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "attempt": "12-evidence-types",
+    "argv": [
+      "bun",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--target",
+      "ES2022",
+      "--module",
+      "ESNext",
+      "--moduleResolution",
+      "Bundler",
+      "--strict",
+      "--noUncheckedIndexedAccess",
+      "--exactOptionalPropertyTypes",
+      "--verbatimModuleSyntax",
+      "--skipLibCheck",
+      "--types",
+      "node",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/run-attempt.ts",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/prepare-native.ts",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/manual-transport.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/12-evidence-types/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/12-evidence-types/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/12-evidence-types/stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/12-evidence-types/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "attempt": "13-manual-transport",
+    "argv": [
+      "bun",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/manual-transport.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/13-manual-transport/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/13-manual-transport/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/13-manual-transport/stdout.log",
+        "bytes": 310,
+        "sha256": "2fb9ad1cc5f42357af8c157d396c6c6cedc83025428a029ca7fb358371ecce3c"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/13-manual-transport/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "attempt": "14-randomized-transport",
+    "argv": [
+      "bun",
+      "test",
+      "--timeout",
+      "15000",
+      "--randomize",
+      "--seed",
+      "16115",
+      "./scripts/recovery/dtf-migration/bundle.test.ts",
+      "--test-name-pattern",
+      "^authority"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "runtime": {
+      "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+      "bun": "1.4.2",
+      "node": "26.3.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "resolvedExecutable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "exitCode": 0,
+    "signal": null,
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/14-randomized-transport/command.json",
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/14-randomized-transport/result.json",
+    "streams": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/14-randomized-transport/stdout.log",
+        "bytes": 28,
+        "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/14-randomized-transport/stderr.log",
+        "bytes": 1131,
+        "sha256": "ee845a616f8a0537fe7790ce32dfcf6a7a32f2ddf4115af72c363718e200f8be"
+      }
+    ]
+  }
+]

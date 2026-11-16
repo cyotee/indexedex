@@ -1,0 +1,9 @@
+{
+  "balancerV3ConstantProductPoolStandardVaultPkg": "0x8C4e2D5727123c7933DC997E901187BA34417b82",
+  "balancerV3Router": "0x5e315f96389C1aaF9324D97d3512ae1e0Bf3C21a",
+  "balancerV3RouterPkg": "0xcd82Ab294B83bbA6a31d50bB051d372cA51EfAdD",
+  "balancerV3StandardExchangeRouter": "0x648dA4fDe3B7ec321a2EB6A4Fe5eE30940E1AfDC",
+  "balancerV3Vault": "0xbA1333333333a1BA1108E8412f11850A5C319bA9",
+  "rateProviderPkg": "0x774b97f566CeA3367D9295c2A574BdcdA2e88A38",
+  "weth": "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9"
+}

@@ -1,0 +1,112 @@
+{
+  "type": "AdversarialVerify",
+  "task": 3,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "acceptance_met": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification/report.md",
+  "reason": "Producer explicitly blocked and omitted authenticated source work. Three required runtime hashes remain null, earlier IDs 0/1/2 lack authenticated role conclusions, exact route/schema/unit/witness indexing is incomplete, and required task-3 source observations and negative log are absent. Dependency receipt remains non-confirmed. This is incomplete verification infrastructure/evidence, not a proven product defect.",
+  "evidence": {
+    "head": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+    "plan_sha256": "31a0f3daff03b0e51830f5428168656eaeb19f81f40dee6f3e7f619be7230683",
+    "producer": {
+      "path": ".omo/ulw-execute/dtf-conformance/task-3-done.json",
+      "sha256": "6f2380d5ba28ea6fe7175fb1ee2ef371a44f3ea9d19f0807303596bdfab9c380",
+      "status": "blocked",
+      "acceptance_met": false,
+      "commands_executed": []
+    },
+    "gates": {
+      "ready_status": "needs-fix",
+      "ready_sha256": "e6043fc75e0b4f6dadc601339743a1492a41aaa77c6015e949329a19035a5a6d",
+      "task_2_verdict": "needs-fix",
+      "task_2_verdict_sha256": "a80cdb9cf9042725c6a4d9763956e701ce5b858a1972e075e2b1eae64398a58a",
+      "qualification": "Earlier empty-Crane/missing-helper statements are stale: Crane is now populated and helpers exist. Bootstrap failure was not independently reproduced. No inference that an earlier missing-file typecheck still fails.",
+      "concurrent_change": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inspected_sha256": "8192d15ff2aa039ea4bb306393205ed3e846270c482abcfb0f46c753e7353ac7",
+        "later_sha256": "a5e7d7f84785066a2d42685aa2893c43e8fc84287b984b9067d71393df4581b9",
+        "later_content_reviewed": false,
+        "impact": "Missing inventory-mode observation applies only to inspected bytes. New helper requires its owner's verification; task-3 incompleteness is independently established."
+      }
+    },
+    "document_review": {
+      "method": "Complete delivered document and permitted fork-source inspection; actual staged/unstaged scoped diff and untracked status; no fake prose tests.",
+      "before_after": "Producer supplied no source-document edit or before snapshot. Scoped tracked diffs empty, but three documents untracked; no authenticated remediation before/after comparison can be claimed.",
+      "source_manifest_sha256": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc",
+      "source_matrix_sha256": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4",
+      "recovery_disposition_sha256": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4",
+      "null_runtime_categories": ["weighted-nft", "weighted-receipt", "earlier-receipt"],
+      "missing_evidence": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-negative.log"
+      ]
+    },
+    "authenticated_archive_probes": [
+      {
+        "archive": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x81fb72511016b42437fe1ac2d5bdb0ba82f14a35.json",
+        "sha256": "4d81f7bb447b176e85081631fa2678ccf7849bd5da0c69d0af8533e80542e78f",
+        "command": "cast keccak <exact runtimeBytecode.onchainBytecode field parsed from this archive>",
+        "exact_invocation": "await Bun.$`cast keccak ${archive.runtimeBytecode.onchainBytecode}`.cwd(root).nothrow().quiet()",
+        "exit_code": 0,
+        "stdout": "0xca224a1792b0b9339c1c5c999c4d5e99bd33f25f8387da864d6eabb4d1d6b398\n",
+        "stderr": "",
+        "source": "Flattened source lines 7632-7639, 14414-14416 and 14724-14751 establish restricted owner-only guards on all three withdrawals."
+      },
+      {
+        "archive": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x1b7a7bc9044642c4e42e64f805f6400d75ad2c16.json",
+        "sha256": "834f55f3211fcf78b42e04517117d2111599f213bd9c546cfe17b1020f44797e",
+        "command": "cast keccak <exact runtimeBytecode.onchainBytecode field parsed from this archive>",
+        "exact_invocation": "await Bun.$`cast keccak ${archive.runtimeBytecode.onchainBytecode}`.cwd(root).nothrow().quiet()",
+        "exit_code": 0,
+        "stdout": "0xe5f44175a8c16c705c2c9e5e68b2c3efe842ce694c5e585d2211947802b10d84\n",
+        "stderr": "",
+        "source": "Archived UniswapV4HookOwnerOnlyLiquidityLib.sol:18-26 permits owner/current fee recipient removal; exception cannot be generalized to earlier LP."
+      }
+    ],
+    "command_results": [
+      {"command": "GIT_MASTER=1 git -C \"$W\" rev-parse HEAD", "exit_code": 0},
+      {"command": "GIT_MASTER=1 git -C \"$W\" status --short --untracked-files=all", "exit_code": 0, "result": "Dirty/untracked tree; scoped entries extracted. No clean-tree assertion."},
+      {"command": "GIT_MASTER=1 git -C \"$W\" diff -- <all five exact scoped paths listed in report>", "exit_code": 0, "stdout_bytes": 0},
+      {"command": "GIT_MASTER=1 git -C \"$W\" diff --cached -- <all five exact scoped paths listed in report>", "exit_code": 0, "stdout_bytes": 0}
+    ]
+  },
+  "adversarial_classes": {
+    "stale_state": "Detected: receipt assertions about missing files/empty dependency no longer match current layout; recorder changed concurrently and later bytes are explicitly unreviewed.",
+    "dirty_worktree": "Probed actual full status and scoped diff. Untracked documents prevent interpreting empty tracked diff as a clean or fully delivered state.",
+    "misleading_success_output": "Rejected: blocked producer, manifest status, monitor IDs and aggregate counts were not treated as acceptance. Historical nonzero source attempts retained as failures with qualifications.",
+    "runtime_integrity": "Wrong zero expected hash differs from independently computed archive runtime hash. Required inventory-helper rejection remains unverified; no fixture success claimed.",
+    "source_authority": "Earlier owner-only and weighted fee-recipient distinctions inspected in archived source. Complete earlier parent/NFT/collector escape-path closure remains unsupported by task-3 indexed evidence.",
+    "source_wallet_id_rollback": "Assertions inspected in original fork files; no new process evidence. Wrong-wallet, nonexistent-ID and unauthorized-exit task QA remains unverified.",
+    "symlink_boundaries": "node_modules outward link inspected only with readlink; target not loaded. No outward dependency traversal.",
+    "generated_artifacts": "Required task-3 observations and negative log absent; file existence alone never treated as proof."
+  },
+  "DoneClaim": {
+    "status": "verification-complete",
+    "changes": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification/report.md",
+      ".omo/ulw-execute/dtf-conformance/task-3-verdict.json"
+    ],
+    "manual_qa_artifacts": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification/report.md"
+    ],
+    "producer_files_modified": false,
+    "preservation": "All five scoped document/source hashes and all three producer/gate receipt hashes unchanged between verification fingerprints. Concurrent helper edit belongs to another writer and was preserved.",
+    "cleanup": "No temporary resources, cache roots, fixture directories or background processes created; no deletion required.",
+    "diagnostics": "Markdown/JSON verification evidence only. No product code diagnostics or build claimed.",
+    "unrun_checks": [
+      "Task-3 real-source suites and negative execution: producer blocked and supplied no run evidence; unchanged full suites were not rerun.",
+      "Required wrong-hash inventory-helper rejection: not independently demonstrated; concurrently changed helper not reviewed or executed.",
+      "Task-2 fixture byte preservation, missing/tampered/outward-link rejection and typecheck: read existing report only; outside this task-3 executor assignment.",
+      "Full permanent E-P custody forwarding-path authentication and earlier IDs 0/1/2 deployed-role resolution: incomplete producer evidence.",
+      "Fresh chain attestation: no RPC performed; archive hashes do not independently attest current chain state."
+    ],
+    "remaining_risks": [
+      "Task 3 does not close GAP-6/GAP-8 and must not unblock task 6, task 9 or final implementation completion.",
+      "No-exposure or eligibility conclusion requires authenticated source/dataset evidence; none was invented.",
+      "Current helper changes may repair earlier harness failures but do not retrospectively complete task-3 source work."
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "task": 7,
+  "status": "blocked",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "sourceFingerprint": "cb516981715892776b9ab9da9ff72ef5c5fd6b2b52e477e0b7ab9ca7d8f82dea",
+  "checks": {
+    "requiredBun": {
+      "exitCode": 0,
+      "passed": 54,
+      "failed": 0,
+      "receipt": "happy-acceptance.command.json"
+    },
+    "strictTypes": {
+      "exitCode": 0,
+      "receipt": "types-acceptance.command.json"
+    },
+    "dependent": {
+      "exitCode": 1,
+      "passed": 162,
+      "failed": 1,
+      "receipt": "dependent-acceptance.command.json"
+    },
+    "realMixedRecordRehearsal": {
+      "exitCode": 0,
+      "manualQa": "pass",
+      "trace": "state-trace.json",
+      "sourceBinding": "rehearsal-source-bindings.json"
+    },
+    "requiredForgeHelper": {
+      "id": "B1",
+      "status": "blocked",
+      "requirement": "Exact requested Forge helper command succeeds",
+      "command": "python3 scripts/forge-artifacts.py script scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --sig 'runMixedRecordRehearsal()' -vv",
+      "exitCode": 2,
+      "evidence": "required-forge.log",
+      "cause": "scripts/forge-artifacts.py accepts audit, plan, build, and test only; script is not a supported action.",
+      "scope": "The helper is outside task 7 allowed writes. It was not changed.",
+      "alternative": "Supported helper artifact build and explicit Solar script both succeeded; this does not turn the required command into a pass."
+    }
+  },
+  "blockers": [
+    {
+      "id": "B1",
+      "status": "blocked",
+      "requirement": "Exact requested Forge helper command succeeds",
+      "command": "python3 scripts/forge-artifacts.py script scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --sig 'runMixedRecordRehearsal()' -vv",
+      "exitCode": 2,
+      "evidence": "required-forge.log",
+      "cause": "scripts/forge-artifacts.py accepts audit, plan, build, and test only; script is not a supported action.",
+      "scope": "The helper is outside task 7 allowed writes. It was not changed.",
+      "alternative": "Supported helper artifact build and explicit Solar script both succeeded; this does not turn the required command into a pass."
+    },
+    {
+      "id": "B2",
+      "status": "blocked",
+      "requirement": "Existing claimed-SY fixed witness runtime identity agrees with freshly compiled artifact",
+      "test": "fixed witness pin matches the concrete compiled router used by the rehearsal",
+      "testLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:89-92",
+      "pinLocation": "scripts/recovery/dtf-migration/claimed-sy-witness.ts:11",
+      "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "pinUnchangedFromHead": true,
+      "evidence": "dependent-acceptance.log",
+      "disposition": "Preserved the source pin and the failing assertion. No artifact substitution, expected-value update, skip, or installation."
+    }
+  ],
+  "mutation": {
+    "log": "mutation-domain.log",
+    "expectedExitCode": 1,
+    "reason": "Missing expected rejection",
+    "restoredAt": "happy-final.command.json",
+    "restoredRawSha256": "d6904a99388b1ea200b355d3ce6258ab972e55e54e06441d858897fbf02547d8",
+    "finalVerifiedBy": "happy-acceptance.command.json",
+    "laterSourceChange": "Unused import cleanup only in the domain module after the byte-for-byte restoration."
+  },
+  "limitations": [
+    "The full real-RPC operator lifecycle and portable workflow are not claimed by the hermetic script or wire-level tests; tasks 10-12 own those scenario runs.",
+    "Historical books are authenticated through their canonical setter and a pinned observation at which the getter equals that book. An intra-block-only overwritten book without such an observation is rejected; no fallback based only on an uploaded receipt is accepted.",
+    "The required helper command remains unsupported and the fixed witness runtime identity remains unresolved. Task 7 must not be marked complete."
+  ],
+  "forbiddenOperationsPerformed": []
+}

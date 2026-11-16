@@ -12,7 +12,24 @@ contract MigrationNativeInvariantTest is TestBase_MigrationStateful {
     }
 
     function afterInvariant() public {
+        // A random stream ending in Stage 1 must still prove the real irreversible cut.
+        if (!handler.active()) handler.activate();
+        if (handler.rewardClaims() == 0) handler.claimRewards(0);
         handler.assertAll();
+        assertGe(handler.pricingActions(), 2, "both complete A/B setters executed");
+        assertGt(handler.configurationActions(), 0, "real configuration executed");
+        assertGt(handler.issuanceActions(), 0, "real independent issuance executed");
+        assertEq(handler.activationActions(), 1, "real activation executed exactly once");
+        assertGt(handler.staleBookRejections(), 0, "stale-book guard actually exercised");
+        assertGt(migration.migrationOwnerFirstBondTokenId(), 0, "real paid owner purchase");
+        assertGt(handler.rewardClaims(), 0, "positive reward delivery required");
+        emit log_named_uint("successful pricing replacements A/B", handler.pricingActions());
+        emit log_named_uint("successful configurations", handler.configurationActions());
+        emit log_named_uint("successful independent issuances", handler.issuanceActions());
+        emit log_named_uint("successful activations", handler.activationActions());
+        emit log_named_uint("exact stale-book rejections", handler.staleBookRejections());
+        emit log_named_uint("successful positive reward claims", handler.rewardClaims());
+        emit log_named_uint("actual reward units delivered", handler.claimedRewardUnits());
         emit log_named_uint("successful SUT actions", handler.successes());
         emit log_named_uint("exact rejected SUT actions", handler.rejections());
         emit log_named_uint("zero-valued valid claims (not positive witnesses)", handler.zeroClaims());
@@ -96,6 +113,19 @@ contract MigrationNativeActiveInvariantTest is TestBase_MigrationStateful {
 
     function afterInvariant() public {
         handler.assertAll();
+        assertGe(handler.pricingActions(), 2);
+        assertGt(handler.issuanceActions(), 0);
+        assertEq(handler.activationActions(), 1);
+        assertGt(handler.laterPaidBonds(), 0);
+        assertGt(handler.laterFundedRewards(), 0);
+        assertGt(handler.rewardClaims(), 0);
+        emit log_named_uint("successful pricing replacements A/B", handler.pricingActions());
+        emit log_named_uint("successful configurations", handler.configurationActions());
+        emit log_named_uint("successful independent issuances", handler.issuanceActions());
+        emit log_named_uint("successful activations", handler.activationActions());
+        emit log_named_uint("exact stale-book rejections", handler.staleBookRejections());
+        emit log_named_uint("successful positive reward claims", handler.rewardClaims());
+        emit log_named_uint("actual reward units delivered", handler.claimedRewardUnits());
         emit log_named_uint("successful active actions", handler.successes());
         emit log_named_uint("exact active rejections", handler.rejections());
         emit log_named_uint("actual later paid bonds", handler.laterPaidBonds());

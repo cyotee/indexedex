@@ -1,0 +1,251 @@
+{
+  "task": "7 / F2-01 historical-current SY census",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "status": "verified-scoped-fix",
+  "runtime": "Bun 1.4.2 (50a8a8387)",
+  "ownedFiles": [
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+      "bytes": 8114,
+      "pureLines": 124
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+      "bytes": 19500,
+      "pureLines": 293
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+      "bytes": 21123,
+      "pureLines": 303
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+      "bytes": 14518,
+      "pureLines": 218
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+      "bytes": 16042,
+      "pureLines": 228
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.fixture.ts",
+      "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+      "bytes": 13686,
+      "pureLines": 192
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+      "bytes": 15030,
+      "pureLines": 248
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts",
+      "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+      "bytes": 6147,
+      "pureLines": 82
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "sha256": "4439a2d7895e36ebeb1348bcec2bbbe2179ff013f540e1ac256db2d0958302ad",
+      "bytes": 6257,
+      "pureLines": 103
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": "attempt-01-baseline",
+      "exit": 0,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 54 pass",
+        " 0 fail",
+        "Ran 54 tests across 3 files. [997.00ms]"
+      ]
+    },
+    {
+      "attempt": "attempt-02-reproduction",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 54 pass",
+        " 1 fail",
+        "Ran 55 tests across 3 files. [1.85s]"
+      ]
+    },
+    {
+      "attempt": "attempt-03-reproduction",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 54 pass",
+        " 1 fail",
+        "Ran 55 tests across 3 files. [3.17s]"
+      ]
+    },
+    {
+      "attempt": "attempt-04-fixture-diagnosis",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 11 pass",
+        " 1 fail",
+        "Ran 12 tests across 1 file. [2.38s]"
+      ]
+    },
+    {
+      "attempt": "attempt-05-filter-diagnosis",
+      "exit": 0,
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/diagnose-fixture.ts",
+      "sourceStable": true,
+      "summary": []
+    },
+    {
+      "attempt": "attempt-06-reproduction",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 54 pass",
+        " 1 fail",
+        "Ran 55 tests across 3 files. [2.75s]"
+      ]
+    },
+    {
+      "attempt": "attempt-07-root-fix",
+      "exit": 0,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 55 pass",
+        " 0 fail",
+        "Ran 55 tests across 3 files. [4.09s]"
+      ]
+    },
+    {
+      "attempt": "attempt-08-adversarial",
+      "exit": 0,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 65 pass",
+        " 0 fail",
+        "Ran 65 tests across 3 files. [13.00s]"
+      ]
+    },
+    {
+      "attempt": "attempt-09-mutant-current-bound",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 64 pass",
+        " 1 fail",
+        "Ran 65 tests across 3 files. [12.89s]"
+      ]
+    },
+    {
+      "attempt": "attempt-10-mutant-members",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 62 pass",
+        " 3 fail",
+        "Ran 65 tests across 3 files. [7.68s]"
+      ]
+    },
+    {
+      "attempt": "attempt-11-mutant-domain",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 64 pass",
+        " 1 fail",
+        "Ran 65 tests across 3 files. [13.90s]"
+      ]
+    },
+    {
+      "attempt": "attempt-12-mutant-receipt",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 64 pass",
+        " 1 fail",
+        "Ran 65 tests across 3 files. [13.87s]"
+      ]
+    },
+    {
+      "attempt": "attempt-13-mutant-scope",
+      "exit": 1,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 63 pass",
+        " 2 fail",
+        "Ran 65 tests across 3 files. [13.86s]"
+      ]
+    },
+    {
+      "attempt": "attempt-14-final-focused",
+      "exit": 0,
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sourceStable": true,
+      "summary": [
+        " 65 pass",
+        " 0 fail",
+        "Ran 65 tests across 3 files. [14.27s]"
+      ]
+    },
+    {
+      "attempt": "attempt-15-manual",
+      "exit": 0,
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "sourceStable": true,
+      "summary": [
+        "{\"childExits\":[0,0,0,0,0,1,1,1],\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc\",\"status\":\"PASS\"}"
+      ]
+    },
+    {
+      "attempt": "attempt-16-diff-check",
+      "exit": 0,
+      "command": "GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/claimed-sy.ts scripts/recovery/dtf-migration/quotes.ts scripts/recovery/dtf-migration/preparation.ts scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/preparation.fixture.ts scripts/recovery/dtf-migration/execution.test.ts",
+      "sourceStable": true,
+      "summary": []
+    }
+  ],
+  "manualEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/result.json",
+  "cleanupEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/cleanup.json",
+  "mutationRestoration": {
+    "scripts/recovery/dtf-migration/claimed-sy.ts": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+    "scripts/recovery/dtf-migration/execution-domain.ts": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca"
+  },
+  "diagnostics": {
+    "nativeLsp": "freshness_timeout: Timed out waiting for fresh diagnostics within 3000ms",
+    "jsonLsp": "Biome is not installed; no installation attempted",
+    "sharedTypecheck": "Not run per lane instruction; integration follows sibling completion"
+  },
+  "limits": [
+    "Synthetic read-only RPC authentication; not task-10 on-chain lifecycle completion",
+    "No full operator or Forge suites; no commits, installation, public transactions, financial allocations or plan checkbox changes",
+    "Existing preparation.ts and quotes.ts remain above 250 pure lines; broad module refactoring is outside the explicit cause-only scope"
+  ],
+  "cleanup": {
+    "ownedServers": "Closed by fixture finally blocks and confirmed by successful process exit",
+    "ownedTemporaryDirectories": "Removed by fixture close()",
+    "temporaryDiagnosticScript": "Removed; attempt-05 raw transcript retained"
+  }
+}

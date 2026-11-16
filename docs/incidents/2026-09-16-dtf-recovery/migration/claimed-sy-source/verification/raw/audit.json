@@ -1,0 +1,379 @@
+{
+  "producer": {
+    "exchanges": 574,
+    "transactions": 11,
+    "signatures": [
+      {
+        "hash": "0xb08783544b52115cdf9de7f5cf9ba5ff92f325b01d433f9476dac0e04dbf51e9",
+        "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nonce": 1895
+      },
+      {
+        "hash": "0xa6129b487ce2acbc1e1544e1703b18d4f395be3d717ad3e754222d9be88b08d6",
+        "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nonce": 1896
+      },
+      {
+        "hash": "0x8429f2840c4f9293561537970f52626c9906be308460adacc11553dc2ab3b2db",
+        "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nonce": 1897
+      },
+      {
+        "hash": "0x72cf432df90b88d437e99bc0c8424834039c29d002aaeadd385626798c8af239",
+        "signer": "0x202b3b724ebcbB4A3B23dCB09Ac492343f327a61",
+        "nonce": 0
+      },
+      {
+        "hash": "0xeb1d0b5ab57e8410bb36e931f747ac4ed5774dfa119f61edb87a84b3ee9d0cd5",
+        "signer": "0x0ECfa2395449Cb032Bbc317020B02c2f9B07fAa9",
+        "nonce": 0
+      },
+      {
+        "hash": "0x2057df21e7d6a71960d89f2b380be26b98c92fb6ee08686dff4c63d2ffcc5194",
+        "signer": "0x202b3b724ebcbB4A3B23dCB09Ac492343f327a61",
+        "nonce": 1
+      },
+      {
+        "hash": "0x4d43526f94e315f46649788f1b130c9b4eb37cf4ad37d189efe12e1a6aee76ac",
+        "signer": "0x0ECfa2395449Cb032Bbc317020B02c2f9B07fAa9",
+        "nonce": 1
+      },
+      {
+        "hash": "0x10dfe431f5ebbb4ed8cfe6afe7728529a704a780124f2d13966f8f198e1bb921",
+        "signer": "0x0ECfa2395449Cb032Bbc317020B02c2f9B07fAa9",
+        "nonce": 2
+      },
+      {
+        "hash": "0x3944c5fe880dd8585cbaf4c5a146ece27628740fa8cd6c5c51fbdbf3b0288c05",
+        "signer": "0x202b3b724ebcbB4A3B23dCB09Ac492343f327a61",
+        "nonce": 2
+      }
+    ],
+    "claims": [
+      {
+        "hash": "0x72cf432df90b88d437e99bc0c8424834039c29d002aaeadd385626798c8af239",
+        "wallet": "0x202b3b724ebcbb4a3b23dcb09ac492343f327a61",
+        "weight": "3000000000000000000",
+        "shares": "54161780477508",
+        "sy": "5416",
+        "weightDivision": {
+          "numerator": "830737751522586348906000000000000000000",
+          "denominator": "15338080546808403036783930",
+          "quotient": "54161780477508",
+          "remainder": "13755730989958515979153560"
+        },
+        "syDivision": {
+          "numerator": "1499807859419176123229820",
+          "denominator": "276912583850862116302",
+          "quotient": "5416",
+          "remainder": "49305282906901338188"
+        },
+        "redeem": {
+          "receiver": "0x202b3b724ebcbB4A3B23dCB09Ac492343f327a61",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0xeb1d0b5ab57e8410bb36e931f747ac4ed5774dfa119f61edb87a84b3ee9d0cd5",
+        "wallet": "0x0ecfa2395449cb032bbc317020b02c2f9b07faa9",
+        "weight": "3000000000000000000",
+        "shares": "54161780477508",
+        "sy": "5416",
+        "weightDivision": {
+          "numerator": "830737589037244916382000000000000000000",
+          "denominator": "15338077546808403036783930",
+          "quotient": "54161780477508",
+          "remainder": "13755730989958515979153560"
+        },
+        "syDivision": {
+          "numerator": "1499807566078973057046492",
+          "denominator": "276912529689081638794",
+          "quotient": "5416",
+          "remainder": "49305282906901338188"
+        },
+        "redeem": {
+          "receiver": "0x0ECfa2395449Cb032Bbc317020B02c2f9B07fAa9",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0x2057df21e7d6a71960d89f2b380be26b98c92fb6ee08686dff4c63d2ffcc5194",
+        "wallet": "0x202b3b724ebcbb4a3b23dcb09ac492343f327a61",
+        "weight": "10013000000000000000017",
+        "shares": "180773969307098861",
+        "sy": "18077396",
+        "weightDivision": {
+          "numerator": "2772724617354736527961425512083794119741862",
+          "denominator": "15338074546808403036783930",
+          "quotient": "180773969307098861",
+          "remainder": "5192389732740338113638132"
+        },
+        "syDivision": {
+          "numerator": "5005856740644517519408302963",
+          "denominator": "276912475527301161286",
+          "quotient": "18077396",
+          "remainder": "263197185615581411707"
+        },
+        "redeem": {
+          "receiver": "0x202b3b724ebcbB4A3B23dCB09Ac492343f327a61",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0x4d43526f94e315f46649788f1b130c9b4eb37cf4ad37d189efe12e1a6aee76ac",
+        "wallet": "0x0ecfa2395449cb032bbc317020b02c2f9b07faa9",
+        "weight": "3337000000000000000005",
+        "shares": "60245953817815729",
+        "sy": "6024595",
+        "weightDivision": {
+          "numerator": "923453688065656186313608658507739970312125",
+          "denominator": "15328061546808403036783913",
+          "quotient": "60245953817815729",
+          "remainder": "8894486011900401344744548"
+        },
+        "syDivision": {
+          "numerator": "1667196533078557061222471323",
+          "denominator": "276731701557994062425",
+          "quotient": "6024595",
+          "remainder": "107530773822707128448"
+        },
+        "redeem": {
+          "receiver": "0x0ECfa2395449Cb032Bbc317020B02c2f9B07fAa9",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0x10dfe431f5ebbb4ed8cfe6afe7728529a704a780124f2d13966f8f198e1bb921",
+        "wallet": "0x0ecfa2395449cb032bbc317020b02c2f9b07faa9",
+        "weight": "6676000000000000000012",
+        "shares": "120528015489283131",
+        "sy": "12052801",
+        "weightDivision": {
+          "numerator": "1847058637546720622945816057467130114960352",
+          "denominator": "15324724546808403036783908",
+          "quotient": "120528015489283131",
+          "remainder": "11627308147336971438304404"
+        },
+        "syDivision": {
+          "numerator": "3334666152456827501086608552",
+          "denominator": "276671455604176246696",
+          "quotient": "12052801",
+          "remainder": "155679356430732813056"
+        },
+        "redeem": {
+          "receiver": "0x0ECfa2395449Cb032Bbc317020B02c2f9B07fAa9",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      }
+    ],
+    "identityChecks": true,
+    "states": {
+      "snapshots": 17,
+      "stateFieldsMatched": 323,
+      "chronology": "exact manual evm_mine count and eth_blockNumber",
+      "lastBlock": "108944674"
+    }
+  },
+  "fresh": {
+    "exchanges": 530,
+    "transactions": 11,
+    "signatures": [
+      {
+        "hash": "0xb08783544b52115cdf9de7f5cf9ba5ff92f325b01d433f9476dac0e04dbf51e9",
+        "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nonce": 1895
+      },
+      {
+        "hash": "0x4ae05a08d2573802d49c8e9c859304f630d133024f36b02600b3299678fca1f6",
+        "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nonce": 1896
+      },
+      {
+        "hash": "0xe90628ce6029662f695fda739411a78db3a6c4a91d7957337deb5d6549f80272",
+        "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nonce": 1897
+      },
+      {
+        "hash": "0x200b97d4a59a1fba6a995b797dc4228bc1576d70d369c74edd5b358b08716f89",
+        "signer": "0x25c3f1035F2DB92EA79072fDd76b64F71178F7Ec",
+        "nonce": 0
+      },
+      {
+        "hash": "0x423b19522b2dc2f6ad0aa814ab4e3ba3260197565860fa52fe55bdfb831c9797",
+        "signer": "0xADc86b12C5a3A7D1E99A4282ef48eb9e56e174a4",
+        "nonce": 0
+      },
+      {
+        "hash": "0xea7afd133cf12a9fbec52845d902c2658efd524a279b40215de346ae7ef4f47a",
+        "signer": "0x25c3f1035F2DB92EA79072fDd76b64F71178F7Ec",
+        "nonce": 1
+      },
+      {
+        "hash": "0xd2c51af22975731a1cd0c81ecdf2c4cc8459fe4cb74baa5a8adc116936dd705a",
+        "signer": "0xADc86b12C5a3A7D1E99A4282ef48eb9e56e174a4",
+        "nonce": 1
+      },
+      {
+        "hash": "0xd3e3ca7bef57d5f6276f973443a75ce395250407cf72049717ea74b506320c8f",
+        "signer": "0xADc86b12C5a3A7D1E99A4282ef48eb9e56e174a4",
+        "nonce": 2
+      },
+      {
+        "hash": "0x2e5a995977ff8d69011fc70bb47880e18cf142a0a8af6c16231d8f2d7f6adc4b",
+        "signer": "0x25c3f1035F2DB92EA79072fDd76b64F71178F7Ec",
+        "nonce": 2
+      }
+    ],
+    "claims": [
+      {
+        "hash": "0x200b97d4a59a1fba6a995b797dc4228bc1576d70d369c74edd5b358b08716f89",
+        "wallet": "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec",
+        "weight": "3000000000000000000",
+        "shares": "54161780477508",
+        "sy": "5416",
+        "weightDivision": {
+          "numerator": "830737751522586348906000000000000000000",
+          "denominator": "15338080546808403036783930",
+          "quotient": "54161780477508",
+          "remainder": "13755730989958515979153560"
+        },
+        "syDivision": {
+          "numerator": "1499807859419176123229820",
+          "denominator": "276912583850862116302",
+          "quotient": "5416",
+          "remainder": "49305282906901338188"
+        },
+        "redeem": {
+          "receiver": "0x25c3f1035F2DB92EA79072fDd76b64F71178F7Ec",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0x423b19522b2dc2f6ad0aa814ab4e3ba3260197565860fa52fe55bdfb831c9797",
+        "wallet": "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4",
+        "weight": "3000000000000000000",
+        "shares": "54161780477508",
+        "sy": "5416",
+        "weightDivision": {
+          "numerator": "830737589037244916382000000000000000000",
+          "denominator": "15338077546808403036783930",
+          "quotient": "54161780477508",
+          "remainder": "13755730989958515979153560"
+        },
+        "syDivision": {
+          "numerator": "1499807566078973057046492",
+          "denominator": "276912529689081638794",
+          "quotient": "5416",
+          "remainder": "49305282906901338188"
+        },
+        "redeem": {
+          "receiver": "0xADc86b12C5a3A7D1E99A4282ef48eb9e56e174a4",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0xea7afd133cf12a9fbec52845d902c2658efd524a279b40215de346ae7ef4f47a",
+        "wallet": "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec",
+        "weight": "10013000000000000000017",
+        "shares": "180773969307098861",
+        "sy": "18077396",
+        "weightDivision": {
+          "numerator": "2772724617354736527961425512083794119741862",
+          "denominator": "15338074546808403036783930",
+          "quotient": "180773969307098861",
+          "remainder": "5192389732740338113638132"
+        },
+        "syDivision": {
+          "numerator": "5005856740644517519408302963",
+          "denominator": "276912475527301161286",
+          "quotient": "18077396",
+          "remainder": "263197185615581411707"
+        },
+        "redeem": {
+          "receiver": "0x25c3f1035F2DB92EA79072fDd76b64F71178F7Ec",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0xd2c51af22975731a1cd0c81ecdf2c4cc8459fe4cb74baa5a8adc116936dd705a",
+        "wallet": "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4",
+        "weight": "3337000000000000000005",
+        "shares": "60245953817815729",
+        "sy": "6024595",
+        "weightDivision": {
+          "numerator": "923453688065656186313608658507739970312125",
+          "denominator": "15328061546808403036783913",
+          "quotient": "60245953817815729",
+          "remainder": "8894486011900401344744548"
+        },
+        "syDivision": {
+          "numerator": "1667196533078557061222471323",
+          "denominator": "276731701557994062425",
+          "quotient": "6024595",
+          "remainder": "107530773822707128448"
+        },
+        "redeem": {
+          "receiver": "0xADc86b12C5a3A7D1E99A4282ef48eb9e56e174a4",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      },
+      {
+        "hash": "0xd3e3ca7bef57d5f6276f973443a75ce395250407cf72049717ea74b506320c8f",
+        "wallet": "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4",
+        "weight": "6676000000000000000012",
+        "shares": "120528015489283131",
+        "sy": "12052801",
+        "weightDivision": {
+          "numerator": "1847058637546720622945816057467130114960352",
+          "denominator": "15324724546808403036783908",
+          "quotient": "120528015489283131",
+          "remainder": "11627308147336971438304404"
+        },
+        "syDivision": {
+          "numerator": "3334666152456827501086608552",
+          "denominator": "276671455604176246696",
+          "quotient": "12052801",
+          "remainder": "155679356430732813056"
+        },
+        "redeem": {
+          "receiver": "0xADc86b12C5a3A7D1E99A4282ef48eb9e56e174a4",
+          "owner": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00"
+        }
+      }
+    ],
+    "identityChecks": true,
+    "states": {
+      "snapshots": 17,
+      "stateFieldsMatched": 323,
+      "chronology": "exact manual evm_mine count and eth_blockNumber",
+      "lastBlock": "108944674"
+    }
+  },
+  "totals": {
+    "weightDebit": "20032000000000000000034",
+    "shareDebit": "361656262175152737",
+    "syReceived": "36165624"
+  },
+  "partialCoverage": {
+    "eligibleConsumed": "3337000000000000000005",
+    "eligibleRemaining": "6676000000000000000012",
+    "measuredSy": "6024595",
+    "complete": false,
+    "admission": "rejected as incomplete; not an executed Migration rejection"
+  },
+  "priorDirectNegative": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-caller.json",
+    "hash": "0x0680e83cb5044541501f6103c8e432475e90f2db5d5671d1f289622867a03e7b",
+    "revert": "0x936d426d0000000000000000000000001a0511e3d0657f00eb5d2695478f9ee1d1debce4000000000000000000000000000000000000000000000dbdbc7e523eeb8854870000000000000000000000000000000000000000000000000000000000000000",
+    "noCallbackTransaction": "0xa0c6447b5598bf960de0c5ddd077ea1af6831f530476c533aaa1b8454cfe66fe",
+    "replayed": false
+  },
+  "limitations": {
+    "originalAllocation": "synthetic partition; not historical entitlement",
+    "byteIdenticalSource": false,
+    "completeOriginalSubsetOnly": true,
+    "certificateEnforcedByLoader": false,
+    "migrationExecution": false,
+    "laterMigrationRollbackExercised": false
+  }
+}

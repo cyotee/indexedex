@@ -1,0 +1,3061 @@
+{
+  "version": "weighted-sy-independent-verification-v1",
+  "date": "2026-11-11",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy",
+  "branch": "work/dtf-migration-phase-14-weighted-sy",
+  "base": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+  "verdict": "confirmed",
+  "scope": "Bounded weighted SY increment only",
+  "sourceFiles": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "admittedSha256": "1bbd5819595ada1f49d7516923bf7e7185d40f41a46bc0e0a24f7b8aeeb262f7",
+      "finalSha256": "1bbd5819595ada1f49d7516923bf7e7185d40f41a46bc0e0a24f7b8aeeb262f7",
+      "bytes": 22922
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "admittedSha256": "1a9879c7ca4185deafe7d78cf44f20a4fde1d9dda29060a20247eb1f4f3e5d57",
+      "finalSha256": "1a9879c7ca4185deafe7d78cf44f20a4fde1d9dda29060a20247eb1f4f3e5d57",
+      "bytes": 2482
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "admittedSha256": "401cc70895c56d06edac8fdf1d0c47aa05aff0368081615b9918899dae0c31ad",
+      "finalSha256": "401cc70895c56d06edac8fdf1d0c47aa05aff0368081615b9918899dae0c31ad",
+      "bytes": 4817
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "admittedSha256": "1311ae0f046e1c7663ce7d45819eeca240ac695c7f1f843a667ce4de8318d64e",
+      "finalSha256": "1311ae0f046e1c7663ce7d45819eeca240ac695c7f1f843a667ce4de8318d64e",
+      "bytes": 3793
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "admittedSha256": "aa6ad2e49a27a9f09a134052d5a2d06a3e0a57a062a87c30edecc7a841dd0c53",
+      "finalSha256": "aa6ad2e49a27a9f09a134052d5a2d06a3e0a57a062a87c30edecc7a841dd0c53",
+      "bytes": 18831
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "admittedSha256": "1b7f28427b27fa3d41aebfd57549310145bcb353680eb156791a0e97e54373d7",
+      "finalSha256": "1b7f28427b27fa3d41aebfd57549310145bcb353680eb156791a0e97e54373d7",
+      "bytes": 20689
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "admittedSha256": "7eea3bf2bd003d7dd6469e802f4f06754e574e90f1d2a2b78a7f593a8a4f3602",
+      "finalSha256": "7eea3bf2bd003d7dd6469e802f4f06754e574e90f1d2a2b78a7f593a8a4f3602",
+      "bytes": 3763
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "admittedSha256": "c4d8b9e1e99cd5f3bc0eb85baf52b3c6500d796033108387c07569ddf3fb5274",
+      "finalSha256": "c4d8b9e1e99cd5f3bc0eb85baf52b3c6500d796033108387c07569ddf3fb5274",
+      "bytes": 2004
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "admittedSha256": "65ae1230d736a3c449dfd4f2a8235b3e1d5f890f16ffd30a48d2152cd1d8b2ca",
+      "finalSha256": "65ae1230d736a3c449dfd4f2a8235b3e1d5f890f16ffd30a48d2152cd1d8b2ca",
+      "bytes": 12685
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "admittedSha256": "99882274820084b11f0fc1d5222a7556609d57f5a7606aab3a6e21d3c1fba5d9",
+      "finalSha256": "99882274820084b11f0fc1d5222a7556609d57f5a7606aab3a6e21d3c1fba5d9",
+      "bytes": 23506
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "admittedSha256": "5010c1d149cf5825a5debd692327da00ed5b33751b632f9b1b2847a664b9014e",
+      "finalSha256": "5010c1d149cf5825a5debd692327da00ed5b33751b632f9b1b2847a664b9014e",
+      "bytes": 5741
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "admittedSha256": "024f4e135e207200f78462b8ee1ed90cde62e385b0eb6289266512dcf358b8b7",
+      "finalSha256": "024f4e135e207200f78462b8ee1ed90cde62e385b0eb6289266512dcf358b8b7",
+      "bytes": 7807
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "admittedSha256": "5e1616aed0aab30b0ae43c2bf1f8aaa75fcac3bc866c0f91e10171a8aa4c30ca",
+      "finalSha256": "5e1616aed0aab30b0ae43c2bf1f8aaa75fcac3bc866c0f91e10171a8aa4c30ca",
+      "bytes": 5285
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "admittedSha256": "3d5f6850305896ac8a1618f081d643161df5b20c23cf2a22e6d3225b87c1bd91",
+      "finalSha256": "3d5f6850305896ac8a1618f081d643161df5b20c23cf2a22e6d3225b87c1bd91",
+      "bytes": 18770
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "admittedSha256": "63566a76842c315d0876586376c689f54595e427d72629f8e3bffe34eaf6ad65",
+      "finalSha256": "63566a76842c315d0876586376c689f54595e427d72629f8e3bffe34eaf6ad65",
+      "bytes": 9646
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "admittedSha256": "539f70348d562f0daef6a8d0f6b5e41798a6fb6a90fd9f776cb2c4f16450728f",
+      "finalSha256": "539f70348d562f0daef6a8d0f6b5e41798a6fb6a90fd9f776cb2c4f16450728f",
+      "bytes": 8850
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "admittedSha256": "8592ed33c78a6e838bec2aaa2f177f6e82cb239c3eef3334f34f766ec9d9a68c",
+      "finalSha256": "8592ed33c78a6e838bec2aaa2f177f6e82cb239c3eef3334f34f766ec9d9a68c",
+      "bytes": 14134
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "admittedSha256": "ced7289c2122fe533864c94dca9e85440fe79a2b7f6f1c90a82f4be169072e10",
+      "finalSha256": "ced7289c2122fe533864c94dca9e85440fe79a2b7f6f1c90a82f4be169072e10",
+      "bytes": 6701
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "admittedSha256": "623058aef7bc8a71495b8206e0b3bce84e304536ba50ccc85ed0e5eb4716bd8f",
+      "finalSha256": "623058aef7bc8a71495b8206e0b3bce84e304536ba50ccc85ed0e5eb4716bd8f",
+      "bytes": 4089
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "admittedSha256": "1b10b3ebda6554c0e22aab2897e86f1f9329f46ee73044a97039806dc141a698",
+      "finalSha256": "1b10b3ebda6554c0e22aab2897e86f1f9329f46ee73044a97039806dc141a698",
+      "bytes": 6832
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "admittedSha256": "aa73702d1b7cb6644ff9020ddb9faeb220aa11562cf3c2d73a801d0a7984b0b6",
+      "finalSha256": "aa73702d1b7cb6644ff9020ddb9faeb220aa11562cf3c2d73a801d0a7984b0b6",
+      "bytes": 4541
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "admittedSha256": "a50de70bda83dc22dc90275bcaa848d085d0a63fda0ad2a7c4ffcbf6a47fd7a9",
+      "finalSha256": "a50de70bda83dc22dc90275bcaa848d085d0a63fda0ad2a7c4ffcbf6a47fd7a9",
+      "bytes": 14757
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "admittedSha256": "0d44fc69a5d38f2baaf97dd69b90d1b43e5330046a2010c31b284ac9b0adf428",
+      "finalSha256": "0d44fc69a5d38f2baaf97dd69b90d1b43e5330046a2010c31b284ac9b0adf428",
+      "bytes": 5259
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "admittedSha256": "0899298458361b5f1d152013bc78aed235837f9ef5fcdd10415c1e81c7f31b80",
+      "finalSha256": "0899298458361b5f1d152013bc78aed235837f9ef5fcdd10415c1e81c7f31b80",
+      "bytes": 21981
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "admittedSha256": "932f867af805810bb579f75fc5843e5d236cdf7b3d453125571dca0a0237e150",
+      "finalSha256": "932f867af805810bb579f75fc5843e5d236cdf7b3d453125571dca0a0237e150",
+      "bytes": 18054
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "admittedSha256": "4a36e35f54f156a7030ab89aa684e22c84b457786e083bd44cb47764077d8b8d",
+      "finalSha256": "4a36e35f54f156a7030ab89aa684e22c84b457786e083bd44cb47764077d8b8d",
+      "bytes": 5506
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "admittedSha256": "a3ba69b02f15b2e16ed03656d6c141e96cba876349712c9493e9061d00e092ea",
+      "finalSha256": "a3ba69b02f15b2e16ed03656d6c141e96cba876349712c9493e9061d00e092ea",
+      "bytes": 4614
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+      "admittedSha256": "fbe1df3e04accf1eee378971c0e85ada1155fee6211203538cb0ddf9f8df0e05",
+      "finalSha256": "fbe1df3e04accf1eee378971c0e85ada1155fee6211203538cb0ddf9f8df0e05",
+      "bytes": 9150
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "admittedSha256": "a5916996d7cca37561d57c0cbbb218001ad90b5ba16d8ca209165be32e97c912",
+      "finalSha256": "a5916996d7cca37561d57c0cbbb218001ad90b5ba16d8ca209165be32e97c912",
+      "bytes": 15428
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "admittedSha256": "e7e664e693be6bea485c0afcdc470137f451d04f602227f4f501d354893743f8",
+      "finalSha256": "e7e664e693be6bea485c0afcdc470137f451d04f602227f4f501d354893743f8",
+      "bytes": 13935
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "admittedSha256": "f1082398e8431e8b647a62d2e66ff71ff122fa8791a8945914779995dceaf5c4",
+      "finalSha256": "f1082398e8431e8b647a62d2e66ff71ff122fa8791a8945914779995dceaf5c4",
+      "bytes": 11806
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "admittedSha256": "07d4b86c0c3ffcb02feb72bfca7b1b5321a76c42447c6b2bde9e2991566e3bbe",
+      "finalSha256": "07d4b86c0c3ffcb02feb72bfca7b1b5321a76c42447c6b2bde9e2991566e3bbe",
+      "bytes": 7052
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+      "admittedSha256": "0c368fc495c1c2d821ce5ee26a92bb38f78821f4594514c864d83b5a5f7e6981",
+      "finalSha256": "0c368fc495c1c2d821ce5ee26a92bb38f78821f4594514c864d83b5a5f7e6981",
+      "bytes": 11702
+    }
+  ],
+  "authorityFiles": [
+    {
+      "name": "phase14-brief.md",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+      "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+      "bytes": 7330,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "plan-r5.md",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "bytes": 79305,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "prd-r22.md",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "bytes": 108022,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "owner-first-bond-directive.md",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "bytes": 8528,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase11-weighted-contract.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/weighted/contract.md",
+      "sha256": "6748c44550417a8e89d655969d9c032158916345367003e4c2679c0c2490b192",
+      "bytes": 45670,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase11-independent-report.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+      "sha256": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc",
+      "bytes": 19702,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase11-independent-matrix.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+      "sha256": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c",
+      "bytes": 19878,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase13-independent-runtime-report.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/report.md",
+      "sha256": "6f2b72c1a50919171790459be6699ce26fefdb4bdc09a2f577f9c01ba3fc365d",
+      "bytes": 22020,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase13-independent-commit-audit.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/commit/verification.md",
+      "sha256": "388a8ec99ab91200f5d65966cc6dbd05078263e9da698677e8bdcec4f0fb5f28",
+      "bytes": 11198,
+      "snapshot": "input-snapshots.json"
+    }
+  ],
+  "historicalFiles": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "bytes": 6447942
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+      "bytes": 17837
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+      "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f",
+      "bytes": 3520268
+    }
+  ],
+  "artifactFiles": [
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "admittedSha256": "48b1577004fdc53adbc602eaa3cebfe0c8b772f2ced0dfb0d8c5a646cdeb6366",
+      "preCliSha256": "48b1577004fdc53adbc602eaa3cebfe0c8b772f2ced0dfb0d8c5a646cdeb6366",
+      "finalSha256": "48b1577004fdc53adbc602eaa3cebfe0c8b772f2ced0dfb0d8c5a646cdeb6366",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol": "IUniswapV4DetfMigration"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAccounting.json",
+      "admittedSha256": "ef7aabf030633c8cce939c2efcf9b04279991dbf0a0796415302ed9abd4ec18a",
+      "preCliSha256": "ef7aabf030633c8cce939c2efcf9b04279991dbf0a0796415302ed9abd4ec18a",
+      "finalSha256": "ef7aabf030633c8cce939c2efcf9b04279991dbf0a0796415302ed9abd4ec18a",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol": "IUniswapV4DetfMigrationAccounting"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "admittedSha256": "ebdf0ebfaa4ffcf86cc1e5f4830ad091a92cef56d0d15554bccb8a44fdff144a",
+      "preCliSha256": "ebdf0ebfaa4ffcf86cc1e5f4830ad091a92cef56d0d15554bccb8a44fdff144a",
+      "finalSha256": "ebdf0ebfaa4ffcf86cc1e5f4830ad091a92cef56d0d15554bccb8a44fdff144a",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol": "IUniswapV4DetfMigrationAllocation"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationBondNFTVault.sol/IUniswapV4DetfMigrationBondNFTVault.json",
+      "admittedSha256": "9698ce8d52b2322b9f24753593a707457e2602fe3d036d6982d155fb161ec29d",
+      "preCliSha256": "9698ce8d52b2322b9f24753593a707457e2602fe3d036d6982d155fb161ec29d",
+      "finalSha256": "9698ce8d52b2322b9f24753593a707457e2602fe3d036d6982d155fb161ec29d",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol": "IUniswapV4DetfMigrationBondNFTVault"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "admittedSha256": "11c214c20e40e8895e029d01d1b11fe2d9086c55ad4748e8262bc89d0a149347",
+      "preCliSha256": "11c214c20e40e8895e029d01d1b11fe2d9086c55ad4748e8262bc89d0a149347",
+      "finalSha256": "11c214c20e40e8895e029d01d1b11fe2d9086c55ad4748e8262bc89d0a149347",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol": "IUniswapV4DetfMigrationDFPkg"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "admittedSha256": "db070f3b1e4f43866ff58111d315599c3dd40dae7e2121b266f38b7aafad494c",
+      "preCliSha256": "db070f3b1e4f43866ff58111d315599c3dd40dae7e2121b266f38b7aafad494c",
+      "finalSha256": "db070f3b1e4f43866ff58111d315599c3dd40dae7e2121b266f38b7aafad494c",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol": "IUniswapV4DetfMigrationRecovery"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationRewardToken.sol/IUniswapV4DetfMigrationRewardToken.json",
+      "admittedSha256": "a57aeb1cbd1a33a71e6658b37c1e3701e35d5c1ca1f2e735fe16773e91f966ea",
+      "preCliSha256": "a57aeb1cbd1a33a71e6658b37c1e3701e35d5c1ca1f2e735fe16773e91f966ea",
+      "finalSha256": "a57aeb1cbd1a33a71e6658b37c1e3701e35d5c1ca1f2e735fe16773e91f966ea",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol": "IUniswapV4DetfMigrationRewardToken"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationRewardToken.sol/IUniswapV4DetfMigrationRewardTokenDFPkg.json",
+      "admittedSha256": "421cc9c4bc3ea9ae6802092e6c57a1c491f7937d4e048087cdf707a80c29063c",
+      "preCliSha256": "421cc9c4bc3ea9ae6802092e6c57a1c491f7937d4e048087cdf707a80c29063c",
+      "finalSha256": "421cc9c4bc3ea9ae6802092e6c57a1c491f7937d4e048087cdf707a80c29063c",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol": "IUniswapV4DetfMigrationRewardTokenDFPkg"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationSY.sol/IUniswapV4DetfMigrationSY.json",
+      "admittedSha256": "9ebbded4dc2a22172097e4226ea6fc71874b23820a816924f17b96c628d4fd82",
+      "preCliSha256": "9ebbded4dc2a22172097e4226ea6fc71874b23820a816924f17b96c628d4fd82",
+      "finalSha256": "9ebbded4dc2a22172097e4226ea6fc71874b23820a816924f17b96c628d4fd82",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol": "IUniswapV4DetfMigrationSY"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationSnapshot.sol/IUniswapV4DetfMigrationSnapshot.json",
+      "admittedSha256": "cb30b10efca8387c304a7c0b16fc0807e4bf0445af2458c827edd8b6997347f9",
+      "preCliSha256": "cb30b10efca8387c304a7c0b16fc0807e4bf0445af2458c827edd8b6997347f9",
+      "finalSha256": "cb30b10efca8387c304a7c0b16fc0807e4bf0445af2458c827edd8b6997347f9",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol": "IUniswapV4DetfMigrationSnapshot"
+      }
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationStakedDETF.sol/IUniswapV4DetfMigrationStakedDETF.json",
+      "admittedSha256": "9dc548fa1c6d4480c85fe9195dcd1fa9263686ef7a257754f75b6bb9c9555d1f",
+      "preCliSha256": "9dc548fa1c6d4480c85fe9195dcd1fa9263686ef7a257754f75b6bb9c9555d1f",
+      "finalSha256": "9dc548fa1c6d4480c85fe9195dcd1fa9263686ef7a257754f75b6bb9c9555d1f",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol": "IUniswapV4DetfMigrationStakedDETF"
+      }
+    },
+    {
+      "path": "out/MigrationAdministration.t.sol/MigrationAdministrationTest.json",
+      "admittedSha256": "aa687c8b212d7317a1985ed50b0a12fedc473e260512dcc3ef8711c938c597ef",
+      "preCliSha256": "aa687c8b212d7317a1985ed50b0a12fedc473e260512dcc3ef8711c938c597ef",
+      "finalSha256": "aa687c8b212d7317a1985ed50b0a12fedc473e260512dcc3ef8711c938c597ef",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol": "MigrationAdministrationTest"
+      }
+    },
+    {
+      "path": "out/MigrationAdministration.t.sol/MigrationOwnerReceiver.json",
+      "admittedSha256": "a50b14f76b01cc3fc5c91c2a621d866e5aab1f5fbf195af249d91a8943d0a911",
+      "preCliSha256": "a50b14f76b01cc3fc5c91c2a621d866e5aab1f5fbf195af249d91a8943d0a911",
+      "finalSha256": "a50b14f76b01cc3fc5c91c2a621d866e5aab1f5fbf195af249d91a8943d0a911",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol": "MigrationOwnerReceiver"
+      }
+    },
+    {
+      "path": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+      "admittedSha256": "aa518bd00afa2d1ef4d27b95e59010126e55ae2513029efdbce820096b8b4d19",
+      "preCliSha256": "aa518bd00afa2d1ef4d27b95e59010126e55ae2513029efdbce820096b8b4d19",
+      "finalSha256": "aa518bd00afa2d1ef4d27b95e59010126e55ae2513029efdbce820096b8b4d19",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol": "MigrationCoreTest"
+      }
+    },
+    {
+      "path": "out/MigrationEgress.t.sol/MigrationEgressTest.json",
+      "admittedSha256": "3532a740163e4fcda7e2b3b3c749f509ba246345887fd1a9e1a9dde5461e7a10",
+      "preCliSha256": "3532a740163e4fcda7e2b3b3c749f509ba246345887fd1a9e1a9dde5461e7a10",
+      "finalSha256": "3532a740163e4fcda7e2b3b3c749f509ba246345887fd1a9e1a9dde5461e7a10",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol": "MigrationEgressTest"
+      }
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalBase.json",
+      "admittedSha256": "dbac186e9cdd1a49ff49144ce177069d56accc264ea4ac7c3723f0bfa6cef947",
+      "preCliSha256": "dbac186e9cdd1a49ff49144ce177069d56accc264ea4ac7c3723f0bfa6cef947",
+      "finalSha256": "dbac186e9cdd1a49ff49144ce177069d56accc264ea4ac7c3723f0bfa6cef947",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol": "MigrationGenesisCapitalBase"
+      }
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalDecimalsTest.json",
+      "admittedSha256": "7c7e839be3095a47612d34ce3eea34287c99a194f38b11221ae6c698f0481163",
+      "preCliSha256": "7c7e839be3095a47612d34ce3eea34287c99a194f38b11221ae6c698f0481163",
+      "finalSha256": "7c7e839be3095a47612d34ce3eea34287c99a194f38b11221ae6c698f0481163",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol": "MigrationGenesisCapitalDecimalsTest"
+      }
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalTest.json",
+      "admittedSha256": "fc5c3a5e993dd846fa18389e38c4d19f27c9480ed35278be53e5f8297b2623b5",
+      "preCliSha256": "fc5c3a5e993dd846fa18389e38c4d19f27c9480ed35278be53e5f8297b2623b5",
+      "finalSha256": "fc5c3a5e993dd846fa18389e38c4d19f27c9480ed35278be53e5f8297b2623b5",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol": "MigrationGenesisCapitalTest"
+      }
+    },
+    {
+      "path": "out/MigrationHostileContribution.t.sol/MigrationHostileContribution.json",
+      "admittedSha256": "d70450cededb0443913a55101b3a002847264c470dacde6cc4233500c4423086",
+      "preCliSha256": "d70450cededb0443913a55101b3a002847264c470dacde6cc4233500c4423086",
+      "finalSha256": "d70450cededb0443913a55101b3a002847264c470dacde6cc4233500c4423086",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol": "MigrationHostileContribution"
+      }
+    },
+    {
+      "path": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+      "admittedSha256": "6b37c3700a998206da54c9616618033c53916871fad85a6135ebe2d1256e41f7",
+      "preCliSha256": "6b37c3700a998206da54c9616618033c53916871fad85a6135ebe2d1256e41f7",
+      "finalSha256": "6b37c3700a998206da54c9616618033c53916871fad85a6135ebe2d1256e41f7",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol": "MigrationHostileContributionTest"
+      }
+    },
+    {
+      "path": "out/MigrationLegacyNftLib.sol/MigrationLegacyNftLib.json",
+      "admittedSha256": "4f68b04bbf47094dd6c24b7f952c6099dee66f657ba3eb7306531f0305c1519b",
+      "preCliSha256": "4f68b04bbf47094dd6c24b7f952c6099dee66f657ba3eb7306531f0305c1519b",
+      "finalSha256": "4f68b04bbf47094dd6c24b7f952c6099dee66f657ba3eb7306531f0305c1519b",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol": "MigrationLegacyNftLib"
+      }
+    },
+    {
+      "path": "out/MigrationLegacyRecoveryLib.sol/MigrationLegacyRecoveryLib.json",
+      "admittedSha256": "a506b0cf3e5a0e0dc1b22ce4ae6120ed91cd6cb2cfd8f4779a67b32bf1c34022",
+      "preCliSha256": "a506b0cf3e5a0e0dc1b22ce4ae6120ed91cd6cb2cfd8f4779a67b32bf1c34022",
+      "finalSha256": "a506b0cf3e5a0e0dc1b22ce4ae6120ed91cd6cb2cfd8f4779a67b32bf1c34022",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol": "MigrationLegacyRecoveryLib"
+      }
+    },
+    {
+      "path": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+      "admittedSha256": "87cf1afd5ca7b087a4046de74dbe1c64465471ed4eabb274c411d8e1e7aae54c",
+      "preCliSha256": "87cf1afd5ca7b087a4046de74dbe1c64465471ed4eabb274c411d8e1e7aae54c",
+      "finalSha256": "87cf1afd5ca7b087a4046de74dbe1c64465471ed4eabb274c411d8e1e7aae54c",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol": "MigrationLegacySourcesTest"
+      }
+    },
+    {
+      "path": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+      "admittedSha256": "ce2805f910773787eca58d919e6b0d90314ff24f340485d1837e0e11a2f4948a",
+      "preCliSha256": "ce2805f910773787eca58d919e6b0d90314ff24f340485d1837e0e11a2f4948a",
+      "finalSha256": "ce2805f910773787eca58d919e6b0d90314ff24f340485d1837e0e11a2f4948a",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol": "MigrationNftConfigurationTest"
+      }
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IEarlierClaims.json",
+      "admittedSha256": "e348fbbeb162d13cb08fd9d135a24836b7557e3ea383cc56eb3235494edf2807",
+      "preCliSha256": "e348fbbeb162d13cb08fd9d135a24836b7557e3ea383cc56eb3235494edf2807",
+      "finalSha256": "e348fbbeb162d13cb08fd9d135a24836b7557e3ea383cc56eb3235494edf2807",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol": "IEarlierClaims"
+      }
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IEarlierParent.json",
+      "admittedSha256": "bc652eeccd5f71882f8b59c866bf729e6a73d9c504bd631361d94a63fbe15adf",
+      "preCliSha256": "bc652eeccd5f71882f8b59c866bf729e6a73d9c504bd631361d94a63fbe15adf",
+      "finalSha256": "bc652eeccd5f71882f8b59c866bf729e6a73d9c504bd631361d94a63fbe15adf",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol": "IEarlierParent"
+      }
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IWeightedClaims.json",
+      "admittedSha256": "635f672f3b9f6d3756ddd43cbc7b7b3b3439e76dd58d5b28e3926fa366851d18",
+      "preCliSha256": "635f672f3b9f6d3756ddd43cbc7b7b3b3439e76dd58d5b28e3926fa366851d18",
+      "finalSha256": "635f672f3b9f6d3756ddd43cbc7b7b3b3439e76dd58d5b28e3926fa366851d18",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol": "IWeightedClaims"
+      }
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/MigrationNftForkBase.json",
+      "admittedSha256": "0c41130f5cd693b5f8db2b215c765d5e106edbeb04eb02a4fddfc27333fb7836",
+      "preCliSha256": "0c41130f5cd693b5f8db2b215c765d5e106edbeb04eb02a4fddfc27333fb7836",
+      "finalSha256": "0c41130f5cd693b5f8db2b215c765d5e106edbeb04eb02a4fddfc27333fb7836",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol": "MigrationNftForkBase"
+      }
+    },
+    {
+      "path": "out/MigrationNftLifecycle.t.sol/MigrationNftHolder.json",
+      "admittedSha256": "bcfa96cb2f7ce4c99c6b4a12cb3eac0ad2a2ee645b4ad4107061a234afbe7cba",
+      "preCliSha256": "bcfa96cb2f7ce4c99c6b4a12cb3eac0ad2a2ee645b4ad4107061a234afbe7cba",
+      "finalSha256": "bcfa96cb2f7ce4c99c6b4a12cb3eac0ad2a2ee645b4ad4107061a234afbe7cba",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol": "MigrationNftHolder"
+      }
+    },
+    {
+      "path": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+      "admittedSha256": "d00142e45110badfa98609d247a8a45b3ecb8867171135deef8293a6e70b816c",
+      "preCliSha256": "d00142e45110badfa98609d247a8a45b3ecb8867171135deef8293a6e70b816c",
+      "finalSha256": "d00142e45110badfa98609d247a8a45b3ecb8867171135deef8293a6e70b816c",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol": "MigrationNftLifecycleTest"
+      }
+    },
+    {
+      "path": "out/MigrationOriginalWallet.t.sol/MigrationOriginalWalletTest.json",
+      "admittedSha256": "1b76b0658fc269e7fb96adb903ad932ddfb458a6960d47f0ad0ca4145d980a77",
+      "preCliSha256": "1b76b0658fc269e7fb96adb903ad932ddfb458a6960d47f0ad0ca4145d980a77",
+      "finalSha256": "1b76b0658fc269e7fb96adb903ad932ddfb458a6960d47f0ad0ca4145d980a77",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol": "MigrationOriginalWalletTest"
+      }
+    },
+    {
+      "path": "out/MigrationOwnerBondCallbacks.t.sol/MigrationOwnerBondCallbacksTest.json",
+      "admittedSha256": "1791e6a849d78473359ae347ed341cbfe6c36e8506f1feffe4880c5d7d628a6d",
+      "preCliSha256": "1791e6a849d78473359ae347ed341cbfe6c36e8506f1feffe4880c5d7d628a6d",
+      "finalSha256": "1791e6a849d78473359ae347ed341cbfe6c36e8506f1feffe4880c5d7d628a6d",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol": "MigrationOwnerBondCallbacksTest"
+      }
+    },
+    {
+      "path": "out/MigrationOwnerBondCallbacks.t.sol/PaidOwnerWallet.json",
+      "admittedSha256": "2419650979e4f4e7306d26aa72d3ee30ab589f8db44553a22feca0c74823ab0d",
+      "preCliSha256": "2419650979e4f4e7306d26aa72d3ee30ab589f8db44553a22feca0c74823ab0d",
+      "finalSha256": "2419650979e4f4e7306d26aa72d3ee30ab589f8db44553a22feca0c74823ab0d",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol": "PaidOwnerWallet"
+      }
+    },
+    {
+      "path": "out/MigrationOwnerFirstBond.t.sol/MigrationOwnerFirstBondTest.json",
+      "admittedSha256": "769fd6634b087036764447c7d2d88804d86b63d239c554064555e9fc4c84a532",
+      "preCliSha256": "769fd6634b087036764447c7d2d88804d86b63d239c554064555e9fc4c84a532",
+      "finalSha256": "769fd6634b087036764447c7d2d88804d86b63d239c554064555e9fc4c84a532",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol": "MigrationOwnerFirstBondTest"
+      }
+    },
+    {
+      "path": "out/MigrationPermit2.t.sol/MigrationPermit2Test.json",
+      "admittedSha256": "b6f64f102e0b152c7a8b6d5813d8aaf4813914fa3ad9b251adb6c50fbdfbe3b6",
+      "preCliSha256": "b6f64f102e0b152c7a8b6d5813d8aaf4813914fa3ad9b251adb6c50fbdfbe3b6",
+      "finalSha256": "b6f64f102e0b152c7a8b6d5813d8aaf4813914fa3ad9b251adb6c50fbdfbe3b6",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol": "MigrationPermit2Test"
+      }
+    },
+    {
+      "path": "out/MigrationPermit2Callback.sol/MigrationPermit2Callback.json",
+      "admittedSha256": "6f75176bb8e221c4e5f6de70f05563ace68211f706fcfe8b87c06363b268a937",
+      "preCliSha256": "6f75176bb8e221c4e5f6de70f05563ace68211f706fcfe8b87c06363b268a937",
+      "finalSha256": "6f75176bb8e221c4e5f6de70f05563ace68211f706fcfe8b87c06363b268a937",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol": "MigrationPermit2Callback"
+      }
+    },
+    {
+      "path": "out/MigrationPermitAndRetirement.t.sol/MigrationPermitAndRetirementTest.json",
+      "admittedSha256": "99fe151dac1789d213d3dc1e6c068d091e2f8fd892122ed5666af46d9c5fe008",
+      "preCliSha256": "99fe151dac1789d213d3dc1e6c068d091e2f8fd892122ed5666af46d9c5fe008",
+      "finalSha256": "99fe151dac1789d213d3dc1e6c068d091e2f8fd892122ed5666af46d9c5fe008",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol": "MigrationPermitAndRetirementTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecovery.t.sol/MigrationRecoveryCallbackTest.json",
+      "admittedSha256": "6325aa1089bf3e172c9697d83a277918a3d1d5ece669a3b17957365cf6c60125",
+      "preCliSha256": "6325aa1089bf3e172c9697d83a277918a3d1d5ece669a3b17957365cf6c60125",
+      "finalSha256": "6325aa1089bf3e172c9697d83a277918a3d1d5ece669a3b17957365cf6c60125",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol": "MigrationRecoveryCallbackTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecovery.t.sol/MigrationRecoveryTest.json",
+      "admittedSha256": "66cb693bc0caeed1aa25da1ab3f9ed335a34836e7038f5ff669cdfdd0d683484",
+      "preCliSha256": "66cb693bc0caeed1aa25da1ab3f9ed335a34836e7038f5ff669cdfdd0d683484",
+      "finalSha256": "66cb693bc0caeed1aa25da1ab3f9ed335a34836e7038f5ff669cdfdd0d683484",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol": "MigrationRecoveryTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryAccrual.t.sol/MigrationRecoveryAccrualTest.json",
+      "admittedSha256": "0e07b7f13883246ae18be4b2b2b10d925affb0ee43cfd845a3ceb678b222528c",
+      "preCliSha256": "0e07b7f13883246ae18be4b2b2b10d925affb0ee43cfd845a3ceb678b222528c",
+      "finalSha256": "0e07b7f13883246ae18be4b2b2b10d925affb0ee43cfd845a3ceb678b222528c",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol": "MigrationRecoveryAccrualTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryAccrualRollback.t.sol/MigrationRecoveryAccrualRollbackTest.json",
+      "admittedSha256": "e95c5345844c8ba83cc6a319ebd9272d3a62f7f0a95d697a22645eef851ff2e7",
+      "preCliSha256": "e95c5345844c8ba83cc6a319ebd9272d3a62f7f0a95d697a22645eef851ff2e7",
+      "finalSha256": "e95c5345844c8ba83cc6a319ebd9272d3a62f7f0a95d697a22645eef851ff2e7",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol": "MigrationRecoveryAccrualRollbackTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationForkBase.json",
+      "admittedSha256": "4fb98db22be9e07b7d0a28808c8f55f78e2e020c453d09af523db70fd4b677eb",
+      "preCliSha256": "4fb98db22be9e07b7d0a28808c8f55f78e2e020c453d09af523db70fd4b677eb",
+      "finalSha256": "4fb98db22be9e07b7d0a28808c8f55f78e2e020c453d09af523db70fd4b677eb",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol": "MigrationRecoveryDonationForkBase"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationTest.json",
+      "admittedSha256": "2f4afc51519da51ae8cced6e7c8675882ba6d1350758214a997d605acd1fe524",
+      "preCliSha256": "2f4afc51519da51ae8cced6e7c8675882ba6d1350758214a997d605acd1fe524",
+      "finalSha256": "2f4afc51519da51ae8cced6e7c8675882ba6d1350758214a997d605acd1fe524",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol": "MigrationRecoveryDonationTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/RecoveryHostileRate.json",
+      "admittedSha256": "7635c884001936ef52a80b5ac758240f2817e1e3af428cdc1c8a440ef863a2c3",
+      "preCliSha256": "7635c884001936ef52a80b5ac758240f2817e1e3af428cdc1c8a440ef863a2c3",
+      "finalSha256": "7635c884001936ef52a80b5ac758240f2817e1e3af428cdc1c8a440ef863a2c3",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol": "RecoveryHostileRate"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryEarlier.t.sol/MigrationRecoveryEarlierTest.json",
+      "admittedSha256": "23f5065e0fac2e91efbb1471669bc587226e33f59dfbe70caf76cd5ed08fb2af",
+      "preCliSha256": "23f5065e0fac2e91efbb1471669bc587226e33f59dfbe70caf76cd5ed08fb2af",
+      "finalSha256": "23f5065e0fac2e91efbb1471669bc587226e33f59dfbe70caf76cd5ed08fb2af",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol": "MigrationRecoveryEarlierTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryForkBase.sol/MigrationRecoveryForkBase.json",
+      "admittedSha256": "59b5737270a66e4e73a53a753bab154e186a3b60a6d461be006a57d5d5266281",
+      "preCliSha256": "59b5737270a66e4e73a53a753bab154e186a3b60a6d461be006a57d5d5266281",
+      "finalSha256": "59b5737270a66e4e73a53a753bab154e186a3b60a6d461be006a57d5d5266281",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryForkBase.sol": "MigrationRecoveryForkBase"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryGas.t.sol/MigrationRecoveryGasTest.json",
+      "admittedSha256": "2721b63955097c5ed435744902e54df937d69af30aa07bc0e97c09ce9d587e2f",
+      "preCliSha256": "2721b63955097c5ed435744902e54df937d69af30aa07bc0e97c09ce9d587e2f",
+      "finalSha256": "2721b63955097c5ed435744902e54df937d69af30aa07bc0e97c09ce9d587e2f",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol": "MigrationRecoveryGasTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryWeighted.t.sol/MigrationRecoveryWeightedTest.json",
+      "admittedSha256": "cbe83e8c2f2209318eae8dd25b8a6848dd7890d939d8b6d88ecbcb1d744ef9a6",
+      "preCliSha256": "cbe83e8c2f2209318eae8dd25b8a6848dd7890d939d8b6d88ecbcb1d744ef9a6",
+      "finalSha256": "cbe83e8c2f2209318eae8dd25b8a6848dd7890d939d8b6d88ecbcb1d744ef9a6",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol": "MigrationRecoveryWeightedTest"
+      }
+    },
+    {
+      "path": "out/MigrationRecoveryWeightedSy.t.sol/MigrationRecoveryWeightedSyTest.json",
+      "admittedSha256": "04574a4bb48645add55dfd38a58a024261ffecc81ce76a08eeff1415efafb91f",
+      "preCliSha256": "04574a4bb48645add55dfd38a58a024261ffecc81ce76a08eeff1415efafb91f",
+      "finalSha256": "04574a4bb48645add55dfd38a58a024261ffecc81ce76a08eeff1415efafb91f",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol": "MigrationRecoveryWeightedSyTest"
+      }
+    },
+    {
+      "path": "out/MigrationRetainedAccounting.t.sol/MigrationRetainedAccountingTest.json",
+      "admittedSha256": "9caaf5bc99d278ca45e5537bca26d99e89bb2b6c60c3f0e43aff8dbd1231bf10",
+      "preCliSha256": "9caaf5bc99d278ca45e5537bca26d99e89bb2b6c60c3f0e43aff8dbd1231bf10",
+      "finalSha256": "9caaf5bc99d278ca45e5537bca26d99e89bb2b6c60c3f0e43aff8dbd1231bf10",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol": "MigrationRetainedAccountingTest"
+      }
+    },
+    {
+      "path": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+      "admittedSha256": "0a1de1bb927ea62bdb0c9317a851040e705b09076122a4ef2bf4353714b33d47",
+      "preCliSha256": "0a1de1bb927ea62bdb0c9317a851040e705b09076122a4ef2bf4353714b33d47",
+      "finalSha256": "0a1de1bb927ea62bdb0c9317a851040e705b09076122a4ef2bf4353714b33d47",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol": "MigrationSurfaceTest"
+      }
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/MigrationWeightedLiquidTest.json",
+      "admittedSha256": "b03edf5529c517ac22823683620d0e8182271573c57861f5bcced06096c4d1ae",
+      "preCliSha256": "b03edf5529c517ac22823683620d0e8182271573c57861f5bcced06096c4d1ae",
+      "finalSha256": "b03edf5529c517ac22823683620d0e8182271573c57861f5bcced06096c4d1ae",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol": "MigrationWeightedLiquidTest"
+      }
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/WeightedLiquidReceiver.json",
+      "admittedSha256": "847397430b46fa52aa2f9d1e9c687615d0c0e12e7279078eb36d9bd9b30f84bb",
+      "preCliSha256": "847397430b46fa52aa2f9d1e9c687615d0c0e12e7279078eb36d9bd9b30f84bb",
+      "finalSha256": "847397430b46fa52aa2f9d1e9c687615d0c0e12e7279078eb36d9bd9b30f84bb",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol": "WeightedLiquidReceiver"
+      }
+    },
+    {
+      "path": "out/MigrationWeightedLiquidConfiguration.t.sol/MigrationWeightedLiquidConfigurationTest.json",
+      "admittedSha256": "2d0cb0622136473da8ff9ec6fc151a409c5ff3def6de17c3d25c0ffeca5fc946",
+      "preCliSha256": "2d0cb0622136473da8ff9ec6fc151a409c5ff3def6de17c3d25c0ffeca5fc946",
+      "finalSha256": "2d0cb0622136473da8ff9ec6fc151a409c5ff3def6de17c3d25c0ffeca5fc946",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol": "MigrationWeightedLiquidConfigurationTest"
+      }
+    },
+    {
+      "path": "out/MigrationWeightedSy.t.sol/MigrationWeightedSyTest.json",
+      "admittedSha256": "efe42c5d750371574540d81305b883dfeda16917ed5d2c1f06f18b1d09ce028d",
+      "preCliSha256": "efe42c5d750371574540d81305b883dfeda16917ed5d2c1f06f18b1d09ce028d",
+      "finalSha256": "efe42c5d750371574540d81305b883dfeda16917ed5d2c1f06f18b1d09ce028d",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol": "MigrationWeightedSyTest"
+      }
+    },
+    {
+      "path": "out/MigrationWeightedSy.t.sol/WeightedSyReceiver.json",
+      "admittedSha256": "5a9ebbbae22fc1d69c60fab10a29c44090f5acfb98f05967e2329568c2ed0422",
+      "preCliSha256": "5a9ebbbae22fc1d69c60fab10a29c44090f5acfb98f05967e2329568c2ed0422",
+      "finalSha256": "5a9ebbbae22fc1d69c60fab10a29c44090f5acfb98f05967e2329568c2ed0422",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol": "WeightedSyReceiver"
+      }
+    },
+    {
+      "path": "out/MigrationWeightedSyConfiguration.t.sol/MigrationWeightedSyConfigurationTest.json",
+      "admittedSha256": "3a7f6bc8a95c4fdb98901719c72ddc1c546d9e6c2e8f03a36917b90ec49c7ebb",
+      "preCliSha256": "3a7f6bc8a95c4fdb98901719c72ddc1c546d9e6c2e8f03a36917b90ec49c7ebb",
+      "finalSha256": "3a7f6bc8a95c4fdb98901719c72ddc1c546d9e6c2e8f03a36917b90ec49c7ebb",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol": "MigrationWeightedSyConfigurationTest"
+      }
+    },
+    {
+      "path": "out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+      "admittedSha256": "43508f66c0d33ac907a817407ad3834c31079933cd7a07b4a01ec4e06d95c22c",
+      "preCliSha256": "43508f66c0d33ac907a817407ad3834c31079933cd7a07b4a01ec4e06d95c22c",
+      "finalSha256": "43508f66c0d33ac907a817407ad3834c31079933cd7a07b4a01ec4e06d95c22c",
+      "rawJsonChanged": false,
+      "target": {
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol": "Phase_08_Stage_00_OperatorEnvironment"
+      }
+    },
+    {
+      "path": "out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+      "admittedSha256": "94cbf9640af41d0d1506cfe50e1c44746df7bf13580737c50b63d9c9a2086d03",
+      "preCliSha256": "94cbf9640af41d0d1506cfe50e1c44746df7bf13580737c50b63d9c9a2086d03",
+      "finalSha256": "94cbf9640af41d0d1506cfe50e1c44746df7bf13580737c50b63d9c9a2086d03",
+      "rawJsonChanged": false,
+      "target": {
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol": "Phase_08_Stage_01_MigrationExecution"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "admittedSha256": "02b8fb38a2ca2d636f6a39fb65d81d94bd18b9182409df677f1fb2ee7de90a40",
+      "preCliSha256": "02b8fb38a2ca2d636f6a39fb65d81d94bd18b9182409df677f1fb2ee7de90a40",
+      "finalSha256": "02b8fb38a2ca2d636f6a39fb65d81d94bd18b9182409df677f1fb2ee7de90a40",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol": "UniswapV4DetfMigrationAllocationFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationAllocationTarget.sol/UniswapV4DetfMigrationAllocationTarget.json",
+      "admittedSha256": "3fec055abfb97d7c48e49bcafdbaa7eb6de38756c50e77b058a6c5d7b965ce66",
+      "preCliSha256": "3fec055abfb97d7c48e49bcafdbaa7eb6de38756c50e77b058a6c5d7b965ce66",
+      "finalSha256": "3fec055abfb97d7c48e49bcafdbaa7eb6de38756c50e77b058a6c5d7b965ce66",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol": "UniswapV4DetfMigrationAllocationTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondFacet.sol/UniswapV4DetfMigrationBondFacet.json",
+      "admittedSha256": "d7fb51c063efd903cb7dd0b760106f9e10a5debb1b9ed6b810e32511266977f7",
+      "preCliSha256": "d7fb51c063efd903cb7dd0b760106f9e10a5debb1b9ed6b810e32511266977f7",
+      "finalSha256": "d7fb51c063efd903cb7dd0b760106f9e10a5debb1b9ed6b810e32511266977f7",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol": "UniswapV4DetfMigrationBondFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondMetadataFacet.sol/UniswapV4DetfMigrationBondMetadataFacet.json",
+      "admittedSha256": "aee5b5cbcc839fee8f043a5bda789390600781c6414f2c4e2d0d3e8a53846347",
+      "preCliSha256": "aee5b5cbcc839fee8f043a5bda789390600781c6414f2c4e2d0d3e8a53846347",
+      "finalSha256": "aee5b5cbcc839fee8f043a5bda789390600781c6414f2c4e2d0d3e8a53846347",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol": "UniswapV4DetfMigrationBondMetadataFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondMetadataTarget.sol/UniswapV4DetfMigrationBondMetadataTarget.json",
+      "admittedSha256": "d82a85d7f0b7788774e8cb104bbb6db8f32c32743937e01bc98b5a5f64645755",
+      "preCliSha256": "d82a85d7f0b7788774e8cb104bbb6db8f32c32743937e01bc98b5a5f64645755",
+      "finalSha256": "d82a85d7f0b7788774e8cb104bbb6db8f32c32743937e01bc98b5a5f64645755",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol": "UniswapV4DetfMigrationBondMetadataTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTRepo.sol/UniswapV4DetfMigrationBondNFTRepo.json",
+      "admittedSha256": "c7c17c43ad816fc81e13c397f9967cb45a01eeaae5230d41652198893eed4f3d",
+      "preCliSha256": "c7c17c43ad816fc81e13c397f9967cb45a01eeaae5230d41652198893eed4f3d",
+      "finalSha256": "c7c17c43ad816fc81e13c397f9967cb45a01eeaae5230d41652198893eed4f3d",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol": "UniswapV4DetfMigrationBondNFTRepo"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol/UniswapV4DetfMigrationBondNFTVaultDFPkg.json",
+      "admittedSha256": "1d9f8c0c71d3825415735d866c43e07a73083b8e58f55c0f7af7953f92dbbf2c",
+      "preCliSha256": "1d9f8c0c71d3825415735d866c43e07a73083b8e58f55c0f7af7953f92dbbf2c",
+      "finalSha256": "1d9f8c0c71d3825415735d866c43e07a73083b8e58f55c0f7af7953f92dbbf2c",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol": "UniswapV4DetfMigrationBondNFTVaultDFPkg"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultFacet.sol/UniswapV4DetfMigrationBondNFTVaultFacet.json",
+      "admittedSha256": "5020d598358531144e2dd88c9d3f07937fc14453a58940ee81d75e2750d9d1a7",
+      "preCliSha256": "5020d598358531144e2dd88c9d3f07937fc14453a58940ee81d75e2750d9d1a7",
+      "finalSha256": "5020d598358531144e2dd88c9d3f07937fc14453a58940ee81d75e2750d9d1a7",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol": "UniswapV4DetfMigrationBondNFTVaultFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultTarget.sol/UniswapV4DetfMigrationBondNFTVaultTarget.json",
+      "admittedSha256": "a498bbb524f4772cf20889a6e541e64d0ed715d59482fafa8f0d2e20b3cdd177",
+      "preCliSha256": "a498bbb524f4772cf20889a6e541e64d0ed715d59482fafa8f0d2e20b3cdd177",
+      "finalSha256": "a498bbb524f4772cf20889a6e541e64d0ed715d59482fafa8f0d2e20b3cdd177",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol": "UniswapV4DetfMigrationBondNFTVaultTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "admittedSha256": "ea770f0e0b5fa802ca463125789cb3b1ad2780cf79d7cc37b29f4934e6192753",
+      "preCliSha256": "ea770f0e0b5fa802ca463125789cb3b1ad2780cf79d7cc37b29f4934e6192753",
+      "finalSha256": "ea770f0e0b5fa802ca463125789cb3b1ad2780cf79d7cc37b29f4934e6192753",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol": "UniswapV4DetfMigrationDFPkg"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "admittedSha256": "e3e134d912361347ae2fdb8713aab56c0d3b528b0dd8c15de8c92c940073c92f",
+      "preCliSha256": "e3e134d912361347ae2fdb8713aab56c0d3b528b0dd8c15de8c92c940073c92f",
+      "finalSha256": "e3e134d912361347ae2fdb8713aab56c0d3b528b0dd8c15de8c92c940073c92f",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol": "UniswapV4DetfMigrationExchangeFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "admittedSha256": "fe92a18ac34ac3fd82dcb347f06b11da2d6a54ea6d35c0d6cbaa0bafb71903de",
+      "preCliSha256": "fe92a18ac34ac3fd82dcb347f06b11da2d6a54ea6d35c0d6cbaa0bafb71903de",
+      "finalSha256": "fe92a18ac34ac3fd82dcb347f06b11da2d6a54ea6d35c0d6cbaa0bafb71903de",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol": "UniswapV4DetfMigrationFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationMaintenanceFacet.sol/UniswapV4DetfMigrationMaintenanceFacet.json",
+      "admittedSha256": "8372c212b776d7569fee85fa8503af46218fd0b19d69ec3081575adb010fff3a",
+      "preCliSha256": "8372c212b776d7569fee85fa8503af46218fd0b19d69ec3081575adb010fff3a",
+      "finalSha256": "8372c212b776d7569fee85fa8503af46218fd0b19d69ec3081575adb010fff3a",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol": "UniswapV4DetfMigrationMaintenanceFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationPolicy.sol/UniswapV4DetfMigrationPolicy.json",
+      "admittedSha256": "198433a73fa1d3c2117278b152fd07bce69fb9314d44a4f019a6ece48e2eeba2",
+      "preCliSha256": "198433a73fa1d3c2117278b152fd07bce69fb9314d44a4f019a6ece48e2eeba2",
+      "finalSha256": "198433a73fa1d3c2117278b152fd07bce69fb9314d44a4f019a6ece48e2eeba2",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol": "UniswapV4DetfMigrationPolicy"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationQueryFacet.sol/UniswapV4DetfMigrationQueryFacet.json",
+      "admittedSha256": "1c0716bc8ad40eeadb76623c7ea70418427ba6730be9e9806fb8847d9e70a88a",
+      "preCliSha256": "1c0716bc8ad40eeadb76623c7ea70418427ba6730be9e9806fb8847d9e70a88a",
+      "finalSha256": "1c0716bc8ad40eeadb76623c7ea70418427ba6730be9e9806fb8847d9e70a88a",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol": "UniswapV4DetfMigrationQueryFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "admittedSha256": "5891703b014003bf52311c240513d4b2a7052f0eeab235cec61c9f5847a71f1d",
+      "preCliSha256": "5891703b014003bf52311c240513d4b2a7052f0eeab235cec61c9f5847a71f1d",
+      "finalSha256": "5891703b014003bf52311c240513d4b2a7052f0eeab235cec61c9f5847a71f1d",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol": "UniswapV4DetfMigrationRecoveryFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryRepo.sol/UniswapV4DetfMigrationRecoveryRepo.json",
+      "admittedSha256": "6940fa62cec8d705a99ea417b4c0ad41da695ec66318351ed58179609ecf02e7",
+      "preCliSha256": "6940fa62cec8d705a99ea417b4c0ad41da695ec66318351ed58179609ecf02e7",
+      "finalSha256": "6940fa62cec8d705a99ea417b4c0ad41da695ec66318351ed58179609ecf02e7",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol": "UniswapV4DetfMigrationRecoveryRepo"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryTarget.sol/UniswapV4DetfMigrationRecoveryTarget.json",
+      "admittedSha256": "e842956350e5934de95bf0662513794916cc2d5014fbbbb8195e933b3289a733",
+      "preCliSha256": "e842956350e5934de95bf0662513794916cc2d5014fbbbb8195e933b3289a733",
+      "finalSha256": "e842956350e5934de95bf0662513794916cc2d5014fbbbb8195e933b3289a733",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol": "UniswapV4DetfMigrationRecoveryTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRepo.sol/UniswapV4DetfMigrationRepo.json",
+      "admittedSha256": "6b01f97506d530713c6d18abd82272eb8b6878709e61ec0c64bf0440f7c1c4ed",
+      "preCliSha256": "6b01f97506d530713c6d18abd82272eb8b6878709e61ec0c64bf0440f7c1c4ed",
+      "finalSha256": "6b01f97506d530713c6d18abd82272eb8b6878709e61ec0c64bf0440f7c1c4ed",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol": "UniswapV4DetfMigrationRepo"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenDFPkg.sol/UniswapV4DetfMigrationRewardTokenDFPkg.json",
+      "admittedSha256": "31e16d857fc807e92ef61931ac965419a19240c238752dba8d799d2c360af086",
+      "preCliSha256": "31e16d857fc807e92ef61931ac965419a19240c238752dba8d799d2c360af086",
+      "finalSha256": "31e16d857fc807e92ef61931ac965419a19240c238752dba8d799d2c360af086",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol": "UniswapV4DetfMigrationRewardTokenDFPkg"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenFacet.sol/UniswapV4DetfMigrationRewardTokenFacet.json",
+      "admittedSha256": "00286cb4dad64e40e6e0f70cc0c9ecfffc3ddf5738e533d8eef5a149da047c0b",
+      "preCliSha256": "00286cb4dad64e40e6e0f70cc0c9ecfffc3ddf5738e533d8eef5a149da047c0b",
+      "finalSha256": "00286cb4dad64e40e6e0f70cc0c9ecfffc3ddf5738e533d8eef5a149da047c0b",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol": "UniswapV4DetfMigrationRewardTokenFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenRepo.sol/UniswapV4DetfMigrationRewardTokenRepo.json",
+      "admittedSha256": "7e587b68f57955dbcbd95ccf1dcc5adde69bee0f9d496beffbddd70de79e51d9",
+      "preCliSha256": "7e587b68f57955dbcbd95ccf1dcc5adde69bee0f9d496beffbddd70de79e51d9",
+      "finalSha256": "7e587b68f57955dbcbd95ccf1dcc5adde69bee0f9d496beffbddd70de79e51d9",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol": "UniswapV4DetfMigrationRewardTokenRepo"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenTarget.sol/UniswapV4DetfMigrationRewardTokenTarget.json",
+      "admittedSha256": "b08aa8d6659a8b77e7c6dac578eb4e5f70f1b3e5fd388b8920b8c49bc5732c23",
+      "preCliSha256": "b08aa8d6659a8b77e7c6dac578eb4e5f70f1b3e5fd388b8920b8c49bc5732c23",
+      "finalSha256": "b08aa8d6659a8b77e7c6dac578eb4e5f70f1b3e5fd388b8920b8c49bc5732c23",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol": "UniswapV4DetfMigrationRewardTokenTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSYFacet.sol/UniswapV4DetfMigrationSYFacet.json",
+      "admittedSha256": "ddeeb1fb8cf75f50324e56bc1f6007666c7cc7430bb6080bff5e7c79b4bc1f1a",
+      "preCliSha256": "ddeeb1fb8cf75f50324e56bc1f6007666c7cc7430bb6080bff5e7c79b4bc1f1a",
+      "finalSha256": "ddeeb1fb8cf75f50324e56bc1f6007666c7cc7430bb6080bff5e7c79b4bc1f1a",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol": "UniswapV4DetfMigrationSYFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSYRepo.sol/UniswapV4DetfMigrationSYRepo.json",
+      "admittedSha256": "18c5afb7a3040a68b846690f9eaca444844511ac5e06db1f79d8a38446bf203a",
+      "preCliSha256": "18c5afb7a3040a68b846690f9eaca444844511ac5e06db1f79d8a38446bf203a",
+      "finalSha256": "18c5afb7a3040a68b846690f9eaca444844511ac5e06db1f79d8a38446bf203a",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol": "UniswapV4DetfMigrationSYRepo"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSYTarget.sol/UniswapV4DetfMigrationSYTarget.json",
+      "admittedSha256": "5aa233269b365715e0b13ca67ef0b1fb3f0ffba6d66978263a8059103b1e52a1",
+      "preCliSha256": "5aa233269b365715e0b13ca67ef0b1fb3f0ffba6d66978263a8059103b1e52a1",
+      "finalSha256": "5aa233269b365715e0b13ca67ef0b1fb3f0ffba6d66978263a8059103b1e52a1",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol": "UniswapV4DetfMigrationSYTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotDecimalsTest.json",
+      "admittedSha256": "f75612b1d44a2ca7c32fa06acc04a517b367c0d199c08f5f0d614360971bf9b3",
+      "preCliSha256": "f75612b1d44a2ca7c32fa06acc04a517b367c0d199c08f5f0d614360971bf9b3",
+      "finalSha256": "f75612b1d44a2ca7c32fa06acc04a517b367c0d199c08f5f0d614360971bf9b3",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol": "UniswapV4DetfMigrationSnapshotDecimalsTest"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotReceiptExclusionTest.json",
+      "admittedSha256": "18d8b189a42448a6688145eaa25cde28cf9a93cc2f723b586785c9f5e1092831",
+      "preCliSha256": "18d8b189a42448a6688145eaa25cde28cf9a93cc2f723b586785c9f5e1092831",
+      "finalSha256": "18d8b189a42448a6688145eaa25cde28cf9a93cc2f723b586785c9f5e1092831",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol": "UniswapV4DetfMigrationSnapshotReceiptExclusionTest"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotTest.json",
+      "admittedSha256": "d6d4ccab1ba52912d77d31314fd794e88a86ef406cc7233f29218e9ecaf71da4",
+      "preCliSha256": "d6d4ccab1ba52912d77d31314fd794e88a86ef406cc7233f29218e9ecaf71da4",
+      "finalSha256": "d6d4ccab1ba52912d77d31314fd794e88a86ef406cc7233f29218e9ecaf71da4",
+      "rawJsonChanged": false,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol": "UniswapV4DetfMigrationSnapshotTest"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshotLib.sol/UniswapV4DetfMigrationSnapshotLib.json",
+      "admittedSha256": "f9738b4936e758182e2e69a0f82775dc66d1f4b7d1e342a93fa38579a3399480",
+      "preCliSha256": "f9738b4936e758182e2e69a0f82775dc66d1f4b7d1e342a93fa38579a3399480",
+      "finalSha256": "f9738b4936e758182e2e69a0f82775dc66d1f4b7d1e342a93fa38579a3399480",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol": "UniswapV4DetfMigrationSnapshotLib"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFFacet.sol/UniswapV4DetfMigrationStakedDETFFacet.json",
+      "admittedSha256": "62e2821e79397e982eee29381bc255f7ec8cecaa73abb57064ea998a853da989",
+      "preCliSha256": "62e2821e79397e982eee29381bc255f7ec8cecaa73abb57064ea998a853da989",
+      "finalSha256": "62e2821e79397e982eee29381bc255f7ec8cecaa73abb57064ea998a853da989",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol": "UniswapV4DetfMigrationStakedDETFFacet"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFRepo.sol/UniswapV4DetfMigrationStakedDETFRepo.json",
+      "admittedSha256": "683211c4c23420c7b261776c49528721f6c45707fb45b32d494ad5769c3a681f",
+      "preCliSha256": "683211c4c23420c7b261776c49528721f6c45707fb45b32d494ad5769c3a681f",
+      "finalSha256": "683211c4c23420c7b261776c49528721f6c45707fb45b32d494ad5769c3a681f",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol": "UniswapV4DetfMigrationStakedDETFRepo"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFTarget.sol/UniswapV4DetfMigrationStakedDETFTarget.json",
+      "admittedSha256": "a327508907ef45372ea4949ed23d001d0034399d6602f9c1434779cbf87577f9",
+      "preCliSha256": "a327508907ef45372ea4949ed23d001d0034399d6602f9c1434779cbf87577f9",
+      "finalSha256": "a327508907ef45372ea4949ed23d001d0034399d6602f9c1434779cbf87577f9",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol": "UniswapV4DetfMigrationStakedDETFTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationTarget.sol/UniswapV4DetfMigrationTarget.json",
+      "admittedSha256": "4e115b8af4169a367cb9912b4a31a6bd6911c3e1e032889d1114e1514f6779cb",
+      "preCliSha256": "4e115b8af4169a367cb9912b4a31a6bd6911c3e1e032889d1114e1514f6779cb",
+      "finalSha256": "4e115b8af4169a367cb9912b4a31a6bd6911c3e1e032889d1114e1514f6779cb",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol": "UniswapV4DetfMigrationTarget"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigration_Component_FactoryService.sol/UniswapV4DetfMigration_Component_FactoryService.json",
+      "admittedSha256": "bd60bebb0e6bd8a892183d0ede1207729285ebe5f9f0b16e9e565f51564cb687",
+      "preCliSha256": "bd60bebb0e6bd8a892183d0ede1207729285ebe5f9f0b16e9e565f51564cb687",
+      "finalSha256": "bd60bebb0e6bd8a892183d0ede1207729285ebe5f9f0b16e9e565f51564cb687",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol": "UniswapV4DetfMigration_Component_FactoryService"
+      }
+    },
+    {
+      "path": "out/UniswapV4DetfMigration_Pkg_FactoryService.sol/UniswapV4DetfMigration_Pkg_FactoryService.json",
+      "admittedSha256": "c6ec3faf9d2b9d393f5c945d0cf99247087458b0a8f446058dae1758a3c163d8",
+      "preCliSha256": "c6ec3faf9d2b9d393f5c945d0cf99247087458b0a8f446058dae1758a3c163d8",
+      "finalSha256": "c6ec3faf9d2b9d393f5c945d0cf99247087458b0a8f446058dae1758a3c163d8",
+      "rawJsonChanged": false,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol": "UniswapV4DetfMigration_Pkg_FactoryService"
+      }
+    }
+  ],
+  "producerReport": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/implementation/report.md",
+    "sha256": "29daaa4d0db079f656f62cb122f62eb6ada954082a523337850a4e557a8884e5"
+  },
+  "producerBindings": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/implementation/bindings.json",
+    "sha256": "53cef93e4cacb60dbd53cd51d72b0a33de42ebde3312c8efe634948df39fd342"
+  },
+  "evidenceFiles": [
+    {
+      "path": "admission.json",
+      "sha256": "0ee89b7c6b5eb3b0c610970098d3fb27c9a8221fccd1bfd8f38a7c5fab3cfb24",
+      "bytes": 226212
+    },
+    {
+      "path": "artifact-reconciliation.json",
+      "sha256": "3eb648805332fb4e3307cbea42e317a27538c11e6e601d4d004e2b4d28846f7b",
+      "bytes": 583143
+    },
+    {
+      "path": "checks.json",
+      "sha256": "2fd0407ba7bbcfe0283f0cde4bcad87955ea246fe3027b7e81b109586b46abfc",
+      "bytes": 8018
+    },
+    {
+      "path": "cleanup.json",
+      "sha256": "79c8781d57fb980721471404a00cfdfb949dc8e358a04e54939189ed7e362658",
+      "bytes": 2051
+    },
+    {
+      "path": "coverage.json",
+      "sha256": "d59998326a5c7122faad815fb7c8c57041a87cbcd8fe914314f13283ce128b89",
+      "bytes": 31915
+    },
+    {
+      "path": "forks.log",
+      "sha256": "9d61bd31edc281e03577ad3322eb9adac7fa34c48cf581f1f083109822a0ee3c",
+      "bytes": 331517
+    },
+    {
+      "path": "operator-artifacts.log",
+      "sha256": "2f001fbe8dcee3643f15ae8c6f0c81bffe60ed8835c93ced321d6ceb281bffd5",
+      "bytes": 322838
+    },
+    {
+      "path": "operator-stages.log",
+      "sha256": "18993e4ca374a154493925ede22e283bce1aa72ae609b927cc2f07e77dab66da",
+      "bytes": 357
+    },
+    {
+      "path": "operator-tests.log",
+      "sha256": "fb8e4b80487f1f5808516201d1b93492e3f19ed952005a17b6ecf45d55a5afd5",
+      "bytes": 5487
+    },
+    {
+      "path": "operator-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "rehearsal-1794437832173/001-deploy.log",
+      "sha256": "1257982f23b655b8e11a22611153ffb183902a98deab233203d73cda71ad5755",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/001-deploy.log.command.json",
+      "sha256": "f5e48b74450008c3b3d1f78fabd11d7dc5b3d6178c0ee3e679390e4f2900c99e",
+      "bytes": 473
+    },
+    {
+      "path": "rehearsal-1794437832173/002-deploy.log",
+      "sha256": "cc7425e5978217a305fefb879cc8b199265350a26304ed7919f87d7213b588b6",
+      "bytes": 155812
+    },
+    {
+      "path": "rehearsal-1794437832173/002-deploy.log.command.json",
+      "sha256": "b285fb809317718e9590fccda5886436fbf115703678473313d30d5be616b4d7",
+      "bytes": 576
+    },
+    {
+      "path": "rehearsal-1794437832173/003-fund.log",
+      "sha256": "9cce9d55da87944da2d4e61236a190b6d40d7fbac197b1fb1d74d8cdee63448f",
+      "bytes": 138
+    },
+    {
+      "path": "rehearsal-1794437832173/003-fund.log.command.json",
+      "sha256": "d9da296507f12330d450dcb497a30ddccd2f803976c0544f6ca6ccbcf9242baa",
+      "bytes": 602
+    },
+    {
+      "path": "rehearsal-1794437832173/004-resume.log",
+      "sha256": "003671fd3b4ea5022dee6764c822a93551487c2ba55368863dac6be6140cc8bc",
+      "bytes": 422
+    },
+    {
+      "path": "rehearsal-1794437832173/004-resume.log.command.json",
+      "sha256": "44e6c5a10150739deec98d72f33c2d968278bb071c561e3c7eea3557fcdd17ea",
+      "bytes": 471
+    },
+    {
+      "path": "rehearsal-1794437832173/005-resume.log",
+      "sha256": "389522f33ca023ed577cca21a50d252190221dcfe2669126038ebebe6824cf17",
+      "bytes": 72879
+    },
+    {
+      "path": "rehearsal-1794437832173/005-resume.log.command.json",
+      "sha256": "0f59f80b547273cb59e877cceec2793398c4e5555197a355be4917302ce7ee83",
+      "bytes": 574
+    },
+    {
+      "path": "rehearsal-1794437832173/006-rejection.json",
+      "sha256": "1b2dc7ac9f865328d22cabf90b890ade0382f2d6461a12d73aa170801cce86e8",
+      "bytes": 62
+    },
+    {
+      "path": "rehearsal-1794437832173/006-resume.log",
+      "sha256": "e4c7d2178113ba59d2c84fbc802a1d29668d241e48590b2939ff4aa6ecba6643",
+      "bytes": 75
+    },
+    {
+      "path": "rehearsal-1794437832173/006-resume.log.command.json",
+      "sha256": "6beb29c534134cf293118ee7799300b5bc6990283fb61c2ea44d4978a82d4745",
+      "bytes": 586
+    },
+    {
+      "path": "rehearsal-1794437832173/007-capture.log",
+      "sha256": "ce57dccc9e265c11f84ae011fa8d1b2f2bef09bcfed9e1c788754d2227a034eb",
+      "bytes": 19644
+    },
+    {
+      "path": "rehearsal-1794437832173/007-capture.log.command.json",
+      "sha256": "fffa93ddc6e1024243be28de3c6203dd2645ad7391a9c2079878bbdc2df231ce",
+      "bytes": 578
+    },
+    {
+      "path": "rehearsal-1794437832173/008-prepare.log",
+      "sha256": "566166c66d8baa5cb654dda81ea56de1581ffa9c01c146847d2c17a420a1e259",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/008-prepare.log.command.json",
+      "sha256": "20665d77a92f06f67829335d006f281b6108446aec80401a1cd69f1cfe25e89c",
+      "bytes": 510
+    },
+    {
+      "path": "rehearsal-1794437832173/009-validate.log",
+      "sha256": "9d3f509b54430b4d2d562f064d07744d31159507c655e828115f039aaf71e3ab",
+      "bytes": 142
+    },
+    {
+      "path": "rehearsal-1794437832173/009-validate.log.command.json",
+      "sha256": "faa550ee56a6fd39de363a239e665d3fd75be67e566cd76d4a68036cc04351f4",
+      "bytes": 335
+    },
+    {
+      "path": "rehearsal-1794437832173/010-prepare.log",
+      "sha256": "566166c66d8baa5cb654dda81ea56de1581ffa9c01c146847d2c17a420a1e259",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/010-prepare.log.command.json",
+      "sha256": "0b7878ee950e06b003e20f43012544b76192efacceacd129de19fef74e44e611",
+      "bytes": 530
+    },
+    {
+      "path": "rehearsal-1794437832173/011-configure.log",
+      "sha256": "fdf8c9ccad1450bea5e9a60a5fff436b9a179e7820fb2282621b287f42a210cc",
+      "bytes": 31328
+    },
+    {
+      "path": "rehearsal-1794437832173/011-configure.log.command.json",
+      "sha256": "4ed978028d8a3bb8a287b572c970e4a099242234e37f0d6606553ca386d9ef23",
+      "bytes": 595
+    },
+    {
+      "path": "rehearsal-1794437832173/012-independent-issue.log",
+      "sha256": "608f6f4d010bf607573afa12d8ded6d6ef618c2a0450e4fa5a01a218518319de",
+      "bytes": 138
+    },
+    {
+      "path": "rehearsal-1794437832173/012-independent-issue.log.command.json",
+      "sha256": "199827bd9c97c21cb6418d117dfc5efe55402e5c28e0b13de61b23c21db57038",
+      "bytes": 617
+    },
+    {
+      "path": "rehearsal-1794437832173/013-resume.log",
+      "sha256": "d4a3dee4f10418090ab24b4f436bca8a494c05a0895b3a40b078bc089874dec0",
+      "bytes": 368
+    },
+    {
+      "path": "rehearsal-1794437832173/013-resume.log.command.json",
+      "sha256": "d34fbfc788c4e39232b0adc3f0fd22e1352fc5abd9a516f63f77ee4a57d74618",
+      "bytes": 473
+    },
+    {
+      "path": "rehearsal-1794437832173/014-resume.log",
+      "sha256": "cfb1057d55c49d74633e9b88cc98b0c64ce527cd9b27aa1640403d7672388804",
+      "bytes": 35017
+    },
+    {
+      "path": "rehearsal-1794437832173/014-resume.log.command.json",
+      "sha256": "d7182bbb3abc4a4ebb3a0c0160a2ef947ed17c32d33cf1c5a497fbfa2aa0d4c2",
+      "bytes": 588
+    },
+    {
+      "path": "rehearsal-1794437832173/015-verify.log",
+      "sha256": "828e4f2fa64c82aba45fb7be8a69d39b962e468991db59ea3bc19d6a38957e3a",
+      "bytes": 461
+    },
+    {
+      "path": "rehearsal-1794437832173/015-verify.log.command.json",
+      "sha256": "eac597091274736cf4c0d2525cd6835e4be09b37b4582eaf346fad5bec8f619e",
+      "bytes": 474
+    },
+    {
+      "path": "rehearsal-1794437832173/016-rejection.json",
+      "sha256": "078e4782370b87478a0ad15cc9560b9a2ffcdbacb98009cf6068aa8f7e6faf87",
+      "bytes": 62
+    },
+    {
+      "path": "rehearsal-1794437832173/016-resume.log",
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5",
+      "bytes": 74
+    },
+    {
+      "path": "rehearsal-1794437832173/016-resume.log.command.json",
+      "sha256": "dae126157d593ac2cfab3c436471adcdbe47616d35a1ae43c1a06fea68879bec",
+      "bytes": 578
+    },
+    {
+      "path": "rehearsal-1794437832173/017-rejection.json",
+      "sha256": "078e4782370b87478a0ad15cc9560b9a2ffcdbacb98009cf6068aa8f7e6faf87",
+      "bytes": 62
+    },
+    {
+      "path": "rehearsal-1794437832173/017-resume.log",
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5",
+      "bytes": 74
+    },
+    {
+      "path": "rehearsal-1794437832173/017-resume.log.command.json",
+      "sha256": "275553219c07f5d551823864237d426e474889dc9f09733faf22440f3d14ea9a",
+      "bytes": 576
+    },
+    {
+      "path": "rehearsal-1794437832173/018-rejection.json",
+      "sha256": "078e4782370b87478a0ad15cc9560b9a2ffcdbacb98009cf6068aa8f7e6faf87",
+      "bytes": 62
+    },
+    {
+      "path": "rehearsal-1794437832173/018-resume.log",
+      "sha256": "a8f4acf119f9e20fa75ed11fd6ab1fc9d74126b8eb1b258c2795af162ae95b92",
+      "bytes": 57
+    },
+    {
+      "path": "rehearsal-1794437832173/018-resume.log.command.json",
+      "sha256": "dac7745a5fde2143d262ec5f676d713273ec21ce71f160e34d22b211b7edb7ed",
+      "bytes": 578
+    },
+    {
+      "path": "rehearsal-1794437832173/019-rejection.json",
+      "sha256": "078e4782370b87478a0ad15cc9560b9a2ffcdbacb98009cf6068aa8f7e6faf87",
+      "bytes": 62
+    },
+    {
+      "path": "rehearsal-1794437832173/019-resume.log",
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5",
+      "bytes": 74
+    },
+    {
+      "path": "rehearsal-1794437832173/019-resume.log.command.json",
+      "sha256": "0097d5541b4499b407ade07d94035a0292f95cdc5a925fb6f7c7fd2352798efc",
+      "bytes": 581
+    },
+    {
+      "path": "rehearsal-1794437832173/020-rejection.json",
+      "sha256": "078e4782370b87478a0ad15cc9560b9a2ffcdbacb98009cf6068aa8f7e6faf87",
+      "bytes": 62
+    },
+    {
+      "path": "rehearsal-1794437832173/020-resume.log",
+      "sha256": "2072e82f3ee757ccf3a4f724fe6ba8f9af59aecaf0499e721316ebb9df3df101",
+      "bytes": 92
+    },
+    {
+      "path": "rehearsal-1794437832173/020-resume.log.command.json",
+      "sha256": "afde2c78b04f4d6a2f6a131e6c393ead0436c9e11f7a37c5a134b31ad8c8fafc",
+      "bytes": 578
+    },
+    {
+      "path": "rehearsal-1794437832173/021-prepare.log",
+      "sha256": "99d87b40f68f5d3f86b0e6ff739d8a0facf340cd0c91dcb6997338fec2521ea0",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/021-prepare.log.command.json",
+      "sha256": "9d52548b0e23f11fb67e110366baa32b04f0edd0bc9d79fc4a673f2f7d754d62",
+      "bytes": 525
+    },
+    {
+      "path": "rehearsal-1794437832173/022-configure.log",
+      "sha256": "074b8b3c035d7e4c3e7ba112d6bba12372e9ab262a57842662bb2c37dd736c57",
+      "bytes": 31326
+    },
+    {
+      "path": "rehearsal-1794437832173/022-configure.log.command.json",
+      "sha256": "07883b35ba3808111ea538780a9151684829ba6b5fbaae68056ad633134a79df",
+      "bytes": 594
+    },
+    {
+      "path": "rehearsal-1794437832173/023-owner-bond.log",
+      "sha256": "e6229af6736879cc2b459fcfd377313a532930abd742bc70e9c48268e8f22535",
+      "bytes": 138
+    },
+    {
+      "path": "rehearsal-1794437832173/023-owner-bond.log.command.json",
+      "sha256": "c09770229f765fef8cb76524df8ff3d1dfcca5ceb6c8b6bce3a8c0aa2c20f343",
+      "bytes": 624
+    },
+    {
+      "path": "rehearsal-1794437832173/024-resume.log",
+      "sha256": "af7594f1b761e1ef5c8491af040411aab66cb32910d139016a432d65efdc64ce",
+      "bytes": 294
+    },
+    {
+      "path": "rehearsal-1794437832173/024-resume.log.command.json",
+      "sha256": "ade9189e5a96d24a0b70654518b02da5a0e34fc86459d4448e609da8c65b6e2e",
+      "bytes": 487
+    },
+    {
+      "path": "rehearsal-1794437832173/025-resume.log",
+      "sha256": "cca32854b17d9576ad55e5b53a92d4813f435b7940b51e4f2bcf5939b3b404bb",
+      "bytes": 176414
+    },
+    {
+      "path": "rehearsal-1794437832173/025-resume.log.command.json",
+      "sha256": "a2389f0e5e24a75b5c31ac6e54d4972748ed932a975e3796b955247049053fd8",
+      "bytes": 590
+    },
+    {
+      "path": "rehearsal-1794437832173/026-resume.log",
+      "sha256": "cca32854b17d9576ad55e5b53a92d4813f435b7940b51e4f2bcf5939b3b404bb",
+      "bytes": 176414
+    },
+    {
+      "path": "rehearsal-1794437832173/026-resume.log.command.json",
+      "sha256": "a2389f0e5e24a75b5c31ac6e54d4972748ed932a975e3796b955247049053fd8",
+      "bytes": 590
+    },
+    {
+      "path": "rehearsal-1794437832173/027-activate.log",
+      "sha256": "4242d6c0cb28b97d4f76ddd36c0659660ab0a9b1649dd9f601ba5b42e0d11ec2",
+      "bytes": 6420
+    },
+    {
+      "path": "rehearsal-1794437832173/027-activate.log.command.json",
+      "sha256": "846dbe96cdc317f12721d20835df2090393e0178ce3007cd223110f8aa87383a",
+      "bytes": 590
+    },
+    {
+      "path": "rehearsal-1794437832173/028-prepare.log",
+      "sha256": "5117bc4e58000adbbd9a2cef15e9d7f01be3e0fac3e773371bdb9deb91c13036",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/028-prepare.log.command.json",
+      "sha256": "a9ecb34ce3fd138ee96b6cf19034fb33f69e78bec45315ed35070ff8e40943b9",
+      "bytes": 551
+    },
+    {
+      "path": "rehearsal-1794437832173/029-harvest.log",
+      "sha256": "ee60085cc4d2db5801d73ed8fb01b6f76e122f38b5fcd9a8286af03a394a1b76",
+      "bytes": 4073
+    },
+    {
+      "path": "rehearsal-1794437832173/029-harvest.log.command.json",
+      "sha256": "49b15ea2f0ca39b3f7df8b60a7fbc9904098958380d43c4db8fb41063c055612",
+      "bytes": 618
+    },
+    {
+      "path": "rehearsal-1794437832173/030-prepare.log",
+      "sha256": "677327c89f17f3edeb9a2e9908bd810639041d22d7ec3f5e0146029dd23fec99",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/030-prepare.log.command.json",
+      "sha256": "285d4ed2327c74129b9a48ff87bfd0822bb47bf93bf010360b2769c84f8b1ec1",
+      "bytes": 559
+    },
+    {
+      "path": "rehearsal-1794437832173/031-harvest.log",
+      "sha256": "c2f053600de980fe8447b35354db0680a08c05c8455d8b4040e93faa5f8a8d8e",
+      "bytes": 4051
+    },
+    {
+      "path": "rehearsal-1794437832173/031-harvest.log.command.json",
+      "sha256": "2e15f50bc9569d513ac286ed312909d77c341ba36019b5f3b38f4b7e6c0e1401",
+      "bytes": 626
+    },
+    {
+      "path": "rehearsal-1794437832173/032-prepare.log",
+      "sha256": "24bbe3795042f839ec97d8c8d8b433228834a69069931890e8c8b694f74a7e91",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/032-prepare.log.command.json",
+      "sha256": "fc04fa9153cf9da839295060f06b5113184c4eea4d0a5e70e4f1943c28ca1dfd",
+      "bytes": 555
+    },
+    {
+      "path": "rehearsal-1794437832173/033-harvest.log",
+      "sha256": "24d47fbbb37c2b44e6fd38ba11c4a354a965dd4e652378df703932a731419894",
+      "bytes": 4053
+    },
+    {
+      "path": "rehearsal-1794437832173/033-harvest.log.command.json",
+      "sha256": "ef5e575cbc5c7646cce2e58a1b0d4f15b6e15b33d32eb12c7e9d2ea3c4824484",
+      "bytes": 622
+    },
+    {
+      "path": "rehearsal-1794437832173/034-prepare.log",
+      "sha256": "d2a1a61ea720238ef07a7a4c60f6a4ccfaf1658bdd495680b55b0da0e5689f8b",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/034-prepare.log.command.json",
+      "sha256": "902839216c62ca5972a85bab8fb59a826cf218a7bc1757df8b03be6574c5f1dc",
+      "bytes": 555
+    },
+    {
+      "path": "rehearsal-1794437832173/035-harvest.log",
+      "sha256": "e9214ced44b41b1a215dcdccbe9224c07b396c9edf073a9e77478e1f57330e9d",
+      "bytes": 11115
+    },
+    {
+      "path": "rehearsal-1794437832173/035-harvest.log.command.json",
+      "sha256": "24dda2ccd6b4a36ecff3871665b54989f786452fb125e83bf9ae300424d4d575",
+      "bytes": 622
+    },
+    {
+      "path": "rehearsal-1794437832173/036-prepare.log",
+      "sha256": "d3cd3ae901ba555a35e7a7e5f5e4974cd3fb0894db7d2aff6b3ddf4529adb476",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/036-prepare.log.command.json",
+      "sha256": "63a6ec6fd2c8a096c38acd7465b2718e50371f8ec2323f28cd6424e2eb05c05e",
+      "bytes": 555
+    },
+    {
+      "path": "rehearsal-1794437832173/037-harvest.log",
+      "sha256": "1d2dbc59011157051f7ecd7d6735e6fc1a040c05da42e804baf7823e90ee20a8",
+      "bytes": 4297
+    },
+    {
+      "path": "rehearsal-1794437832173/037-harvest.log.command.json",
+      "sha256": "ea37cb11b3b0fa6a93e57a34002475b6022923c756490cb7edf281ec55b701d1",
+      "bytes": 622
+    },
+    {
+      "path": "rehearsal-1794437832173/038-prepare.log",
+      "sha256": "e7ffb55e6fd70bf149c2868e5f96c578528727ac2747d9f16f1ee0298c659676",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/038-prepare.log.command.json",
+      "sha256": "b8fa617f3e8646aff313f5a4d41bbaa334814d9d853d768b2aac12baf33566a9",
+      "bytes": 555
+    },
+    {
+      "path": "rehearsal-1794437832173/039-harvest.log",
+      "sha256": "111de92dd27ddd82b8a16fcdd1355c5ec47d4c30a5b168c7f9359769ffdc156f",
+      "bytes": 11977
+    },
+    {
+      "path": "rehearsal-1794437832173/039-harvest.log.command.json",
+      "sha256": "664c926f17e0c1cce0b22671b0a20f0e6ab995d91fef5c06b63ba96b26e8667e",
+      "bytes": 622
+    },
+    {
+      "path": "rehearsal-1794437832173/040-prepare.log",
+      "sha256": "9fd8618f1b81a44e24a421207987338121bdb4b51e0d340dc0e07c694d55b630",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/040-prepare.log.command.json",
+      "sha256": "83c7d93755f7d44bdbef692bcaec09f3b8e8ecadd5c4b8ef0e9b15c769853e67",
+      "bytes": 537
+    },
+    {
+      "path": "rehearsal-1794437832173/041-harvest.log",
+      "sha256": "3ca2e65b14a174a0bbfa0dc70d45c7d7b141b169a13aa4441514487e88f213ed",
+      "bytes": 171202
+    },
+    {
+      "path": "rehearsal-1794437832173/041-harvest.log.command.json",
+      "sha256": "a6cdb35072a635920945f85089fa746de92cc532ff325d32db1e46af4432066a",
+      "bytes": 604
+    },
+    {
+      "path": "rehearsal-1794437832173/042-prepare.log",
+      "sha256": "516cb1551f362b8272c83caaaf4c015dce3d45d5d827e052e55271b77f45a8e8",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/042-prepare.log.command.json",
+      "sha256": "9094f1753fe58b86fd093b5d4c4c5657a1bd16a035ca7838a614be1d87587c07",
+      "bytes": 549
+    },
+    {
+      "path": "rehearsal-1794437832173/043-harvest.log",
+      "sha256": "046484327ea222fd4f4215e323c32890b2049602f1cd8b1efe2293b101783ec7",
+      "bytes": 3991
+    },
+    {
+      "path": "rehearsal-1794437832173/043-harvest.log.command.json",
+      "sha256": "b266ef146020d753b4edfdfd5e975f786da10492aca367367eb0a90af31ee193",
+      "bytes": 616
+    },
+    {
+      "path": "rehearsal-1794437832173/044-prepare.log",
+      "sha256": "b771cb97f7f8944547b855fe669622d6d7cdbbdbb6b4d8a4646ba68b793e2868",
+      "bytes": 223
+    },
+    {
+      "path": "rehearsal-1794437832173/044-prepare.log.command.json",
+      "sha256": "c93c229fef36f8fb27c3cf980815bcd50556d8495c8af620efc8dbfd73b1c3d3",
+      "bytes": 547
+    },
+    {
+      "path": "rehearsal-1794437832173/045-harvest.log",
+      "sha256": "e5b0390eedbcadcc464af24875eb9042b1bb78fad021793e507ded9d902c5c84",
+      "bytes": 4681
+    },
+    {
+      "path": "rehearsal-1794437832173/045-harvest.log.command.json",
+      "sha256": "7b9731cf83deedd38b0de264f061f11ba1d811bf21084ff0c1a8a2d91da77130",
+      "bytes": 614
+    },
+    {
+      "path": "rehearsal-1794437832173/046-verify.log",
+      "sha256": "fd31154aabc4aa2b27f350d6e4dffca9c90463619cd3549f22d1219790847096",
+      "bytes": 461
+    },
+    {
+      "path": "rehearsal-1794437832173/046-verify.log.command.json",
+      "sha256": "1c44b7ff5514ab0888b3a54779c1c480f3089ed4416be7dc95d9ad0c55501841",
+      "bytes": 489
+    },
+    {
+      "path": "rehearsal-1794437832173/admission-after-activation.json",
+      "sha256": "487209d70b2f57303567847dea0f35efc406f6249b6cc739b0380b67b49444b2",
+      "bytes": 7608
+    },
+    {
+      "path": "rehearsal-1794437832173/admission-before-activation.json",
+      "sha256": "aa6b1a8bace6c65e19adf1736edba09dfdee12fe72ad8efed7cab36a0d7a11f5",
+      "bytes": 2076
+    },
+    {
+      "path": "rehearsal-1794437832173/admission-late-activation.json",
+      "sha256": "db3df4eba80c17f28b9e3ed866af08ea4b2b2fbd68ab54b97e06d6594e5aac21",
+      "bytes": 5071
+    },
+    {
+      "path": "rehearsal-1794437832173/anvil-command.json",
+      "sha256": "fdc434605370ffb77be5108a937044bdd09a850ac197870d4681e4b5fa7ecf18",
+      "bytes": 258
+    },
+    {
+      "path": "rehearsal-1794437832173/anvil.log",
+      "sha256": "c4c5eb17a67fb558511c218c82b51f49240c49e79cc5199c1e7f7e642e34422c",
+      "bytes": 314205
+    },
+    {
+      "path": "rehearsal-1794437832173/cleanup.json",
+      "sha256": "5a41cf20ae0c368d31c7915edb19520dd58797266f1af6660f35b6298116a2b4",
+      "bytes": 209
+    },
+    {
+      "path": "rehearsal-1794437832173/deterministic-preparation.json",
+      "sha256": "f9fde7c370ce02c266ff41e5fc979eb8cbcae646476d027c1ad6e20996a381b8",
+      "bytes": 697
+    },
+    {
+      "path": "rehearsal-1794437832173/donation-before-resume.json",
+      "sha256": "b11b868ff4f2220c72d9f72085a5e38084c94d4681ca9205e464a4922d7ca51d",
+      "bytes": 8347
+    },
+    {
+      "path": "rehearsal-1794437832173/donation-resumed.json",
+      "sha256": "2846684081a22e5c351c2cc91e88ea0517b0ea54e9fe6774bc123ccaf4494bd6",
+      "bytes": 1137
+    },
+    {
+      "path": "rehearsal-1794437832173/environment-mined-transactions.json",
+      "sha256": "cbc651599abaab9c5a579052537ed1be62914f83964cd8a4a4d336dd8f68f62e",
+      "bytes": 5817936
+    },
+    {
+      "path": "rehearsal-1794437832173/environment-stage.log",
+      "sha256": "0d8ed32af77f52f21b185ccaf6fcbdb3fcb87afd64b25205a432d50fa34d7478",
+      "bytes": 26762
+    },
+    {
+      "path": "rehearsal-1794437832173/environment-stage.log.command.json",
+      "sha256": "cbf04bf25be53ddfbec59593a5a7b5cf94886fd9e977138cb94746ae1ba612a5",
+      "bytes": 479
+    },
+    {
+      "path": "rehearsal-1794437832173/environment.json",
+      "sha256": "e56c9bbaf79bb68f68406722df2a739d316521e233326771b081c2cf10dac309",
+      "bytes": 4089
+    },
+    {
+      "path": "rehearsal-1794437832173/fixture-receipts.json",
+      "sha256": "e10b648896ec74d52755c420c3426a6f21f4d45696ca0a0d4e0db980511015f5",
+      "bytes": 1200694
+    },
+    {
+      "path": "rehearsal-1794437832173/funding-observation.json",
+      "sha256": "c41f035377c41c272f095e57cfc2f7b6d06c48a8f2e968dc7800630f78c66091",
+      "bytes": 230
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-01-WeightedClaim-execution.json",
+      "sha256": "b358e59c90aa85cef10f01a454e33297359da7e689f08215a54979165d0bc59e",
+      "bytes": 8733
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-01-WeightedClaim-input.json",
+      "sha256": "f2095d1b92248efdd1237e48cb39eab6bdbcd7ffebd9d66826bab4f7d7008596",
+      "bytes": 16204
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-01-WeightedClaim/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-01-WeightedClaim/manifest.json",
+      "sha256": "a52326339f0e4a04dd46078db4ce4b31378aa0d3a547419f8415bf94398030f5",
+      "bytes": 37412
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-01-WeightedClaim/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-01-WeightedClaim/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-01-WeightedClaim/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-02-WeightedPrincipal-execution.json",
+      "sha256": "18e02df7ca1b9d1cad653d550bef39b511f148bf252b5c84e9c0310fc8e21f4f",
+      "bytes": 8737
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-02-WeightedPrincipal-input.json",
+      "sha256": "3ae70679c864ac1ca8957f91c9fd1cba3d21597bc86a56bfdfacd10431107932",
+      "bytes": 16209
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-02-WeightedPrincipal/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-02-WeightedPrincipal/manifest.json",
+      "sha256": "b1b5de6253851651aa8bb97cf14405a954f7dc7183b9494a127102d0ddb4fd62",
+      "bytes": 37422
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-02-WeightedPrincipal/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-02-WeightedPrincipal/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-02-WeightedPrincipal/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-03-WeightedRewards-execution.json",
+      "sha256": "c504ec365e8ccfbb9e5995cbff875a1d211d2a11e3f11819628060e1fa41a448",
+      "bytes": 8735
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-03-WeightedRewards-input.json",
+      "sha256": "1572e83daeed7dbdbb0bb8e2d7003516a721f34fb6d77eece0a3aa62a38c835e",
+      "bytes": 16207
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-03-WeightedRewards/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-03-WeightedRewards/manifest.json",
+      "sha256": "af8f724f68583889deb588d4ad3b6d79e355311c30123c9f074b98b81fc529dd",
+      "bytes": 37418
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-03-WeightedRewards/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-03-WeightedRewards/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-03-WeightedRewards/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-04-WeightedUnstake-execution.json",
+      "sha256": "b696d148b5eaf0b8f8062fc7a52d79ce11b2f2fc2abbf54324aef30ec0f937de",
+      "bytes": 8735
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-04-WeightedUnstake-input.json",
+      "sha256": "b7d4cbe8c0be49a5ed8eb69be00f0db4061df15e6921e8eb974e09183c5aa6ef",
+      "bytes": 16214
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-04-WeightedUnstake/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-04-WeightedUnstake/manifest.json",
+      "sha256": "845d354acbc93f218d9981791fb69fdade4fcd85908e3f1f40edbb89ca583c63",
+      "bytes": 37432
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-04-WeightedUnstake/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-04-WeightedUnstake/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-04-WeightedUnstake/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-05-WeightedUnstake-execution.json",
+      "sha256": "4e8a584e4cdbac4a0b270a6c89104682033d0363d8bb11249687fa26a904daf6",
+      "bytes": 8735
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-05-WeightedUnstake-input.json",
+      "sha256": "483fb74fae95c2eed85118c0f1ad27cef3d9542cd16d1719273e7bbf1e4f8ea6",
+      "bytes": 16210
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-05-WeightedUnstake/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-05-WeightedUnstake/manifest.json",
+      "sha256": "641013d06a43c72d781e795fdbbc4378e2455f8c2043c263321c825ec69eae8d",
+      "bytes": 37424
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-05-WeightedUnstake/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-05-WeightedUnstake/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-05-WeightedUnstake/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-06-WeightedConvert-execution.json",
+      "sha256": "9038222ccb710966d5b29a111d2753a96defc7d89c15fce22f32fc0dbcd63c58",
+      "bytes": 8735
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-06-WeightedConvert-input.json",
+      "sha256": "8a3c836264931ee09c13a59da8c86e7becd2f95f4669f51228ac046a7470f5b3",
+      "bytes": 16214
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-06-WeightedConvert/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-06-WeightedConvert/manifest.json",
+      "sha256": "2565b59ac42826ecde3d83ccaee01e00322edde451ad5adf40c452101664828e",
+      "bytes": 37432
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-06-WeightedConvert/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-06-WeightedConvert/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-06-WeightedConvert/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-07-Donate-execution.json",
+      "sha256": "3ec76521e9efb2e02e8b26d23c71776a59819e7a429eb56cbf1370e002313762",
+      "bytes": 8726
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-07-Donate-input.json",
+      "sha256": "8b2877d748f1e8cc0bfbc260d5eb3ae4cc6092daee191d5f32f6151d21c07e24",
+      "bytes": 16215
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-07-Donate/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-07-Donate/manifest.json",
+      "sha256": "caac4d48b6dba7079c8aa7f96f3fe348fcd0ed33a9ad8db3bd27a3b9b9243836",
+      "bytes": 37434
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-07-Donate/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-07-Donate/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-07-Donate/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-08-EarlierClaim-execution.json",
+      "sha256": "c93069f80ee1f6cf743347e85467add260ef11b11036199924ff1ff240944639",
+      "bytes": 8732
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-08-EarlierClaim-input.json",
+      "sha256": "141416aea469beef44d2cdaa99c4c113bc57e4661976ccaabff28645cfbb51c4",
+      "bytes": 16203
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-08-EarlierClaim/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-08-EarlierClaim/manifest.json",
+      "sha256": "e131a6a1ac09565b5123e97cf5a4b3cc66911aa142ff9aa41d2108df7f307aaa",
+      "bytes": 37410
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-08-EarlierClaim/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-08-EarlierClaim/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-08-EarlierClaim/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-09-EarlierSale-execution.json",
+      "sha256": "3116336ad154a271392bced1d9499ff72277c541494e228b3428909fd8cfdd22",
+      "bytes": 8731
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-09-EarlierSale-input.json",
+      "sha256": "45cb02f6678af2a72a602a30afda8870df4f02a1abd8d452a4f5adb3e8c813d5",
+      "bytes": 16202
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-09-EarlierSale/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-09-EarlierSale/manifest.json",
+      "sha256": "021f1ae9a91d801eb72aea09208e59d79a3e2389bcdad3110e6791325ca872ab",
+      "bytes": 37408
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-09-EarlierSale/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-09-EarlierSale/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/harvest-09-EarlierSale/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/historical-header.json",
+      "sha256": "fcb077545e0b7b6a1813acbe95e2d700973f229556749e6d4e7a53cf4f0e457a",
+      "bytes": 1717
+    },
+    {
+      "path": "rehearsal-1794437832173/input.json",
+      "sha256": "21c17a9fe26a0ddf6b6afbb4e29ac009dce255b6941aeccb99aea4750f0f0b06",
+      "bytes": 16194
+    },
+    {
+      "path": "rehearsal-1794437832173/issuance-before-resume.json",
+      "sha256": "069064947cee801c8ea1d0dec2744b1d11b16fde489044f39906bd67d7e37016",
+      "bytes": 13188
+    },
+    {
+      "path": "rehearsal-1794437832173/issuance-observation.json",
+      "sha256": "4702e7c548ddcd114b7cbde2fab04e73aafc5f931b51ab47f1e71aae693c2cba",
+      "bytes": 107
+    },
+    {
+      "path": "rehearsal-1794437832173/issuance-resumed.json",
+      "sha256": "3a49a5ff6d31c1a913534c8325c289f10d6dd7d9a9aa01647f708b0969e7f746",
+      "bytes": 717
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-activate/domain.json",
+      "sha256": "a7a3787e60a2db90a2f62c9ae24fbcee853f09d09db15a338068144ceb778586",
+      "bytes": 8896
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.intent.json",
+      "sha256": "01381f76e1f38b64f113d3c525d829f2bfbd2de1bdb5b8a2e3e133c8b65b9bd6",
+      "bytes": 751
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.receipt.json",
+      "sha256": "7432b145ed31b46269151dea72905f0981aa67e3e2444016f0fe44e1e668bcee",
+      "bytes": 6350
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-activate/run.json",
+      "sha256": "828446767d8e2f00feeac895f702103d5913360fa9a2defce0931e51a054a40e",
+      "bytes": 104
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.intent.json",
+      "sha256": "dce66395fa895124533f11cbe045e648421a63b5a195d06c14cc60f65e9b4c1b",
+      "bytes": 757
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.receipt.json",
+      "sha256": "9c133eadf664084a02281fd0a76c4519089b7eb01ca453d55532e8ae66b3f093",
+      "bytes": 19575
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-capture/domain.json",
+      "sha256": "5aa3456690be0b91669e203aeada9fdfee4018ef20479199368fbff24cb39a44",
+      "bytes": 8516
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-capture/run.json",
+      "sha256": "fdb957ec6fcabd9e748bfc9058f5fa2d9db023facec782fe2651bf9185bec837",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.intent.json",
+      "sha256": "7a71df2fd5086f9f7e0dbf839e46412e8d1cd28135715f6c3fbb727aba6e1b93",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "sha256": "84110cc0d657d1eaa32a218c3f2bca8b6bff294205cae6df53c7236becf4eb0e",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.intent.json",
+      "sha256": "0a832ea66f362077dd4fb7f5791dbc8ae82478f80b912f0acfa6fd935823553e",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "sha256": "3276c2a6e46202bdecf1dc0dabfeedc13e58b0edf58a73e2a07eea77d3b0284a",
+      "bytes": 2834
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.intent.json",
+      "sha256": "f9ceedc8e683f32c80803c776eecd897739793a6bc9b32d04cb13b01f85efcd7",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.receipt.json",
+      "sha256": "e40016163046a0ee12d3606f837fea1eda1795cd0ec16965ed003e080047c8cd",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.intent.json",
+      "sha256": "fa2fa26540d87832835746b65ba422a95fbd49abd7aa4f28da7691589402c077",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "sha256": "c85a73c95534b908733d327f13b0c8ff605d6fcc2df821505822719880514ce5",
+      "bytes": 2826
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.intent.json",
+      "sha256": "bc844c73c8036c5d64a7cc412ccbe387940c1c2e0c5378460b73537c03ccd649",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "sha256": "2854500462b091b6cf5c621f5938380581d6fea49b8b85a90b827d6ff268c323",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.intent.json",
+      "sha256": "512b4d80e1381ea60f62c7a4c83f8a58f0a1f43b397de769ef0f25db3520aa2b",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "sha256": "f471f32bbef8c9677ca95226b257c01b4451c5d3016bfde4cd3dfdc4ed49db10",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.intent.json",
+      "sha256": "d374ea97cd068159355598ca116e48b7831841415dfd77a38bfc9322cde384cf",
+      "bytes": 2056
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.receipt.json",
+      "sha256": "14c9cec29a834c19a6ffb6fb224364ef125f779624da85e8e8473932f0f3b785",
+      "bytes": 2926
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.intent.json",
+      "sha256": "90e12b2d310d14650f8bb29f8655c4ea6f2f98fb28bbd210fe7926894d4ac758",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "sha256": "307dc09e27f0c40c426caa71846e5016de7b48d17d307121ddd0f3fa3af378fc",
+      "bytes": 2826
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.intent.json",
+      "sha256": "47d748c4614db4952c29ac97c84d89dc263257ca9c86d74db3f195f2574e0efb",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "sha256": "e8172836452eadf49d46e63c85611c2f68ad458d1ada325f8d0da8f1d8216e8a",
+      "bytes": 2829
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/d827a40d5deb93f5bb107a6b788f4040a435ab579685d70f63598fb25b83a143.intent.json",
+      "sha256": "c9a0c064079981d9617e261dbb5668b6799379b9a362c020112b11c725ca8441",
+      "bytes": 2052
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/d827a40d5deb93f5bb107a6b788f4040a435ab579685d70f63598fb25b83a143.receipt.json",
+      "sha256": "fadf5150daaaabe30ba82bf2b02e4cff038216b70fc656eef9c9e85dc1ba08d4",
+      "bytes": 2902
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.intent.json",
+      "sha256": "c506d57e2832447ea3d71924eb02590338af1b02e636143d0474c4b60956d3b8",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "sha256": "02f76bd688b79969036765bf8ac6893670e9b967ebb89872b1b6c305fada837f",
+      "bytes": 2842
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/domain.json",
+      "sha256": "66b66e3b790c4956c71c88bdc07fbc2cb1ea2950df9c5fda91086d983ca7631f",
+      "bytes": 8893
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-configure/run.json",
+      "sha256": "5bd2f43a8f075d3f3318c80ed56f2c16403fb56e6d2c1c9817de8fbddf77a0b8",
+      "bytes": 775
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.intent.json",
+      "sha256": "d8bf9b51c1d9f60d5ebc9315cb4cde253d18d84b6e9c2309c53129dd86d74e11",
+      "bytes": 6383
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.receipt.json",
+      "sha256": "d7f3d2b8d72b14de257df6817f07da901916eb8756f51a9fd5ab28a962f4105c",
+      "bytes": 155744
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-deploy/domain.json",
+      "sha256": "5aa3456690be0b91669e203aeada9fdfee4018ef20479199368fbff24cb39a44",
+      "bytes": 8516
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-deploy/run.json",
+      "sha256": "1661ae5ffa03fee0b6237074f927314d8841b809fad1c94589e74437804fe219",
+      "bytes": 102
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.intent.json",
+      "sha256": "546a033ed6f584bb7f67788983f44d8cf85d6537295f4bfa2ef88eb2868b3838",
+      "bytes": 995
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.receipt.json",
+      "sha256": "e90612a652136e86455b556c411e134d788e5a75b31a9ad0eb6c80073a4c06c4",
+      "bytes": 1797
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.intent.json",
+      "sha256": "02b108a59de3d263ab11350ad12c7ee1e3842461f07cf89e722149e2ed8fbcbf",
+      "bytes": 995
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.receipt.json",
+      "sha256": "8f553aa77bd6d16fcfc198370c2c1ad5fb39318d0e4aa7eaecd2e0ccbfcc4757",
+      "bytes": 1798
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/d5c695f0fa293eafa77f70b2d3b579093f0e01f43926f99a11fbcf64321665fa.intent.json",
+      "sha256": "47b5a5f614908324b0f9343d436a3249e5e1ee33b2d32ef1912a7b33cc795938",
+      "bytes": 2204
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/d5c695f0fa293eafa77f70b2d3b579093f0e01f43926f99a11fbcf64321665fa.receipt.json",
+      "sha256": "73837d24ddf2d95695d55b5b6b2c365b7181a69e720657968169ab9d6eca5307",
+      "bytes": 5842
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/domain.json",
+      "sha256": "5aa3456690be0b91669e203aeada9fdfee4018ef20479199368fbff24cb39a44",
+      "bytes": 8516
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/e4155f10909096070c1a6f57cc9f7a31f4ed8cebc72755c0f0c0d15c4dda5875.intent.json",
+      "sha256": "1ccb9298658609ae6d899e9608a020d8248702760390b47a7803970f0878204c",
+      "bytes": 2169
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/e4155f10909096070c1a6f57cc9f7a31f4ed8cebc72755c0f0c0d15c4dda5875.receipt.json",
+      "sha256": "469860ed3581268429079c1bd50902a928980af1ba336afd50501716014f0c5f",
+      "bytes": 63376
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-fund/run.json",
+      "sha256": "3ad629345eb14fb1e692a5b0b771a0e3117c9b3ae0aecbe945004dba0619c227",
+      "bytes": 301
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-01-WeightedClaim/domain.json",
+      "sha256": "0b82ecd038e6484756f05e05f09173fc02c0410e652ba25d19a3cffcfe57e06d",
+      "bytes": 8909
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-01-WeightedClaim/ff2ea3a8e3f8dfa099c1ce251e654620e5462f9eb228865d6ef296d41d926668.intent.json",
+      "sha256": "c14da0a601d6abca194840cf57123ffffd1bfeb38b6b1bb8b4d892766febc5b2",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-01-WeightedClaim/ff2ea3a8e3f8dfa099c1ce251e654620e5462f9eb228865d6ef296d41d926668.receipt.json",
+      "sha256": "c06ff6528ef10d216e29fe0261dcc61dbee68bcdbc7b50238f6c2b0a0bd7d7f9",
+      "bytes": 4004
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-01-WeightedClaim/run.json",
+      "sha256": "d7e02f1dfbc2de148230a4adbef60a81bde9b6d2d38339fc7728fc8a781d6182",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-02-WeightedPrincipal/domain.json",
+      "sha256": "e93e9f403b254a639353f1346408415a78e08fff914eae8df339b0ded7237b3c",
+      "bytes": 8913
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-02-WeightedPrincipal/ecf0202086c309fe15e771cca72936c4823be76ad49ce788af3a4e8a47dcafbe.intent.json",
+      "sha256": "7fa6bc4102141d6b7f930b7b79aca69bc0021c69c33a54ee680605717e87d76f",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-02-WeightedPrincipal/ecf0202086c309fe15e771cca72936c4823be76ad49ce788af3a4e8a47dcafbe.receipt.json",
+      "sha256": "dd885a573ef8026610a448ad742a8c1182a865ebec346f2a597808f428fa9a5b",
+      "bytes": 3982
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-02-WeightedPrincipal/run.json",
+      "sha256": "969963a8810b7147caaef37c69afa53cc73eee5be4ba2274c1c2eba59e6b73d8",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-03-WeightedRewards/c6ffd045ad30fbe5bc2460b65ceb7b7a1fd5665095f85605b7c76b7a37df4d38.intent.json",
+      "sha256": "fe4239105a78eac4bbbac3bc4d39d60692163215bd5fe9442c388bfea87091e8",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-03-WeightedRewards/c6ffd045ad30fbe5bc2460b65ceb7b7a1fd5665095f85605b7c76b7a37df4d38.receipt.json",
+      "sha256": "4987fb92edba0464e5424bbfe1d3fda94e1505c656d9a05165a99c8b6ac4ca74",
+      "bytes": 3984
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-03-WeightedRewards/domain.json",
+      "sha256": "c3b3a2acaa8ce02b05cd7f69e62d4efe8e5547b4b5d20e09482e99410ecbcd28",
+      "bytes": 8911
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-03-WeightedRewards/run.json",
+      "sha256": "3094f2dac3c55ab3f222955e3c49993cf56a96814a3f6fd3df03cb0e0aa3e9a8",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-04-WeightedUnstake/3c061b79f17cfcc44f4af9c5d3c47283be57729d85a5bbc0e4326e8b5d160971.intent.json",
+      "sha256": "5c21ad1edaa0a091b48a9043a4360f8edad7a51bba0ba92abd251489dfd39dcb",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-04-WeightedUnstake/3c061b79f17cfcc44f4af9c5d3c47283be57729d85a5bbc0e4326e8b5d160971.receipt.json",
+      "sha256": "1011b147ed81b3b374887015fb07d5459499135b42fe484de24ea3e8f07d456b",
+      "bytes": 11046
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-04-WeightedUnstake/domain.json",
+      "sha256": "7541de3914803d6d148990b5ddc0f6d2daabfc44084135d5ed86fc70740a5177",
+      "bytes": 8911
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-04-WeightedUnstake/run.json",
+      "sha256": "fc1537584d4dc0302c6beeb49aaf5cb21a6e0d1e04cc511f4acaa8be5170b7ed",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-05-WeightedUnstake/650c4eae409411aa643dbd10c0adfbc14509453c10a86c240324858160f6ec21.intent.json",
+      "sha256": "5dcdd692032acf6361222778a6a791d9ee5fea5b6c3c80c052ef343c885869c2",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-05-WeightedUnstake/650c4eae409411aa643dbd10c0adfbc14509453c10a86c240324858160f6ec21.receipt.json",
+      "sha256": "fba7d099e8d8943ab22d71d229bbeaa25a67273e9815799460488cf3619aa246",
+      "bytes": 4228
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-05-WeightedUnstake/domain.json",
+      "sha256": "ed6e263094608746d8ccb57a52b956c7767f85e5e42f25f21da76496648afbee",
+      "bytes": 8911
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-05-WeightedUnstake/run.json",
+      "sha256": "e5a0cf53f05ed508371dcef1cd61030f59ff1320bfd8fd2615616d1a751df0c7",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-06-WeightedConvert/51fde788655acd68b9d7a583d1f456fb6d0c73eeaf06c124a92b6a776d6c002e.intent.json",
+      "sha256": "f3c44b1838746dce9c3a365b410f4b721a11f205e846d9de57405e705646b8fe",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-06-WeightedConvert/51fde788655acd68b9d7a583d1f456fb6d0c73eeaf06c124a92b6a776d6c002e.receipt.json",
+      "sha256": "dad7d9d05b5aa8e5b5a96e79adaf9554350ce96279ec2273e151792da758bda1",
+      "bytes": 11908
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-06-WeightedConvert/domain.json",
+      "sha256": "958d93e2ef341612c1f0c15a5d1a17d247d103408754795ab3e645de15b07d09",
+      "bytes": 8911
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-06-WeightedConvert/run.json",
+      "sha256": "9bf8307ca21f11aa52cfdbeeff20967c3c9344579550d53b73eb219160ee4959",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-07-Donate/1811cba12cd82a4d93eebbfae0e26ee13796e1b399e83825b1652800f43f6df8.intent.json",
+      "sha256": "37806bc66eceb82021fd493b0cfc57bf88c249bd0ebf14f934ae5dbc0f1654a1",
+      "bytes": 1655
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-07-Donate/1811cba12cd82a4d93eebbfae0e26ee13796e1b399e83825b1652800f43f6df8.receipt.json",
+      "sha256": "fa4283287cab7349264b9365d1cd0d5023bbef73a6527eb20012bd31adf67df1",
+      "bytes": 171133
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-07-Donate/domain.json",
+      "sha256": "7aa6d6120f679c336fa757d77ff2b99f55927778a3954917d18323ba9e91eaf1",
+      "bytes": 8902
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-07-Donate/run.json",
+      "sha256": "ceee2cda553bb50196261f640701ae9caf7359c5fe3fc8fb2fc9503b17ae990c",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-08-EarlierClaim/ca7644069cd4f140a83f3be89ce9ffbfb800d683329a7bdeb02ca5f38d20ba1f.intent.json",
+      "sha256": "bfb515fb4a8b802c5299be48c96ac20c38a7cd86b20c6cd08514a30616c5e109",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-08-EarlierClaim/ca7644069cd4f140a83f3be89ce9ffbfb800d683329a7bdeb02ca5f38d20ba1f.receipt.json",
+      "sha256": "b75f4271d911f1a06e5359af6a255ea5cd94a7b78a7b6f7902e59501aa980560",
+      "bytes": 3922
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-08-EarlierClaim/domain.json",
+      "sha256": "f35f29fcb5e15a90df758bb4767e0775e23d0022192a1b74a609bf6ef7074bea",
+      "bytes": 8908
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-08-EarlierClaim/run.json",
+      "sha256": "e1e1eb7e56444238fed9ab82a0517ad287e8e0abb5f46d9a0ebda2cc8f924074",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-09-EarlierSale/domain.json",
+      "sha256": "794170d3ebfcc7da8756726cd245873f91ff3b638e13780f4782ab7fb1ca86a7",
+      "bytes": 8907
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-09-EarlierSale/e064892450ff5029104c6711025ecb1673ee7041c20652536d35d23fbde97f89.intent.json",
+      "sha256": "8c68d88b411af1b673d116f08d1d614b4939dbd5da160722aea6ec6f0c195950",
+      "bytes": 1653
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-09-EarlierSale/e064892450ff5029104c6711025ecb1673ee7041c20652536d35d23fbde97f89.receipt.json",
+      "sha256": "fc05b9730da305eed7f42e5f17e5fa81755367d780bde1aa6d4f949a548a9714",
+      "bytes": 4612
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-harvest-09-EarlierSale/run.json",
+      "sha256": "cdcc49062746ee5103aad20b63210cec0e512be00497583d3b1f8f1135808219",
+      "bytes": 103
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/4ff4f3dd6a38e838c6a440c43ebe76bd39bc8fdac3214e873d31ec2dccaebb18.intent.json",
+      "sha256": "3154bf634d86732bfefead8f53cbf471aa3f62a8ce30fe6d3b6217a22b91fa93",
+      "bytes": 1284
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/4ff4f3dd6a38e838c6a440c43ebe76bd39bc8fdac3214e873d31ec2dccaebb18.receipt.json",
+      "sha256": "4eae75b8cf1c1b7210b81a12dfaedeb64e9dbd15b109577f57bf4b2503aa3b1e",
+      "bytes": 11646
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/a8c9b68619f41c419b9576fcbe980ef4301ab38e5b139ec3f416a27f7e5ae095.intent.json",
+      "sha256": "382c99c18fc93e0a39d7859e783522fce38bd86ee0109eb1f3decdee70937da6",
+      "bytes": 1284
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/a8c9b68619f41c419b9576fcbe980ef4301ab38e5b139ec3f416a27f7e5ae095.receipt.json",
+      "sha256": "9902809e2f89975f41f48acb8a14d319e21cfe2cda3b49070fdeb20766415e21",
+      "bytes": 11646
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/d8c221db897a13b2463be63c7bab160967c9f64bb86166c56806263b7d1c55b3.intent.json",
+      "sha256": "065abc448d6c8c5df8316313282fe6871bf5f91a652490c80addf5160c78d467",
+      "bytes": 1284
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/d8c221db897a13b2463be63c7bab160967c9f64bb86166c56806263b7d1c55b3.receipt.json",
+      "sha256": "cba24dc85e854bf6f04cc265b4e167e8707b9ab0cfd14a5a0a4f497cf3951853",
+      "bytes": 11646
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/domain.json",
+      "sha256": "66b66e3b790c4956c71c88bdc07fbc2cb1ea2950df9c5fda91086d983ca7631f",
+      "bytes": 8893
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-issue/run.json",
+      "sha256": "18e730a131ea7a798e438990bb79b2f58cba81eafea76df116f3e332174a494a",
+      "bytes": 247
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-owner-bond/46241245c4191594650f924a819027b4165bab3e31b9d00b2f9232876374d730.intent.json",
+      "sha256": "cce85ee39a0a627602e0a369a94e9cec52bb8635a3bc2d4c2e09462ce9957b5f",
+      "bytes": 1001
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-owner-bond/46241245c4191594650f924a819027b4165bab3e31b9d00b2f9232876374d730.receipt.json",
+      "sha256": "873e5e9d9b655dec29f5bccc50ae6c25f94080270b3dc877f6aed7a23fec8f8e",
+      "bytes": 1795
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-owner-bond/8bea8dd25c0a289b2474588319657833c4540a46c00e8a4114123b7025770475.intent.json",
+      "sha256": "366ea66c8b3b516dda9354c964c8aa86a99621acebbc7b5fa835e2b65f7fafd5",
+      "bytes": 1514
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-owner-bond/8bea8dd25c0a289b2474588319657833c4540a46c00e8a4114123b7025770475.receipt.json",
+      "sha256": "6245e36923eceb7b41ab8c80f87a4a97bc1536df5537e366dfdec424b3c075f3",
+      "bytes": 174547
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-owner-bond/domain.json",
+      "sha256": "a7a3787e60a2db90a2f62c9ae24fbcee853f09d09db15a338068144ceb778586",
+      "bytes": 8896
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-owner-bond/run.json",
+      "sha256": "247fb270cbd0f981974fe2fe7550503ccf688d3e41e1ab061eb32c22990c5892",
+      "bytes": 173
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.intent.json",
+      "sha256": "a55c4604bc55d16760e8dd8c913b3317df2bebc8d07da1e3ab9355607ca7fb16",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "sha256": "8bf982975db154102433129ae58ba1329c86f445dcbdfefb0c8c8a99f8cf8fb1",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.intent.json",
+      "sha256": "49f39dbe93673f54226ea4df2ced00dfc9d03f61fadd1224e1b0b1f7732fa71a",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "sha256": "24c345bbd3039cc7cff3c54c5a2a14bb3bb153897f01ae611175345d1f01fa8a",
+      "bytes": 2834
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.intent.json",
+      "sha256": "0563571bb6f5b9e1e5b6b11336555711d8001fd2bf400577a312d43c0d9803f1",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "sha256": "598dc4154b1574635bee660c823a8c700e9c49781aa82085067ea4f43c5fd2e2",
+      "bytes": 2826
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.intent.json",
+      "sha256": "cbdd67a5b173b2a4e9c922532dc05357a405f4b7dc1f1c100ab9b14725d6e4a2",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "sha256": "4a36e53d2a1d7d28ed005f6824e1d5ab7c599b6aeb681efe7ded1086c9bacf2d",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.intent.json",
+      "sha256": "99c92e072e861dff36aef41b77a85037dff35d906f6c3b1cf263737c7e0fcd24",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "sha256": "3e158f7380a423380057c99157d5cc85dcacdf20da0cee52848f3ae0d961942e",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/75d1557b9e75d42f162f33f3add809b8c6c7e201b1a1ad13ff9b9ad5af0bff01.intent.json",
+      "sha256": "e8cd9696527db37e9061e2050f54d894f4f01a9ea60ce26f965258314c52a5ef",
+      "bytes": 2052
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/75d1557b9e75d42f162f33f3add809b8c6c7e201b1a1ad13ff9b9ad5af0bff01.receipt.json",
+      "sha256": "a31e003d0d6eb3cddb91023258976efce93c3177e7d28dba82abcf65ff898519",
+      "bytes": 2901
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.intent.json",
+      "sha256": "14c24b2831653dd2b0fdbeef194023a0cc04002a03d184bc326a5226a128aaad",
+      "bytes": 2180
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.receipt.json",
+      "sha256": "3dbf9e045286d888b2068d537891c1d992924d5f13ed4d4251eb0e38d0df69fe",
+      "bytes": 2818
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.intent.json",
+      "sha256": "1a9121af2da2cf7505b715ce0554036b98508a518146b89345e24afe245e0ed6",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "sha256": "ed5ad41f3c6c43d4544a135d831af18a6f94bd609a1f6df99f29bfbe1ebddf41",
+      "bytes": 2826
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.intent.json",
+      "sha256": "66edb663ffabcd687665a2b3d01c05b2d10bd155ebaa0e7d0b2c1154eb754b42",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "sha256": "453531452168510d4e6146440e00c0e013196b0640a699b81b68300415a04663",
+      "bytes": 2829
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.intent.json",
+      "sha256": "1a1436e8a390de0d1b92d84c59dfd9712089efe314c795ad484b358dd6db63f9",
+      "bytes": 2056
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.receipt.json",
+      "sha256": "1d7e146be4498a8fb20bfc8a8eade848773b47a3c06a279a155ece5e8ea2c77e",
+      "bytes": 2925
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.intent.json",
+      "sha256": "8713ff817238388f3ed8a7ab3204889c76f30a716aef3c13573e69bfc7885c54",
+      "bytes": 2045
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "sha256": "cfb72ec9e19c136a96e1ff52821dbdaa14786e0363e569887a6ff82b19c6ecac",
+      "bytes": 2842
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/domain.json",
+      "sha256": "a7a3787e60a2db90a2f62c9ae24fbcee853f09d09db15a338068144ceb778586",
+      "bytes": 8896
+    },
+    {
+      "path": "rehearsal-1794437832173/journal-replacement/run.json",
+      "sha256": "566805a15fe24e9d4ad4229010c70baa666b0ed5360715c51ff876da829067e6",
+      "bytes": 775
+    },
+    {
+      "path": "rehearsal-1794437832173/ordinary-deposit.json",
+      "sha256": "505dc5dd541d844cf2606280eee6807f860aeef13f81603f314f05efd2b8de18",
+      "bytes": 271
+    },
+    {
+      "path": "rehearsal-1794437832173/owner-bond-before-resume.json",
+      "sha256": "98684c1ac66c7c9a97ba64eb3e4f3d87e406d1f4d588a0cf9284027a235416e1",
+      "bytes": 176066
+    },
+    {
+      "path": "rehearsal-1794437832173/owner-bond-child-runtime.json",
+      "sha256": "cad96c60c857f89c0f02754d4d73553f1a25f3a6c65c9f76624f7bde27b135fa",
+      "bytes": 92920
+    },
+    {
+      "path": "rehearsal-1794437832173/owner-bond-observation.json",
+      "sha256": "109f80a5f845f545c12043177c0608dae966b85d41b58e66286da96d31104369",
+      "bytes": 1706
+    },
+    {
+      "path": "rehearsal-1794437832173/owner-bond-resumed.json",
+      "sha256": "cad7806637b02a00dbff66b02bf6efc9dc3adc2dbc493eeb9eaa5ce87e6e1031",
+      "bytes": 1099
+    },
+    {
+      "path": "rehearsal-1794437832173/post-capture.json",
+      "sha256": "90ab6614b6a5d5c0e889bd2df46a91935b79c50cc9fda49fe391e51785865734",
+      "bytes": 8717
+    },
+    {
+      "path": "rehearsal-1794437832173/pre-capture.json",
+      "sha256": "7f13eaba294b167f8cc66cae2745333bd083a6811792b38e477222c5c43ce958",
+      "bytes": 8464
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared-reordered/independent.json",
+      "sha256": "ee23f0ba3ee6f4e68bc42ab8b4c03be13d79b4bb9e9d9ba09cb87d64c29b1b39",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared-reordered/manifest.json",
+      "sha256": "5e9266c716e7f2b0e9a8157b26c689c6a8452bad5fbad87374ce019b8414ca39",
+      "bytes": 37306
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared-reordered/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared-reordered/weighted-liquid.json",
+      "sha256": "81369207073a958640396f9636a9d5791c0a158c03fed10f18929984a72d3578",
+      "bytes": 389
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared-reordered/weighted-sy.json",
+      "sha256": "ca9a87cd16c8800df466b1d5531f34b2f4d33beea9f521a7513f6f9e97242a5c",
+      "bytes": 385
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared/independent.json",
+      "sha256": "ee23f0ba3ee6f4e68bc42ab8b4c03be13d79b4bb9e9d9ba09cb87d64c29b1b39",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared/manifest.json",
+      "sha256": "5e9266c716e7f2b0e9a8157b26c689c6a8452bad5fbad87374ce019b8414ca39",
+      "bytes": 37306
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared/weighted-liquid.json",
+      "sha256": "81369207073a958640396f9636a9d5791c0a158c03fed10f18929984a72d3578",
+      "bytes": 389
+    },
+    {
+      "path": "rehearsal-1794437832173/prepared/weighted-sy.json",
+      "sha256": "ca9a87cd16c8800df466b1d5531f34b2f4d33beea9f521a7513f6f9e97242a5c",
+      "bytes": 385
+    },
+    {
+      "path": "rehearsal-1794437832173/recipient-identity.json",
+      "sha256": "dc74595de6d4b5892e1ee61b9b03fb8566c4a613804e471de79806f2f302ca64",
+      "bytes": 255
+    },
+    {
+      "path": "rehearsal-1794437832173/recovery-observation.json",
+      "sha256": "fa8031595535786d05002f10c1c9e872ebe621c0e17531a14a19ce8017d23b43",
+      "bytes": 487
+    },
+    {
+      "path": "rehearsal-1794437832173/reject-chainId.json",
+      "sha256": "2c4fc05780ae771b6acd11130fef75a1ac66547410e9fba279970aec137cc684",
+      "bytes": 8714
+    },
+    {
+      "path": "rehearsal-1794437832173/reject-package.json",
+      "sha256": "9a58adffbe8fa1aea341bf8a40fb07c35ee54fda01ec2393d1dbd4a82380730d",
+      "bytes": 8717
+    },
+    {
+      "path": "rehearsal-1794437832173/reject-payload.json",
+      "sha256": "22b9b8e64c8d75fc6556d2f31644860e027fc9561c3902e668ff50c308880d38",
+      "bytes": 8717
+    },
+    {
+      "path": "rehearsal-1794437832173/reject-proxy.json",
+      "sha256": "4ab9ccef7c3420d96241d1e8396481f2cb3f24f34ea821e89e4c9eaa490586ec",
+      "bytes": 8717
+    },
+    {
+      "path": "rehearsal-1794437832173/reject-snapshotId.json",
+      "sha256": "acbe9481f6c98eacb765b229b7a5dec9903fb07d1a4d06cc1d401333dc1902dc",
+      "bytes": 8717
+    },
+    {
+      "path": "rehearsal-1794437832173/reordered-input.json",
+      "sha256": "10a0a9070957e72cfedf2c31de62852451a9f53ddd5690bf52f277d61fe436dc",
+      "bytes": 16194
+    },
+    {
+      "path": "rehearsal-1794437832173/reordered-issuance.json",
+      "sha256": "7a1558db867ae424a38985598972efc997ca7abe6480bce8ef61e6c4798969e9",
+      "bytes": 913
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement-execution.json",
+      "sha256": "bf5ba20943b2a66fc925a6afcd5cdcb90ab9d704d9c9613f93ddaac6c6919ac1",
+      "bytes": 8720
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement-input.json",
+      "sha256": "9fad2ce09bad2aa6fa4383d4066fce374f4bf81ea2f6d3d4be2e6820c9a94ea0",
+      "bytes": 16204
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement-observation.json",
+      "sha256": "297223dc574a88c78ec6959e058c3e4c528df1f6e3ec872023f32f67a0efd0cd",
+      "bytes": 271
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement/independent.json",
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd",
+      "bytes": 1502
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement/manifest.json",
+      "sha256": "fe33eb9da095f9dacfb9995ba08691e407f3a73f9cf33d5843556fa1aac32939",
+      "bytes": 37412
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement/nfts.json",
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580",
+      "bytes": 1645
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement/weighted-liquid.json",
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0",
+      "bytes": 388
+    },
+    {
+      "path": "rehearsal-1794437832173/replacement/weighted-sy.json",
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426",
+      "bytes": 384
+    },
+    {
+      "path": "rehearsal-1794437832173/runtime-code.json",
+      "sha256": "37c9002ac7a8571e83e019869ee4415144d946de5d13eb3466113f67246379df",
+      "bytes": 266125
+    },
+    {
+      "path": "rehearsal-1794437832173/synthetic-originals.json",
+      "sha256": "9a863df91df90be45c8df81006af795faf30a6f12cb8ff3370dc995e636b366e",
+      "bytes": 6491
+    },
+    {
+      "path": "rehearsal-1794437832173/synthetic-replacement-originals.json",
+      "sha256": "3433b542c8cf371f8ea22849020c6608c5ae0836d7e588d128d16e1addbfb176",
+      "bytes": 6489
+    },
+    {
+      "path": "rehearsal-1794437832173/tampered-prepared.json",
+      "sha256": "74aee70e9b8395937e273c5f13ee51a55197023bd90ec90ec37524da1eb5fa9f",
+      "bytes": 37306
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-liquid-final.json",
+      "sha256": "64533dd8984cab1d28822a947db99689c7da5ffddcb54447fe5517688d37e52c",
+      "bytes": 3328
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-liquid-partial.json",
+      "sha256": "4b460fec0186f682b228e156df79d4725a28f9301c953349e83616926bd43fca",
+      "bytes": 2908
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-liquid-source-bindings.json",
+      "sha256": "9bd53d25a888e53efb9a4597fc8d9c1bd30050e33222a2066d7c1ffe43e80ec8",
+      "bytes": 1116
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-liquid-stage1.json",
+      "sha256": "6b02b5012b89614d12f13d7e2d39e2de404dcafd5ebfbeb75f5d41e64b4ec1a5",
+      "bytes": 1176
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-sy-final.json",
+      "sha256": "310cae26f9792b2a69b333d1d5a1638c27361f8dbc92095cd4301248cdf0036f",
+      "bytes": 3895
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-sy-partial.json",
+      "sha256": "fd9fddd864a66ee6c596223421758c34c65950ace43a3e506cfa70c85fdd32c1",
+      "bytes": 3470
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-sy-source-bindings.json",
+      "sha256": "51bf2baa044d3107322133ea385ad87dc88ba02f0876c65463475878911c67e9",
+      "bytes": 1112
+    },
+    {
+      "path": "rehearsal-1794437832173/weighted-sy-stage1.json",
+      "sha256": "64e7d3ee69b5909421d29a09c66b0d069cb33ac685d4080c6a2725348b9289ab",
+      "bytes": 1168
+    },
+    {
+      "path": "rehearsal.log",
+      "sha256": "0130e7ff78bac93b06d5e5904f8cdb509682fb5356f0d467849512f3d4a761d6",
+      "bytes": 241
+    },
+    {
+      "path": "runtime-index.json",
+      "sha256": "39f1b7d046d14ccd9e5ba9b1fa5a14d19754507577034e25c47a7b3f8afb9b34",
+      "bytes": 343189
+    },
+    {
+      "path": "source-authority.json",
+      "sha256": "f9f94466e799b647afa343ba8d7fa302fb52da980aff35f7f39fc9ef1e9e81db",
+      "bytes": 49862
+    },
+    {
+      "path": "specs.log",
+      "sha256": "8b4462ce46447c15f75677bcd2f7458020cc37d2bfa2c952fa3bc72f1ba9a261",
+      "bytes": 379174
+    }
+  ],
+  "reportSealedSeparately": true,
+  "manifestDoesNotHashItself": true
+}
+

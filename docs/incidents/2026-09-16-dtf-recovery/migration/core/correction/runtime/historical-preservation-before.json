@@ -1,0 +1,409 @@
+{
+  "checkedAt": "2026-11-10T23:24:53.632Z",
+  "files": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/release-mined-cliff-clock.json",
+      "sha256": "1b850e556e305dce6d34add0c4b15e2dd33590c8a377157ec73cbc5d408a1732"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-a-attempt-02-command.txt",
+      "sha256": "249462689654da812209d2191f14905b44f5a54a64f2552c7f8a7be357f013ed"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/final-executed-commands.txt",
+      "sha256": "c2d843275f5418f198fa278cb73d70d301e5ec645184588acf17a525f87c7fa5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/report.md",
+      "sha256": "bbc09ed1a30b3033e6499069bb30ad8f77d48baf79fc5f974b58be01def3272b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/release-early-reward-rejection.json",
+      "sha256": "e7b64649344272ad4480d1297acaa9c4cf7ff0bb6048bf3035bb2857786681b8"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-a-attempt-01-failure.json",
+      "sha256": "f0fcf98792d4352edc49b46c09121736bfed928c2f7982c9adb69214bd112c93"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/verification-summary.json",
+      "sha256": "ce80b6f5ff51ae5c1dccb93748ff0e87ebaaf850e4a0cfe13d0651267b963a2b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/diagnostics.json",
+      "sha256": "b9036d6038eb473646363f2a9f2b420e22efdc42888fa92d9570fe305af59456"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/node-before.json",
+      "sha256": "fc42dac2ba4dd647557cb107a354aa26bb8529b84f21a4c080bc31d0899f956d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/deployed-surface-and-runtime.json",
+      "sha256": "eecec293ea869ed2ceef9582199c701a0ce44058e147964384b13d8aa9f6da82"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-a-readback.json",
+      "sha256": "8760033c5a1ffa03ae45ef302944010c9bc5dc9b29ee8f5b452a456fe32b1b52"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/cleanup.json",
+      "sha256": "571c11eae7868ca7e8f418c2303e7aadcba6c34e5adc06798328b33a4c2bbfc0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-b-command.txt",
+      "sha256": "2b818673b37e2acb2fbd688a0fc1eba344f0264e585bfce5ad83e5c690940532"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-a-attempt-02-failure.json",
+      "sha256": "0d3644e2ef9187723ac6ebcb251423b92da787cf23082b15b0a4b05ca931ed59"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/release-stage-a-readback.json",
+      "sha256": "91f4df92be6f9feddf00e4986e4dd9b6b3d42db4612cf1cbcdea97fecdfae92c"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/early-reward-rejection.json",
+      "sha256": "5e14eb798ac7aa2a68e33aaaf46dd349b5c50bf54c4c94449edce70eb516e81a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/release-stage-b-readback.json",
+      "sha256": "d00dba13679b83b58ddb3afa99acac9f723e76eec68193bfbbfafb07e79586ec"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/package-owner-retired-runtime.json",
+      "sha256": "ff8e0e20dfddb3f509d0b699c6aba4a03accbc466abe5464409e9a9314bf17a5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-b-readback.json",
+      "sha256": "89101b93293f1f06f3a76bccb8ebe415892293e2e29d24c2fdfea8d83b681217"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/mined-cliff-clock.json",
+      "sha256": "9039c97f8c59ddaf20475ba62f37717af7fa5cadf4f9bf9f57b53c47e42d07ac"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/wrong-endpoint.json",
+      "sha256": "f9dd6be92f90b9b87de48161676f23a096cf7bfabea0abcc451445bd7167e880"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/final-check-commands.txt",
+      "sha256": "396833ab055654dc701ecd65157b261cac044a94840b6d3bd57e22714fa19233"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/node-attempt-02.json",
+      "sha256": "3f31261a5e87b763271ee4ce7129a1cd3d4678422b2c36189bbf9445e849c164"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/source-artifact-binding.json",
+      "sha256": "dd57bdddbcc40596c338aa68ff0856521b6dc5be211a86bf8efdedabdcb72879"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-a-release-command.txt",
+      "sha256": "20336a8bddab50a2eddc5a535987ce7246ef5e36ded4142448340b0bbe7a3836"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/node-final.json",
+      "sha256": "15d05be05ebd8ca6a542b145c61eb357f34aa3566ce8d6a5f64c75afd6879c46"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-a-final-command.txt",
+      "sha256": "c58d3d9b421cd86fdb008fd902d1db4a84aa6def57897ee87d5650581995ec31"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/node-release.json",
+      "sha256": "dc9940ecae342e5fca981b2729c21d9675d66276892aa52eae126d35ed341215"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-a-command.txt",
+      "sha256": "56b9206e07270ba8e6987485090bec4c4e3b2e2150f599251031ee53da7bb6d1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/stage-b-release-command.txt",
+      "sha256": "62f526023f39fa09ea277fa9b7f3beae4169fedb364b943a4b654426dede2858"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast/MigrationCoreLocalQA.s.sol/31337/run-1794346086711.json",
+      "sha256": "ac8182b34bf4bf4ede37d24d6637d587087ed88af78f04519cb9fd5cdae3bec5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast/MigrationCoreLocalQA.s.sol/31337/deployAndIssue-latest.json",
+      "sha256": "ac8182b34bf4bf4ede37d24d6637d587087ed88af78f04519cb9fd5cdae3bec5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-final/MigrationCoreLocalQA.s.sol/31337/run-1794346882109.json",
+      "sha256": "87884088d6e3b5dba2d1bfdf43e373efbb0ffd48562576bc8510a5677584840a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-final/MigrationCoreLocalQA.s.sol/31337/exerciseAfterCliff-latest.json",
+      "sha256": "87884088d6e3b5dba2d1bfdf43e373efbb0ffd48562576bc8510a5677584840a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-final/MigrationCoreLocalQA.s.sol/31337/run-1794346607049.json",
+      "sha256": "56aa4db1a96c191681f04670c202ed6cf1aaaff89414eb2aff71600fd9f26a93"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-final/MigrationCoreLocalQA.s.sol/31337/deployAndIssue-latest.json",
+      "sha256": "56aa4db1a96c191681f04670c202ed6cf1aaaff89414eb2aff71600fd9f26a93"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-attempt-02/MigrationCoreLocalQA.s.sol/31337/run-1794346316591.json",
+      "sha256": "85640fc7a0b6ccd2c08d6aac076d07281940003fe114905e2439354d86442319"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-attempt-02/MigrationCoreLocalQA.s.sol/31337/deployAndIssue-latest.json",
+      "sha256": "85640fc7a0b6ccd2c08d6aac076d07281940003fe114905e2439354d86442319"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-release/MigrationCoreLocalQA.s.sol/31337/run-1794347615480.json",
+      "sha256": "e92e26527050846e0fcd53380c63dcf6989c8c2843404be395126e7e1893d067"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-release/MigrationCoreLocalQA.s.sol/31337/run-1794347422346.json",
+      "sha256": "6b03fcc8f76b00399ef97fcf7569791984864c8251fc9045a94a2e26cff2baf9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-release/MigrationCoreLocalQA.s.sol/31337/exerciseAfterCliff-latest.json",
+      "sha256": "e92e26527050846e0fcd53380c63dcf6989c8c2843404be395126e7e1893d067"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/broadcast-release/MigrationCoreLocalQA.s.sol/31337/deployAndIssue-latest.json",
+      "sha256": "6b03fcc8f76b00399ef97fcf7569791984864c8251fc9045a94a2e26cff2baf9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/artifact-plan.json",
+      "sha256": "e7ebad1dd62e2aff1dcc6e5d3470d7b9c9fba7a76d2fd221b57dbf29dd251a32"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/qa-build-03.log",
+      "sha256": "bb6bcc4a1eecd5ca12d9c114811366f63a27a18a324a7eadd9e27cffdff31bd2"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/qa-build-02.log",
+      "sha256": "884f2f59db3e7125e85e9dff335c500a2f4fdfda182b801f9ee7ff19de97907e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/local-stage-a-01.log",
+      "sha256": "75a577bffbeac765335a929d68fbfb81bbc8b99d2d3b99475cfe68b039ff333a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/local-stage-a-03.log",
+      "sha256": "5699c28748c0cac4eea9e847dfd7bef665cee9673273a3f1553abfbc68c41012"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/qa-build-01.log",
+      "sha256": "a058b221e91fbc484f57e3e9ae9832751aaa6e295cc65bfc7b1bf8e8a0fa4e2f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/local-stage-a-02.log",
+      "sha256": "4bc065e08e5194ba6b7b907114c20efac949c26136e3aed18036614d5d0b7fcf"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-09.log",
+      "sha256": "93bb3f1944781f33dcf2811bebaf47426aed14020da012cd5540e8b1c73bd04c"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-08.log",
+      "sha256": "1f1a7387b5106ebeca9b1939b1ae41fa6274b32a4fee7fcd5122da57cb2aec81"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/local-stage-a-05.log",
+      "sha256": "2d70c789d62b71fa5c5830ae725d4a282332accb8c664a5573e2fddb4aee3aa3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/local-stage-a-04.log",
+      "sha256": "7ace80eb95246172a27d7c4d94e6b041e26b8e89f4ac2bfd201d784b42fa2065"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/retained-trace-01.log",
+      "sha256": "fac5fd47c7e089e660b86a24c4313c73ef46c34c1691c5887b69b3dc1e2923c9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/local-stage-b-01.log",
+      "sha256": "a4e2e50ecca8633e8189acdc01ec841f62fea9e471438bde39bf031d28f25837"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/local-stage-b-02.log",
+      "sha256": "8aaf95eeb22639d8d5574d934b76687b35b2838dec29f61dfd1eb2996211f674"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/combined-01.log",
+      "sha256": "7e433ef3ce13d2112fc70d1e7340db14a5da1c7c60f54f5d218938be0357cb0c"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-12.log",
+      "sha256": "ca269bb2b59a746e651d00dc3408fd20f34d500feddc36f483d59e0a776934dd"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-06.log",
+      "sha256": "8474f8d918c3da0da79d9945ec349b8ae10fe01af8954b23cf567bb24525f3a6"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-07.log",
+      "sha256": "ca3bc515038059bc29c4b1b65de566a8e8677bac0c2dc8284fbdd8da161a865d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-13.log",
+      "sha256": "632a3b041bf3e424b1356d6e501f8445a7af2b4795a6c36ba0b51f086f83fdfd"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-05.log",
+      "sha256": "9d8f6d4a7395e4c79000bcee4346a6653378e12dbc6a43b0cbdcf0938377c209"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-11.log",
+      "sha256": "aea1566c86da23d592de225aa8c47157c6ddbca5ff7538c1708dbd07808bc9d4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-10.log",
+      "sha256": "ea7dcdca1d5812e9573854a6f0667ccee0a0b036c7f29e7474d2ac8f0f62b725"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-04.log",
+      "sha256": "5196d134897f9053787bf54082f9c60c0174bdf114cfff49a0fcf7d60c4c7c48"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-14.log",
+      "sha256": "c99c65215333b5431b9d32b17c3855c5099312c948fffdb3ed6f52aba8ce5111"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-15.log",
+      "sha256": "f55e36be618e7bd5129d51bb7df26748333c48a0e6430338138206b5cb7b5b76"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-01.log",
+      "sha256": "e7b8f4060945182301ba177a43ae79d496b11ab180e7d0b3de2b8e9cd9f30ddf"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-03.log",
+      "sha256": "9b96a2746621683ea7443d250214c7744fa0bc8b503e776f5273cca352c9fc1d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/implementation/logs/focused-02.log",
+      "sha256": "e7b8f4060945182301ba177a43ae79d496b11ab180e7d0b3de2b8e9cd9f30ddf"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/GenesisWitness.s.sol",
+      "sha256": "b02b38aef5e42e147a9bb50beffc2db7e2c0d555934233875bb38143530686ee"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/CallbackRollbackWitness.s.sol",
+      "sha256": "dadb327472657c81bdf58be04429c844da2450b9483ba048f3f5025900cd7c32"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/witness-diagnostics.json",
+      "sha256": "6344b7fa4eb847c52475ddd40be09802c9cc270928fe15b2e50b1ed6a5c333a8"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/report.md",
+      "sha256": "53ffdb9378724ea63bb32a20e8f99cfd2c94a134a1ef45b3205827fe5bb900c4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/witness-identities.json",
+      "sha256": "673f0c178fd4ed78a0f1850f121ce32ee4af9f7057fb697492c338cf399df2fa"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/cleanup.json",
+      "sha256": "e41fb365ca6fc053b15189ebb11ce028f35d634502d72b2b8f0b073c0244b6dd"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/surface-artifact-matrix.json",
+      "sha256": "aaaf3893424fa8c9973ea9434d33e1a91049209d4e6f5e60cbdc6a54ecaca452"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/reviewed-input-identities.json",
+      "sha256": "79a9bb50ff20923330a5447fea12c02b8e6f46f54f6b069abf5a92700ada32a4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/binding-summary.json",
+      "sha256": "2cd85e73c19c3d4c29d1a092f23e2c29ad288d26276238edd8e2f51b7b7cc6a7"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/stage-a-isolated.log",
+      "sha256": "f697e17d4bfed5996c348ee76504806ac0e6717ca7abbe6103739cff3e4bbb3a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/genesis-witness-corrected.log",
+      "sha256": "c4026ba71a1261e550208b7281dc1dbf88073138f3c8262424e4515b63a4f88b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/metadata-captures.json",
+      "sha256": "2cd2995222db345390128891c2afdf9ff2d86a406dfae1af35b2cbb7ebdfcb36"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/restoration-probes.json",
+      "sha256": "724e98a96623169eca0efe7cf9dd3affee309cb070d69019a83f6c012f879488"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/callback-rollback-witness.log",
+      "sha256": "6a46668627232370232a32d176ddb40f01118d9ee2aa926afcd99d9b37f475fc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/conservation.json",
+      "sha256": "0d6bc7c8fbe146c867ac812fe26a02653372ee4aa70e2b9985c9de5400540094"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/genesis-witness-final.log",
+      "sha256": "1826a518bce2f8137d04d17bc6fd573ce10594c03869947d4f29402102a0b3a3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/stage-a-readback.json",
+      "sha256": "a776ccc6449edd41dd1eb90c561c099022257883bcc0f5b49c1d94c9fa11bc84"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/README.md",
+      "sha256": "5d99a592d72ac23567d0e1ada71219616ffc3efc1ffa766a0988393d425e9640"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/bearer-self-rewards.json",
+      "sha256": "95ffe031036bb859438d57badedae593b394ab378e613ce09e803797704cb275"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/genesis-witness.log",
+      "sha256": "71140611a6e5026c2ef9dd2d5eb2ed219111a0ca31f0f4a8196fe9c86aae89a5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/stage-b-readback.json",
+      "sha256": "3af7c839c472db76a8236d3e79d50bc352046f57bae2154c6adab8350617afa9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/stage-a-funded.log",
+      "sha256": "4e78a434e551e2c6f47dda31b347cce12d658df0ffd0db6897b938e6487453e2"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/inherited-donation-probes.json",
+      "sha256": "5ea3d5d8d0702ce811a4e006f1459171455a20c4d130ec1a9e2f4ccb64bd8889"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/stage-a.log",
+      "sha256": "cf4410811bf8cd7f4ef63681931e10bd42c330e1f0be980fc21b2c0188c273d8"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/stage-b.log",
+      "sha256": "a69238be99b981243f3fe8372b36eee968917f5ebc3263124300ccb6f61c783d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/broadcast/MigrationCoreLocalQA.s.sol/31337/run-1794349119330.json",
+      "sha256": "10f63343456550f4447576dcaf8997da05e5d2c25ea2fb40780c67800ef0a228"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/broadcast/MigrationCoreLocalQA.s.sol/31337/deployAndIssue-latest.json",
+      "sha256": "10f63343456550f4447576dcaf8997da05e5d2c25ea2fb40780c67800ef0a228"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/broadcast-funded/MigrationCoreLocalQA.s.sol/31337/run-1794349266784.json",
+      "sha256": "37fc825cafe8f49cab6f430f6720ebdf9679417c3be48c277e72c604af984286"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/broadcast-funded/MigrationCoreLocalQA.s.sol/31337/run-1794349425987.json",
+      "sha256": "2f9a4db80e19e50ca08624778d058119b7836a9a1a9ce1aa7a282aeeecdf3514"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/broadcast-funded/MigrationCoreLocalQA.s.sol/31337/exerciseAfterCliff-latest.json",
+      "sha256": "2f9a4db80e19e50ca08624778d058119b7836a9a1a9ce1aa7a282aeeecdf3514"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/broadcast-funded/MigrationCoreLocalQA.s.sol/31337/deployAndIssue-latest.json",
+      "sha256": "37fc825cafe8f49cab6f430f6720ebdf9679417c3be48c277e72c604af984286"
+    }
+  ]
+}

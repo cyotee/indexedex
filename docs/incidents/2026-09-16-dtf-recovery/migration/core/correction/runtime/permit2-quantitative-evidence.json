@@ -1,0 +1,1113 @@
+{
+  "source": {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+    "sha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+    "keccak256": "0x3e38f1547d9e07795103cce6650c3718c9dcced09f92a038f551c960ae6751e4",
+    "lines": 252,
+    "pureLines": 224
+  },
+  "traceSha256": "435c251db587c0f180066f8ddec934de55ac4fc488133dacfad080e4c3467921",
+  "executedTests": 15,
+  "exit": 0,
+  "canonicalAddress": "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+  "runtimeKeccak256": "0x584b3dfa0888b6e2ba8f0a3a47011aa3c53dcd8a819c8dd1963e00cbcc82ba6a",
+  "chainId": 31337,
+  "domain": "0x4d553c58ae79a6c4ba64f0e690a5d1cd2deff8c6b91cf38300e0f2b76f9ee346",
+  "cases": [
+    {
+      "test": "test_V1_allowanceCallbackFailureRollsBackEverything",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 15,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 641,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 643,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 645,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 758,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1384,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1386,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1388,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1408,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1410,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 31341,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31343,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31986,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 990000000000000000 [9.9e17], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 31988,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 31993,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31997,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_allowanceDeadlineFailureRollsBack",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 4,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 630,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 632,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 634,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 664,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1290,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1292,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1294,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_allowanceDonationPaysOnlyReserve",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 13,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 15,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 29946,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 29948,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 30591,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 990000000000000000 [9.9e17], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 30593,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 30598,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 30602,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_allowanceDownstreamMinimumRestoresApprovalAndReserve",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 13,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 639,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 641,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 643,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 21981,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 22607,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 22609,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 22611,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 22629,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 22631,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 52562,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 52564,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 53207,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 990000000000000000 [9.9e17], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 53209,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 53214,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 53218,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_allowanceExpiryWithValidRouteRollsBack",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 9,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 86399 [8.639e4], 0"
+        },
+        {
+          "traceLine": 635,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 637,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 639,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 685,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 86399 [8.639e4], 0"
+        },
+        {
+          "traceLine": 1311,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1313,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1315,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_allowanceWrongCallerCannotSpendDonorApproval",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 21,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 647,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 649,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 651,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 669,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(unapproved donor: [0xa8C8c0414B9E36f4e323e50105fB15462D27F41B], MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 0, 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1295,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(unapproved donor: [0xa8C8c0414B9E36f4e323e50105fB15462D27F41B], 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1345,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1971,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1973,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1975,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1993,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(unapproved donor: [0xa8C8c0414B9E36f4e323e50105fB15462D27F41B], MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 0, 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 2619,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(unapproved donor: [0xa8C8c0414B9E36f4e323e50105fB15462D27F41B], 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_canonicalRuntimeAndDomainIdentity",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 16,
+          "call": "├─ [228] 0x000000000022D473030F116dDEE9F6B43aC78BA3::DOMAIN_SEPARATOR() [staticcall]",
+          "returned": "│   └─ ← [Return] 0x4d553c58ae79a6c4ba64f0e690a5d1cd2deff8c6b91cf38300e0f2b76f9ee346"
+        },
+        {
+          "traceLine": 19,
+          "call": "├─ [228] 0x000000000022D473030F116dDEE9F6B43aC78BA3::DOMAIN_SEPARATOR() [staticcall]",
+          "returned": "│   └─ ← [Return] 0x4d553c58ae79a6c4ba64f0e690a5d1cd2deff8c6b91cf38300e0f2b76f9ee346"
+        },
+        {
+          "traceLine": 24,
+          "call": "├─ [378] 0x000000000022D473030F116dDEE9F6B43aC78BA3::DOMAIN_SEPARATOR() [staticcall]",
+          "returned": "│   └─ ← [Return] 0x866a5aba21966af95d6c7ab78eb2b2fc913915c28be3b9aa07cc04ff903e3f28"
+        },
+        {
+          "traceLine": 27,
+          "call": "├─ [378] 0x000000000022D473030F116dDEE9F6B43aC78BA3::DOMAIN_SEPARATOR() [staticcall]",
+          "returned": "│   └─ ← [Return] 0x866a5aba21966af95d6c7ab78eb2b2fc913915c28be3b9aa07cc04ff903e3f28"
+        },
+        {
+          "traceLine": 32,
+          "call": "├─ [378] 0x000000000022D473030F116dDEE9F6B43aC78BA3::DOMAIN_SEPARATOR() [staticcall]",
+          "returned": "│   └─ ← [Return] 0xd39117098c7fdd9b7eb1fa23b1f6296122c98bb236a734d2beeb44bdad389f2b"
+        },
+        {
+          "traceLine": 35,
+          "call": "├─ [378] 0x000000000022D473030F116dDEE9F6B43aC78BA3::DOMAIN_SEPARATOR() [staticcall]",
+          "returned": "│   └─ ← [Return] 0xd39117098c7fdd9b7eb1fa23b1f6296122c98bb236a734d2beeb44bdad389f2b"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureCallbackFailureRestoresNonce",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 15,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 641,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 643,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 645,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 760,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1386,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1388,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1390,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1410,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1412,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 31345,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31347,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31990,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 31992,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 31997,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 32001,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureDonationPaysOnlyReserve",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 13,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 15,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 29948,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 29950,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 30593,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 30595,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 30600,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 30604,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureDownstreamMinimumRestoresNonceAndReserve",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 15,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 641,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 643,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 645,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 21985,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 22611,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 22613,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 22615,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 22633,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 22635,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 52568,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 52570,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 53213,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 53215,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 53220,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 53224,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureExpiredWithValidOuterDeadlineRollsBack",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 6,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 632,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 634,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 636,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 654,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1280,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1282,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1284,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1330,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1956,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1958,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1960,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1978,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 2604,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 2606,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 2608,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureReplayPreservesCommittedFirstDonation",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 13,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 15,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 29948,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 29950,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 30593,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 30595,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 30600,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 30604,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 30609,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 31235,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 31237,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31239,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31257,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 31883,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 31885,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31887,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 31933,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 32559,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 32561,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 32563,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 32581,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 33207,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 128"
+        },
+        {
+          "traceLine": 33209,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        },
+        {
+          "traceLine": 33211,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 9990000000000000000 [9.99e18]"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureWrongCallerRollsBackBothAccounts",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 18,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 644,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 646,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 648,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 666,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(signature thief: [0x1798B6a15b3147286EA609a5908A5080cE4BA7d6], MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 0, 0, 0"
+        },
+        {
+          "traceLine": 1292,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(signature thief: [0x1798B6a15b3147286EA609a5908A5080cE4BA7d6], 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1344,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1970,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1972,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1974,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1992,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(signature thief: [0x1798B6a15b3147286EA609a5908A5080cE4BA7d6], MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 0, 0, 0"
+        },
+        {
+          "traceLine": 2618,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(signature thief: [0x1798B6a15b3147286EA609a5908A5080cE4BA7d6], 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureWrongDomainRollsBackNonce",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 10,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 636,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 638,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 640,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 658,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1284,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1286,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1288,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1336,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1962,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1964,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1966,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1984,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 2610,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 2612,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 2614,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        }
+      ]
+    },
+    {
+      "test": "test_V1_signatureWrongSpenderRollsBackNonce",
+      "status": "PASS",
+      "rawLog": "permit2-state-traces.log",
+      "observations": [
+        {
+          "traceLine": 6,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 632,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 634,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 636,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 654,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1280,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1282,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1284,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1332,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 1958,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 1960,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1962,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 1980,
+          "call": "├─ [2771] 0x000000000022D473030F116dDEE9F6B43aC78BA3::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, MigrationPermit2Callback: [0xf600471362E76508D1e3F5BA5d705755B7e1043C], MinimalDiamondCallBackProxy: [0x7985Ecc11f051829A8aE4D3812ef55C198765fCa]) [staticcall]",
+          "returned": "│   └─ ← [Return] 1000000000000000000 [1e18], 172800 [1.728e5], 0"
+        },
+        {
+          "traceLine": 2606,
+          "call": "├─ [2524] 0x000000000022D473030F116dDEE9F6B43aC78BA3::nonceBitmap(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0) [staticcall]",
+          "returned": "│   └─ ← [Return] 0"
+        },
+        {
+          "traceLine": 2608,
+          "call": "├─ [2512] MigrationPermit2Callback::balanceOf(0x6E350f78D41177D00D36B66C35e5704fAA605743) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        },
+        {
+          "traceLine": 2610,
+          "call": "├─ [2742] MigrationPermit2Callback::allowance(0x6E350f78D41177D00D36B66C35e5704fAA605743, 0x000000000022D473030F116dDEE9F6B43aC78BA3) [staticcall]",
+          "returned": "│   └─ ← [Return] 10000000000000000000 [1e19]"
+        }
+      ]
+    }
+  ]
+}

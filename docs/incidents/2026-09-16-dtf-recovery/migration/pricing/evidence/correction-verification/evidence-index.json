@@ -1,0 +1,161 @@
+{
+  "checkedAt": "2026-11-10T16:05:12.527Z",
+  "recorder": {
+    "path": "run.sh",
+    "sha256": "18d5e1556ac435cea0b604560765008bffa60243eac65907546d58bd1f368f8e"
+  },
+  "report": {
+    "path": "report.md",
+    "sha256": "ab13bd6fa282bb500694fba7dbd7d8e74d31123b51100f307209d573eb1be602"
+  },
+  "receipts": [
+    {
+      "path": "positive-readbacks.json",
+      "sha256": "462bb4753d3798c1d2d49107c3ed884e34975c39d727a8bb2a0d87c034511e8f"
+    },
+    {
+      "path": "nodes-ready-command.txt",
+      "sha256": "70a9ce3784df877121c3b44a469fbe60d30d05d9672eb6f7da52cca44235baeb"
+    },
+    {
+      "path": "mined-receipts-command.txt",
+      "sha256": "f4b65124319a96b1b485e061d95d71506ed3dd5beda30543bf3e899a81cab044"
+    },
+    {
+      "path": "preflight.log",
+      "sha256": "412a0fc9c43efe67ad1df03869df083ab3b5e51815b1fb08d2a922699fffdd57"
+    },
+    {
+      "path": "f2-receipt-check.json",
+      "sha256": "6a59faf2c8186b1e1e7567d684f7ad91ef6e1eb5b244a5c9cf74e55e2528989e"
+    },
+    {
+      "path": "positive.log",
+      "sha256": "0d3c6f7474ed170afb0a6d90070eefb9a9b044eab1a89ccf640df745440dacb5"
+    },
+    {
+      "path": "negative-exit.txt",
+      "sha256": "2dc381077cf6b4859cbfb1d366a5ba5312fa4c7c777f7eda01912c44e70c9c06"
+    },
+    {
+      "path": "negative.log",
+      "sha256": "47a60fc8539d4efcd9ac7b303d8028151217190f88fdb4de4ff046294e3b194d"
+    },
+    {
+      "path": "anvil-18546-command.txt",
+      "sha256": "67195df4e46d4a3399751d353e446da8c399fd5da94c1d1ccdfd05ea954adb1b"
+    },
+    {
+      "path": "coverage-gates-exit.txt",
+      "sha256": "fb0cdb053c2d2369f9f2301547bd88f91ffb8c4dd67125b3f7148a5c6c2b9fbb"
+    },
+    {
+      "path": "nodes-ready-exit.txt",
+      "sha256": "0c366af5b857bae93290a54892d9c8d04df4f9cb39f753330ca44c179b22035c"
+    },
+    {
+      "path": "mined-receipts-exit.txt",
+      "sha256": "8682da2ccc742a73b7be6493257a081862f3c67105a62d308e4132c75a21c4c1"
+    },
+    {
+      "path": "anvil-18547.log",
+      "sha256": "b2084079af3ae081f8a2961c4b4be43451853a1a037c60c0fd9e8a9d442021b6"
+    },
+    {
+      "path": "anvil-18546.log",
+      "sha256": "949f8c62631d401e76591137f6a6f7352e652319f649f1efc5c484f658b06fbb"
+    },
+    {
+      "path": "nodes-ready.log",
+      "sha256": "acc321065419fc56f6d6e9067d947b8a27fc250689b82d92637f104bc4a6d28c"
+    },
+    {
+      "path": "positive-command.txt",
+      "sha256": "3631f59de8a00929d5c1d9797781e0eababa203e97ad4e699bd39849f3b3c5bf"
+    },
+    {
+      "path": "cleanup-command.txt",
+      "sha256": "748f75b132da90f14658a14568f04b83e910a34368e12f6c3576b5df2b47e412"
+    },
+    {
+      "path": "negative-command.txt",
+      "sha256": "e0aa6e42206ce45348c0d2ed026a74797a132aed6f7cdbd364eca7d049ef291b"
+    },
+    {
+      "path": "stop-nodes.log",
+      "sha256": "d3b3412bbeb27271069938cab21017f643b176bd934370d692a2677853895a4b"
+    },
+    {
+      "path": "cleanup.log",
+      "sha256": "5731cad8af2dd43bae321ebb3a7469a7b2d0dccabaf4e416d4f79cb659d3a2da"
+    },
+    {
+      "path": "negative-after-rpc.json",
+      "sha256": "bfbe4e405186f57ef87f8057ba80e7c0414cf4771edc1cc1b9f7292d05e659ba"
+    },
+    {
+      "path": "coverage-gates.log",
+      "sha256": "fa57373d0b31906a270b4170d69e28cfcace418f4653f4e426b29f0232fa7718"
+    },
+    {
+      "path": "coverage-gates-command.txt",
+      "sha256": "cc6a22d0fab9ca03e26e4a910a6a77a37f2b570ed53342194d92402c7a37bde9"
+    },
+    {
+      "path": "positive-exit.txt",
+      "sha256": "abc2f4e2ddb07ba65892afa78133f9a8cd410fd6c13f6eb1b28d97a2e85e9c4f"
+    },
+    {
+      "path": "cleanup-exit.txt",
+      "sha256": "711ed914e66e2f6115b64cf08d3aa2bd9f583c87df71e763584622b0f5f72a43"
+    },
+    {
+      "path": "mined-receipts.log",
+      "sha256": "88df79f9527d3ddce33eb891b6303920084383946219562145afdcc99d296522"
+    },
+    {
+      "path": "source-artifact-binding.json",
+      "sha256": "fb283c0fd402cff058466451d32f232007c743008c5374982c6d6ab17c4cae1e"
+    },
+    {
+      "path": "stop-nodes-command.txt",
+      "sha256": "9fdcfea4e288dbcdc54c18bf6a6da42e55a0e88a6bf865dfb0aead737b59b117"
+    },
+    {
+      "path": "negative-before-rpc.json",
+      "sha256": "88dc07468ae44c4b79fe0f2f6dab96389cdd07e54c89d8bac54b6d766d597c6f"
+    },
+    {
+      "path": "preflight-exit.txt",
+      "sha256": "556e8b61ffab8e170bd64693494ad7c86a4a01ccd759185eac9f337306da7894"
+    },
+    {
+      "path": "anvil-18547-exit.txt",
+      "sha256": "82f7520f7d2adebdd27bcf59404fc62a76503fbe6f95b381fec22bfa29656996"
+    },
+    {
+      "path": "anvil-18546-exit.txt",
+      "sha256": "82f7520f7d2adebdd27bcf59404fc62a76503fbe6f95b381fec22bfa29656996"
+    },
+    {
+      "path": "stop-nodes-exit.txt",
+      "sha256": "82f7520f7d2adebdd27bcf59404fc62a76503fbe6f95b381fec22bfa29656996"
+    },
+    {
+      "path": "preflight-command.txt",
+      "sha256": "8d83d9daed457ace76e624e40d7bf8a853360783b0e83f41b6034d5846330ce7"
+    },
+    {
+      "path": "final-preservation.json",
+      "sha256": "30e6df48901c98fa7be28f60e6e6aef5bd7807e121ecab7f5ca13c07cea58aec"
+    },
+    {
+      "path": "anvil-18547-command.txt",
+      "sha256": "f99ddbc7506b390f3da5e37fd98e8aea1a956de3891ae788a17a20c94ad69045"
+    }
+  ],
+  "broadcast": {
+    "path": "broadcast/MigrationSnapshotLocalQA.s.sol/31337/run-latest.json",
+    "sha256": "de718b43cd1b478eb36ac9da1ece7a00b7d7544351604a89e1ca205cd10cda65"
+  }
+}

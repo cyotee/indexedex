@@ -1,0 +1,66 @@
+@startuml IRouter_swapSingleTokenExactOut
+actor User
+participant Router
+participant Vault
+participant Pool
+participant Hooks
+
+== Initiation ==
+User -> Router: swapSingleTokenExactOut(pool, tokenIn, tokenOut, exactAmountOut, maxAmountIn, deadline, wethIsEth, userData)
+note right: User calls Router to swap for an exact amount of tokenOut.\n**Code Citation**: Router.sol#L451-L472
+note left: Entry point for exact output swap, validates inputs and prepares params.
+
+== Vault Unlocking ==
+Router -> Vault: unlock(params)
+note right: Router encodes SwapSingleTokenHookParams and calls Vault.unlock to enter transient state.\n**Code Citation**: Router.sol#L457-L471\n**Code Citation (Vault)**: Vault.sol#L191-L197
+note left: Enables atomic transaction with transient debt management.
+
+== Swap Single Token Hook ==
+Vault -> Router: swapSingleTokenHook(params)
+note right: Vault executes Router's swapSingleTokenHook.\n**Code Citation**: Router.sol#L581-L602
+
+== Swap Logic ==
+Router -> Vault: swap(VaultSwapParams with kind=EXACT_OUT)
+note right: Router calls Vault.swap to compute swap amounts for exact output.\n**Code Citation**: Router.sol#L583-L592\n**Code Citation (Vault)**: Vault.sol#L258-L346
+
+alt shouldCallBeforeSwap == true
+    Vault -> Hooks: onBeforeSwap(swapParams, pool)
+    note right: Vault calls hook (if enabled) for pre-swap logic.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L170-L179
+    Hooks --> Vault: true
+    note right: Hook returns true, signaling success.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L175
+end alt
+
+Vault -> Pool: onSwap(swapParams)
+note right: Vault calls pool's onSwap to compute input amount for exact output.\n**Code Citation (Pool)**: IBasePool.sol#L67-L70\n**Code Citation (Vault)**: Vault.sol#L313-L315
+
+alt shouldCallAfterSwap == true
+    Vault -> Hooks: onAfterSwap(afterSwapParams)
+    note right: Vault calls hook (if enabled) for post-swap logic.\nMay adjust amountCalculated if enableHookAdjustedAmounts is true.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L192-L215
+    Hooks --> Vault: adjustedAmountCalculatedRaw
+    note right: Hook returns adjusted amount if applicable.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L210
+end alt
+
+Vault --> Router: amountCalculated, amountIn, amountOut
+
+== Token Transfers ==
+Router -> Vault: takeTokenIn(sender, tokenIn, amountIn, wethIsEth)
+note right: Router handles tokenIn transfer, wrapping ETH to WETH if needed.\n**Code Citation**: Router.sol#L595-L597
+
+Router -> Vault: sendTokenOut(sender, tokenOut, amountOut, wethIsEth)
+note right: Router handles tokenOut transfer, unwrapping WETH to ETH if needed.\n**Code Citation**: Router.sol#L598-L600
+
+alt tokenIn == WETH
+    Router -> User: return remaining ETH
+    note right: If tokenIn is WETH, return any remaining ETH to user.\n**Code Citation**: Router.sol#L601
+end alt
+
+== Vault Settlement ==
+Vault -> Vault: check _tokenDeltas == 0
+note right: Vault ensures all transient debts are settled.\n**Code Citation (Vault)**: Vault.sol#L167-L189
+
+== Router Finalization ==
+Router -> User: amountIn
+note right: Router returns the amount of tokenIn used in the swap.\n**Code Citation**: Router.sol#L472
+note left: Delivers amountIn to user, concluding the operation.
+
+@enduml

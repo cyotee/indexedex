@@ -1,0 +1,54 @@
+{
+  "CONSUMER": "0x28dB1faE7d59B36aE6BBB939766F3F7F1c3eabec",
+  "DETF": "0x0Db4a30BB8A6A1873455693a33d732DBF0ABF9E2",
+  "HOOK": "0xb85cBEDF5098cCD53152386980702FD4245C6aa8",
+  "MANAGER": "0xAa66038Ae217b246F5bF7537104342672e56fed8",
+  "PAIR_A": "0x9283F3Ff485698b26333120D2F24c0dDBfd5BF08",
+  "PAIR_B": "0x536dA309fa11FEF8Fc8B94F5A9f7a608cdBbF3Ee",
+  "SE_A": "0x29103624cFf0c4FF93f41065b08aa5bA199bDFbE",
+  "SE_B": "0x6704e2474fdC91BB25e608F3B6FA50cEf9b80FE1",
+  "ETH_FROZEN": "1192506671",
+  "DTF_FROZEN": "1773603429",
+  "ETH_LIVE_AFTER": "1290890931",
+  "DTF_LIVE_AFTER": "1566579720",
+  "scope": "Local test tokens, not pinned recovery assets or historical attribution",
+  "originalEthAlias": "address(0) maps to configured PAIR_A; PAIR_A is a mintable 18-decimal fixture, not deployed WETH",
+  "routes": [
+    {
+      "contribution": "0x0000000000000000000000000000000000000000",
+      "pair": "0x9283F3Ff485698b26333120D2F24c0dDBfd5BF08",
+      "selectedSE": "0x29103624cFf0c4FF93f41065b08aa5bA199bDFbE",
+      "conversion": "identity",
+      "buffer": "recognized V3 ordinary pair deposit",
+      "output": "0x0Db4a30BB8A6A1873455693a33d732DBF0ABF9E2"
+    },
+    {
+      "contribution": "0x536dA309fa11FEF8Fc8B94F5A9f7a608cdBbF3Ee",
+      "pair": "0x536dA309fa11FEF8Fc8B94F5A9f7a608cdBbF3Ee",
+      "selectedSE": "0x6704e2474fdC91BB25e608F3B6FA50cEf9b80FE1",
+      "conversion": "identity",
+      "buffer": "recognized V3 ordinary pair deposit",
+      "output": "0x0Db4a30BB8A6A1873455693a33d732DBF0ABF9E2"
+    }
+  ],
+  "modelIdentity": {
+    "capture": {
+      "selector": "e13e2921",
+      "facet": "0xb33507fffc8f37eba70a1b8bf58b72f9cc370dda",
+      "bytes": 15973,
+      "completeRuntimeMatchesArtifact": true
+    },
+    "preview": {
+      "selector": "89d61912",
+      "facet": "0xde155799f66db238883a60c6ea9b713bfa709146",
+      "bytes": 11012,
+      "completeRuntimeMatchesArtifact": true
+    }
+  },
+  "pureMath": "0xe5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+  "snapshotStoredBytes": 5632,
+  "captureBlock": 227,
+  "captureGas": "3842683",
+  "evaluationGas": "451403",
+  "maximumSetupTransactionGas": "33584353"
+}

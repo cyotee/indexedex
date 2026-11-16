@@ -1,0 +1,227 @@
+{
+  "version": "independent-owner-bond-checks-v1",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+  "checks": [
+    {
+      "name": "Migration specs",
+      "command": "/bin/zsh -lc 'cd '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid'\\'' && set -o pipefail; PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol -- -vv 2>&1 | tee '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/specs.log'\\'''",
+      "exit": 0,
+      "monitor": "mon_3WG1H7X543506VKW"
+    },
+    {
+      "name": "Migration forks",
+      "command": "/bin/zsh -lc 'cd '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid'\\'' && set -o pipefail; PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv 2>&1 | tee '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/forks.log'\\'''",
+      "exit": 0,
+      "monitor": "mon_Z9JDZXHHSW9QR42V"
+    },
+    {
+      "name": "Operator stages then tests then types",
+      "command": "/bin/zsh -lc 'cd '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid'\\'' && set -o pipefail; PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol 2>&1 | tee '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/operator-stages.log'\\'' && bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts 2>&1 | tee '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/operator-tests.log'\\'' && bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts 2>&1 | tee '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/operator-types.log'\\'''",
+      "exit": 0,
+      "monitor": "mon_VX4CQCSHSY7C2C86"
+    },
+    {
+      "name": "Actual fixed18563 CLI",
+      "command": "/bin/zsh -lc 'cd '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid'\\'' && set -o pipefail; bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18563 --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints --evidence /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification 2>&1 | tee '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/rehearsal.log'\\'''",
+      "exit": 0,
+      "monitor": "mon_NMCZZJYVGD83PAFT"
+    },
+    {
+      "name": "Critical D1 unseeded purchase and callback traces",
+      "command": "/bin/zsh -lc 'cd '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid'\\'' && set -o pipefail; PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol -- --match-test '\\''test_activationRemovesEntireAdministrationAndKeepsQueries|test_immediatePaidPurchaseUsesCanonicalWeightsRewardsAndOrdinaryTerms|test_contractOwnerPaymentCallbacksCannotPublishOrBypassAndShortReceiptRollsBack'\\'' -vvvv 2>&1 | tee '\\''/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/critical-traces.log'\\'''",
+      "exit": 0,
+      "monitor": "mon_3J8CTXZSFJ4PVRFT"
+    }
+  ],
+  "counts": {
+    "specs": 109,
+    "forks": 52,
+    "operator": 57,
+    "criticalTraces": 3
+  },
+  "operatorComponents": [
+    {
+      "name": "both operator stages",
+      "command": "PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "exit": 0,
+      "log": "operator-stages.log"
+    },
+    {
+      "name": "three operator tests",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "exit": 0,
+      "log": "operator-tests.log"
+    },
+    {
+      "name": "strict operator types",
+      "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts",
+      "exit": 0,
+      "log": "operator-types.log"
+    }
+  ],
+  "expectedNegativeCommands": [
+    {
+      "file": "017-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/reject-proxy.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "018-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/reject-package.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "003-fund.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "fund",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "file": "023-owner-bond.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "owner-bond",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/owner-bond",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "file": "006-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33",
+        "--reverse"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "012-independent-issue.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "independent-issue",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "file": "020-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/reject-payload.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "019-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/reject-snapshotId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "file": "016-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/owner-bond-correction/rehearsal-1794433923560/reject-chainId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xdd6ef4caccc894700d4f516da8e498d3db5d973e943fc55a90681a1a4da8ff33"
+      ],
+      "code": 1,
+      "signal": null
+    }
+  ],
+  "notes": [
+    "All independent required checks exited 0.",
+    "Three critical tests were replayed with traces to prove an actual partial selector cut and unseeded principal-before-rewards.",
+    "Solidity definition LSP timed out; source traversal was used. JSON LSP unavailable because Biome is not installed; no install or config change.",
+    "Read-only analysis recoveries: redefined a nonpersistent helper; resolved absolute legacy seal paths; corrected an evidence filename; decoded ERC721 and ERC20 Transfer separately. No replay failure or production edit."
+  ]
+}

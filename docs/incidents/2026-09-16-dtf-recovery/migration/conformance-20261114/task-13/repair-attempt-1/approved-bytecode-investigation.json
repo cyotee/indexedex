@@ -1,0 +1,158 @@
+{
+  "recordedAt": "2026-11-15T09:09:39.902Z",
+  "outcome": "No reproducible approved-bytecode recipe matching the existing pin was established from the inspected source and retained build records. Investigation branch stopped; original operator failure intact.",
+  "productFixed": false,
+  "operatorStillRed": true,
+  "pinRetuned": false,
+  "testAssertionChanged": false,
+  "artifactWritten": false,
+  "buildOrTestRun": false,
+  "expectedPin": {
+    "value": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+    "testPath": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+    "importLine": 7,
+    "assertionLine": 92,
+    "assertionQuote": "assert.equal(keccak256(artifact.deployedBytecode.object), claimWitnessCodeHash);",
+    "definitionPath": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+    "definitionLine": 11,
+    "definitionQuote": "export const claimWitnessCodeHash = \"0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899\";"
+  },
+  "observedArtifact": {
+    "path": "out/MigrationClaimWitness.sol/MigrationClaimWitness.json",
+    "codeHash": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+    "pinMatches": false,
+    "compiler": {
+      "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 1
+    },
+    "evmVersion": "osaka",
+    "metadataSettings": {
+      "bytecodeHash": "ipfs"
+    },
+    "compilationTarget": {
+      "scripts/foundry/recovery/dtf-migration/MigrationClaimWitness.sol": "MigrationClaimWitness"
+    },
+    "sourceMetadata": {
+      "scripts/foundry/recovery/dtf-migration/MigrationClaimWitness.sol": {
+        "keccak256": "0x48206e00c432f4fe647b220d35eee53201f01f13a136ba22b0018c5e79195156",
+        "urls": [
+          "bzz-raw://eececbea8e1d603713af394caacffacc65076a45eba7bcb30a35dbe4a36804eb",
+          "dweb:/ipfs/QmWCcsMcTqWXsoLbr6gkjoXGWBvA9n7BMgjULPz3tZqx59"
+        ],
+        "license": null
+      }
+    },
+    "currentSourceKeccak256": "0x48206e00c432f4fe647b220d35eee53201f01f13a136ba22b0018c5e79195156"
+  },
+  "retainedBuildObservations": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/witness-build.log",
+      "commandQuote": "python3 scripts/forge-artifacts.py build scripts/foundry/recovery/dtf-migration/MigrationClaimWitness.sol",
+      "exitQuote": "BUILD_EXIT_CODE=2",
+      "result": "Helper selected no artifact build roots."
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/witness-build-2.log",
+      "commandQuote": "forge build --use solar scripts/foundry/recovery/dtf-migration/MigrationClaimWitness.sol",
+      "exitQuote": "BUILD_EXIT_CODE=0",
+      "result": "One file compiled successfully with Solar 0.8.38. Existing dependent/operator logs still show unequal runtime hash and fixed pin."
+    }
+  ],
+  "historicalAudits": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/audit-final.json",
+      "bytes": 8437780,
+      "sha256": "c8ab29bdd1f36f1bfe815453862b6458a996872bf61df6d9a607bad5f6f30829",
+      "witnessMatches": []
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/verification-r2/audit-01.json",
+      "bytes": 19484166,
+      "sha256": "9ae4c6692341df43c270ba5efc5f72a1d02050bf0f6e3b0971c56b620eed0fff",
+      "witnessMatches": []
+    }
+  ],
+  "recordHashes": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/witness-build.log",
+      "sha256": "98f5d18e5e78e533fab1fdff73e7a74a198ce574be84dc292c87ed79c3e12a2d",
+      "bytes": 272
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/witness-build-2.log",
+      "sha256": "37941af3b41d3305fba930737021adbb85b3420f511208c6644fa140b9322c6b",
+      "bytes": 1416
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/verification-r2/commands.md",
+      "sha256": "1b8f65344f5322425f34490a231b547b50191047c1707ba90e6100b573695eee",
+      "bytes": 3468
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/verification-r2/report.md",
+      "sha256": "14750c64ed29a92ddf36b8c68fd6ec8b9fcdd39b7bc61e612662b1ff617a3f41",
+      "bytes": 24548
+    }
+  ],
+  "boundSources": [
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationClaimWitness.sol",
+      "bytes": 1800,
+      "sha256": "4ea3713f408eef07d9f862a915df747e61b3fe72a3f788bfcb217da73f497f5f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "bytes": 5719,
+      "sha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "bytes": 5647,
+      "sha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "bytes": 10410,
+      "sha256": "583558715dae13f2c405655ab18b5dd0a44b54fbd294de73472e3b8080b7c4d8"
+    },
+    {
+      "path": "foundry.toml",
+      "bytes": 3814,
+      "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839"
+    },
+    {
+      "path": "out/MigrationClaimWitness.sol/MigrationClaimWitness.json",
+      "bytes": 43568,
+      "sha256": "09187d4b4adcfe56a63bc0fc53501fb5d4d43598c3a43b671ad43aa8cd1400ff"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/verification/report.md",
+      "bytes": 12723,
+      "sha256": "7557626a3066d680ce8348c9c21ba26597f692a9f5e792cef7133d5d8c69c78e"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-13-verdict.json",
+      "bytes": 8393,
+      "sha256": "3cbd144b91439f9f0e2b4c7e7360ffd87e4a97b35195bcea37b4ffef195b1b71"
+    }
+  ],
+  "sourceObservation": "The fixed hash comment says Solar-built and optimizer_runs=1. Current metadata agrees on Solar and optimizer runs, but no inspected source-linked record binds the expected hash to the complete compiler input/settings or an approved alternative.",
+  "inference": "Changing build settings or source layout without a retained approval/provenance binding would not establish an approved-bytecode recipe. No settings sweep, compiler substitution, artifact substitution, source rewrite, pin retune or test weakening was attempted.",
+  "limits": "Bounded source and retained-record investigation, not a proof that no possible matching build exists. No live-chain lookup, Git history search, rebuild, rehearsal, or new test execution. Two full historical JSON audits were parsed beyond grep prefix limits and contained no MigrationClaimWitness or expected-pin records.",
+  "claimCorrection": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-13-done.json",
+    "field": "/unmet/0/expectedPin",
+    "oldValue": "0x4ae06bcb278766df6529bcd60e05453fee6c8536b9f18d2a4d0dac8fd899",
+    "correctedValue": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+    "derivation": "Follow the actual test import of claimWitnessCodeHash to its unchanged source definition; verifier values only corroborate this derivation."
+  },
+  "archive": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-13-done-attempt-1.json",
+    "bytes": 8737,
+    "sha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd",
+    "matchesOriginal": true
+  }
+}

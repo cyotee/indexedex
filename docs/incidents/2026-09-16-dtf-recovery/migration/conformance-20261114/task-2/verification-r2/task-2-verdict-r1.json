@@ -1,0 +1,90 @@
+{
+  "type": "AdversarialVerify",
+  "task": 2,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "acceptance_met": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/report.md",
+  "reason": "Producer is explicitly blocked. Current ready.json remains needs-fix. Both required delivered helpers are absent. Independent fixture inventory/delivery commands exit 1 before contract execution, and the exact helper typecheck exits 2 with TS6053 for both files. Required recovery and integrity acceptance are not demonstrated.",
+  "evidence": {
+    "producer_claim": {
+      "path": ".omo/ulw-execute/dtf-conformance/task-2-done.json",
+      "sha256": "11a002c555380f1725930ec7f534dc617315013a0c56f8dbfb6ef4e4295cf7f8",
+      "status": "blocked",
+      "acceptance_met": false,
+      "commands_executed": []
+    },
+    "current_gate": {
+      "path": ".omo/ulw-execute/dtf-conformance/ready.json",
+      "sha256": "e6043fc75e0b4f6dadc601339743a1492a41aaa77c6015e949329a19035a5a6d",
+      "status": "needs-fix",
+      "bootstrap_failure_independently_reproduced": false
+    },
+    "plan_sha256": "31a0f3daff03b0e51830f5428168656eaeb19f81f40dee6f3e7f619be7230683",
+    "head": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+    "scoped_tracked_diff": "git diff -- docs/incidents/2026-09-16-dtf-recovery/migration exited 0 with zero output bytes; untracked claim inspected separately.",
+    "missing_deliverables": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+    ],
+    "fixture_repro": {
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "bindings": {
+        "D": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration",
+        "V": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification"
+      },
+      "setup": "Two owned fixture roots, identical file pair, source-only file, unequal raw-byte destination pair, and source/outward-link -> ../../outward-sentinel.txt. Exact bytes and SHA-256 values recorded in report.",
+      "inventory_command": "bun \"$D/resumed-integration/record-verification.ts\" inventory \"$V/happy-output\" \"$V/fixtures/source\" \"$V/fixtures/destination\"",
+      "inventory_exit": 1,
+      "delivery_command": "bun \"$D/resumed-integration/record-verification.ts\" delivery \"$V/happy-output/inventory.json\" \"$V/delivery-output\"",
+      "delivery_exit": 1,
+      "stdout": "",
+      "stderr_each": "error: Module not found \"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts\"\n",
+      "raw_fixture_bytes_unchanged": true,
+      "missing_rejection": "blocked before implementation loaded",
+      "tampered_rejection": "blocked before implementation loaded",
+      "outward_symlink_rejection": "blocked before implementation loaded; link text inspected without traversing target",
+      "happy_inventory": "not demonstrated",
+      "retained_byte_delivery": "fails: both original helper byte streams have no delivered counterpart"
+    },
+    "typecheck": {
+      "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node \"$D/resumed-integration/record-verification.ts\" \"$D/resumed-integration/verify-bounded-deployments.ts\"",
+      "environment": "TMPDIR=$V BUN_RUNTIME_TRANSPILER_CACHE_PATH=$V/runtime-cache",
+      "exit_code": 2,
+      "result": "TS6053: both delivered helper root files not found; exact raw stdout in report.",
+      "stderr": ""
+    }
+  },
+  "adversarial_classes": {
+    "stale_state": "Current gate reread and raw claim/plan/gate hashes bound; historical originals not substituted for delivered code.",
+    "dirty_worktree": "Actual full untracked status inspected; empty tracked diff not treated as clean state. Unrelated files preserved through restricted writes; no exhaustive unrelated-byte audit claimed.",
+    "misleading_success_output": "Blocked producer claim and startup failures are explicitly non-confirmed. Fixture byte equality and verdict-file existence are not acceptance.",
+    "byte_preservation": "Original helper hashes inspected; missing delivered counterparts fail delivery. Fixture before/after raw hashes match.",
+    "missing_tampered_outward_symlink": "Concrete fixtures attempted, but intended rejection contracts remain unverified because executable source is missing.",
+    "generated_artifacts": "No producer inventory or delivery receipt exists."
+  },
+  "DoneClaim": {
+    "status": "verification-complete",
+    "changes": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/report.md",
+      ".omo/ulw-execute/dtf-conformance/task-2-verdict.json"
+    ],
+    "manual_qa_artifacts": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/report.md"
+    ],
+    "cleanup": "Removed only owned fixture files, outward sentinel/link, empty fixture directories and runtime-cache. Removal commands exited 0. No background processes or shared resources created.",
+    "producer_files_modified": false,
+    "unrun_checks": [
+      "Successful inventory/delivery and per-entry rejection behavior: missing executable source.",
+      "Complete retained-candidate census and disposition audit: producer did not execute recovery.",
+      "Original network modes and unchanged full suites: outside this independent task-2 probe."
+    ],
+    "remaining_risks": [
+      "Task 2 remains incomplete and must not unblock dependent tasks.",
+      "Bootstrap failure mechanism was reported by current gate, not independently reproduced.",
+      "Task 3 authenticated source review was not part of this assigned task."
+    ]
+  }
+}

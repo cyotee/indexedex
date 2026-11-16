@@ -1,0 +1,14 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "args": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/cli.ts",
+    "validate",
+    "--manifest",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/full-a/candidates.json"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/validate-negative.stdout",
+  "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/validate-negative.stderr"
+}

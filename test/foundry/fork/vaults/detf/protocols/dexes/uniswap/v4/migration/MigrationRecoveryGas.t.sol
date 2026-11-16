@@ -16,7 +16,7 @@ contract MigrationRecoveryGasTest is MigrationRecoveryForkBase {
     function test_selectedWorkIndependentOfTwentyFourUnrelatedSurrenders() public {
         Migration.NftEntitlementInput[] memory rows_ = _populationInputs();
         vm.prank(migrationOwner);
-        allocation.configureNftEntitlements(rows_);
+        allocation.configureNftEntitlements(rows_, pricingId);
         _configureNft(EARLIER, 4);
         _take(WEIGHTED, 4);
         _take(EARLIER, 4);

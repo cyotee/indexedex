@@ -1,0 +1,17 @@
+@startuml IBatchRouter_swapExactOut
+actor User
+participant BatchRouter
+participant Vault
+
+User -> BatchRouter: swapExactOut(paths, deadline, wethIsEth, userData)
+BatchRouter -> Vault: unlock(encoded params)
+Vault -> BatchRouter: swapExactOutHook(params)
+BatchRouter -> BatchRouter: check deadline
+BatchRouter -> BatchRouter: process swap paths (compute inputs)
+note right: For each path, compute required input amounts\nby processing steps backwards
+BatchRouter -> Vault: perform operations (swaps, liquidity, buffers)
+note right: Vault executes swaps, add/remove liquidity,\nor buffer wrap/unwrap as needed
+BatchRouter -> BatchRouter: settle token transfers
+note right: Transfer input tokens from user,\nsend output tokens to user
+BatchRouter --> User: pathAmountsIn, tokensIn, amountsIn
+@enduml

@@ -1,0 +1,731 @@
+{
+  "checked": 121,
+  "results": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical.log",
+      "bytes": 43,
+      "sha256": "44e00a7c54260770e4ba144536288a2918055b9de00b47e1e9a3803b5f5105e0",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/inputs.json",
+      "bytes": 5900,
+      "sha256": "979944f4b8a4abe49a8aa965550d802bea0ce741d3a3cc756cde2beb6b7578a6",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/build-r2.log",
+      "bytes": 5176,
+      "sha256": "d7b18af6576b7f88fbea5d26d112f951d948e792a4ae0f387b702ac7a456019f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/build.log",
+      "bytes": 216,
+      "sha256": "af463f31b795edb3b4370befd68045ef71e8b9eb760e2fe0e80640e559d08d38",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/foundry.toml",
+      "bytes": 176,
+      "sha256": "d21a4312ca000c08a1f9a5f1a61fe80b12680f93aec581c9a05f967ec820a092",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/admission.ts",
+      "bytes": 7151,
+      "sha256": "ee79081694793c0601bb996f4475e1b448b4102b259cb6c14e1baf3d5d463faa",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/common.ts",
+      "bytes": 8457,
+      "sha256": "804070127361e67f9082d903e675fc583b18ddae41ab1f86dbe4002f75b56044",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/historical.ts",
+      "bytes": 4767,
+      "sha256": "101ef3bc0564c16441c5ffd19814f5d072ea8251ee20f14f04edbf9b3ffb58fb",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/chain.ts",
+      "bytes": 5619,
+      "sha256": "0f20a0f5f81931c48db4f25f63be43d17592a987bab06da53e80dd2637ec477f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/src/DelegatedSourceProbe.sol",
+      "bytes": 3919,
+      "sha256": "ff5f138a410e1887b587d6cbc2f46b1ecc071647c524b0f53ab210278ac0e893",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/out/build-info/f6cf0463843ae056.json",
+      "bytes": 104,
+      "sha256": "0bea825140ce72a87971e07531ced88de19c0e35b0f6d57d58542cb2fc2634cb",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/out/DelegatedSourceProbe.sol/SourceCustody.json",
+      "bytes": 9985,
+      "sha256": "d0b30620bca769e196d4fc7fcd5b930abe227a5f27ad7e1b57f17d290b7b3881",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/out/DelegatedSourceProbe.sol/DelegatedSourceProbe.json",
+      "bytes": 18529,
+      "sha256": "f9dc610dcbc340cd54e7885d72e764c7d2741f13da9c1d3b9aab89a32262f5e7",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/out/DelegatedSourceProbe.sol/ISource.json",
+      "bytes": 2407,
+      "sha256": "83afb557396af84791630a3913f9b844e662a3d54defc657816b77acf9e17a8d",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/out/DelegatedSourceProbe.sol/ISy.json",
+      "bytes": 4319,
+      "sha256": "d46b980058ca8b4b49d4c97918502fec9d83fb91ead292bd53fef0397cc9f14f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/probe/cache_forge/solidity-files-cache.json",
+      "bytes": 1852,
+      "sha256": "e437b605528f14ae944d7b6fc1ce808d75610757dbcafff06da883357bb8e295",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/trace.json",
+      "bytes": 273,
+      "sha256": "681c751b7a69f46bc8dc90da5b8f30bb67d2efe7725ef6b0895c8496439ee567",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/canonical.json",
+      "bytes": 23221,
+      "sha256": "88571c892c6d478e0e2b4987830409c77f9a0f81f4576fb86832a6b0172e5dc5",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/observations.json",
+      "bytes": 564866,
+      "sha256": "56ba8fc2ce6bc941bdfd22398d19f892ee2e24d9eeeed5bf83f3bf2735685c9f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00019.json",
+      "bytes": 995,
+      "sha256": "ec7e4f614a747aa582bead5de0c9d981bc18f0345ef2be1dc8eac41d8ecbeb19",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00058.json",
+      "bytes": 413,
+      "sha256": "407550bc74b8e02c832cb73bc237c390095121a000cc290a235ef1ad548927b0",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00023.json",
+      "bytes": 6583,
+      "sha256": "27bc469a4dfc968e418661c9d8ce125ea23a13073b7f38f8e1ed8d9e0c3b3662",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00074.json",
+      "bytes": 6583,
+      "sha256": "745e477332252c5ba14c2face6fc734cda8f88735bd31f94c0ccbbafe1e729a9",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00062.json",
+      "bytes": 413,
+      "sha256": "e3dce0520ebf3f36a77e4f1d000943a0ab641c6ee91185f547e427fc94852204",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00035.json",
+      "bytes": 413,
+      "sha256": "481fb55049e40dfef9e6abd238045dcb57be70aaa9ddd53d21acb38eb8e465cc",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00042.json",
+      "bytes": 349,
+      "sha256": "d08d219334dae1b319d4b17b14247c5cdbcee702a367f3c79059f3056773a49f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00015.json",
+      "bytes": 413,
+      "sha256": "6ef87af80f75f466a445a26dbd346038d5c6db5f3187bfc2835a91ce3e1ab484",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00003.json",
+      "bytes": 3430,
+      "sha256": "dd68dd0b164de069c28dee21054a24667939d98f832ddc19b7a6f5b696fd0ead",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00054.json",
+      "bytes": 413,
+      "sha256": "4a5ee6e8a4951365de9e408a879a9e724148efc9e0221f9dc0fa46020339c278",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00097.json",
+      "bytes": 349,
+      "sha256": "f29b482e8be7095d358e687383c5c25936d64c0a223bbb19e32f10dbddf0c6b6",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00078.json",
+      "bytes": 413,
+      "sha256": "4a0a36fb304575c9520d55e94a01fe02554693c27ed834759185f82846674189",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00081.json",
+      "bytes": 26645,
+      "sha256": "d9b1405684710585b72f0e904a9ef80f32379dfbd255eea613e4adbd92863c85",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00039.json",
+      "bytes": 301,
+      "sha256": "e868dcc2484e7fd203ae963e451070f8cc0b1de5955645b019c7a0e16cc67952",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00038.json",
+      "bytes": 26645,
+      "sha256": "9697881b64cbd24973d708aeb72108d363f86debb39329eecc603ddc068d1c36",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00080.json",
+      "bytes": 413,
+      "sha256": "09f39027c7e6b3ec29fb8d39c2fb105c945d5457beccab22e06c6cecd0f78c3c",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00096.json",
+      "bytes": 413,
+      "sha256": "5c145bbec8fa3d7517c3c1364da0965fa8869d5bdfe806dfdd68fdb63d7ad3af",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00079.json",
+      "bytes": 26645,
+      "sha256": "533b0435b21a9d610a6efb1aac5b01b04b3157995e3e505601dad7278cede33e",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00055.json",
+      "bytes": 24067,
+      "sha256": "ad8ce0fc2a60a10493b162868c8ae33f6c8fff03da64f13c63a465e3ae107a1e",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00002.json",
+      "bytes": 2023,
+      "sha256": "d1cb7504599817b5677b090595ad37bd4c30955a46afd00a58cc289a3a6558dd",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00014.json",
+      "bytes": 24067,
+      "sha256": "8385de16892c080a3772674ebb54f8e0bc193aacc477b8d35b406e3ec8ddd664",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00043.json",
+      "bytes": 349,
+      "sha256": "d736bf42b2c7b8d07421034dbfcfb7aaa449c26e9878a250b6d9fdc5a72ee8ff",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00034.json",
+      "bytes": 26645,
+      "sha256": "e3717c22ebeaf0f2d657ae9e28230bbc03f774c229d691934d0d9b9e2f1356eb",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00063.json",
+      "bytes": 24067,
+      "sha256": "fd977aca559458ac6ef877ced40b20c67f8c91b0bcb0c6a915e0a49a7333c249",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00075.json",
+      "bytes": 995,
+      "sha256": "069b4d59ff9b60eeea489b53a1ea9379229722ed9867847569417ed91662beed",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00022.json",
+      "bytes": 413,
+      "sha256": "7095b5ee73e835d7f8ace834660de0c578a4b41b0e439d0dc17edf6b37d7c9d9",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00059.json",
+      "bytes": 24067,
+      "sha256": "7c5090c692a86a406dfd02839faccd584530f4f6d2a2350db054c042327063f5",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00018.json",
+      "bytes": 24067,
+      "sha256": "b7ebd561e7cc15f3ac7f5e77d812892194685c0df90b5be6c57c6fee4d2bf7ee",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00044.json",
+      "bytes": 349,
+      "sha256": "b8b6934b3da91e3a6bf68e02bc1c1a453504e6849400f18c6714e2c8abb9a738",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00013.json",
+      "bytes": 413,
+      "sha256": "a08efea674a9530417fb77fef3ce83c0d5fa80cc47a5afe7f4f200924f96de6d",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00005.json",
+      "bytes": 2523,
+      "sha256": "c20c467673b0c51eb65b39c843bc0b2d00806501b789e6d006b68cbcf1a97d2a",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00052.json",
+      "bytes": 349,
+      "sha256": "68f411d62d3d56b8158c0a68aa166980bb19edccd09040cf1661c2d29b4a0c46",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00029.json",
+      "bytes": 6583,
+      "sha256": "20b9894ace2650a6a63f375bd357bd640e42e99155a00d2ee142d0769f80516c",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00091.json",
+      "bytes": 413,
+      "sha256": "2448b76460cdc5efcb9d458510e04a93545f107076bf7858aa7e3f679ba4e566",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00087.json",
+      "bytes": 349,
+      "sha256": "fd2103d94cb88c59b93137d92dc5b51d98140a5d81e941da2a0db651a1305522",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00068.json",
+      "bytes": 6583,
+      "sha256": "3f6bafba37cad79c240957529b4082529fba5aefe4b643b160426434ddbda18a",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00048.json",
+      "bytes": 413,
+      "sha256": "89218d39806baf8004aeb8380532d5753f0d3ea585277216c57ac0e26b6acac8",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00009.json",
+      "bytes": 411,
+      "sha256": "156be8babfc34aa166ccf6d722ae8fd5dad3fe292f89a7439c8127bd16351045",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00025.json",
+      "bytes": 6583,
+      "sha256": "93159ae53a1c28c8a9cdc20dd109c0f68200b3ad8a79ba6fc5523f4c3705fd26",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00072.json",
+      "bytes": 12563,
+      "sha256": "e4f0bc866e1e9f713bedb30ea1731ad878beb9719bcb5d28d3ba68bd6a09429c",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00064.json",
+      "bytes": 995,
+      "sha256": "6df37061d71077e9c1c8f79cc8bfc1f02cdfad5c454dda5fea05e330bc707fc9",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00033.json",
+      "bytes": 413,
+      "sha256": "aeef8a61984b2cd31e98a973c8b1fe778657ea28c95c5850e8000b563931f1be",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00032.json",
+      "bytes": 26645,
+      "sha256": "3acc5a0809d52b02e806ff36f44ed4e452fb0156e8ead603ae667e596aac6ef3",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00065.json",
+      "bytes": 413,
+      "sha256": "4b258d77498c111748a6ad1d47f483cf9c429d528f6e922ab867502ab610a9c5",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00073.json",
+      "bytes": 413,
+      "sha256": "c7e745b677b10402007b7d39f26d2a3d00ff47a346beef20555a135725508800",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00024.json",
+      "bytes": 413,
+      "sha256": "e0f6a006eade5eea109ecd17913dc7e298a295dd65443b475872774d82f69027",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00008.json",
+      "bytes": 993,
+      "sha256": "a7a2d13f9fa10d4804b94a58d14fd26655fc89e1a0c5df8f2e38c8345d71fcca",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00049.json",
+      "bytes": 349,
+      "sha256": "66be6fe64aee886dd80ac80f9f872ae62ccb6c245c937fa8e7ac52ef7058f024",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00086.json",
+      "bytes": 349,
+      "sha256": "372e28c973e677f3fd72d148fe715f9e3f1350569b8035acfe0ff4ce18756484",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00069.json",
+      "bytes": 413,
+      "sha256": "0d10b4bf3ec14867d12ec00eb3cdf0f7af7b0efbf74fd6ec961564de3f545ee3",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00090.json",
+      "bytes": 349,
+      "sha256": "41afe9540a92ebe0cb8f8042583287e8ee35cac05cbfe87cfc32b1f14da35f6f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00028.json",
+      "bytes": 413,
+      "sha256": "36e2fdf8ce55234a2876de7079625b120d1c769a8ead4c32b7b03aef03c6838a",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00053.json",
+      "bytes": 995,
+      "sha256": "6e6ad29ea0aad3c7a421602ddfbc76c345a01048f87335cab8341601fd40e2c0",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00004.json",
+      "bytes": 11800,
+      "sha256": "327697db025e311cc5129d946ec1cb3824dc52d5777a3d7446f9c92cf58bfb4c",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00012.json",
+      "bytes": 24067,
+      "sha256": "4bc4c82af19d4ef3e3d96b924c6691ff185f460388c3468202ca299f716eee19",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00045.json",
+      "bytes": 349,
+      "sha256": "e8b6874ce974d8d1603d518e74312a5b392aef443147259bbd1d25f55d96e7ba",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00085.json",
+      "bytes": 6891,
+      "sha256": "56ca251558f6e5b6d724e98d433491c8cc501f81875ac95f9251d849144c1572",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00093.json",
+      "bytes": 413,
+      "sha256": "4e563bcf3af63493e0bf207425dc33831955a932c8dfe5474ffec8d96f92e5a7",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00050.json",
+      "bytes": 413,
+      "sha256": "758cc860c374628813cf4692953306d7d7cc527bcc3118d63584e5bc0322b96f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00007.json",
+      "bytes": 439,
+      "sha256": "e84583cfbb9ba077128e6d2cdc79d01c5e9d99a74a40a45ee46fd53e620011ed",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00011.json",
+      "bytes": 413,
+      "sha256": "ed136ca5fd42d2e6efc9316f438d75cf97b91277aa08badf8d15009431d43a8b",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00046.json",
+      "bytes": 413,
+      "sha256": "d3cf56e8bd1ab78bf4df0bc3ae96849ca73039d2abba57302c34e9c65f915cdd",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00031.json",
+      "bytes": 413,
+      "sha256": "38ed428f25ebcdf1417722e750cd7c7c837c1da9a99722c6703174d7c79337fe",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00066.json",
+      "bytes": 12563,
+      "sha256": "2ed5aacd1bd619a86b3effd7b09132125bf0c1ca25a08f3cc0201ed296a34005",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00089.json",
+      "bytes": 349,
+      "sha256": "fd4d3836509e82a7ce2e5c02956ada1143d2e6cbd4b03ecec2e6220a574d4cfb",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00070.json",
+      "bytes": 6583,
+      "sha256": "eb6b5bc7dd64e9e336895276c8f195c56f50012867bb69c6b9d02537c22f528f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00027.json",
+      "bytes": 12563,
+      "sha256": "ab8cafb616ad920c5e53f45b7affe03e7e83849385c117c7f7052d25935b7d86",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00026.json",
+      "bytes": 413,
+      "sha256": "c08b922164fefcc49a3fe5273e53d99b0ab51dfe2354ad98def2228d582d3292",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00071.json",
+      "bytes": 413,
+      "sha256": "84176724001e9dfb8cfdbb7e35724abe19aeb57b5b53a9a660e418d4e2f8d600",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00067.json",
+      "bytes": 413,
+      "sha256": "12659c54e30860e2bbd988f430872484c9f070482c3c193dc7174537408342b0",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00088.json",
+      "bytes": 349,
+      "sha256": "11ac11d107a23d87116dd5d7745dea4d59a7475bd2f2a68e9ac7fb1e7429b007",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00030.json",
+      "bytes": 995,
+      "sha256": "b5d69fe161e5833063ba718e21ce5cdb8559e863768a888b1032c7e1a8e7d576",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00047.json",
+      "bytes": 349,
+      "sha256": "cb0fe9db5b47fdd44ca8338ff0f9791d2f6faa7621265e296a3220fdb51802ce",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00010.json",
+      "bytes": 24067,
+      "sha256": "2d3d61e5817c52c396709a8fec5cdd937c28ce80ea1d2f7bc84551172f5bb613",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00006.json",
+      "bytes": 2578,
+      "sha256": "b6e478bc39ac1d0c3b76c680e79115bfd8cbc23b89d7df8ede113ef9de9fd84d",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00051.json",
+      "bytes": 413,
+      "sha256": "073298dd38b9fd07e3daee0aa44f52040b1d8b0ae4a2ac5aa1a16a92bde15781",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00092.json",
+      "bytes": 349,
+      "sha256": "d4a34a2ebe1b002dd9b63a2ce9f8b392c041bdd9d8f0b0eda82d7de052f68ad8",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00084.json",
+      "bytes": 301,
+      "sha256": "8482ff98e4f21082cdef9fabd7f74097e1c577369694b08fc3eecd8fced2e0ef",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00037.json",
+      "bytes": 413,
+      "sha256": "b21690baae6512f87c14adcb4323cdae25c665eb7f00cf6137c0d1c68fde9ea5",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00060.json",
+      "bytes": 413,
+      "sha256": "b3990105b0b984b6e273b15ede12d2c81901c332e77a39a0fb3e48490e053999",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00076.json",
+      "bytes": 413,
+      "sha256": "9c50086047b450d58d6251d73c169aec0d2183e1e680574e339d415e66046a5b",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00021.json",
+      "bytes": 12563,
+      "sha256": "084a51084f2730a3aacc30c5f1002e088758c52616c75c2e6ea0293a5374fafa",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00083.json",
+      "bytes": 26645,
+      "sha256": "1d5dc2076c3f7f7cc5e92da1a879513f5b62a2b6fc22a95013e7edbf45516924",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00095.json",
+      "bytes": 413,
+      "sha256": "4c1e945a32901a0916b31f507f10ac7dd4969ea5ff03810c74baad75e4628b0e",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00056.json",
+      "bytes": 413,
+      "sha256": "ed38b5f07ab788c35e2acccc41ce527eef266e319a012a019e39b04e5e32da21",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00001.json",
+      "bytes": 197,
+      "sha256": "2797d7902e5b0117e9f3d93e0aa4b1f8e39ddf6a34fb73f893465526805ebe18",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00017.json",
+      "bytes": 413,
+      "sha256": "ed0019e6f5e931a6182b6d844d825d364bed133589fdbbb52d814fce0979e8e5",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00040.json",
+      "bytes": 6891,
+      "sha256": "a47413d7de442f6df71297ebd441f3f4e0aedc7814bee27bab18dfec5c732a36",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00041.json",
+      "bytes": 349,
+      "sha256": "e444589f2c3ca163aad6170a5205484974275c29104b7eb4bd1c37baa3f7c802",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00016.json",
+      "bytes": 24067,
+      "sha256": "9ad7d2fc2f08cb0cb0aa02267760fc75037b22e694b3406b694fc2f0b8e0dffb",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00057.json",
+      "bytes": 24067,
+      "sha256": "745c4bae22cfb70cde84f82f081bb1663dca50f457a9fb051909c8fe467b27c5",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00094.json",
+      "bytes": 349,
+      "sha256": "630f07b7cbb9e8b641f6d3810ae565506e8a76aadf4dc7a9357864af16811552",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00082.json",
+      "bytes": 413,
+      "sha256": "95fa668a46290ae3ba94b129534fa6d0222b0c62fdab69bd25164e24805a848f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00020.json",
+      "bytes": 413,
+      "sha256": "79c5bb8d7cfee1d350a22ad6fce65b777a5ba3ce8c5b9490cf790f7b38fd4641",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00077.json",
+      "bytes": 26645,
+      "sha256": "a02fa9c9b2539eb0207904b446fbd873ea13395187ea2e15e092063b3ce35e26",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00061.json",
+      "bytes": 24067,
+      "sha256": "c17944bee7d5b2f6ce1d1b26ee8bbe2d19e8721a4f4b98470c25141e06772c56",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00036.json",
+      "bytes": 26645,
+      "sha256": "ca02cf24343a2d63001ae4c960c6ed3a855d14da963820c664ef45362a1c0502",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/claimed-sy.ts",
+      "bytes": 16788,
+      "sha256": "c2592871a67dbb76b52822f98b8eaa389dde6a7ecd2aca3b9943699c52e44c87",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 9828,
+      "sha256": "35b3e2e1b570ebabf706d5f718eacbacb06e8f05bed0a7536f3abae8514d3e63",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 10828,
+      "sha256": "8a66ef6229f4171d7cf1be031d451cd7a94f35cee3b7ef26a4ebdcff5a256b85",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "bytes": 111119,
+      "sha256": "0477caf32ac14a01f1894953b427f524348b8fad3202828aeab410a8d28ef388",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "bytes": 84361,
+      "sha256": "20a4ab3359b59ec6f760c892ed95a52f8ee911eca942a326d4c8563c5eef41e3",
+      "unchanged": true
+    }
+  ]
+}

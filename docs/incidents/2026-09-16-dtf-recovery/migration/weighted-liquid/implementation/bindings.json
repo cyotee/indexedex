@@ -1,0 +1,203 @@
+{
+  "version": "weighted-liquid-decision-gate-v1",
+  "sealedAt": "2026-11-11T12:12:14.681Z",
+  "base": "2c2b3370ded30cae1662329025d4fb58f7197330",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+  "status": "blocked-on-partial-correction-policy",
+  "runtimeAcceptance": false,
+  "realTransactionReceipts": [],
+  "files": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "5f9aab936407c0546a77e0f4e07a3ed1242e880d3f1ccd20678fd021c4e90eb8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "sha256": "93a1494bca2bbb99d7aebfde61e37f77cbc574f1ed63a85e4dad094577d75c46"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "sha256": "f751e4178ab66fc3bd3ce8e7aef9724a0437225955c2c0a0a22fc5f06ea9d806"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "sha256": "def9726f027e844019b70358b326f91d9a0a2fc30df13dec6ab92ec9fed11473"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "f1005fa4dba3cc62fab4f4c0ccbddf56e11196811970fe2e055addd9c01d8bc8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "sha256": "c5c31b6cd2434506aaeda0df4192a0e14e9a362a3744aed332a6d13fb750dd45"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "73faf6c89d44cb93e2449ce9ba357ffc99952109510ec1c14e2fc7ed13ff588b"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "9d9445fdc744c88116ca9f49fc6ede5eeeb06888501f8085217f09e974c5a091"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "21bb5ae7f0a541e54f3e730bb13f5439800b443ba0be5003bf88104e99889564"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "5c1e2931cc2f705499c1d2a25ad15a93f9197b7eb3b4be82275dc3345ac350f7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "33a369e8cd4b64f5d6a8c357057f3bd33c5d2a9ac62cc1e95659833654972128"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "55301049017ecad5f35c8dc3e64684cadd38e30cec802a3da2a38e4cfb2c11c3"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "0995b68e5b20f0fc9a5aca93a6183169184cb984baed8be496496c48c5d13d40"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "6282d36cbd4413f745c2a611e91fad7a3ebd865ee4243dc7f88d9098961364d8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "ff1f142ede94d546d190ae6a822d90e14ee409a8bf610ed6c64a505e3b32286e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "ef111fcc9e8b88bf452b5425f7fa1d151437be48fe4dc4cda44cdfab805c36c6"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "f1ff681551040e08f84557e0cd1c666eda4a16550b1f72f2a78767bebeb01713"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "7232dce7be3eeea98d11dccc06f6daf0054103eaef13cfb59d125ed702a9bf0a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "804f893cb409318ef3523215ed2a25d324777d39e691bd7835f8bb5845cdc7b5"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "7134c09beeafc10aac47382b6c13076b2efcbbf56ea404639c9e4b9ab5bdca9e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "sha256": "1af88fe4b49064910169e97c0b7e2c26d65162ae42f5bcbd75c71a34cf4fa8ee"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "sha256": "4a125e28aa4bf2b75904302573468b370eb1288c3857c80b0e200a565d04ccbd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "sha256": "3964fd6be8944c9ac603e4554ecc1bff96d9848100f09a785c2047cbecc0a85f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "sha256": "07146e474d982b233e464c90319a6f6a0352363fe0896b7b613b961a82c8b9ba"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+      "sha256": "12f0594b45f79c428f29e4aa8460700aec0cd81a95a261dcafb17c1e485cb0f7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+      "sha256": "61a53752a7038d6ec3fa7a60199f472c249b0824d16defa47a040c8f05933b6d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid-brief.md",
+      "sha256": "28a20cf28b2b47da3d4581f872c3d871043fa2e4f215f9025d1a62aad91f4f0a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "6c8013ff058abf418e7d15566a7028cb5de5ec68916b7fc60873809310d339f2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+      "sha256": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+      "sha256": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/weighted/contract.md",
+      "sha256": "6748c44550417a8e89d655969d9c032158916345367003e4c2679c0c2490b192"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "sha256": "b5bfca556c35d7233c4556d1f2d2f35baa1e612e987c650165c922908ecbe6f1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "sha256": "1f51a3fcfd1a55ecf30a13b71dbba46d6439d57e23a0fdfc6b028b411adc7c1e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "sha256": "d8bb35f61ab8db838e9bce52244ea9bc8a0107bc793bc13780a78f5c454efabd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "sha256": "0c4cfea2706f9810c91833323b8ac2d076f881aa321df35caa997c83d76d7498"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "sha256": "85a43a4cbfde8d4de721267aaade524cf1c8a1ee565fb820da3934f6853c82b8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+      "sha256": "a10be1d5242946e4470afd03e0cd93feadce6bd3afa8f384d4dc0d6450a8b72e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/MigrationWeightedLiquid.t.sol/MigrationWeightedLiquidTest.json",
+      "sha256": "92a737a8d3d798744843a7d0624cffbcbe0905a0169f9ef4f7033bf65e1680ef"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/MigrationWeightedLiquidConfiguration.t.sol/MigrationWeightedLiquidConfigurationTest.json",
+      "sha256": "1d9cd4867cc93a99f6fcb2a12128a79bcf08908813d703ec313315f662359f18"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/artifact-build-independent.log",
+      "sha256": "0d960796c329047fdf05854a7bc8ef024e63f4aa4bda966969fd9d3b426985c1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/operator-stage-build.log",
+      "sha256": "4c909e7ef0341d54c4d69388b8204d6e2230635dbfc39bb072644298089db7b2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/operator-stage-build-solar-path.log",
+      "sha256": "22ffe8d7e0bdb56149a78f30cc4e778fc7356b81ade202686f621d8326f0d64c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/regression-compile.log",
+      "sha256": "5a12b280100ef37bdbe60aa454e2fc60d8a83c676bbeeb2fdfcabe00fdc86785"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/operator-tests.log",
+      "sha256": "ceef885a87979eea79f75975a6b8c66aaee6d34d63ded2c57a32b9b8f186d40d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/types.log",
+      "sha256": "d5f6c9f4f7321147be2d3269ef47bf1842920afd26f67bd65760724488176735"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/types-node.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/implementation/types-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

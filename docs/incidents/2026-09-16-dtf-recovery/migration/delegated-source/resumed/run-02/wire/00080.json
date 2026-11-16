@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":80,\"method\":\"eth_sendRawTransaction\",\"params\":[\"0x02f8778212378207698405f5e1008477359400834c4b4094016900aa17a08a52f1cc10a9474b3bbfaeb380a3880de0b6b3a764000080c001a09e810a10fe074376a2e905ef4cfe44e80868eaba4b28678032a0ef1142d6a2bfa07955bb2b63ba812e8c998a849eced8740b060f47e434639af83d046058f97421\"]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":80,\"result\":\"0x0633683d198b57a703f3d8dd2a70e06a72c991687dfa5a365c602946a643e446\"}",
+  "httpStatus": 200,
+  "raw": true
+}

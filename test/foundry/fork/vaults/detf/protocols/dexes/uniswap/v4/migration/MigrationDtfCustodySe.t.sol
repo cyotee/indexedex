@@ -112,7 +112,7 @@ contract MigrationDtfCustodySeTest is MigrationDtfCustodySeForkBase {
         for (uint256 i_; i_ < 2; ++i_) {
             if (i_ == 1) { inputs_[0].originalWallet = address(this); inputs_[0].originalDtf = 1 ether; }
             vm.prank(migrationOwner);
-            (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureDtfCustodySeEntitlements, (inputs_)));
+            (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureDtfCustodySeEntitlements, (inputs_, pricingId)));
             assertFalse(ok_);
         }
         assertEq(abi.encode(migration.dtfCustodySeSurrender(SE_ORIGIN)), before_);
@@ -124,7 +124,7 @@ contract MigrationDtfCustodySeTest is MigrationDtfCustodySeForkBase {
         Migration.DtfCustodySeEntitlementInput[] memory inputs_ = _seInputs(seHolder, acquiredShares + 1);
         inputs_[0].originalId = bytes32("too much");
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(inputs_);
+        allocation.configureDtfCustodySeEntitlements(inputs_, pricingId);
         _activate();
         uint256 supply_ = IERC20(detf).totalSupply();
         vm.startPrank(seHolder);

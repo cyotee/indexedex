@@ -1,0 +1,417 @@
+{
+  "sourcePathPrefix": "sources/",
+  "hooks": [
+    {
+      "surface": "NUMBER",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:462-469",
+        "nitro/arbos/tx_processor.go:960-974",
+        "nitro/arbos/internal_tx.go:88-104"
+      ],
+      "reads": "cached or stored L1 block number",
+      "producer": "start-block RecordNewL1Block updates parent-number cache",
+      "disposition": "parent-domain counter, not L2 number or executing prefix"
+    },
+    {
+      "surface": "BLOCKHASH",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:416-449",
+        "nitro/arbos/tx_processor.go:977-992",
+        "nitro/arbos/blockhash/blockhash.go:33-78"
+      ],
+      "reads": "L1-number-indexed 256-slot stored hashes; skipped numbers may be synthesized from previous L2 hash plus number",
+      "producer": "start-block RecordNewL1Block(l1Number-1, prevL2Hash, version)",
+      "disposition": "past/block-start data, never current-prefix hash; do not infer Ethereum L1 header from nonzero value"
+    },
+    {
+      "surface": "BALANCE / SELFBALANCE",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:255-260",
+        "go-ethereum/core/vm/eips.go:96-99",
+        "go-ethereum/core/state/statedb.go:380-387",
+        "go-ethereum/core/state/statedb.go:498-533"
+      ],
+      "reads": "selected account native balance",
+      "producer": "StateDB balance mutations, transfers, protocol fees and native mint/burn",
+      "disposition": "live selected scalar, not complete ordered prefix"
+    },
+    {
+      "surface": "EXTCODESIZE / EXTCODECOPY / EXTCODEHASH",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:330-402",
+        "go-ethereum/core/state/statedb.go:416-445",
+        "go-ethereum/core/state/statedb.go:554-561"
+      ],
+      "reads": "selected account code/size/codehash",
+      "producer": "SetCode on deployment/code changes; code hash hashes code bytes only",
+      "disposition": "code identity, not account/storage/global state commitment"
+    },
+    {
+      "surface": "SLOAD / TLOAD",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:511-518",
+        "go-ethereum/core/vm/eips.go:204-210"
+      ],
+      "reads": "storage/transient storage at currently executing contract address and supplied key",
+      "producer": "SSTORE/TSTORE in same storage context",
+      "disposition": "selected values, no opcode exposing arbitrary StateDB IntermediateRoot or receipt trie"
+    },
+    {
+      "surface": "GAS / GASPRICE / BASEFEE",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:407-414",
+        "go-ethereum/core/vm/instructions.go:568-571",
+        "go-ethereum/core/vm/eips.go:223-226",
+        "nitro/arbos/tx_processor.go:1022-1035"
+      ],
+      "reads": "current frame gas budget, paid message price, block base fee",
+      "producer": "frame gas accounting; GasPriceOp/GetPaidGasPrice; block context and pricing",
+      "disposition": "fee/counter facts can distinguish histories but do not commit ordered transfer content"
+    },
+    {
+      "surface": "ORIGIN / CALLER / CALLVALUE / calldata / returndata",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:262-278",
+        "go-ethereum/core/vm/instructions.go:279-329",
+        "go-ethereum/core/evm.go:93-100"
+      ],
+      "reads": "current frame/message inputs or results of a selected call",
+      "producer": "message context and normal call execution",
+      "disposition": "no implicit execution-history authenticity; calldata roots are supplied claims"
+    },
+    {
+      "surface": "TIMESTAMP / COINBASE / GASLIMIT / DIFFICULTY-PREVRANDAO / CHAINID",
+      "source": [
+        "go-ethereum/core/vm/instructions.go:452-484",
+        "go-ethereum/core/evm.go:42-90",
+        "nitro/arbos/block_processor.go:197-235"
+      ],
+      "reads": "block context/config; Nitro header difficulty1, ArbOS Random derived from difficulty hash",
+      "producer": "createNewHeader and NewEVMBlockContext; not current state/receipt/tx roots",
+      "disposition": "block-level facts fixed before ordinary execution, not caller-position prefix"
+    },
+    {
+      "surface": "BLOBHASH / BLOBBASEFEE",
+      "source": [
+        "go-ethereum/core/vm/eips.go:275-293",
+        "go-ethereum/core/evm.go:93-100"
+      ],
+      "reads": "message BlobHashes by supplied index; BLOBBASEFEE errors on Arbitrum",
+      "producer": "current message blob fields, not earlier transactions",
+      "disposition": "supplied/current-message data, not native prefix"
+    },
+    {
+      "surface": "HistoryStorage read/write",
+      "address": "0x0000f90827f1c53a10cb7a02335b175320002935",
+      "selector": null,
+      "source": [
+        "go-ethereum/params/protocol_params.go:239-246",
+        "nitro/arbos/internal_tx.go:74-86",
+        "nitro/arbos/arbosState/arbosstate.go:487-490"
+      ],
+      "reads": "exact32-byte L2 height; 393168 preceding hashes, current excluded",
+      "producer": "system-address start-block write of previous L2 block hash to ring slot",
+      "disposition": "ordinary nested call observed; completed-block-only, not prefix; no four-byte ABI selector",
+      "runtimeEvidence": [
+        20,
+        24,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        49,
+        50,
+        51
+      ]
+    },
+    {
+      "surface": "NodeInterface / NodeInterfaceDebug",
+      "addresses": [
+        "0x00000000000000000000000000000000000000c8",
+        "0x00000000000000000000000000000000000000c9"
+      ],
+      "source": [
+        "nitro/execution/nodeinterface/node_interface.go:33-47",
+        "nitro/execution/nodeinterface/virtual_contracts.go"
+      ],
+      "reads": "RPC backend helper state, not ordinary EVM contract",
+      "producer": "InterceptRPCMessage outside normal nested EVM dispatch",
+      "disposition": "RPC-only; no native Migration capability; direct call result is not ordinary-call proof",
+      "runtimeEvidence": [
+        46,
+        47,
+        48
+      ]
+    },
+    {
+      "surface": "BeaconRoots address",
+      "address": "0x000f3df6d732807ef1319fb7b8bb8522d0beac02",
+      "source": [
+        "go-ethereum/params/protocol_params.go:232-237"
+      ],
+      "reads": "no code at inherited P/C observations",
+      "producer": "none established on this deployment",
+      "disposition": "not an observed current-prefix oracle; hypothetical standard beacon roots are not adopted",
+      "runtimeEvidence": [
+        21,
+        25
+      ]
+    }
+  ],
+  "standardPrimitives": [
+    {
+      "name": "ecrecover",
+      "address": "0x0000000000000000000000000000000000000001",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "sha256hash",
+      "address": "0x0000000000000000000000000000000000000002",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "ripemd160hash",
+      "address": "0x0000000000000000000000000000000000000003",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "dataCopy",
+      "address": "0x0000000000000000000000000000000000000004",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bigModExp (Osaka EIP7823/EIP7883)",
+      "address": "0x0000000000000000000000000000000000000005",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bn256AddIstanbul",
+      "address": "0x0000000000000000000000000000000000000006",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bn256ScalarMulIstanbul",
+      "address": "0x0000000000000000000000000000000000000007",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bn256PairingIstanbul",
+      "address": "0x0000000000000000000000000000000000000008",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "blake2F",
+      "address": "0x0000000000000000000000000000000000000009",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "kzgPointEvaluation",
+      "address": "0x000000000000000000000000000000000000000a",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bls12381G1Add",
+      "address": "0x000000000000000000000000000000000000000b",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bls12381G1MultiExp",
+      "address": "0x000000000000000000000000000000000000000c",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bls12381G2Add",
+      "address": "0x000000000000000000000000000000000000000d",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bls12381G2MultiExp",
+      "address": "0x000000000000000000000000000000000000000e",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bls12381Pairing",
+      "address": "0x000000000000000000000000000000000000000f",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bls12381MapG1",
+      "address": "0x0000000000000000000000000000000000000010",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "bls12381MapG2",
+      "address": "0x0000000000000000000000000000000000000011",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    },
+    {
+      "name": "p256Verify",
+      "address": "0x0000000000000000000000000000000000000100",
+      "selector": null,
+      "enabledAtSource61": true,
+      "disposition": "supplied-input-primitive-not-prefix",
+      "source": [
+        "nitro/gethhook/geth-hook.go:90-125",
+        "go-ethereum/core/vm/contracts.go:48-55",
+        "go-ethereum/core/vm/contracts.go:151-173"
+      ],
+      "dataDependency": "Run(input []byte) operates on supplied bytes and protocol cryptographic constants, not current EVM StateDB/prefix; no ABI selector."
+    }
+  ],
+  "standardPrimitiveRegistration": "ArbOS61 selects StartingFromArbOS60 (Elara) -> Osaka standard map plus all18 ArbOS families",
+  "limitations": "No claim of exhaustive arbitrary deployed application contracts, arbitrary observation-vector constructions, or unrelated Stylus internals.",
+  "activeMapLinkage": {
+    "source": [
+      "go-ethereum/core/vm/evm.go:145-160",
+      "go-ethereum/params/config.go:1489-1495",
+      "go-ethereum/params/config_arbitrum.go:49-63",
+      "go-ethereum/core/vm/contracts.go:215-226",
+      "nitro/gethhook/geth-hook.go:91-114"
+    ],
+    "meaning": "At source61, NewEVM derives Rules using BlockContext.ArbOSVersion; IsElara is true for Arbitrum and version>=60, so activePrecompiledContracts selects StartingFromArbOS60 containing all18 families plus Osaka primitives."
+  }
+}

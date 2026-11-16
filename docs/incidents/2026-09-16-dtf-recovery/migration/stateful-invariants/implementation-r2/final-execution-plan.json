@@ -1,0 +1,264 @@
+{
+  "commands": {
+    "specs": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants && export PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_INVARIANT_FAIL_ON_REVERT=true FOUNDRY_INVARIANT_RUNS=32 FOUNDRY_INVARIANT_DEPTH=16 && set -o pipefail && python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv --fuzz-seed 0x24c1 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/implementation-r2/specs-final-01.log",
+    "forks": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants && export PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_PROFILE=fork FOUNDRY_INVARIANT_FAIL_ON_REVERT=true FOUNDRY_INVARIANT_RUNS=32 FOUNDRY_INVARIANT_DEPTH=16 && set -o pipefail && python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv -j 1 --rpc-timeout 120 --compute-units-per-second 10 --fuzz-seed 0x24c2 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/implementation-r2/forks-final-01.log'",
+    "ordinary": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants && export PATH=/Users/cyotee/.foundry/bin:$PATH && set -o pipefail && python3 scripts/forge-artifacts.py test --test-root test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol --test-root test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol --test-root test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_FeeCreatorClaim.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_TrustFlags.t.sol -- -vv --fuzz-seed 0x24c3 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/implementation-r2/ordinary-final-01.log"
+  },
+  "sourceStoppedAt": "2026-11-12T18:23:41.924Z",
+  "runs": 32,
+  "depth": 16,
+  "failOnUnexpectedRevert": true,
+  "diagnostics": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "result": {
+        "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol within 3000ms.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false,
+          "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol within 3000ms.",
+          "errorKind": "freshness_timeout"
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "result": {
+        "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol within 3000ms.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false,
+          "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol within 3000ms.",
+          "errorKind": "freshness_timeout"
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "result": {
+        "text": "error[solar] at 32:12: invalid checksummed address\nhelp: correct checksummed address: \"0xb7D4Bb379D361AD442CddEE53eA71a33957826A7\"\nnote: if this is not used as an address, please prepend \"00\"",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [
+            {
+              "file": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+              "diagnostic": {
+                "range": {
+                  "start": {
+                    "line": 31,
+                    "character": 12
+                  },
+                  "end": {
+                    "line": 31,
+                    "character": 54
+                  }
+                },
+                "severity": 1,
+                "source": "solar",
+                "message": "invalid checksummed address\nhelp: correct checksummed address: \"0xb7D4Bb379D361AD442CddEE53eA71a33957826A7\"\nnote: if this is not used as an address, please prepend \"00\""
+              }
+            }
+          ],
+          "totalDiagnostics": 1,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "result": {
+        "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol within 3000ms.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false,
+          "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol within 3000ms.",
+          "errorKind": "freshness_timeout"
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+          "severity": "all",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    }
+  ],
+  "correctedChecksum": "The reported checksum diagnostic was corrected before successful development-07 compilation. Fresh final diagnostics follow separately.",
+  "limits": "No CLI/resume, full repository, provider change or gas validation."
+}

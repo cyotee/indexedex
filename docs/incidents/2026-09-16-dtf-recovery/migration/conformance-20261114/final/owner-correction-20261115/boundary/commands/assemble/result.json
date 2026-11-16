@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "bun",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/assemble-current-inventory.ts"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "started": "2026-11-15T19:30:31.898Z",
+  "finished": "2026-11-15T19:30:32.055Z",
+  "exit": 0,
+  "signal": null,
+  "stdoutBytes": 57,
+  "stderrBytes": 0
+}

@@ -1,0 +1,134 @@
+import { Interface, keccak256, toUtf8Bytes } from "ethers";
+import type { JsonRpcProvider } from "ethers";
+import { z } from "zod";
+import { canonical, readBoundFile } from "./provenance.js";
+import { hex, PreparationError } from "./schema.js";
+import type { ClaimedSyCertificate, Domain, FileRef, PreparationInput, WeightedSyOriginal } from "./schema.js";
+import { stakingClaim } from "./claimed-sy-source.js";
+import { authenticateClaimedSyMember, block, log } from "./claimed-sy-member.js";
+import { requireClaimEvidence as requireEvidence } from "./claimed-sy-witness.js";
+export { stakingSource, stakingClaim } from "./claimed-sy-source.js";
+export type CensusScope = "current" | "historical";
+
+export function claimedSyEvidenceId(domain: Domain, original: WeightedSyOriginal, certificate: ClaimedSyCertificate) {
+  const { evidenceId: _commitment, ...inputs } = original;
+  return keccak256(toUtf8Bytes(canonical({
+    kind: "IndexedEx.complete-original-claimed-sy-v2",
+    chainId: domain.chainId, proxy: domain.proxy, bookId: certificate.pricingSet.bookId,
+    original: inputs, certificate,
+  })));
+}
+
+/** Historical review is explicit; no hash or current balance authenticates that review. */
+export function validateClaimedSyInputs(input: PreparationInput): void {
+  const members = new Set<string>();
+  for (const row of input.weightedSy) {
+    const c = row.claimedOrigin;
+    if (!c) continue;
+    const r = c.review;
+    const o = row.original;
+    switch (c.kind) {
+      case "complete-original-token-staking":
+        requireEvidence(r.originalWeight === undefined, "complete original cannot override its weight basis");
+        break;
+      case "complete-remaining-token-staking":
+        requireEvidence(r.originalWeight !== undefined
+          && BigInt(r.eligibleWeight) <= BigInt(r.originalWeight), "remaining weight exceeds or lacks full original weight");
+        break;
+      default: {
+        const kind: never = c.kind;
+        throw new PreparationError("PROVENANCE", kind);
+      }
+    }
+    requireEvidence(input.domain.chainId === c.chainId && o.source === c.sy && c.pricingSet.bookId === row.pricing.bookId
+      && r.originalId === o.originalId && r.originalWallet === o.originalWallet
+      && r.originalEth === o.originalEth && r.originalDtf === o.originalDtf
+      && o.contributionsKnown, "review and complete original differ");
+    requireEvidence(c.members.reduce((sum, m) => sum + BigInt(m.consumedWeight), 0n) === BigInt(r.eligibleWeight),
+      "incomplete or excess original weight coverage");
+    const q0 = c.members.reduce((sum, m) => sum + BigInt(m.receivedSy), 0n);
+    requireEvidence(q0 > 0n && q0 === BigInt(o.originalUnits), "measured original SY sum differs");
+    for (const member of c.members) {
+      requireEvidence(!members.has(member.transactionHash), "duplicate member within or across originals");
+      members.add(member.transactionHash);
+      requireEvidence(BigInt(member.blockNumber) <= BigInt(input.domain.blockNumber), "preparation follows loading domain");
+    }
+    requireEvidence(o.evidenceId === claimedSyEvidenceId(input.domain, o, c), "certificate commitment differs");
+  }
+}
+
+/** Authenticate against the selected RPC, never against self-consistent uploaded receipt JSON. */
+export async function authenticateClaimedSy(input: PreparationInput, provider: JsonRpcProvider,
+  context: { readonly bundle: FileRef | undefined; readonly census: CensusScope }): Promise<void> {
+  const { bundle } = context;
+  const censusTag = { current: "latest", historical: `0x${BigInt(input.domain.blockNumber).toString(16)}` }[context.census];
+  if (input.weightedSy.some((row) => row.claimedOrigin)) {
+    const { authenticateBooks, authenticateDeployment } = await import("./quotes.js");
+    const abi = z.object({ abi: z.array(z.unknown()) }).parse(JSON.parse((await readBoundFile(input.domain.pricingArtifact, bundle ?? input.bundle)).toString("utf8")));
+    await authenticateDeployment(input, provider, bundle);
+    await authenticateBooks(input, provider, new Interface(JSON.stringify(abi.abi)), bundle);
+  }
+  const budgets = new Map<string, { historical: bigint; floor: bigint; sy: string }>();
+
+  const surrender = new Interface([
+    "function weightedSySurrender(bytes32) view returns((uint256 consumedUnits,uint256 deliveredCredit,uint256 remainingUnits,uint256 remainingCredit))",
+  ]);
+  const readAt = async (target: string, method: string, args: readonly unknown[], tag: string) =>
+    stakingClaim.decodeFunctionResult(method, hex.parse(await provider.send("eth_call", [
+      { to: target, data: stakingClaim.encodeFunctionData(method, args) }, tag,
+    ])))[0];
+  for (const row of input.weightedSy) {
+    const c = row.claimedOrigin;
+    if (!c) continue;
+    const wallet = row.original.originalWallet;
+    const evidence = input.books.find((b) => b.bookId === row.pricing.bookId);
+    requireEvidence(evidence !== undefined && c.pricingSet.bookId === row.pricing.bookId
+      && evidence.setTransactionHash === c.pricingSet.transactionHash, "claimed SY row book differs");
+    const { canonicalReceipt } = await import("./execution-rpc.js");
+    const captured = await canonicalReceipt(provider, c.pricingSet.transactionHash);
+    requireEvidence(captured !== undefined && BigInt(captured.blockNumber).toString() === c.pricingSet.blockNumber
+      && captured.blockHash === c.pricingSet.blockHash, "pricing setter receipt differs");
+    for (const m of c.members) {
+      await authenticateClaimedSyMember(provider, c, m);
+    }
+    const consumed = z.bigint().parse(surrender.decodeFunctionResult("weightedSySurrender",
+      hex.parse(await provider.send("eth_call", [{ to: input.domain.proxy,
+        data: surrender.encodeFunctionData("weightedSySurrender", [row.original.originalId]) }, censusTag])))[0][0]);
+    const q0 = BigInt(row.original.originalUnits);
+    requireEvidence(consumed <= q0, "already consumed SY exceeds certified original");
+    const previous = budgets.get(wallet) ?? { historical: 0n, floor: 0n, sy: c.sy };
+    const excluded = BigInt(c.review.unrelatedSyFloor);
+    budgets.set(wallet, { historical: previous.historical + q0,
+      floor: previous.floor > excluded ? previous.floor : excluded, sy: c.sy });
+  }
+  for (const [wallet, budget] of budgets) {
+    const historical = z.bigint().parse(await readAt(budget.sy, "balanceOf", [wallet],
+      `0x${BigInt(input.domain.blockNumber).toString(16)}`));
+    // Certify preparation at its pinned block. Later transfers neither invalidate
+    // configuration nor veto owner activation; surrender enforces actual custody.
+    requireEvidence(historical >= budget.historical + budget.floor,
+      "complete measured descendants or excluded floors were not controlled at preparation");
+  }
+  {
+    // Historical preparation authenticates its pinned census; its exact later
+    // load is authenticated separately by the signed intent and canonical receipt.
+    // Current manifests must cover deployment-to-latest, even with zero SY rows.
+    const configured = new Interface([
+      "event WeightedSyEntitlementConfigured(bytes32 indexed originalId,bytes32 indexed configurationId,address indexed originalWallet,uint256 originalUnits,uint256 credit)",
+    ]);
+    const event = configured.getEvent("WeightedSyEntitlementConfigured");
+    requireEvidence(event !== null, "missing configuration event ABI");
+
+    const observed = z.array(log).parse(await provider.send("eth_getLogs", [{
+      address: input.domain.proxy, fromBlock: `0x${BigInt(input.domain.deploymentBlockNumber).toString(16)}`, toBlock: censusTag,
+      topics: [event?.topicHash],
+    }]));
+    for (const entry of observed) {
+      const decoded = configured.parseLog({ topics: [...entry.topics], data: entry.data });
+      requireEvidence(input.weightedSy.some((row) => row.original.originalId === decoded?.args[0]),
+        "previously configured SY origin omitted from complete census");
+      requireEvidence(block.parse(await provider.send("eth_getBlockByNumber", [entry.blockNumber, false])).hash === entry.blockHash,
+        "noncanonical prior configuration");
+    }
+  }
+}

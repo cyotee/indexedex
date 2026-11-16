@@ -1,0 +1,64 @@
+46 |     status: z.literal("NON-ISSUABLE-RECEIPT-OBSERVATIONS"), version: z.literal("dtf-finite-receipt-evidence-v1"),
+47 |   }).passthrough().parse(await json(join(directory, "archive.json")));
+48 |   for (const b of [archive.inputs, archive.http, archive.reconciliation]) await bound(directory, b);
+49 |   const archivedInputs = z.object({ identities: z.array(identity), declarations: z.array(identity.extend({ declaration: z.string() })),
+50 |     sources: z.unknown() }).parse(await json(join(directory, "inputs.json")));
+51 |   assert.deepEqual(archivedInputs.sources, await json(join(inputRoot, "sources.json")));
+              ^
+AssertionError: Expected values to be strictly deep-equal:
++ actual - expected
+... Skipped lines
+
+  {
+    chainId: 4663,
+    evidenceCutoff: {
+      block: 108944663,
+      hash: '0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733',
+...
+    },
+-   policyRevision: 'held-assets-no-upfront-credit-20261108',
+    sourceNotes: [
+      'Main event histories and current main balances use the cutoff; old CP current receipt balances were latest-state calls on November 8, with an unresolved supply discrepancy.',
+      'S007-S010 copied from prior research exports; durable copies are here, not dependent on /tmp.',
+      'Normalized transfers preserve raw integer values and log locators; rebasing token balances must not be reconstructed by summing Transfer alone.',
+      'S011 DTF coverage is transfers to/from weighted DETF, not all market trades; WETH coverage is inbound only through block69999999, not a complete post-incident recovery history.',
+
+ generatedMessage: true,
+     actual: {
+  chainId: 4663,
+  evidenceCutoff: [Object ...],
+  incident: [Object ...],
+  sourceNotes: [ "Main event histories and current main balances use the cutoff; old CP current receipt balances were latest-state calls on November 8, with an unresolved supply discrepancy.",
+    "S007-S010 copied from prior research exports; durable copies are here, not dependent on /tmp.",
+    "Normalized transfers preserve raw integer values and log locators; rebasing token balances must not be reconstructed by summing Transfer alone.",
+    "S011 DTF coverage is transfers to/from weighted DETF, not all market trades; WETH coverage is inbound only through block69999999, not a complete post-incident recovery history.",
+    "Current holding observations remain at the recorded cutoff, not a new on-chain scan. Lower-bound exclusions use source units and event-time gons; unmatched remainder stays on hold, not eligible.",
+    "User correction: no upfront new bond credit for held tokens/NFTs even when deposited for DTF harvesting; replaces the former retained-outside-only K rule."
+  ],
+  sources: [
+    [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...]
+  ],
+},
+   expected: {
+  chainId: 4663,
+  incident: [Object ...],
+  evidenceCutoff: [Object ...],
+  sourceNotes: [ "Main event histories and current main balances use the cutoff; old CP current receipt balances were latest-state calls on November 8, with an unresolved supply discrepancy.",
+    "S007-S010 copied from prior research exports; durable copies are here, not dependent on /tmp.",
+    "Normalized transfers preserve raw integer values and log locators; rebasing token balances must not be reconstructed by summing Transfer alone.",
+    "S011 DTF coverage is transfers to/from weighted DETF, not all market trades; WETH coverage is inbound only through block69999999, not a complete post-incident recovery history.",
+    "Current holding observations remain at the recorded cutoff, not a new on-chain scan. Lower-bound exclusions use source units and event-time gons; unmatched remainder stays on hold, not eligible.",
+    "User correction: no upfront new bond credit for held tokens/NFTs even when deposited for DTF harvesting; replaces the former retained-outside-only K rule."
+  ],
+  sources: [
+    [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...]
+  ],
+  policyRevision: "held-assets-no-upfront-credit-20261108",
+},
+   operator: "deepStrictEqual",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/oracle.ts:51:10
+
+Bun v1.4.2 (macOS arm64)

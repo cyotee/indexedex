@@ -19,8 +19,8 @@ import {UniswapV4DetfTarget} from "../detf/UniswapV4DetfTarget.sol";
 import {UniswapV4DetfCommon} from "../detf/UniswapV4DetfCommon.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation}
     from "./interfaces/IUniswapV4DetfMigration.sol";
-import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswapV4DetfMigrationSnapshot.sol";
-import {UniswapV4DetfMigrationSnapshotLib as SnapshotLib} from "./UniswapV4DetfMigrationSnapshotLib.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "./interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+import {UniswapV4DetfMigrationWeightedPricingLib as PricingLib} from "./UniswapV4DetfMigrationWeightedPricingLib.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyRecoveryLib.sol";
 
 /// @notice The removable current-owner administration surface; no legacy attribution shortcuts.
@@ -41,21 +41,25 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         _;
     }
 
-    function captureMigrationSnapshot() external administration nonReentrant returns (bytes32 id_) {
+    /// @notice Replace manual inputs without changing stored credit, custody or issuance.
+    function setMigrationWeightedPricing(Pricing.Inputs calldata next_)
+        external administration nonReentrant returns (bytes32 bookId_)
+    {
         Repo.Storage storage m_ = Repo._layoutStruct();
-        if (m_.frozen.length != 0) revert Snapshot.SnapshotAlreadyCaptured();
-        Snapshot.Snapshot memory book_ = SnapshotLib.capture(Snapshot.Source(
-            address(this), address(ParentRepo._layoutStruct().feeOracle), m_.weth, m_.originalDtf
-        ));
-        m_.frozen = abi.encode(book_);
-        emit Migration.MigrationSnapshotCaptured(book_.id, block.number);
+        Pricing.Book memory book_ = Pricing.Book(
+            2, block.chainid, address(this), m_.weth, m_.originalDtf, bytes32(0), next_
+        );
+        PricingLib.validate(book_);
+        book_.id = keccak256(abi.encode("IndexedEx.manual-weighted-original-credit", book_));
+        m_.weightedPricing = abi.encode(book_);
+        emit Pricing.MigrationWeightedPricingSet(book_.id);
         return book_.id;
     }
 
-    function configureIndependentAllocations(Migration.IndependentAllocationInput[] calldata inputs_)
+    function configureIndependentAllocations(Migration.IndependentAllocationInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.IndependentAllocationInput calldata input_ = inputs_[i_];
@@ -87,7 +91,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                     || (issuedTo_ != address(0) && issuedTo_ != input_.recipient)) {
                     revert Migration.DuplicateOriginalEntitlement(original_.entitlementId);
                 }
-                uint256 credit_ = SnapshotLib.evaluateOriginals(book_, original_.originalEth, original_.originalDtf);
+                uint256 credit_ = PricingLib.evaluateOriginals(book_, original_.originalEth, original_.originalDtf);
                 config_.entitlements.push(Migration.QuotedOriginalEntitlement(original_, credit_));
                 config_.totalCredit += credit_;
                 m_.configuredOriginal[original_.entitlementId] = input_.recipient;
@@ -145,10 +149,10 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         _syncAllExpectedHoldReserves();
     }
 
-    function configureWeightedSyEntitlements(Migration.WeightedSyEntitlementInput[] calldata inputs_)
+    function configureWeightedSyEntitlements(Migration.WeightedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.WeightedSyEntitlementInput calldata input_ = inputs_[i_];
@@ -159,10 +163,10 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         }
     }
 
-    function configureClaimedSyEntitlements(Migration.ClaimedSyEntitlementInput[] calldata inputs_)
+    function configureClaimedSyEntitlements(Migration.ClaimedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.ClaimedSyEntitlementInput calldata input_ = inputs_[i_];
             if (input_.eligibleWeight == 0 || input_.eligibleWeight > input_.originalWeight) {
@@ -179,7 +183,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         }
     }
 
-    function _quoteWeightedSy(Migration.WeightedSyEntitlementInput calldata input_, Snapshot.Snapshot memory book_)
+    function _quoteWeightedSy(Migration.WeightedSyEntitlementInput calldata input_, Pricing.Book memory book_)
         private view returns (uint256)
     {
         if (block.chainid != 4663 || input_.source != Legacy.WEIGHTED_SY) {
@@ -195,7 +199,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
             revert Migration.WeightedSyIdentityConsumed(original_);
         }
-        return SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+        return PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
     }
 
     function _storeWeightedSy(Migration.WeightedSyEntitlementInput calldata input_, bytes32 config_, uint256 credit_)
@@ -212,10 +216,10 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         );
     }
 
-    function configureDtfCustodySeEntitlements(Migration.DtfCustodySeEntitlementInput[] calldata inputs_)
+    function configureDtfCustodySeEntitlements(Migration.DtfCustodySeEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.DtfCustodySeEntitlementInput calldata input_ = inputs_[i_];
@@ -232,7 +236,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.DtfCustodySeIdentityConsumed(original_);
             }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = PricingLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
             m_.dtfCustodySeEntitlements[original_] =
                 Migration.DtfCustodySeEntitlement(true, input_, config_, credit_);
@@ -281,7 +285,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
         selectors_ = new bytes4[](16);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
-        selectors_[1] = Allocation.captureMigrationSnapshot.selector;
+        selectors_[1] = Allocation.setMigrationWeightedPricing.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
         selectors_[3] = Allocation.issueIndependentAllocations.selector;
         selectors_[4] = Allocation.activateMigration.selector;

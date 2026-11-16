@@ -1,0 +1,128 @@
+{
+  "DoneClaim": "F2-01 historical/current SY census invariant is reproduced, fixed, and verified at the existing preparation/execution and public CLI boundaries.",
+  "status": "complete",
+  "task": "Reopened task 7: census lane only",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "rootCause": "Accepted historical execution A recursively used current evidence validation, imposing a deployment-to-latest census on immutable A after Y was configured. The exact A source/preparation/journal/receipt remained authentic, but A could not contain future Y.",
+  "resolution": "Historical contexts authenticate their pinned preparation census and their own exact source, book, deployment, signed domain and canonical configuration/issuance receipt. Default current B validation still enforces deployment-to-latest completeness, including an empty SY category. No fresh-price re-quote or historical rewrite.",
+  "files": [
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.fixture.ts",
+      "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts",
+      "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "sha256": "4439a2d7895e36ebeb1348bcec2bbbe2179ff013f540e1ac256db2d0958302ad"
+    }
+  ],
+  "evidence": {
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/report.md",
+    "ledger": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/results.json",
+    "reproduction": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-06-reproduction",
+    "focused": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-14-final-focused",
+    "manualCommand": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-15-manual",
+    "manualResults": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/result.json",
+    "cleanup": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/cleanup.json",
+    "diffCheck": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-16-diff-check"
+  },
+  "results": {
+    "reproduction": {
+      "exit": 1,
+      "passed": 54,
+      "failed": 1,
+      "error": "claimed SY: previously configured SY origin omitted from complete census"
+    },
+    "focused": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 0,
+      "passed": 65,
+      "failed": 0
+    },
+    "manual": {
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "exit": 0,
+      "status": "PASS",
+      "childExits": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "originalAByteIdentical": true,
+      "completeBAccepted": true,
+      "incompleteBRejected": [
+        "missing X",
+        "missing Y",
+        "empty SY category"
+      ],
+      "resumes": 2,
+      "newNonceRequests": 0,
+      "sends": 0,
+      "newIntents": 0,
+      "requotes": 0
+    },
+    "mutationProofs": [
+      "current bound",
+      "source members/facets/economics",
+      "historical journal domain",
+      "canonical receipt",
+      "historical and empty-current census"
+    ],
+    "mutationsRestored": true,
+    "diffCheckExit": 0
+  },
+  "assumptions": [
+    "Wire fixtures model canonical RPC facts with real offline signatures and archived fixed source runtime bytes; they do not execute an EVM lifecycle.",
+    "Historical completeness is bounded at the already authenticated preparation block; its later configuration is authenticated separately through the original signed intent and canonical receipt."
+  ],
+  "unresolved": [
+    "Parent integration must run the full operator suite and shared typecheck after sibling edits settle; neither was run in this lane.",
+    "Native TypeScript LSP freshness timed out; JSON Biome LSP is absent. No clean diagnostics claim or installation.",
+    "Existing quotes.ts and preparation.ts exceed 250 pure lines; their broader split is outside the explicit cause-only scope.",
+    "Task 10 on-chain lifecycle proof remains separate; read-only transport results do not satisfy it."
+  ],
+  "constraints": {
+    "delegation": false,
+    "commits": false,
+    "publicTransactions": false,
+    "operationalFinancialInputs": false,
+    "solidityEdits": false,
+    "bundleOrRehearsalEdits": false,
+    "siblingOwnedEdits": false,
+    "planCheckboxEdits": false
+  },
+  "cleanup": "Owned servers and temporary fixture directories closed/removed; manual cleanup receipt retained; temporary diagnosis script removed.",
+  "writtenLast": true
+}

@@ -1,0 +1,26 @@
+
+scripts/recovery/dtf-migration/execution-domain.test.ts:
+(pass) new pricing source binding rejects stale bytes and rehashed malformed artifacts [144.11ms]
+(pass) setter verification requires its pricing event binding even with generated event bytes [84.21ms]
+(pass) saved v2 preparation rehydrates without a current-price quote [118.61ms]
+(pass) v1 execution manifest is rejected before RPC or signing [77.19ms]
+(pass) overwritten intra-block book authenticates through its exact setter and subsequent load [219.39ms]
+(pass) historical intent domain is reconstructed independently of surrounding reference hashes [182.58ms]
+(pass) resume rejects wrong nonce, chain, or gas in a persisted signed intent [78.74ms]
+(pass) stale journal and second active checkpoint reject before any signer is created [83.89ms]
+(pass) an unsigned blocked attempt closes without trapping the operator root or rewriting its journal [76.80ms]
+(pass) duplicate configure batch rejects while intentional identical donations keep distinct IDs [70.69ms]
+
+scripts/recovery/dtf-migration/execution-state.test.ts:
+(pass) new source-bound setter recognizes its exact book and rejects independently corrupted receipts [164.92ms]
+(pass) unsent A rejects current B before nonce allocation or transaction submission [77.11ms]
+(pass) changed quote rejects before nonce allocation even when the book id agrees [80.72ms]
+(pass) all selected loaders bind their own book and stable NFT identity excludes repricing [71.09ms]
+(pass) NFT current verification binds consumed credit to each original component floor [85.25ms]
+(pass) same-block A completion reads transaction-prefix A rather than overwritten block-end B [81.42ms]
+(pass) canonical completion rejects forged receipt order and altered transaction log contents [81.16ms]
+(pass) current B configuration is verified independently of authenticated A issuance and principal [275.22ms]
+
+ 18 pass
+ 0 fail
+Ran 18 tests across 2 files. [2.12s]

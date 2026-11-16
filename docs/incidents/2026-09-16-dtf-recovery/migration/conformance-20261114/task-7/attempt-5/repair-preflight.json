@@ -1,0 +1,43 @@
+{
+  "kind": "task-7-harness-repair",
+  "productAttemptIncrement": false,
+  "requestFindings": [
+    "H3",
+    "H4",
+    "B1"
+  ],
+  "unresolvedFollowUp": "B2",
+  "protectedFiles": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-7-verdict.json",
+      "sha256": "6a35a7210d3b9fd95f01a6b1ff460285f03da39f73e4085c92a3cdb6c4226718"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "sha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "sha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/verification.md",
+      "sha256": "883c4dddfbd1f89173c2e0b5c7b2209fac54962d20b95a417256c8673746f9bc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/package-evidence.md",
+      "sha256": "cd9e62951d4e635db2bb482908a20b53b0c0b97a3c7f130c8e23f46822723f5f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/surrender-spec.md",
+      "sha256": "9995fd4dfb9db089883241d24a617aa95caf0c7d964fa66dff38a3d6603091b9"
+    }
+  ],
+  "previousClaimSha256": "c22e5299c0d94abae089db8d18e564f7c14b7a7bd1645473f22978c5b76592bf",
+  "helperBeforeSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8",
+  "recordedAt": "2026-11-15T05:24:28.910Z"
+}

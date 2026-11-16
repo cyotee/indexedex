@@ -1,0 +1,80 @@
+@startuml
+actor User
+participant BatchRouter
+participant Vault
+participant Pool
+participant Buffer
+
+User -> BatchRouter: swapExactIn(paths, deadline, wethIsEth, userData)
+note right: User initiates the swap with exact input amounts.
+
+BatchRouter -> Vault: unlock(encoded SwapExactInHookParams)
+note right: BatchRouter encodes parameters and calls Vault.unlock.
+
+Vault -> BatchRouter: swapExactInHook(params)
+note right: Vault triggers the hook on BatchRouter.
+
+BatchRouter -> BatchRouter: validate deadline
+note right: Check if block.timestamp <= deadline.
+
+loop for each path in paths
+    BatchRouter -> BatchRouter: initialize stepTokenIn = path.tokenIn, stepExactAmountIn = path.exactAmountIn
+    alt first step isBuffer and not static call
+        BatchRouter -> Vault: takeTokenIn(sender, stepTokenIn, stepExactAmountIn, wethIsEth)
+        note right: Take token in advance for buffer operations.
+    else
+        BatchRouter -> BatchRouter: add stepTokenIn to _currentSwapTokensIn
+        BatchRouter -> BatchRouter: add stepExactAmountIn to _currentSwapTokenInAmounts[stepTokenIn]
+    end
+    loop for each step in path.steps
+        BatchRouter -> BatchRouter: determine if isLastStep or isFirstStep
+        alt isLastStep
+            BatchRouter -> BatchRouter: set minAmountOut = path.minAmountOut
+        else
+            BatchRouter -> BatchRouter: set minAmountOut = 0
+        end
+        alt step.isBuffer
+            BatchRouter -> Vault: erc4626BufferWrapOrUnwrap(kind=EXACT_IN, direction, wrappedToken=step.pool, amountGivenRaw=stepExactAmountIn, limitRaw=minAmountOut)
+            Vault --> BatchRouter: amountOut
+        else step.tokenIn == step.pool
+            BatchRouter -> Vault: removeLiquidity(pool=step.pool, from=address(this), maxBptAmountIn=stepExactAmountIn, minAmountsOut, kind=SINGLE_TOKEN_EXACT_IN, userData)
+            Vault --> BatchRouter: amountsOut
+            note right: Burn BPT to get single token out.
+        else step.tokenOut == step.pool
+            BatchRouter -> Vault: addLiquidity(pool=step.pool, to=address(this), maxAmountsIn, minBptAmountOut, kind=UNBALANCED, userData)
+            Vault --> BatchRouter: bptAmountOut
+            note right: Add liquidity to get BPT.
+        else
+            BatchRouter -> Vault: swap(kind=EXACT_IN, pool=step.pool, tokenIn=stepTokenIn, tokenOut=step.tokenOut, amountGivenRaw=stepExactAmountIn, limitRaw=minAmountOut, userData)
+            Vault -> Pool: onSwap(params)
+            Pool --> Vault: amountOut
+            Vault --> BatchRouter: amountOut
+        end
+        alt isLastStep
+            BatchRouter -> BatchRouter: record pathAmountsOut[i] = amountOut
+            BatchRouter -> BatchRouter: add step.tokenOut to _currentSwapTokensOut
+            BatchRouter -> BatchRouter: add amountOut to _currentSwapTokenOutAmounts[step.tokenOut]
+        else
+            BatchRouter -> BatchRouter: set stepExactAmountIn = amountOut
+            BatchRouter -> BatchRouter: set stepTokenIn = step.tokenOut
+        end
+    end
+end
+
+BatchRouter -> BatchRouter: _settlePaths(sender, wethIsEth)
+note right: Settle token transfers based on transient storage.
+
+loop for each tokenIn in _currentSwapTokensIn
+    BatchRouter -> Vault: takeTokenIn(sender, tokenIn, amountIn, wethIsEth)
+    note right: Transfer input tokens from user.
+end
+
+loop for each tokenOut in _currentSwapTokensOut
+    BatchRouter -> Vault: sendTokenOut(sender, tokenOut, amountOut, wethIsEth)
+    note right: Send output tokens to user.
+end
+
+BatchRouter --> User: pathAmountsOut, tokensOut, amountsOut
+note right: Return computed amounts and tokens.
+
+@enduml

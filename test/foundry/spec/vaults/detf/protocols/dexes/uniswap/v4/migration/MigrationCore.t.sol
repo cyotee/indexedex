@@ -9,8 +9,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {TestBase_UniswapV4DetfMigration} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation, IUniswapV4DetfMigrationAccounting as Accounting}
     from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
-import {IUniswapV4DetfMigrationSnapshot as Snapshot}
-    from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing}
+    from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
 import {IUniswapV4DetfMigrationDFPkg as MigrationPackage}
     from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol";
 import {IUniswapV4DetfMigrationRewardToken as RT}
@@ -97,19 +97,18 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
         allocation.issueIndependentAllocations(requests_);
     }
 
-    function test_snapshotCannotRecaptureOrChangeAfterDonation() public {
+    function test_manualBookChangesOnlyOnExplicitSetNotDonation() public {
         _fundAndCapture();
         uint256 quote_ = migration.previewOriginalCredit(1 ether, 1 ether);
-        bytes32 id_ = migration.migrationSnapshot().id;
-        vm.prank(migrationOwner);
-        vm.expectRevert(Snapshot.SnapshotAlreadyCaptured.selector);
-        allocation.captureMigrationSnapshot();
+        bytes32 id_ = migration.migrationWeightedPricing().id;
+        _setObservedPricing();
+        assertEq(pricingId, id_, "identical inputs keep identity");
         IERC20[] memory tokens_ = new IERC20[](1);
         tokens_[0] = IERC20(pairB);
         uint256[] memory amounts_ = new uint256[](1);
         amounts_[0] = 1 ether;
         migration.donateMigrationCapital(tokens_, amounts_, 0, 0, block.timestamp);
-        assertEq(migration.migrationSnapshot().id, id_);
+        assertEq(migration.migrationWeightedPricing().id, id_);
         assertEq(migration.previewOriginalCredit(1 ether, 1 ether), quote_);
     }
 
@@ -185,7 +184,7 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
     function test_activationRemovesEntireAdministrationAndKeepsQueries() public {
         _fundAndCapture();
         bytes4[11] memory selectors_ = [
-            Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
+            Allocation.bootstrapMigrationReserve.selector, Allocation.setMigrationWeightedPricing.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
             Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureWeightedSyEntitlements.selector,
@@ -227,7 +226,7 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
         assertFalse(IERC165(detf).supportsInterface(type(Allocation).interfaceId));
         for (uint256 i_; i_ < selectors_.length; ++i_) assertEq(IDiamondLoupe(detf).facetAddress(selectors_[i_]), address(0));
         assertEq(migration.owner(), migrationOwner);
-        assertNotEq(migration.migrationSnapshot().id, bytes32(0));
+        assertNotEq(migration.migrationWeightedPricing().id, bytes32(0));
         assertGt(migration.previewOriginalCredit(1 ether, 0), 0);
         uint256 before_ = IERC20(detf).balanceOf(address(this));
         (uint256 out_,) = detfExchangeIn.exchangeIn(

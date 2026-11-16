@@ -1,0 +1,300 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+
+/**
+ * @title IUniswapV4StandardExchangeCurveQuadStableBufferHook
+ * @notice Public product surface: 4-asset StableSwap book with ≥1 SE buffer legs.
+ * @dev DETF-facing ABI is IUniswapV4SeBufferHook + IDetfReserveQuote. Family extras stay here
+ *      (baseAmp, indexed getters, B6 flexible, ordered joinUnbalanced(uint256[]) wrapper).
+ *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
+ */
+interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
+    IUniswapV4SeBufferHook,
+    IUniswapV4SeBufferHookNativeLiquidity,
+    IDetfReserveQuote
+{
+    error InvalidRoute();
+
+    event JoinNativeComponents(
+        address indexed sender,
+        address indexed to,
+        uint256 netLp,
+        uint256[] localAmounts,
+        uint256[] shareAmounts,
+        uint256 protocolSharesMinted
+    );
+
+    event Join(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        int256[4] deltas,
+        uint256 protocolSharesMinted
+    );
+    event Exit(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        int256[4] deltas,
+        uint256 protocolSharesMinted
+    );
+    event DepositSingle(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountIn,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
+    event WithdrawSingle(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountOut,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
+    event WithdrawSingleExactOut(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountOut,
+        uint256 sharesBurned,
+        uint256 protocolSharesMinted
+    );
+    event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
+    /// @notice Retired join-trade event; caller-only component assembly does not emit it.
+    event JoinComponentTrade(
+        uint8 indexed tokenIn, uint8 indexed tokenOut,
+        uint256 sharesIn, uint256 localIn, uint256 sharesOut, uint256 localOut
+    );
+    event PairPoolsEnsured(address indexed hook, uint256 doorsEnsured);
+
+    /// @notice B6 proportional join with per-leg pair vs SE-share units (`amountIsSeShare`).
+    event JoinFlexible(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        uint256[] amounts,
+        bool[] amountIsSeShare,
+        uint256[] usedAmounts,
+        uint256 protocolSharesMinted
+    );
+
+    /// @notice B6 proportional exit paying pair and/or SE shares per leg (`receiveSeShare`).
+    event ExitFlexible(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        bool[] receiveSeShare,
+        uint256[] amounts,
+        uint256 protocolSharesMinted
+    );
+
+    event DepositSingleFlexible(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
+
+    event WithdrawSingleFlexible(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountOut,
+        bool receiveSeShare,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
+
+    /* ------------------------------- Binding -------------------------------- */
+
+    function poolManager() external view returns (IPoolManager);
+    function feeOracle() external view returns (IVaultFeeOracleQuery);
+    function permit2() external view returns (address);
+    function numTokens() external view returns (uint8);
+    function token(uint256 index) external view returns (address);
+    function baseAmp() external view returns (uint256);
+    function getCurrentAmp() external view returns (uint256);
+    function standardExchange(uint256 index) external view returns (address);
+    function rateProvider(uint256 index) external view returns (address);
+    /// @notice D60: configured rate providers per leg.
+    function rateProviders() external view returns (address[] memory);
+    /// @notice D60: configured rate provider for `token` (address(0) when none).
+    function rateProvider(address token) external view returns (address);
+    function isBuffered(uint256 index) external view returns (bool);
+
+    /* --------------------------- Inventory / rated -------------------------- */
+
+    /// @notice Booked native SE shares on buffered legs, booked raw tokens otherwise; excludes unsolicited custody.
+    function nativeReserve(uint256 index) external view returns (uint256);
+    function nativeReserves() external view returns (uint256[] memory);
+    /// @notice Swap reserve: local pair tokens plus rated booked SE shares, in pair-native units.
+    function ratedBalance(uint256 index) external view returns (uint256);
+    function ratedBalances() external view returns (uint256[] memory);
+    function seBalance(uint256 index) external view returns (uint256);
+    function seClaim(uint256 index) external view returns (uint256);
+    function invScale(uint256 index) external view returns (uint256);
+    function ratedScale(uint256 index) external view returns (uint256);
+
+    /* -------------------------------- Fees ---------------------------------- */
+
+    function dexSwapFee() external view returns (uint256);
+    /// @notice Resolved WAD percentage split from newly backed LP, not a prior-growth fee.
+    function usageFee() external view returns (uint256);
+    function feeTo() external view returns (address);
+    /// @notice Compatibility getter for the retired growth checkpoint; zero on new deployments.
+    function kLast() external view returns (uint256);
+    function isFullBook() external view returns (bool);
+
+    /* ----------------------------- Pair doors ------------------------------- */
+
+    function ensurePairPools() external returns (uint256 doorsEnsured);
+    function pairDoorCount() external view returns (uint256);
+
+    /* ------------------------------ Previews -------------------------------- */
+
+    /// @notice Family wrapper: amounts in `tokens()` order. Canonical is `previewJoinUnbalanced(address[],uint256[])`.
+    function previewJoinUnbalanced(uint256[] calldata amounts) external view returns (uint256 shares);
+
+    function previewDepositSingle(address tokenIn, uint256 amountIn)
+        external
+        view
+        returns (uint256 shares);
+
+    function previewWithdrawSingle(address tokenOut, uint256 sharesIn)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function previewWithdrawSingleExactOut(address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 sharesIn);
+
+    /// @notice Net LP and accepted input debit after caller-only conversion; SE legs require shares at genesis.
+    /// @dev Excess converted shares and pair tokens are refunded separately in their native token.
+    function previewJoinProportionalFlexible(uint256[] calldata amounts, bool[] calldata amountIsSeShare)
+        external
+        view
+        returns (uint256 shares, uint256[] memory usedAmounts);
+
+    function previewExitProportionalFlexible(uint256 shares, bool[] calldata receiveSeShare)
+        external
+        view
+        returns (uint256[] memory amounts);
+
+    function previewJoinSingleAssetExactInFlexible(address tokenIn, uint256 amountIn, bool amountIsSeShare)
+        external
+        view
+        returns (uint256 shares);
+
+    function previewDepositSingleFlexible(address tokenIn, uint256 amountIn, bool amountIsSeShare)
+        external
+        view
+        returns (uint256 shares);
+
+    function previewExitSingleAssetExactBptInFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function previewWithdrawSingleFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
+        external
+        view
+        returns (uint256 amountOut);
+
+    /* ------------------------------ Liquidity ------------------------------- */
+
+    /// @notice Family wrapper: amounts in `tokens()` order. Canonical is `joinUnbalanced(address[],uint256[],…)`.
+    function joinUnbalanced(uint256[] calldata amounts, address to, uint256 sharesMin, uint256 deadline)
+        external
+        returns (uint256 shares);
+
+    function depositSingle(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function withdrawSingle(
+        address tokenOut,
+        uint256 sharesIn,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    function withdrawSingleExactOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) external returns (uint256 sharesIn);
+
+    /* --------------------------- B6 flexible LP ----------------------------- */
+
+    function joinProportionalFlexible(
+        uint256[] calldata amounts,
+        bool[] calldata amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares, uint256[] memory usedAmounts);
+
+    function exitProportionalFlexible(
+        uint256 shares,
+        address to,
+        bool[] calldata receiveSeShare,
+        uint256[] calldata amountsMin,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function joinSingleAssetExactInFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function depositSingleFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function exitSingleAssetExactBptInFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    function withdrawSingleFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+}

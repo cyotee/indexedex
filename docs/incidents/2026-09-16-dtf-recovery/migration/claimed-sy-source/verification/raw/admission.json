@@ -1,0 +1,229 @@
+{
+  "seal": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/seal.json",
+    "sha256": "edc983cc135b672559ee06c44bd176035a5c1cbf85dbfbc78790a66fdea95acd",
+    "members": [
+      {
+        "path": "contract.md",
+        "bytes": 17571,
+        "sha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "method.md",
+        "bytes": 8244,
+        "sha256": "c87f9a8b9c9b588e04746b4b39e8d6332bb315b6811d7c51ab6488cf5ef271ca",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/cleanup.json",
+        "bytes": 7855,
+        "sha256": "e7a684cdaeab7037048fe371c489b8a209ba5492252fa0190d3cb92d9cb86472",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/input-preservation.json",
+        "bytes": 4734,
+        "sha256": "b314958801aac738c71a7f08b3fb8721d921840e5cf9b793ecb9ce6d8471c497",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/observations.json",
+        "bytes": 29900,
+        "sha256": "a864d40a72717eca3ddd1a4601b75a613852b18c935e7cd1b36112f433dc934d",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/offline-audit.json",
+        "bytes": 1105,
+        "sha256": "195c687c99b838fc5b0e37c3ea052834d93915046b600d5523c8ff9ffec824e0",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/reconciliation.json",
+        "bytes": 7901,
+        "sha256": "f202a9d098dc9a5be7a717d95d39c7db0c51c185da0b65c16e02576491de81d6",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/source-identities.json",
+        "bytes": 370968,
+        "sha256": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/transactions.json",
+        "bytes": 439946,
+        "sha256": "8311e6212e77704e2494424fe4c74e3189e98326a944be509225798ed97156c6",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "raw/wire.json",
+        "bytes": 1144231,
+        "sha256": "800689d5a29376107378ab8648d39dfdaf8dcb03cadc68c4a33289b2c420642a",
+        "mode": 420,
+        "verified": true
+      },
+      {
+        "path": "report.md",
+        "bytes": 17136,
+        "sha256": "7abf2e1c933d6f773f1864caf526f0a077336c8cc61ca4ae012b2202e9e56cfd",
+        "mode": 420,
+        "verified": true
+      }
+    ],
+    "exactMembership": true
+  },
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md",
+      "bytes": 6237,
+      "sha256": "d03eafff015d1bd28f1d01993ac073795f5dc208385bf7720efceeeb1307ea25",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase11-same-wallet-source-brief.md",
+      "bytes": 6406,
+      "sha256": "cadc176a5323cce7e9447de85270138ec2580e687577fcd53596c7d5583988d5",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/claimed-sy-intake-assessment.md",
+      "bytes": 3696,
+      "sha256": "0cdbc2fa9649d383dc875e9ec45ebd9ddb63a19d724d3a1cee1210b75c76a306",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-source-coverage-snapshot.md",
+      "bytes": 7064,
+      "sha256": "7ce2ab4274051348a09da278049d0e9f22aa0f368aeb6a3fba2b70c0af3c9667",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "bytes": 79305,
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "bytes": 108022,
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-caller.json",
+      "bytes": 94994,
+      "sha256": "1a06f2439e9531bb42ec0adebdbf212fbdc73046ecc498fca7655dedcc1b2230",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-source.raw.json",
+      "bytes": 127,
+      "sha256": "d88ed9e7797a6fad18db602e3a3b1d911876257fb98d21ad81eed3dd12219861",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.json",
+      "bytes": 699993,
+      "sha256": "8752356e523adcd85af806ff044520cc76d89c12fc285a7de43a9610ccf7d702",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.sources.json",
+      "bytes": 411756,
+      "sha256": "026c9ab02a2fde5738b2e290d875e55d0b2ff762cae975b7a8ca0bf3454231ab",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/report.md",
+      "bytes": 25230,
+      "sha256": "989a09b0ea2a3b73863df3c3fa7c4ba89b54b70f7d7af22e534998c4809e2df4",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/commit/verification.md",
+      "bytes": 20217,
+      "sha256": "6ab0148d8398161c5f1e74ffbd000053e6c0ecb736fa51113156fbfc9e8a7e4e",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 37557,
+      "sha256": "e6be67ebca04f9903d03a0ffaa1b833bc650404d5fae1b9255a9e7b1bf69eb2a",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 25433,
+      "sha256": "cb9739e50e75229ca51e30ddb8f4a2823830c0a6eaf6d28de3bac675195bb2c4",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "bytes": 22543,
+      "sha256": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/contracts/protocols/staking/token/TokenStakingTarget.sol",
+      "bytes": 20256,
+      "sha256": "006dc9e18befcc1c7151a93b81a4e61690d117021efb08f0190fd274d088757c",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Common.sol",
+      "bytes": 23680,
+      "sha256": "e806e72b86b5207a33dda89eb508c68fd8fcbdd892fa1679c57dd63159698ad0",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/claims/contract.md",
+      "bytes": 48499,
+      "sha256": "a657b9e8a5a6925130a6a56f7334a26536162effac321254144063774fd98d41",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/seal.json",
+      "bytes": 2517,
+      "sha256": "edc983cc135b672559ee06c44bd176035a5c1cbf85dbfbc78790a66fdea95acd",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/contract.md",
+      "bytes": 17571,
+      "sha256": "b0785175919f4eb6e5dd53f94bdb343b3c88dee1aa9fde190bcd9d52354911c7",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/report.md",
+      "bytes": 17136,
+      "sha256": "7abf2e1c933d6f773f1864caf526f0a077336c8cc61ca4ae012b2202e9e56cfd",
+      "verified": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/method.md",
+      "bytes": 8244,
+      "sha256": "c87f9a8b9c9b588e04746b4b39e8d6332bb315b6811d7c51ab6488cf5ef271ca",
+      "verified": true
+    }
+  ],
+  "initialWorktreeAndStoppedNode": {
+    "text": "listener_exit=1\n4eaa7decab80d24cf37cb3781eff5ffaf9362942\ntracked_diff_exit=0\nindex_diff_exit=0\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/",
+    "details": {
+      "status": "completed"
+    },
+    "images": [],
+    "hasError": false
+  },
+  "subject": "4eaa7decab80d24cf37cb3781eff5ffaf9362942"
+}

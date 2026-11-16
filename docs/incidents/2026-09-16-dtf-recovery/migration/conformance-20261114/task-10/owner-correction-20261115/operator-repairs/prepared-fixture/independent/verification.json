@@ -1,0 +1,3467 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "exact_scope": "Combined frozen issuance/empty/prepared census production repair verdicts plus authorized mixed-fixture response-key adaptation, current unit tests/types and production CLI on synthetic transport; excludes real rehearsal and task-10 lifecycle",
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-fixture-done.json",
+    "sha256": "01a7814895ecf34e90396f19a2fc66cfc168f043a73a94428fade71db0392406"
+  },
+  "reusedProductionVerdicts": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-verdict.json",
+      "sha256": "122035701ff9bc85c1230f3acc9b4e83baa88ad6f399f0220585a057973fba12",
+      "verdict": "confirmed",
+      "failure_class": "none",
+      "scope": "Issuance required child-event emitter/topic selection and exact proof validation in execution-state.ts and execution-state.test.ts only; excludes census sibling, shared QA and fresh task-10 lifecycle"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-verdict.json",
+      "sha256": "964f1ccf406f0ad1ff2e91b413b6f1091735e8679c74e0759e694f5b3ed90dab",
+      "verdict": "confirmed",
+      "failure_class": "none-in-empty-census-repair",
+      "scope": "verifyEmptyCensus compensation-event classification in execution-domain.ts and execution-domain.test.ts; separately requested adjacent verifyConfiguration assessment is advisory only"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-verdict.json",
+      "sha256": "602c101fa60359e05d331af1ba77cfb042973530cc36bc938fb6b50b74710f31",
+      "verdict": "confirmed",
+      "failure_class": "none",
+      "scope": "Frozen A1 production prepared-range repair: shared compensationEventTopics in execution-domain.ts and use in execution-state.ts, associated frozen tests; retained failure classification only for the shared gate"
+    }
+  ],
+  "frozenGateBindings": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "independentlyConfirmedSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "freshRunSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "independentlyConfirmedSha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "freshRunSha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "independentlyConfirmedSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "freshRunSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "independentlyConfirmedSha256": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+      "freshRunSha256": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+      "matches": true
+    }
+  ],
+  "fixtureDiff": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+    "archivedBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/mixed-fixture.before.txt",
+    "beforeSha256": "aa68ed246ee0e135860c1cf79b9712468cb05327dabc8496f9cf2adbbf9d37c4",
+    "afterSha256": "ef79cad27c4b6fd351f583c6c75d96560fb6b9d99ba3c887058ff1e1ef558bf8",
+    "exactAuthorizedTwoEditReconstruction": true,
+    "responseAssignmentByteIdentical": true,
+    "sourceInventoryChanges": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+        "sha256": "ef79cad27c4b6fd351f583c6c75d96560fb6b9d99ba3c887058ff1e1ef558bf8",
+        "bytes": 18281
+      }
+    ]
+  },
+  "freshCommands": [
+    {
+      "name": "00-bun-path",
+      "argv": [
+        "/usr/bin/which",
+        "bun"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stdout.log",
+        "sha256": "b8852309b79933c7e655033693bdd9a0089dd7a64135b0a900a3fa717d1d9916",
+        "bytes": 22
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "00-bun-version",
+      "argv": [
+        "bun",
+        "--version"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stdout.log",
+        "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
+        "bytes": 6
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "00-bun-revision",
+      "argv": [
+        "bun",
+        "--revision"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stdout.log",
+        "sha256": "43c92ee3266e71a3576a0c901180eceb18343004b4074f3363702ab3a6efec10",
+        "bytes": 16
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "00-ts-version",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--version"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:14Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stdout.log",
+        "sha256": "4c7ae79542506418b516a1a9f6e91321e9464f88a2130bfa070aca57929b2eb5",
+        "bytes": 14
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "01-focused",
+      "argv": [
+        "env",
+        "TASK12_EVIDENCE=/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused",
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/bundle.test.ts",
+        "-t",
+        "complete mixed A-SY/B-configuration|default validate on a relocated retained-A|omitting old configured SY"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:15:14Z",
+      "finished": "2026-11-15T18:15:36Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stdout.log",
+        "sha256": "89fbbcbb0416444d7833d2199f22e505b4cf3d764bc8876002ccb6c0184588a3",
+        "bytes": 1124
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stderr.log",
+        "sha256": "ac527df16148c99d2699129cea7ff3d7ac129d974d14b466a0c5a784b61d7388",
+        "bytes": 469
+      }
+    },
+    {
+      "name": "02-full-tests",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/bundle.test.ts",
+        "./scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "./scripts/recovery/dtf-migration/candidates.test.ts",
+        "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts",
+        "./scripts/recovery/dtf-migration/execution.test.ts",
+        "./scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "./scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "./scripts/recovery/dtf-migration/preparation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt.test.ts",
+        "./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:15:36Z",
+      "finished": "2026-11-15T18:17:22Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stdout.log",
+        "sha256": "711d04fb3854e2033e02fb4ddb52d00e6ac9cd34dd5af8af7b9c6a1dcf17f48a",
+        "bytes": 3492
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log",
+        "sha256": "2db6f464e2f0aa628e81f4084612975f13f8d054132670ad5f4331c222838f74",
+        "bytes": 34752
+      }
+    },
+    {
+      "name": "03-operator-types",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "scripts/recovery/dtf-migration/bundle-files.ts",
+        "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/bundle.ts",
+        "scripts/recovery/dtf-migration/candidate-input.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "scripts/recovery/dtf-migration/candidates.test.ts",
+        "scripts/recovery/dtf-migration/candidates.ts",
+        "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "scripts/recovery/dtf-migration/execution-domain.ts",
+        "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "scripts/recovery/dtf-migration/execution-plan.ts",
+        "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "scripts/recovery/dtf-migration/execution-schema.ts",
+        "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "scripts/recovery/dtf-migration/execution-state.ts",
+        "scripts/recovery/dtf-migration/execution.fixture.ts",
+        "scripts/recovery/dtf-migration/execution.test.ts",
+        "scripts/recovery/dtf-migration/execution.ts",
+        "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "scripts/recovery/dtf-migration/journal.ts",
+        "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "scripts/recovery/dtf-migration/payloads.ts",
+        "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "scripts/recovery/dtf-migration/preparation.test.ts",
+        "scripts/recovery/dtf-migration/preparation.ts",
+        "scripts/recovery/dtf-migration/provenance.ts",
+        "scripts/recovery/dtf-migration/quotes.ts",
+        "scripts/recovery/dtf-migration/receipt-association.ts",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "scripts/recovery/dtf-migration/receipt-input.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "scripts/recovery/dtf-migration/receipt.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+        "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "scripts/recovery/dtf-migration/rehearse.ts",
+        "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "scripts/recovery/dtf-migration/schema.ts",
+        "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:17:22Z",
+      "finished": "2026-11-15T18:17:25Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "04-manual",
+      "argv": [
+        "env",
+        "PREPARED_FIXTURE_EVIDENCE=/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual",
+        "bun",
+        "--eval",
+        "import assert from \"node:assert/strict\";\nimport { readFile, writeFile, access } from \"node:fs/promises\";\nimport { join } from \"node:path\";\nimport { mixedFixture } from \"./docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts\";\nimport { main } from \"./scripts/recovery/dtf-migration/cli.js\";\nimport { exportBundle } from \"./scripts/recovery/dtf-migration/bundle.js\";\nimport { readBundle } from \"./scripts/recovery/dtf-migration/bundle-files.js\";\nimport { materializeBundle } from \"./scripts/recovery/dtf-migration/bundle-materialize.js\";\nimport { assemble, normalize } from \"./scripts/recovery/dtf-migration/preparation.js\";\nimport { loadExecution, compensationEventTopics } from \"./scripts/recovery/dtf-migration/execution-domain.js\";\nimport { canonical, fingerprint } from \"./scripts/recovery/dtf-migration/provenance.js\";\nconst f = await mixedFixture();\nconst commands = [];\nconst cli = async (argv) => { console.log(canonical({kind:\"cli-start\",argv})); await main(argv); commands.push({argv,status:\"returned\"}); };\ntry {\n  const native = await loadExecution(f.manifestPath);\n  const query = {address:native.manifest.proxy,fromBlock:\"0x\"+BigInt(native.manifest.deploymentBlockNumber).toString(16),toBlock:\"latest\",topics:[compensationEventTopics(native.abis.migration,\"configuration\")]};\n  const rows = f.changes.logs.get(canonical(query));\n  assert.ok(rows); assert.equal(rows.length,3);\n  const responseBefore = canonical(rows);\n  const completeBundle = await exportBundle(f.manifestPath,join(f.root,\"manual-complete-bundle\"));\n  const saved = await readBundle(completeBundle);\n  const originals = await Promise.all(saved.manifest.files.map(async item => { const raw = await readFile(item.originalPath); return {...item,sha256:fingerprint(raw),rawBase64:raw.toString(\"base64\")}; }));\n  const complete = await materializeBundle(completeBundle,join(f.root,\"manual-complete-relocated\"));\n  assert.equal(complete.kind,\"execution\");\n  const completeDomain = await loadExecution(complete.manifest);\n  await cli([\"validate\",\"--manifest\",completeDomain.manifest.preparedManifest]);\n  await cli([\"verify\",\"--manifest\",complete.manifest,\"--checkpoint\",join(f.root,\"complete-must-not-create\")]);\n  const omitted = assemble(normalize({...f.finalPrepared.input,weightedSy:[],exposures:f.finalPrepared.input.exposures.filter(r=>r.category!==\"weighted-sy\")}),f.finalPrepared.quoteEvidence);\n  const prepared = await f.save(\"manual-omitted-sy-prepared.json\",omitted);\n  const execution = await f.save(\"manual-omitted-sy-execution.json\",{...native.manifest,preparedManifest:prepared.path});\n  const omittedBundle = await exportBundle(execution.path,join(f.root,\"manual-omitted-sy-bundle\"));\n  const relocated = await materializeBundle(omittedBundle,join(f.root,\"manual-omitted-sy-relocated\"));\n  assert.equal(relocated.kind,\"execution\");\n  const negativeArgv = [\"verify\",\"--manifest\",relocated.manifest,\"--checkpoint\",join(f.root,\"omitted-must-not-create\")];\n  let rejection;\n  console.log(canonical({kind:\"cli-start\",argv:negativeArgv}));\n  try { await main(negativeArgv); } catch (error) { if (!(error instanceof Error)) throw error; assert.match(error.message,/configured original omitted from complete deployment census/); rejection={name:error.name,message:error.message}; }\n  assert.ok(rejection); commands.push({argv:negativeArgv,status:\"expected-throw\",rejection});\n  assert.equal(canonical(f.changes.logs.get(canonical(query))),responseBefore);\n  for (const original of originals) assert.equal(fingerprint(await readFile(original.originalPath)),original.sha256);\n  assert.equal(f.methods.includes(\"eth_getTransactionCount\"),false); assert.equal(f.methods.includes(\"eth_sendRawTransaction\"),false);\n  const result = {scope:\"Synthetic task-12 loopback transport; production CLI main invoked in-process; no EVM or public RPC\",query,responseRows:rows,responseSha256:fingerprint(responseBefore),responseRowsUnchanged:true,commands,completeRelocated:{manifest:complete.manifest,prepared:completeDomain.manifest.preparedManifest,status:\"validate-and-verify-returned\"},omittedRelocated:{manifest:relocated.manifest,status:\"rejected\",rejection},originalInputs:originals,originalInputsUnchanged:true,methods:f.methods,limits:[\"Expected rejection is a thrown production CLI error, not a separate process exit.\",\"No live census, Anvil transaction, activation or readiness proof.\"]};\n  await writeFile(join(process.env.PREPARED_FIXTURE_EVIDENCE,\"result.json\"),JSON.stringify(result,null,2)+\"\\n\",{flag:\"wx\"});\n  console.log(canonical({kind:\"manual-complete\",complete:\"accepted\",omitted:\"rejected\",responseRows:rows.length,originalInputs:originals.length,noSends:true}));\n} finally { await f.close(); console.log(canonical({kind:\"cleanup\",fixtureRoot:f.root,closed:true})); }\n"
+      ],
+      "argvMatchesClaim": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "started": "2026-11-15T18:17:25Z",
+      "finished": "2026-11-15T18:17:40Z",
+      "sourceSnapshotSha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "snapshotStable": true,
+      "matchesSourceInventory": true,
+      "stdout": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stdout.log",
+        "sha256": "dacd1b25b05124c2194e590c44d4f6c1290e537330ce6a2014b83aca8a2d0626",
+        "bytes": 1372
+      },
+      "stderr": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "exactCommandComparisons": [
+    {
+      "current": "02-full-tests",
+      "prior": "attempt-09-full-tests",
+      "exactArgvMatch": true
+    },
+    {
+      "current": "03-operator-types",
+      "prior": "attempt-10-operator-types",
+      "exactArgvMatch": true
+    }
+  ],
+  "tests": {
+    "passed": 336,
+    "failed": 0,
+    "files": 21,
+    "timeoutMs": 15000,
+    "raw": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log",
+    "formerlyFailedPasses": [
+      "(pass) complete mixed A-SY/B-configuration and immutable A-issuance relocate twice without native fallback or new prices [10887.80ms]",
+      "(pass) default validate on a relocated retained-A preparation stays read-only without current pricing [6141.39ms]",
+      "(pass) omitting old configured SY from a relocated complete preparation rejects the census [5020.32ms]"
+    ]
+  },
+  "retainedHelper": {
+    "receipt": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+      ],
+      "argvMatchesBinding": true,
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "stdoutBytes": 0,
+      "stderrBytes": 0
+    },
+    "binding": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/retained-helper-types.json",
+    "roots": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+    ],
+    "edges": [
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-process.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-data.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-process.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-chain.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-data.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/execution.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "to": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-chain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/payloads.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/bundle.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/execution-domain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/execution-plan.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "to": "scripts/recovery/dtf-migration/execution-state.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-schema.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/execution-domain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/execution-plan.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/execution-state.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/journal.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/provenance.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/provenance.ts",
+        "to": "scripts/recovery/dtf-migration/bundle-files.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "to": "scripts/recovery/dtf-migration/candidate-input.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "to": "scripts/recovery/dtf-migration/candidate-nfts.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-chain.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "to": "scripts/recovery/dtf-migration/rehearsal-data.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-source.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-member.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-witness.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "to": "scripts/recovery/dtf-migration/quotes.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/payloads.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/payloads.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/bundle.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/bundle.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/bundle.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/bundle.ts",
+        "to": "scripts/recovery/dtf-migration/bundle-files.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/preparation.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/bundle.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/payloads.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/execution-plan.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/execution.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "to": "scripts/recovery/dtf-migration/execution-state.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "to": "scripts/recovery/dtf-migration/execution-domain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/execution-domain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/execution-plan.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/execution-owner-bond.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/execution-deployment.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/payloads.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-state.ts",
+        "to": "scripts/recovery/dtf-migration/preparation.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/journal.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/journal.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/bundle-files.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/bundle-files.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/candidate-input.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/candidate-input.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "to": "scripts/recovery/dtf-migration/candidate-input.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-source.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-state.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-witness.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-source.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/quotes.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/quotes.ts",
+        "to": "scripts/recovery/dtf-migration/payloads.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/quotes.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/quotes.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/quotes.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/quotes.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/preparation.ts",
+        "to": "scripts/recovery/dtf-migration/payloads.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/preparation.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/preparation.ts",
+        "to": "scripts/recovery/dtf-migration/quotes.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/preparation.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/preparation.ts",
+        "to": "scripts/recovery/dtf-migration/bundle.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/preparation.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/preparation.ts",
+        "to": "scripts/recovery/dtf-migration/execution-domain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "to": "scripts/recovery/dtf-migration/execution-domain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "to": "scripts/recovery/dtf-migration/provenance.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "to": "scripts/recovery/dtf-migration/execution-domain.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "to": "scripts/recovery/dtf-migration/execution-rpc.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "to": "scripts/recovery/dtf-migration/execution-schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "to": "scripts/recovery/dtf-migration/schema.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-source.ts"
+      },
+      {
+        "from": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "to": "scripts/recovery/dtf-migration/claimed-sy-witness.ts"
+      }
+    ],
+    "reachableFiles": 29,
+    "fixtureReachable": false,
+    "currentAndHistoricalBindings": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "currentSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json",
+        "olderSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "currentSha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+        "currentSha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/schema.ts",
+        "currentSha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "currentSha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/provenance.ts",
+        "currentSha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+        "currentSha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "currentSha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+        "currentSha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "currentSha256": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "currentSha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "currentSha256": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/quotes.ts",
+        "currentSha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/payloads.ts",
+        "currentSha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "currentSha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "currentSha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/bundle.ts",
+        "currentSha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "currentSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.ts",
+        "currentSha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "currentSha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution.ts",
+        "currentSha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "currentSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "currentSha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "currentSha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/journal.ts",
+        "currentSha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "currentSha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json",
+        "olderSha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+        "currentSha256": "a97cd3c41d282ec3aa22229cb819cb8e637262dfac22d8da43d4c258a1138ceb",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/source-after.json",
+        "olderSha256": null,
+        "historicalMatch": false,
+        "historicalInventoryMissing": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+        "currentSha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "currentSha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+        "currentMatchesCaptured": true,
+        "recordedAt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+        "olderSha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+        "historicalMatch": true,
+        "historicalInventoryMissing": false
+      }
+    ],
+    "historicalMatches": 28,
+    "totalLocalFiles": 29,
+    "historicalGap": "task-11/recovery.ts was not separately inventoried at the retained compile; current adaptation before/after identity only",
+    "parentStatementIsNotNewUserDecision": true,
+    "retroactiveHashPinRequired": false,
+    "rerun": false
+  },
+  "failureClearance": [
+    {
+      "id": "H1",
+      "previousFailureClass": "harness-fixture-response-key-mismatch",
+      "disposition": "cleared-for-combined-unit-cli-scope",
+      "evidence": "Exact authorized import/topic-key adaptation; same three rows and assertions; focused/full omission test passes and production CLI omission throws the expected error."
+    },
+    {
+      "id": "H2",
+      "previousFailureClass": "runner-timeout",
+      "disposition": "cleared-for-current-combined-run",
+      "evidence": "One fresh full run passes all 336 tests at unchanged 15000 ms; formerly timed-out relocation passes in 10887.80 ms. No general absence-of-flakes claim."
+    },
+    {
+      "id": "H3",
+      "previousFailureClass": "harness-lifecycle-cleanup-fallout",
+      "previousCausalConfidence": "probable",
+      "disposition": "cleared-for-current-combined-run",
+      "evidence": "The following relocated validation passes in the fresh full run, 6141.39 ms, with no ENOENT. The old deletion interleaving remains unproved; no historical diagnosis is strengthened retroactively."
+    }
+  ],
+  "manual": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/result.json",
+    "scope": "Synthetic task-12 loopback transport; production CLI main invoked in-process; no EVM or public RPC",
+    "query": {
+      "address": "0x000000000000000000000000000000000000000a",
+      "fromBlock": "0x5a",
+      "toBlock": "latest",
+      "topics": [
+        [
+          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+          "0x286c5cc5454dd5423791286ff6d0889b2f1a236b36653c8362d3f45c7a83a3b6",
+          "0xaa6b30bf9a69ad8b85c9d0d99f86b818a231717ca2a48ec168034aec8d1dc202",
+          "0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2",
+          "0xd1c2bd2d7e34aef74f5c3777f0ab7d0f582179408134c8d7e6306695e026673a",
+          "0x59306009aea8a6c83c64e203653e34d719cab2ea6cda18efa00ed8c25d8d400b",
+          "0x33e0d7611cd01ac585b56590f0e06f294b7f66f0ee6604c70a99a2322721f7b5",
+          "0x85d95872fb01c95b5c79ec368bf9ca44bec41bcd0cfe91e2cf2749ae0b79e232",
+          "0xc50f03b2667f754f048eb2d07be8528842bb6b437806e66b53a8d2c3d09096f9",
+          "0xefcccb4ed1d365a1bfebc8e2a0dbc11034fad586b6ee762949c5fd15fa5e1ac6"
+        ]
+      ]
+    },
+    "responseRows": [
+      {
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000cb0000000000000000000000000000000000000000000000007d0000000000046d",
+        "topics": [
+          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+          "0x0000000000000000000000000000000000000000000000000000000000000014",
+          "0x6a33b0eb7da6af040e2b9defdbc93858a488987971508b05c015c36125e24c05"
+        ],
+        "address": "0x000000000000000000000000000000000000000a",
+        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000065",
+        "blockNumber": "0x65",
+        "transactionHash": "0xdabc9d8fddbf66045d063a177d7c8c08236985f4c47749f0576bcbc3be3dc5a5",
+        "transactionIndex": "0x0",
+        "logIndex": "0x0"
+      },
+      {
+        "data": "0x0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000c",
+        "topics": [
+          "0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2",
+          "0x00000000000000000000000000000000000000000000000000000000000000cf",
+          "0xeaaa66ad9fa89fead5359c9d9c0d46e40f589be2ba3e327b7db4a3a1e5edbe49",
+          "0x0000000000000000000000000000000000000000000000000000000000000016"
+        ],
+        "address": "0x000000000000000000000000000000000000000a",
+        "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000066",
+        "blockNumber": "0x66",
+        "transactionHash": "0x456095128017cfef6d7bb7df7b706acf3fb5cb410f36ef8a80376f06939595f7",
+        "transactionIndex": "0x0",
+        "logIndex": "0x0"
+      },
+      {
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000cb0000000000000000000000000000000000000000000000007d0000000000046d",
+        "topics": [
+          "0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84",
+          "0x0000000000000000000000000000000000000000000000000000000000000014",
+          "0x4c6e895a8083b06c120fa58069efdb5fc609699505395d531d7775f47b4ea33d"
+        ],
+        "address": "0x000000000000000000000000000000000000000a",
+        "blockHash": "0x000000000000000000000000000000000000000000000000000000000000006a",
+        "blockNumber": "0x6a",
+        "transactionHash": "0x0d2907f64a8472c5a103865b59e10b8d8edc40a04a950f21bbc9fd868d3b56f3",
+        "transactionIndex": "0x0",
+        "logIndex": "0x0"
+      }
+    ],
+    "responseSha256Computed": "09a1d6f304ed67f58acca3c84ddf7ab0e927b4c9c054aafbcaf1329d0badafd1",
+    "commands": [
+      {
+        "argv": [
+          "validate",
+          "--manifest",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-complete-relocated/prepared/manifest.json"
+        ],
+        "status": "returned"
+      },
+      {
+        "argv": [
+          "verify",
+          "--manifest",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-complete-relocated/execution.json",
+          "--checkpoint",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/complete-must-not-create"
+        ],
+        "status": "returned"
+      },
+      {
+        "argv": [
+          "verify",
+          "--manifest",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/manual-omitted-sy-relocated/execution.json",
+          "--checkpoint",
+          "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/omitted-must-not-create"
+        ],
+        "status": "expected-throw",
+        "rejection": {
+          "name": "ExecutionError",
+          "message": "configured original omitted from complete deployment census"
+        }
+      }
+    ],
+    "negativeIsExpectedThrownCliError": true,
+    "negativeChildProcessExitClaimed": false,
+    "originalBindings": [
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/deployment.json",
+        "sha256": "4ab2ca89aa40b0570d7cd4623c0710c22fc6699a4fa6f041af919b9ce9a5a019",
+        "bytes": 1376,
+        "matches": true
+      },
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/evidence.json",
+        "sha256": "261a4c204848bbfde38c61636d32d38a2245cdf9023eee6271486eacb424df2c",
+        "bytes": 4507,
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+        "sha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+        "bytes": 365399,
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+        "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "bytes": 302108,
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+        "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "bytes": 123210,
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+        "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "bytes": 60558,
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+        "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "bytes": 128972,
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+        "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "bytes": 124637,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/book-a.json",
+        "sha256": "f8e4f14e87ee25b25f8d432714475bf312404f54616c723ee899a3e500815006",
+        "bytes": 5303,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/inputs-a.json",
+        "sha256": "b57bec7f82c4c366fe70d268942f84e7c0c3cd962936b66d45c92b3725ec3f1f",
+        "bytes": 2329,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/book-b.json",
+        "sha256": "46b77bf7945631b61f7548ecd7e9f9af52d32c26821b38847a51f0e7e461acf6",
+        "bytes": 5303,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/inputs-b.json",
+        "sha256": "0e981c5450c61df24b3890accadb8b8a828f3b9890999c0998a83b0b7ccd706c",
+        "bytes": 2329,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/prepared-mixed.json",
+        "sha256": "be8843a4c3876f75fa296c6fd73a33bd278d5e252e4d6b016318ba2083678070",
+        "bytes": 37126,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-10.json",
+        "sha256": "ada5f64f38bbd1e22f5c0c1c348186351ec938736393135832f03382fba9735b",
+        "bytes": 1959,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/execution-b.json",
+        "sha256": "285c53853cbf02c4a5ee543b79087dac34a5c7461ec17adace2bc0622026328b",
+        "bytes": 5562,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-10.json",
+        "sha256": "438209cbe5e4608a84f50e5e298e513aff7b5fee923f50ba3dce8fd6d14e4a10",
+        "bytes": 2330,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/journal-b.json",
+        "sha256": "81ff8d18944e3df6d62bcb0617c860c50a9c353dfc9971fa799bb7fcd81ba807",
+        "bytes": 5738,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/prepared-b.json",
+        "sha256": "dc3573e237a0baa2ce7f87416ad7b91891e12728a294f4d3a1af422698c26e5d",
+        "bytes": 37118,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-7.json",
+        "sha256": "27e934c44e2852aac6d3b50aeed589d583a883a6e09bd43f72055b2d5c7cbed6",
+        "bytes": 1959,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/execution-a.json",
+        "sha256": "dca38e4d850225be7561a02989db705096992ecbba90532bda8898560dd69604",
+        "bytes": 5562,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-7.json",
+        "sha256": "b2b6aa4c9493e79285324d919640df0a9ef554534e83d077077ab2993f3b8c33",
+        "bytes": 2329,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/journal-a.json",
+        "sha256": "f255c2068e4366dc225ff13a0af72e676a7d3bd1ba0f5d2d7ec25bfbea94f7d5",
+        "bytes": 5738,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/prepared-a.json",
+        "sha256": "ff2a1d6c0a99af150b754fd22d320bfb93dd0626af6bfc1a02c8525b16b98085",
+        "bytes": 24231,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-9.json",
+        "sha256": "59e926bd011d6e48f7018820149d40da46b79ce3ea12a28d45aad261fe6a44d1",
+        "bytes": 3176,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-9.json",
+        "sha256": "ba2853eaf59d7e326e2f83e1c552408a6059b78441c530fe73ba28e25b946b04",
+        "bytes": 1305,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/receipt-8.json",
+        "sha256": "389ea4763ef34de920f11d5b7deadf2d551d0060692f4363fa58c19273adb97c",
+        "bytes": 1907,
+        "matches": true
+      },
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr/intent-8.json",
+        "sha256": "41c4d524f515ac23192661cc8be04ddddaa72809c76b420ebd46769e0ba1f7d1",
+        "bytes": 2201,
+        "matches": true
+      }
+    ],
+    "nonceRequests": 0,
+    "sends": 0
+  },
+  "portable": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/portable-integrity.json",
+    "rawBindings": [
+      {
+        "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/deployment.json",
+        "sha256": "4ab2ca89aa40b0570d7cd4623c0710c22fc6699a4fa6f041af919b9ce9a5a019",
+        "bytes": 1376,
+        "matches": true
+      },
+      {
+        "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/evidence.json",
+        "sha256": "261a4c204848bbfde38c61636d32d38a2245cdf9023eee6271486eacb424df2c",
+        "bytes": 4507,
+        "matches": true
+      },
+      {
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+        "sha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+        "bytes": 365399,
+        "matches": true
+      },
+      {
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+        "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+        "bytes": 302108,
+        "matches": true
+      },
+      {
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+        "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+        "bytes": 123210,
+        "matches": true
+      },
+      {
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+        "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+        "bytes": 60558,
+        "matches": true
+      },
+      {
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+        "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+        "bytes": 128972,
+        "matches": true
+      },
+      {
+        "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+        "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+        "bytes": 124637,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/book-a.json",
+        "sha256": "f8e4f14e87ee25b25f8d432714475bf312404f54616c723ee899a3e500815006",
+        "bytes": 5303,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/inputs-a.json",
+        "sha256": "b57bec7f82c4c366fe70d268942f84e7c0c3cd962936b66d45c92b3725ec3f1f",
+        "bytes": 2329,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/book-b.json",
+        "sha256": "46b77bf7945631b61f7548ecd7e9f9af52d32c26821b38847a51f0e7e461acf6",
+        "bytes": 5303,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/inputs-b.json",
+        "sha256": "0e981c5450c61df24b3890accadb8b8a828f3b9890999c0998a83b0b7ccd706c",
+        "bytes": 2329,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-mixed.json",
+        "sha256": "0bfc2bbff8dafa6c15d7d32ace63aaa1a98ecbc6ca911283d5974aab556fbc25",
+        "bytes": 37126,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-10.json",
+        "sha256": "0fb6cb68353c11c43c5dddb94e09ef20ce6fd3b1b568dad031d2541c91b9fedc",
+        "bytes": 1959,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/execution-b.json",
+        "sha256": "4f9753c868287db5453b1f26a8071f9662761d0de73b702795c2f8fd9cb9efe6",
+        "bytes": 5562,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-10.json",
+        "sha256": "bdca5e02604ca01d22a0bffa24303246450b1ddad53fb0b080360398d9117591",
+        "bytes": 2330,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/journal-b.json",
+        "sha256": "24d7b8ec8b785cfdb85ec0365e479efc77c4b144514814cde9948d64738dc766",
+        "bytes": 5738,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-b.json",
+        "sha256": "f54b47786db5453586b20a3cb121bf94af106665a8073c4c8c946230905fc526",
+        "bytes": 37118,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-7.json",
+        "sha256": "6328283d02175346cc2857346833c40687a00c7b0548bcca3b076d5e18cc5132",
+        "bytes": 1959,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/execution-a.json",
+        "sha256": "c63c8104169f45a216aa1da884e0eec4c869fedc5c14a4cab50cec5fcde233ce",
+        "bytes": 5562,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-7.json",
+        "sha256": "6c4a76505fdd19f192404418c83c5eecbc3e557cc175b71ee1cca636763deadf",
+        "bytes": 2329,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/journal-a.json",
+        "sha256": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091",
+        "bytes": 5738,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-a.json",
+        "sha256": "d2e40724bc11314a5821a760c2d495debb9c8a7f4286deb047c67bee808da5dc",
+        "bytes": 24231,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-9.json",
+        "sha256": "820a97c7f32d7345f2405cd0665f3799fbf9e7ab247dc6df41e853347e98c89f",
+        "bytes": 3176,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-9.json",
+        "sha256": "1c6854ff13436d2fac639903a6bd4531b84cb3ddca7ee22a176b92662310cba8",
+        "bytes": 1305,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-8.json",
+        "sha256": "8294d6265e7ac38ffb7b42735b08380cd34371120c20c9a1dcf20d3602bd9c4f",
+        "bytes": 1907,
+        "matches": true
+      },
+      {
+        "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-8.json",
+        "sha256": "3113f6ee8ff492034ad5f61254a5eba4801b887bd52df44a565fb12a2e2f80f8",
+        "bytes": 2201,
+        "matches": true
+      }
+    ],
+    "comparisons": [
+      {
+        "freshDomainHash": "985a8d230e8d8b29044a31882cc1954f9e1bd5096b0b518da4149b535d5ccc06",
+        "contexts": [
+          {
+            "stage": "configure",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-10.json",
+              "sha256": "bdca5e02604ca01d22a0bffa24303246450b1ddad53fb0b080360398d9117591",
+              "bytes": "2330"
+            },
+            "originalDomainHash": "24d7b8ec8b785cfdb85ec0365e479efc77c4b144514814cde9948d64738dc766",
+            "signedDomainHash": "24d7b8ec8b785cfdb85ec0365e479efc77c4b144514814cde9948d64738dc766"
+          },
+          {
+            "stage": "configure",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-8.json",
+              "sha256": "3113f6ee8ff492034ad5f61254a5eba4801b887bd52df44a565fb12a2e2f80f8",
+              "bytes": "2201"
+            },
+            "originalDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091",
+            "signedDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091"
+          },
+          {
+            "stage": "configure",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-7.json",
+              "sha256": "6c4a76505fdd19f192404418c83c5eecbc3e557cc175b71ee1cca636763deadf",
+              "bytes": "2329"
+            },
+            "originalDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091",
+            "signedDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091"
+          },
+          {
+            "stage": "independent-issue",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-9.json",
+              "sha256": "1c6854ff13436d2fac639903a6bd4531b84cb3ddca7ee22a176b92662310cba8",
+              "bytes": "1305"
+            },
+            "originalDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091",
+            "signedDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091"
+          }
+        ],
+        "allSignedDomainHashesRetained": true,
+        "byteComparisons": [
+          {
+            "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/deployment.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/evidence.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/book-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/inputs-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/book-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/inputs-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-mixed.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-10.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/execution-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-10.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/journal-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-7.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/execution-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-7.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/journal-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-9.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-9.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-8.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-8.json",
+            "matchesRetainedBytes": true
+          }
+        ]
+      },
+      {
+        "freshDomainHash": "8d70151f2d4083e61a85cd84afd6fa3e31bcb1f68d8508f301573f165572a90e",
+        "contexts": [
+          {
+            "stage": "configure",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-10.json",
+              "sha256": "bdca5e02604ca01d22a0bffa24303246450b1ddad53fb0b080360398d9117591",
+              "bytes": "2330"
+            },
+            "originalDomainHash": "24d7b8ec8b785cfdb85ec0365e479efc77c4b144514814cde9948d64738dc766",
+            "signedDomainHash": "24d7b8ec8b785cfdb85ec0365e479efc77c4b144514814cde9948d64738dc766"
+          },
+          {
+            "stage": "configure",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-8.json",
+              "sha256": "3113f6ee8ff492034ad5f61254a5eba4801b887bd52df44a565fb12a2e2f80f8",
+              "bytes": "2201"
+            },
+            "originalDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091",
+            "signedDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091"
+          },
+          {
+            "stage": "configure",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-7.json",
+              "sha256": "6c4a76505fdd19f192404418c83c5eecbc3e557cc175b71ee1cca636763deadf",
+              "bytes": "2329"
+            },
+            "originalDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091",
+            "signedDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091"
+          },
+          {
+            "stage": "independent-issue",
+            "intent": {
+              "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-9.json",
+              "sha256": "1c6854ff13436d2fac639903a6bd4531b84cb3ddca7ee22a176b92662310cba8",
+              "bytes": "1305"
+            },
+            "originalDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091",
+            "signedDomainHash": "c8cf733d38acbe381052c0b97cf02a4aa7a3c2385cf603805746494722be1091"
+          }
+        ],
+        "allSignedDomainHashesRetained": true,
+        "byteComparisons": [
+          {
+            "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/deployment.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/evidence.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/book-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/inputs-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/book-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/inputs-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-mixed.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-10.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/execution-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-10.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/journal-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-b.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-7.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/execution-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-7.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/journal-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/prepared-a.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-9.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-9.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/receipt-8.json",
+            "matchesRetainedBytes": true
+          },
+          {
+            "originalPath": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-RIfven/intent-8.json",
+            "matchesRetainedBytes": true
+          }
+        ]
+      }
+    ]
+  },
+  "integrityChecks": [
+    {
+      "path": "bun.lock",
+      "sha256": "25c47a2ce63eef951a283eea0132611e3d6d78f40f4737fbad5f5eab7c931740",
+      "bytes": 247642,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts",
+      "sha256": "a97cd3c41d282ec3aa22229cb819cb8e637262dfac22d8da43d4c258a1138ceb",
+      "bytes": 8971,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+      "sha256": "ef79cad27c4b6fd351f583c6c75d96560fb6b9d99ba3c887058ff1e1ef558bf8",
+      "bytes": 18281,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "bytes": 20293,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+      "bytes": 18846,
+      "matches": true
+    },
+    {
+      "path": "node_modules/ethers/package.json",
+      "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f",
+      "bytes": 4945,
+      "matches": true
+    },
+    {
+      "path": "node_modules/typescript/bin/tsc",
+      "sha256": "8d5fa5bd883fec0979fc2004f1fe1d99aef40570155d550eadc0b03b55513bf0",
+      "bytes": 45,
+      "matches": true
+    },
+    {
+      "path": "node_modules/typescript/package.json",
+      "sha256": "5a0bb7f286c4b3f1413a42c05f902311b161f70e5f52d9da10490443bfd595a3",
+      "bytes": 3620,
+      "matches": true
+    },
+    {
+      "path": "node_modules/zod/package.json",
+      "sha256": "f2d8e294bb39f78a945cd602ee5635781f66081f032d991f61548f7e550ae74d",
+      "bytes": 3284,
+      "matches": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "a3d0d97074012a183156abf0134370f1f8bc69b2e69aeaa7babebbd0644a651d",
+      "bytes": 3138,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "sha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+      "bytes": 8321,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "sha256": "01505bf4ca5fbb81d7466ec6cfe7e8b9382a949c8a6cd9a072973dba1ad62282",
+      "bytes": 1793,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "sha256": "6fdc999ed41fa75b694f0efdb43c3f59a0e46c01d2338d10709ca5ecffb4911e",
+      "bytes": 34081,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "sha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+      "bytes": 9123,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "bytes": 6757,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+      "bytes": 6421,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+      "bytes": 11872,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "bytes": 7120,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+      "bytes": 5443,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+      "bytes": 8096,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+      "bytes": 9086,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+      "bytes": 3399,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "75aeece9077d5e4030344fc06d24ec11054f66a861574908cba0d5c306da4bc8",
+      "bytes": 5412,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+      "sha256": "40c33bbe081c38d48e29dab80febb3bf804834499529afc9f4302f342952965b",
+      "bytes": 10369,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+      "sha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af",
+      "bytes": 2346,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "sha256": "3b262fb7ab7b7b29457b60ebda0bcf8c9c8b33802e8621186b0262cb8f6f0595",
+      "bytes": 3806,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+      "sha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e",
+      "bytes": 2929,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "sha256": "5d89132aaa379ecd04f5bd1b7ada7fa4db9ec24957935ebd0f09187da19a61df",
+      "bytes": 5140,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "sha256": "00dcffda3e6f8ee183228c4d8531e878eed73cac8798fa60f1cfcb67da893477",
+      "bytes": 5522,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+      "bytes": 8114,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "0804827556835e51d00fa553d3f99cd027263ed7042d501cdff088d46f02d011",
+      "bytes": 13446,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "sha256": "6e5aebb5c965959823441f8dd8d346e86166ed2901b8eedd70c0ba9f4c7e979c",
+      "bytes": 5404,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "sha256": "7c652f7d60f1f4109bfb8988fa19f959192a302aeac4682d5d9f732e3833ec4a",
+      "bytes": 9330,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "sha256": "daab8beeb5428aefd8e97f134638f02dab2d0d3044c2363ef3179c97eb2d8f97",
+      "bytes": 6682,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-deployment.ts",
+      "sha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b",
+      "bytes": 4485,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "bytes": 15178,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "bytes": 15624,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "sha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61",
+      "bytes": 11414,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5",
+      "bytes": 6855,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "sha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754",
+      "bytes": 12513,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "sha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912",
+      "bytes": 5380,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "sha256": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+      "bytes": 22933,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "bytes": 30326,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.fixture.ts",
+      "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+      "bytes": 13686,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+      "bytes": 20619,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "bytes": 19008,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "sha256": "5016194f2904a251077dbd265e21c7a253d4f2aa59ee7c2364e363e0b3af09f2",
+      "bytes": 6823,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3",
+      "bytes": 8522,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "sha256": "caabc9a7604339920c25487c4af6dd7577cb12df4d4edb9abc6cdbf863f2bda4",
+      "bytes": 10063,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3",
+      "bytes": 17608,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+      "bytes": 16042,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+      "bytes": 15126,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+      "bytes": 21123,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2",
+      "bytes": 7181,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+      "bytes": 19500,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+      "bytes": 3491,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "sha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e",
+      "bytes": 8738,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "sha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323",
+      "bytes": 5724,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "sha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4",
+      "bytes": 9271,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "sha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4",
+      "bytes": 10148,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+      "bytes": 6178,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "sha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472",
+      "bytes": 8477,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "sha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1",
+      "bytes": 9645,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "sha256": "9ebf5c44cf38381da213f3c3ee6b633b9cbac93e3c111f59b8fd3fd147bea286",
+      "bytes": 14625,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "bytes": 4636,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+      "bytes": 6745,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+      "bytes": 20029,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+      "sha256": "f6b85235915eb23d2f22a736f6af5616e58d68f1ea4b64c68c80d183495c6958",
+      "bytes": 7861,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "sha256": "d5c78110ab49ca60919579358ff52adeea351d0a7dd5796382afd36fa8e71950",
+      "bytes": 7916,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+      "sha256": "6d0c7195f8603df8c2b4d8111c479fc87aa99a5a05cff51c4827c0c57060e09b",
+      "bytes": 8392,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "sha256": "134a65e6ec14bb01eb9dd620f83e7a2f38df8a98689879eb9b7e08d6e266abe9",
+      "bytes": 13869,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+      "sha256": "1c277d81758444791a2fcf2d0b9e871b86a4113bd5290f28d313eabc0af2f8e3",
+      "bytes": 3925,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "sha256": "7971fe65ec2a25d8b5bebe1b1203a6955ef89f3bf73e046e0652c81e3cf78a25",
+      "bytes": 10185,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "sha256": "14607d15bf59bf8a660a9339d28f710e309c3d6c53969fe3b6733bfb08971615",
+      "bytes": 14491,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "bytes": 31166,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+      "bytes": 19046,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "031179dad9816047f5972006f3720eed9517840b24674fb6ca45ef0afb562c67",
+      "bytes": 13370,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "sha256": "ad822ba0cd573e615ec09433e30047ac0f426ac0d5fe4e40fd80cdc2c290fcfe",
+      "bytes": 12829,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "sha256": "c625d384632c459a4d40a1fe434096635b86b172ad867ceb5b3d35cbd228d9b5",
+      "bytes": 13875,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "sha256": "50960d918b03d2c0a517ef498dba4ea601aefdc439fe39e425c2c6e156b04b30",
+      "bytes": 9538,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "sha256": "4adf63cf79fcf192aa31ec8b5e194e71b3729992d6484bf5661c9f2120da0048",
+      "bytes": 11915,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+      "sha256": "0d8afc388603c7a5929540a4823a67bf4fdae4c6e78c943d33d9f889820f585b",
+      "bytes": 17437,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "sha256": "0c6c5f27baabeb61898aef7f2b74bdf3ee444f577ca6beff19af9bdf003ae628",
+      "bytes": 11342,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "sha256": "b96d81ec174e1cf0830d44e42c057ab397501e54f567762520817af3ff8d0f94",
+      "bytes": 7556,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "bytes": 2869,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "29451c33fca5ace782a657ab942efbc6e235b94f7838ebd2881df72463e620f7",
+      "bytes": 16710,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "sha256": "15ff421c881fba204e0b8178e6992155493a97f3d89999282caae64810325962",
+      "bytes": 14462,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "sha256": "33865e649a1ef7774230f8729438cfc684920f5195efb56a23255255a5dd597d",
+      "bytes": 18499,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+      "bytes": 6048,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "bytes": 15737,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "sha256": "a0f9a4b18e12baaf714a9ce9f1e66e7ee80dec0b810bf5f473b2a69a7d80c26f",
+      "bytes": 22057,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "93fa246116dc60ffcb60f75b02a978dca1c7054733f2b6d1e0c346c71af7ff9a",
+      "bytes": 51089,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+      "bytes": 4079,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+      "bytes": 13749,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "sha256": "c2af2343c48f106e1fe77d2892896c98a42ffddf80333d0dbceea805dfc604e1",
+      "bytes": 5435,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "sha256": "83a04df23bd0ea7b9e99cfabe8e0a5dfa49873a2e94ec21f400c6640bfd40e16",
+      "bytes": 6799,
+      "matches": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "sha256": "7ab5b5e1218c7ae89de49169930ca0394cd99221f95b44f65e2db655aeadbba8",
+      "bytes": 13080,
+      "matches": true
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-done.json",
+      "sha256": "12fa20751a1c7eb9faec567572c3d2f98ffb700e615437ac30302f29e69caee5",
+      "bytes": 7387,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/argv.nul",
+      "sha256": "d4567f10b58595b1ac8f0355c76526033cf59a2557a606b09dcc1b7331abdd2d",
+      "bytes": 1199,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/command.txt",
+      "sha256": "80ce0567e4363449c924fb71910f473e1aa867e843e1a369e5203598a3c61ad5",
+      "bytes": 1200,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/exit.txt",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/finished.txt",
+      "sha256": "3ba8b5a216ebaa478ca47f016412f4be3c8fc862b2258b8e6f0120a83dbccd3d",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/source-after.sha256",
+      "sha256": "fe309a55119694f98b14096a5bf53b26d178cf3b1d334e1cb9243206c5b785dd",
+      "bytes": 11032,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/source-before.sha256",
+      "sha256": "fe309a55119694f98b14096a5bf53b26d178cf3b1d334e1cb9243206c5b785dd",
+      "bytes": 11032,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/started.txt",
+      "sha256": "c0e0ed9f252d48a867e292314687b0395938493d5d413fbe13079877b4098993",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/stderr.log",
+      "sha256": "fdb3d30cb6e94e0d754b685c3ab435148b1a5976b9c024c35a1e67444ec6e64d",
+      "bytes": 38756,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests/stdout.log",
+      "sha256": "86ed7438498053f1039e4992a36dc5af1d006cb8b520ce5d87aba991925fde96",
+      "bytes": 3350,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/argv.nul",
+      "sha256": "7e537ae342043173dad39318e61b02ea786e9984b9317088173f05b132842b0c",
+      "bytes": 411,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/command.txt",
+      "sha256": "0555e5328bd3e79e9003367d831eecdf7eab58018f5e6dab20c370497ef4ecf1",
+      "bytes": 412,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/finished.txt",
+      "sha256": "b1fd003be344049230178fa15b0c739da860a4a2bdc991ecb2d1360b997bebaf",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-after.sha256",
+      "sha256": "fe309a55119694f98b14096a5bf53b26d178cf3b1d334e1cb9243206c5b785dd",
+      "bytes": 11032,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/source-before.sha256",
+      "sha256": "fe309a55119694f98b14096a5bf53b26d178cf3b1d334e1cb9243206c5b785dd",
+      "bytes": 11032,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/started.txt",
+      "sha256": "c937654d5b14f9d4ddf35b4faf9122bdb1cc5e9e17695d8b680b009470d5f654",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/argv.nul",
+      "sha256": "843c452a69f37b08c4d052bf7ee864bf1206d42c14f36fa6473c05c6c35e951e",
+      "bytes": 170,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/command.txt",
+      "sha256": "0e53c3cc5189ed0d16ffd4982451b78f39ef4044cd043ddda79d1f4977ee109a",
+      "bytes": 171,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/finished.txt",
+      "sha256": "2f192909e119f0a9bd0d34a7353c231e85499006a9043bb57f597c7d1af4f9ee",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/source-after.sha256",
+      "sha256": "672c58fc6e058ab991d8a267f7888aa268df8ef5e81300222e6a30020f687e77",
+      "bytes": 11264,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/source-before.sha256",
+      "sha256": "672c58fc6e058ab991d8a267f7888aa268df8ef5e81300222e6a30020f687e77",
+      "bytes": 11264,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/started.txt",
+      "sha256": "d58286628cb934f2fb85f77c43fb6c1e8853d8831cb6dcedbce061882bd75ec4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis/stdout.log",
+      "sha256": "fe6e0df8265c5d5542b91fcbcde41e60d00c88f898e9c5da15db2fc6dfbd45e1",
+      "bytes": 2056,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/diagnose-portable-fixture.ts",
+      "sha256": "1f38fb87e82d4ce0ede76f3aa2d36d9c8ae4f24e3c04942bf951f5e73ac02175",
+      "bytes": 3421,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/report.md",
+      "sha256": "206a1d617a482b57139e70df602a5b8c351cae32b26ed404c9d652aedf4b9f3d",
+      "bytes": 10635,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/results.json",
+      "sha256": "dc813b99d7dfde23c88732b413e94f5c26843d98201e1fd8b7291e1a10893c17",
+      "bytes": 39896,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/source-preservation.json",
+      "sha256": "f04c24d017509f267f692656bd4b0208b1934d712e6ee602164879a058bd3c0e",
+      "bytes": 2928,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/argv.nul",
+      "sha256": "8a9921f4f5dcc9b80e57f8b65351f952d08bb72349adec0dcfa0bd0ea60889e1",
+      "bytes": 19,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/command.txt",
+      "sha256": "5930367f05d9d372f1553ab065aa4a90afc0ccffab6a146cd6289e0dab565f9f",
+      "bytes": 20,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-path/stdout.log",
+      "sha256": "b8852309b79933c7e655033693bdd9a0089dd7a64135b0a900a3fa717d1d9916",
+      "bytes": 22,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/argv.nul",
+      "sha256": "74dfd4090835c6e694d7f7373b750aa0ffd367bb4f42c97cb5d8db061d3387eb",
+      "bytes": 15,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/command.txt",
+      "sha256": "b6ce41cea50761ec55c77eac61cfc3aab653c297bcba7328fbf43e608e5081ad",
+      "bytes": 16,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-revision/stdout.log",
+      "sha256": "43c92ee3266e71a3576a0c901180eceb18343004b4074f3363702ab3a6efec10",
+      "bytes": 16,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/argv.nul",
+      "sha256": "196fb6f2e8ca9c28fcb314f1a77974ab4c4cbc3e5dd69fedbc50512f24658a28",
+      "bytes": 14,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/command.txt",
+      "sha256": "a52b57d3b6521e053640e9f292cb91fbad5c06b760cd5d62b55a7dfd16817310",
+      "bytes": 15,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-bun-version/stdout.log",
+      "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
+      "bytes": 6,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/argv.nul",
+      "sha256": "cc7407ae7a51948907af531ae19aa090a636f71e26f41e62b5bb82dd8511e165",
+      "bytes": 46,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/command.txt",
+      "sha256": "66649645b9646f6d102789d898a051e359371b1aadf337937122e32d03d59d4d",
+      "bytes": 47,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/finished.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/00-ts-version/stdout.log",
+      "sha256": "4c7ae79542506418b516a1a9f6e91321e9464f88a2130bfa070aca57929b2eb5",
+      "bytes": 14,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/argv.nul",
+      "sha256": "04e14c2e402490d4e5b812c97313797d857baf019d5ac8b5be41838ad74433a5",
+      "bytes": 419,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/command.txt",
+      "sha256": "f93fe559ccf388338a0d593fb688d4145495419b9d21670877724c1e29052ebe",
+      "bytes": 432,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/finished.txt",
+      "sha256": "710c4d3938abec3116e03d3f1bda5a78503447eb8cdf2fc0b10e4b52ea540608",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/portable-integrity.json",
+      "sha256": "f36f674b9d154bd4a0a284da00024665d20ff5d4c560f0bd618024146a630f78",
+      "bytes": 1768165,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/started.txt",
+      "sha256": "6d94c92e751c2bc33a81a745961a3dcbb2f1a780277a759a2c696022b3d37ef4",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stderr.log",
+      "sha256": "ac527df16148c99d2699129cea7ff3d7ac129d974d14b466a0c5a784b61d7388",
+      "bytes": 469,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/stdout.log",
+      "sha256": "89fbbcbb0416444d7833d2199f22e505b4cf3d764bc8876002ccb6c0184588a3",
+      "bytes": 1124,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/01-focused/tamper-rejections.log",
+      "sha256": "5e0318495f1a1399773c41997fedd936088d45de44ac0ba7a2259fc5b03a3542",
+      "bytes": 96,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/argv.nul",
+      "sha256": "d4567f10b58595b1ac8f0355c76526033cf59a2557a606b09dcc1b7331abdd2d",
+      "bytes": 1199,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/command.txt",
+      "sha256": "80ce0567e4363449c924fb71910f473e1aa867e843e1a369e5203598a3c61ad5",
+      "bytes": 1200,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/finished.txt",
+      "sha256": "e4c94a5a948953ddafeec749a0e3edf0fecbaa8259f58e69a0101ae23bfa99fc",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/started.txt",
+      "sha256": "710c4d3938abec3116e03d3f1bda5a78503447eb8cdf2fc0b10e4b52ea540608",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log",
+      "sha256": "2db6f464e2f0aa628e81f4084612975f13f8d054132670ad5f4331c222838f74",
+      "bytes": 34752,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stdout.log",
+      "sha256": "711d04fb3854e2033e02fb4ddb52d00e6ac9cd34dd5af8af7b9c6a1dcf17f48a",
+      "bytes": 3492,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/argv.nul",
+      "sha256": "7bca625d3c93d4639207075a0ab1cc02341448aaf7ff252342be873f19df1cee",
+      "bytes": 4839,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/command.txt",
+      "sha256": "911bab9857ce78401ddd62e8a19930d0defe0be660afe96cd9061edcdaf5d6e1",
+      "bytes": 4840,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/finished.txt",
+      "sha256": "3b6fb4bbccb1d0320b31688603eedff5c701e2ced3f2522c1769e23a96be38c1",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/started.txt",
+      "sha256": "e4c94a5a948953ddafeec749a0e3edf0fecbaa8259f58e69a0101ae23bfa99fc",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/03-operator-types/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/argv.nul",
+      "sha256": "4e6dd308a053bedf8d2bae169d5d55ebbf9b32c11ddf2ec867b8d72e8df292c5",
+      "bytes": 5056,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/command.txt",
+      "sha256": "738bcd95456191724ce02a398c69fafe3e0a554d1ba482142fac9d65c61d6c87",
+      "bytes": 5107,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/finished.txt",
+      "sha256": "3e51f09110a82dfa78a963292b6febc802a4e0031377a7d5ce2b3aee3581d972",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/result.json",
+      "sha256": "99275c3bb3b9b9597dff098c7b63d3ea175710dfbd6806b0a621d9a3ecdc12ac",
+      "bytes": 1776548,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/source-after.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/source-before.sha256",
+      "sha256": "b30bb31fe24b230583080450c007670477c90f6cfe3f36a8467adf56d589f799",
+      "bytes": 11551,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/started.txt",
+      "sha256": "3b6fb4bbccb1d0320b31688603eedff5c701e2ced3f2522c1769e23a96be38c1",
+      "bytes": 21,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/04-manual/stdout.log",
+      "sha256": "dacd1b25b05124c2194e590c44d4f6c1290e537330ce6a2014b83aca8a2d0626",
+      "bytes": 1372,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/cleanup.json",
+      "sha256": "1f15be8aa9183bd606a4bf7230fe599452aa24165a3fb18e960ca623c029e875",
+      "bytes": 883,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/mixed-fixture.before.txt",
+      "sha256": "aa68ed246ee0e135860c1cf79b9712468cb05327dabc8496f9cf2adbbf9d37c4",
+      "bytes": 18388,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/overall.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/report.md",
+      "sha256": "4a67599850447dc08097e486f592e052ab5e0e515de9f9493631430c70eca33b",
+      "bytes": 6621,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/results.json",
+      "sha256": "1e87650b8128934daed76ab59f62f87f500e58af8df9d34b8e66a6062247eb79",
+      "bytes": 27043,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/retained-helper-types.json",
+      "sha256": "ebaf1c3432b7b1fa4d8a4e2b59396a3c7e088cbf102c0824d1d31fae8408d55a",
+      "bytes": 16015,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/run-checks.sh",
+      "sha256": "72f5c9acb0179132c2a3eaeb4a24c2bb57ef15bffa638ce61d31ef77c1ab86d9",
+      "bytes": 12242,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/source-after.json",
+      "sha256": "90342474e840606547634bfa8fa6259b486e53d92e9f19ce318765ef7b15d3e8",
+      "bytes": 35578,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/source-before.json",
+      "sha256": "4219181ea6f1fd984d3f4eea28b75009a45a04dffc54bcc688cb4f8d81f8d7d6",
+      "bytes": 34838,
+      "matches": true
+    }
+  ],
+  "artifactChecks": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/UniswapV4DetfMigrationWeightedHookFacet.sol/UniswapV4DetfMigrationWeightedHookFacet.json",
+      "sha256": "a0d4cabf1683efd3024c53a0e0b8a3a96b94a60646c71c2abe20a4b3c8f7aba6",
+      "bytes": 365399,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+      "bytes": 302108,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "sha256": "05b895e22240ba48006ddcfff52fc10e37a3026a3aba1e8ef3dc5692063a4dd3",
+      "bytes": 123210,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "sha256": "41fb6ea0e13dad0656b0c50fbbb7cabe79570d4e8e21c7ea7412446aa6c1336b",
+      "bytes": 60558,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "sha256": "4f56da7ad9961cf3cf62ec4b00ab4bafde9f0dfc1716767cfcc0293203445f73",
+      "bytes": 128972,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json",
+      "sha256": "2d5b5c7b99f0f28765c235045dfc108aae98930537567ebbcf706051a131fe11",
+      "bytes": 124637,
+      "matches": true
+    }
+  ],
+  "producerCompletionReceipts": {
+    "transcript": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1df7f/sessions/st_01a1df7f/2026-11-15T13-56-27.259Z_d2b1deb1-116a-4980-bb65-794d9db80bb6.jsonl",
+    "receipts": [
+      {
+        "id": "66d9bdf7",
+        "timestamp": "2026-11-15T18:15:41.290Z",
+        "text": "<system-reminder>Monitor event(Prepared fixture adaptation: focused regressions, one full operator suite, strict types and CLI proof): PREPARED_FIXTURE_RESULT 00-bun-path exit=0\nPREPARED_FIXTURE_RESULT 00-bun-version exit=0\nPREPARED_FIXTURE_RESULT 00-bun-revision exit=0\nPREPARED_FIXTURE_RESULT 00-ts-version exit=0</system-reminder>"
+      },
+      {
+        "id": "2b5487b3",
+        "timestamp": "2026-11-15T18:15:41.290Z",
+        "text": "<system-reminder>Monitor event(Prepared fixture adaptation: focused regressions, one full operator suite, strict types and CLI proof): PREPARED_FIXTURE_RESULT 01-focused exit=0</system-reminder>"
+      },
+      {
+        "id": "97bde50d",
+        "timestamp": "2026-11-15T18:17:26.199Z",
+        "text": "<system-reminder>Monitor event(Prepared fixture adaptation: focused regressions, one full operator suite, strict types and CLI proof): PREPARED_FIXTURE_RESULT 02-full-tests exit=0</system-reminder>"
+      },
+      {
+        "id": "1c2230e3",
+        "timestamp": "2026-11-15T18:17:48.354Z",
+        "text": "<system-reminder>Monitor event(Prepared fixture adaptation: focused regressions, one full operator suite, strict types and CLI proof): PREPARED_FIXTURE_RESULT 03-operator-types exit=0</system-reminder>"
+      },
+      {
+        "id": "cd4734d2",
+        "timestamp": "2026-11-15T18:17:48.355Z",
+        "text": "<system-reminder>Monitor event(Prepared fixture adaptation: focused regressions, one full operator suite, strict types and CLI proof): PREPARED_FIXTURE_RESULT 04-manual exit=0\nPREPARED_FIXTURE_COMPLETE exit=0\nwatcher completed (exit code 0)</system-reminder>"
+      }
+    ]
+  },
+  "cleanup": {
+    "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/cleanup.json",
+    "record": {
+      "monitor": "mon_K37ZF2YPMMT5V6E2",
+      "session": "bash_1",
+      "completion": "PREPARED_FIXTURE_COMPLETE exit=0; watcher completed (exit code 0)",
+      "pendingProcesses": 0,
+      "fixtureCleanup": [
+        {
+          "closed": true,
+          "fixtureRoot": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr",
+          "kind": "cleanup",
+          "rootStillExists": false
+        }
+      ],
+      "tempBefore": [
+        "dtf-prepare-test-6ABTvq",
+        "dtf-prepare-test-sSyY0e"
+      ],
+      "tempAfter": [
+        "dtf-prepare-test-6ABTvq",
+        "dtf-prepare-test-sSyY0e"
+      ],
+      "newTempDirectories": [],
+      "unknownPriorDirectoriesPreserved": true,
+      "removedResources": "Existing fixture finally/afterEach cleanup only; no manual blanket deletion or unknown-resource kill.",
+      "anvil": false,
+      "forge": false,
+      "publicRpc": false,
+      "installs": false,
+      "commits": false,
+      "delegation": false
+    },
+    "manualTemporaryRootAbsent": true
+  },
+  "testsOrReplaysRunByVerifier": false,
+  "newIssues": [],
+  "fixes": [],
+  "combinedUnitCliAccepted": true,
+  "realRehearsalAccepted": false,
+  "realAnvilAccepted": false,
+  "task10LifecycleAccepted": false,
+  "readinessMarkerWritten": false,
+  "limits": [
+    "One full run passed at unchanged timeout; no general flake-free guarantee.",
+    "Historical helper inventory covers 28/29 reachable local inputs; current recovery.ts hash does not retroactively prove its old bytes.",
+    "CLI main is invoked in-process on synthetic transport; omission is an expected thrown error, not a separate failing process.",
+    "All production reviews are reused; no new production or real economic lifecycle audit."
+  ]
+}

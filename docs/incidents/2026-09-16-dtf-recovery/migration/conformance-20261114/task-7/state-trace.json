@@ -1,0 +1,56 @@
+{
+  "kind": "task-7-mixed-record-state-trace",
+  "status": "pass",
+  "surface": "real registry/proxy hermetic Forge script; no broadcast",
+  "sourceLog": "rehearsal-3.log",
+  "sourceLogSha256": "2824cb5c5946d9bc08bd24e4c7ef2e5bc0e3b69b5ef809b6b808f4392977011b",
+  "command": "forge script --use solar scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --tc MigrationCoreLocalQA --sig 'runMixedRecordRehearsal()' -vv",
+  "environment": {
+    "PATH": "/Users/cyotee/.foundry/bin:$PATH",
+    "FOUNDRY_SCRIPT_EXECUTION_PROTECTION": "false"
+  },
+  "requiredHelperCommandStatus": "blocked: helper has no script action",
+  "transitions": [
+    {
+      "state": "issued-A",
+      "bookId": "0xff9e15399acc39d6fd2e18525a1f43ba521b9c6e22981571d696d4ad5112c738",
+      "configurationId": "0xd3d156ac32b6945839cab198467cb8cc0f1ba9a070e78cb23e77688706b84bf8",
+      "bondId": "3"
+    },
+    {
+      "state": "mixed-A-B",
+      "bookId": "0xe0cba792faa25f4e78a0ba1db34f886e3709ed02d00a38bf08b61a8dd6c4ac1a",
+      "stableNftOrigin": "0xa232b06040c523ffaa7d2a90c2a3fd80ea2c594bc18142163beb1b89b8936fe7",
+      "nft3": [
+        {
+          "originalEth": "999999000000000",
+          "originalDtf": "0",
+          "credit": "673302"
+        },
+        {
+          "originalEth": "0",
+          "originalDtf": "362893857600000000000",
+          "credit": "244267674654"
+        }
+      ]
+    },
+    {
+      "state": "complete",
+      "terminal": true,
+      "bookId": "0xe0cba792faa25f4e78a0ba1db34f886e3709ed02d00a38bf08b61a8dd6c4ac1a",
+      "stableNftOrigin": "0xa232b06040c523ffaa7d2a90c2a3fd80ea2c594bc18142163beb1b89b8936fe7",
+      "historicalJournalImported": false,
+      "nft3Mode": "separate-contributions"
+    }
+  ],
+  "assertions": {
+    "terminal": true,
+    "stableNftOrigin": true,
+    "separateNft3Components": true,
+    "historicalJournalImported": false
+  },
+  "limits": [
+    "This is the requested hermetic contract rehearsal, not an RPC transaction broadcast or a full operator lifecycle run.",
+    "The exact requested helper command failed before compilation; the supported helper build plus named Solar script produced this trace."
+  ]
+}

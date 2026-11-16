@@ -1,0 +1,66 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "-e",
+    "const m=await import(\"/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/evidence.mjs\"); const s=await m.intake(); console.log(JSON.stringify({rows:s.rows.length,bindings:s.bindings.length,flows:s.rows.reduce((n,r)=>n+r.joinedRecipientFlow.length,0)}));"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source",
+  "startedAt": "2026-11-13T10:18:07.354Z",
+  "stoppedAt": "2026-11-13T10:18:07.566Z",
+  "pid": 41293,
+  "exitCode": 0,
+  "signal": null,
+  "runtime": {
+    "bun": "1.4.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "sourceIdentities": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/evidence.mjs",
+      "bytes": 9331,
+      "sha256": "242c82aaf7a4c593b3863682aa9b915238e82d35b2c05d840608af1c4f606bea"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/rpc.mjs",
+      "bytes": 4617,
+      "sha256": "9efabaee1aa3cec8e6284f91bb905b5da5904a0c3dfe404058be17737c711282"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/observe.mjs",
+      "bytes": 12378,
+      "sha256": "b5442605f3b6db1f8d553eccbef347693c79cbcb4350ee1cb325243790ed72f5"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/record.mjs",
+      "bytes": 3034,
+      "sha256": "d2f7c027535655b97f62fc5516663abff2181e4bb3116ecca13455926be80735"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/prove.mjs",
+      "bytes": 11047,
+      "sha256": "89c8dfd5c86100bdad8bcecbe277e5d38a247d70fbe75b05328ff06ea99f5f6f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/seal.mjs",
+      "bytes": 4249,
+      "sha256": "7b99a430224a6ee649a1c87f1ecd3b08a0f04fd7232af8fa2a8bbc04299cf1cc"
+    }
+  ],
+  "streams": {
+    "stdout": {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/validate-final-07.stdout",
+      "bytes": 38,
+      "sha256": "ccf7dec99a04989744d85beb83ca0ea6bbc44677375ec5b8d900831c15d6d27f",
+      "raw": true
+    },
+    "stderr": {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/validate-final-07.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": true
+    }
+  },
+  "selectedProvider": null,
+  "childCloseObserved": true
+}

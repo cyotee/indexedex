@@ -1,0 +1,90 @@
+{
+  "capturedBeforeStaging": true,
+  "commitDirectoryExistedDuringWalk": false,
+  "exclusions": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/commit/"
+  ],
+  "aggregates": {
+    "docs-incidents.jsonl": "f1f756066474d7a0c55a2b50183f90b84a862bebdbf01b702fe5443b2383f18b",
+    "docs-incidents-perms.jsonl": "e45b44ee1650c8958d1076c5721ce817b2a4b1b9609c48eac51385a50f58a910",
+    "out.jsonl": "bb19ac57b3c690b884825f476317d17b83a4ca7efea7864f9b548b3949848af4",
+    "cache_forge.jsonl": "07553006db203678e9d2f3de779e62d0398101c4fd088ef7c2c6a5591b61f5cd",
+    "host-dependencies.jsonl": "8d26437c76e3fefe921fe4edc32d5eaa1d9c6b52560a923c00c35028e2f0723f",
+    "show-ref.txt": "822b6ce5ba8c5cb1b28819f4bcf60fe94ff1cb2348e7a21a661a7acf359a6bdb",
+    "status-before.txt": "b60723944c4a5e209b3889414ec04b4f07cc6fa169751dc9a202e19fe62231d1",
+    "tracked-diff.txt": "c89ba4c3202fa7a1fd21a185c1ebae5b027ab626879dc65f045c2f09f5c79586",
+    "whitespace-before.txt": "28d3b9e880a77975493dc7e359144c0295a4f694cfe0af4f928c22307bc5c320",
+    "recipe.txt": "9917515ce883c91199aefc142d094ebc09e26240848ddb259fa5c405aff387d4",
+    "source-identity-before.json": "e7795a9e10963e858b744b8c3cd0378ccd813d965fa25e4b7bd3ba2de6aa6c5b",
+    "indexes.json": "1a771972fd88bd9bec93fca09fefc9dca986bb0f509f7b4ccd50b5144158f51b",
+    "artifact-drift.json": "ce7b61d486f440ffff5a5868b488baef1c20150c052b839771892dba439fe4f0",
+    "extra.json": "2d1db147b2548ecdc490f2fc4471a2b46243e0afbd23f150d4bb07f6aa849ae0"
+  },
+  "counts": {
+    "docsIncidents": 1080,
+    "docsIncidentsPerms": 1150,
+    "out": 7343,
+    "cacheForge": 605,
+    "hostDependencies": 1490,
+    "authority": 26,
+    "immutable": 78,
+    "parentPreserved": 1386,
+    "indexes": 22,
+    "foreignIndexes": 21,
+    "sourceModified": 28,
+    "sourceAdded": 4
+  },
+  "links": [
+    {
+      "path": "lib/crane",
+      "kind": "symlink",
+      "perm": "0o755",
+      "mode": "0o120755",
+      "size": 42,
+      "inode": 19477553,
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "sha256": "3dcc99d9c280a1a007d6284e027f5543690bc104fd2b33cf4626f14871b963ab"
+    },
+    {
+      "path": "node_modules",
+      "kind": "symlink",
+      "perm": "0o755",
+      "mode": "0o120755",
+      "size": 45,
+      "inode": 19477554,
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "sha256": "c8ce23751ae468dd00158f2465a4c8ced85fb4811e0f46af46d458d9b79bc861"
+    }
+  ],
+  "listener18569Exit": 1,
+  "listener18569Output": "",
+  "checkpointExists": false,
+  "runtimeParentExists": false,
+  "whitespaceBeforeExit": 0,
+  "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+  "branch": "work/dtf-migration-phase-19-earlier-liquid",
+  "showRefSha256": "822b6ce5ba8c5cb1b28819f4bcf60fe94ff1cb2348e7a21a661a7acf359a6bdb",
+  "drift": {
+    "capturedInputRecords": 24,
+    "independentProducerRuntimeDrift": 0,
+    "independentFreshDrift": 0,
+    "producerAuditKeys": [
+      "schema",
+      "runtime",
+      "checks",
+      "coverage",
+      "runtimeBindings",
+      "signedReceipts",
+      "er",
+      "ed",
+      "lifecycle",
+      "parentEvidencePreserved",
+      "cleanup"
+    ]
+  },
+  "hostRoles": {
+    "authority": 26,
+    "immutable": 78,
+    "parentPreserved": 1386
+  }
+}

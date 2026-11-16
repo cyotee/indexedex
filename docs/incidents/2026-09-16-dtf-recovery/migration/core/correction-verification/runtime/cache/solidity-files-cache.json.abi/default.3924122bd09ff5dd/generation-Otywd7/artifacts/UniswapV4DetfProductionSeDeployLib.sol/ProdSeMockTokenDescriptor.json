@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"tokenURI","inputs":[{"name":"","type":"address","internalType":"address"},{"name":"","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"string","internalType":"string"}],"stateMutability":"pure"}],"id":2372}

@@ -1,0 +1,227 @@
+{
+  "task": 7,
+  "branch": "work/dtf-conformance-20261115-wave-1",
+  "baseline": "Task-entry raw contents retained before edits; bundle.test.ts was clean at entry and compared with HEAD.",
+  "changes": [
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "beforeSha256": "108863bfc81667b3805d74ab2b3e7d37bf71602dfd367e29d65ca6ce4c5ea37a",
+      "afterSha256": "b1fdc282c3d476a34048b992004cdcf05913ee8ac1b6960e5c7da78763805c83"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "beforeSha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+      "afterSha256": "4ccb78785ea6838aabc5944d7b544b524cfe99f1f83b263796dbe6c2f7c2cf37"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "beforeSha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+      "afterSha256": "6a3e899762ad66dbfe19aa7108dc2745a11cc17c5d3b020849060c79e0813d5a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "beforeSha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+      "afterSha256": "81166388c25d1283d73556c6e95c6599ee448cdc3e9f96d97bd14f7e9090d7c0"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "beforeSha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+      "afterSha256": "8698f081eccd5fc7d359479e74ef04cdfc5764efddef48451dd17a9d12bd540c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+      "beforeSha256": "cf79c6f106ffd7393254b05785fca61e3129cea385b9469c1c1f841f89c23e47",
+      "afterSha256": "8e0e4366c0fa89b6d34438653eb551ac14795b3d2364cebbab2d3336b4da2207"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "beforeSha256": "52e74ce94be66ee46af14d4e07064b0428d737d0ce504b020eb469a79fbeca11",
+      "afterSha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "beforeSha256": "a1aa3a16238782e5d3108b74435b37a482411adafe8a6a1d6cdcef209f94bd78",
+      "afterSha256": "125ead9248793eead4aa4395bd8eaa02b34ab9eef7c783dc090ce4956449c922"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "beforeSha256": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437",
+      "afterSha256": "0804827556835e51d00fa553d3f99cd027263ed7042d501cdff088d46f02d011"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "beforeSha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "afterSha256": "36e4fccd336ad8dffdac38c633d845587e5fd7b1f5d7d530d70b7a8a00d18bd2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "beforeSha256": "61c8128124da092cbecbe8fb17d54d203f98519444653c43985890f726047d78",
+      "afterSha256": "7c652f7d60f1f4109bfb8988fa19f959192a302aeac4682d5d9f732e3833ec4a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "beforeSha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+      "afterSha256": "daab8beeb5428aefd8e97f134638f02dab2d0d3044c2363ef3179c97eb2d8f97"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "809a7b83f8a1991ba6a60c45e45ec54166788a930f2dda1edc8e3504e511736b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "beforeSha256": "89b528b228a37a926725684403ecb09a167211fe092bf8d50b553d4540837db7",
+      "afterSha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "beforeSha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "afterSha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "beforeSha256": "3af2b09763bbcb5c66dd184c1a5b68d94dd6ceee9e0b4b3fcb64839d933f0670",
+      "afterSha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "beforeSha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "afterSha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "beforeSha256": "526094ef3b5697e46a6fe918a7fd346844f0ab576c775acfc100f985a0cff303",
+      "afterSha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "33ac83c00d4d9e071f0457b5ed1324397480228a3546b2723c6d21b25ee1998c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "beforeSha256": "08a4e8bb2c340abba9ddf9c1bfe69cb51089fe1b599e750391f315b0abcdad65",
+      "afterSha256": "d84784b41a70331fb11248a4bc9dcdc067cdcb8ab1d7e3adb9c2a9aa55020cd1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "beforeSha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "afterSha256": "cffee37d8425db7b3d1ba1e22b279a7f1e0fe11fd4b0865b5a054de655970a0e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "beforeSha256": "c938b02f82335b0cb2ef5d581c67cabc9239e3fd4e7510011e78f473b6d3d613",
+      "afterSha256": "735ac6fd772b4ddbb1c57ad476145082d5654066c3ac68015e10672820edbd15"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "beforeSha256": "d8e75ad0776d96bf0b19e5cc97e0d57308130f1cd3c0fbd3ea722f05a07b3ef6",
+      "afterSha256": "5016194f2904a251077dbd265e21c7a253d4f2aa59ee7c2364e363e0b3af09f2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "beforeSha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "afterSha256": "8457eef560dde6013e4d226e2ced42386fc6afd497592ad1d24864307c6d5b1d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "beforeSha256": "9d09b14e1e4f74cb55c716e5cfa9b97ef09635db4650cd29e0b70515e3206ce9",
+      "afterSha256": "caabc9a7604339920c25487c4af6dd7577cb12df4d4edb9abc6cdbf863f2bda4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "beforeSha256": "06ea1feff633e182defddc28858f27a274e050735eebcff3b5ac6279e3663424",
+      "afterSha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "beforeSha256": "9213db8b7d968b8153e7efd829bca5c75936c7d57ca1b7cc958bb4b718574c5d",
+      "afterSha256": "3653252e020f372f09ba6262220a95b9908c3740cee1773d1315af37f3118a2d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "beforeSha256": "bb215b89ccfa5165920aa16c513863cf1498958b5611babe1eace7e09a965ebb",
+      "afterSha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "beforeSha256": "8a66ef6229f4171d7cf1be031d451cd7a94f35cee3b7ef26a4ebdcff5a256b85",
+      "afterSha256": "a95d112842150b1749a86ce65495749b08f2057e93f7500b2f661ed4473f7c95"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "beforeSha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+      "afterSha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "beforeSha256": "0bd1e87ad561e0a5ebb07ff7f89d0734a8954f37fcfc6239f582113f0322da9e",
+      "afterSha256": "5483b6f5606d1dc618c97ce647c3b2997964c62c829d3174b079843b0fda664c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+      "beforeSha256": "6bd3a529d24be2c8a3d98daba48a9a330cccff5ea31079eff0ed389b11f9de88",
+      "afterSha256": "f6b85235915eb23d2f22a736f6af5616e58d68f1ea4b64c68c80d183495c6958"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "beforeSha256": "10689bc57cb3df16dbc60aaf4d03fadd45c3eb9b28d8c182c6cf274f206e0326",
+      "afterSha256": "134a65e6ec14bb01eb9dd620f83e7a2f38df8a98689879eb9b7e08d6e266abe9"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "beforeSha256": "1a98917947dcca4514f8299e4cbeadc4957b2cb0288fc48476c8bdb0d8e2da5d",
+      "afterSha256": "583558715dae13f2c405655ab18b5dd0a44b54fbd294de73472e3b8080b7c4d8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "beforeSha256": "b5814a1b844af5c0a37c03f987cf099934e3d911027d3d6526688455cab280c8",
+      "afterSha256": "e643bdc6b5914106810275581815a79558c0571f0f7e1e7776fb29c867cbaa83"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "beforeSha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+      "afterSha256": "e77b66b1d2f2fbbd5bd47fbf7186941acaf1f2ad71a9ccfe27fc13fd51ebd80b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "beforeSha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+      "afterSha256": "33865e649a1ef7774230f8729438cfc684920f5195efb56a23255255a5dd597d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "beforeSha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+      "afterSha256": "a0f9a4b18e12baaf714a9ce9f1e66e7ee80dec0b810bf5f473b2a69a7d80c26f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "beforeSha256": "2eab21885a6cdde6856fda244ed3f9f716755d9c91ebd708a10720b76913f7a9",
+      "afterSha256": "e75f026c7f3c44b67c23e1468a6f596a6c0d5e23eace61c00208b0f8875cdc37"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "beforeSha256": "2e530249f7c13bd39d4fda8e38dd36b2de4b176c5629902d8272b2fa4342b1eb",
+      "afterSha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "beforeSha256": "c18c8e24e5054dadf15a2a8b5684bca7c9035fe79df34a939ea98ffea41e74d4",
+      "afterSha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "beforeSha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "afterSha256": "4c54dd134cdaf5fd6d46ebf8bdbf02c741509d447c8e664ba2cacb888feb6154"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "beforeSha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+      "afterSha256": "83a04df23bd0ea7b9e99cfabe8e0a5dfa49873a2e94ec21f400c6640bfd40e16"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "beforeSha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+      "afterSha256": "9d3d647dfb1e30060da8748e10ac1e7d1d902eeea52cfbc237a8848123644e37"
+    }
+  ]
+}

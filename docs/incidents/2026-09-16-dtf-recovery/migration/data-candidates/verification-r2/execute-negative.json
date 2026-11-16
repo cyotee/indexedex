@@ -1,0 +1,16 @@
+{
+  "executable": "bun",
+  "args": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/cli.ts",
+    "verify",
+    "--manifest",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/full-a/candidates.json",
+    "--checkpoint",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/rejected-execute"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2",
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/execute-negative.stdout",
+  "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/execute-negative.stderr"
+}

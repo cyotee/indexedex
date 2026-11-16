@@ -1,0 +1,16 @@
+{
+  "status": "pass",
+  "taskComplete": false,
+  "rawFiles": 27,
+  "transitiveReferenceReads": 228,
+  "freshLocations": 2,
+  "historicalContextsPerLocation": 4,
+  "tamperCases": 23,
+  "reportSha256": "4d00449771af2ba9d6c05b898aa6b0ed641877145158eecb6f439368cfc632bc",
+  "finalLogSha256": "e919860e3d55a7eccc4fb993d8ea450e7e7ec2d8c1e56b0514ca83b1ab7958dd",
+  "tamperLogSha256": "e60db2c53dd950e41197a70bf931d8775ef1481a9004bc93ca277036a9362228",
+  "unmet": [
+    "task 10 real portable mode current-chain proof"
+  ],
+  "qualification": "Mechanical integrity of synthetic wire evidence; no task 10 chain proof."
+}

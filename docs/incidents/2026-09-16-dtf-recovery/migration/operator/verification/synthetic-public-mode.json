@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "scripts/recovery/dtf-migration/cli.ts",
+    "deploy",
+    "--manifest",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/execution/rehearsal-1794377054937/pre-capture.json",
+    "--checkpoint",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/forbidden-public-journal",
+    "--broadcast",
+    "--confirm-chain",
+    "4663",
+    "--confirm-proxy",
+    "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+    "--confirm-snapshot",
+    "uncaptured",
+    "--signer-key-env",
+    "INDEPENDENT_UNSET_SIGNING_KEY"
+  ],
+  "pid": 68177,
+  "code": 1,
+  "signal": null,
+  "stdout": "",
+  "stderr": "{\"error\":\"DOMAIN\",\"message\":\"fresh chain/proxy/snapshot confirmations required\"}\n"
+}

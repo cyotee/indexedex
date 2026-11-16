@@ -1,0 +1,36 @@
+{
+  "section_1_10_operative_exact": true,
+  "acceptance_table_rows": 53,
+  "acceptance_ids_complete": true,
+  "mig_p_rows": 15,
+  "e_gate_rows": 5,
+  "arithmetic_examples": 13,
+  "section_8_1_byte_identical_to_original": true,
+  "owner_sections": [
+    "1.1",
+    "1.2",
+    "1.3",
+    "1.4",
+    "1.5",
+    "1.6",
+    "1.7",
+    "1.8",
+    "1.9",
+    "1.10"
+  ],
+  "required_obsolete_pattern_matches": 0,
+  "broader_capture_precedence_matches": 3,
+  "broader_removed_artifact_matches": 0,
+  "git_diff_check_exit_code": 0,
+  "git_diff_lines": 495,
+  "prose_unit_tests_run": false,
+  "compiler_run": false,
+  "final_sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+  "artifacts": {
+    "full_diff": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p.diff",
+    "diff_check": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/git-diff-check.txt",
+    "source_hashes": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/source-hashes.txt",
+    "requirements_review": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/requirements-reconciliation.md",
+    "obsolete_clause_review": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md"
+  }
+}

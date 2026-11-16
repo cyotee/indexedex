@@ -1,0 +1,791 @@
+{
+  "head": "15fd629375edeb361f6a39262795bdc66723ca3a",
+  "propertyCount": 12,
+  "supportedUnitStateful": [
+    {
+      "name": "W-L native9",
+      "invariant": {
+        "line": 4459,
+        "address": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "4",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4713,
+        "address": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Exact actual external balances and approved custody; historical eligible originals are disclosed synthetic fixture inputs."
+    },
+    {
+      "name": "E-L native18",
+      "invariant": {
+        "line": 4465,
+        "address": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "values": {
+          "source successful surrenders": "2",
+          "source exact rejected operations": "5",
+          "source late funded receipt rollbacks": "2",
+          "remaining eligible original units": "5625",
+          "remaining frozen credit": "3624098"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4719,
+        "address": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Exact actual external balances and approved custody; historical eligible originals are disclosed synthetic fixture inputs."
+    },
+    {
+      "name": "W-R exact original gons",
+      "invariant": {
+        "line": 4471,
+        "address": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+        "values": {
+          "source successful surrenders": "2",
+          "source exact rejected operations": "4",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "50635073830046997872009171561012763540",
+          "remaining frozen credit": "3689438"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4725,
+        "address": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "419661796441813012824673292252566920",
+          "remaining frozen credit": "30578"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Positive eligible Q/C residue remains smaller than one transferable native token at current divisor; not confiscated or paid."
+    },
+    {
+      "name": "E-R exact internal shares",
+      "invariant": {
+        "line": 4477,
+        "address": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "values": {
+          "source successful surrenders": "2",
+          "source exact rejected operations": "4",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "2560861833251447247559438618",
+          "remaining frozen credit": "3624880"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4731,
+        "address": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "392519172024864887958474",
+          "remaining frozen credit": "556"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Positive exact-internal Q/C residue remains nonrepresentable at current rate; no diagnostic storage value is used as a production transfer amount."
+    },
+    {
+      "name": "C direct vault native19",
+      "invariant": {
+        "line": 4483,
+        "address": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "5",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "8437499990881",
+          "remaining frozen credit": "1812049"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4737,
+        "address": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Exact actual external balances and approved custody; historical eligible originals are disclosed synthetic fixture inputs."
+    },
+    {
+      "name": "W-SD native28",
+      "invariant": {
+        "line": 4489,
+        "address": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+        "values": {
+          "source successful surrenders": "4",
+          "source exact rejected operations": "4",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "1874999981250000000000000000",
+          "remaining frozen credit": "1208033"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4743,
+        "address": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Exact actual external balances and approved custody; historical eligible originals are disclosed synthetic fixture inputs."
+    },
+    {
+      "name": "W-SW held native18",
+      "invariant": {
+        "line": 4495,
+        "address": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+        "values": {
+          "source successful surrenders": "2",
+          "source exact rejected operations": "5",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "5625",
+          "remaining frozen credit": "3624098"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4749,
+        "address": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Exact actual external balances and approved custody; historical eligible originals are disclosed synthetic fixture inputs."
+    },
+    {
+      "name": "E-P held native18",
+      "invariant": {
+        "line": 4501,
+        "address": "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+        "values": {
+          "source successful surrenders": "2",
+          "source exact rejected operations": "5",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "5625",
+          "remaining frozen credit": "3624098"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4755,
+        "address": "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Real pinned external-EOA-owner release and personal donation fixture only; Migration does not acquire collector owner authority or a functioning LP exit."
+    },
+    {
+      "name": "W-P held native18",
+      "invariant": {
+        "line": 4507,
+        "address": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+        "values": {
+          "source successful surrenders": "2",
+          "source exact rejected operations": "5",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "5625",
+          "remaining frozen credit": "3624098",
+          "canonical competing enrollment rejections": "99"
+        }
+      },
+      "deterministicTerminal": {
+        "line": 4761,
+        "address": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+        "values": {
+          "source successful surrenders": "3",
+          "source exact rejected operations": "6",
+          "source late funded receipt rollbacks": "1",
+          "remaining eligible original units": "0",
+          "remaining frozen credit": "0",
+          "canonical competing enrollment rejections": "99"
+        }
+      },
+      "disposition": "confirmed",
+      "limits": "Real pinned external-EOA-owner release and personal donation fixture only; Migration does not acquire collector owner authority or a functioning LP exit."
+    }
+  ],
+  "wholeNftSources": [
+    "weighted source id4 genuine original wallet",
+    "earlier source id3 genuine original wallet"
+  ],
+  "sharedSyDomain": "ordinary acquired weighted SY native9, receiver handler; not a direct-EOA claimed-source state machine",
+  "claimedSourceRegressionOnly": {
+    "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol:MigrationClaimedSyTest",
+    "tests": [
+      "test_completeSingleClaimPreservesWholeOriginalCreditAndUnrelatedFloors",
+      "test_completeSplitClaimsAggregateMeasuredOutputsIntoOneOriginal",
+      "test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight"
+    ],
+    "qualification": "Existing Foundry EOA-identity regressions use vm.prank on code-empty controlled EOAs. Prior signed-source admission and operator integration remain distinct preserved phase23 evidence; no new signed operator replay."
+  },
+  "closureGaps": [
+    {
+      "gap": 1,
+      "disposition": "closed in executed bounded supported-unit gate"
+    },
+    {
+      "gap": 2,
+      "disposition": "closed in executed bounded supported-unit gate"
+    },
+    {
+      "gap": 3,
+      "disposition": "closed in executed bounded supported-unit gate"
+    },
+    {
+      "gap": 4,
+      "disposition": "closed in executed bounded supported-unit gate"
+    },
+    {
+      "gap": 5,
+      "disposition": "closed in executed bounded supported-unit gate"
+    },
+    {
+      "gap": 6,
+      "disposition": "closed in executed bounded supported-unit gate"
+    }
+  ],
+  "invariants": {
+    "specs": [
+      {
+        "line": 4819,
+        "result": "[PASS] invariant_nativeLedgerAndPermanentLifecycle() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 4824,
+            "contract": "MigrationNativeHandler",
+            "selector": "activate",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4826,
+            "contract": "MigrationNativeHandler",
+            "selector": "advanceTime",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4828,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimPrincipal",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4830,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimRewards",
+            "calls": 38,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4832,
+            "contract": "MigrationNativeHandler",
+            "selector": "configure",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4834,
+            "contract": "MigrationNativeHandler",
+            "selector": "failedBatch",
+            "calls": 50,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4836,
+            "contract": "MigrationNativeHandler",
+            "selector": "issue",
+            "calls": 42,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4838,
+            "contract": "MigrationNativeHandler",
+            "selector": "market",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4840,
+            "contract": "MigrationNativeHandler",
+            "selector": "paidBond",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4842,
+            "contract": "MigrationNativeHandler",
+            "selector": "providerRateChange",
+            "calls": 40,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4844,
+            "contract": "MigrationNativeHandler",
+            "selector": "rejectRoleRewards",
+            "calls": 45,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4846,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferBond",
+            "calls": 49,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4848,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferOwner",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      },
+      {
+        "line": 6050,
+        "result": "[PASS] invariant_laterFundingAndAllPositionClaims() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 6055,
+            "contract": "MigrationNativeHandler",
+            "selector": "activate",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6057,
+            "contract": "MigrationNativeHandler",
+            "selector": "advanceTime",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6059,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimPrincipal",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6061,
+            "contract": "MigrationNativeHandler",
+            "selector": "claimRewards",
+            "calls": 38,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6063,
+            "contract": "MigrationNativeHandler",
+            "selector": "configure",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6065,
+            "contract": "MigrationNativeHandler",
+            "selector": "failedBatch",
+            "calls": 50,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6067,
+            "contract": "MigrationNativeHandler",
+            "selector": "issue",
+            "calls": 42,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6069,
+            "contract": "MigrationNativeHandler",
+            "selector": "market",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6071,
+            "contract": "MigrationNativeHandler",
+            "selector": "paidBond",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6073,
+            "contract": "MigrationNativeHandler",
+            "selector": "providerRateChange",
+            "calls": 40,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6075,
+            "contract": "MigrationNativeHandler",
+            "selector": "rejectRoleRewards",
+            "calls": 45,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6077,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferBond",
+            "calls": 49,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 6079,
+            "contract": "MigrationNativeHandler",
+            "selector": "transferOwner",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      }
+    ],
+    "forks": [
+      {
+        "line": 3511,
+        "result": "[PASS] invariant_originalCreditCustodyFundingAndStagedRecovery() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 3516,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "advanceTime",
+            "calls": 24,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3518,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "changeOwner",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3520,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "claimPrincipal",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3522,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "claimRewards",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3524,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "claimWeighted",
+            "calls": 29,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3526,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "convert",
+            "calls": 25,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3528,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "donate",
+            "calls": 36,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3530,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "failedIssuance",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3532,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "failedRecoveryBatch",
+            "calls": 41,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3534,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "missingRecord",
+            "calls": 35,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3536,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "redeemSy",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3538,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "rejectNftControl",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3540,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "surrender",
+            "calls": 21,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3542,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "takeNft",
+            "calls": 23,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3544,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "transferAndReject",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3546,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "transferBond",
+            "calls": 26,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 3548,
+            "contract": "MigrationLegacyRecoveryHandler",
+            "selector": "unstake",
+            "calls": 38,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      },
+      {
+        "line": 4232,
+        "result": "[PASS] invariant_exactOriginalUnitsCustodyAndFreshEscrow() (runs: 32, calls: 512, reverts: 0)",
+        "selected": [
+          {
+            "line": 4237,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "advanceTime",
+            "calls": 30,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4239,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "changeEarlierRate",
+            "calls": 33,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4241,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "changeOwner",
+            "calls": 39,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4243,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "claimPrincipal",
+            "calls": 31,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4245,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "failedIssuance",
+            "calls": 35,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4247,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "failedRecoveryBatch",
+            "calls": 42,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4249,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "missingRecord",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4251,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "recover",
+            "calls": 31,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4253,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "redeemRecoveredSy",
+            "calls": 32,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4255,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "rejectControls",
+            "calls": 33,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4257,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "rejectExcess",
+            "calls": 34,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4259,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "removedConfiguration",
+            "calls": 28,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4261,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "sellEarlier",
+            "calls": 43,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4263,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "surrender",
+            "calls": 37,
+            "reverts": 0,
+            "discards": 0
+          },
+          {
+            "line": 4265,
+            "contract": "MigrationSourceUnitsRecoveryHandler",
+            "selector": "transferBond",
+            "calls": 27,
+            "reverts": 0,
+            "discards": 0
+          }
+        ],
+        "sum": 512
+      }
+    ],
+    "ordinary": []
+  },
+  "note": "Detailed one-to-one property and adversarial applicability assessment is in report.md; tables alone are not proof and are linked to actual source and complete raw independent logs."
+}

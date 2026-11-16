@@ -19,7 +19,7 @@ library MigrationLegacyNftLib {
 
     function originalId(address collection_, uint256 tokenId_) internal view returns (bytes32) {
         requireSource(collection_);
-        return keccak256(abi.encode("migration.nft", block.chainid, address(this), Repo._snapshot().id,
+        return keccak256(abi.encode("migration.nft", block.chainid, address(this),
             collection_, tokenId_));
     }
 

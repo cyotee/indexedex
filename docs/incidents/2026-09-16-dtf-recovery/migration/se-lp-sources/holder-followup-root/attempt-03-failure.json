@@ -1,0 +1,7 @@
+{
+  "attempt": 3,
+  "exitCode": 2,
+  "error": "cast block: unexpected argument 'hash'",
+  "acceptedBalanceResults": false,
+  "correction": "Installed cast block --help requires --field hash; cast call --help verified signature, block and rate-limit options. Header failed before the balance loop."
+}

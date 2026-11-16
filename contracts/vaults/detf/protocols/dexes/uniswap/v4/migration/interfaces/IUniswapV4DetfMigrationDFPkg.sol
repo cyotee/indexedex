@@ -31,7 +31,7 @@ interface IUniswapV4DetfMigrationDFPkg is IDiamondFactoryPackage, IStandardVault
     /// @dev Canonical encoding and salt include every field, clearing only baseArgs.hook in the
     /// salt copy for hook prediction. owner must be nonzero; buffer keeps actual Crane semantics.
     /// weth/originalDtf are nonzero distinct deployment bindings, not prices or mutable routes.
-    /// Snapshot Source.subject and Source.feeOracle come from the proxy and installed package.
+    /// Manual pricing binds its consumer to this proxy; its domain cannot be supplied by the setter.
     /// RT name/symbol are derived from baseArgs metadata; its decimals and gon quantum are fixed.
     struct PkgArgs {
         IUniswapV4Detf.PkgArgs baseArgs;

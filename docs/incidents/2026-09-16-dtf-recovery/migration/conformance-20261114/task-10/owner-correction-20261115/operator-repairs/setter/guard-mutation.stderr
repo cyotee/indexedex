@@ -1,0 +1,100 @@
+
+scripts/recovery/dtf-migration/execution-domain.test.ts:
+(pass) new pricing source binding rejects stale bytes and rehashed malformed artifacts [156.95ms]
+31 | const key = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+32 | 
+33 | test("setter verification requires its pricing event binding even with generated event bytes", async () => {
+34 |   const f = await setterContext(false);
+35 |   try {
+36 |     await assert.rejects(f.verify(f.mined), /missing bound pricing event ABI/);
+                      ^
+AssertionError: The input did not match the regular expression /missing bound pricing event ABI/. Input:
+
+'ExecutionError: manual setter event differs from exact Inputs'
+
+ generatedMessage: true,
+   expected: /missing bound pricing event ABI/,
+   operator: "rejects",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at expectedException (node:assert:327:33)
+      at expectsError (node:assert:395:20)
+      at assert.rejects (node:assert:434:17)
+      at /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.test.ts:36:18
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at processTicksAndRejections (native:7:39)
+
+119 |     case "setMigrationWeightedPricing": {
+120 |       const { nextBookId } = await import("./execution-domain.js");
+121 |       const expected = nextBookId(domain);
+122 |       const actual = events.filter((e) => e.name === "MigrationWeightedPricingSet");
+123 |       if (canonical(actual) !== canonical([{ name: "MigrationWeightedPricingSet", values: [expected] }])) {
+124 |         throw new ExecutionError("STATE", "manual setter event differs from exact Inputs");
+                    ^
+ExecutionError: manual setter event differs from exact Inputs
+ code: "STATE"
+
+      at captureAtReceipt (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts:124:15)
+      at async atReceipt (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-rpc.ts:172:24)
+(fail) setter verification requires its pricing event binding even with generated event bytes [101.83ms]
+(pass) saved v2 preparation rehydrates without a current-price quote [142.90ms]
+(pass) v1 execution manifest is rejected before RPC or signing [77.45ms]
+(pass) overwritten intra-block book authenticates through its exact setter and subsequent load [244.80ms]
+(pass) historical intent domain is reconstructed independently of surrounding reference hashes [206.13ms]
+(pass) resume rejects wrong nonce, chain, or gas in a persisted signed intent [89.43ms]
+(pass) stale journal and second active checkpoint reject before any signer is created [83.37ms]
+(pass) an unsigned blocked attempt closes without trapping the operator root or rewriting its journal [81.51ms]
+(pass) duplicate configure batch rejects while intentional identical donations keep distinct IDs [74.30ms]
+
+scripts/recovery/dtf-migration/execution-state.test.ts:
+890 |     result.ok = function ok(...args) {
+891 |       plan?.count(), innerOk(ok, args.length, ...args);
+892 |     };
+893 |   return result;
+894 | }
+895 |   let error = Error(message);
+                         ^
+error: 2 subtests failed
+ failureType: "subtestsFailed",
+       code: "ERR_TEST_FAILURE"
+
+      at makeTestFailure (node:test:895:20)
+      at executeTestNode (node:test:1470:34)
+
+48 |       { name: "wrong block", logs: [{ ...log, blockHash: h(999) }] },
+49 |       { name: "wrong transaction index", logs: [{ ...log, transactionIndex: "0x1" }] },
+50 |       { name: "wrong log order", logs: [{ ...log, logIndex: "0x1" }] },
+51 |     ];
+52 |     for (const example of cases) await t.test(example.name, async () => {
+53 |       await assert.rejects(f.verify(receipt.parse({ ...f.mined, logs: example.logs })));
+                        ^
+AssertionError: Missing expected rejection.
+ generatedMessage: false,
+     actual: undefined,
+   expected: undefined,
+   operator: "rejects",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at innerFail (node:assert:50:27)
+      at expectsError (node:assert:385:14)
+      at assert.rejects (node:assert:434:17)
+      at /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.test.ts:53:20
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at node:test:1513:71
+      at processTicksAndRejections (native:7:39)
+(fail) new source-bound setter recognizes its exact book and rejects independently corrupted receipts [204.60ms]
+(pass) unsent A rejects current B before nonce allocation or transaction submission [89.10ms]
+(pass) changed quote rejects before nonce allocation even when the book id agrees [83.89ms]
+(pass) all selected loaders bind their own book and stable NFT identity excludes repricing [78.58ms]
+(pass) NFT current verification binds consumed credit to each original component floor [92.20ms]
+(pass) same-block A completion reads transaction-prefix A rather than overwritten block-end B [82.59ms]
+(pass) canonical completion rejects forged receipt order and altered transaction log contents [85.66ms]
+(pass) current B configuration is verified independently of authenticated A issuance and principal [290.00ms]
+
+ 16 pass
+ 2 fail
+Ran 18 tests across 2 files. [2.35s]

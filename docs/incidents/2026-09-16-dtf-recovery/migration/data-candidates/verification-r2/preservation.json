@@ -1,0 +1,2244 @@
+{
+  "version": "independent-r2-final-preservation-v1",
+  "rawInputs": [
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "before": {
+        "bytes": 24558,
+        "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+      },
+      "after": {
+        "bytes": 24558,
+        "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+      },
+      "relocated": {
+        "bytes": 24558,
+        "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+      "before": {
+        "bytes": 10515,
+        "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+      },
+      "after": {
+        "bytes": 10515,
+        "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+      },
+      "relocated": {
+        "bytes": 10515,
+        "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/snapshot.json",
+      "before": {
+        "bytes": 3055,
+        "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+      },
+      "after": {
+        "bytes": 3055,
+        "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+      },
+      "relocated": {
+        "bytes": 3055,
+        "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "before": {
+        "bytes": 1432,
+        "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+      },
+      "after": {
+        "bytes": 1432,
+        "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+      },
+      "relocated": {
+        "bytes": 1432,
+        "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "before": {
+        "bytes": 41120,
+        "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+      },
+      "after": {
+        "bytes": 41120,
+        "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+      },
+      "relocated": {
+        "bytes": 41120,
+        "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "before": {
+        "bytes": 186222,
+        "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+      },
+      "after": {
+        "bytes": 186222,
+        "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+      },
+      "relocated": {
+        "bytes": 186222,
+        "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "before": {
+        "bytes": 83558,
+        "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+      },
+      "after": {
+        "bytes": 83558,
+        "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+      },
+      "relocated": {
+        "bytes": 83558,
+        "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "before": {
+        "bytes": 12283,
+        "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+      },
+      "after": {
+        "bytes": 12283,
+        "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+      },
+      "relocated": {
+        "bytes": 12283,
+        "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "before": {
+        "bytes": 3709,
+        "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+      },
+      "after": {
+        "bytes": 3709,
+        "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+      },
+      "relocated": {
+        "bytes": 3709,
+        "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "before": {
+        "bytes": 2542,
+        "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+      },
+      "after": {
+        "bytes": 2542,
+        "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+      },
+      "relocated": {
+        "bytes": 2542,
+        "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "before": {
+        "bytes": 4535122,
+        "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+      },
+      "after": {
+        "bytes": 4535122,
+        "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+      },
+      "relocated": {
+        "bytes": 4535122,
+        "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "before": {
+        "bytes": 18666,
+        "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+      },
+      "after": {
+        "bytes": 18666,
+        "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+      },
+      "relocated": {
+        "bytes": 18666,
+        "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "before": {
+        "bytes": 111333,
+        "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+      },
+      "after": {
+        "bytes": 111333,
+        "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+      },
+      "relocated": {
+        "bytes": 111333,
+        "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "before": {
+        "bytes": 141460,
+        "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+      },
+      "after": {
+        "bytes": 141460,
+        "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+      },
+      "relocated": {
+        "bytes": 141460,
+        "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "before": {
+        "bytes": 3012,
+        "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+      },
+      "after": {
+        "bytes": 3012,
+        "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+      },
+      "relocated": {
+        "bytes": 3012,
+        "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "account-ledger.csv",
+      "before": {
+        "bytes": 285464,
+        "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+      },
+      "after": {
+        "bytes": 285464,
+        "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+      },
+      "relocated": {
+        "bytes": 285464,
+        "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "positions.csv",
+      "before": {
+        "bytes": 123221,
+        "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+      },
+      "after": {
+        "bytes": 123221,
+        "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+      },
+      "relocated": {
+        "bytes": 123221,
+        "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "observed-recoveries.csv",
+      "before": {
+        "bytes": 30839,
+        "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+      },
+      "after": {
+        "bytes": 30839,
+        "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+      },
+      "relocated": {
+        "bytes": 30839,
+        "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "conversions.csv",
+      "before": {
+        "bytes": 91676,
+        "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+      },
+      "after": {
+        "bytes": 91676,
+        "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+      },
+      "relocated": {
+        "bytes": 91676,
+        "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "exceptions.csv",
+      "before": {
+        "bytes": 3404,
+        "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+      },
+      "after": {
+        "bytes": 3404,
+        "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+      },
+      "relocated": {
+        "bytes": 3404,
+        "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "rounding.csv",
+      "before": {
+        "bytes": 327,
+        "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+      },
+      "after": {
+        "bytes": 327,
+        "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+      },
+      "relocated": {
+        "bytes": 327,
+        "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "reconciliation.json",
+      "before": {
+        "bytes": 1798,
+        "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+      },
+      "after": {
+        "bytes": 1798,
+        "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+      },
+      "relocated": {
+        "bytes": 1798,
+        "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "sources.json",
+      "before": {
+        "bytes": 5502,
+        "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+      },
+      "after": {
+        "bytes": 5502,
+        "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+      },
+      "relocated": {
+        "bytes": 5502,
+        "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "LOSS_AND_RECOVERY_LEDGER.md",
+      "before": {
+        "bytes": 15308,
+        "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+      },
+      "after": {
+        "bytes": 15308,
+        "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+      },
+      "relocated": {
+        "bytes": 15308,
+        "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "held-exclusions.csv",
+      "before": {
+        "bytes": 188644,
+        "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+      },
+      "after": {
+        "bytes": 188644,
+        "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+      },
+      "relocated": {
+        "bytes": 188644,
+        "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "custody-inventory.csv",
+      "before": {
+        "bytes": 139535,
+        "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+      },
+      "after": {
+        "bytes": 139535,
+        "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+      },
+      "relocated": {
+        "bytes": 139535,
+        "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "CUSTODY_AND_HARVEST.md",
+      "before": {
+        "bytes": 7357,
+        "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+      },
+      "after": {
+        "bytes": 7357,
+        "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+      },
+      "relocated": {
+        "bytes": 7357,
+        "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    },
+    {
+      "path": "manifest.json",
+      "before": {
+        "bytes": 3209,
+        "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+      },
+      "after": {
+        "bytes": 3209,
+        "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+      },
+      "relocated": {
+        "bytes": 3209,
+        "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+      },
+      "unchanged": true,
+      "relocatedEqual": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 9484,
+      "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63",
+      "pass": true,
+      "actual": {
+        "bytes": 9484,
+        "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "bytes": 11872,
+      "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+      "pass": true,
+      "actual": {
+        "bytes": 11872,
+        "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "bytes": 6048,
+      "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+      "pass": true,
+      "actual": {
+        "bytes": 6048,
+        "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "bytes": 1727,
+      "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+      "pass": true,
+      "actual": {
+        "bytes": 1727,
+        "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 10087,
+      "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1",
+      "pass": true,
+      "actual": {
+        "bytes": 10087,
+        "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "bytes": 6094,
+      "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+      "pass": true,
+      "actual": {
+        "bytes": 6094,
+        "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "bytes": 16331,
+      "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f",
+      "pass": true,
+      "actual": {
+        "bytes": 16331,
+        "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "bytes": 7869,
+      "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+      "pass": true,
+      "actual": {
+        "bytes": 7869,
+        "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "bytes": 15737,
+      "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "pass": true,
+      "actual": {
+        "bytes": 15737,
+        "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "bytes": 3399,
+      "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+      "pass": true,
+      "actual": {
+        "bytes": 3399,
+        "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "bytes": 6461,
+      "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2",
+      "pass": true,
+      "actual": {
+        "bytes": 6461,
+        "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "bytes": 4667,
+      "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "pass": true,
+      "actual": {
+        "bytes": 4667,
+        "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 6200,
+      "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+      "pass": true,
+      "actual": {
+        "bytes": 6200,
+        "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "bytes": 7950,
+      "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "pass": true,
+      "actual": {
+        "bytes": 7950,
+        "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "bytes": 6464,
+      "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+      "pass": true,
+      "actual": {
+        "bytes": 6464,
+        "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "bytes": 7095,
+      "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33",
+      "pass": true,
+      "actual": {
+        "bytes": 7095,
+        "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "bytes": 6781,
+      "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581",
+      "pass": true,
+      "actual": {
+        "bytes": 6781,
+        "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "bytes": 4907,
+      "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda",
+      "pass": true,
+      "actual": {
+        "bytes": 4907,
+        "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "bytes": 8096,
+      "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+      "pass": true,
+      "actual": {
+        "bytes": 8096,
+        "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "bytes": 6468,
+      "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889",
+      "pass": true,
+      "actual": {
+        "bytes": 6468,
+        "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "bytes": 15613,
+      "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c",
+      "pass": true,
+      "actual": {
+        "bytes": 15613,
+        "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "bytes": 6023,
+      "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c",
+      "pass": true,
+      "actual": {
+        "bytes": 6023,
+        "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "bytes": 8535,
+      "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+      "pass": true,
+      "actual": {
+        "bytes": 8535,
+        "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 11960,
+      "sha256": "fd0993fd3315bd1b883bf01bee1b0a1abf4120269387762cac996f0c0e0479c3",
+      "pass": true,
+      "actual": {
+        "bytes": 11960,
+        "sha256": "fd0993fd3315bd1b883bf01bee1b0a1abf4120269387762cac996f0c0e0479c3"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "bytes": 16228,
+      "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d",
+      "pass": true,
+      "actual": {
+        "bytes": 16228,
+        "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "bytes": 9883,
+      "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+      "pass": true,
+      "actual": {
+        "bytes": 9883,
+        "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "bytes": 9082,
+      "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce",
+      "pass": true,
+      "actual": {
+        "bytes": 9082,
+        "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "bytes": 10884,
+      "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+      "pass": true,
+      "actual": {
+        "bytes": 10884,
+        "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "bytes": 9521,
+      "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761",
+      "pass": true,
+      "actual": {
+        "bytes": 9521,
+        "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "bytes": 6421,
+      "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+      "pass": true,
+      "actual": {
+        "bytes": 6421,
+        "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "bytes": 5012,
+      "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e",
+      "pass": true,
+      "actual": {
+        "bytes": 5012,
+        "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "bytes": 19046,
+      "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+      "pass": true,
+      "actual": {
+        "bytes": 19046,
+        "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "bytes": 8426,
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "pass": true,
+      "actual": {
+        "bytes": 8426,
+        "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "bytes": 22048,
+      "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+      "pass": true,
+      "actual": {
+        "bytes": 22048,
+        "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "bytes": 6162,
+      "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "pass": true,
+      "actual": {
+        "bytes": 6162,
+        "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "bytes": 2869,
+      "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "pass": true,
+      "actual": {
+        "bytes": 2869,
+        "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "bytes": 18490,
+      "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+      "pass": true,
+      "actual": {
+        "bytes": 18490,
+        "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "bytes": 12737,
+      "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741",
+      "pass": true,
+      "actual": {
+        "bytes": 12737,
+        "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "bytes": 6560,
+      "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+      "pass": true,
+      "actual": {
+        "bytes": 6560,
+        "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "bytes": 5443,
+      "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+      "pass": true,
+      "actual": {
+        "bytes": 5443,
+        "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "bytes": 12218,
+      "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+      "pass": true,
+      "actual": {
+        "bytes": 12218,
+        "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "bytes": 13769,
+      "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315",
+      "pass": true,
+      "actual": {
+        "bytes": 13769,
+        "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "bytes": 6757,
+      "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "pass": true,
+      "actual": {
+        "bytes": 6757,
+        "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "bytes": 14484,
+      "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+      "pass": true,
+      "actual": {
+        "bytes": 14484,
+        "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "bytes": 4679,
+      "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+      "pass": true,
+      "actual": {
+        "bytes": 4679,
+        "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "bytes": 9086,
+      "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+      "pass": true,
+      "actual": {
+        "bytes": 9086,
+        "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "bytes": 11812,
+      "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2",
+      "pass": true,
+      "actual": {
+        "bytes": 11812,
+        "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "bytes": 4694,
+      "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "pass": true,
+      "actual": {
+        "bytes": 4694,
+        "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "bytes": 27586,
+      "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b",
+      "pass": true,
+      "actual": {
+        "bytes": 27586,
+        "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "bytes": 11187,
+      "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+      "pass": true,
+      "actual": {
+        "bytes": 11187,
+        "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "bytes": 6581,
+      "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+      "pass": true,
+      "actual": {
+        "bytes": 6581,
+        "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "bytes": 4792,
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "pass": true,
+      "actual": {
+        "bytes": 4792,
+        "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "bytes": 20029,
+      "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+      "pass": true,
+      "actual": {
+        "bytes": 20029,
+        "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "bytes": 6745,
+      "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+      "pass": true,
+      "actual": {
+        "bytes": 6745,
+        "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 25106,
+      "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914",
+      "pass": true,
+      "actual": {
+        "bytes": 25106,
+        "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "bytes": 4636,
+      "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "pass": true,
+      "actual": {
+        "bytes": 4636,
+        "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "bytes": 31760,
+      "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e",
+      "pass": true,
+      "actual": {
+        "bytes": 31760,
+        "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "bytes": 8959,
+      "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+      "pass": true,
+      "actual": {
+        "bytes": 8959,
+        "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "bytes": 7823,
+      "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+      "pass": true,
+      "actual": {
+        "bytes": 7823,
+        "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "bytes": 4913,
+      "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+      "pass": true,
+      "actual": {
+        "bytes": 4913,
+        "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "bytes": 7120,
+      "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "pass": true,
+      "actual": {
+        "bytes": 7120,
+        "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "bytes": 59669,
+      "sha256": "3e757d019f9769e25db54c1350fba54e4ed22397bd194a177150925a7b21c575",
+      "pass": true,
+      "actual": {
+        "bytes": 59669,
+        "sha256": "3e757d019f9769e25db54c1350fba54e4ed22397bd194a177150925a7b21c575"
+      },
+      "unchanged": true
+    }
+  ],
+  "authorities": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "bytes": 79305,
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "actual": {
+        "bytes": 79305,
+        "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "bytes": 108022,
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "actual": {
+        "bytes": 108022,
+        "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+      "bytes": 41316,
+      "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349",
+      "actual": {
+        "bytes": 41316,
+        "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md",
+      "bytes": 57366,
+      "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4",
+      "actual": {
+        "bytes": 57366,
+        "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4"
+      },
+      "unchanged": true
+    }
+  ],
+  "histories": [
+    {
+      "path": "implementation/source-manifest.json",
+      "actual": {
+        "bytes": 3179,
+        "sha256": "ef45e54769c7eb4bdf409e2263cb1926a236023e9f7503ed817bcfe9ecbeace6"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "implementation/seal.json",
+      "actual": {
+        "bytes": 346,
+        "sha256": "fe9d0e574ea654a1e8fc7ce565dd159c82115030b194c7b3198796b06c8a9dea"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "implementation/report.md",
+      "actual": {
+        "bytes": 5795,
+        "sha256": "61da0dfcfc164c81bc1ab45baec3b7df3e3b2c6f8ff2a85155e46d67f833fb59"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "implementation/binding-audit.json",
+      "actual": {
+        "bytes": 13354,
+        "sha256": "47828b37707de3e9f55c3d3d9d421d58d205d445d8299a769924d806974bd3e1"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "implementation/manifest.json",
+      "actual": {
+        "bytes": 916,
+        "sha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/source-manifest.json",
+      "actual": {
+        "bytes": 17476,
+        "sha256": "398e82175b52fe3fdd444681f7e27c6070ac0c4734dcc23aa994ff64834f0f64"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/operator-final-screen.txt",
+      "actual": {
+        "bytes": 2834,
+        "sha256": "45bed206aae1e973b887d210454263a557e7fc537d94c623b2cec96d64db6687"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/unchanged-inputs.json",
+      "actual": {
+        "bytes": 38214,
+        "sha256": "cb334e39dac5ff6c93e4d56c80587d06df1f2ca07d08fc3e0823d94bd6fe1d27"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/seal.json",
+      "actual": {
+        "bytes": 678,
+        "sha256": "d1be625e746c52436524cd82a8ab6f54455a1c42a113ea165b0c59f4e0dd982d"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/report.md",
+      "actual": {
+        "bytes": 17476,
+        "sha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/commands.md",
+      "actual": {
+        "bytes": 8827,
+        "sha256": "5ab79ac41efb1053f48561ff0186aff5917a06fc005ce46b229f1ab30c4936ef"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/cli-boundary.log",
+      "actual": {
+        "bytes": 7579,
+        "sha256": "8ee076ce8f90b13fd7a6d39f0a602a54e52178f89cb3fefc51377ff8f8c61f9f"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/binding-audit.json",
+      "actual": {
+        "bytes": 19253,
+        "sha256": "beda25ec68114ee60293971b7d3b7dac01bedeb072c2e359b98f4ead3fb185ef"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/producer-audit.json",
+      "actual": {
+        "bytes": 11336,
+        "sha256": "bb100471d1b45efa50f2339c64365f8e719825ca94ddf7a8ceaa0826f7bf3d29"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/cleanup.json",
+      "actual": {
+        "bytes": 5109,
+        "sha256": "350fb1d5e7569dad43e8f2c9b508f5db4a23c2951144409389b3190ad7cfb8da"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/manifest.json",
+      "actual": {
+        "bytes": 2619,
+        "sha256": "40441ced6c053e02c92ce130d5d65b04f76844b7d8a6b4720842563f2f7cd54c"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "verification/coverage.json",
+      "actual": {
+        "bytes": 6580,
+        "sha256": "e914c5d6a48fa20d21d48043716ac1e92a5eee420c79f80cb747cac53f21e30a"
+      },
+      "unchanged": true
+    }
+  ],
+  "producerFiles": [
+    {
+      "path": "attempt01.json",
+      "unchanged": true
+    },
+    {
+      "path": "attempt01.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "attempt01.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "attempt02.json",
+      "unchanged": true
+    },
+    {
+      "path": "attempt02.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "attempt02.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "attempt03.json",
+      "unchanged": true
+    },
+    {
+      "path": "attempt03.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "attempt03.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "attempt04-output/candidates.json",
+      "unchanged": true
+    },
+    {
+      "path": "attempt04.json",
+      "unchanged": true
+    },
+    {
+      "path": "attempt04.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "attempt04.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "authorities/ENTITLEMENT_LEDGER_PROVENANCE.md",
+      "unchanged": true
+    },
+    {
+      "path": "authorities/MIGRATION_DETF_DRAFT_PRD.md",
+      "unchanged": true
+    },
+    {
+      "path": "authorities/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "unchanged": true
+    },
+    {
+      "path": "authorities/phase27-data-candidates-brief.md",
+      "unchanged": true
+    },
+    {
+      "path": "authorities/recovery.json",
+      "unchanged": true
+    },
+    {
+      "path": "authorities/requirements-coverage-0856a5c5.md",
+      "unchanged": true
+    },
+    {
+      "path": "authorities/validation.json",
+      "unchanged": true
+    },
+    {
+      "path": "bun-version.json",
+      "unchanged": true
+    },
+    {
+      "path": "bun-version.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "bun-version.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "candidate-tests01.json",
+      "unchanged": true
+    },
+    {
+      "path": "candidate-tests01.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "candidate-tests01.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "candidate-tests02.json",
+      "unchanged": true
+    },
+    {
+      "path": "candidate-tests02.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "candidate-tests02.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "cleanup.json",
+      "unchanged": true
+    },
+    {
+      "path": "command-index.json",
+      "unchanged": true
+    },
+    {
+      "path": "debug01.json",
+      "unchanged": true
+    },
+    {
+      "path": "debug01.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "debug01.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "executed-source01/candidate-inventory.test.ts.txt",
+      "unchanged": true
+    },
+    {
+      "path": "executed-source01/candidate-inventory.ts.txt",
+      "unchanged": true
+    },
+    {
+      "path": "git-branch-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "git-branch-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "git-branch-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "git-check-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "git-check-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "git-check-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "git-diff-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "git-diff-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "git-diff-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "git-head-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "git-head-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "git-head-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "git-staged-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "git-staged-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "git-staged-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "git-status-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "git-status-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "git-status-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "mutation01.json",
+      "unchanged": true
+    },
+    {
+      "path": "mutation01.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "mutation01.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "operator-tests-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "operator-tests-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "operator-tests-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "operator-tests-final02.json",
+      "unchanged": true
+    },
+    {
+      "path": "operator-tests-final02.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "operator-tests-final02.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "preservation-audit.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/execution-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/execution-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/execution-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-a-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-a-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-a-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-a/candidates.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-b-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-b-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-b-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-b/candidates.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-data-proof.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-relocated-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-relocated-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-relocated-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/full-relocated/candidates.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/prepare-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/prepare-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/prepare-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/primary-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/primary-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/primary-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-identities.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/snapshot.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/stakers.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/CUSTODY_AND_HARVEST.md",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/LOSS_AND_RECOVERY_LEDGER.md",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/account-ledger.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/conversions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/custody-inventory.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/all-index-events.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/bond-accounting.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-bonds.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-wallets.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/index-events.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/post-incident-bond-claims.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/transfers.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-bonds.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-candidates.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/exceptions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/held-exclusions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/observed-recoveries.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/positions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/reconciliation.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/rounding.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/raw-input-tree/2026-09-16-dtf-recovery/sources.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/recovery-check.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/unresolved-review.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/validate-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/validate-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof01/validate-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/execution-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/execution-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/execution-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-a-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-a-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-a-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-a/candidates.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-b-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-b-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-b-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-b/candidates.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-data-proof.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-relocated-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-relocated-command.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-relocated-command.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/full-relocated/candidates.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/prepare-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/prepare-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/prepare-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/primary-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/primary-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/primary-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-identities.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/snapshot.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/stakers.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/CUSTODY_AND_HARVEST.md",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/LOSS_AND_RECOVERY_LEDGER.md",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/account-ledger.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/conversions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/custody-inventory.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/all-index-events.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/bond-accounting.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-bonds.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-wallets.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/index-events.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/post-incident-bond-claims.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/transfers.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-bonds.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/evidence/weighted-candidates.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/exceptions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/held-exclusions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/observed-recoveries.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/positions.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/reconciliation.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/rounding.csv",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/raw-input-tree/2026-09-16-dtf-recovery/sources.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/recovery-check.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/unresolved-review.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/validate-negative.json",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/validate-negative.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "proof02/validate-negative.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "prove-executed01.ts.txt",
+      "unchanged": true
+    },
+    {
+      "path": "prove.ts",
+      "unchanged": true
+    },
+    {
+      "path": "report.md",
+      "unchanged": true
+    },
+    {
+      "path": "run.ts",
+      "unchanged": true
+    },
+    {
+      "path": "source-audit.json",
+      "unchanged": true
+    },
+    {
+      "path": "source-audit.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "source-audit.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "source-diff.json",
+      "unchanged": true
+    },
+    {
+      "path": "source-diff.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "source-diff.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "source-manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "test-junk.json",
+      "unchanged": true
+    },
+    {
+      "path": "test-junk.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "test-junk.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "types-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "types-final.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "types-final.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "types-final02.json",
+      "unchanged": true
+    },
+    {
+      "path": "types-final02.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "types-final02.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "types-final03.json",
+      "unchanged": true
+    },
+    {
+      "path": "types-final03.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "types-final03.stdout",
+      "unchanged": true
+    },
+    {
+      "path": "types01.json",
+      "unchanged": true
+    },
+    {
+      "path": "types01.stderr",
+      "unchanged": true
+    },
+    {
+      "path": "types01.stdout",
+      "unchanged": true
+    }
+  ],
+  "primaryAnnotatedDocuments": [
+    {
+      "name": "LOSS_AND_RECOVERY_LEDGER.md",
+      "expected": {
+        "bytes": 15943,
+        "sha256": "52758ad2bbfa4efce31668ba1079aff608a8c72798280512e0247a0fb1747a71"
+      },
+      "actual": {
+        "bytes": 15943,
+        "sha256": "52758ad2bbfa4efce31668ba1079aff608a8c72798280512e0247a0fb1747a71"
+      }
+    },
+    {
+      "name": "CUSTODY_AND_HARVEST.md",
+      "expected": {
+        "bytes": 7920,
+        "sha256": "ab837ca952449a6d9ac155f5cd641329134ed92c0b9a610007ad7cd9b33698d8"
+      },
+      "actual": {
+        "bytes": 7920,
+        "sha256": "ab837ca952449a6d9ac155f5cd641329134ed92c0b9a610007ad7cd9b33698d8"
+      }
+    }
+  ],
+  "originalManifest": {
+    "expected": {
+      "bytes": 3209,
+      "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+    },
+    "actual": {
+      "bytes": 3209,
+      "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+    }
+  },
+  "recoveryRecords": {
+    "recovery": {
+      "bytes": 30781,
+      "sha256": "8ad79a2331b022698d73de0e00cdb1a01ee97a9b282b637a36981c071cdfb699"
+    },
+    "validation": {
+      "bytes": 8926,
+      "sha256": "964302815216202a986ed851b0418e22a3abc2a85764294f2a923c59ab9d0c9f"
+    }
+  },
+  "canonicalOutputs": [
+    {
+      "path": "full-a/candidates.json",
+      "bytes": 16570240,
+      "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+    },
+    {
+      "path": "full-b/candidates.json",
+      "bytes": 16570240,
+      "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+    },
+    {
+      "path": "full-relocated/candidates.json",
+      "bytes": 16570240,
+      "sha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278"
+    }
+  ],
+  "noPersonalPath": true,
+  "repeatByteIdentical": true,
+  "relocatedByteIdentical": true,
+  "producerByteIdentical": true
+}

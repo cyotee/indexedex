@@ -1,0 +1,26 @@
+{
+  "key": "dtf-migration-phase30-recovery-receipts",
+  "name": "Migration DETF phase 30: conversion and recovery receipt evidence",
+  "nodes": [
+    {
+      "id": "collect-recovery-receipts",
+      "label": "Collect conversion and recovery receipts",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "task_summary": "Extend the read-only collector and reconcile all 319 known conversion/recovery records",
+      "prompt": "Implement the complete finite data-collection increment in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-brief.md. Read the entire brief and required repo rules/current code before editing. Prepare the new worktree /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts at07d54b9a3d20d98aee24e75235bbf16b650a8028; only existing operator/runbook code and owned /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/implementation/. Deliver explicit bounded read-only record selection, unchanged default collector and operational boundaries, meaningful tests, strict types, one final operator suite, actual319record collection and exact complete reconciliation with raw safe evidence and stopped report/manifest/cleanup/seal. All archive/output/input identity, failure retention, integer/native-unit, ambiguity and unknown handling requirements in the brief apply. Use the same existing five read RPC methods/provider only. No trace, signing, delegation task, provider workaround, financial approval, old evidence/input edit, config/install/Forge/fullrehearsal or source commit. This is a separate data acquisition unit, not resumption of refused phase29. Stop with actual complete source/evidence deliverable or a precise blocker, never a status-only final while commands remain running."
+    },
+    {
+      "id": "verify-recovery-receipts",
+      "label": "Verify recovery receipt evidence",
+      "category": "deep-low",
+      "dependsOn": [
+        "collect-recovery-receipts"
+      ],
+      "task_summary": "Independently verify all 319 records, canonical links and retained financial unknowns",
+      "prompt": "Independently verify the completed source/data increment specified in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-brief.md. Read the entire brief and require stopped implementation report/source/evidence manifests/cleanup/seal. Subject /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts; own only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/ and owned temporary runtime. Audit complete code/default/operational boundaries and raw input/output identities; run strict types/operator suite and one actual complete319record collector, independently reconcile every canonical association and output locator from raw CSV/RPC without producer code as sole oracle. Preserve original flags/unknowns/units and distinguish matching transfers from net contributions, compensation deductions, source admission and current control. No source fixes, commits, old evidence/input edits, other provider/methods, signing/delegation/trace/phase29 retry, Forge/fullrehearsal or financial approval. Deliver actual confirmed/needs-fix report/proof/cleanup/finalseal after all owned operations stop; no completion based on a launched command."
+    }
+  ]
+}

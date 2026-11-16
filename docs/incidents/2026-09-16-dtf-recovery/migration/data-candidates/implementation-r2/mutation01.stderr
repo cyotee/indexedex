@@ -1,0 +1,137 @@
+
+scripts/recovery/dtf-migration/candidates.test.ts:
+(pass) joins exact multiple asset inputs to one collection ID and preserves observations [1.89ms]
+57 | });
+58 | test("shared purchase transactions never attribute their entire input to each NFT", () => {
+59 |   const weighted = deriveNfts(nftInput(true)).filter((n) => n.model === "fixed-principal");
+60 |   assert.equal(weighted.length, 2);
+61 |   for (const n of weighted) {
+62 |     assert.ok(n.flags.includes("ambiguous-transaction-sharing"));
+                ^
+AssertionError: false == true
+ generatedMessage: true,
+     actual: false,
+   expected: true,
+   operator: "==",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidates.test.ts:62:12
+      at run (node:async_hooks:144:29)
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:45)
+      at node:test:1591:20
+(fail) shared purchase transactions never attribute their entire input to each NFT [0.84ms]
+67 |   const input = nftInput();
+68 |   const raw = input.bytes.get("evidence/transfers.csv");
+69 |   assert.ok(raw);
+70 |   const changed = Buffer.from(new TextDecoder().decode(raw).replaceAll(`"${wallet}","${legacy.weighted}"`, `"${other}","${legacy.weighted}"`));
+71 |   const nfts = deriveNfts({ ...input, bytes: new Map([...input.bytes, ["evidence/transfers.csv", changed]]) });
+72 |   assert.deepEqual(nfts.find((n) => n.model === "fixed-principal")?.directInputs.map((i) => i.attributedRaw), [null, null]);
+              ^
+AssertionError: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
++   '90071992547409931240',
++   '80'
+-   null,
+-   null
+  ]
+
+ generatedMessage: true,
+     actual: [ "90071992547409931240", "80" ],
+   expected: [ null, null ],
+   operator: "deepStrictEqual",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidates.test.ts:72:10
+      at run (node:async_hooks:144:29)
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:45)
+      at node:test:1591:20
+(fail) payer conflicts remain unresolved instead of being assigned to the recipient [1.17ms]
+(pass) earlier LP accounting shares keep direct WETH distinct from routed DTF and missing receipts [0.19ms]
+(pass) unknown integer is distinct from observed zero and rejects decimal or malformed encodings [0.22ms]
+(pass) CSV parser preserves quoted delimiters and rejects truncation, bad widths and duplicate keys [0.06ms]
+(pass) source units distinguish native19 vault shares, native28 SE, raw weights, gons and accounting LP [0.11ms]
+(pass) candidate documents are unsupported by every live input schema and preparation CLI [1.84ms]
+123 |     "prose.md": { bytes: 8, sha256: fingerprint("original") },
+124 |   } }));
+125 |   await writeFile(join(dir, "raw.csv"), raw);
+126 |   await writeFile(join(dir, "prose.md"), "changed!");
+127 |   try {
+128 |     await assert.rejects(loadCandidateInput(dir), /raw binding differs: prose.md/);
+                       ^
+AssertionError: Missing expected rejection.
+ generatedMessage: false,
+     actual: undefined,
+   expected: /raw binding differs: prose.md/,
+   operator: "rejects",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at innerFail (node:assert:50:27)
+      at expectsError (node:assert:385:14)
+      at assert.rejects (node:assert:434:17)
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidates.test.ts:128:18
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+(fail) all declared bytes authenticate before malformed raw CSV parsing and fail closed on missing files [2.61ms]
+(pass) offline candidate command rejects signing, broadcast and duplicate input flags [0.10ms]
+
+scripts/recovery/dtf-migration/candidate-inventory.test.ts:
+(pass) inventory links each account, exclusion, source, holding and observed recovery without granting basis [0.59ms]
+(pass) inventory rejects broken account-ledger.csv position_ids relation [0.59ms]
+(pass) inventory rejects broken account-ledger.csv current_holding_ids relation [0.17ms]
+53 |   ["positions.csv", "source_id", "S999", /unknown source/],
+54 |   ["evidence/all-index-events.csv", "gons_per_unit", "11", /index subset differs/],
+55 |   ["observed-recoveries.csv", "observed_amount_raw", "5", /recovery event differs/],
+56 | ] as const) {
+57 |   test(`inventory rejects broken ${path} ${column} relation`, () => {
+58 |     assert.throws(() => deriveInventory(inventoryInput({ path, column, value })), message);
+                ^
+AssertionError: Missing expected exception.
+ generatedMessage: false,
+     actual: undefined,
+   expected: /partition differs/,
+   operator: "throws",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-inventory.test.ts:58:12
+      at run (node:async_hooks:144:29)
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:45)
+      at node:test:1591:20
+(fail) inventory rejects broken held-exclusions.csv unresolved_snapshot_remainder_detf_raw relation [0.35ms]
+(pass) inventory rejects broken positions.csv source_id relation [0.10ms]
+53 |   ["positions.csv", "source_id", "S999", /unknown source/],
+54 |   ["evidence/all-index-events.csv", "gons_per_unit", "11", /index subset differs/],
+55 |   ["observed-recoveries.csv", "observed_amount_raw", "5", /recovery event differs/],
+56 | ] as const) {
+57 |   test(`inventory rejects broken ${path} ${column} relation`, () => {
+58 |     assert.throws(() => deriveInventory(inventoryInput({ path, column, value })), message);
+                ^
+AssertionError: Missing expected exception.
+ generatedMessage: false,
+     actual: undefined,
+   expected: /index subset differs/,
+   operator: "throws",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-inventory.test.ts:58:12
+      at run (node:async_hooks:144:29)
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:45)
+      at node:test:1591:20
+(fail) inventory rejects broken evidence/all-index-events.csv gons_per_unit relation [0.15ms]
+(pass) inventory rejects broken observed-recoveries.csv observed_amount_raw relation [0.18ms]
+(pass) blank recovery count remains unknown rather than an inferred zero [0.17ms]
+(pass) historical proofs check event-time divisor and signed claim conservation [0.32ms]
+
+ 14 pass
+ 5 fail
+Ran 19 tests across 2 files. [73.00ms]

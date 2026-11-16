@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "chainId": 4663,
+  "blockNumber": 108944663,
+  "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+  "earlierPhysicalLp": {
+    "source": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+    "owner": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+    "withdrawalFacet": "0x81fb72511016b42437fe1ac2d5bdb0ba82f14a35",
+    "withdrawalFacetRuntimeHash": "0xca224a1792b0b9339c1c5c999c4d5e99bd33f25f8387da864d6eabb4d1d6b398",
+    "selectors": {
+      "withdraw": "0xff9a34c0",
+      "withdrawSingle": "0x50a7e68e",
+      "withdrawSeShares": "0x84eb9bce"
+    },
+    "guard": {
+      "archive": "b2-public-exit-probe-20261113/source-0x81fb72511016b42437fe1ac2d5bdb0ba82f14a35.json",
+      "file": "UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol",
+      "ranges": [
+        [
+          7632,
+          7639
+        ],
+        [
+          14724,
+          14751
+        ]
+      ],
+      "excerpts": [
+        "/// @title UniswapV4HookOwnerOnlyLiquidityLib\n/// @notice D9: when `ownerOnlyLiquidity` is set, only the MultiStepOwnable owner may add/remove LP.\n/// @dev Native V4 `modifyLiquidity` stays banned on product hooks independently of this flag.\nlibrary UniswapV4HookOwnerOnlyLiquidityLib {\n    function enforce(bool ownerOnlyLiquidity) internal view {\n        if (ownerOnlyLiquidity) {\n            MultiStepOwnableRepo._onlyOwner();\n        }",
+        "    function withdraw(uint256 lpAmount, address to, uint256 minAmount0, uint256 minAmount1, uint256 deadline)\n        external\n        onlyLiquidityOwner\n        nonReentrant\n        returns (uint256 amount0, uint256 amount1)\n    {\n        return _withdraw(lpAmount, to, minAmount0, minAmount1, deadline);\n    }\n\n    function withdrawSingle(\n        uint256 lpAmount,\n        address tokenOut,\n        address to,\n        uint256 minAmountOut,\n        uint256 deadline\n    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {\n        return _withdrawSingle(lpAmount, tokenOut, to, minAmountOut, deadline);\n    }\n\n    /// @notice B6: proportional withdraw paying rawToken + SE vault shares (no unwrap).\n    function withdrawSeShares(\n        uint256 lpAmount,\n        address to,\n        uint256 minAmountRaw,\n        uint256 minAmountSe,\n        uint256 deadline\n    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountRaw, uint256 amountSe) {\n        return _withdrawSeShares(lpAmount, to, minAmountRaw, minAmountSe, deadline);"
+      ]
+    },
+    "parent": {
+      "facet": "0x8333749cc7b1f66b5be568257d362aa749497cf0",
+      "hash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d",
+      "acceptedTokens": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+        "0xb7d4bb379d361ad442cddee53ea71a33957826a7"
+      ],
+      "claimLiquiditySelector": "0xcaaf4702",
+      "acceptedBondTokensSelector": "0xd7cb29d0",
+      "archive": "evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "file": "UniswapV4SingleStandardExchangeDETFFacet.sol",
+      "excerpts": [
+        {
+          "start": 24999,
+          "end": 25014,
+          "text": "    function _claimLiquidity(uint256 lpAmount_, address recipient_) internal returns (uint256 pairOut_) {\n        UniswapV4SingleStandardExchangeDETFRepo.Storage storage s = UniswapV4SingleStandardExchangeDETFRepo._layoutStruct();\n        address bond_ = address(s.bondNftVault);\n        address claim_ = address(s.rebasingClaimToken);\n        if (msg.sender != bond_ && msg.sender != claim_ && msg.sender != address(this)) {\n            revert UniswapV4SingleStandardExchangeDETFRepo.NotAuthorized(msg.sender);\n        }\n        if (lpAmount_ == 0) revert UniswapV4SingleStandardExchangeDETFRepo.ZeroAmount();\n        if (msg.sender == bond_) {\n            _pullBondLp(lpAmount_);\n        } else {\n            _ensureProtocolLpOnDiamond(lpAmount_);\n        }\n        pairOut_ = _withdrawSinglePair(lpAmount_, recipient_ == address(0) ? msg.sender : recipient_);\n        // Money route end-order: pair leave diamond → full hold-set sync (L-DETF-END-ORDER).\n        _syncAllExpectedHoldReserves();"
+        },
+        {
+          "start": 25106,
+          "end": 25123,
+          "text": "    function _settleToPair(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_, uint256 deadline_)\n        internal\n        returns (uint256 pairAmount_)\n    {\n        UniswapV4SingleStandardExchangeDETFRepo.Storage storage s = UniswapV4SingleStandardExchangeDETFRepo._layoutStruct();\n        if (address(tokenIn_) == address(s.pairToken)) {\n            return _pullToken(tokenIn_, amountIn_, pretransferred_);\n        }\n        uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);\n        if (address(tokenIn_) == address(s.standardExchangeVaultShare) || _isAllowlistedTokenIn(tokenIn_)) {\n            // Nested SE fund: push + pretransferred=true (L-DETF-PUSH-NESTED).\n            pairAmount_ = _nestedExchangeInPush(\n                IStandardExchangeIn(address(s.standardExchangeVault)),\n                tokenIn_, pulled_, s.pairToken, 0, address(this), deadline_\n            );\n            return pairAmount_;\n        }\n        revert UniswapV4SingleStandardExchangeDETFRepo.InvalidRoute(tokenIn_, s.pairToken);"
+        },
+        {
+          "start": 25862,
+          "end": 25866,
+          "text": "    function acceptedBondTokens() external view returns (address[] memory tokens_) {\n        UniswapV4SingleStandardExchangeDETFRepo.Storage storage s = UniswapV4SingleStandardExchangeDETFRepo._layoutStruct();\n        tokens_ = new address[](2);\n        tokens_[0] = address(s.pairToken);\n        tokens_[1] = address(s.standardExchangeVaultShare);"
+        }
+      ]
+    },
+    "nftForwarding": {
+      "facet": "0x3ab85813785b43b864f9c171f7ac97d6b76c459b",
+      "hash": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027",
+      "archive": "evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "file": "DETFNFTVaultFacet.sol",
+      "excerpts": [
+        {
+          "start": 16206,
+          "end": 16214,
+          "text": "    function createPosition(uint256 shares, uint256 lockDuration, address recipient)\n        external\n        onlyOwner\n        nonReentrant\n        returns (uint256 tokenId)\n    {\n        // Peer path: original = effective base = shares (LP); bonus applied to both.\n        tokenId = _createPositionInternal(shares, shares, lockDuration, recipient);\n    }"
+        },
+        {
+          "start": 16463,
+          "end": 16490,
+          "text": "    function addToDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {\n        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {\n            revert DETFNFTRestricted(tokenId);\n        }\n\n        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();\n        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);\n        DETFNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);\n    }\n\n    /// @notice L7: effective-share weight only on ids 1 or 2. Does not change `originalShares`.\n    function addEffectiveSharesOnly(uint256 tokenId, uint256 shares) external onlyOwner {\n        if (!_isStandingRewardNft(tokenId)) {\n            revert DETFNFTRestricted(tokenId);\n        }\n        if (ERC721Repo._ownerOf(tokenId) == address(0)) {\n            revert ReservedBondNftsNotWired();\n        }\n        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();\n        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);\n        DETFNFTVaultRepo._addEffectiveSharesOnly(layoutStruct, tokenId, shares);\n    }\n\n    /// @notice Debit protocol-NFT principal 1:1 (original and effective). `tokenId` must be `detfNFTId`.\n    function removeFromDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {\n        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {\n            revert DETFNFTRestricted(tokenId);\n        }"
+        },
+        {
+          "start": 16693,
+          "end": 16697,
+          "text": "    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner nonReentrant {\n        if (to == address(0) || address(token) == address(0)) revert NotAuthorized(address(0));\n        if (amount == 0) revert BaseSharesZero();\n        token.safeTransfer(to, amount);\n    }"
+        }
+      ]
+    },
+    "collector": {
+      "address": "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+      "facet": "0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669",
+      "hash": "0x7ae5c353c623b635938a7bb3ebc07cb3eda6469b2cd9dbf76c8bed336ff0b5cb",
+      "pullFeeSelector": "0x45e94ee3",
+      "archive": "b2-public-exit-probe-20261113/source-0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669.json",
+      "file": "FeeCollectorManagerFacet.sol",
+      "excerpts": [
+        {
+          "start": 5019,
+          "end": 5045,
+          "text": "    function syncReserve(IERC20 token) public returns (bool) {\n        MultiAssetBasicVaultRepo._updateReserve(token, token.balanceOf(address(this)));\n        return true;\n    }\n\n    // end::syncReserve(address)[]\n\n    // tag::syncReserves(address[])[]\n    /**\n     * @inheritdoc IFeeCollectorManager\n     */\n    function syncReserves(IERC20[] calldata tokens) public returns (bool) {\n        for (uint256 i = 0; i < tokens.length; i++) {\n            syncReserve(tokens[i]);\n        }\n        return true;\n    }\n\n    // end::syncReserves(address[])[]\n\n    // tag::pullFee(address_uint256_address)[]\n    /**\n     * @inheritdoc IFeeCollectorManager\n     */\n    function pullFee(IERC20 token, uint256 amount, address recipient) external onlyOwner returns (bool) {\n        token.safeTransfer(recipient, amount);\n        return true;"
+        }
+      ],
+      "boundary": "pullFee transfers only collector-owned token under collector owner; syncReserve/syncReserves only update recorded reserves; no arbitrary surrendered-LP executor was found on this bound surface."
+    },
+    "liveReadEvidence": "conformance-20261114/task-3/source-custody-live.log",
+    "rejectionWitness": "MigrationLegacyLpExitTest::test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake",
+    "rejectionAsserts": "Actual holder NotOwner before and after real local feeTo change and one-year advance, unchanged LP balance and totalSupply; actual parent enablement then LP intake InvalidRoute, unchanged LP balance/supply."
+  },
+  "weightedException": {
+    "source": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+    "facet": "0x1b7a7bc9044642c4e42e64f805f6400d75ad2c16",
+    "hash": "0xe5f44175a8c16c705c2c9e5e68b2c3efe842ce694c5e585d2211947802b10d84",
+    "archive": "b2-public-exit-probe-20261113/source-0x1b7a7bc9044642c4e42e64f805f6400d75ad2c16.json",
+    "file": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+    "start": 14,
+    "end": 33,
+    "text": "/// @notice D9: when `ownerOnlyLiquidity` is set, only the owner may add LP; the current fee collector may also redeem LP.\n/// @dev Native V4 `modifyLiquidity` stays banned on product hooks independently of this flag.\nlibrary UniswapV4HookOwnerOnlyLiquidityLib {\n    /// @dev Callers pass the live oracle feeTo, never a deployment-time recipient snapshot.\n    function enforceRemoval(bool restricted, address feeRecipient) internal view {\n        if (!restricted) return;\n        address actor = msg.sender;\n        if (actor == address(this)) {\n            address initiator = NativeStandardYieldContextRepo._initiator();\n            if (initiator != address(0)) actor = initiator;\n        }\n        if (actor != feeRecipient && actor != MultiStepOwnableRepo._owner()) {\n            revert IMultiStepOwnable.NotOwner(actor);\n        }\n    }\n\n    function enforce(bool ownerOnlyLiquidity) internal view {\n        if (ownerOnlyLiquidity) {\n            MultiStepOwnableRepo._onlyOwner();\n        }",
+    "witness": "MigrationLegacyLpExitTest::test_weightedLpExitRequiresActualCurrentFeeRecipientAuthorization",
+    "boundary": "Actual local oracle owner set current feeTo; pre-role holder NotOwner, post-role actual LP redemption yielded DTF. Migration does not grant itself source authority."
+  },
+  "disposition": "E-P permanent protocol custody under the authenticated existing immutable caller surface; conditional W-P conversion is a separate source-specific exception.",
+  "limits": "No public source role change, original eligibility dataset, general future-market impossibility or new liquidation policy is asserted."
+}

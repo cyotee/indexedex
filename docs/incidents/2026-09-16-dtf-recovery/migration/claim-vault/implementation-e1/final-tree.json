@@ -1,0 +1,2711 @@
+{
+  "version": 1,
+  "excludedSelf": "final-tree.json",
+  "files": [
+    {
+      "path": "actual-cli-archive-path-fixed.log",
+      "bytes": 254,
+      "sha256": "11ca32fb293c2d2ba125d45b722da68ca676e7d200c8e09c222e0bb97aaf4928"
+    },
+    {
+      "path": "actual-cli-pinned.log",
+      "bytes": 65,
+      "sha256": "dda5d6806902cc8a7b595b1b7ededc76d5bad6f317ef5274206d2b7f0f0edabb"
+    },
+    {
+      "path": "actual-cli.log",
+      "bytes": 76,
+      "sha256": "111ccdc5421ced30eea510bfabdd2c1ad81cf441e7080d5c393a2561afe56ece"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 9478,
+      "sha256": "18d0afe49c403e8f673e39e07661949ae9069d434970bee646ab7a4f503cbbc3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/anvil-command.json",
+      "bytes": 258,
+      "sha256": "4195a2f3432c7c54e8a56d8db241cdf60561bbbf954e6712bfc98eeb57927d1f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/anvil.log",
+      "bytes": 111255,
+      "sha256": "770426ce936fb0ea5842e62e4715fabcdd40c6909c7b530fa267d6206934de38"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/claim-vault-acquisition.json",
+      "bytes": 31499,
+      "sha256": "f3e40a50a52fd3770a74bb671b348e2f16f043e5f5b56f2a843c569983573af6"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/cleanup.json",
+      "bytes": 209,
+      "sha256": "e352ee6958627b492bde79b1ab91b80797398453fe131308865916678aa60d72"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/dtf-custody-se-acquisition.json",
+      "bytes": 48519,
+      "sha256": "57369ab9ea1272733dd870d7d31523b03c9eedce1f46b4f0c5938533f2cf212c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/environment-mined-transactions.json",
+      "bytes": 5900701,
+      "sha256": "e0c26542f9dfce45b8ea803251ad4f3025a50f0ddbc9b508ae892709749ad186"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/environment-stage.log",
+      "bytes": 26762,
+      "sha256": "dbbf9754e3affb270aa2325b46e17016f36d5a5b5c2adef079915c4d77ae2466"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/environment-stage.log.command.json",
+      "bytes": 479,
+      "sha256": "a483144b43f9366cf45e1c72de410ab4c4f4d1586b0e43bd425147dda96c4af0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/environment.json",
+      "bytes": 4139,
+      "sha256": "69fbc14405d324e8bc95c3ef6b64d796b9bc5dfbde447aeb367cf0bafb2bf572"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/failure.json",
+      "bytes": 89,
+      "sha256": "c64feef3e856f0428266261841f23f649699edd5f07a79dd3cdb7be8413b71f7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/fixture-receipts.json",
+      "bytes": 39683,
+      "sha256": "6f2edd818b8bd675ce1ebccfb29b3a2c1063660bc3c008c477f7129d9b1b11df"
+    },
+    {
+      "path": "cli-run/rehearsal-1794447797660/historical-header.json",
+      "bytes": 1717,
+      "sha256": "fcb077545e0b7b6a1813acbe95e2d700973f229556749e6d4e7a53cf4f0e457a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/001-deploy.log",
+      "bytes": 223,
+      "sha256": "6073ab1f074065acf7b85ed67fc54549746f288cbaea61ffe65f1c31987357fa"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/001-deploy.log.command.json",
+      "bytes": 486,
+      "sha256": "a2b7548d81f0c2219316eb631641b0fe4f8b5acd621da6f99421ec4837e377a6"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/002-deploy.log",
+      "bytes": 156772,
+      "sha256": "678926a5172d892709b111db27596a14bb3b7cb501ea86caf8b86723d3f86e18"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/002-deploy.log.command.json",
+      "bytes": 589,
+      "sha256": "4e65d0abb9ca1486b7dc95a8df309587d79e4c60e162f7182d39730aed93b86b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/003-fund.log",
+      "bytes": 138,
+      "sha256": "3df830af2065ce70331852ce89f8e8eecc56e56b6ce28ee56d5191a25e34f1cc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/003-fund.log.command.json",
+      "bytes": 615,
+      "sha256": "053d7a5a266cf3800d3b18d4afd2b390028fe83df40874515c204ae487d2b4f1"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/004-resume.log",
+      "bytes": 422,
+      "sha256": "7b2745d9eda034d5065a456727e06ae3e87c08ca50fa4563703ae3f5b22db8d3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/004-resume.log.command.json",
+      "bytes": 484,
+      "sha256": "041fc8bd79951b42c9fd73648cfc507c41972a6afcf2550b2d69f7ea7429d784"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/005-resume.log",
+      "bytes": 72879,
+      "sha256": "9572b5fab245733f471719027b9530b664d7d195f08166974a8a0515e44f43c5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/005-resume.log.command.json",
+      "bytes": 587,
+      "sha256": "de598f5666325ce012a8cb98d180e3a7d7920c093447d0769646848076fb4cb8"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/006-rejection.json",
+      "bytes": 62,
+      "sha256": "e1e52bbf762b7ff6782f291098dd2f97bd5238b88528b4ca3488d12d78e91b8c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/006-resume.log",
+      "bytes": 75,
+      "sha256": "e4c7d2178113ba59d2c84fbc802a1d29668d241e48590b2939ff4aa6ecba6643"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/006-resume.log.command.json",
+      "bytes": 599,
+      "sha256": "fc70394e913825694ab77f15e99bca4943e9ecf231034e490fcfd674307283fc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/007-capture.log",
+      "bytes": 19644,
+      "sha256": "865e38b676257496552688091b1b81882deccca0dbb5c35ba30cb109836c304c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/007-capture.log.command.json",
+      "bytes": 591,
+      "sha256": "ba30743665c2aa0aca0d1555088f6dd56765b96c943169058373f1928a7e550d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/008-prepare.log",
+      "bytes": 223,
+      "sha256": "9dc56e607e26780949946cc6ee10aff357a52d3e9495016d2453a1882858a50b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/008-prepare.log.command.json",
+      "bytes": 536,
+      "sha256": "1ebbd0c3cdb9901593b3751a3b2337a2ad7a43496206b60ceab9ee0a1f2aea97"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/009-validate.log",
+      "bytes": 142,
+      "sha256": "9f884e16a99bf516b2a991bb27d7c6a443965bdb45291cccffdf46286edd4d8e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/009-validate.log.command.json",
+      "bytes": 348,
+      "sha256": "dc48103f3d805f2e7f799bf4a555b02d8da52a63a85e80b97a54134178419b6a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/010-prepare.log",
+      "bytes": 223,
+      "sha256": "9dc56e607e26780949946cc6ee10aff357a52d3e9495016d2453a1882858a50b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/010-prepare.log.command.json",
+      "bytes": 556,
+      "sha256": "cc0838170684f58b0fb94a821613ffea18d36c17e200e6ba985f29c4708d587c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/011-configure.log",
+      "bytes": 37259,
+      "sha256": "d32ecdac5c5d1dd8bf4a141fb8c0ce14e72bc94afecd82d38f21a375a14cba7e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/011-configure.log.command.json",
+      "bytes": 608,
+      "sha256": "f9cc9d2e86e9d8560c5b43577249e568a3f7b31c9a7703674f136ecb84d653f5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/012-independent-issue.log",
+      "bytes": 138,
+      "sha256": "5990d8d2f01c8340967bca782e5f3c88d3262746e3b8afce8fb8f5c847a48b27"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/012-independent-issue.log.command.json",
+      "bytes": 630,
+      "sha256": "029ae73bbbb0fcd61dc512edde1f5195bf0d886c9082c5eee34e7f05fba28384"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/013-resume.log",
+      "bytes": 368,
+      "sha256": "787683f8fe00cb00bdc73d4878ea2ec68386914c607254170a9bc354a7c2e722"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/013-resume.log.command.json",
+      "bytes": 486,
+      "sha256": "01cf1fda92b6e6fd8d756f927a063763101f74636f150e3be0d3b4bac8046655"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/014-resume.log",
+      "bytes": 35017,
+      "sha256": "a7881e63c806d6d8280d7259b10b7d3eaf84b886e1f63b8f14df84cc43ccc04f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/014-resume.log.command.json",
+      "bytes": 601,
+      "sha256": "355a5ec1331eb2314af4f313686a7ce8a90e8349507694703b0bcf128e55c1c2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/015-verify.log",
+      "bytes": 461,
+      "sha256": "828e4f2fa64c82aba45fb7be8a69d39b962e468991db59ea3bc19d6a38957e3a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/015-verify.log.command.json",
+      "bytes": 487,
+      "sha256": "2a98dd8685346e30037ca8e251db7afe24b3895cc3d41532b77b749c831911f8"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/016-rejection.json",
+      "bytes": 62,
+      "sha256": "2cde98d1222f1dbc7ca956a685857caea091b81abb160f7e4da7bf3cb35dd08e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/016-resume.log",
+      "bytes": 74,
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/016-resume.log.command.json",
+      "bytes": 591,
+      "sha256": "8e16e8d23fdfc5cdd3b0f094c8660e040aedddece2386e6d08a77cd6a2f55596"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/017-rejection.json",
+      "bytes": 62,
+      "sha256": "2cde98d1222f1dbc7ca956a685857caea091b81abb160f7e4da7bf3cb35dd08e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/017-resume.log",
+      "bytes": 74,
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/017-resume.log.command.json",
+      "bytes": 589,
+      "sha256": "75260e1d35fb08852c41a10945054c00879844d6b9a6370a59801e500a411bbd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/018-rejection.json",
+      "bytes": 62,
+      "sha256": "2cde98d1222f1dbc7ca956a685857caea091b81abb160f7e4da7bf3cb35dd08e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/018-resume.log",
+      "bytes": 57,
+      "sha256": "a8f4acf119f9e20fa75ed11fd6ab1fc9d74126b8eb1b258c2795af162ae95b92"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/018-resume.log.command.json",
+      "bytes": 591,
+      "sha256": "b6bf1a3a193e25a91b8c5e05947f1b3667a61b5a420216adf3760e45ebf91061"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/019-rejection.json",
+      "bytes": 62,
+      "sha256": "2cde98d1222f1dbc7ca956a685857caea091b81abb160f7e4da7bf3cb35dd08e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/019-resume.log",
+      "bytes": 74,
+      "sha256": "188b4c2c3d118912b790052b52fb2eb879aaac7ee17e34b57145948e3cf708e5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/019-resume.log.command.json",
+      "bytes": 594,
+      "sha256": "e5db19003d6beb26cf7da4502c992ab688c17d8db01c47ad080f35007fa917a1"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/020-rejection.json",
+      "bytes": 62,
+      "sha256": "2cde98d1222f1dbc7ca956a685857caea091b81abb160f7e4da7bf3cb35dd08e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/020-resume.log",
+      "bytes": 92,
+      "sha256": "2072e82f3ee757ccf3a4f724fe6ba8f9af59aecaf0499e721316ebb9df3df101"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/020-resume.log.command.json",
+      "bytes": 591,
+      "sha256": "76c32add2e432bf1432a3905fa4ba793d0dc78f2ddb5b3741ec71e5a75e4f3d7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/021-prepare.log",
+      "bytes": 223,
+      "sha256": "ec4f09218e5ef1e29d924458e88413059f94ec09d16d5fe5f95f2a718a6bda0b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/021-prepare.log.command.json",
+      "bytes": 551,
+      "sha256": "b2e13811985711be45a76b361adf57138643259dedf097cad94a3198c843ad53"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/022-configure.log",
+      "bytes": 37252,
+      "sha256": "9eb7013ac29092bc5b359783f6b6c10d729c07ef60f0d9e1cebfd59ca1ad7c79"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/022-configure.log.command.json",
+      "bytes": 607,
+      "sha256": "7707d696910fa47c076bee5ef071ebf87ed4714ea0bcf83b548ae1bba5901968"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/023-owner-bond.log",
+      "bytes": 138,
+      "sha256": "6a9bc021ff3bbaddcb248ca4289329270b4dd4cd621ca114b0fa78ab0e0b8f18"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/023-owner-bond.log.command.json",
+      "bytes": 637,
+      "sha256": "ed2c480931159d93ba55438000b1ad7641e6f4933f18d967e90f8b15aebdd020"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/024-resume.log",
+      "bytes": 294,
+      "sha256": "345d48c240ac54642cf908e3a681d8cf4968f9d9ac8c3bf740cb64fab3807092"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/024-resume.log.command.json",
+      "bytes": 500,
+      "sha256": "ab06a5fb2557ed74200889595cb1f179f981b1bf0ee8ba4e750959d442b7e82c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/025-resume.log",
+      "bytes": 176414,
+      "sha256": "9aa61929e6e837540959e524f0370e47b9eb52480f77d56f303486c3a829826d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/025-resume.log.command.json",
+      "bytes": 603,
+      "sha256": "fe3b7fd29746e940e06a6f4f1766bf16afd7dd6d3f4526c1691ae1699da9c4bc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/026-resume.log",
+      "bytes": 176414,
+      "sha256": "9aa61929e6e837540959e524f0370e47b9eb52480f77d56f303486c3a829826d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/026-resume.log.command.json",
+      "bytes": 603,
+      "sha256": "fe3b7fd29746e940e06a6f4f1766bf16afd7dd6d3f4526c1691ae1699da9c4bc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/027-activate.log",
+      "bytes": 7558,
+      "sha256": "efd04bee9d6db916883ac9301f7cf1fcae6d55be350d32113c352436992c37a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/027-activate.log.command.json",
+      "bytes": 603,
+      "sha256": "601956618e00e14f14a7a764b73f8a9ab40e46c14b5e03c706bf742e61989326"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/028-prepare.log",
+      "bytes": 223,
+      "sha256": "c3ce4a9d6269984c119dc72db1826000f4639b68a48be802e569f39cb725fb8d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/028-prepare.log.command.json",
+      "bytes": 577,
+      "sha256": "d1016f8f9d710acecdbdc9ba1301b46dd90ebdf802cb148347c45e019c30a672"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/029-harvest.log",
+      "bytes": 4191,
+      "sha256": "3670b805c123d6397be53a45ccd0204333fa15ea6aa7ef827ba072b06422c7ad"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/029-harvest.log.command.json",
+      "bytes": 631,
+      "sha256": "c7d5734ad9a586b1bafeb09dcfff65113ff79beebeffde849ee912e5a4e451a5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/030-prepare.log",
+      "bytes": 223,
+      "sha256": "27c248e3c858269fa566f58a2b4d970fba2e22fbd7114d32e27d3d7a796079bd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/030-prepare.log.command.json",
+      "bytes": 585,
+      "sha256": "873b836f8164337f5262bcae85c906b49c8f8fc22cb48c1c6ca0366c51195486"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/031-harvest.log",
+      "bytes": 4169,
+      "sha256": "30997eb413df99d0773bcf03b06c353767557ab7dbe209d964e9d2523fe20510"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/031-harvest.log.command.json",
+      "bytes": 639,
+      "sha256": "681ede14fd217fa014ab7e24251745da9bbd97c658bb6a523c5cf59f0dfb7488"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/032-prepare.log",
+      "bytes": 223,
+      "sha256": "fb5ab5adb6df6b7af27707254fca2b387097254ca33c3f95faa37cb9bb451400"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/032-prepare.log.command.json",
+      "bytes": 581,
+      "sha256": "da7df0af46f567fa13e06179f45ed0c33733be64b241fc6339afd2ac99ba2511"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/033-harvest.log",
+      "bytes": 4171,
+      "sha256": "f69b10feef27d37ed7216dacf1ad9c2388cf14506eb69aa4f103cd33c95cf724"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/033-harvest.log.command.json",
+      "bytes": 635,
+      "sha256": "dc9b99a33697040e70ed617ac67082b95d0d049598f8e32ed32fb0b40ec01f30"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/034-prepare.log",
+      "bytes": 223,
+      "sha256": "d9200500906fdacbfefc7fa4758bc308beefe897b6b1101703a51755502d21ed"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/034-prepare.log.command.json",
+      "bytes": 581,
+      "sha256": "8d010ec65a072ce4fd79792af3abae4ac1df3c47a17520f5227f8bb3b033b623"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/035-harvest.log",
+      "bytes": 11233,
+      "sha256": "3b131116403538eea728168b5e2f69a3ed649004e6040e186557847437cbc412"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/035-harvest.log.command.json",
+      "bytes": 635,
+      "sha256": "4c391af8cbe66a3d4e3454b7e91fd732144cfc722bb023ec046c9043d8f76ecf"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/036-prepare.log",
+      "bytes": 223,
+      "sha256": "21372b9c228e254290ee4eaa533078368d847ee014667cd38f24498ab1d26552"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/036-prepare.log.command.json",
+      "bytes": 581,
+      "sha256": "745b0d7b03c171738abc5b2642c302de6c29e890fc4a547083c539771d4f477e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/037-harvest.log",
+      "bytes": 4415,
+      "sha256": "36c696022de4370408cdbdffa2ebdce9b9853add36f9bfad6234173f517fb970"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/037-harvest.log.command.json",
+      "bytes": 635,
+      "sha256": "121f8517c45756b1992a4af7d4053c5dfbeb633080a20b60015af12283d89111"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/038-prepare.log",
+      "bytes": 223,
+      "sha256": "f3e8c51042533f33e832ff93b9b6d0556345ad59c9c07176433487a2f72783b9"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/038-prepare.log.command.json",
+      "bytes": 581,
+      "sha256": "96a0837ce903736c7c506e2d487cc0993247f8780dbef4de5ec8fcff7c85e25c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/039-harvest.log",
+      "bytes": 12095,
+      "sha256": "b29d8a3e58dd1206921d7e96ba9b2f1e519f564550ebfd83f7ff0e2c2ea1adaa"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/039-harvest.log.command.json",
+      "bytes": 635,
+      "sha256": "2ca3bb3d372c9333fc9772d32e794d8a4e74f321fa14f61f7a91ee61093a1299"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/040-prepare.log",
+      "bytes": 223,
+      "sha256": "5abd690800eb21fa8f559b459fb4015ea4ff275d073b22e2a6e47d61dfb7a4ff"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/040-prepare.log.command.json",
+      "bytes": 563,
+      "sha256": "8f2d93c6a4cda6a8d0ee318cd49f76ae9ef65120817bebbea6fa7baf2b5d0b57"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/041-harvest.log",
+      "bytes": 171320,
+      "sha256": "0487528687c6e2e5e0208023642190946d3db6b7ad1c83abc67702d95f3ae223"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/041-harvest.log.command.json",
+      "bytes": 617,
+      "sha256": "e7841b3f7c73ecbba619316d1cd42e5679bd278048bf483a38b0bc7626f6f4be"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/042-prepare.log",
+      "bytes": 223,
+      "sha256": "966ba625c92f2982bc137335e83bbe6d9353efda5cf173a62a4a30b97b863d82"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/042-prepare.log.command.json",
+      "bytes": 575,
+      "sha256": "ee4a266232d020dbf11e8b2ab849e31853b84f58c9daf1779003b4d9cbdf4a36"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/043-harvest.log",
+      "bytes": 4109,
+      "sha256": "b5af56b1dc084066b53bc725eef6911a2e83a231c26df0d449379e275049a7f4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/043-harvest.log.command.json",
+      "bytes": 629,
+      "sha256": "ace8a3bb33e0e754487b6ccce30ad08401a2ee55962df6496325ede9069b1928"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/044-prepare.log",
+      "bytes": 223,
+      "sha256": "bf5d5987964f6ab0be7b28522a882da39ceb4b7ca8f4c34f0ebd894b84c9ff35"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/044-prepare.log.command.json",
+      "bytes": 573,
+      "sha256": "4900e870e4559317735304b0f7c4e41e29df2dc27333b8779960a35c0e196929"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/045-harvest.log",
+      "bytes": 4799,
+      "sha256": "f899fe5d97e01f88cdb3eb4e32d32c79ec60bc8ae3d15a9f0eaab804655447cf"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/045-harvest.log.command.json",
+      "bytes": 627,
+      "sha256": "9d1ea47774520c282289d3e03878b471a9254b143b192475965815b20a59bd54"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/046-verify.log",
+      "bytes": 461,
+      "sha256": "db2f9df5579851582666f55cd985a45e9bc08e00b6c9257cd4854c797eabf137"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/046-verify.log.command.json",
+      "bytes": 502,
+      "sha256": "561f1952570d6e0bfafb272cb3a0dc5ab46941a0e571df9a9055af72b64dbd38"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/admission-after-activation.json",
+      "bytes": 7608,
+      "sha256": "29a95ee12d7c63fa666a440688efa190db8e91ce80017b35422db98fcc6c4b9c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/admission-before-activation.json",
+      "bytes": 2076,
+      "sha256": "4e7f5183b1d2ac9fa19eabf455cb5723243c7c66622bcc167c5c51bdd80f356b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/admission-late-activation.json",
+      "bytes": 5071,
+      "sha256": "dee5908a777466c24dc3c849e91a827498fe359c248d8e71c1f7fcde30ecc627"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/anvil-command.json",
+      "bytes": 258,
+      "sha256": "4195a2f3432c7c54e8a56d8db241cdf60561bbbf954e6712bfc98eeb57927d1f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/anvil.log",
+      "bytes": 396693,
+      "sha256": "29e1277b050e2c7fd93f352787939d5a1f61d5f0fe3266a42268afac892645c9"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/claim-vault-acquisition.json",
+      "bytes": 31499,
+      "sha256": "563298ba2f1b5c860e7c8a70d9b3a6cb952eaf29d37aefd6182557c6ef749446"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/claim-vault-final.json",
+      "bytes": 139012,
+      "sha256": "c88726481babaa72a7b32e8f2382b7cc410ad7ff1844765fcf2a9b054bc4b1e3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/claim-vault-partial.json",
+      "bytes": 138618,
+      "sha256": "94a4dd49eabe59b74852f31ae1df1da977c42c15ce5d7fb4452b0a421eed2db3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/claim-vault-stage1.json",
+      "bytes": 1194,
+      "sha256": "4723650eb2bcdca43b4c1d314c3a6ce4895085eff515ecd8587cbebb6fb6536d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/cleanup.json",
+      "bytes": 209,
+      "sha256": "4ec20e55be0ae9b90713c4d5c693b0cb099eb86c3923bea0eb0f6656439a919d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/deterministic-preparation.json",
+      "bytes": 974,
+      "sha256": "62a462a0ae329b5e2e378fdc89733d519a1321bec571eb0c7684f6678ea595ed"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/donation-before-resume.json",
+      "bytes": 8346,
+      "sha256": "4ba0917ad8c64703d2b3f5bd44f41b0ead3afb98076caf9bc93f8bca07084643"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/donation-resumed.json",
+      "bytes": 1137,
+      "sha256": "735130f88ff84a78580f3c2084a78b9b4acfb608d68919f8a1690f626c2b4c1d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/dtf-custody-se-acquisition.json",
+      "bytes": 48519,
+      "sha256": "446e08b7c6ec07e6c825e738ed09845cc18cdcf76a5341b1c9075346963723d8"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/dtf-custody-se-final.json",
+      "bytes": 3677,
+      "sha256": "66ad5cc5eb8ee80390122bc2b9098a8226f1884934295411536559ae4a39ef0b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/dtf-custody-se-partial.json",
+      "bytes": 3329,
+      "sha256": "f7f93287a3016ef6f0c6886a227d53145b60c96d6f651e205f0fc4b84b0217d6"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/dtf-custody-se-stage1.json",
+      "bytes": 1222,
+      "sha256": "e402e97a8f2a936948b944e24510b5ee76674675c79d991df5bd85e85a6e09a2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/environment-mined-transactions.json",
+      "bytes": 5900701,
+      "sha256": "a1695307bdaa8bf0e856ed55d693e3876cb1e117869ea35ed6fba75cddc4f279"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/environment-stage.log",
+      "bytes": 1002,
+      "sha256": "248a0c2fe405cf44dfb36ecc87b8730c7df25d126663535040240f9ee54c1a0a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/environment-stage.log.command.json",
+      "bytes": 479,
+      "sha256": "a483144b43f9366cf45e1c72de410ab4c4f4d1586b0e43bd425147dda96c4af0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/environment.json",
+      "bytes": 4139,
+      "sha256": "69fbc14405d324e8bc95c3ef6b64d796b9bc5dfbde447aeb367cf0bafb2bf572"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/fixture-receipts.json",
+      "bytes": 2017022,
+      "sha256": "04634c23f48a115111185d2a5d9c5a617180e24d65c869777ce07140fdb933a7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/funding-observation.json",
+      "bytes": 230,
+      "sha256": "f0017b79167eb64d740930babda48ba03ea97f90eee8d1575d44f2e838b35555"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim/manifest.json",
+      "bytes": 42745,
+      "sha256": "0bc87955e6ecb077ff8e72bdf756d3a658beb6e57d2dbcbbe789678615b1505a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim-execution.json",
+      "bytes": 10895,
+      "sha256": "c7044d8736321a5929c5eb85a31d939a63814afa7f14145c360c1e543c18b89d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-01-WeightedClaim-input.json",
+      "bytes": 20115,
+      "sha256": "3a122fbdc83be9c49815c05f6f5f47889181395b8a78ee5621c1caefa665f51a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal/manifest.json",
+      "bytes": 42755,
+      "sha256": "9e6101942921cb3bd4a3afd91c49808c37c008d4a1b42fb0177f33922e05565f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal-execution.json",
+      "bytes": 10899,
+      "sha256": "6cb9357e5a8bed67ee96c797ecd4f9c949406b067e08f1aa021374f4b1f0a9cd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-02-WeightedPrincipal-input.json",
+      "bytes": 20120,
+      "sha256": "6aa4977fec0fe32b7d1158fa157b09ce0cabfe58491c8beb1da44758c6054086"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards/manifest.json",
+      "bytes": 42751,
+      "sha256": "a2250808d7c6953b51858e9720a45260c07d39adf91987002350e49be19d911a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards-execution.json",
+      "bytes": 10897,
+      "sha256": "d989a9d52d50b92e3b3a174bb464667418983b92c8fe49a492626e441ce4c7da"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-03-WeightedRewards-input.json",
+      "bytes": 20118,
+      "sha256": "bdb8217e3888c6c1aec9b59ed7e72f328239f5681471c0e124969e509de696da"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake/manifest.json",
+      "bytes": 42765,
+      "sha256": "cdc01c3b4111e2412773453a01699bcd12d6bac8c218daad8982b9a3191fce9f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake-execution.json",
+      "bytes": 10897,
+      "sha256": "0150175b29694cdfc3e1031ecd05b845606f970191bbec3c2357feb3b78d2fe4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-04-WeightedUnstake-input.json",
+      "bytes": 20125,
+      "sha256": "f49c223ac279513caff1cd14cb57fc8c7ffa1b8c3e2aa3e46193d99c7234d661"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake/manifest.json",
+      "bytes": 42757,
+      "sha256": "7e63687fa7ac3120105619415744ed668b65027d859354dee391bf2b51d8fb6c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake-execution.json",
+      "bytes": 10897,
+      "sha256": "5f1f880934e750db49693501c9b236000b5e64a9757c41fc1af54f1b38969f0c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-05-WeightedUnstake-input.json",
+      "bytes": 20121,
+      "sha256": "bac79875fa536cbefd3b300b4e32f94926ccbbcdb2b7418415d4edc8bba1b2e3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert/manifest.json",
+      "bytes": 42765,
+      "sha256": "39c712d07747ba18d8989ea6ed002b652d6dac15acc14abb111a2f28ff622fb7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert-execution.json",
+      "bytes": 10897,
+      "sha256": "43e39a05a04ad4ee31c4e4c444524e334c0e430ab376733e54a5e688c86b5712"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-06-WeightedConvert-input.json",
+      "bytes": 20125,
+      "sha256": "0c3e0d98187e28a5587f5b22cd84f8c8a85281dea78a6a425b85b3d2d517d00f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate/manifest.json",
+      "bytes": 42767,
+      "sha256": "29c428d6ba55f58be59ecda2ebe42379a1fbb742c7b7c28425d88cd188e6bf87"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate-execution.json",
+      "bytes": 10888,
+      "sha256": "eac86e86db2859e4891af9328b9b341db1501eea2d45b6912a75c68f1d6546ab"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-07-Donate-input.json",
+      "bytes": 20126,
+      "sha256": "bb9fadd9263361c5a9eb8702c28a1082b96d0af3b8f6a27b992451bccbb8094d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim/manifest.json",
+      "bytes": 42743,
+      "sha256": "3c3fa45094853b016d1f6a0b6e4b1c38e11287e98fcd230d1631eff811fd599d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim-execution.json",
+      "bytes": 10894,
+      "sha256": "efd5a3bdd64bc4b4faad2abe726b55b6f5a12d220623505df45a61b46b785cd2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-08-EarlierClaim-input.json",
+      "bytes": 20114,
+      "sha256": "b30ae24eb1ff2c90f634c8cc917e2e2d7b4d12d70b2696f6ed89f64c43fd08c9"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale/manifest.json",
+      "bytes": 42741,
+      "sha256": "9034edb1e04e6b7199a1d13d103ff6171ff6c13de883cba7ba54a46f0eb9c8bc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale-execution.json",
+      "bytes": 10893,
+      "sha256": "92aef4ff72961b87bb26de468dd64d7af44abb5a37f86f7d9af7798744bc0b82"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/harvest-09-EarlierSale-input.json",
+      "bytes": 20113,
+      "sha256": "4c95f7068eaff94312e0ffd8434a15bac78a11264614f120dc696c769d2f3625"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/historical-header.json",
+      "bytes": 1717,
+      "sha256": "fcb077545e0b7b6a1813acbe95e2d700973f229556749e6d4e7a53cf4f0e457a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/input.json",
+      "bytes": 20110,
+      "sha256": "f17166bff54165dadd07f26c54d7991c43a9bb6e0e82447c6e17e80258fd2372"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/issuance-before-resume.json",
+      "bytes": 13188,
+      "sha256": "3cf062c5ab54af310c059528a2937283e1751331b09d118fa982ce000ca2fbc2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/issuance-observation.json",
+      "bytes": 107,
+      "sha256": "4702e7c548ddcd114b7cbde2fab04e73aafc5f931b51ab47f1e71aae693c2cba"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/issuance-resumed.json",
+      "bytes": 717,
+      "sha256": "251c82e1eed6412d056ad38dcb3038895fe891ec929f6ba5ce6fc1a2923d6c4b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-activate/domain.json",
+      "bytes": 11058,
+      "sha256": "78226c589a90fd81028d614011574548ff7a0f207604ba9c8119c8354dcc6582"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.intent.json",
+      "bytes": 751,
+      "sha256": "c44ae8309d3dede37d4468318e21ada4af37b34005b1d39b5110f278989c2cfc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.receipt.json",
+      "bytes": 7488,
+      "sha256": "b60720e84bd87c5665b37c09c9f0a8a741d1344c054861fa75430a68990839c6"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-activate/run.json",
+      "bytes": 104,
+      "sha256": "828446767d8e2f00feeac895f702103d5913360fa9a2defce0931e51a054a40e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.intent.json",
+      "bytes": 757,
+      "sha256": "f741524be8c80898b433fe9f127d8c585b679c534128ba99caab28736c077be5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.receipt.json",
+      "bytes": 19575,
+      "sha256": "2da3b9cac865ece4cbbe405b28169b71c6af9804d26260283da974f79f3ba1c4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-capture/domain.json",
+      "bytes": 10665,
+      "sha256": "45baf17af8cec1cad53404b774c317daffc47bf04332c69e3c1a0d681ff0bd59"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-capture/run.json",
+      "bytes": 103,
+      "sha256": "fdb957ec6fcabd9e748bfc9058f5fa2d9db023facec782fe2651bf9185bec837"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.intent.json",
+      "bytes": 2180,
+      "sha256": "78b63fa3dcb1681e396e81fef9dffcadb36065e2e315ec80923382ad25dfdffc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "bytes": 2818,
+      "sha256": "6a34d1ab807bb56d61ad6e453bd198484f8602bba0cd5b92e45bdffd9f9f7e4c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/0e96073b51489cf24f0ed102767a18ca02e576f094073568a56cab87be79d269.intent.json",
+      "bytes": 2052,
+      "sha256": "a575e0b49cfef55e9571cd17841c880df6fd2e4ade7a90d7d2bd278f5a602af6"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/0e96073b51489cf24f0ed102767a18ca02e576f094073568a56cab87be79d269.receipt.json",
+      "bytes": 2940,
+      "sha256": "980760b5eb5d3855b8852f7d380eaed9c51dbce70a2d6ecc18940ebbce51839c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.intent.json",
+      "bytes": 2045,
+      "sha256": "c3739102b682148746de4cbe3edba555fb6ed8400b2ab7cc1782de88f18db707"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "bytes": 2834,
+      "sha256": "9bcca696a1c90715c37250254a606a86e3986759d159ca1a48f004107a73f76b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.intent.json",
+      "bytes": 2180,
+      "sha256": "91498c5c609a975a2123256bf7c150266d00310a6cf8bda3723affa4fd248744"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.receipt.json",
+      "bytes": 2818,
+      "sha256": "f92f5b4debc0226d4900769a85cc26c7ad85751d0f985a956cf11c52d6a89ed0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.intent.json",
+      "bytes": 2045,
+      "sha256": "128534703ead2700dfc1ba9a0f87f37764f419be7ae4ab49963087868561daf4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "bytes": 2826,
+      "sha256": "5e673ae70bc15f0b452185d5be554de5b26d5a10c8bd53cbd6d851821dca4b3e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/4031c016483b46f97a0fe6f797a44a51614e34800e6ea863c0e606332b64b435.intent.json",
+      "bytes": 2054,
+      "sha256": "c308e19f1207150c487886c5443aa0dc89db1b3746bdf1c4325dc2b624c7cee3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/4031c016483b46f97a0fe6f797a44a51614e34800e6ea863c0e606332b64b435.receipt.json",
+      "bytes": 2991,
+      "sha256": "6653e5e83c533eb987c8dd277178e5f6755911558b663744b300def574ed7e99"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.intent.json",
+      "bytes": 2180,
+      "sha256": "faffb1d855ca57bfea3e54931d2fbb9ae85cf670059f2dbc8f7629873ac46458"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "bytes": 2818,
+      "sha256": "1a8c23fb64bcb13907d46da38b1c6df1b3c09b565f14aa7d9fdcb597fe891309"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.intent.json",
+      "bytes": 2180,
+      "sha256": "40dfcc85f08fcba9eaabab383feb852517d18d4e77c67e9da99e651ffe1af410"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "bytes": 2818,
+      "sha256": "d4ed3d1a804e281eb555e1acb0a6892ed20604a28f4b84a64db68cc62f9332e3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.intent.json",
+      "bytes": 2056,
+      "sha256": "7664597f5f05a1c88f795bd226a8792520d4187c529dc2539bcdc8a5ca578058"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.receipt.json",
+      "bytes": 2926,
+      "sha256": "d343b620972eaef5ce84ac363657a86c7509c98fcda26d87b15da65825194e13"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.intent.json",
+      "bytes": 2045,
+      "sha256": "4ca7cbcb6068da16c78a9d5ac8bea50c0fe7219ed1e5ff22e2161f063016f598"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "bytes": 2826,
+      "sha256": "fdb3c855d5a9728fc6cc5d2930fedb670004113a4ce0799258788453ceed613f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.intent.json",
+      "bytes": 2045,
+      "sha256": "5b6386498f3fe68c9244209c8f834a9091457e17d7b84a56c1b8f148bc50203e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "bytes": 2829,
+      "sha256": "bf2cc3e9c4b69e4fdf1e183ca1a20f245e215abaf68db66ad83f223bdc34ed6d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/d827a40d5deb93f5bb107a6b788f4040a435ab579685d70f63598fb25b83a143.intent.json",
+      "bytes": 2052,
+      "sha256": "280603a3d5dfca2812ddb5f6bdb94cb7d8118263ce0d9c497180b1c72b31d76e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/d827a40d5deb93f5bb107a6b788f4040a435ab579685d70f63598fb25b83a143.receipt.json",
+      "bytes": 2902,
+      "sha256": "4cef945b2deabb8db1b56f48b5b60e00e8c63aacb4624b9675e1a96e64fdc84a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.intent.json",
+      "bytes": 2045,
+      "sha256": "f3fda7fbdc46f888862fab365f60b8128495efff056fdbbdb6842c820da73a46"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "bytes": 2842,
+      "sha256": "e0f8d5b1a4f2a8a515bebeaa92abd845204b67b1890c44f3b65fea02aa0f50e3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/domain.json",
+      "bytes": 11055,
+      "sha256": "e058d414914585e0abfb01661a1f05b72cdcf1d0a1a530e246310d22e69847f2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-configure/run.json",
+      "bytes": 909,
+      "sha256": "d40a589e118eaa5be550d799735150815c0a03e8c9cde0ee750f094e6d99ceed"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.intent.json",
+      "bytes": 6383,
+      "sha256": "6e228adfc4a73e1c40a600ff7d044523c3c099b85c13b46922c9721fb1bf3110"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.receipt.json",
+      "bytes": 156704,
+      "sha256": "2c21c23e03bce5906e2ebf9404c41f39ff98874a43bc71d6cec08f6666b49eb4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-deploy/domain.json",
+      "bytes": 10665,
+      "sha256": "45baf17af8cec1cad53404b774c317daffc47bf04332c69e3c1a0d681ff0bd59"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-deploy/run.json",
+      "bytes": 102,
+      "sha256": "1661ae5ffa03fee0b6237074f927314d8841b809fad1c94589e74437804fe219"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/1086638a54eb6e92390c1d0360f577c27dba7ff475c02a6e46cce610446deee3.intent.json",
+      "bytes": 2204,
+      "sha256": "d958b5eb0c38f3f882d7443d2ac0beb81f550baf5c4556b067c88c087900e82a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/1086638a54eb6e92390c1d0360f577c27dba7ff475c02a6e46cce610446deee3.receipt.json",
+      "bytes": 5842,
+      "sha256": "f01d15060d86ec5abac954cf0f2bb6e0926a0b547c9b89045ba0cb1dd409bba5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.intent.json",
+      "bytes": 995,
+      "sha256": "b5e92d91b3786e358ee445b72106ad1ea1b72deba3e07af84276a8145c8868ad"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.receipt.json",
+      "bytes": 1797,
+      "sha256": "4a7a33d807310cc2676dee206d1d8721830732f49350865044b2975dff88b349"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.intent.json",
+      "bytes": 995,
+      "sha256": "679df5622856f56b071f609167cb02b432b871fd557aa4784abc8657c3934dca"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.receipt.json",
+      "bytes": 1798,
+      "sha256": "2cd8c3ed243f39b59c34f4c771fdb26c5a501ac2f17833267fbe107bd97cf9a1"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/da53cd9d05dbab84fc9c147733ac370ea803cbc1b4642b8c8ac5a199a6191420.intent.json",
+      "bytes": 2169,
+      "sha256": "d004fd4b58605aff99922bae797031ede15ee113d49c2e62209f28c30f50fa6e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/da53cd9d05dbab84fc9c147733ac370ea803cbc1b4642b8c8ac5a199a6191420.receipt.json",
+      "bytes": 63376,
+      "sha256": "8331f9123c4e46b9240022d3a6d89b34ef593e759dd650f71ed58d02ed1616ed"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/domain.json",
+      "bytes": 10665,
+      "sha256": "45baf17af8cec1cad53404b774c317daffc47bf04332c69e3c1a0d681ff0bd59"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-fund/run.json",
+      "bytes": 301,
+      "sha256": "e253341243235be31a514a15cd5d2d351565d473f29a77ffce3476a7c78c4f48"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-01-WeightedClaim/7581805b84f3a16ce62c7190742c4ad291adc365d7636f8021f76582f191f19a.intent.json",
+      "bytes": 1653,
+      "sha256": "c721fca25d67d3708c9dc7f5f4085bdfea751dd4900ae705f46158e7c0120a7e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-01-WeightedClaim/7581805b84f3a16ce62c7190742c4ad291adc365d7636f8021f76582f191f19a.receipt.json",
+      "bytes": 4122,
+      "sha256": "1ebc17ed4741f52b2384c2a1620b16059d39af0d824687a984e0b19990980f71"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-01-WeightedClaim/domain.json",
+      "bytes": 11071,
+      "sha256": "e76fd4a257c6778a2395e0cc2e3ebc7c7691a75110e390ee023d00e08052c872"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-01-WeightedClaim/run.json",
+      "bytes": 103,
+      "sha256": "4f549a10a222da456eb6c21db8f75b13c5f56ec3c117f9fddfd0656688fb2989"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-02-WeightedPrincipal/0cf3569f057bb853390ca5ea3165b102e93dd95feabe98f86031298d07aabb34.intent.json",
+      "bytes": 1653,
+      "sha256": "68e93a05eb6548211069261b022cb8f7bef0a59289d6e8b3222644bb3e969c70"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-02-WeightedPrincipal/0cf3569f057bb853390ca5ea3165b102e93dd95feabe98f86031298d07aabb34.receipt.json",
+      "bytes": 4100,
+      "sha256": "36e901cab7a24951b95eec8c544ce68e9c7603c22062be8c92749867d6d5d728"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-02-WeightedPrincipal/domain.json",
+      "bytes": 11075,
+      "sha256": "c02d18e0c0ca9a5c5aa7f29be0df4e853b810be9a3fa6c3a3083217dd0ce2328"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-02-WeightedPrincipal/run.json",
+      "bytes": 103,
+      "sha256": "f59c533073d9a25ecef4a9d58af3f522ed1472e66b8c55aeb44c6e4a9ea8d883"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-03-WeightedRewards/80d450e5ef823c7d2a76039da5141e8633fd2c111da3ea84b197d25e49d2ee36.intent.json",
+      "bytes": 1653,
+      "sha256": "31e4c099f4f0698fd84e135680bcfdda29e6181f7d80675c04417553a75be9d4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-03-WeightedRewards/80d450e5ef823c7d2a76039da5141e8633fd2c111da3ea84b197d25e49d2ee36.receipt.json",
+      "bytes": 4102,
+      "sha256": "eea2ca1c4862ea2a95521d321a0dbceead9665f4babb6b149b48a9ef16db2ba5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-03-WeightedRewards/domain.json",
+      "bytes": 11073,
+      "sha256": "bb5ba58c967f3a2eeae8167cab5f6a654eedc7dc2dd07118d7454dcde530de1c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-03-WeightedRewards/run.json",
+      "bytes": 103,
+      "sha256": "5fec09877439535f1c279580247bdc8d8eebdce912f5fa587d6318ff121761dc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-04-WeightedUnstake/28641de105977ec53b4bb186cfe658f432eb025bd71bdaa540cc715cecbc7062.intent.json",
+      "bytes": 1653,
+      "sha256": "8d538bc742fd453d5812c46ab7e7a5b4a89b80dc32a67e58fd7bc58622cbc5dc"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-04-WeightedUnstake/28641de105977ec53b4bb186cfe658f432eb025bd71bdaa540cc715cecbc7062.receipt.json",
+      "bytes": 11164,
+      "sha256": "9243ddc1464000dcbb9ed0c136505fe85c5f5e0f3328930b6d3e6186d28fbc93"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-04-WeightedUnstake/domain.json",
+      "bytes": 11073,
+      "sha256": "f400b5f22de756344856039a9fce8174b0fcee37c8494c4e576fea12b58f48a3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-04-WeightedUnstake/run.json",
+      "bytes": 103,
+      "sha256": "fbf33f62bfe421fa5c248aeac080c1d4e413a657e615c39c9667b645b29f5c42"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-05-WeightedUnstake/a2b410be3734edfa47b34714ce98bb6d381bf20542bd0f222f068c4ff95be374.intent.json",
+      "bytes": 1653,
+      "sha256": "325f17566f7a02973a9eb07a36be0b3d65c1d29143ee5bdcc820b3bad2f827cb"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-05-WeightedUnstake/a2b410be3734edfa47b34714ce98bb6d381bf20542bd0f222f068c4ff95be374.receipt.json",
+      "bytes": 4346,
+      "sha256": "142b55f987386cb9aa60a4f8b2f91353c7d93b2b4379f36acd46b4e3f33dd191"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-05-WeightedUnstake/domain.json",
+      "bytes": 11073,
+      "sha256": "cc3ddf44dab3389f4fb046e2ead10fafb9f85b63b6cea40a484c7d464e810e77"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-05-WeightedUnstake/run.json",
+      "bytes": 103,
+      "sha256": "9b21c15abf89cc193d7869635643188ed768b3881848fd069e802f3eb28e410a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-06-WeightedConvert/49f014aeb49c71d0e19e7b382e511d2d2a6966c2bcc7d747043f7e14ed990b58.intent.json",
+      "bytes": 1653,
+      "sha256": "2cfa17d8c9a9fd05e6ad72ad084061aa77617a4879257a67c7474f0555d36f88"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-06-WeightedConvert/49f014aeb49c71d0e19e7b382e511d2d2a6966c2bcc7d747043f7e14ed990b58.receipt.json",
+      "bytes": 12026,
+      "sha256": "4f2f8839a1212115a702f937ee46d7e1cba734214d7665a8245a1571fee48b8c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-06-WeightedConvert/domain.json",
+      "bytes": 11073,
+      "sha256": "abcdd7679b036ebb2cdd6db49dd61a09f50366ca62bfd5e3058a8b9a4dd4e8cf"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-06-WeightedConvert/run.json",
+      "bytes": 103,
+      "sha256": "4740d97491ac1ea68464b60bc277ee00ab3589e85d3df1da95068443be0c0e8b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-07-Donate/785025917961f97ce89c87e04df730cc6f5933d67485d1572b08631e7352aed3.intent.json",
+      "bytes": 1655,
+      "sha256": "63e5009658645d413079b853f4518cd0767c06fc930e8d0f4ba4ea691c11b0ba"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-07-Donate/785025917961f97ce89c87e04df730cc6f5933d67485d1572b08631e7352aed3.receipt.json",
+      "bytes": 171251,
+      "sha256": "e1367f26cb48dc5751dd1813e6b3efd9edbbcb563a5365e3312b8ee84225adf3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-07-Donate/domain.json",
+      "bytes": 11064,
+      "sha256": "2cef19f937e91c3e6a808a569e19ec0e5b57b1f77c52bdbcc659977a38f75330"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-07-Donate/run.json",
+      "bytes": 103,
+      "sha256": "8fdeddd94a004c8a43f093440687c7d1535c25f9abbe9c5a816bf1738a1c4fa2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-08-EarlierClaim/450e282cd70f34c3bc63728ce49a5f12efe6bfa5c0480a7fe20b1eeb488cfecd.intent.json",
+      "bytes": 1653,
+      "sha256": "cea3f6c86cd831ba72df787e3bb0fcc74d321f0f210e55aa7c54ddb06b273072"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-08-EarlierClaim/450e282cd70f34c3bc63728ce49a5f12efe6bfa5c0480a7fe20b1eeb488cfecd.receipt.json",
+      "bytes": 4040,
+      "sha256": "52b72830ad3f144c1b12218a613bcbd259f9623168fd1913c0200cb0915d9db0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-08-EarlierClaim/domain.json",
+      "bytes": 11070,
+      "sha256": "e07f9d0a6507e6fd592fe2193c93505014eaa0b5811c2f34f7a173f7299f7055"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-08-EarlierClaim/run.json",
+      "bytes": 103,
+      "sha256": "6167d71ddb36c1e284544da6550dd5e390564a7813d3899f2e790228cf6988f3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-09-EarlierSale/b35a3a95f806eff32206a854507ed43c7801e7c3b0153e255ec1af7a2f9e0e11.intent.json",
+      "bytes": 1653,
+      "sha256": "e6f7dad2d6e542ad145427dc039776137f998a192cde98fd2d4176cfdd95ed10"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-09-EarlierSale/b35a3a95f806eff32206a854507ed43c7801e7c3b0153e255ec1af7a2f9e0e11.receipt.json",
+      "bytes": 4730,
+      "sha256": "8a8dc737b4c8bf0b7709094ab117a15f1e219111409f159d640fa6398fe52ae1"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-09-EarlierSale/domain.json",
+      "bytes": 11069,
+      "sha256": "7770dd342f5579bd703b3351eaf92714433d1c0b64a5bcf8cef67fa7dc82a5d5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-harvest-09-EarlierSale/run.json",
+      "bytes": 103,
+      "sha256": "1121f7118e32c1a7380b7fbcf66ef5136b6681c6f0e2a8f4f98c024cc1bebba8"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/880ea607b8f39361a1b6041a05652021f353b038de2c5708bd4697f607b8711b.intent.json",
+      "bytes": 1284,
+      "sha256": "4ba8a2ccc65b63625c064e0ce54659b38f23c04fdf26a3fec3106dfd75c667a3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/880ea607b8f39361a1b6041a05652021f353b038de2c5708bd4697f607b8711b.receipt.json",
+      "bytes": 11646,
+      "sha256": "916bac8522c7f185ff4fba7a41577d4e1dcb1a285c0591461fad1c2956fbffe1"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/acde781f98b153d3ec0a6aa646d83a67c02f46d467a3d2f7e8f60b606be583a4.intent.json",
+      "bytes": 1284,
+      "sha256": "692e4d671cdff06cf67651fd633864e49081365cc3a55130179e50d73ed7cb36"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/acde781f98b153d3ec0a6aa646d83a67c02f46d467a3d2f7e8f60b606be583a4.receipt.json",
+      "bytes": 11646,
+      "sha256": "8b06852ff552d7100a828f5759a913ec5170f222c9d28455c802cfe2af3c61b3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/domain.json",
+      "bytes": 11055,
+      "sha256": "e058d414914585e0abfb01661a1f05b72cdcf1d0a1a530e246310d22e69847f2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/feccfe8b44a7d82fddd30ac8852ad7f6afdccb8871aac3f6ddfcb7234001b483.intent.json",
+      "bytes": 1284,
+      "sha256": "ff792ed82b5c5c4bd3afcbc08be4aea0cd37976e6a603998975928880d036b80"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/feccfe8b44a7d82fddd30ac8852ad7f6afdccb8871aac3f6ddfcb7234001b483.receipt.json",
+      "bytes": 11646,
+      "sha256": "dcdd4349207073252033145c5ff397427987d4840a134e071041877a9fc71786"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-issue/run.json",
+      "bytes": 247,
+      "sha256": "bb4138309e48af3c19b1a0aef4e51805d1d39f7ffc7a00b2550f9674037226d8"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-owner-bond/2df509b00117f056c84acb3dd74c0ae1fe55ec3ff2839df7d80cc309aa29d3c9.intent.json",
+      "bytes": 1514,
+      "sha256": "bf772f9092b4e641ec3a76fdc594c75aaca24d72a92e83e315b944bd12aede66"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-owner-bond/2df509b00117f056c84acb3dd74c0ae1fe55ec3ff2839df7d80cc309aa29d3c9.receipt.json",
+      "bytes": 174547,
+      "sha256": "955f5221ea237858636b0bf36316f8616a54fc877129fef720b4878387fd3e13"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-owner-bond/46241245c4191594650f924a819027b4165bab3e31b9d00b2f9232876374d730.intent.json",
+      "bytes": 1001,
+      "sha256": "fb8a0853a65e3e430414e23d13cf483502ba61315de534d712cf6115c2dbf37b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-owner-bond/46241245c4191594650f924a819027b4165bab3e31b9d00b2f9232876374d730.receipt.json",
+      "bytes": 1795,
+      "sha256": "3478eacf4117f8cf3f1cb609ba13c47f88d7e2d06c13f9505c48de2fb15ea83f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-owner-bond/domain.json",
+      "bytes": 11058,
+      "sha256": "78226c589a90fd81028d614011574548ff7a0f207604ba9c8119c8354dcc6582"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-owner-bond/run.json",
+      "bytes": 173,
+      "sha256": "90969f4e22fe793625a76256ec0fc28750e8cdec7d7afddde230da66bd0f70ff"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.intent.json",
+      "bytes": 2180,
+      "sha256": "dad64771362dbe40f210689eb910a926f19bc9c97f413ee3b121834c644688bd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "bytes": 2818,
+      "sha256": "ef437b6809518648c57aa6c10eb0a9100f09f510eddf83a313d3d10a134064f4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/0d0e80a7412766f09be495d95679d17d98a996a556997e2d8b0fb7ad122e4b3a.intent.json",
+      "bytes": 2052,
+      "sha256": "f19923530f705644723be555a183070fa93353f98598297366af87d7e786d283"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/0d0e80a7412766f09be495d95679d17d98a996a556997e2d8b0fb7ad122e4b3a.receipt.json",
+      "bytes": 2939,
+      "sha256": "4ffac7d74b17fa49a3a4c0b304d71f49f477ae363b46fa96d6d858b47da1627a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.intent.json",
+      "bytes": 2045,
+      "sha256": "f97827ca2d86fcbfb3289981e742762f75dfdfc98aec4721bac34be9b96d0707"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "bytes": 2834,
+      "sha256": "612e5fbdbf525d9fef3cd76e67a652a80a85e97e9cef30be4e85055320fc0182"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.intent.json",
+      "bytes": 2045,
+      "sha256": "275d71bbffcf7f52fca489b542b65318d5c17004e8905327e4cb5f55d4aeb47c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "bytes": 2826,
+      "sha256": "30085ede0153ef7cfc993d5dccdf01b4426363f4136f67fff9c069c9fcf2306f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.intent.json",
+      "bytes": 2180,
+      "sha256": "6858c0dae4e73fd994d2c88188c9fb340a07c1fb5a0495d0ca6e0fdcecc53a20"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "bytes": 2818,
+      "sha256": "433951375d0768d5202968c8cef03bd80e7182e685d950810f804643a1600acb"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.intent.json",
+      "bytes": 2180,
+      "sha256": "a4849b094ae86ef5fca7388c901c0286f46f5bb41608bc32d26c6c7f79665793"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "bytes": 2818,
+      "sha256": "ed7106c556315647f6d3c3c36dc0366adea77d76aed378ce8ec3831b7d44f7e7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/75d1557b9e75d42f162f33f3add809b8c6c7e201b1a1ad13ff9b9ad5af0bff01.intent.json",
+      "bytes": 2052,
+      "sha256": "022fd4657956350450b8ec084f38c64730e580642d960d71d1b36019fe256f3f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/75d1557b9e75d42f162f33f3add809b8c6c7e201b1a1ad13ff9b9ad5af0bff01.receipt.json",
+      "bytes": 2901,
+      "sha256": "63530442d586a1d39349c2ff6f4ff69b3399067f850cdad9d263c35931de2f7f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/7da40388988231dcd00f8f1bb02c019681198621846101a2c0a84b4244abfd8c.intent.json",
+      "bytes": 2054,
+      "sha256": "98ac44f586cb3d4aff861daf92c838e411c46f09766205001b8c2fa397d8a539"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/7da40388988231dcd00f8f1bb02c019681198621846101a2c0a84b4244abfd8c.receipt.json",
+      "bytes": 2987,
+      "sha256": "2f9402e5ec40345502ed7eba620cd25b616b698abd422808593b4efb68717f95"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.intent.json",
+      "bytes": 2180,
+      "sha256": "82b68579e29a2fa6716e76a0fb8eda2301f947e1258ff91e41c923b877ab25ff"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.receipt.json",
+      "bytes": 2818,
+      "sha256": "6fcc9090d18a155715b3c0888ee9297e774c57e4285d9b1734b5acbf3be62002"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.intent.json",
+      "bytes": 2045,
+      "sha256": "0fdc72027f3c04ad7d17189775fabd5689bda35054a70c05666b4e55676aa4d0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "bytes": 2826,
+      "sha256": "2676c55679c5079211256e043cfe0dfb71abf034512f7061bcd73892f112d4bd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.intent.json",
+      "bytes": 2045,
+      "sha256": "77b27dccebf040e2d160b6318304c15dc1a24097b46155881d6f49f450075672"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "bytes": 2829,
+      "sha256": "2b7efdea8b7327497395b192303a5f57dfabe6b50e330e494ef49342dd345866"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.intent.json",
+      "bytes": 2056,
+      "sha256": "a950cb412f7271c2390a3987cfb5f19bc06d4811a8d11f8e79b1abff62be0180"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.receipt.json",
+      "bytes": 2925,
+      "sha256": "c0b0444a0f4d42c7fa67881df0b16f25675e33e8845d5eeda00d9da68c04f10b"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.intent.json",
+      "bytes": 2045,
+      "sha256": "f18681a082a1212c1e479c08aec13da11a6bc416f6421ccc8e268fa6632b93b5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "bytes": 2842,
+      "sha256": "29daebc9fe8e1ee3aa9c9f145a7300821c05861e1f7ca0bedd52e13746996fea"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/domain.json",
+      "bytes": 11058,
+      "sha256": "78226c589a90fd81028d614011574548ff7a0f207604ba9c8119c8354dcc6582"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/journal-replacement/run.json",
+      "bytes": 909,
+      "sha256": "d4fda84be100ad5d2d378a9554d505e7c7e7f603d7ccc88a699603f7bb678925"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/ordinary-deposit.json",
+      "bytes": 271,
+      "sha256": "5b3fd6d875a1262199249b98c6e37f7fdb0168ad842e8afc783c2b6f02ac7ab5"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/owner-bond-before-resume.json",
+      "bytes": 176066,
+      "sha256": "e7a0d381717b5abf9cba1897d05cad8af4c512a17d8bad2be7b07041bf23ae6e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/owner-bond-child-runtime.json",
+      "bytes": 92920,
+      "sha256": "2f681dbdaac7b3f29495b2f1358a362ac9f3b03b5fef0f3d053279c60b1d55cd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/owner-bond-observation.json",
+      "bytes": 1886,
+      "sha256": "8334f5644369a1b7c9a17a06f53dd6100a9042dbbaa0b8204efc12f48f1fa0c7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/owner-bond-resumed.json",
+      "bytes": 1099,
+      "sha256": "3a596f62a31e41e23d08f1dea7e8765640df26bff25c7790f824ea86dcbcfcd1"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/post-capture.json",
+      "bytes": 10879,
+      "sha256": "53369fad4596eb94c62e27c12cf76336b53502032a8d802456deb4c32f69998a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/pre-capture.json",
+      "bytes": 10613,
+      "sha256": "4b026d7dc593e5c6f3da573dc603fb834c296ab9f5ff6ee128c6e89f19c1752e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared/claim-vault.json",
+      "bytes": 397,
+      "sha256": "9a4698959ff5392f167acfd006d20a775d63a2bbf158fd9ca86217a38017b540"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared/dtf-custody-se.json",
+      "bytes": 412,
+      "sha256": "36f44beb59fd10019a700a0531b6d6878c94c130b61c1df1f4cc1be1ffce3241"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared/independent.json",
+      "bytes": 1502,
+      "sha256": "ee23f0ba3ee6f4e68bc42ab8b4c03be13d79b4bb9e9d9ba09cb87d64c29b1b39"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared/manifest.json",
+      "bytes": 42648,
+      "sha256": "0837c09264b9430ae7b4c7453f5eebdf86b3bc18714319c5514a680b2957fec7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared/weighted-liquid.json",
+      "bytes": 389,
+      "sha256": "81369207073a958640396f9636a9d5791c0a158c03fed10f18929984a72d3578"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared/weighted-sy.json",
+      "bytes": 385,
+      "sha256": "ca9a87cd16c8800df466b1d5531f34b2f4d33beea9f521a7513f6f9e97242a5c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared-reordered/claim-vault.json",
+      "bytes": 397,
+      "sha256": "9a4698959ff5392f167acfd006d20a775d63a2bbf158fd9ca86217a38017b540"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared-reordered/dtf-custody-se.json",
+      "bytes": 412,
+      "sha256": "36f44beb59fd10019a700a0531b6d6878c94c130b61c1df1f4cc1be1ffce3241"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared-reordered/independent.json",
+      "bytes": 1502,
+      "sha256": "ee23f0ba3ee6f4e68bc42ab8b4c03be13d79b4bb9e9d9ba09cb87d64c29b1b39"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared-reordered/manifest.json",
+      "bytes": 42648,
+      "sha256": "0837c09264b9430ae7b4c7453f5eebdf86b3bc18714319c5514a680b2957fec7"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared-reordered/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared-reordered/weighted-liquid.json",
+      "bytes": 389,
+      "sha256": "81369207073a958640396f9636a9d5791c0a158c03fed10f18929984a72d3578"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/prepared-reordered/weighted-sy.json",
+      "bytes": 385,
+      "sha256": "ca9a87cd16c8800df466b1d5531f34b2f4d33beea9f521a7513f6f9e97242a5c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/recipient-identity.json",
+      "bytes": 255,
+      "sha256": "dc74595de6d4b5892e1ee61b9b03fb8566c4a613804e471de79806f2f302ca64"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/recovery-observation.json",
+      "bytes": 487,
+      "sha256": "29695bc0c48405ecf45d26af35fd9a07205e6d2f36f6955873ce070757a0885a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/reject-chainId.json",
+      "bytes": 10876,
+      "sha256": "46f95ea0ed86ea0eaa4fbbaa5acd4ffc5dc3a4e7d758be1e082dceba1e5de77a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/reject-package.json",
+      "bytes": 10879,
+      "sha256": "de382c82c1e75e1881c7e9d2ec0e12ec97d5d9d3a7757c01eaa22edf60f9d34d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/reject-payload.json",
+      "bytes": 10879,
+      "sha256": "452c7e68c2628865be98e0ab12056541834a2a9064980a4c960c77a0ec9a673e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/reject-proxy.json",
+      "bytes": 10879,
+      "sha256": "f6c92347520ce1ddbd7fbc7d15b961b87719497395d18c1d2c5031faf28f3fda"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/reject-snapshotId.json",
+      "bytes": 10879,
+      "sha256": "bacdb9e146b2b394ca6f3717e625ffbf3909628c2ba7e72b625f83d4217b9fe3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/reordered-input.json",
+      "bytes": 20110,
+      "sha256": "6972ec0046604379e56a60b6988625223233d649155edf30bab1377ecc13928d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/reordered-issuance.json",
+      "bytes": 913,
+      "sha256": "61c65356190fbd6199dc85e91d7c59298b42714f33c786fc72587e462926a4c4"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement/claim-vault.json",
+      "bytes": 396,
+      "sha256": "df23c26aecb1638f6427109e05ccc11036684b8949615b59c6660fbfa4db143a"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement/dtf-custody-se.json",
+      "bytes": 410,
+      "sha256": "74826b2ed22df111ab8d77161d52982ad0e0d49a535f9eb5d90c189448ef2db2"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement/independent.json",
+      "bytes": 1502,
+      "sha256": "1d0be2087bd6e1f7a815dfa57b0ca3bbf833f1bcc27c6909c077abe83e451ebd"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement/manifest.json",
+      "bytes": 42745,
+      "sha256": "8790f67f824fadce5b76ba128ba4c5b354512be5aef158119489cc2c27228691"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement/nfts.json",
+      "bytes": 1645,
+      "sha256": "e0dcfea8383c327a7c121dc645948a90be456a00246d1c04b066c5555f1fb580"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement/weighted-liquid.json",
+      "bytes": 388,
+      "sha256": "f024cfa7a0ee2a4dedfe9026efb88c0a3b19ccb2979f995dde45ba84971bc4a0"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement/weighted-sy.json",
+      "bytes": 384,
+      "sha256": "1c34c088937e184c1e9d61b011835d8cdb30c03b26cbdff27d21ca37a0ba8426"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement-execution.json",
+      "bytes": 10882,
+      "sha256": "947ff41ef967b501742828a6e4f45cd1b9c1b8bbf44a231259d297a461ffb6d9"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement-input.json",
+      "bytes": 20115,
+      "sha256": "8c883cf6015edbaa784b074683d766c25ee0e461a96b1b4c8960853bd6fb4c79"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/replacement-observation.json",
+      "bytes": 271,
+      "sha256": "e8406ee5571f11880149d757717d5294b3616a57610e4fb23dc1ef30fdc3829c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/runtime-code.json",
+      "bytes": 291929,
+      "sha256": "7e41abb0d7c38b23aebdcf90ddef82796ae6ab3c9407e22590c1a32260c26d5e"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/synthetic-originals.json",
+      "bytes": 7957,
+      "sha256": "787941cc00082f9b97052b40a92d0bb9aa30faa570268d48ff4222e0726d2794"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/synthetic-replacement-originals.json",
+      "bytes": 7950,
+      "sha256": "605bfb3711a6bde1e4b5f0d2d11750979eb7c73e8f51183a58ed5647d2663966"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/tampered-prepared.json",
+      "bytes": 42648,
+      "sha256": "8359841bfdbfb0889aa7c6b9e454493ae256b006d6ea254df06ed9ae9e943b3f"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-liquid-final.json",
+      "bytes": 3328,
+      "sha256": "6c970b0d468330ab1887be79538a2c122de44f7fb2ec42397d4b6ad4a52207da"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-liquid-partial.json",
+      "bytes": 2908,
+      "sha256": "778688c6de59e1465d5f5190ffbd183b119373585a69d22106bced82a02f5c10"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-liquid-source-bindings.json",
+      "bytes": 1116,
+      "sha256": "ca65630baa05fcf55df956434bd470dd4db1f7e769dd219d20f22c7154eed01d"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-liquid-stage1.json",
+      "bytes": 1176,
+      "sha256": "dba32f6a2f080ef89c68e978719b09780c6d745276d39982c3e9f02fff846dac"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-sy-final.json",
+      "bytes": 3895,
+      "sha256": "4e20a9752417c1d1a2f9a13874bb3bfd7fccf308548854537531db4f35eebc27"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-sy-partial.json",
+      "bytes": 3470,
+      "sha256": "873212c119f8fa72fb4f4034b5cf61a295fd973ef56daa649ec2dbfe1dabd2c3"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-sy-source-bindings.json",
+      "bytes": 1112,
+      "sha256": "9304778bef8e7b912bd3663a503433dbbe724dca257fc786255802cab509820c"
+    },
+    {
+      "path": "cli-run/rehearsal-1794448019639/weighted-sy-stage1.json",
+      "bytes": 1168,
+      "sha256": "4de3cf152fc9d8b025b03e6c99fec276ee6d2dcda1b8b29ee5f0cae63ba0071c"
+    },
+    {
+      "path": "final-artifact-bindings.json",
+      "bytes": 9378,
+      "sha256": "f40ac76040d9192837a36a900cb09a8d17bed92e6a68977a5d1dfe0a051cd90f"
+    },
+    {
+      "path": "final-cleanup.json",
+      "bytes": 1365,
+      "sha256": "d6146c14be965accc9ec7d4d760f0fcb7a453d06d8112e858161a49212277464"
+    },
+    {
+      "path": "final-input-bindings.json",
+      "bytes": 971,
+      "sha256": "e4759be64146c6b75479b73f53337002508c79f5fc88466ed0cd85609ed519be"
+    },
+    {
+      "path": "final-runtime-bindings.json",
+      "bytes": 3478,
+      "sha256": "1eac79f70d245abeb6a6d85d226c639373110424e7851fdf01106d5722a45442"
+    },
+    {
+      "path": "final-sealed-preservation.json",
+      "bytes": 2152,
+      "sha256": "0df33e7c4f2277d0cd5ad934a484be6fb8070cfb132d87f677db28bc0edd3285"
+    },
+    {
+      "path": "final-source-bindings.json",
+      "bytes": 8535,
+      "sha256": "f33ba8e4b43f142a958076fa543d6a92ecdd523ecd0a1ec93065625e70e91288"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 25889,
+      "sha256": "50101967d1ed2e58af8aa16878fc9a200dc17b705efe850f6ee0d154613f4c9f"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 2649,
+      "sha256": "500228877c9795d53312295e506ddf6797eca1cee8d04a76f0d09f73f0116bb5"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "bytes": 3930,
+      "sha256": "ae8272d6cfff98a48f6703a36b62d0ef833cf10e4e2a3c6d9a2629c5b70c3f35"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "bytes": 2853,
+      "sha256": "28587a9599b5f6452e3ccd9ed06e4a6de5fd0d292262e15f076619928a02eb5a"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 15462,
+      "sha256": "d5b634cd0857a564960d3c47da506f1ad049c8818091fe9b22f883e35bd94ab0"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "bytes": 22869,
+      "sha256": "f24bba95d01d2d23abbd7ce4f310845428d4dacc143549e9a0bbd07adf79daca"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "bytes": 1078,
+      "sha256": "de3aeb7770dfeb0105c82cc05abf72fa9f9708e2ae944b897ca3a2bcc60ce9e4"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 25952,
+      "sha256": "c3a0b7ef8fe7ef3b7e03934420dbeb16c2c1bcfadc709fe427c28cde2537be4e"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "bytes": 1158,
+      "sha256": "68feefdf017cfe787974c064aec7d0d503afcbe6e628ceabf7ede2ac92d9faff"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "bytes": 3366,
+      "sha256": "334ae5220153279d0efec14358eaea3557c07e816abd681b238f29c61156832e"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 15430,
+      "sha256": "644976c7dd465d0443014e8220f1d6e03fb4815c18763b1099eb0e5fb7edd13b"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "bytes": 1672,
+      "sha256": "553403763bab57d05c4e2cc080adc92d2f07bda468a195159b3cc362ae57e99b"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "bytes": 9005,
+      "sha256": "09ee47bdce9c8077ed61ecf6f55f05fe68ec9867917bb467a8933ce717a54faf"
+    },
+    {
+      "path": "final-source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "bytes": 4129,
+      "sha256": "efcd2d657ed9046b492d40ac525c87728426c22323549cab3da29ee42882e803"
+    },
+    {
+      "path": "final-source-snapshot/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "bytes": 28987,
+      "sha256": "819dedd9d4d7ffd43d929874f68ae1d0edc5087f548cf8fc4f68944bea842778"
+    },
+    {
+      "path": "final-source-snapshot/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "bytes": 7075,
+      "sha256": "da0b00ad6eb7fa87231b81a78a4f2c629cfafed447154460fb62f9c8fe8629f6"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "bytes": 4680,
+      "sha256": "c69bb69a7d4bba7da3d0fdcbdfecc10726513adac13867a5768b7744af9d03c3"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 7810,
+      "sha256": "ac226d12173801a4a7b2bbceb6605cfb57706fd73d6acac67d725cba84c94ebc"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/execution-plan.ts",
+      "bytes": 5555,
+      "sha256": "0a12beba165e9865178daa28b7b5ee5bf8f57505f94e7950d240cc9a22615b9b"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/execution-state.ts",
+      "bytes": 24105,
+      "sha256": "c925a9a4abf05d94f918584de120687717193c729513b1e77902e646147e2681"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/payloads.ts",
+      "bytes": 11503,
+      "sha256": "4e643ff82038e6874566e4984f4da3fc775749bee9e4c1ee1552f244f9443f28"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "bytes": 9840,
+      "sha256": "9acd4c99c4b024d955e2de5fabf3e4bc7830c298135f31fd781f153f09b82f11"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/preparation.test.ts",
+      "bytes": 14341,
+      "sha256": "e236e871a0ee97fa18b095f15d4e7c5acca5bb3e729aab4ec56849246e355b92"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 7660,
+      "sha256": "94f914f30ae0d7036b14c9e13300eda6822249d244b53a319436b3a2317a6660"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 4231,
+      "sha256": "9636a9d90f1151562277b82c1c0b96395be846c639067ad113251f47c318793f"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/quotes.ts",
+      "bytes": 6882,
+      "sha256": "58579a42727a66702f6ccb3b00017ff3a8ec2ec91fc579540f0ea8cdc9c64008"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "bytes": 6732,
+      "sha256": "1d425490f4174715a38fee71911a8620253ea14c0a6813120faae8316c7baa1a"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "bytes": 20073,
+      "sha256": "fa01045025033561fcc8b20b667e1b564ec3503edf5c074a1aa7a001ed1b0eae"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 17630,
+      "sha256": "7628e5ce5437bb53cfd1908f5b2f5fcc7e66ab755bdf907b54967e6f650e295a"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "bytes": 6506,
+      "sha256": "5af2ee76ab02c6a6da5b0c56cf434c21436d0ffd44f1bfa5f20673dd6b7bffea"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "bytes": 5404,
+      "sha256": "b4fde89928479b81a588b56c58d6c6787a668853367f50766ce964e9a9640ab6"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/rehearse.ts",
+      "bytes": 19382,
+      "sha256": "1cbb1505d150ca8c026568d7eb2d89a38eb0f374dfaa16af9617a9dab669f0df"
+    },
+    {
+      "path": "final-source-snapshot/scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 6120,
+      "sha256": "eb610000ac822708abb23e7bc046f92a530ca1c9a3ee780c4d46d622724448f0"
+    },
+    {
+      "path": "final-source-snapshot/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "bytes": 12039,
+      "sha256": "cb8d4ec86caed7cfae6b0f99aeae7aeef978bedfb524423b800f6a0673000d78"
+    },
+    {
+      "path": "final-source-snapshot/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "bytes": 5538,
+      "sha256": "5f6c38945129eaaf66c7f03bd41dc4f91f7d19b7a43f70fc678c20bb53a20cbd"
+    },
+    {
+      "path": "final-source-snapshot/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "bytes": 12074,
+      "sha256": "59737e67042cf409e75fb23bd484b497ed7db879a805066a67c301d40103dc7f"
+    },
+    {
+      "path": "final-source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "bytes": 14126,
+      "sha256": "50673dc339dad69e04755637445b4b6611ca37c364624b2d6b56700af5abf3c4"
+    },
+    {
+      "path": "final-source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "bytes": 14056,
+      "sha256": "b36207cc1c27db5b92c4b59e4ae36d3907aa0048e690b263ce306acce3b2678d"
+    },
+    {
+      "path": "final-source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "bytes": 7711,
+      "sha256": "b61e7e3f551f1122eb4602cba0161b45d88ccc04f7ddaa6e5a4ce607dde0a8c5"
+    },
+    {
+      "path": "final-source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "bytes": 7623,
+      "sha256": "38898ae898c39125c9340f64edbd978c4b2ed9ad81ef7aa703b5145cfc8cbfd5"
+    },
+    {
+      "path": "finalize.ts",
+      "bytes": 1717,
+      "sha256": "865b4d0e59e19621d120dfb8e9d0bada9746f00eb0e2124ceeb5e0f7484f89c6"
+    },
+    {
+      "path": "forks-final.log",
+      "bytes": 349473,
+      "sha256": "89d09f73d90eb9083640916ab821b6a10878c39d0072a375622227138327271b"
+    },
+    {
+      "path": "forks.log",
+      "bytes": 342316,
+      "sha256": "59f082d59d7f413c6d50bd4fc561c2c4d7af9bbcf61e31288bff54b6471dc173"
+    },
+    {
+      "path": "input-bindings.json",
+      "bytes": 971,
+      "sha256": "e4759be64146c6b75479b73f53337002508c79f5fc88466ed0cd85609ed519be"
+    },
+    {
+      "path": "operator-artifacts.log",
+      "bytes": 341390,
+      "sha256": "7d5240982fdb3d5324ec72ddd1042e555c4a625a1b2d5df66fbe99fb4d18086c"
+    },
+    {
+      "path": "operator-stages.log",
+      "bytes": 357,
+      "sha256": "c914033f2b7c32ae40f14ca63fcba7b496ade65a7259358fec66a4355ca7ac78"
+    },
+    {
+      "path": "operator-tests.log",
+      "bytes": 6251,
+      "sha256": "e8227ef6ab1f9b45a5cec503bbc85cacf12b2e4d621354ecbb1b19a991d7d7b8"
+    },
+    {
+      "path": "operator-types-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "operator-types.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "report.md",
+      "bytes": 15359,
+      "sha256": "ee81d2c9d15f35befe95bbfe6af48152537af3d2363c4601a1bfd9a248240125"
+    },
+    {
+      "path": "route-anvil.log",
+      "bytes": 5850,
+      "sha256": "1f1929daa062b1e2d90d32ebcaae365acaeab7c10cd13c55e0c4852e3fd8624c"
+    },
+    {
+      "path": "route-cleanup.json",
+      "bytes": 86,
+      "sha256": "8f65338a62f40c5f7d1647804e6e49f5d2da1fd069bc75ab10ce47fef8904a10"
+    },
+    {
+      "path": "route-expanded/route-anvil.log",
+      "bytes": 5850,
+      "sha256": "a0a969b05958c3292b734192ab101826678992f2d8b6f68653185999ad5a681e"
+    },
+    {
+      "path": "route-expanded/route-cleanup.json",
+      "bytes": 86,
+      "sha256": "093aeee0168033723b74a1ca69597c76d1c1e4b99a68461a28945c00b4ed1aec"
+    },
+    {
+      "path": "route-expanded/route-funding.json",
+      "bytes": 7601,
+      "sha256": "4968209d8090d614faa69cc1967adbd7b1eada6ccd991703b8fc681f9b2f0697"
+    },
+    {
+      "path": "route-expanded/route-identity.json",
+      "bytes": 54066,
+      "sha256": "0752897171b50e88b00c888c2a8b28f1156fed5abb39e7235005d796948f75da"
+    },
+    {
+      "path": "route-expanded/route-progress.json",
+      "bytes": 64590,
+      "sha256": "97e339c73e4ccd427ef8f2fa0cf9f331fb09c474cf03bdca7b5c6151ebe87fa5"
+    },
+    {
+      "path": "route-expanded/route-tx-0.json",
+      "bytes": 7478,
+      "sha256": "e6e904014a3bd0923869e1564343657cb3b1d1c1e28cfe7fb94c1e270b735ae8"
+    },
+    {
+      "path": "route-expanded/route-tx-1.json",
+      "bytes": 3306,
+      "sha256": "b1f59d3db6f3cc56d15a1b8c268fb5f652cd858868d21885bc7e64d1e0c1fc30"
+    },
+    {
+      "path": "route-expanded/route-tx-2.json",
+      "bytes": 10486,
+      "sha256": "fef87ce9eb585fdb9ff3c227dedcc356dd518cd3eea2af759acac74a39eb1277"
+    },
+    {
+      "path": "route-expanded/route-tx-3.json",
+      "bytes": 9392,
+      "sha256": "838f8d32ca3273ee30cb73eb3d043f07c15527e15e263f52d329b3c52bd64efb"
+    },
+    {
+      "path": "route-expanded-final/custodian-redeem.json",
+      "bytes": 8425,
+      "sha256": "263964fae1b1bc37317253028181be208180cfe93b6b271e79ea19165b7a4c71"
+    },
+    {
+      "path": "route-expanded-final/route-anvil.log",
+      "bytes": 9154,
+      "sha256": "04397491743b2a97723c8da7b2087ccf44686005402233a92421b698fc5dffaa"
+    },
+    {
+      "path": "route-expanded-final/route-cleanup.json",
+      "bytes": 86,
+      "sha256": "8302b8d2217bf6ab6e67319c176a0ad216c81f8f2f30c143a81fd6094a2b185f"
+    },
+    {
+      "path": "route-expanded-final/route-funding.json",
+      "bytes": 7601,
+      "sha256": "4968209d8090d614faa69cc1967adbd7b1eada6ccd991703b8fc681f9b2f0697"
+    },
+    {
+      "path": "route-expanded-final/route-identity.json",
+      "bytes": 54066,
+      "sha256": "0752897171b50e88b00c888c2a8b28f1156fed5abb39e7235005d796948f75da"
+    },
+    {
+      "path": "route-expanded-final/route-progress.json",
+      "bytes": 64590,
+      "sha256": "97e339c73e4ccd427ef8f2fa0cf9f331fb09c474cf03bdca7b5c6151ebe87fa5"
+    },
+    {
+      "path": "route-expanded-final/route-results.json",
+      "bytes": 64607,
+      "sha256": "52c813e7697a8b0e96f2ca76e1fe71d3d7b9796b3146cc7eb76a7aa421a6d2c1"
+    },
+    {
+      "path": "route-expanded-final/route-tx-0.json",
+      "bytes": 7478,
+      "sha256": "e6e904014a3bd0923869e1564343657cb3b1d1c1e28cfe7fb94c1e270b735ae8"
+    },
+    {
+      "path": "route-expanded-final/route-tx-1.json",
+      "bytes": 3306,
+      "sha256": "b1f59d3db6f3cc56d15a1b8c268fb5f652cd858868d21885bc7e64d1e0c1fc30"
+    },
+    {
+      "path": "route-expanded-final/route-tx-2.json",
+      "bytes": 10486,
+      "sha256": "fef87ce9eb585fdb9ff3c227dedcc356dd518cd3eea2af759acac74a39eb1277"
+    },
+    {
+      "path": "route-expanded-final/route-tx-3.json",
+      "bytes": 9392,
+      "sha256": "838f8d32ca3273ee30cb73eb3d043f07c15527e15e263f52d329b3c52bd64efb"
+    },
+    {
+      "path": "route-expanded-final/route-tx-4.json",
+      "bytes": 3813,
+      "sha256": "200f4b1b6c0dff93fdb62b81d520141b7e1a7c0c1d61fd050ec45aa6e72bbf26"
+    },
+    {
+      "path": "route-expanded-final/route-tx-5.json",
+      "bytes": 7381,
+      "sha256": "93af6e0895b2e9444efe5b047bce9e1fa31a0b715af3af3be50689d8fbf88529"
+    },
+    {
+      "path": "route-expanded-final/route-tx-6.json",
+      "bytes": 10499,
+      "sha256": "6263dca816d8aa3eb2e11320738e0d907d4b5ffbfcfaae31d10f48b1bf524af2"
+    },
+    {
+      "path": "route-expanded-final/route-tx-7.json",
+      "bytes": 9379,
+      "sha256": "c96a6104ee9bda410f78bbafe975a3a5c7e74fe162f122c52f1a3d48a8ec065a"
+    },
+    {
+      "path": "route-expanded-final/unauthorized-redeem.json",
+      "bytes": 2991,
+      "sha256": "bd32ade6b7cc5575b23cc2b2d5b32dfe4fda86253c60a670f59e36e32414e594"
+    },
+    {
+      "path": "route-funding.json",
+      "bytes": 7601,
+      "sha256": "4ae7904608251f247297882f05a821622197df076fc56874acf5d76e237e3f8d"
+    },
+    {
+      "path": "route-identity.json",
+      "bytes": 54066,
+      "sha256": "0752897171b50e88b00c888c2a8b28f1156fed5abb39e7235005d796948f75da"
+    },
+    {
+      "path": "route-probe.ts",
+      "bytes": 11477,
+      "sha256": "509981ac66de90ebf82882717e20a3bde30cd9f5ca6e2cffc2fcf9158494c20f"
+    },
+    {
+      "path": "route-progress.json",
+      "bytes": 64590,
+      "sha256": "c688209f73fe1ad80b98fd6218c32793e466bd32310e7d252ede244ade2704ed"
+    },
+    {
+      "path": "route-results.json",
+      "bytes": 64607,
+      "sha256": "914d29f90ba7d3874fa46fdcd84a72809bf5cb3e246387a042fee41c191422a1"
+    },
+    {
+      "path": "route-tx-0.json",
+      "bytes": 7478,
+      "sha256": "9a1ab0a9910be38325d9072b3ef4a294c8fd8caae6a7c28e8270973254aaf1c7"
+    },
+    {
+      "path": "route-tx-1.json",
+      "bytes": 3306,
+      "sha256": "5ab37722075588c988fcc681c00e90a555401ccaae258daa11bfde8208bc5a80"
+    },
+    {
+      "path": "route-tx-2.json",
+      "bytes": 10486,
+      "sha256": "9337411146f38e12adc4db3cd48e78cb0c171a76fec29e4d2b83eca14f6b7264"
+    },
+    {
+      "path": "route-tx-3.json",
+      "bytes": 9379,
+      "sha256": "aaa11cd84128ccdbdb61828d88564eea3460c5b31223faff9e461f9cfbd138c2"
+    },
+    {
+      "path": "seal-evidence.ts",
+      "bytes": 6893,
+      "sha256": "7d21c4897d424ffcd58f83c1c1918d53d9fb1ba001cbcbe25b784d9eb25f7546"
+    },
+    {
+      "path": "source-bindings.json",
+      "bytes": 8535,
+      "sha256": "f33ba8e4b43f142a958076fa543d6a92ecdd523ecd0a1ec93065625e70e91288"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 25889,
+      "sha256": "50101967d1ed2e58af8aa16878fc9a200dc17b705efe850f6ee0d154613f4c9f"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 2649,
+      "sha256": "500228877c9795d53312295e506ddf6797eca1cee8d04a76f0d09f73f0116bb5"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "bytes": 3930,
+      "sha256": "ae8272d6cfff98a48f6703a36b62d0ef833cf10e4e2a3c6d9a2629c5b70c3f35"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "bytes": 2853,
+      "sha256": "28587a9599b5f6452e3ccd9ed06e4a6de5fd0d292262e15f076619928a02eb5a"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 15462,
+      "sha256": "d5b634cd0857a564960d3c47da506f1ad049c8818091fe9b22f883e35bd94ab0"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "bytes": 22869,
+      "sha256": "f24bba95d01d2d23abbd7ce4f310845428d4dacc143549e9a0bbd07adf79daca"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "bytes": 1078,
+      "sha256": "de3aeb7770dfeb0105c82cc05abf72fa9f9708e2ae944b897ca3a2bcc60ce9e4"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 25952,
+      "sha256": "c3a0b7ef8fe7ef3b7e03934420dbeb16c2c1bcfadc709fe427c28cde2537be4e"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "bytes": 1158,
+      "sha256": "68feefdf017cfe787974c064aec7d0d503afcbe6e628ceabf7ede2ac92d9faff"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "bytes": 3366,
+      "sha256": "334ae5220153279d0efec14358eaea3557c07e816abd681b238f29c61156832e"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 15430,
+      "sha256": "644976c7dd465d0443014e8220f1d6e03fb4815c18763b1099eb0e5fb7edd13b"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "bytes": 1672,
+      "sha256": "553403763bab57d05c4e2cc080adc92d2f07bda468a195159b3cc362ae57e99b"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "bytes": 9005,
+      "sha256": "09ee47bdce9c8077ed61ecf6f55f05fe68ec9867917bb467a8933ce717a54faf"
+    },
+    {
+      "path": "source-snapshot/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "bytes": 4129,
+      "sha256": "efcd2d657ed9046b492d40ac525c87728426c22323549cab3da29ee42882e803"
+    },
+    {
+      "path": "source-snapshot/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "bytes": 28987,
+      "sha256": "819dedd9d4d7ffd43d929874f68ae1d0edc5087f548cf8fc4f68944bea842778"
+    },
+    {
+      "path": "source-snapshot/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "bytes": 7075,
+      "sha256": "da0b00ad6eb7fa87231b81a78a4f2c629cfafed447154460fb62f9c8fe8629f6"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "bytes": 4680,
+      "sha256": "c69bb69a7d4bba7da3d0fdcbdfecc10726513adac13867a5768b7744af9d03c3"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 7810,
+      "sha256": "ac226d12173801a4a7b2bbceb6605cfb57706fd73d6acac67d725cba84c94ebc"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/execution-plan.ts",
+      "bytes": 5555,
+      "sha256": "0a12beba165e9865178daa28b7b5ee5bf8f57505f94e7950d240cc9a22615b9b"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/execution-state.ts",
+      "bytes": 24105,
+      "sha256": "c925a9a4abf05d94f918584de120687717193c729513b1e77902e646147e2681"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/payloads.ts",
+      "bytes": 11503,
+      "sha256": "4e643ff82038e6874566e4984f4da3fc775749bee9e4c1ee1552f244f9443f28"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "bytes": 9840,
+      "sha256": "9acd4c99c4b024d955e2de5fabf3e4bc7830c298135f31fd781f153f09b82f11"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/preparation.test.ts",
+      "bytes": 14341,
+      "sha256": "e236e871a0ee97fa18b095f15d4e7c5acca5bb3e729aab4ec56849246e355b92"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 7660,
+      "sha256": "94f914f30ae0d7036b14c9e13300eda6822249d244b53a319436b3a2317a6660"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 4231,
+      "sha256": "9636a9d90f1151562277b82c1c0b96395be846c639067ad113251f47c318793f"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/quotes.ts",
+      "bytes": 6882,
+      "sha256": "58579a42727a66702f6ccb3b00017ff3a8ec2ec91fc579540f0ea8cdc9c64008"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "bytes": 6732,
+      "sha256": "1d425490f4174715a38fee71911a8620253ea14c0a6813120faae8316c7baa1a"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "bytes": 20073,
+      "sha256": "fa01045025033561fcc8b20b667e1b564ec3503edf5c074a1aa7a001ed1b0eae"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 17630,
+      "sha256": "7628e5ce5437bb53cfd1908f5b2f5fcc7e66ab755bdf907b54967e6f650e295a"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "bytes": 6506,
+      "sha256": "5af2ee76ab02c6a6da5b0c56cf434c21436d0ffd44f1bfa5f20673dd6b7bffea"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "bytes": 5404,
+      "sha256": "b4fde89928479b81a588b56c58d6c6787a668853367f50766ce964e9a9640ab6"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/rehearse.ts",
+      "bytes": 19382,
+      "sha256": "1cbb1505d150ca8c026568d7eb2d89a38eb0f374dfaa16af9617a9dab669f0df"
+    },
+    {
+      "path": "source-snapshot/scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 6120,
+      "sha256": "eb610000ac822708abb23e7bc046f92a530ca1c9a3ee780c4d46d622724448f0"
+    },
+    {
+      "path": "source-snapshot/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "bytes": 12039,
+      "sha256": "cb8d4ec86caed7cfae6b0f99aeae7aeef978bedfb524423b800f6a0673000d78"
+    },
+    {
+      "path": "source-snapshot/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "bytes": 5538,
+      "sha256": "5f6c38945129eaaf66c7f03bd41dc4f91f7d19b7a43f70fc678c20bb53a20cbd"
+    },
+    {
+      "path": "source-snapshot/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "bytes": 12074,
+      "sha256": "59737e67042cf409e75fb23bd484b497ed7db879a805066a67c301d40103dc7f"
+    },
+    {
+      "path": "source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "bytes": 14126,
+      "sha256": "50673dc339dad69e04755637445b4b6611ca37c364624b2d6b56700af5abf3c4"
+    },
+    {
+      "path": "source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "bytes": 14056,
+      "sha256": "b36207cc1c27db5b92c4b59e4ae36d3907aa0048e690b263ce306acce3b2678d"
+    },
+    {
+      "path": "source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "bytes": 7711,
+      "sha256": "b61e7e3f551f1122eb4602cba0161b45d88ccc04f7ddaa6e5a4ce607dde0a8c5"
+    },
+    {
+      "path": "source-snapshot/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "bytes": 7623,
+      "sha256": "38898ae898c39125c9340f64edbd978c4b2ed9ad81ef7aa703b5145cfc8cbfd5"
+    },
+    {
+      "path": "specs-final.log",
+      "bytes": 395548,
+      "sha256": "e339ab5f34d50f0ce2c19b485928dd32498943b68a4d1775cfa17735ab302928"
+    },
+    {
+      "path": "specs-split-final.log",
+      "bytes": 403047,
+      "sha256": "ace21b09a0b8c7fc998d151e19741c52fc8a62451d44969d26847c9df5f2cc85"
+    },
+    {
+      "path": "specs.log",
+      "bytes": 396786,
+      "sha256": "8cb3f23bc0165ea5df04ce8d014d8eadd9ffc2c77b0c0bf410df77bdcefd62ee"
+    },
+    {
+      "path": "types-seal-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

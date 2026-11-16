@@ -1,0 +1,4810 @@
+{
+  "date": "2026-11-11",
+  "scope": "Weighted NFT recovery source admission only; no new RPC, transaction, compiler or implementation",
+  "worktree": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery",
+    "branch": "work/dtf-migration-phase-07-recovery",
+    "head": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+    "initialStatus": "empty, exit 0, --ignore-submodules=all",
+    "plainStatusFailure": "exit 128: expected submodule path lib/crane not to be a symbolic link; preserved warm seed"
+  },
+  "pin": {
+    "chainId": 4663,
+    "block": "108944663",
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733"
+  },
+  "fingerprints": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+      "sha256": "1df2d1b6bffbe6cd241f89b9533cb5cea3f14b431df6593861bd44e4c6fa0440"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+      "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.exit.json",
+      "sha256": "e3b11df38b89338f99a02ecf0d33a7bfd3d13d789a3b6b9bb5d9d13de88fd241"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/contract.md",
+      "sha256": "02aad997374190bf8f5428029c8fb80eed102ba63a83752113250118bd313d85"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json",
+      "sha256": "3cedd67167cb74af689f26647f16bddc7466f5aec52ea853b1484c5e42ea27b4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/report.md",
+      "sha256": "a500c793f876a416fef9d6f38b4116db17db532743541f7ab207943ff86e5de2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md",
+      "sha256": "1f401c497df3df5cd9b8a3237e467baa0d53425a5341c818bec96c04da8c001e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json",
+      "sha256": "f4d63fc4a35eb17e1a2246322638ed7ad8c1ca207cef43987285e55133acc6fd"
+    }
+  ],
+  "bindings": [
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "ownerOf(uint256) view returns (address)",
+      "selector": "0x6352211e",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "match": "match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "loupeJournalIndexes": [
+        3
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "positionOf(uint256) view returns ((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+      "selector": "0x46f96023",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "components": [
+            {
+              "name": "principal",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "claimedPrincipal",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "stakingGons",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "startTimestamp",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "vestingDuration",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "internalType": "struct DETFFundedStakingMath.BondPosition"
+        }
+      ],
+      "loupeJournalIndexes": [
+        5
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "previewClaim(uint256) view returns ((uint256 vestedPrincipal,uint256 principalRemaining,uint256 principalDue,uint256 rewardsDue))",
+      "selector": "0xae648e90",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "claim_",
+          "type": "tuple",
+          "components": [
+            {
+              "name": "vestedPrincipal",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "principalRemaining",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "principalDue",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "rewardsDue",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "internalType": "struct DETFFundedStakingMath.BondClaim"
+        }
+      ],
+      "loupeJournalIndexes": [
+        7
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "approve(address,uint256)",
+      "selector": "0x095ea7b3",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "match": "match",
+      "outputs": [],
+      "loupeJournalIndexes": [
+        9
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "getApproved(uint256) view returns (address)",
+      "selector": "0x081812fc",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "match": "match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "loupeJournalIndexes": [
+        11
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "setApprovalForAll(address,bool)",
+      "selector": "0xa22cb465",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "match": "match",
+      "outputs": [],
+      "loupeJournalIndexes": [
+        13
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "isApprovedForAll(address,address) view returns (bool)",
+      "selector": "0xe985e9c5",
+      "facet": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+      "runtimeKeccak256": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8",
+      "match": "match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "loupeJournalIndexes": [
+        15
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "transferFrom(address,address,uint256)",
+      "selector": "0x23b872dd",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [],
+      "loupeJournalIndexes": [
+        17
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "safeTransferFrom(address,address,uint256)",
+      "selector": "0x42842e0e",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [],
+      "loupeJournalIndexes": [
+        19
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "claimPrincipal(uint256,address)",
+      "selector": "0xf400c743",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "principal_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        21
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "claimRewards(uint256,address)",
+      "selector": "0x6c7b69cb",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "rewards_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        23
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "claimBond(uint256,address)",
+      "selector": "0x084c59ae",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "principal_",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "rewards_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        25
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "detf() view returns (address)",
+      "selector": "0x8a91f8bc",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "loupeJournalIndexes": [
+        27
+      ]
+    },
+    {
+      "proxy": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+      "signature": "lpToken() view returns (address)",
+      "selector": "0x5fcbd285",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "runtimeKeccak256": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract IERC20"
+        }
+      ],
+      "loupeJournalIndexes": [
+        29
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "decimals() view returns (uint8)",
+      "selector": "0x313ce567",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8",
+          "internalType": "uint8"
+        }
+      ],
+      "loupeJournalIndexes": [
+        45
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "detf() view returns (address)",
+      "selector": "0x8a91f8bc",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "loupeJournalIndexes": [
+        47
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "gonsOf(address) view returns (uint256)",
+      "selector": "0x79a67521",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        49
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "stakingState() view returns ((uint256 totalGons,uint256 gonsPerUnit,uint256 accountedBacking,uint256 allocationDust,uint256 stakingDust,uint256 feeWeight,uint256 creatorWeight))",
+      "selector": "0xe082f1d4",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "state_",
+          "type": "tuple",
+          "components": [
+            {
+              "name": "totalGons",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "gonsPerUnit",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "accountedBacking",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "allocationDust",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "stakingDust",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "feeWeight",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "creatorWeight",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "internalType": "struct IStakedDETF.StakingState"
+        }
+      ],
+      "loupeJournalIndexes": [
+        51
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "balanceOf(address) view returns (uint256)",
+      "selector": "0x70a08231",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        53
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "approve(address,uint256) returns (bool)",
+      "selector": "0x095ea7b3",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "loupeJournalIndexes": [
+        55
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "transferFrom(address,address,uint256) returns (bool)",
+      "selector": "0x23b872dd",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "loupeJournalIndexes": [
+        57
+      ]
+    },
+    {
+      "proxy": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns (uint256)",
+      "selector": "0xd02d3063",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "runtimeKeccak256": "0xcb505aba37d6ad909d8fb33dbf0091be50c9dd37f43e5df506bd240fc711b361",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "amountOut_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        59
+      ]
+    },
+    {
+      "proxy": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "signature": "decimals() view returns (uint8)",
+      "selector": "0x313ce567",
+      "facet": "0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "runtimeKeccak256": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50",
+      "match": "match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8",
+          "internalType": "uint8"
+        }
+      ],
+      "loupeJournalIndexes": [
+        32
+      ]
+    },
+    {
+      "proxy": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "signature": "balanceOf(address) view returns (uint256)",
+      "selector": "0x70a08231",
+      "facet": "0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "runtimeKeccak256": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50",
+      "match": "match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        34
+      ]
+    },
+    {
+      "proxy": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "signature": "approve(address,uint256) returns (bool)",
+      "selector": "0x095ea7b3",
+      "facet": "0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "runtimeKeccak256": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50",
+      "match": "match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "loupeJournalIndexes": [
+        36
+      ]
+    },
+    {
+      "proxy": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "signature": "transferFrom(address,address,uint256) returns (bool)",
+      "selector": "0x23b872dd",
+      "facet": "0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "runtimeKeccak256": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50",
+      "match": "match",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "loupeJournalIndexes": [
+        38
+      ]
+    },
+    {
+      "proxy": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "signature": "previewExchangeIn(address,uint256,address) view returns (uint256)",
+      "selector": "0x89d61912",
+      "facet": "0x1d38189B5f3548bc86838061F4318DBFA2f77680",
+      "runtimeKeccak256": "0xcdb1b86aac1f571fc4f78937a4c670a6710ae2ab465d0f9c23acb87ddad7d8f4",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "amountOut_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        40
+      ]
+    },
+    {
+      "proxy": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns (uint256)",
+      "selector": "0xd02d3063",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "runtimeKeccak256": "0x1eadaa06571b1cca173491d149bab9b07d5d1b9dc83d268654e49d3179b1a460",
+      "match": "exact_match",
+      "outputs": [
+        {
+          "name": "amountOut_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "loupeJournalIndexes": [
+        42
+      ]
+    }
+  ],
+  "sourceRanges": [
+    {
+      "tag": "B",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "sourceSha256": "b0d11c2c41eacf10eb23eb1935000f470e59e17da67be294d5fc17aacd354a49",
+      "start": 40,
+      "end": 48,
+      "lines": [
+        {
+          "line": 40,
+          "content": "    modifier onlyDetf() {"
+        },
+        {
+          "line": 41,
+          "content": "        if (msg.sender != Repo._layoutStruct().detf) revert NotAuthorized(msg.sender);"
+        },
+        {
+          "line": 42,
+          "content": "        _;"
+        },
+        {
+          "line": 43,
+          "content": "    }"
+        },
+        {
+          "line": 44,
+          "content": ""
+        },
+        {
+          "line": 45,
+          "content": "    modifier synchronized() {"
+        },
+        {
+          "line": 46,
+          "content": "        IDETFFundedRewards(Repo._layoutStruct().detf).synchronizeRewards();"
+        },
+        {
+          "line": 47,
+          "content": "        _;"
+        },
+        {
+          "line": 48,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "B",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "sourceSha256": "b0d11c2c41eacf10eb23eb1935000f470e59e17da67be294d5fc17aacd354a49",
+      "start": 127,
+      "end": 200,
+      "lines": [
+        {
+          "line": 127,
+          "content": "    /// @notice Fixed purchase terms and remaining attributed gons."
+        },
+        {
+          "line": 128,
+          "content": "    function positionOf(uint256 tokenId_) external view returns (StakingMath.BondPosition memory) {"
+        },
+        {
+          "line": 129,
+          "content": "        _requireExists(tokenId_);"
+        },
+        {
+          "line": 130,
+          "content": "        return Repo._layoutStruct().positions[tokenId_];"
+        },
+        {
+          "line": 131,
+          "content": "    }"
+        },
+        {
+          "line": 132,
+          "content": ""
+        },
+        {
+          "line": 133,
+          "content": "    /// @notice Funded claims at the stored staking index; unminted expansion is excluded."
+        },
+        {
+          "line": 134,
+          "content": "    function previewClaim(uint256 tokenId_) public view returns (StakingMath.BondClaim memory claim_) {"
+        },
+        {
+          "line": 135,
+          "content": "        _requireExists(tokenId_);"
+        },
+        {
+          "line": 136,
+          "content": "        if (tokenId_ < 3) return claim_;"
+        },
+        {
+          "line": 137,
+          "content": "        return StakingMath._claim("
+        },
+        {
+          "line": 138,
+          "content": "            Repo._layoutStruct().positions[tokenId_], block.timestamp, _staking().stakingState().gonsPerUnit"
+        },
+        {
+          "line": 139,
+          "content": "        );"
+        },
+        {
+          "line": 140,
+          "content": "    }"
+        },
+        {
+          "line": 141,
+          "content": ""
+        },
+        {
+          "line": 142,
+          "content": "    /// @notice Claim vested principal as sDETF without claiming its separate staking rewards."
+        },
+        {
+          "line": 143,
+          "content": "    function claimPrincipal(uint256 tokenId_, address recipient_)"
+        },
+        {
+          "line": 144,
+          "content": "        external synchronized nonReentrant returns (uint256 principal_)"
+        },
+        {
+          "line": 145,
+          "content": "    {"
+        },
+        {
+          "line": 146,
+          "content": "        (principal_,) = _claim(tokenId_, recipient_, true, false);"
+        },
+        {
+          "line": 147,
+          "content": "    }"
+        },
+        {
+          "line": 148,
+          "content": ""
+        },
+        {
+          "line": 149,
+          "content": "    /// @notice Claim funded sDETF growth while keeping all remaining principal staked."
+        },
+        {
+          "line": 150,
+          "content": "    function claimRewards(uint256 tokenId_, address recipient_)"
+        },
+        {
+          "line": 151,
+          "content": "        external synchronized nonReentrant returns (uint256 rewards_)"
+        },
+        {
+          "line": 152,
+          "content": "    {"
+        },
+        {
+          "line": 153,
+          "content": "        (, rewards_) = _claim(tokenId_, recipient_, false, true);"
+        },
+        {
+          "line": 154,
+          "content": "    }"
+        },
+        {
+          "line": 155,
+          "content": ""
+        },
+        {
+          "line": 156,
+          "content": "    /// @notice Claim both available components; retire a fully paid purchased position."
+        },
+        {
+          "line": 157,
+          "content": "    function claimBond(uint256 tokenId_, address recipient_)"
+        },
+        {
+          "line": 158,
+          "content": "        external synchronized nonReentrant returns (uint256 principal_, uint256 rewards_)"
+        },
+        {
+          "line": 159,
+          "content": "    {"
+        },
+        {
+          "line": 160,
+          "content": "        return _claim(tokenId_, recipient_, true, true);"
+        },
+        {
+          "line": 161,
+          "content": "    }"
+        },
+        {
+          "line": 162,
+          "content": ""
+        },
+        {
+          "line": 163,
+          "content": "    function _claim(uint256 tokenId_, address recipient_, bool principalClaim_, bool rewardClaim_)"
+        },
+        {
+          "line": 164,
+          "content": "        internal returns (uint256 principal_, uint256 rewards_)"
+        },
+        {
+          "line": 165,
+          "content": "    {"
+        },
+        {
+          "line": 166,
+          "content": "        if (tokenId_ < 3) revert ReservedBond(tokenId_);"
+        },
+        {
+          "line": 167,
+          "content": "        address owner_ = _requireExists(tokenId_);"
+        },
+        {
+          "line": 168,
+          "content": "        if (msg.sender != owner_ && ERC721Repo._getApproved(tokenId_) != msg.sender"
+        },
+        {
+          "line": 169,
+          "content": "            && !ERC721Repo._isApprovedForAll(owner_, msg.sender)) revert NotAuthorized(msg.sender);"
+        },
+        {
+          "line": 170,
+          "content": "        if (recipient_ == address(0)) recipient_ = owner_;"
+        },
+        {
+          "line": 171,
+          "content": "        _checkRecipient(recipient_);"
+        },
+        {
+          "line": 172,
+          "content": "        Repo.Storage storage s_ = Repo._layoutStruct();"
+        },
+        {
+          "line": 173,
+          "content": "        StakingMath.BondPosition storage position_ = s_.positions[tokenId_];"
+        },
+        {
+          "line": 174,
+          "content": "        IStakedDETF staking_ = _staking();"
+        },
+        {
+          "line": 175,
+          "content": "        uint256 k_ = staking_.stakingState().gonsPerUnit;"
+        },
+        {
+          "line": 176,
+          "content": "        StakingMath.BondClaim memory claim_ = StakingMath._claim(position_, block.timestamp, k_);"
+        },
+        {
+          "line": 177,
+          "content": "        principal_ = principalClaim_ ? claim_.principalDue : 0;"
+        },
+        {
+          "line": 178,
+          "content": "        rewards_ = rewardClaim_ ? claim_.rewardsDue : 0;"
+        },
+        {
+          "line": 179,
+          "content": "        uint256 amount_ = principal_ + rewards_;"
+        },
+        {
+          "line": 180,
+          "content": "        uint256 debit_ = StakingMath._toGons(amount_, k_);"
+        },
+        {
+          "line": 181,
+          "content": "        position_.claimedPrincipal += principal_;"
+        },
+        {
+          "line": 182,
+          "content": "        position_.stakingGons -= debit_;"
+        },
+        {
+          "line": 183,
+          "content": "        s_.attributedGons -= debit_;"
+        },
+        {
+          "line": 184,
+          "content": "        if (amount_ != 0) IERC20(address(staking_)).safeTransfer(recipient_, amount_);"
+        },
+        {
+          "line": 185,
+          "content": "        _retireIfPaid(tokenId_, staking_, k_);"
+        },
+        {
+          "line": 186,
+          "content": "        Repo._requireFunded(s_, staking_.gonsOf(address(this)));"
+        },
+        {
+          "line": 187,
+          "content": "        emit IDetfBondNFT.BondClaimed(tokenId_, recipient_, principal_, rewards_);"
+        },
+        {
+          "line": 188,
+          "content": "    }"
+        },
+        {
+          "line": 189,
+          "content": ""
+        },
+        {
+          "line": 190,
+          "content": "    function _retireIfPaid(uint256 tokenId_, IStakedDETF staking_, uint256 k_) internal {"
+        },
+        {
+          "line": 191,
+          "content": "        Repo.Storage storage s_ = Repo._layoutStruct();"
+        },
+        {
+          "line": 192,
+          "content": "        StakingMath.BondPosition storage position_ = s_.positions[tokenId_];"
+        },
+        {
+          "line": 193,
+          "content": "        if (position_.claimedPrincipal == position_.principal && position_.stakingGons < k_) {"
+        },
+        {
+          "line": 194,
+          "content": "            uint256 fraction_ = position_.stakingGons;"
+        },
+        {
+          "line": 195,
+          "content": "            s_.attributedGons -= fraction_;"
+        },
+        {
+          "line": 196,
+          "content": "            delete s_.positions[tokenId_];"
+        },
+        {
+          "line": 197,
+          "content": "            if (fraction_ != 0) staking_.retireEscrowDust(fraction_);"
+        },
+        {
+          "line": 198,
+          "content": "            ERC721Repo._burn(tokenId_);"
+        },
+        {
+          "line": 199,
+          "content": "        }"
+        },
+        {
+          "line": 200,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "B",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "sourceSha256": "b0d11c2c41eacf10eb23eb1935000f470e59e17da67be294d5fc17aacd354a49",
+      "start": 230,
+      "end": 243,
+      "lines": [
+        {
+          "line": 230,
+          "content": "    function _staking() internal view returns (IStakedDETF) {"
+        },
+        {
+          "line": 231,
+          "content": "        return IStakedDETF(address(IDetfStakingToken(Repo._layoutStruct().detf).rebasingClaimToken()));"
+        },
+        {
+          "line": 232,
+          "content": "    }"
+        },
+        {
+          "line": 233,
+          "content": ""
+        },
+        {
+          "line": 234,
+          "content": "    function _requireExists(uint256 tokenId_) internal view returns (address owner_) {"
+        },
+        {
+          "line": 235,
+          "content": "        owner_ = ERC721Repo._ownerOf(tokenId_);"
+        },
+        {
+          "line": 236,
+          "content": "        if (owner_ == address(0)) revert IERC721Errors.ERC721NonexistentToken(tokenId_);"
+        },
+        {
+          "line": 237,
+          "content": "    }"
+        },
+        {
+          "line": 238,
+          "content": ""
+        },
+        {
+          "line": 239,
+          "content": "    function _checkRecipient(address recipient_) internal view {"
+        },
+        {
+          "line": 240,
+          "content": "        if (recipient_ == address(0) || recipient_ == Repo._layoutStruct().detf || recipient_ == address(this)) {"
+        },
+        {
+          "line": 241,
+          "content": "            revert IERC721Errors.ERC721InvalidReceiver(recipient_);"
+        },
+        {
+          "line": 242,
+          "content": "        }"
+        },
+        {
+          "line": 243,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "B",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "sourceSha256": "3ec13e4bb20549f5e3055e63212d6518cdc011bb616bab2783e22e5c7a20ba06",
+      "start": 28,
+      "end": 54,
+      "lines": [
+        {
+          "line": 28,
+          "content": "    /// @notice Fixed purchase terms and current attributed staking inventory for one NFT."
+        },
+        {
+          "line": 29,
+          "content": "    struct BondPosition {"
+        },
+        {
+          "line": 30,
+          "content": "        uint256 principal;"
+        },
+        {
+          "line": 31,
+          "content": "        uint256 claimedPrincipal;"
+        },
+        {
+          "line": 32,
+          "content": "        uint256 stakingGons;"
+        },
+        {
+          "line": 33,
+          "content": "        uint256 startTimestamp;"
+        },
+        {
+          "line": 34,
+          "content": "        uint256 vestingDuration;"
+        },
+        {
+          "line": 35,
+          "content": "    }"
+        },
+        {
+          "line": 36,
+          "content": ""
+        },
+        {
+          "line": 37,
+          "content": "    /// @notice Native DETF-equivalent amounts; both claim amounts are paid in sDETF."
+        },
+        {
+          "line": 38,
+          "content": "    struct BondClaim {"
+        },
+        {
+          "line": 39,
+          "content": "        uint256 vestedPrincipal;"
+        },
+        {
+          "line": 40,
+          "content": "        uint256 principalRemaining;"
+        },
+        {
+          "line": 41,
+          "content": "        uint256 principalDue;"
+        },
+        {
+          "line": 42,
+          "content": "        uint256 rewardsDue;"
+        },
+        {
+          "line": 43,
+          "content": "    }"
+        },
+        {
+          "line": 44,
+          "content": ""
+        },
+        {
+          "line": 45,
+          "content": "    /// @notice Gons needed to credit or debit exactly the requested native sDETF amount."
+        },
+        {
+          "line": 46,
+          "content": "    function _toGons(uint256 amount_, uint256 gonsPerUnit_) internal pure returns (uint256) {"
+        },
+        {
+          "line": 47,
+          "content": "        if (gonsPerUnit_ == 0) revert InvalidGonsPerUnit();"
+        },
+        {
+          "line": 48,
+          "content": "        return Math.mulDiv(amount_, gonsPerUnit_, 1);"
+        },
+        {
+          "line": 49,
+          "content": "    }"
+        },
+        {
+          "line": 50,
+          "content": ""
+        },
+        {
+          "line": 51,
+          "content": "    /// @notice Conservatively rounded native amount attributable to these gons."
+        },
+        {
+          "line": 52,
+          "content": "    function _toAmount(uint256 gons_, uint256 gonsPerUnit_) internal pure returns (uint256) {"
+        },
+        {
+          "line": 53,
+          "content": "        if (gonsPerUnit_ == 0) revert InvalidGonsPerUnit();"
+        },
+        {
+          "line": 54,
+          "content": "        return gons_ / gonsPerUnit_;"
+        }
+      ]
+    },
+    {
+      "tag": "B",
+      "facet": "0x3a07364eabA092472d40F0e6788b8891A31faD4D",
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "sourceSha256": "3ec13e4bb20549f5e3055e63212d6518cdc011bb616bab2783e22e5c7a20ba06",
+      "start": 96,
+      "end": 117,
+      "lines": [
+        {
+          "line": 96,
+          "content": "    /// @notice Quote vested principal and independent funded rewards without changing the clock."
+        },
+        {
+          "line": 97,
+          "content": "    function _claim(BondPosition memory position_, uint256 timestamp_, uint256 gonsPerUnit_)"
+        },
+        {
+          "line": 98,
+          "content": "        internal"
+        },
+        {
+          "line": 99,
+          "content": "        pure"
+        },
+        {
+          "line": 100,
+          "content": "        returns (BondClaim memory claim_)"
+        },
+        {
+          "line": 101,
+          "content": "    {"
+        },
+        {
+          "line": 102,
+          "content": "        if (position_.vestingDuration == 0) revert InvalidVestingDuration();"
+        },
+        {
+          "line": 103,
+          "content": "        uint256 elapsed_ = timestamp_ > position_.startTimestamp ? timestamp_ - position_.startTimestamp : 0;"
+        },
+        {
+          "line": 104,
+          "content": "        claim_.vestedPrincipal = elapsed_ >= position_.vestingDuration"
+        },
+        {
+          "line": 105,
+          "content": "            ? position_.principal"
+        },
+        {
+          "line": 106,
+          "content": "            : Math.mulDiv(position_.principal, elapsed_, position_.vestingDuration);"
+        },
+        {
+          "line": 107,
+          "content": "        if (position_.claimedPrincipal > claim_.vestedPrincipal) {"
+        },
+        {
+          "line": 108,
+          "content": "            revert PrincipalAlreadyClaimed(position_.claimedPrincipal, claim_.vestedPrincipal);"
+        },
+        {
+          "line": 109,
+          "content": "        }"
+        },
+        {
+          "line": 110,
+          "content": "        claim_.principalRemaining = position_.principal - position_.claimedPrincipal;"
+        },
+        {
+          "line": 111,
+          "content": "        claim_.principalDue = claim_.vestedPrincipal - position_.claimedPrincipal;"
+        },
+        {
+          "line": 112,
+          "content": "        uint256 stakingValue_ = _toAmount(position_.stakingGons, gonsPerUnit_);"
+        },
+        {
+          "line": 113,
+          "content": "        if (stakingValue_ < claim_.principalRemaining) {"
+        },
+        {
+          "line": 114,
+          "content": "            revert UnfundedBondPrincipal(stakingValue_, claim_.principalRemaining);"
+        },
+        {
+          "line": 115,
+          "content": "        }"
+        },
+        {
+          "line": 116,
+          "content": "        claim_.rewardsDue = stakingValue_ - claim_.principalRemaining;"
+        },
+        {
+          "line": 117,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "S",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "sourceSha256": "0c42d88387a46425ca8634af4f09eee9498f450312dc6ba6415969ebaf3ca92c",
+      "start": 91,
+      "end": 123,
+      "lines": [
+        {
+          "line": 91,
+          "content": "    /// @notice Native staking and backing token amounts have the same nine-decimal unit."
+        },
+        {
+          "line": 92,
+          "content": "    function decimals() external pure returns (uint8) { return 9; }"
+        },
+        {
+          "line": 93,
+          "content": ""
+        },
+        {
+          "line": 94,
+          "content": "    /// @notice Aggregate funded redemption liability, excluding virtual reward weights."
+        },
+        {
+          "line": 95,
+          "content": "    function totalSupply() external view returns (uint256) { return Repo._totalSupply(); }"
+        },
+        {
+          "line": 96,
+          "content": ""
+        },
+        {
+          "line": 97,
+          "content": "    /// @notice Funded balance changes only with gons transfers or funded index growth."
+        },
+        {
+          "line": 98,
+          "content": "    function balanceOf(address owner_) external view returns (uint256) { return Repo._balanceOf(owner_); }"
+        },
+        {
+          "line": 99,
+          "content": ""
+        },
+        {
+          "line": 100,
+          "content": "    /// @notice ERC-20 allowance in native sDETF units."
+        },
+        {
+          "line": 101,
+          "content": "    function allowance(address owner_, address spender_) external view returns (uint256) {"
+        },
+        {
+          "line": 102,
+          "content": "        return ERC20Repo._allowance(owner_, spender_);"
+        },
+        {
+          "line": 103,
+          "content": "    }"
+        },
+        {
+          "line": 104,
+          "content": ""
+        },
+        {
+          "line": 105,
+          "content": "    /// @notice Approve native units; the shared ERC-20 Repo emits the approval event once."
+        },
+        {
+          "line": 106,
+          "content": "    function approve(address spender_, uint256 amount_) external returns (bool) {"
+        },
+        {
+          "line": 107,
+          "content": "        ERC20Repo._approve(msg.sender, spender_, amount_);"
+        },
+        {
+          "line": 108,
+          "content": "        return true;"
+        },
+        {
+          "line": 109,
+          "content": "    }"
+        },
+        {
+          "line": 110,
+          "content": ""
+        },
+        {
+          "line": 111,
+          "content": "    /// @notice Settle due expansion before transferring the funded position."
+        },
+        {
+          "line": 112,
+          "content": "    function transfer(address to_, uint256 amount_) external synchronized nonReentrant returns (bool) {"
+        },
+        {
+          "line": 113,
+          "content": "        Repo._transfer(msg.sender, to_, amount_);"
+        },
+        {
+          "line": 114,
+          "content": "        return true;"
+        },
+        {
+          "line": 115,
+          "content": "    }"
+        },
+        {
+          "line": 116,
+          "content": ""
+        },
+        {
+          "line": 117,
+          "content": "    /// @notice Transfer using the shared permit-compatible native-unit allowance ledger."
+        },
+        {
+          "line": 118,
+          "content": "    function transferFrom(address from_, address to_, uint256 amount_)"
+        },
+        {
+          "line": 119,
+          "content": "        external synchronized nonReentrant returns (bool)"
+        },
+        {
+          "line": 120,
+          "content": "    {"
+        },
+        {
+          "line": 121,
+          "content": "        ERC20Repo._spendAllowance(from_, msg.sender, amount_);"
+        },
+        {
+          "line": 122,
+          "content": "        Repo._transfer(from_, to_, amount_);"
+        },
+        {
+          "line": 123,
+          "content": "        return true;"
+        }
+      ]
+    },
+    {
+      "tag": "S",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "sourceSha256": "0c42d88387a46425ca8634af4f09eee9498f450312dc6ba6415969ebaf3ca92c",
+      "start": 126,
+      "end": 160,
+      "lines": [
+        {
+          "line": 126,
+          "content": "    /// @notice Direct funded staking and unstaking quote one raw unit for one raw unit."
+        },
+        {
+          "line": 127,
+          "content": "    function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)"
+        },
+        {
+          "line": 128,
+          "content": "        external view returns (uint256)"
+        },
+        {
+          "line": 129,
+          "content": "    {"
+        },
+        {
+          "line": 130,
+          "content": "        _isStake(tokenIn_, tokenOut_);"
+        },
+        {
+          "line": 131,
+          "content": "        return amountIn_;"
+        },
+        {
+          "line": 132,
+          "content": "    }"
+        },
+        {
+          "line": 133,
+          "content": ""
+        },
+        {
+          "line": 134,
+          "content": "    /// @notice Direct exact-output staking and unstaking require equal raw input."
+        },
+        {
+          "line": 135,
+          "content": "    function previewExchangeOut(IERC20 tokenIn_, IERC20 tokenOut_, uint256 amountOut_)"
+        },
+        {
+          "line": 136,
+          "content": "        external view returns (uint256)"
+        },
+        {
+          "line": 137,
+          "content": "    {"
+        },
+        {
+          "line": 138,
+          "content": "        _isStake(tokenIn_, tokenOut_);"
+        },
+        {
+          "line": 139,
+          "content": "        return amountOut_;"
+        },
+        {
+          "line": 140,
+          "content": "    }"
+        },
+        {
+          "line": 141,
+          "content": ""
+        },
+        {
+          "line": 142,
+          "content": "    /// @notice Exchange actual DETF for equal sDETF, or burn sDETF for held DETF."
+        },
+        {
+          "line": 143,
+          "content": "    function exchangeIn("
+        },
+        {
+          "line": 144,
+          "content": "        IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_, uint256 minAmountOut_,"
+        },
+        {
+          "line": 145,
+          "content": "        address recipient_, bool pretransferred_, uint256 deadline_"
+        },
+        {
+          "line": 146,
+          "content": "    ) external synchronized nonReentrant returns (uint256 amountOut_) {"
+        },
+        {
+          "line": 147,
+          "content": "        if (amountIn_ < minAmountOut_) revert MinimumOutputNotMet(minAmountOut_, amountIn_);"
+        },
+        {
+          "line": 148,
+          "content": "        _exchange(tokenIn_, tokenOut_, amountIn_, recipient_, pretransferred_, deadline_);"
+        },
+        {
+          "line": 149,
+          "content": "        return amountIn_;"
+        },
+        {
+          "line": 150,
+          "content": "    }"
+        },
+        {
+          "line": 151,
+          "content": ""
+        },
+        {
+          "line": 152,
+          "content": "    /// @notice Exact-output direct staking pulls or burns only the required native input."
+        },
+        {
+          "line": 153,
+          "content": "    function exchangeOut("
+        },
+        {
+          "line": 154,
+          "content": "        IERC20 tokenIn_, uint256 maxAmountIn_, IERC20 tokenOut_, uint256 amountOut_,"
+        },
+        {
+          "line": 155,
+          "content": "        address recipient_, bool pretransferred_, uint256 deadline_"
+        },
+        {
+          "line": 156,
+          "content": "    ) external synchronized nonReentrant returns (uint256 amountIn_) {"
+        },
+        {
+          "line": 157,
+          "content": "        if (amountOut_ > maxAmountIn_) revert MaximumInputExceeded(maxAmountIn_, amountOut_);"
+        },
+        {
+          "line": 158,
+          "content": "        _exchange(tokenIn_, tokenOut_, amountOut_, recipient_, pretransferred_, deadline_);"
+        },
+        {
+          "line": 159,
+          "content": "        return amountOut_;"
+        },
+        {
+          "line": 160,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "S",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "sourceSha256": "0c42d88387a46425ca8634af4f09eee9498f450312dc6ba6415969ebaf3ca92c",
+      "start": 187,
+      "end": 214,
+      "lines": [
+        {
+          "line": 187,
+          "content": "    function _exchange("
+        },
+        {
+          "line": 188,
+          "content": "        IERC20 tokenIn_, IERC20 tokenOut_, uint256 amount_, address recipient_, bool pretransferred_, uint256 deadline_"
+        },
+        {
+          "line": 189,
+          "content": "    ) internal {"
+        },
+        {
+          "line": 190,
+          "content": "        if (block.timestamp > deadline_) revert DeadlineExpired(deadline_);"
+        },
+        {
+          "line": 191,
+          "content": "        if (amount_ == 0) revert ZeroAmount();"
+        },
+        {
+          "line": 192,
+          "content": "        // Preserve the secure claim-route rule: prior idle balances do not authenticate input."
+        },
+        {
+          "line": 193,
+          "content": "        if (pretransferred_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);"
+        },
+        {
+          "line": 194,
+          "content": "        bool stake_ = _isStake(tokenIn_, tokenOut_);"
+        },
+        {
+          "line": 195,
+          "content": "        if (recipient_ == address(0)) recipient_ = msg.sender;"
+        },
+        {
+          "line": 196,
+          "content": "        Repo.Storage storage s_ = Repo._layoutStruct();"
+        },
+        {
+          "line": 197,
+          "content": "        if (stake_) {"
+        },
+        {
+          "line": 198,
+          "content": "            _pullDetf(s_, amount_);"
+        },
+        {
+          "line": 199,
+          "content": "            uint256 gons_ = Repo._creditPrincipal(s_, recipient_, amount_);"
+        },
+        {
+          "line": 200,
+          "content": "            emit Staked(msg.sender, recipient_, amount_, gons_);"
+        },
+        {
+          "line": 201,
+          "content": "        } else {"
+        },
+        {
+          "line": 202,
+          "content": "            uint256 gons_ = Repo._debitPrincipal(s_, msg.sender, amount_);"
+        },
+        {
+          "line": 203,
+          "content": "            s_.detf.safeTransfer(recipient_, amount_);"
+        },
+        {
+          "line": 204,
+          "content": "            Repo._requireBacking(s_);"
+        },
+        {
+          "line": 205,
+          "content": "            emit Unstaked(msg.sender, recipient_, amount_, gons_);"
+        },
+        {
+          "line": 206,
+          "content": "        }"
+        },
+        {
+          "line": 207,
+          "content": "        _topUpWeights(s_);"
+        },
+        {
+          "line": 208,
+          "content": "    }"
+        },
+        {
+          "line": 209,
+          "content": ""
+        },
+        {
+          "line": 210,
+          "content": "    function _isStake(IERC20 tokenIn_, IERC20 tokenOut_) internal view returns (bool) {"
+        },
+        {
+          "line": 211,
+          "content": "        address backing_ = address(Repo._layoutStruct().detf);"
+        },
+        {
+          "line": 212,
+          "content": "        if (address(tokenIn_) == backing_ && address(tokenOut_) == address(this)) return true;"
+        },
+        {
+          "line": 213,
+          "content": "        if (address(tokenIn_) == address(this) && address(tokenOut_) == backing_) return false;"
+        },
+        {
+          "line": 214,
+          "content": "        revert InvalidStakingRoute(address(tokenIn_), address(tokenOut_));"
+        }
+      ]
+    },
+    {
+      "tag": "S",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "sourceSha256": "0c42d88387a46425ca8634af4f09eee9498f450312dc6ba6415969ebaf3ca92c",
+      "start": 230,
+      "end": 236,
+      "lines": [
+        {
+          "line": 230,
+          "content": "    function _synchronize() internal {"
+        },
+        {
+          "line": 231,
+          "content": "        Repo.Storage storage s_ = Repo._layoutStruct();"
+        },
+        {
+          "line": 232,
+          "content": "        if (s_.synchronizing) revert RewardSynchronizationInProgress();"
+        },
+        {
+          "line": 233,
+          "content": "        s_.synchronizing = true;"
+        },
+        {
+          "line": 234,
+          "content": "        IDETFFundedRewards(address(s_.detf)).synchronizeRewards();"
+        },
+        {
+          "line": 235,
+          "content": "        s_.synchronizing = false;"
+        },
+        {
+          "line": 236,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "S",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+      "sourceSha256": "ac8618bcc168f05902ae27da16381bbfed2811ff19cbf992ab07666198c6abe9",
+      "start": 81,
+      "end": 88,
+      "lines": [
+        {
+          "line": 81,
+          "content": "    /// @notice Current native-unit balance backed by an account's gons."
+        },
+        {
+          "line": 82,
+          "content": "    function _balanceOf(Storage storage layoutStruct_, address account_) internal view returns (uint256) {"
+        },
+        {
+          "line": 83,
+          "content": "        return StakingMath._toAmount(layoutStruct_.gonsOf[account_], layoutStruct_.gonsPerUnit);"
+        },
+        {
+          "line": 84,
+          "content": "    }"
+        },
+        {
+          "line": 85,
+          "content": ""
+        },
+        {
+          "line": 86,
+          "content": "    /// @notice Current balance in the canonical ledger."
+        },
+        {
+          "line": 87,
+          "content": "    function _balanceOf(address account_) internal view returns (uint256) {"
+        },
+        {
+          "line": 88,
+          "content": "        return _balanceOf(_layoutStruct(), account_);"
+        }
+      ]
+    },
+    {
+      "tag": "S",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+      "sourceSha256": "ac8618bcc168f05902ae27da16381bbfed2811ff19cbf992ab07666198c6abe9",
+      "start": 107,
+      "end": 124,
+      "lines": [
+        {
+          "line": 107,
+          "content": "    /// @notice Debit a funded withdrawal before the Target transfers equal native DETF units."
+        },
+        {
+          "line": 108,
+          "content": "    /// @dev Full exits retire only this account's sub-native remainder, retaining its backing as dust."
+        },
+        {
+          "line": 109,
+          "content": "    function _debitPrincipal(Storage storage layoutStruct_, address owner_, uint256 amount_)"
+        },
+        {
+          "line": 110,
+          "content": "        internal"
+        },
+        {
+          "line": 111,
+          "content": "        returns (uint256 gons_)"
+        },
+        {
+          "line": 112,
+          "content": "    {"
+        },
+        {
+          "line": 113,
+          "content": "        uint256 balance_ = _balanceOf(layoutStruct_, owner_);"
+        },
+        {
+          "line": 114,
+          "content": "        if (amount_ > balance_) revert IERC20Errors.ERC20InsufficientBalance(owner_, balance_, amount_);"
+        },
+        {
+          "line": 115,
+          "content": "        uint256 oldLiability_ = _totalSupply(layoutStruct_);"
+        },
+        {
+          "line": 116,
+          "content": "        gons_ = amount_ == balance_"
+        },
+        {
+          "line": 117,
+          "content": "            ? layoutStruct_.gonsOf[owner_]"
+        },
+        {
+          "line": 118,
+          "content": "            : StakingMath._toGons(amount_, layoutStruct_.gonsPerUnit);"
+        },
+        {
+          "line": 119,
+          "content": "        layoutStruct_.gonsOf[owner_] -= gons_;"
+        },
+        {
+          "line": 120,
+          "content": "        layoutStruct_.totalGons -= gons_;"
+        },
+        {
+          "line": 121,
+          "content": "        layoutStruct_.accountedBacking -= amount_;"
+        },
+        {
+          "line": 122,
+          "content": "        layoutStruct_.stakingDust += oldLiability_ - _totalSupply(layoutStruct_) - amount_;"
+        },
+        {
+          "line": 123,
+          "content": "        emit IERC20Events.Transfer(owner_, address(0), amount_);"
+        },
+        {
+          "line": 124,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "S",
+      "facet": "0xB7581fe833a2B2380DD786B345D61FFB734D36EB",
+      "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+      "sourceSha256": "ac8618bcc168f05902ae27da16381bbfed2811ff19cbf992ab07666198c6abe9",
+      "start": 147,
+      "end": 157,
+      "lines": [
+        {
+          "line": 147,
+          "content": "    /// @notice Transfer equal native balances without changing aggregate or standing weights."
+        },
+        {
+          "line": 148,
+          "content": "    function _transfer(Storage storage layoutStruct_, address from_, address to_, uint256 amount_) internal {"
+        },
+        {
+          "line": 149,
+          "content": "        if (from_ == address(0)) revert IERC20Errors.ERC20InvalidSender(from_);"
+        },
+        {
+          "line": 150,
+          "content": "        if (to_ == address(0)) revert IERC20Errors.ERC20InvalidReceiver(to_);"
+        },
+        {
+          "line": 151,
+          "content": "        uint256 balance_ = _balanceOf(layoutStruct_, from_);"
+        },
+        {
+          "line": 152,
+          "content": "        if (amount_ > balance_) revert IERC20Errors.ERC20InsufficientBalance(from_, balance_, amount_);"
+        },
+        {
+          "line": 153,
+          "content": "        uint256 gons_ = StakingMath._toGons(amount_, layoutStruct_.gonsPerUnit);"
+        },
+        {
+          "line": 154,
+          "content": "        layoutStruct_.gonsOf[from_] -= gons_;"
+        },
+        {
+          "line": 155,
+          "content": "        layoutStruct_.gonsOf[to_] += gons_;"
+        },
+        {
+          "line": 156,
+          "content": "        emit IERC20Events.Transfer(from_, to_, amount_);"
+        },
+        {
+          "line": 157,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "X",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeTarget.sol",
+      "sourceSha256": "74aa679b8503a98a045f4eb06dd6d988687cdac08171300a50b9ccf00966d117",
+      "start": 9,
+      "end": 20,
+      "lines": [
+        {
+          "line": 9,
+          "content": "    /// @notice Executes an exact-input mint, burn, or DETF-to-claim route on the diamond."
+        },
+        {
+          "line": 10,
+          "content": "    function exchangeIn("
+        },
+        {
+          "line": 11,
+          "content": "        IERC20 tokenIn_,"
+        },
+        {
+          "line": 12,
+          "content": "        uint256 amountIn_,"
+        },
+        {
+          "line": 13,
+          "content": "        IERC20 tokenOut_,"
+        },
+        {
+          "line": 14,
+          "content": "        uint256 minAmountOut_,"
+        },
+        {
+          "line": 15,
+          "content": "        address recipient_,"
+        },
+        {
+          "line": 16,
+          "content": "        bool pretransferred_,"
+        },
+        {
+          "line": 17,
+          "content": "        uint256 deadline_"
+        },
+        {
+          "line": 18,
+          "content": "    ) external returns (uint256 amountOut_) {"
+        },
+        {
+          "line": 19,
+          "content": "        return _entryExchangeIn(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);"
+        },
+        {
+          "line": 20,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "X",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "sourceSha256": "023a914aeb8535d8805b017db35fb64a1181808b2d094965d5a2edd2591c77ff",
+      "start": 204,
+      "end": 234,
+      "lines": [
+        {
+          "line": 204,
+          "content": "    function _entryExchangeIn("
+        },
+        {
+          "line": 205,
+          "content": "        IERC20 tokenIn_,"
+        },
+        {
+          "line": 206,
+          "content": "        uint256 amountIn_,"
+        },
+        {
+          "line": 207,
+          "content": "        IERC20 tokenOut_,"
+        },
+        {
+          "line": 208,
+          "content": "        uint256 minAmountOut_,"
+        },
+        {
+          "line": 209,
+          "content": "        address recipient_,"
+        },
+        {
+          "line": 210,
+          "content": "        bool pretransferred_,"
+        },
+        {
+          "line": 211,
+          "content": "        uint256 deadline_"
+        },
+        {
+          "line": 212,
+          "content": "    ) internal virtual nonReentrant returns (uint256 amountOut_) {"
+        },
+        {
+          "line": 213,
+          "content": "        _requireActive(deadline_, amountIn_);"
+        },
+        {
+          "line": 214,
+          "content": "        if (recipient_ == address(0)) recipient_ = msg.sender;"
+        },
+        {
+          "line": 215,
+          "content": "        address claim_ = address(Repo._layoutStruct().rebasingClaimToken);"
+        },
+        {
+          "line": 216,
+          "content": "        if (address(tokenIn_) == address(this) && address(tokenOut_) == claim_ && claim_ != address(0)) {"
+        },
+        {
+          "line": 217,
+          "content": "            return _stakePath(amountIn_, minAmountOut_, recipient_, pretransferred_, deadline_);"
+        },
+        {
+          "line": 218,
+          "content": "        }"
+        },
+        {
+          "line": 219,
+          "content": "        if (address(tokenIn_) == claim_ && claim_ != address(0)) {"
+        },
+        {
+          "line": 220,
+          "content": "            if (pretransferred_) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, 0);"
+        },
+        {
+          "line": 221,
+          "content": "            return _unstakePath(amountIn_, tokenOut_, minAmountOut_, recipient_, deadline_);"
+        },
+        {
+          "line": 222,
+          "content": "        }"
+        },
+        {
+          "line": 223,
+          "content": "        if (address(tokenOut_) == claim_ && claim_ != address(0)) {"
+        },
+        {
+          "line": 224,
+          "content": "            uint256 acquired_ = _mintPath(tokenIn_, amountIn_, minAmountOut_, address(this), pretransferred_, deadline_);"
+        },
+        {
+          "line": 225,
+          "content": "            return _stakeHeld(acquired_, minAmountOut_, recipient_, deadline_);"
+        },
+        {
+          "line": 226,
+          "content": "        }"
+        },
+        {
+          "line": 227,
+          "content": "        if (address(tokenIn_) == address(this)) {"
+        },
+        {
+          "line": 228,
+          "content": "            return _burnPath(amountIn_, tokenOut_, minAmountOut_, recipient_, deadline_);"
+        },
+        {
+          "line": 229,
+          "content": "        }"
+        },
+        {
+          "line": 230,
+          "content": "        if (address(tokenOut_) == address(this)) {"
+        },
+        {
+          "line": 231,
+          "content": "            return _mintPath(tokenIn_, amountIn_, minAmountOut_, recipient_, pretransferred_, deadline_);"
+        },
+        {
+          "line": 232,
+          "content": "        }"
+        },
+        {
+          "line": 233,
+          "content": "        revert Repo.InvalidRoute(address(tokenIn_), address(tokenOut_));"
+        },
+        {
+          "line": 234,
+          "content": "    }"
+        }
+      ]
+    },
+    {
+      "tag": "X",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "sourceSha256": "023a914aeb8535d8805b017db35fb64a1181808b2d094965d5a2edd2591c77ff",
+      "start": 429,
+      "end": 495,
+      "lines": [
+        {
+          "line": 429,
+          "content": "    function _burnPath(uint256 detfIn_, IERC20 tokenOut_, uint256 minAmountOut_, address recipient_, uint256 deadline_)"
+        },
+        {
+          "line": 430,
+          "content": "        internal"
+        },
+        {
+          "line": 431,
+          "content": "        returns (uint256 amountOut_)"
+        },
+        {
+          "line": 432,
+          "content": "    {"
+        },
+        {
+          "line": 433,
+          "content": "        _requireActive(deadline_, detfIn_);"
+        },
+        {
+          "line": 434,
+          "content": "        _realizeExpansionIfNeeded();"
+        },
+        {
+          "line": 435,
+          "content": "        IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);"
+        },
+        {
+          "line": 436,
+          "content": "        return _burnHeld(detfIn_, tokenOut_, minAmountOut_, recipient_, deadline_);"
+        },
+        {
+          "line": 437,
+          "content": "    }"
+        },
+        {
+          "line": 438,
+          "content": ""
+        },
+        {
+          "line": 439,
+          "content": "    function _burnHeld(uint256 detfIn_, IERC20 tokenOut_, uint256 minAmountOut_, address recipient_, uint256 deadline_)"
+        },
+        {
+          "line": 440,
+          "content": "        internal returns (uint256 amountOut_)"
+        },
+        {
+          "line": 441,
+          "content": "    {"
+        },
+        {
+          "line": 442,
+          "content": "        _requireActive(deadline_, detfIn_);"
+        },
+        {
+          "line": 443,
+          "content": "        _requireReserveLive();"
+        },
+        {
+          "line": 444,
+          "content": "        if (recipient_ == address(0)) recipient_ = msg.sender;"
+        },
+        {
+          "line": 445,
+          "content": "        Repo.Storage storage s = Repo._layoutStruct();"
+        },
+        {
+          "line": 446,
+          "content": "        if (!s.burnTable.tokens._contains(address(tokenOut_))) {"
+        },
+        {
+          "line": 447,
+          "content": "            revert Repo.InvalidRoute(address(this), address(tokenOut_));"
+        },
+        {
+          "line": 448,
+          "content": "        }"
+        },
+        {
+          "line": 449,
+          "content": "        _realizeExpansionIfNeeded();"
+        },
+        {
+          "line": 450,
+          "content": "        if (!_isBurningAllowedToken(tokenOut_)) {"
+        },
+        {
+          "line": 451,
+          "content": "            return _swapBurnPath(detfIn_, tokenOut_, minAmountOut_, recipient_, deadline_);"
+        },
+        {
+          "line": 452,
+          "content": "        }"
+        },
+        {
+          "line": 453,
+          "content": "        uint256 supply_ = ERC20Repo._totalSupply();"
+        },
+        {
+          "line": 454,
+          "content": "        uint256 lpOut_ = Math.mulDiv(detfIn_, _protocolLp(), supply_);"
+        },
+        {
+          "line": 455,
+          "content": "        if (lpOut_ == 0) revert Repo.ZeroAmount();"
+        },
+        {
+          "line": 456,
+          "content": "        _burnDetf(address(this), detfIn_);"
+        },
+        {
+          "line": 457,
+          "content": "        uint256[] memory exitAmts_ = _exitBurnLp(lpOut_, deadline_);"
+        },
+        {
+          "line": 458,
+          "content": "        amountOut_ = _payBurnOut(tokenOut_, recipient_, deadline_, exitAmts_);"
+        },
+        {
+          "line": 459,
+          "content": "        if (amountOut_ < minAmountOut_) {"
+        },
+        {
+          "line": 460,
+          "content": "            revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);"
+        },
+        {
+          "line": 461,
+          "content": "        }"
+        },
+        {
+          "line": 462,
+          "content": "        // Positive LP can still round to no recipient asset. Preserve the user's input."
+        },
+        {
+          "line": 463,
+          "content": "        if (amountOut_ == 0) revert Repo.ZeroAmount();"
+        },
+        {
+          "line": 464,
+          "content": "        _rejoinExitDetf(exitAmts_, deadline_);"
+        },
+        {
+          "line": 465,
+          "content": "        _returnLeftoverLp();"
+        },
+        {
+          "line": 466,
+          "content": "        _trySweepDust();"
+        },
+        {
+          "line": 467,
+          "content": "        _syncAllExpectedHoldReserves();"
+        },
+        {
+          "line": 468,
+          "content": "    }"
+        },
+        {
+          "line": 469,
+          "content": ""
+        },
+        {
+          "line": 470,
+          "content": "    /// @dev Explicit burn-gate fallback transfers existing DETF into the reserve without burning it."
+        },
+        {
+          "line": 471,
+          "content": "    function _swapBurnPath(uint256 detfIn_, IERC20 tokenOut_, uint256 minimum_, address recipient_, uint256 deadline_)"
+        },
+        {
+          "line": 472,
+          "content": "        private returns (uint256 out_)"
+        },
+        {
+          "line": 473,
+          "content": "    {"
+        },
+        {
+          "line": 474,
+          "content": "        IStandardExchange vault_ = Repo._layoutStruct().burnTable.vaultOf[address(tokenOut_)];"
+        },
+        {
+          "line": 475,
+          "content": "        IERC20 pair_ = IERC20(_hookPairOfVault(vault_));"
+        },
+        {
+          "line": 476,
+          "content": "        uint256 acquired_ = _swapOwned(IERC20(address(this)), pair_, detfIn_, 0, deadline_);"
+        },
+        {
+          "line": 477,
+          "content": "        if (address(tokenOut_) == address(pair_)) {"
+        },
+        {
+          "line": 478,
+          "content": "            out_ = acquired_;"
+        },
+        {
+          "line": 479,
+          "content": "            pair_.safeTransfer(recipient_, out_);"
+        },
+        {
+          "line": 480,
+          "content": "        } else {"
+        },
+        {
+          "line": 481,
+          "content": "            out_ = _nestedExchangeIn("
+        },
+        {
+          "line": 482,
+          "content": "                IStandardExchangeIn(address(vault_)), pair_, acquired_, tokenOut_, minimum_, recipient_, deadline_"
+        },
+        {
+          "line": 483,
+          "content": "            );"
+        },
+        {
+          "line": 484,
+          "content": "        }"
+        },
+        {
+          "line": 485,
+          "content": "        if (out_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, out_);"
+        },
+        {
+          "line": 486,
+          "content": "        if (out_ == 0) revert Repo.ZeroAmount();"
+        },
+        {
+          "line": 487,
+          "content": "        _syncAllExpectedHoldReserves();"
+        },
+        {
+          "line": 488,
+          "content": "    }"
+        },
+        {
+          "line": 489,
+          "content": ""
+        },
+        {
+          "line": 490,
+          "content": "    function _exitBurnLp(uint256 lpOut_, uint256 deadline_) private returns (uint256[] memory amounts_) {"
+        },
+        {
+          "line": 491,
+          "content": "        Repo.Storage storage s = Repo._layoutStruct();"
+        },
+        {
+          "line": 492,
+          "content": "        _pullNftLp(lpOut_);"
+        },
+        {
+          "line": 493,
+          "content": "        IERC20(s.hook).forceApprove(s.hook, lpOut_);"
+        },
+        {
+          "line": 494,
+          "content": "        amounts_ = _hook().exitProportional(lpOut_, address(this), new uint256[](_hook().tokens().length), deadline_);"
+        },
+        {
+          "line": 495,
+          "content": "        IERC20(s.hook).forceApprove(s.hook, 0);"
+        }
+      ]
+    },
+    {
+      "tag": "X",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "sourceSha256": "023a914aeb8535d8805b017db35fb64a1181808b2d094965d5a2edd2591c77ff",
+      "start": 516,
+      "end": 534,
+      "lines": [
+        {
+          "line": 516,
+          "content": "    function _payBurnOut(IERC20 tokenOut_, address recipient_, uint256 deadline_, uint256[] memory withdrawn_)"
+        },
+        {
+          "line": 517,
+          "content": "        private returns (uint256 amountOut_)"
+        },
+        {
+          "line": 518,
+          "content": "    {"
+        },
+        {
+          "line": 519,
+          "content": "        Repo.Storage storage s = Repo._layoutStruct();"
+        },
+        {
+          "line": 520,
+          "content": "        IStandardExchange v_ = s.burnTable.vaultOf[address(tokenOut_)];"
+        },
+        {
+          "line": 521,
+          "content": "        address pair_ = _hookPairOfVault(v_);"
+        },
+        {
+          "line": 522,
+          "content": "        address[] memory tokens_ = _hook().tokens();"
+        },
+        {
+          "line": 523,
+          "content": "        uint256 residual_;"
+        },
+        {
+          "line": 524,
+          "content": "        for (uint256 i; i < tokens_.length; ++i) {"
+        },
+        {
+          "line": 525,
+          "content": "            if (tokens_[i] == pair_) residual_ = withdrawn_[i];"
+        },
+        {
+          "line": 526,
+          "content": "        }"
+        },
+        {
+          "line": 527,
+          "content": "        if (address(tokenOut_) == pair_) {"
+        },
+        {
+          "line": 528,
+          "content": "            amountOut_ = residual_;"
+        },
+        {
+          "line": 529,
+          "content": "            if (amountOut_ > 0) IERC20(pair_).safeTransfer(recipient_, amountOut_);"
+        },
+        {
+          "line": 530,
+          "content": "            return amountOut_;"
+        },
+        {
+          "line": 531,
+          "content": "        }"
+        },
+        {
+          "line": 532,
+          "content": "        return _nestedExchangeIn("
+        },
+        {
+          "line": 533,
+          "content": "            IStandardExchangeIn(address(v_)), IERC20(pair_), residual_, tokenOut_, 0, recipient_, deadline_"
+        },
+        {
+          "line": 534,
+          "content": "        );"
+        }
+      ]
+    },
+    {
+      "tag": "X",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "sourceSha256": "8f2cf9e5fa92c9ef4123e88e79472bdefcadcc7b33817aa80c7beb7b720289f4",
+      "start": 59,
+      "end": 100,
+      "lines": [
+        {
+          "line": 59,
+          "content": "    function _requireActive(uint256 deadline_, uint256 amount_) internal view {"
+        },
+        {
+          "line": 60,
+          "content": "        if (amount_ == 0) revert Repo.ZeroAmount();"
+        },
+        {
+          "line": 61,
+          "content": "        if (block.timestamp > deadline_) revert Repo.DeadlineExpired(deadline_);"
+        },
+        {
+          "line": 62,
+          "content": "    }"
+        },
+        {
+          "line": 63,
+          "content": ""
+        },
+        {
+          "line": 64,
+          "content": "    function _rejectPretransferredFirstBond(bool pretransferred_, uint256 claimed_) internal pure {"
+        },
+        {
+          "line": 65,
+          "content": "        if (pretransferred_) {"
+        },
+        {
+          "line": 66,
+          "content": "            revert ISecurePullErrors.TransferDeltaInsufficient(claimed_, 0);"
+        },
+        {
+          "line": 67,
+          "content": "        }"
+        },
+        {
+          "line": 68,
+          "content": "    }"
+        },
+        {
+          "line": 69,
+          "content": ""
+        },
+        {
+          "line": 70,
+          "content": "    function _requireNotDisabled() internal view {"
+        },
+        {
+          "line": 71,
+          "content": "        address reg = address(StandardVaultRepo._feeOracle());"
+        },
+        {
+          "line": 72,
+          "content": "        if (IVaultRegistryDisableQuery(reg).isDisabled(address(this))) {"
+        },
+        {
+          "line": 73,
+          "content": "            revert IVaultRegistryDisableQuery.VaultDisabled(address(this));"
+        },
+        {
+          "line": 74,
+          "content": "        }"
+        },
+        {
+          "line": 75,
+          "content": "    }"
+        },
+        {
+          "line": 76,
+          "content": ""
+        },
+        {
+          "line": 77,
+          "content": "    function _requireBondNft() internal view {"
+        },
+        {
+          "line": 78,
+          "content": "        if (msg.sender != address(Repo._layoutStruct().bondNftVault)) {"
+        },
+        {
+          "line": 79,
+          "content": "            revert Repo.NotAuthorized(msg.sender);"
+        },
+        {
+          "line": 80,
+          "content": "        }"
+        },
+        {
+          "line": 81,
+          "content": "    }"
+        },
+        {
+          "line": 82,
+          "content": ""
+        },
+        {
+          "line": 83,
+          "content": "    function _hook() internal view returns (IUniswapV4SeBufferHook) {"
+        },
+        {
+          "line": 84,
+          "content": "        return IUniswapV4SeBufferHook(Repo._layoutStruct().hook);"
+        },
+        {
+          "line": 85,
+          "content": "    }"
+        },
+        {
+          "line": 86,
+          "content": ""
+        },
+        {
+          "line": 87,
+          "content": "    function _quote() internal view returns (IDetfReserveQuote) {"
+        },
+        {
+          "line": 88,
+          "content": "        return IDetfReserveQuote(Repo._layoutStruct().hook);"
+        },
+        {
+          "line": 89,
+          "content": "    }"
+        },
+        {
+          "line": 90,
+          "content": ""
+        },
+        {
+          "line": 91,
+          "content": "    function _bondLpHolder() internal view returns (address) {"
+        },
+        {
+          "line": 92,
+          "content": "        address bond_ = address(Repo._layoutStruct().bondNftVault);"
+        },
+        {
+          "line": 93,
+          "content": "        return bond_ == address(0) ? address(this) : bond_;"
+        },
+        {
+          "line": 94,
+          "content": "    }"
+        },
+        {
+          "line": 95,
+          "content": ""
+        },
+        {
+          "line": 96,
+          "content": "    function _protocolLp() internal view returns (uint256) {"
+        },
+        {
+          "line": 97,
+          "content": "        IERC20 lp_ = IERC20(Repo._layoutStruct().hook);"
+        },
+        {
+          "line": 98,
+          "content": "        address holder_ = _bondLpHolder();"
+        },
+        {
+          "line": 99,
+          "content": "        uint256 held_ = lp_.balanceOf(address(this));"
+        },
+        {
+          "line": 100,
+          "content": "        return holder_ == address(this) ? held_ : held_ + lp_.balanceOf(holder_);"
+        }
+      ]
+    },
+    {
+      "tag": "X",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "sourceSha256": "8f2cf9e5fa92c9ef4123e88e79472bdefcadcc7b33817aa80c7beb7b720289f4",
+      "start": 352,
+      "end": 388,
+      "lines": [
+        {
+          "line": 352,
+          "content": "    function _realizeExpansionIfNeeded() internal returns (uint256 mintAmount_) {"
+        },
+        {
+          "line": 353,
+          "content": "        Repo.Storage storage s = Repo._layoutStruct();"
+        },
+        {
+          "line": 354,
+          "content": "        if (!_hasCompletedExpansionEpoch(s)) return 0;"
+        },
+        {
+          "line": 355,
+          "content": "        DETFEpochNaturalExpansionLib.AccrualInput memory in_;"
+        },
+        {
+          "line": 356,
+          "content": "        in_.isLive = true;"
+        },
+        {
+          "line": 357,
+          "content": "        in_.spotSyntheticPrice = _highestSyntheticPrice();"
+        },
+        {
+          "line": 358,
+          "content": "        in_.mintThreshold = s.mintThreshold;"
+        },
+        {
+          "line": 359,
+          "content": "        in_.totalDetfSupply = ERC20Repo._totalSupply();"
+        },
+        {
+          "line": 360,
+          "content": "        in_.lastExpansionTimestamp = s.lastExpansionTimestamp;"
+        },
+        {
+          "line": 361,
+          "content": "        in_.nowTimestamp = block.timestamp;"
+        },
+        {
+          "line": 362,
+          "content": "        in_.expansionClosureRatePerYearWad = s.expansionClosureRatePerYearWad;"
+        },
+        {
+          "line": 363,
+          "content": "        uint256 newTs_;"
+        },
+        {
+          "line": 364,
+          "content": "        (mintAmount_, newTs_) = DETFEpochNaturalExpansionLib.computeRealization(in_);"
+        },
+        {
+          "line": 365,
+          "content": "        if (newTs_ != s.lastExpansionTimestamp) {"
+        },
+        {
+          "line": 366,
+          "content": "            s.lastExpansionTimestamp = newTs_;"
+        },
+        {
+          "line": 367,
+          "content": "        }"
+        },
+        {
+          "line": 368,
+          "content": "        if (mintAmount_ > 0) {"
+        },
+        {
+          "line": 369,
+          "content": "            _fundStakingRewards(mintAmount_);"
+        },
+        {
+          "line": 370,
+          "content": "            emit IUniswapV4Detf.NaturalSupplyExpanded(mintAmount_, in_.spotSyntheticPrice, newTs_);"
+        },
+        {
+          "line": 371,
+          "content": "        }"
+        },
+        {
+          "line": 372,
+          "content": "    }"
+        },
+        {
+          "line": 373,
+          "content": ""
+        },
+        {
+          "line": 374,
+          "content": "    /// @dev Incomplete or already-consumed epochs cannot mint. Avoid expensive nested"
+        },
+        {
+          "line": 375,
+          "content": "    /// reserve liquidation quotes on repeated staking and bond-claim synchronization."
+        },
+        {
+          "line": 376,
+          "content": "    function _hasCompletedExpansionEpoch(Repo.Storage storage s) private view returns (bool) {"
+        },
+        {
+          "line": 377,
+          "content": "        return s.isReserveLive && block.timestamp > s.lastExpansionTimestamp"
+        },
+        {
+          "line": 378,
+          "content": "            && block.timestamp - s.lastExpansionTimestamp >= DETFEpochNaturalExpansionLib.EPOCH;"
+        },
+        {
+          "line": 379,
+          "content": "    }"
+        },
+        {
+          "line": 380,
+          "content": ""
+        },
+        {
+          "line": 381,
+          "content": "    /// @dev Expansion and issuance seigniorage are separate actual DETF funding transfers."
+        },
+        {
+          "line": 382,
+          "content": "    function _fundStakingRewards(uint256 amount_) internal {"
+        },
+        {
+          "line": 383,
+          "content": "        if (amount_ == 0) return;"
+        },
+        {
+          "line": 384,
+          "content": "        address staking_ = address(Repo._layoutStruct().rebasingClaimToken);"
+        },
+        {
+          "line": 385,
+          "content": "        _mintDetf(address(this), amount_);"
+        },
+        {
+          "line": 386,
+          "content": "        IERC20(address(this)).forceApprove(staking_, amount_);"
+        },
+        {
+          "line": 387,
+          "content": "        IStakedDETF(staking_).fundRewards(amount_);"
+        },
+        {
+          "line": 388,
+          "content": "        IERC20(address(this)).forceApprove(staking_, 0);"
+        }
+      ]
+    },
+    {
+      "tag": "X",
+      "facet": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "sourceSha256": "8f2cf9e5fa92c9ef4123e88e79472bdefcadcc7b33817aa80c7beb7b720289f4",
+      "start": 413,
+      "end": 427,
+      "lines": [
+        {
+          "line": 413,
+          "content": "    function _nestedExchangeIn("
+        },
+        {
+          "line": 414,
+          "content": "        IStandardExchangeIn host_,"
+        },
+        {
+          "line": 415,
+          "content": "        IERC20 tokenIn_,"
+        },
+        {
+          "line": 416,
+          "content": "        uint256 amountIn_,"
+        },
+        {
+          "line": 417,
+          "content": "        IERC20 tokenOut_,"
+        },
+        {
+          "line": 418,
+          "content": "        uint256 minAmountOut_,"
+        },
+        {
+          "line": 419,
+          "content": "        address recipient_,"
+        },
+        {
+          "line": 420,
+          "content": "        uint256 deadline_"
+        },
+        {
+          "line": 421,
+          "content": "    ) internal returns (uint256 amountOut_) {"
+        },
+        {
+          "line": 422,
+          "content": "        if (amountIn_ == 0) return 0;"
+        },
+        {
+          "line": 423,
+          "content": "        // Use the standard approval-based route, including SEs whose own-share"
+        },
+        {
+          "line": 424,
+          "content": "        // redemption burns the caller's balance. Authorize only this payment."
+        },
+        {
+          "line": 425,
+          "content": "        tokenIn_.forceApprove(address(host_), amountIn_);"
+        },
+        {
+          "line": 426,
+          "content": "        amountOut_ = host_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, false, deadline_);"
+        },
+        {
+          "line": 427,
+          "content": "        tokenIn_.forceApprove(address(host_), 0);"
+        }
+      ]
+    }
+  ],
+  "receipts": [
+    {
+      "checkIndex": 6,
+      "name": "approved_actual_whole_nft_custody",
+      "verdict": "PASS",
+      "measurements": {
+        "ownerAfter": "0x000000000000000000000000000000000000c057"
+      },
+      "transactions": [
+        {
+          "role": "approval",
+          "hash": "0x4e001d408a3e6aad5e4112d6bed27144eb86fd91dd39fe420802d8f8a8be702c",
+          "status": "0x1",
+          "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "gasUsed": "0xd305",
+          "input": "0x095ea7b3000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000003",
+          "decoded": {
+            "functionName": "approve",
+            "args": [
+              "0x000000000000000000000000000000000000c057",
+              "3"
+            ]
+          },
+          "events": []
+        },
+        {
+          "role": "transfer",
+          "hash": "0x0f344ce9310c30f5a50be14b9f69a7ba2110deb33254a612ff6a3f92b1fc043e",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "gasUsed": "0x1545a7",
+          "input": "0x42842e0e00000000000000000000000072bea6fa3e68ef18c87d045aac7c4aa5249d933b000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000003",
+          "decoded": {
+            "functionName": "safeTransferFrom",
+            "args": [
+              "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+              "0x000000000000000000000000000000000000c057",
+              "3"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+                "value": "2993607764"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+                "value": "6985084784"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "RewardsFunded",
+              "args": {
+                "detfAmount": "23083004250",
+                "stakingGrowth": "13104311701",
+                "feeReceipt": "2993607764",
+                "creatorReceipt": "6985084784",
+                "gonsPerUnit": "875481854921341751018652579115616129"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+                "to": "0x000000000000000000000000000000000000c057",
+                "tokenId": "3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 7,
+      "name": "custodied_nft_actual_claim",
+      "verdict": "PASS",
+      "measurements": {
+        "balanceBefore": "0",
+        "balanceAfter": "4308806205",
+        "delta": "4308806205"
+      },
+      "transactions": [
+        {
+          "role": "harvest",
+          "hash": "0x40049b8b180aaf28d770b96a0b607bce5cd181b3efa5489b00cfa60db9c27cb8",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "gasUsed": "0x49b4f",
+          "input": "0x084c59ae0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000c057",
+          "decoded": {
+            "functionName": "claimBond",
+            "args": [
+              "3",
+              "0x000000000000000000000000000000000000c057"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "4308806205"
+              }
+            },
+            {
+              "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x000000000000000000000000000000000000c057",
+                "to": "0x0000000000000000000000000000000000000000",
+                "tokenId": "3"
+              }
+            },
+            {
+              "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "eventName": "BondClaimed",
+              "args": {
+                "tokenId": "3",
+                "recipient": "0x000000000000000000000000000000000000c057",
+                "principal": "3772281649",
+                "rewards": "536524556"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 8,
+      "name": "burn_and_repeat_claim_rejection",
+      "verdict": "PASS",
+      "measurements": {
+        "ownerAfter": "0x0000000000000000000000000000000000000000"
+      },
+      "transactions": [
+        {
+          "role": "repeated",
+          "hash": "0xf0fdd29fd4e84f962ba8640d132a5ebb42c6fb3b15452fb42d8431e79c0d9eb9",
+          "status": "0x0",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "gasUsed": "0x1a04f",
+          "input": "0x084c59ae0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000c057",
+          "decoded": {
+            "functionName": "claimBond",
+            "args": [
+              "3",
+              "0x000000000000000000000000000000000000c057"
+            ]
+          },
+          "events": []
+        }
+      ]
+    },
+    {
+      "checkIndex": 9,
+      "name": "receipt_to_detf_actual_conversion",
+      "verdict": "PASS",
+      "measurements": {
+        "amount": "4308806205",
+        "before": "0",
+        "after": "4308806205"
+      },
+      "transactions": [
+        {
+          "role": "receipt",
+          "hash": "0xc5fdef1e066063b549f98c2f9d4508726f3e20b6f65303f42dc0de89eebac6eb",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "gasUsed": "0x3293a",
+          "input": "0xd02d30630000000000000000000000004fa4974a8a09660258b8edd430b51c1620ebfe5c0000000000000000000000000000000000000000000000000000000100d32a3d0000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000100d32a3d000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+          "decoded": {
+            "functionName": "exchangeIn",
+            "args": [
+              "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+              "4308806205",
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "4308806205",
+              "0x000000000000000000000000000000000000c057",
+              false,
+              "18446744073709551615"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x000000000000000000000000000000000000c057",
+                "to": "0x0000000000000000000000000000000000000000",
+                "value": "4308806205"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "4308806205"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Unstaked",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "recipient": "0x000000000000000000000000000000000000c057",
+                "detfAmount": "4308806205",
+                "gons": "3772281648849987123714735303632620189033280445"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 10,
+      "name": "detf_to_dtf_actual_harvest",
+      "verdict": "PASS",
+      "measurements": {
+        "amount": "4308806205",
+        "balanceBefore": "0",
+        "balanceAfter": "24312424763253115621623",
+        "dtfRawReceived": "24312424763253115621623"
+      },
+      "transactions": [
+        {
+          "role": "approval",
+          "hash": "0xbf03457391b042fdbdcd730a5a3c51eb12795f791ead63990eb9bbf345184027",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "gasUsed": "0xcb50",
+          "input": "0x095ea7b30000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000100d32a3d",
+          "decoded": {
+            "functionName": "approve",
+            "args": [
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "4308806205"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "spender": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "4308806205"
+              }
+            }
+          ]
+        },
+        {
+          "role": "conversion",
+          "hash": "0x8e20f225db3d277f59b1950224f075c2b8ba1198d475d2308297cb283d9caffc",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "gasUsed": "0x12a02b",
+          "input": "0xd02d30630000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000100d32a3d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+          "decoded": {
+            "functionName": "exchangeIn",
+            "args": [
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "4308806205",
+              "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+              "0",
+              "0x000000000000000000000000000000000000c057",
+              false,
+              "18446744073709551615"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "spender": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x000000000000000000000000000000000000c057",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "4308806205"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "4308806205"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "4308806205"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "spender": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "value": "243124247632531156216230000000000"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "to": "0x0000000000000000000000000000000000000000",
+                "value": "243124247632531156216230000000000"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "to": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "24312424763253115621623"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "spender": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "24312424763253115621623"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "24312424763253115621623"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 12,
+      "name": "legacy_operator_recipient_redirection_protection",
+      "verdict": "FAIL",
+      "measurements": {
+        "meaning": "FAIL means the legacy source allows an approved operator to redirect. A migration adapter must independently bind caller/current owner and fixed custody destination.",
+        "before": "0",
+        "after": "4308806205"
+      },
+      "transactions": [
+        {
+          "role": "approval",
+          "hash": "0x90d78cce703a4a295484e56dd84fc1fbf446170e34808708227c25abd763b758",
+          "status": "0x1",
+          "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "gasUsed": "0xcaf4",
+          "input": "0xa22cb4650000000000000000000000000000000000000000000000000000000000000a110000000000000000000000000000000000000000000000000000000000000001",
+          "decoded": {
+            "functionName": "setApprovalForAll",
+            "args": [
+              "0x0000000000000000000000000000000000000a11",
+              true
+            ]
+          },
+          "events": []
+        },
+        {
+          "role": "receipt",
+          "hash": "0xcadefebefd78638594f2c8a2434c08d6baf16e832708bc877a5387a960fafbce",
+          "status": "0x1",
+          "from": "0x0000000000000000000000000000000000000a11",
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "gasUsed": "0x16f362",
+          "input": "0x084c59ae00000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000bad",
+          "decoded": {
+            "functionName": "claimBond",
+            "args": [
+              "3",
+              "0x0000000000000000000000000000000000000Bad"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+                "value": "2993607764"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+                "value": "6985084784"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "RewardsFunded",
+              "args": {
+                "detfAmount": "23083004250",
+                "stakingGrowth": "13104311701",
+                "feeReceipt": "2993607764",
+                "creatorReceipt": "6985084784",
+                "gonsPerUnit": "875481854921341751018652579115616129"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+                "to": "0x0000000000000000000000000000000000000Bad",
+                "value": "4308806205"
+              }
+            },
+            {
+              "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+                "to": "0x0000000000000000000000000000000000000000",
+                "tokenId": "3"
+              }
+            },
+            {
+              "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "eventName": "BondClaimed",
+              "args": {
+                "tokenId": "3",
+                "recipient": "0x0000000000000000000000000000000000000Bad",
+                "principal": "3772281649",
+                "rewards": "536524556"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 19,
+      "name": "reward_only_source_persists_after_principal",
+      "verdict": "PASS",
+      "measurements": {
+        "owner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+        "remainingPrincipal": "0"
+      },
+      "transactions": [
+        {
+          "role": "receipt",
+          "hash": "0x4f1b70c3cf0b3392db950f428d63dd6897b5362bb7358f367d4a44706f033d78",
+          "status": "0x1",
+          "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "gasUsed": "0x16782e",
+          "input": "0xf400c7430000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000c057",
+          "decoded": {
+            "functionName": "claimPrincipal",
+            "args": [
+              "3",
+              "0x000000000000000000000000000000000000c057"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "23083004250"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+                "value": "2993607764"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x0000000000000000000000000000000000000000",
+                "to": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+                "value": "6985084784"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "RewardsFunded",
+              "args": {
+                "detfAmount": "23083004250",
+                "stakingGrowth": "13104311701",
+                "feeReceipt": "2993607764",
+                "creatorReceipt": "6985084784",
+                "gonsPerUnit": "875481854921341751018652579115616129"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "3772281649"
+              }
+            },
+            {
+              "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "eventName": "BondClaimed",
+              "args": {
+                "tokenId": "3",
+                "recipient": "0x000000000000000000000000000000000000c057",
+                "principal": "3772281649",
+                "rewards": "0"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 27,
+      "name": "receipt_to_detf_actual_conversion",
+      "verdict": "PASS",
+      "measurements": {
+        "amount": "38283506",
+        "before": "0",
+        "after": "38283506"
+      },
+      "transactions": [
+        {
+          "role": "receipt",
+          "hash": "0x682ca80ee644d423679424095ad6120867fa79326bad6e5d70510cb9d800ad7d",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "gasUsed": "0x3293a",
+          "input": "0xd02d30630000000000000000000000004fa4974a8a09660258b8edd430b51c1620ebfe5c00000000000000000000000000000000000000000000000000000000024828f20000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc700000000000000000000000000000000000000000000000000000000024828f2000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+          "decoded": {
+            "functionName": "exchangeIn",
+            "args": [
+              "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+              "38283506",
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "38283506",
+              "0x000000000000000000000000000000000000c057",
+              false,
+              "18446744073709551615"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x000000000000000000000000000000000000c057",
+                "to": "0x0000000000000000000000000000000000000000",
+                "value": "38283506"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "38283506"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Unstaked",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "recipient": "0x000000000000000000000000000000000000c057",
+                "detfAmount": "38283506",
+                "gons": "33516514845772316453173092124488164768268274"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 28,
+      "name": "detf_to_dtf_actual_harvest",
+      "verdict": "PASS",
+      "measurements": {
+        "amount": "38283506",
+        "balanceBefore": "0",
+        "balanceAfter": "216228659430800592372",
+        "dtfRawReceived": "216228659430800592372"
+      },
+      "transactions": [
+        {
+          "role": "approval",
+          "hash": "0x47dac1545be905e65496fffeceeb797a0afe1cf0927695db36dc6bbcd4a65a1f",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "gasUsed": "0xcb50",
+          "input": "0x095ea7b30000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc700000000000000000000000000000000000000000000000000000000024828f2",
+          "decoded": {
+            "functionName": "approve",
+            "args": [
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "38283506"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "spender": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "38283506"
+              }
+            }
+          ]
+        },
+        {
+          "role": "conversion",
+          "hash": "0x9745116d8634c0335ba78d17a2ef0c48a6ed922b05833803a749bf9af099d537",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "gasUsed": "0x12a02b",
+          "input": "0xd02d30630000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc700000000000000000000000000000000000000000000000000000000024828f2000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+          "decoded": {
+            "functionName": "exchangeIn",
+            "args": [
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "38283506",
+              "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+              "0",
+              "0x000000000000000000000000000000000000c057",
+              false,
+              "18446744073709551615"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "spender": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x000000000000000000000000000000000000c057",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "38283506"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "38283506"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "38283506"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "spender": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "value": "2162286594308005923720000000000"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "to": "0x0000000000000000000000000000000000000000",
+                "value": "2162286594308005923720000000000"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "to": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "216228659430800592372"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "spender": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "216228659430800592372"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "216228659430800592372"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 32,
+      "name": "receipt_to_detf_actual_conversion",
+      "verdict": "PASS",
+      "measurements": {
+        "amount": "9245",
+        "before": "0",
+        "after": "9245"
+      },
+      "transactions": [
+        {
+          "role": "receipt",
+          "hash": "0xe90907636f9b4f5cb689af0d6ced6bc1111329195b443be28614fbae1a5fd38b",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+          "gasUsed": "0x3290a",
+          "input": "0xd02d30630000000000000000000000004fa4974a8a09660258b8edd430b51c1620ebfe5c000000000000000000000000000000000000000000000000000000000000241d0000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7000000000000000000000000000000000000000000000000000000000000241d000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+          "decoded": {
+            "functionName": "exchangeIn",
+            "args": [
+              "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+              "9245",
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "9245",
+              "0x000000000000000000000000000000000000c057",
+              false,
+              "18446744073709551615"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x000000000000000000000000000000000000c057",
+                "to": "0x0000000000000000000000000000000000000000",
+                "value": "9245"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "9245"
+              }
+            },
+            {
+              "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+              "eventName": "Unstaked",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "recipient": "0x000000000000000000000000000000000000c057",
+                "detfAmount": "9245",
+                "gons": "8093829748747804488167443093923871112605"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkIndex": 33,
+      "name": "detf_to_dtf_actual_harvest",
+      "verdict": "PASS",
+      "measurements": {
+        "amount": "9245",
+        "balanceBefore": "0",
+        "balanceAfter": "52221256856930805",
+        "dtfRawReceived": "52221256856930805"
+      },
+      "transactions": [
+        {
+          "role": "approval",
+          "hash": "0x7921e37d89e3baa8b18973e62c9559eedf9afb13d7c6eb51888d6e59a59aa695",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "gasUsed": "0xcb38",
+          "input": "0x095ea7b30000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7000000000000000000000000000000000000000000000000000000000000241d",
+          "decoded": {
+            "functionName": "approve",
+            "args": [
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "9245"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "spender": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "9245"
+              }
+            }
+          ]
+        },
+        {
+          "role": "conversion",
+          "hash": "0xa3491916815cc29e641eed88560a2ae0464ca6fb0434958a16fcdb16ed7ddaa4",
+          "status": "0x1",
+          "from": "0x000000000000000000000000000000000000c057",
+          "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+          "gasUsed": "0x12a013",
+          "input": "0xd02d30630000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7000000000000000000000000000000000000000000000000000000000000241d000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff",
+          "decoded": {
+            "functionName": "exchangeIn",
+            "args": [
+              "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+              "9245",
+              "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+              "0",
+              "0x000000000000000000000000000000000000c057",
+              false,
+              "18446744073709551615"
+            ]
+          },
+          "events": [
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x000000000000000000000000000000000000c057",
+                "spender": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x000000000000000000000000000000000000c057",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "9245"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "9245"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "9245"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "spender": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "value": "522212568569308050000000000"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "to": "0x0000000000000000000000000000000000000000",
+                "value": "522212568569308050000000000"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "to": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "52221256856930805"
+              }
+            },
+            {
+              "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "spender": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "to": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "value": "52221256856930805"
+              }
+            },
+            {
+              "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+              "eventName": "Approval",
+              "args": {
+                "owner": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "spender": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+                "value": "0"
+              }
+            },
+            {
+              "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+              "eventName": "Transfer",
+              "args": {
+                "from": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+                "to": "0x000000000000000000000000000000000000c057",
+                "value": "52221256856930805"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "label": "selector nft ownerOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft ownerOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft ownerOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft ownerOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft ownerOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector nft positionOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft positionOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft positionOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft positionOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft positionOf(uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector nft previewClaim(uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft previewClaim(uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft previewClaim(uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft previewClaim(uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft previewClaim(uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector nft approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector nft getApproved(uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft getApproved(uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft getApproved(uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft getApproved(uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft getApproved(uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector nft setApprovalForAll(address,bool)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft setApprovalForAll(address,bool)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft setApprovalForAll(address,bool)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft setApprovalForAll(address,bool)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft setApprovalForAll(address,bool)",
+      "pass": true
+    },
+    {
+      "label": "selector nft isApprovedForAll(address,address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft isApprovedForAll(address,address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft isApprovedForAll(address,address)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft isApprovedForAll(address,address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft isApprovedForAll(address,address)",
+      "pass": true
+    },
+    {
+      "label": "selector nft transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector nft safeTransferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft safeTransferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft safeTransferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft safeTransferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft safeTransferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector nft claimPrincipal(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft claimPrincipal(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft claimPrincipal(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft claimPrincipal(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft claimPrincipal(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "selector nft claimRewards(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft claimRewards(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft claimRewards(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft claimRewards(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft claimRewards(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "selector nft claimBond(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft claimBond(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft claimBond(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "published execution nft claimBond(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft claimBond(uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "selector nft detf()",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft detf()",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft detf()",
+      "pass": true
+    },
+    {
+      "label": "published execution nft detf()",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft detf()",
+      "pass": true
+    },
+    {
+      "label": "selector nft lpToken()",
+      "pass": true
+    },
+    {
+      "label": "archive runtime nft lpToken()",
+      "pass": true
+    },
+    {
+      "label": "independent archive nft lpToken()",
+      "pass": true
+    },
+    {
+      "label": "published execution nft lpToken()",
+      "pass": true
+    },
+    {
+      "label": "raw loupe nft lpToken()",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf decimals()",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf decimals()",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf decimals()",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf decimals()",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf decimals()",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf detf()",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf detf()",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf detf()",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf detf()",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf detf()",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf gonsOf(address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf gonsOf(address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf gonsOf(address)",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf gonsOf(address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf gonsOf(address)",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf stakingState()",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf stakingState()",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf stakingState()",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf stakingState()",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf stakingState()",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector sdetf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime sdetf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive sdetf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution sdetf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe sdetf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector detf decimals()",
+      "pass": true
+    },
+    {
+      "label": "archive runtime detf decimals()",
+      "pass": true
+    },
+    {
+      "label": "independent archive detf decimals()",
+      "pass": true
+    },
+    {
+      "label": "published execution detf decimals()",
+      "pass": true
+    },
+    {
+      "label": "raw loupe detf decimals()",
+      "pass": true
+    },
+    {
+      "label": "selector detf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime detf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive detf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "published execution detf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe detf balanceOf(address)",
+      "pass": true
+    },
+    {
+      "label": "selector detf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime detf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive detf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution detf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe detf approve(address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector detf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime detf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive detf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution detf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe detf transferFrom(address,address,uint256)",
+      "pass": true
+    },
+    {
+      "label": "selector detf previewExchangeIn(address,uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime detf previewExchangeIn(address,uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "independent archive detf previewExchangeIn(address,uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "published execution detf previewExchangeIn(address,uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe detf previewExchangeIn(address,uint256,address)",
+      "pass": true
+    },
+    {
+      "label": "selector detf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "archive runtime detf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "independent archive detf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "published execution detf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "raw loupe detf exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x4e001d408a3e6aad5e4112d6bed27144eb86fd91dd39fe420802d8f8a8be702c",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x0f344ce9310c30f5a50be14b9f69a7ba2110deb33254a612ff6a3f92b1fc043e",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x40049b8b180aaf28d770b96a0b607bce5cd181b3efa5489b00cfa60db9c27cb8",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0xf0fdd29fd4e84f962ba8640d132a5ebb42c6fb3b15452fb42d8431e79c0d9eb9",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0xc5fdef1e066063b549f98c2f9d4508726f3e20b6f65303f42dc0de89eebac6eb",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0xbf03457391b042fdbdcd730a5a3c51eb12795f791ead63990eb9bbf345184027",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x8e20f225db3d277f59b1950224f075c2b8ba1198d475d2308297cb283d9caffc",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x90d78cce703a4a295484e56dd84fc1fbf446170e34808708227c25abd763b758",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0xcadefebefd78638594f2c8a2434c08d6baf16e832708bc877a5387a960fafbce",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x4f1b70c3cf0b3392db950f428d63dd6897b5362bb7358f367d4a44706f033d78",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x682ca80ee644d423679424095ad6120867fa79326bad6e5d70510cb9d800ad7d",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x47dac1545be905e65496fffeceeb797a0afe1cf0927695db36dc6bbcd4a65a1f",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x9745116d8634c0335ba78d17a2ef0c48a6ed922b05833803a749bf9af099d537",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0xe90907636f9b4f5cb689af0d6ced6bc1111329195b443be28614fbae1a5fd38b",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0x7921e37d89e3baa8b18973e62c9559eedf9afb13d7c6eb51888d6e59a59aa695",
+      "pass": true
+    },
+    {
+      "label": "send receipt 0xa3491916815cc29e641eed88560a2ae0464ca6fb0434958a16fcdb16ed7ddaa4",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x4e001d408a3e6aad5e4112d6bed27144eb86fd91dd39fe420802d8f8a8be702c",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x0f344ce9310c30f5a50be14b9f69a7ba2110deb33254a612ff6a3f92b1fc043e",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x40049b8b180aaf28d770b96a0b607bce5cd181b3efa5489b00cfa60db9c27cb8",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0xf0fdd29fd4e84f962ba8640d132a5ebb42c6fb3b15452fb42d8431e79c0d9eb9",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0xc5fdef1e066063b549f98c2f9d4508726f3e20b6f65303f42dc0de89eebac6eb",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0xbf03457391b042fdbdcd730a5a3c51eb12795f791ead63990eb9bbf345184027",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x8e20f225db3d277f59b1950224f075c2b8ba1198d475d2308297cb283d9caffc",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x90d78cce703a4a295484e56dd84fc1fbf446170e34808708227c25abd763b758",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0xcadefebefd78638594f2c8a2434c08d6baf16e832708bc877a5387a960fafbce",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x4f1b70c3cf0b3392db950f428d63dd6897b5362bb7358f367d4a44706f033d78",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x682ca80ee644d423679424095ad6120867fa79326bad6e5d70510cb9d800ad7d",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x47dac1545be905e65496fffeceeb797a0afe1cf0927695db36dc6bbcd4a65a1f",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x9745116d8634c0335ba78d17a2ef0c48a6ed922b05833803a749bf9af099d537",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0xe90907636f9b4f5cb689af0d6ced6bc1111329195b443be28614fbae1a5fd38b",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0x7921e37d89e3baa8b18973e62c9559eedf9afb13d7c6eb51888d6e59a59aa695",
+      "pass": true
+    },
+    {
+      "label": "raw mined receipt 0xa3491916815cc29e641eed88560a2ae0464ca6fb0434958a16fcdb16ed7ddaa4",
+      "pass": true
+    },
+    {
+      "label": "proxy nft",
+      "pass": true
+    },
+    {
+      "label": "proxy sdetf",
+      "pass": true
+    },
+    {
+      "label": "proxy detf",
+      "pass": true
+    },
+    {
+      "label": "claim components equal measured receipt",
+      "pass": true
+    },
+    {
+      "label": "claim actual fixed custody transfer",
+      "pass": true
+    },
+    {
+      "label": "conversion custody and no pretransfer 0x8e20f225db3d277f59b1950224f075c2b8ba1198d475d2308297cb283d9caffc",
+      "pass": true
+    },
+    {
+      "label": "DTF receipt equals delta 0x8e20f225db3d277f59b1950224f075c2b8ba1198d475d2308297cb283d9caffc",
+      "pass": true
+    },
+    {
+      "label": "conversion custody and no pretransfer 0x9745116d8634c0335ba78d17a2ef0c48a6ed922b05833803a749bf9af099d537",
+      "pass": true
+    },
+    {
+      "label": "DTF receipt equals delta 0x9745116d8634c0335ba78d17a2ef0c48a6ed922b05833803a749bf9af099d537",
+      "pass": true
+    },
+    {
+      "label": "conversion custody and no pretransfer 0xa3491916815cc29e641eed88560a2ae0464ca6fb0434958a16fcdb16ed7ddaa4",
+      "pass": true
+    },
+    {
+      "label": "DTF receipt equals delta 0xa3491916815cc29e641eed88560a2ae0464ca6fb0434958a16fcdb16ed7ddaa4",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "Published Sourcify recompilation compared; no independent compilation",
+    "Phase01 positive source caller is EOA custodian, not Migration integration",
+    "Phase05 genuine Migration proves custody/surrender, not recovery",
+    "Unburned repeated/partial claims and index-isolated accounting are source-derived obligations, not newly executed integration proof",
+    "Forced registry-disable matrix and recovery donation integration remain implementation/verifier work"
+  ],
+  "cleanup": {
+    "startedNodes": 0,
+    "rpcRequests": 0,
+    "newTransactions": 0,
+    "forgeInvocations": 0,
+    "usedPort18555": false,
+    "ownedRuntimeRoots": [],
+    "pendingResources": 0
+  }
+}

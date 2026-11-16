@@ -1,0 +1,78 @@
+[
+  {
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/evidence.mjs"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+    "pid": 3389,
+    "startedAt": "2026-11-13T12:07:37.149Z",
+    "finishedAt": "2026-11-13T12:07:37.343Z",
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrInline": "",
+    "stdoutInline": "",
+    "source": "evidence.mjs"
+  },
+  {
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/rows.mjs"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+    "pid": 3390,
+    "startedAt": "2026-11-13T12:07:37.150Z",
+    "finishedAt": "2026-11-13T12:07:37.343Z",
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrInline": "",
+    "stdoutInline": "",
+    "source": "rows.mjs"
+  },
+  {
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/prove.mjs"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+    "pid": 3391,
+    "startedAt": "2026-11-13T12:07:37.151Z",
+    "finishedAt": "2026-11-13T12:07:37.343Z",
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrInline": "",
+    "stdoutInline": "",
+    "source": "prove.mjs"
+  },
+  {
+    "executable": "/opt/homebrew/bin/node",
+    "argv": [
+      "--check",
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/verify.mjs"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+    "pid": 3392,
+    "startedAt": "2026-11-13T12:07:37.151Z",
+    "finishedAt": "2026-11-13T12:07:37.343Z",
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrInline": "",
+    "stdoutInline": "",
+    "source": "verify.mjs"
+  }
+]

@@ -1,0 +1,158 @@
+{
+  "pathCount": 24,
+  "diffSha256": "be5e01553b7ee9551b9b641776addf0a550d898fdac1ec0468f8ca9afe4a624e",
+  "method": "Every staged existing-file diff equals complete already-read pre-stage diff byte-for-byte. Every added-file diff reconstructs completely-read new-file SHA-256. Every staged mode/blob/current hash matches source manifest. Full staged diff retained separately.",
+  "paths": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "blob": "a01924fb56a71a3129226d99167b625dee22873d",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "mode": "100644",
+      "blob": "6027f70f0ed50cbd2c571d792964bfb44dce9ede",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "mode": "100644",
+      "blob": "f44eb8841dbc37ae6b79fce3236a8f05d14cf1b1",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "mode": "100644",
+      "blob": "6320ce5f118a9eb8dcd256796609cfb11c315359",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "mode": "100644",
+      "blob": "8d129b37ad62ce81cd016f1e2161fb25669a46c0",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "mode": "100644",
+      "blob": "ab2e06a9887fbf1a82c47c779485cb9c29d27030",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "mode": "100644",
+      "blob": "3931831632409e557b238a782f4ee36448afd056",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "mode": "100644",
+      "blob": "01d5ae93ff75c7cc2b2ca417e7578edc03401cc9",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "mode": "100644",
+      "blob": "b0934117773831a851885d2a3055b779350845c7",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "mode": "100644",
+      "blob": "3a8d1a045f5e658b103a296049e28c22d9e139b2",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "mode": "100644",
+      "blob": "921f41fc353541bbc6bfc6c8fa0e51a989825d52",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "mode": "100644",
+      "blob": "d84882e78877a2f944be859b42890912c16480a6",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "mode": "100644",
+      "blob": "29ef159f53cb986cdfa4096e500dab6d142617a0",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "mode": "100644",
+      "blob": "1328c9a476fb7d79f12b81a5aa128742f17c85ee",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "mode": "100644",
+      "blob": "a93156670e463f9345193a2b3459d01a60a97668",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "mode": "100644",
+      "blob": "5bdf67f72ec735bd85a3e33890193d89c66dce6b",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "mode": "100644",
+      "blob": "e7df3467c8128c038ab658169dcf56df4def1d56",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "mode": "100644",
+      "blob": "686770817329261472c42309e5b3be89765a5818",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "mode": "100644",
+      "blob": "8fd59d5054192e2cd637340cf66ef4075d336902",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "mode": "100644",
+      "blob": "5d4c1ec72e79fa1e9b2261887490bca604e92c6d",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+      "mode": "100644",
+      "blob": "37c1b86b2531067b7ffbcb1632e65e4cbaa06bd0",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+      "mode": "100644",
+      "blob": "767caf3e0db00498cb7cb5c3ece3a5c53f652293",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+      "mode": "100644",
+      "blob": "814796e76bdf8372254ff0828d887ae95a09821c",
+      "completeDiffMatchesReviewedBytes": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "mode": "100644",
+      "blob": "c929c404274b34b62fa9770b6b80caa7e760b442",
+      "completeDiffMatchesReviewedBytes": true
+    }
+  ],
+  "checks": {
+    "exactPaths": true,
+    "noEvidencePaths": true,
+    "stagedDiffCheckExit": 0,
+    "unstagedTrackedEmpty": true
+  },
+  "jsonDiagnostics": "JSON.parse and exact in-memory schema/value comparisons passed. Biome LSP unavailable; no forbidden dependency install performed."
+}

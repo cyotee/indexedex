@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-11-10T23:34:11.180Z",
+  "nodeInstance": "0x86c73d741983bdf3fbff119692d28fb7951dd9b3b335e8105e9dd94a00fd477a",
+  "ownedNodeSession": "bash_7",
+  "stopToolResult": "EPERM removing monitor-state file after process termination; independent port/process probes below establish shutdown.",
+  "probe": "OWNED_TMP_REMOVED\nPORT_18548_LISTENERS\nLSOF_EXIT=1\nOWNED_ANVIL_PROCESSES\nOWNED_PROCESS_SEARCH_EXIT=1",
+  "retained": [
+    "out/",
+    "cache_forge/",
+    "correction/runtime/script-cache/",
+    "all prior reports, witness sources and receipts",
+    "all correction logs and fresh broadcast receipts",
+    "shared dependency links"
+  ],
+  "removed": [
+    "correction/runtime/tmp (empty)"
+  ],
+  "otherSessionsStopped": false
+}

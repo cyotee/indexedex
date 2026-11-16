@@ -1,0 +1,279 @@
+{
+  "nodeInstance": "0x86c73d741983bdf3fbff119692d28fb7951dd9b3b335e8105e9dd94a00fd477a",
+  "successfulStageAReceipts": 230,
+  "successfulStageBReceipts": 16,
+  "currentOwner": "0xD8c0e1DF4Cb2a23Eb2949A193374F6524c12D9aE",
+  "controller": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+  "configurationId": "0xbd7d54a99ab363eae09d2a4ecb5f19efe56d43dd2d02e42c28c7e265d3615771",
+  "issuedAt": "1794353395",
+  "principalEvent": {
+    "event": "BondClaimed",
+    "tokenId": "3",
+    "recipient": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "principal": "1201585232",
+    "rewards": "0"
+  },
+  "rewardEvent": {
+    "event": "BondClaimed",
+    "tokenId": "3",
+    "recipient": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "principal": "0",
+    "rewards": "1065857776"
+  },
+  "roleBeneficiaries": {
+    "fee": "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+    "creator": "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D"
+  },
+  "rolePayment": {
+    "index": 14,
+    "hash": "0xb36fe6cf22145a16827b02f4877f2bc1e537652da0b608dcc2f50fe359a51981",
+    "to": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+    "selector": "0x98652511",
+    "values": [
+      {
+        "token": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+        "from": "0xEf2E550310745309Fc07B1DdE1853447e6a528bF",
+        "to": "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+        "value": "717112024"
+      }
+    ]
+  },
+  "rtRedemptions": [
+    {
+      "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "receiver": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      "nativeRT": "2903655350914193571309238",
+      "nativeSDETF": "5529754",
+      "retainedGons": "394395608778125083915324042509108970"
+    }
+  ],
+  "nativeRemainderPayment": {
+    "index": 12,
+    "hash": "0xc5205268a084ba4e45611be73b8af26b65b4815b508b1f81efa0e2eb397289b1",
+    "to": "0xd5a995b3199be66ec1b6825014cbae48691c3425",
+    "selector": "0x852465fb",
+    "values": [
+      {
+        "token": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+        "from": "0xEf2E550310745309Fc07B1DdE1853447e6a528bF",
+        "to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "value": "0"
+      }
+    ]
+  },
+  "repeatClaim": {
+    "index": 15,
+    "hash": "0x11695d1f4a324c9adce2faa89731f4e43e4e06dcaedd44e9599be16a81eddb19",
+    "to": "0xd5a995b3199be66ec1b6825014cbae48691c3425",
+    "selector": "0xef5cfb8c",
+    "values": [
+      {
+        "token": "0x186a8c0806facedc673789980f7483dccc633430",
+        "from": "0x0000000000000000000000000000000000000000",
+        "to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "value": "0"
+      }
+    ]
+  },
+  "allocationInterface": "0xa71d1a99",
+  "administrationSupported": false,
+  "removedCallProbes": [
+    {
+      "selector": "0xe9dc9e6d",
+      "success": false,
+      "result": "{\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: e9dc9e6d00000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4be9dc9e6d00000000000000000000000000000000000000000000000000000000\"}"
+    },
+    {
+      "selector": "0xec55c474",
+      "success": false,
+      "result": "{\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: ec55c47400000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4bec55c47400000000000000000000000000000000000000000000000000000000\"}"
+    },
+    {
+      "selector": "0x161d9afc",
+      "success": false,
+      "result": "{\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 161d9afc00000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b161d9afc00000000000000000000000000000000000000000000000000000000\"}"
+    },
+    {
+      "selector": "0xccff9894",
+      "success": false,
+      "result": "{\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: ccff989400000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4bccff989400000000000000000000000000000000000000000000000000000000\"}"
+    },
+    {
+      "selector": "0x787642e8",
+      "success": false,
+      "result": "{\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: 787642e800000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4b787642e800000000000000000000000000000000000000000000000000000000\"}"
+    }
+  ],
+  "metadataStates": [
+    {
+      "activated": false,
+      "attributes": [
+        {
+          "trait_type": "DETF name",
+          "value": "Migration DETF"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "DETF"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Migration cliff bond"
+        },
+        {
+          "trait_type": "Purchased DETF",
+          "value": "1.201585232"
+        },
+        {
+          "trait_type": "Remaining DETF principal",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimed DETF principal",
+          "value": "1.201585232"
+        },
+        {
+          "trait_type": "Claimable principal sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable rewards sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Total claimable sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Accrued rewards sDETF",
+          "value": "1.065857776"
+        },
+        {
+          "trait_type": "Reward delivery",
+          "value": "Locked until activation"
+        },
+        {
+          "trait_type": "Cliff start",
+          "display_type": "date",
+          "value": 1794353395
+        },
+        {
+          "trait_type": "Principal unlock time",
+          "display_type": "date",
+          "value": 1802129395
+        },
+        {
+          "trait_type": "Cliff duration seconds",
+          "value": 7776000
+        },
+        {
+          "trait_type": "Principal unlocked bps",
+          "value": 10000
+        },
+        {
+          "trait_type": "Principal status",
+          "value": "Unlocked"
+        },
+        {
+          "trait_type": "Seconds remaining",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "activated": true,
+      "attributes": [
+        {
+          "trait_type": "DETF name",
+          "value": "Migration DETF"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "DETF"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Migration cliff bond"
+        },
+        {
+          "trait_type": "Purchased DETF",
+          "value": "1.201585232"
+        },
+        {
+          "trait_type": "Remaining DETF principal",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimed DETF principal",
+          "value": "1.201585232"
+        },
+        {
+          "trait_type": "Claimable principal sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable rewards sDETF",
+          "value": "1.065857776"
+        },
+        {
+          "trait_type": "Total claimable sDETF",
+          "value": "1.065857776"
+        },
+        {
+          "trait_type": "Accrued rewards sDETF",
+          "value": "1.065857776"
+        },
+        {
+          "trait_type": "Reward delivery",
+          "value": "Open"
+        },
+        {
+          "trait_type": "Cliff start",
+          "display_type": "date",
+          "value": 1794353395
+        },
+        {
+          "trait_type": "Principal unlock time",
+          "display_type": "date",
+          "value": 1802129395
+        },
+        {
+          "trait_type": "Cliff duration seconds",
+          "value": 7776000
+        },
+        {
+          "trait_type": "Principal unlocked bps",
+          "value": 10000
+        },
+        {
+          "trait_type": "Principal status",
+          "value": "Unlocked"
+        },
+        {
+          "trait_type": "Seconds remaining",
+          "value": "0"
+        }
+      ]
+    }
+  ],
+  "ordinaryNewBond": {
+    "id": 4,
+    "marked": false,
+    "position": {
+      "principal": "277056448",
+      "claimedPrincipal": "0",
+      "stakingGons": "146820420634958475377495143914331564165961600",
+      "startTimestamp": "1802129406",
+      "vestingDuration": "7776000"
+    }
+  },
+  "conservation": {
+    "physicalEqualsTotal": true,
+    "escrowEqualsDeferredPlusE": true,
+    "tokenizedEqualsRTSupply": true,
+    "bondAttributedEqualsPhysical": true,
+    "syAttributedEqualsPhysical": true,
+    "heldBackingEqualsAccounted": true,
+    "backingEqualsLiabilityAndDust": true
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "full-hermetic-metadata-correction-source-manifest-v1",
+  "date": "2026-11-12",
+  "commit": {
+    "hash": "137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+    "parent": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca",
+    "soleParent": true,
+    "subject": "Fix frozen quote interface metadata expectations",
+    "author": "Cyotee Doge <not_cyotee@proton.me>",
+    "authorDate": "2026-11-12T15:01:42-08:00",
+    "committer": "Cyotee Doge <not_cyotee@proton.me>",
+    "committerDate": "2026-11-12T15:01:42-08:00",
+    "tree": "aa68a333c11d70e4c1952b5c095f046ad26cbf34",
+    "pathCount": 1,
+    "modifications": 1,
+    "additions": 0,
+    "insertions": 3,
+    "deletions": 1,
+    "coauthorTrailer": "Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>",
+    "trailerCount": 1,
+    "otherTrailers": [],
+    "signatureKey": "55EB42889513051267BC55A395206404A78FB7F3",
+    "signatureStatus": "good",
+    "signatureOwnertrust": "unknown; not a bad signature",
+    "rawCommitBytes": 1196,
+    "rawCommitSha256": "6a9f24d68555d1384ce2bbbbdef0555d5558696a5d8888408de6eaacceb8449f"
+  },
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic",
+  "branch": "work/dtf-migration-phase-25-full-hermetic",
+  "scope": "One stale metadata expectation in the existing V3 full-spread package deploy test. No production behavior, test deletion, skip, evidence, configuration, dependency, held09, gas, portability, operational, or public acceptance.",
+  "derivation": "Seal source object and current raw bytes, cross-checked to the complete unstaged diff before staging. Not taken from a directory listing.",
+  "hashAlgorithm": "SHA-256 of raw file bytes for provenance; Git blob id is SHA-1 of the blob header plus those same bytes",
+  "encoding": {
+    "core.autocrlf": null,
+    "autocrlfExit": 1,
+    "filter": "unspecified",
+    "gpg.program": null,
+    "gpgProgramExit": 1,
+    "comparison": "worktree bytes, staged blob bytes, committed blob bytes, and accepted SHA-256 match",
+    "modeEncoding": "Accepted and current mode 33188 is 0o100644. Permission 0o644 is st_mode & 0o777. Staged and committed mode is 100644."
+  },
+  "whitespace": {
+    "stagedBaseToCandidateExit": 0,
+    "stagedCheckExit": 0,
+    "parentToHeadExit": 0,
+    "showCheckExit": 0,
+    "rewritten": false,
+    "note": "Both staged gates and the parent-to-HEAD gate exited 0 with empty output. No source byte was edited to satisfy whitespace."
+  },
+  "selfDigest": "This manifest does not claim its own raw SHA-256.",
+  "paths": [
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol",
+      "status": "modified",
+      "mode": "100644",
+      "perm": "0o644",
+      "size": 17776,
+      "acceptedSha256": "e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1",
+      "currentSha256": "e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1",
+      "stagedSha256": "e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1",
+      "committedSha256": "e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1",
+      "gitBlob": "075c1444c757188cd187fe8d63df947422bbaf8c",
+      "parentBlob": "2a806b5a411e61dade8b08dd2183e442a2c0ac8e",
+      "acceptedBytes": 17776,
+      "currentMode": 33188,
+      "producerMode": 33188
+    }
+  ]
+}

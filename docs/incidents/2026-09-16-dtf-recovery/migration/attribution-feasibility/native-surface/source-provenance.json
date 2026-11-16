@@ -1,0 +1,1591 @@
+{
+  "date": "2026-11-11",
+  "pins": {
+    "nitro": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+    "geth": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+    "abiInterfaces": "7e88c8cc53c2e96201a23c638f1536557b9cb68b"
+  },
+  "nitroTreeBindings": [
+    {
+      "path": "contracts-local/src/precompiles",
+      "mode": "160000",
+      "type": "commit",
+      "sha": "7e88c8cc53c2e96201a23c638f1536557b9cb68b"
+    },
+    {
+      "path": "go-ethereum",
+      "mode": "160000",
+      "type": "commit",
+      "sha": "5eee8f546e7602b7deeef7909f291bbebc77e233"
+    }
+  ],
+  "treeQueries": [
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro/git/trees/70fa99a6e711f09eedd96a907290c3df0f3bcf7d?recursive=1",
+      "sha256": "39f8742916bad2f5af92faf9f0d3b46897810d99a64b0ee807e4cb1cd7e54760",
+      "truncated": false
+    },
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/go-ethereum/git/trees/5eee8f546e7602b7deeef7909f291bbebc77e233?recursive=1",
+      "sha256": "0b35677de8f08bced81ea97f4a3ef0ef753a8f52da2c386aa0801b007f03e837",
+      "truncated": false
+    },
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro-precompile-interfaces/git/trees/7e88c8cc53c2e96201a23c638f1536557b9cb68b?recursive=1",
+      "sha256": "f381d600746de9fdd2602c514325dfe7f2dca1e304af75d2216f507d2949b2fd",
+      "truncated": false
+    }
+  ],
+  "abiGeneration": "Pinned solgen/gen.go reads contracts-local/out/precompiles/*.sol/*.json into precompilesgen via abigen; contracts-local/src/precompiles is the pinned nitro-precompile-interfaces gitlink, not contracts/src or a mutable master interface. Generated build products were not rebuilt/attested.",
+  "files": [
+    {
+      "path": "sources/nitro/precompiles/ArbInfo.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbInfo.go",
+      "bytes": 1203,
+      "sha256": "d7ba3232f9587c93fb020d24405c20cf8f99373972a53152c0286826d4e3a401",
+      "gitBlobSha1": "e8f4aac22b1527fc7212ffd868534d06b1c2e082"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbAddressTable.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbAddressTable.go",
+      "bytes": 2596,
+      "sha256": "e7395408ab80eb63df3c659715ab820959b4556a2fb55501d83c1fb8ceb796aa",
+      "gitBlobSha1": "73e174621d1d6c6d1556aa63c237640c7d5be1df"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbBLS.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbBLS.go",
+      "bytes": 259,
+      "sha256": "73fb359b55ff4b896fdf341756d8c4130ea9dd670379caaad7e3f5570e7c4c7c",
+      "gitBlobSha1": "43db602d7067ff8f51ad69f43f4b82b4a8916536"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbFunctionTable.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbFunctionTable.go",
+      "bytes": 958,
+      "sha256": "761515da44816bea73647a519968dd121374f100faea797bf4aaa11d5adbeeb8",
+      "gitBlobSha1": "75532e17b7c4677e20004e7a2af130b3493d55fa"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbosTest.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbosTest.go",
+      "bytes": 729,
+      "sha256": "26429e31f81c999e7df50cd0280128acce7f70737317892af558c7e0db5b4b4a",
+      "gitBlobSha1": "0ef143b15983a17b22fadcc4369c391d234b06d4"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbGasInfo.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbGasInfo.go",
+      "bytes": 13762,
+      "sha256": "adf4bc79cf1cb650fd5a14f02f49578d39af8483d214be9c63769fef4701d54d",
+      "gitBlobSha1": "2e773f1b5bf1fe70f247237236f474632ce03ec7"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbAggregator.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbAggregator.go",
+      "bytes": 3577,
+      "sha256": "a9c22c66547e91d10a004495c1237fff52e4d630cde5b7f43617d6641b5b0e58",
+      "gitBlobSha1": "47c0cddfb93025d370c7c40441e18e47e6bec0db"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbStatistics.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbStatistics.go",
+      "bytes": 1282,
+      "sha256": "84d420a95f8fa1c10aa78db0ffc4009a542cec4ab502b6bba4a7486393605e7a",
+      "gitBlobSha1": "0217ffa41888587e06122e885bf75f27ceebd578"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbOwnerPublic.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbOwnerPublic.go",
+      "bytes": 5018,
+      "sha256": "3e7f40582f6446ec9b0030fb3ad6bf90c5d9dbc529140a09f2d083fdcdce7572",
+      "gitBlobSha1": "b0860fac059930a24badfd2a414491621c96eb75"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbWasm.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbWasm.go",
+      "bytes": 8606,
+      "sha256": "d69353ea1a6f2a083d3220491d2f3044a24d1e97fb56b869815b4e97e361e597",
+      "gitBlobSha1": "d02d9174a574b5ea86086e3c1a0a02731f0aae6c"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbWasmCache.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbWasmCache.go",
+      "bytes": 2666,
+      "sha256": "e48a942fd72f604544d9736c64a7c30d82b41a5946a6e735eb2f0a1471d16c60",
+      "gitBlobSha1": "ca6d04fa1eba0b279b5a31f99d32da8fbfe9255e"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbRetryableTx.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbRetryableTx.go",
+      "bytes": 10114,
+      "sha256": "6d113ee3dd6617e0f9f13238cd1f17a99e8dd478aa8239072f12953eca332ad0",
+      "gitBlobSha1": "28cb115aabef9d64ad742950db468eef712a6a8f"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbSys.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbSys.go",
+      "bytes": 8307,
+      "sha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "gitBlobSha1": "c3ccd22b6865304363ade2d2b4d48e5c65079edd"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbOwner.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbOwner.go",
+      "bytes": 25491,
+      "sha256": "ffe02545d3af25ab2aec245d70c8b7d511e1a27cc342c491299d90692a7df0f9",
+      "gitBlobSha1": "db70dfad879547451005e9142ca2a33a4571bac7"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbDebug.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbDebug.go",
+      "bytes": 2647,
+      "sha256": "c53e795fd61c55c300da2c21d6c11470ad581346e7ec480e8d3ccd9a40dd18b1",
+      "gitBlobSha1": "5672169b4a687599842867ed845b5062fa306e47"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbosActs.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbosActs.go",
+      "bytes": 1034,
+      "sha256": "a59f30c2b99de75a47e32b1be610178da86836829ea896fcd90d8143b23a4408",
+      "gitBlobSha1": "aeb73d57735fe187cde15c350808040c61557ade"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbNativeTokenManager.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbNativeTokenManager.go",
+      "bytes": 2250,
+      "sha256": "7a657df13501c4638b33d764ebcf9989ebda5b3edcf0a967353ca95c4d14ed41",
+      "gitBlobSha1": "cfcc8cbfd031f4936ac22a61b82268d61295e3e8"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbFilteredTransactionsManager.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbFilteredTransactionsManager.go",
+      "bytes": 2144,
+      "sha256": "e1a0a62f8dc61d08d50a512ae1fe9cbd8ebc3bc803b025b82aefc3584a599ecd",
+      "gitBlobSha1": "2e1ab4a18b705088a02e7f4bbf62137b6adc9a88"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbInfo.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbInfo.sol",
+      "bytes": 781,
+      "sha256": "d9ce39a86d5e167bf2fa954d9d3c58a210103526e3ff2f98ed6e9d67826167a0",
+      "gitBlobSha1": "316fd6800139cfdc4252b53afd3abe27454282fb"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbAddressTable.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbAddressTable.sol",
+      "bytes": 2272,
+      "sha256": "545343f7e16e5dca19de89be9593389f7359ed233903a59589c986e91b4fe116",
+      "gitBlobSha1": "b34a0b9cef1902b499013cf8684c29307d6afbc4"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbBLS.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbBLS.sol",
+      "bytes": 425,
+      "sha256": "88091e28a13c87764e66c395651cbaba66d9b114a720171ec500f694fe300660",
+      "gitBlobSha1": "7fbb5a90d4695b3bde18884f7560e4d1ea349668"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbFunctionTable.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbFunctionTable.sol",
+      "bytes": 1043,
+      "sha256": "86b80bd87a20625d2f3eb8678ad701c6e40b1576322c7445fe39ea7de8a2f376",
+      "gitBlobSha1": "be2b30e5f30846add86c330472d250bcb2c42837"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbosTest.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbosTest.sol",
+      "bytes": 778,
+      "sha256": "32b5cf1ba3639c3bfc9a2bb0767bc9c899b8c8ea388c44dc407562b40210116e",
+      "gitBlobSha1": "e1c1ce90df73422450c3474eb0364e64c3eb21ad"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbGasInfo.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbGasInfo.sol",
+      "bytes": 9960,
+      "sha256": "ec622f01a4e4a2fa191a62415df3c5d2c5e008c581570fb5f0b16a270b0a6949",
+      "gitBlobSha1": "99afeff91e45e91217bcb20e48cc2fc77b12255c"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbAggregator.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbAggregator.sol",
+      "bytes": 2873,
+      "sha256": "9a7904a771b6cf88b0318a4088fcbeecab27aca2d7b13fbbb41d46cd8f7ecaf8",
+      "gitBlobSha1": "03dd42dab7fb6c1da7388fe24b653632a8ae44ba"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbStatistics.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbStatistics.sol",
+      "bytes": 1004,
+      "sha256": "680bfb36762a508154613605958ab139e231589b12bbc61c0fb093093c4f829d",
+      "gitBlobSha1": "f5ae31c3b0224387ef4d20922ae4f135333a8619"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbOwnerPublic.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbOwnerPublic.sol",
+      "bytes": 4266,
+      "sha256": "1dbc44a27c056a640f966afaa14c44168683b58519009db7a736c75cb2fde1a0",
+      "gitBlobSha1": "8539fffacca8faa7e5d82cf339209a48805e3e87"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbWasm.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbWasm.sol",
+      "bytes": 5776,
+      "sha256": "6d2076d064b6a12e1b8df4ffa26a0fdde6c93fc79b4c3ee2e8adf98e96a243f1",
+      "gitBlobSha1": "1dc83428b8724a4de36c2ef14bfed9603c3c599d"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbWasmCache.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbWasmCache.sol",
+      "bytes": 1845,
+      "sha256": "69a3855c597c3e165f5ab18b99355c33e264aa08d5f1eabafb95d7782f1ef67b",
+      "gitBlobSha1": "3d7e2420e3a859c01737a2bea6a1d029f6bf70b1"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbRetryableTx.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbRetryableTx.sol",
+      "bytes": 3914,
+      "sha256": "195c78d75962132116dd1c2f0ce04ab8c977d2fb278becdefc925f02ce621bb0",
+      "gitBlobSha1": "454a55bf98378fff98f63404fb7f69c3920681e2"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbSys.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbSys.sol",
+      "bytes": 5488,
+      "sha256": "55251738b340761189c5ef8874c9de135cce76e7a8b4bbe682a46db75f5fd87d",
+      "gitBlobSha1": "f253a465a6bdc3779bd973c817008f4e6bf26697"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbOwner.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbOwner.sol",
+      "bytes": 18128,
+      "sha256": "4192fdc91ea9b10baa245ead4cbb304ce9fb89c15ee7da8cce5b31c1ca60c63b",
+      "gitBlobSha1": "7fb2627a57fc2ccb284080c58cbc7523e5b44401"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbDebug.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbDebug.sol",
+      "bytes": 1594,
+      "sha256": "67b7f243d371f72e681827e99c84468ed9faeadc13e17342d30a1285b56f22ab",
+      "gitBlobSha1": "c39ed7c72ce85b1be24bc9bee51bef4dbed4ea86"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbosActs.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbosActs.sol",
+      "bytes": 1769,
+      "sha256": "0decceb7e4bc2b70a22bee2c94cb23b3690a952bbb64a46c1ca40b376afd0d86",
+      "gitBlobSha1": "dfdd08787630269a82c8db56ec3fd6d51c995ce0"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbNativeTokenManager.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbNativeTokenManager.sol",
+      "bytes": 1348,
+      "sha256": "c18543955ef3b12a04a239f8e45b81f892cbeeb9f06117f8d0530f11dae9edbe",
+      "gitBlobSha1": "8a092d4ddb42fafa321485ecab54fea8bae16550"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbFilteredTransactionsManager.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbFilteredTransactionsManager.sol",
+      "bytes": 1437,
+      "sha256": "14cb6b3c300629fda9e6eb5aa83c414c3b31a69e049708c6f4cbaff6857039e6",
+      "gitBlobSha1": "0fef736221332734c220f4c9de5af7aafbfa202e"
+    },
+    {
+      "path": "sources/nitro/precompiles/precompile.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/precompile.go",
+      "bytes": 33644,
+      "sha256": "c284cea90f037b84048ba59306d73fb7bce25b15e2e469ebc898c0d8b9838d3d",
+      "gitBlobSha1": "f385390b4a8db52b36c111ae09ef466be3ed5f6b"
+    },
+    {
+      "path": "sources/nitro/precompiles/wrapper.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/wrapper.go",
+      "bytes": 5926,
+      "sha256": "fd770434dfafe6718bd53590f99476bd8a8dcffa43dbbc7b855e4f9b56abac45",
+      "gitBlobSha1": "4676f843ad68b15cbf14806c161935e928a92538"
+    },
+    {
+      "path": "sources/nitro/precompiles/context.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/context.go",
+      "bytes": 4383,
+      "sha256": "f961d0a24f4fc44e9ab3c4251826df6ccc10e004911c9acaa2b8b860571848eb",
+      "gitBlobSha1": "ec6ca056a61277ce821090968fe8c38f4b100a82"
+    },
+    {
+      "path": "sources/nitro/precompiles/ArbMultiGasConstraintsTypes.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbMultiGasConstraintsTypes.go",
+      "bytes": 568,
+      "sha256": "c1103c33c8dde1e25769311c8d66e1441df2c78ed92a490a7e6d17c2444cdb81",
+      "gitBlobSha1": "0d38ba90f3f1453aeea2dd72ce5ab2176dc2e761"
+    },
+    {
+      "path": "sources/nitro/solgen/gen.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/solgen/gen.go",
+      "bytes": 8801,
+      "sha256": "54abce5afd85c027e418a6f6d4c7a0b92296a75805ff9305d65a2cf10f583013",
+      "gitBlobSha1": "b027b717de09063e1f6a31eb61940a0f67a8c538"
+    },
+    {
+      "path": "sources/nitro/.gitmodules",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/.gitmodules",
+      "bytes": 1718,
+      "sha256": "38aef0443de19d2a2d137ca453edb7ad6604d3b69a64aad9a32e3d92ca4331d2",
+      "gitBlobSha1": "6ae8a9cccd4148ed43bb95f387b5f758e6299480"
+    },
+    {
+      "path": "sources/nitro/gethhook/geth-hook.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/gethhook/geth-hook.go",
+      "bytes": 5974,
+      "sha256": "2efe217e3c32e6407848149ec3e93450d6e114c798ce63543a3dc77cfbaa874d",
+      "gitBlobSha1": "bf2f95faf352e9fb57bc5679ce503d40f58a6bd5"
+    },
+    {
+      "path": "sources/nitro-precompile-interfaces/ArbMultiGasConstraintsTypes.sol",
+      "repository": "nitro-precompile-interfaces",
+      "revision": "7e88c8cc53c2e96201a23c638f1536557b9cb68b",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbMultiGasConstraintsTypes.sol",
+      "bytes": 2112,
+      "sha256": "b1079f2ad650c6263bdc752c3014c1b1b6e38c71301cd4eaf6d675dfab85b8cb",
+      "gitBlobSha1": "a4c9d356688a9bbc8cd2fee2fc2fa0a8c48c1617"
+    },
+    {
+      "path": "sources/go-ethereum/params/config_arbitrum.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/config_arbitrum.go",
+      "bytes": 5344,
+      "sha256": "229c8897ce78450384d53ad21e091d4876fc35be70103656372a382fbf7714ac",
+      "gitBlobSha1": "0fb98d808cc4959c3e08507eb53247a3e9dded94"
+    },
+    {
+      "path": "sources/go-ethereum/core/types/arbitrum_signer.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/arbitrum_signer.go",
+      "bytes": 3502,
+      "sha256": "0db68d4c489c8bf6c34f84a7ba24aa294e12b1e38bdfcbb77a7616676e958f85",
+      "gitBlobSha1": "aa01640813a12a619ba5472af70d5361377c91d5"
+    },
+    {
+      "path": "sources/go-ethereum/core/types/block.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/block.go",
+      "bytes": 18888,
+      "sha256": "f76e3bd2f3acc9488727419afce5c94a38beedb14c3ff2954ec0a9065a85502b",
+      "gitBlobSha1": "eab458e88aa6ff30140593930da6a61cd4a77399"
+    },
+    {
+      "path": "sources/go-ethereum/params/protocol_params.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/protocol_params.go",
+      "bytes": 21395,
+      "sha256": "f5ec4a8345962f208613329a38ce4b0c9bcf4d0b94c2ec25954a78c513165f80",
+      "gitBlobSha1": "2728979aec089eb3662cae237b01b3e4a00f636e"
+    },
+    {
+      "path": "sources/go-ethereum/core/evm.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/evm.go",
+      "bytes": 5286,
+      "sha256": "63a26d7a30347aa384638d327b56d63b87790b8ea9c8b8c9437618dd0b724b77",
+      "gitBlobSha1": "820b5800987df9245ec8567868ea0efabb8c60c5"
+    },
+    {
+      "path": "sources/go-ethereum/core/vm/instructions.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/instructions.go",
+      "bytes": 38699,
+      "sha256": "b2f27b875ade767429a30669d5ef49d800d3c04da28ebf2124e78b99cef26196",
+      "gitBlobSha1": "a3da7cb5e96d115576bec416a273aee37274de03"
+    },
+    {
+      "path": "sources/go-ethereum/core/vm/eips.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/eips.go",
+      "bytes": 17416,
+      "sha256": "1af4accd143025d69e67bd0a35e883e37f0d90cb2007d4bda43783e68d937b2e",
+      "gitBlobSha1": "a8ee92335f7fe0665f04fa59273a3dc427e80613"
+    },
+    {
+      "path": "sources/go-ethereum/core/vm/contracts.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/contracts.go",
+      "bytes": 48772,
+      "sha256": "9c28e68e923a5077cfcd7896086320a9119d1b6f615c3fb60446e26da853ccbd",
+      "gitBlobSha1": "7171187062112c92230588f0479c5bfab61af9e8"
+    },
+    {
+      "path": "sources/go-ethereum/core/vm/contracts_arbitrum.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/contracts_arbitrum.go",
+      "bytes": 1592,
+      "sha256": "433b881d6763488deb823cc044a3a3a82939f09c0314659515b684e82b379a69",
+      "gitBlobSha1": "2bc9371f6557ef50420f4e894441de28babbf3df"
+    },
+    {
+      "path": "sources/go-ethereum/core/state/statedb.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/state/statedb.go",
+      "bytes": 60400,
+      "sha256": "3e8566fe7a24f883ccbd98915dca6657e96874513f8fcfe863fbdce1bd381d5c",
+      "gitBlobSha1": "69f4f4a9fd50122a284fa61180c74030cdc8336d"
+    },
+    {
+      "path": "sources/nitro/arbos/addressTable/addressTable.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/addressTable/addressTable.go",
+      "bytes": 3441,
+      "sha256": "b567eff3341b52ff4ea69e41960d60e6fddaa2bceceaa319211b55555c7bfb0f",
+      "gitBlobSha1": "9c96b0de64e84189a63fc7503450054952cb1622"
+    },
+    {
+      "path": "sources/nitro/arbos/l1pricing/l1pricing.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l1pricing/l1pricing.go",
+      "bytes": 20102,
+      "sha256": "73dc5dc56215d3617c816884e76491bffce93bd93f1626fe2e886cea0e140dd6",
+      "gitBlobSha1": "8b8a365db08d71580ca27ff0a7777b54e2bf8c0f"
+    },
+    {
+      "path": "sources/nitro/arbos/internal_tx.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/internal_tx.go",
+      "bytes": 7313,
+      "sha256": "c48800495c1d4fa564c10948ea753b66be9ef47baf2c592064eb2ae01b96110a",
+      "gitBlobSha1": "f51c5b0812e77c0197f1c1b8b29ef801c18462f9"
+    },
+    {
+      "path": "sources/nitro/arbos/tx_processor.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/tx_processor.go",
+      "bytes": 44942,
+      "sha256": "f639d682351430d0ce751d0774f890dcf2fd9e292836e60538e0e3c2593c3c54",
+      "gitBlobSha1": "94c97e44d798b699b08eabeec9ff2a189b627a42"
+    },
+    {
+      "path": "sources/nitro/arbos/l2pricing/l2pricing.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/l2pricing.go",
+      "bytes": 10152,
+      "sha256": "3b59b6f6d5b2ada784819f0cc5b765c8d2cd805d73e0aeb0d571969a97cb1c12",
+      "gitBlobSha1": "43cfec21ca69b09fc192929b13b2586bf82ec9cc"
+    },
+    {
+      "path": "sources/nitro/arbos/l2pricing/model.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/model.go",
+      "bytes": 13257,
+      "sha256": "6d8959dd7f2ec8f532293ab8c4cdc8bf363234b6eb853a4c8d912eae239419af",
+      "gitBlobSha1": "34f0144f7f9ce87cc043f83c9b8ea5bd79323bc6"
+    },
+    {
+      "path": "sources/nitro/arbos/l2pricing/gas_constraint.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/gas_constraint.go",
+      "bytes": 1873,
+      "sha256": "b105dc65de2c732f6db7652f7aa0db3461d39f83fe3099b7572a2b45d922fd02",
+      "gitBlobSha1": "c2d5754b314f07336da6e823d7988d73d6d5338e"
+    },
+    {
+      "path": "sources/nitro/arbos/l2pricing/multi_gas_constraint.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/multi_gas_constraint.go",
+      "bytes": 5504,
+      "sha256": "e78a48d45460a38d5f76fc6814cc524a0a00a4ea80bfa943ace9aa0d488d712c",
+      "gitBlobSha1": "be8fe06f0112c6ebb97c3ecfa672da8ddf4402e2"
+    },
+    {
+      "path": "sources/nitro/arbos/l2pricing/multi_gas_fees.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/multi_gas_fees.go",
+      "bytes": 2328,
+      "sha256": "bd3b07a68d4515aed647d1514b659cf4fbeccb46a3f63ec8794872cbe89e4e91",
+      "gitBlobSha1": "8d34e8d3a4e5f8e7ab0095ec5071292f1250fd82"
+    },
+    {
+      "path": "sources/nitro/arbos/block_processor.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/block_processor.go",
+      "bytes": 33262,
+      "sha256": "1a847ed646a64f8df933d44dcce75f7dd062890363927739395f077cd906ac34",
+      "gitBlobSha1": "050ec23ff6a2bdc8b6eeaea132a425a052f0ecc8"
+    },
+    {
+      "path": "sources/nitro/arbos/l1pricing/batchPoster.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l1pricing/batchPoster.go",
+      "bytes": 4655,
+      "sha256": "9235317cbc58ca352d877687319ca64895b45ab8ee927601c80ea7ae87941d36",
+      "gitBlobSha1": "9313c807434df742693c85fee633894768f605fd"
+    },
+    {
+      "path": "sources/nitro/arbos/addressSet/addressSet.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/addressSet/addressSet.go",
+      "bytes": 4733,
+      "sha256": "64de5db4b3f9de60f4a6b8ce7919cbf6e4a679f20a095e42d22b9848c610d3d5",
+      "gitBlobSha1": "cb8035f0f95af2f6dca97d241d5d3a40594175f3"
+    },
+    {
+      "path": "sources/nitro/arbos/arbosState/arbosstate.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/arbosState/arbosstate.go",
+      "bytes": 28493,
+      "sha256": "d784755e8b24c799e374206f613f606f7a184d60df4040885ec2175dfd706faf",
+      "gitBlobSha1": "c1b4363e466cec181e6d71d1136ca2f7adf067f4"
+    },
+    {
+      "path": "sources/nitro/arbos/features/features.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/features/features.go",
+      "bytes": 1580,
+      "sha256": "6cb8308a7e2efbca9a592f4c81595aa95cc5dbee6e04113d61e07e1e6ef84fd4",
+      "gitBlobSha1": "f2fb36078ed86cc3ab02278c3a01e4349eb24c96"
+    },
+    {
+      "path": "sources/nitro/arbos/programs/params.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/programs/params.go",
+      "bytes": 9293,
+      "sha256": "c748b57e1b30fa26c6e353a63b3d3072ddf4ca4d651c24b045be42b879c6434a",
+      "gitBlobSha1": "0d2603a3db6dc26cd1d1ce99657b64ae04128859"
+    },
+    {
+      "path": "sources/nitro/arbos/programs/programs.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/programs/programs.go",
+      "bytes": 28679,
+      "sha256": "eabecb9fd2c659a05be891583ff860d766a345ef5bad1b1ce50d0a93ff08c036",
+      "gitBlobSha1": "46a66c566def203144c95933b4fe2792fee0217b"
+    },
+    {
+      "path": "sources/nitro/arbos/programs/data_pricer.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/programs/data_pricer.go",
+      "bytes": 3095,
+      "sha256": "a38c52a53998a58d7bc8e5f7ac33bc387103691a54f16f702efa442d4c858406",
+      "gitBlobSha1": "241cd358c57612501bd930d60d1de379b321f11a"
+    },
+    {
+      "path": "sources/nitro/arbos/retryables/retryable.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/retryables/retryable.go",
+      "bytes": 12964,
+      "sha256": "36beedf7fae0ab6b8d23b09bf6ae4623a962588a3bd4815183b6a39e5ce2b705",
+      "gitBlobSha1": "67e663c770cfc08385f7d2327710a94758294542"
+    },
+    {
+      "path": "sources/nitro/arbos/merkleAccumulator/merkleAccumulator.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/merkleAccumulator/merkleAccumulator.go",
+      "bytes": 7272,
+      "sha256": "d1b6f806059cb09473a2c31a7ae01fcc545200911726219aa09a18190cdf8557",
+      "gitBlobSha1": "06a1ca196b9d6c8122b781c290e8647e47befcc3"
+    },
+    {
+      "path": "sources/nitro/arbos/filteredTransactions/state.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/filteredTransactions/state.go",
+      "bytes": 1674,
+      "sha256": "f3abb1583c504d525208b529d243ddf06bfa5cc706236f9d73633d933e69deea",
+      "gitBlobSha1": "768f86b9c0e70000230347d54f4ce927f742f979"
+    },
+    {
+      "path": "sources/nitro/arbos/blockhash/blockhash.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/blockhash/blockhash.go",
+      "bytes": 2235,
+      "sha256": "3c70cec4d47a9cd744152ad6c4dfc43536b698cd0170cf0bde66570e14432ec8",
+      "gitBlobSha1": "1aea45d1b951e17f174042cd82af91328183c91a"
+    },
+    {
+      "path": "sources/nitro/execution/nodeinterface/node_interface.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/execution/nodeinterface/node_interface.go",
+      "bytes": 21674,
+      "sha256": "95d1112f677a9285e1884c032eec6172d00c268600871e8d63e0aa4c267f7439",
+      "gitBlobSha1": "7f4a3d29e67756bbf667df2c77b8b6d4adff96f9"
+    },
+    {
+      "path": "sources/nitro/execution/nodeinterface/virtual_contracts.go",
+      "repository": "nitro",
+      "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/execution/nodeinterface/virtual_contracts.go",
+      "bytes": 6256,
+      "sha256": "5c2017b4657b8a84d850b292c658e715937f571007a13133af2e68167de371ea",
+      "gitBlobSha1": "1af98290de64297b29b77a4b1de7dc2707f13736"
+    },
+    {
+      "path": "sources/go-ethereum/params/config.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/config.go",
+      "bytes": 62268,
+      "sha256": "a8dee8f8ef54db8f3c95230aa0ad99df4166c39c6ccce761808f6894427efece",
+      "gitBlobSha1": "9f3b6c295907aa0bdef6f0944ced4d40bf437cd0"
+    },
+    {
+      "path": "sources/go-ethereum/core/vm/evm.go",
+      "repository": "go-ethereum",
+      "revision": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/evm.go",
+      "bytes": 36452,
+      "sha256": "3292951d31c79ab74709d6e7d24a591b5052f2d427cd476cac1cfbd2dd2c869a",
+      "gitBlobSha1": "75b82ad591cf510b868e086b5bc7a2b110a55bae"
+    }
+  ],
+  "sourceFetches": [
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/precompile.go",
+      "status": 200,
+      "bytes": 33644,
+      "sha256": "c284cea90f037b84048ba59306d73fb7bce25b15e2e469ebc898c0d8b9838d3d",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/.gitmodules",
+      "status": 200,
+      "bytes": 1718,
+      "sha256": "38aef0443de19d2a2d137ca453edb7ad6604d3b69a64aad9a32e3d92ca4331d2",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbInfo.go",
+      "status": 200,
+      "bytes": 1203,
+      "sha256": "d7ba3232f9587c93fb020d24405c20cf8f99373972a53152c0286826d4e3a401",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbFunctionTable.go",
+      "status": 200,
+      "bytes": 958,
+      "sha256": "761515da44816bea73647a519968dd121374f100faea797bf4aaa11d5adbeeb8",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbBLS.go",
+      "status": 200,
+      "bytes": 259,
+      "sha256": "73fb359b55ff4b896fdf341756d8c4130ea9dd670379caaad7e3f5570e7c4c7c",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbosTest.go",
+      "status": 200,
+      "bytes": 729,
+      "sha256": "26429e31f81c999e7df50cd0280128acce7f70737317892af558c7e0db5b4b4a",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbGasInfo.go",
+      "status": 200,
+      "bytes": 13762,
+      "sha256": "adf4bc79cf1cb650fd5a14f02f49578d39af8483d214be9c63769fef4701d54d",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbAddressTable.go",
+      "status": 200,
+      "bytes": 2596,
+      "sha256": "e7395408ab80eb63df3c659715ab820959b4556a2fb55501d83c1fb8ceb796aa",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbStatistics.go",
+      "status": 200,
+      "bytes": 1282,
+      "sha256": "84d420a95f8fa1c10aa78db0ffc4009a542cec4ab502b6bba4a7486393605e7a",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbAggregator.go",
+      "status": 200,
+      "bytes": 3577,
+      "sha256": "a9c22c66547e91d10a004495c1237fff52e4d630cde5b7f43617d6641b5b0e58",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbOwnerPublic.go",
+      "status": 200,
+      "bytes": 5018,
+      "sha256": "3e7f40582f6446ec9b0030fb3ad6bf90c5d9dbc529140a09f2d083fdcdce7572",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbWasmCache.go",
+      "status": 200,
+      "bytes": 2666,
+      "sha256": "e48a942fd72f604544d9736c64a7c30d82b41a5946a6e735eb2f0a1471d16c60",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbSys.go",
+      "status": 200,
+      "bytes": 8307,
+      "sha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbWasm.go",
+      "status": 200,
+      "bytes": 8606,
+      "sha256": "d69353ea1a6f2a083d3220491d2f3044a24d1e97fb56b869815b4e97e361e597",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbRetryableTx.go",
+      "status": 200,
+      "bytes": 10114,
+      "sha256": "6d113ee3dd6617e0f9f13238cd1f17a99e8dd478aa8239072f12953eca332ad0",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbOwner.go",
+      "status": 200,
+      "bytes": 25491,
+      "sha256": "ffe02545d3af25ab2aec245d70c8b7d511e1a27cc342c491299d90692a7df0f9",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbosActs.go",
+      "status": 200,
+      "bytes": 1034,
+      "sha256": "a59f30c2b99de75a47e32b1be610178da86836829ea896fcd90d8143b23a4408",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbDebug.go",
+      "status": 200,
+      "bytes": 2647,
+      "sha256": "c53e795fd61c55c300da2c21d6c11470ad581346e7ec480e8d3ccd9a40dd18b1",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbFilteredTransactionsManager.go",
+      "status": 200,
+      "bytes": 2144,
+      "sha256": "e1a0a62f8dc61d08d50a512ae1fe9cbd8ebc3bc803b025b82aefc3584a599ecd",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/wrapper.go",
+      "status": 200,
+      "bytes": 5926,
+      "sha256": "fd770434dfafe6718bd53590f99476bd8a8dcffa43dbbc7b855e4f9b56abac45",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/context.go",
+      "status": 200,
+      "bytes": 4383,
+      "sha256": "f961d0a24f4fc44e9ab3c4251826df6ccc10e004911c9acaa2b8b860571848eb",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbNativeTokenManager.go",
+      "status": 200,
+      "bytes": 2250,
+      "sha256": "7a657df13501c4638b33d764ebcf9989ebda5b3edcf0a967353ca95c4d14ed41",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/arbitrum_types.go",
+      "status": 404,
+      "bytes": 14,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed",
+      "archived": false,
+      "failureBody": "404: Not Found"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/arbitrum_params.go",
+      "status": 404,
+      "bytes": 14,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed",
+      "archived": false,
+      "failureBody": "404: Not Found"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/solgen/gen.go",
+      "status": 200,
+      "bytes": 8801,
+      "sha256": "54abce5afd85c027e418a6f6d4c7a0b92296a75805ff9305d65a2cf10f583013",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbAddressTable.sol",
+      "status": 200,
+      "bytes": 2272,
+      "sha256": "545343f7e16e5dca19de89be9593389f7359ed233903a59589c986e91b4fe116",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbFunctionTable.sol",
+      "status": 200,
+      "bytes": 1043,
+      "sha256": "86b80bd87a20625d2f3eb8678ad701c6e40b1576322c7445fe39ea7de8a2f376",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbInfo.sol",
+      "status": 200,
+      "bytes": 781,
+      "sha256": "d9ce39a86d5e167bf2fa954d9d3c58a210103526e3ff2f98ed6e9d67826167a0",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbBLS.sol",
+      "status": 200,
+      "bytes": 425,
+      "sha256": "88091e28a13c87764e66c395651cbaba66d9b114a720171ec500f694fe300660",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbosTest.sol",
+      "status": 200,
+      "bytes": 778,
+      "sha256": "32b5cf1ba3639c3bfc9a2bb0767bc9c899b8c8ea388c44dc407562b40210116e",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbAggregator.sol",
+      "status": 200,
+      "bytes": 2873,
+      "sha256": "9a7904a771b6cf88b0318a4088fcbeecab27aca2d7b13fbbb41d46cd8f7ecaf8",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbStatistics.sol",
+      "status": 200,
+      "bytes": 1004,
+      "sha256": "680bfb36762a508154613605958ab139e231589b12bbc61c0fb093093c4f829d",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbGasInfo.sol",
+      "status": 200,
+      "bytes": 9960,
+      "sha256": "ec622f01a4e4a2fa191a62415df3c5d2c5e008c581570fb5f0b16a270b0a6949",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbOwnerPublic.sol",
+      "status": 200,
+      "bytes": 4266,
+      "sha256": "1dbc44a27c056a640f966afaa14c44168683b58519009db7a736c75cb2fde1a0",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbWasm.sol",
+      "status": 200,
+      "bytes": 5776,
+      "sha256": "6d2076d064b6a12e1b8df4ffa26a0fdde6c93fc79b4c3ee2e8adf98e96a243f1",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbSys.sol",
+      "status": 200,
+      "bytes": 5488,
+      "sha256": "55251738b340761189c5ef8874c9de135cce76e7a8b4bbe682a46db75f5fd87d",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbRetryableTx.sol",
+      "status": 200,
+      "bytes": 3914,
+      "sha256": "195c78d75962132116dd1c2f0ce04ab8c977d2fb278becdefc925f02ce621bb0",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbWasmCache.sol",
+      "status": 200,
+      "bytes": 1845,
+      "sha256": "69a3855c597c3e165f5ab18b99355c33e264aa08d5f1eabafb95d7782f1ef67b",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbOwner.sol",
+      "status": 200,
+      "bytes": 18128,
+      "sha256": "4192fdc91ea9b10baa245ead4cbb304ce9fb89c15ee7da8cce5b31c1ca60c63b",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbDebug.sol",
+      "status": 200,
+      "bytes": 1594,
+      "sha256": "67b7f243d371f72e681827e99c84468ed9faeadc13e17342d30a1285b56f22ab",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbosActs.sol",
+      "status": 200,
+      "bytes": 1769,
+      "sha256": "0decceb7e4bc2b70a22bee2c94cb23b3690a952bbb64a46c1ca40b376afd0d86",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbFilteredTransactionsManager.sol",
+      "status": 200,
+      "bytes": 1437,
+      "sha256": "14cb6b3c300629fda9e6eb5aa83c414c3b31a69e049708c6f4cbaff6857039e6",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbNativeTokenManager.sol",
+      "status": 200,
+      "bytes": 1348,
+      "sha256": "c18543955ef3b12a04a239f8e45b81f892cbeeb9f06117f8d0530f11dae9edbe",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/config_arbitrum.go",
+      "status": 200,
+      "bytes": 5344,
+      "sha256": "229c8897ce78450384d53ad21e091d4876fc35be70103656372a382fbf7714ac",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/arb_types.go",
+      "status": 200,
+      "bytes": 21898,
+      "sha256": "905a769259cbbcc397f7479b2b5a45aa7f1dfd94a71935692f1dd125f0501662",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/addressSet/addressSet.go",
+      "status": 200,
+      "bytes": 4733,
+      "sha256": "64de5db4b3f9de60f4a6b8ce7919cbf6e4a679f20a095e42d22b9848c610d3d5",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/filteredTransactions/state.go",
+      "status": 200,
+      "bytes": 1674,
+      "sha256": "f3abb1583c504d525208b529d243ddf06bfa5cc706236f9d73633d933e69deea",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/addressTable/addressTable.go",
+      "status": 200,
+      "bytes": 3441,
+      "sha256": "b567eff3341b52ff4ea69e41960d60e6fddaa2bceceaa319211b55555c7bfb0f",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l1pricing/l1pricing.go",
+      "status": 200,
+      "bytes": 20102,
+      "sha256": "73dc5dc56215d3617c816884e76491bffce93bd93f1626fe2e886cea0e140dd6",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l1pricing/batchPoster.go",
+      "status": 200,
+      "bytes": 4655,
+      "sha256": "9235317cbc58ca352d877687319ca64895b45ab8ee927601c80ea7ae87941d36",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/l2pricing.go",
+      "status": 200,
+      "bytes": 10152,
+      "sha256": "3b59b6f6d5b2ada784819f0cc5b765c8d2cd805d73e0aeb0d571969a97cb1c12",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/multi_gas_constraint.go",
+      "status": 200,
+      "bytes": 5504,
+      "sha256": "e78a48d45460a38d5f76fc6814cc524a0a00a4ea80bfa943ace9aa0d488d712c",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/gas_constraint.go",
+      "status": 200,
+      "bytes": 1873,
+      "sha256": "b105dc65de2c732f6db7652f7aa0db3461d39f83fe3099b7572a2b45d922fd02",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/programs/programs.go",
+      "status": 200,
+      "bytes": 28679,
+      "sha256": "eabecb9fd2c659a05be891583ff860d766a345ef5bad1b1ce50d0a93ff08c036",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/programs/params.go",
+      "status": 200,
+      "bytes": 9293,
+      "sha256": "c748b57e1b30fa26c6e353a63b3d3072ddf4ca4d651c24b045be42b879c6434a",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/multi_gas_fees.go",
+      "status": 200,
+      "bytes": 2328,
+      "sha256": "bd3b07a68d4515aed647d1514b659cf4fbeccb46a3f63ec8794872cbe89e4e91",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/programs/data_pricer.go",
+      "status": 200,
+      "bytes": 3095,
+      "sha256": "a38c52a53998a58d7bc8e5f7ac33bc387103691a54f16f702efa442d4c858406",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/retryables/retryable.go",
+      "status": 200,
+      "bytes": 12964,
+      "sha256": "36beedf7fae0ab6b8d23b09bf6ae4623a962588a3bd4815183b6a39e5ce2b705",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/internal_tx.go",
+      "status": 200,
+      "bytes": 7313,
+      "sha256": "c48800495c1d4fa564c10948ea753b66be9ef47baf2c592064eb2ae01b96110a",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/merkleAccumulator/merkleAccumulator.go",
+      "status": 200,
+      "bytes": 7272,
+      "sha256": "d1b6f806059cb09473a2c31a7ae01fcc545200911726219aa09a18190cdf8557",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/blockhash/blockhash.go",
+      "status": 200,
+      "bytes": 2235,
+      "sha256": "3c70cec4d47a9cd744152ad6c4dfc43536b698cd0170cf0bde66570e14432ec8",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/block_processor.go",
+      "status": 200,
+      "bytes": 33262,
+      "sha256": "1a847ed646a64f8df933d44dcce75f7dd062890363927739395f077cd906ac34",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/tx_processor.go",
+      "status": 200,
+      "bytes": 44942,
+      "sha256": "f639d682351430d0ce751d0774f890dcf2fd9e292836e60538e0e3c2593c3c54",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/arbosState/arbosstate.go",
+      "status": 200,
+      "bytes": 28493,
+      "sha256": "d784755e8b24c799e374206f613f606f7a184d60df4040885ec2175dfd706faf",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/execution/nodeinterface/node_interface.go",
+      "status": 200,
+      "bytes": 21674,
+      "sha256": "95d1112f677a9285e1884c032eec6172d00c268600871e8d63e0aa4c267f7439",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/addresses.go",
+      "status": 404,
+      "bytes": 14,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed",
+      "archived": false,
+      "failureBody": "404: Not Found"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/instructions.go",
+      "status": 200,
+      "bytes": 38699,
+      "sha256": "b2f27b875ade767429a30669d5ef49d800d3c04da28ebf2124e78b99cef26196",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/arbitrum_hooks.go",
+      "status": 200,
+      "bytes": 3325,
+      "sha256": "0a19c413eebb78aaa7d1ee0e86761860ba98e45d28b9a6165619c1ced275e132",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/contracts_arbitrum.go",
+      "status": 200,
+      "bytes": 1592,
+      "sha256": "433b881d6763488deb823cc044a3a3a82939f09c0314659515b684e82b379a69",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/state/statedb.go",
+      "status": 200,
+      "bytes": 60400,
+      "sha256": "3e8566fe7a24f883ccbd98915dca6657e96874513f8fcfe863fbdce1bd381d5c",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/block.go",
+      "status": 200,
+      "bytes": 18888,
+      "sha256": "f76e3bd2f3acc9488727419afce5c94a38beedb14c3ff2954ec0a9065a85502b",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/protocol_params.go",
+      "status": 200,
+      "bytes": 21395,
+      "sha256": "f5ec4a8345962f208613329a38ce4b0c9bcf4d0b94c2ec25954a78c513165f80",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/common/types_arbitrum.go",
+      "status": 200,
+      "bytes": 1668,
+      "sha256": "fd621c98f00e8e23b9d912fcfee5d2e52bab1bd5a8a58fd3e66d2ed296159e14",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/7e88c8cc53c2e96201a23c638f1536557b9cb68b/ArbMultiGasConstraintsTypes.sol",
+      "status": 200,
+      "bytes": 2112,
+      "sha256": "b1079f2ad650c6263bdc752c3014c1b1b6e38c71301cd4eaf6d675dfab85b8cb",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/transaction.go",
+      "status": 200,
+      "bytes": 24242,
+      "sha256": "b645142c3b256493af729ebcac8f137b8d1e5823c28203f9ab8da104b294e7ac",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/gethhook/geth-hook.go",
+      "status": 200,
+      "bytes": 5974,
+      "sha256": "2efe217e3c32e6407848149ec3e93450d6e114c798ce63543a3dc77cfbaa874d",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/l2pricing/model.go",
+      "status": 200,
+      "bytes": 13257,
+      "sha256": "6d8959dd7f2ec8f532293ab8c4cdc8bf363234b6eb853a4c8d912eae239419af",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/Makefile",
+      "status": 200,
+      "bytes": 38377,
+      "sha256": "121641bf788d11f31600bf5ef51e8b81255845136bba5b731d18f3268a9a3609",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/bloom9.go",
+      "status": 200,
+      "bytes": 4884,
+      "sha256": "9c5be83c57ead0a3fa073fbb6a02338564c49c7d3357f8effe570286aa3c3359",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/arbitrum_signer.go",
+      "status": 200,
+      "bytes": 3502,
+      "sha256": "0db68d4c489c8bf6c34f84a7ba24aa294e12b1e38bdfcbb77a7616676e958f85",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/account.go",
+      "status": 200,
+      "bytes": 2788,
+      "sha256": "55cea37f90b117eda1070d151b3374af010c1bbadb1cbc7683f4d3b03ce1a6e8",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/arbitrum_legacy_tx.go",
+      "status": 200,
+      "bytes": 1751,
+      "sha256": "ef476309c86460979dc80833e21f920fba74fa9cd9aa30180416513c9cc157e5",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/deposit.go",
+      "status": 200,
+      "bytes": 2355,
+      "sha256": "69c201314c8c0cfc3488551a1b3df1aa11eee7236d5c4ea13a0a2152589e49f0",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_access_tuple.go",
+      "status": 200,
+      "bytes": 1162,
+      "sha256": "1437ac9704fe372a8b406b95a0402d5972d24099e7736222a08febd256acdb20",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_account.go",
+      "status": 200,
+      "bytes": 1906,
+      "sha256": "bc6f0dfca2f9fa68c716c2d4908cf2d24558f2c6d341c764059a1c956b19c9f6",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_authorization.go",
+      "status": 200,
+      "bytes": 2426,
+      "sha256": "e90991d4eeb6b8ccd73b91712af1cee36f39298d6304b8114a84c0a422788c21",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_header_json.go",
+      "status": 200,
+      "bytes": 7412,
+      "sha256": "86315e622a34d39f1000ebea2edd20fb250e4be5ef7218d114fe68fb359dbe05",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_account_rlp.go",
+      "status": 200,
+      "bytes": 437,
+      "sha256": "d3517b46b165d67a72ef05bb7810cbdfb1bb15b3f1e870528a67181d84574981",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_log_json.go",
+      "status": 200,
+      "bytes": 3077,
+      "sha256": "2cb731819d16b5050bb53720a8f60d7d0de2267f27349deaef8e89cb432efed8",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_header_rlp.go",
+      "status": 200,
+      "bytes": 2570,
+      "sha256": "851b282b0f65a90f7f0b0226e68bb207a29d667e531090e8dcc9b43362256ea7",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_log_rlp.go",
+      "status": 200,
+      "bytes": 407,
+      "sha256": "880be31a10f2579cdfc85bc3d3aa495d51f063d59bde17730466fb0edca04f82",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_withdrawal_json.go",
+      "status": 200,
+      "bytes": 1378,
+      "sha256": "41d90b307ca75df640dc23473db4e375e4a0243c46b14c3a3ec23c48860d2141",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/hashes.go",
+      "status": 200,
+      "bytes": 2450,
+      "sha256": "ed6b927ef8d5eb0c01bfb6033d3e2cb18357880eeb145cd58e6c9e9b9f8ea7da",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_withdrawal_rlp.go",
+      "status": 200,
+      "bytes": 372,
+      "sha256": "ac5635fc2e070077c3c51c3fd73dea2cec47be846fcc02efd7bb9f1d9be45508",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/gen_receipt_json.go",
+      "status": 200,
+      "bytes": 5259,
+      "sha256": "77c304a1d54be78bfe920507d1e0f010785d24cbd5a751732bce22245eb3be07",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/hashing.go",
+      "status": 200,
+      "bytes": 4744,
+      "sha256": "346239a88d49c479aad1da564a226cd186a6794546f356fdb86979b44bce1377",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/receipt.go",
+      "status": 200,
+      "bytes": 18297,
+      "sha256": "1cde670b59ff52582bfc60c5c9c076ee37b9d285cf9049cb5c3d490ed364e6eb",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/log.go",
+      "status": 200,
+      "bytes": 4515,
+      "sha256": "0b10fb6b441850a3826d2ce62a535cafb844e8fc0e1bcf60ce11c07a9bb42e64",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/state_account.go",
+      "status": 200,
+      "bytes": 3642,
+      "sha256": "1300c376b6e282fe720f55c4ca54ce27bc832736b9265e48cc11fc32e168b6b3",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/receipt_arbitrum.go",
+      "status": 200,
+      "bytes": 887,
+      "sha256": "7dcaf73e996659ca7aa3ec24037478e53a4314e51fdfb3b34bf54964fa31ccd3",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/transaction_marshalling.go",
+      "status": 200,
+      "bytes": 30045,
+      "sha256": "a3c7304b72977269cad0672fb817d27e0684dd0b72a62f91d8ea005ac46d91c4",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/tx_access_list.go",
+      "status": 200,
+      "bytes": 4443,
+      "sha256": "3559717c7895b93cef6c811109f2e4825a922ef484244ba6aae2d34130f92332",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/transaction_signing.go",
+      "status": 200,
+      "bytes": 16777,
+      "sha256": "6883ee28e3ffaa499d277987235729559bfd33a813e6256fcdcc20e4c1260832",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/tx_blob.go",
+      "status": 200,
+      "bytes": 13177,
+      "sha256": "cf4353476f66777fe5ad4563a41d057126fc71c72b212050f625afa0b8dc642d",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/tx_legacy.go",
+      "status": 200,
+      "bytes": 4193,
+      "sha256": "6d2bb62697e68b63c12089ff8fbbb78f59bcd948e713e80f95dbbe8edf31e465",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/tx_setcode.go",
+      "status": 200,
+      "bytes": 7439,
+      "sha256": "98714d010b9dcad59dd8b0a5ea1cf86d68e1d570bbf30e4ba1c1c60a9224ef88",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/withdrawal.go",
+      "status": 200,
+      "bytes": 2454,
+      "sha256": "ca04eba0edc3c8dc86550ee794913052038679fbd6e9ea523943f7bcbe2b2550",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/tx_dynamic_fee.go",
+      "status": 200,
+      "bytes": 3991,
+      "sha256": "5230e0036b4412e6f7314989e0240740873aa16c638d7c352b52bf91b175d74d",
+      "archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/contracts.go",
+      "status": 200,
+      "bytes": 48772,
+      "sha256": "9c28e68e923a5077cfcd7896086320a9119d1b6f615c3fb60446e26da853ccbd",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/features/features.go",
+      "status": 200,
+      "bytes": 1580,
+      "sha256": "6cb8308a7e2efbca9a592f4c81595aa95cc5dbee6e04113d61e07e1e6ef84fd4",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/evm.go",
+      "status": 200,
+      "bytes": 5286,
+      "sha256": "63a26d7a30347aa384638d327b56d63b87790b8ea9c8b8c9437618dd0b724b77",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/eips.go",
+      "status": 200,
+      "bytes": 17416,
+      "sha256": "1af4accd143025d69e67bd0a35e883e37f0d90cb2007d4bda43783e68d937b2e",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/execution/nodeinterface/virtual_contracts.go",
+      "status": 200,
+      "bytes": 6256,
+      "sha256": "5c2017b4657b8a84d850b292c658e715937f571007a13133af2e68167de371ea",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbMultiGasConstraintsTypes.go",
+      "status": 200,
+      "bytes": 568,
+      "sha256": "c1103c33c8dde1e25769311c8d66e1441df2c78ed92a490a7e6d17c2444cdb81",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/config.go",
+      "status": 200,
+      "bytes": 62268,
+      "sha256": "a8dee8f8ef54db8f3c95230aa0ad99df4166c39c6ccce761808f6894427efece",
+      "archived": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/evm.go",
+      "status": 200,
+      "bytes": 36452,
+      "sha256": "3292951d31c79ab74709d6e7d24a591b5052f2d427cd476cac1cfbd2dd2c869a",
+      "archived": true
+    }
+  ],
+  "failedDiscovery": [
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/arbitrum_types.go",
+      "status": 404,
+      "bytes": 14,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/arbitrum_params.go",
+      "status": 404,
+      "bytes": 14,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/addresses.go",
+      "status": 404,
+      "bytes": 14,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed"
+    }
+  ],
+  "allArchivedFilesMatchPinnedGitBlobs": true
+}

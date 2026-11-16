@@ -1,0 +1,1303 @@
+{
+  "checkedAt": "2026-11-11T00:07:41.069859+00:00",
+  "verdict": "AdversarialVerify: confirmed",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04",
+  "branch": "work/dtf-migration-phase-04",
+  "commit": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "parents": [
+    "6e27ecaa242c4acca132e3575a160514aad07b11"
+  ],
+  "tree": "8e19ea9645031d3fedada2520a69b67f0b189059",
+  "rawCommitSha256": "3bf6fffc2e34ec6c251c5a372e091b8a4ee4873ed081a910d3412b05b2e221ac",
+  "message": "Add verified bounded DETF Migration core\n\nCo-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\n",
+  "trailerCount": 1,
+  "changedPaths": [
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadata.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "9e798795bd9fef4c748a8662b4c7a47086795ac6",
+      "committedSha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "currentSha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "acceptedSha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "9e798795bd9fef4c748a8662b4c7a47086795ac6"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "01150e4a76b361522a6cb5b8bed3fa42215815a8",
+      "committedSha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "currentSha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "acceptedSha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "01150e4a76b361522a6cb5b8bed3fa42215815a8"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "b50f383051401553d849b1f566cd5fec336a5714",
+      "committedSha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "currentSha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "acceptedSha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "b50f383051401553d849b1f566cd5fec336a5714"
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "c9eaa15331f99e4631e66a0bc89a14283c36334e",
+      "committedSha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "currentSha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "acceptedSha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "c9eaa15331f99e4631e66a0bc89a14283c36334e"
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "0399ee79648573f0ae0b5aa277ff55d11bf9c023",
+      "committedSha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "currentSha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "acceptedSha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "0399ee79648573f0ae0b5aa277ff55d11bf9c023"
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "71a3a4c03c699d62a3662d642d36995c4c0bce33",
+      "committedSha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "currentSha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "acceptedSha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "71a3a4c03c699d62a3662d642d36995c4c0bce33"
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYTarget.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "4dc3cbf2ea081d2d47a12a93b45b0409d4e35afd",
+      "committedSha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "currentSha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "acceptedSha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "4dc3cbf2ea081d2d47a12a93b45b0409d4e35afd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "4bb197c7b187108c9aab20c86e1f65c295334e3a",
+      "committedSha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "currentSha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "acceptedSha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "4bb197c7b187108c9aab20c86e1f65c295334e3a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "change": "M",
+      "mode": "100644",
+      "blob": "c01cd97d8d4c4000d175b1b35d2d8a090416aa44",
+      "committedSha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "currentSha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "acceptedSha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "c01cd97d8d4c4000d175b1b35d2d8a090416aa44"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "448c6bff6f828e8d13e3d3403699dbd2b407da61",
+      "committedSha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "currentSha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "acceptedSha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "448c6bff6f828e8d13e3d3403699dbd2b407da61"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "faca7b69859614f865e496a4944b82b5697ef056",
+      "committedSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "currentSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "acceptedSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "faca7b69859614f865e496a4944b82b5697ef056"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "a08f5b265ed43542e9756b49cf4c1a9b981fe8bc",
+      "committedSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "currentSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "acceptedSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "a08f5b265ed43542e9756b49cf4c1a9b981fe8bc"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "c9c0daef8feee32c32ebeef8cefc087c3da6f8ea",
+      "committedSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "currentSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "acceptedSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "c9c0daef8feee32c32ebeef8cefc087c3da6f8ea"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "f149ffc3d39e186ff62d7c5a351fe077d20c6c58",
+      "committedSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "currentSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "acceptedSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "f149ffc3d39e186ff62d7c5a351fe077d20c6c58"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "5ce9ad3e805a33c3898a8feb6ebf1e22775edf70",
+      "committedSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "currentSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "acceptedSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "5ce9ad3e805a33c3898a8feb6ebf1e22775edf70"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "c6c063eeb854a6920e2c6a3d59ad31f7910bf735",
+      "committedSha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "currentSha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "acceptedSha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "c6c063eeb854a6920e2c6a3d59ad31f7910bf735"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "36ea4b810709b91dea948f395786b2ac18987e42",
+      "committedSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "currentSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "acceptedSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "36ea4b810709b91dea948f395786b2ac18987e42"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "6c8e8387ade97834f18ebf09068c66e8bdd9532c",
+      "committedSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "currentSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "acceptedSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "6c8e8387ade97834f18ebf09068c66e8bdd9532c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "b8cd3dbbcc67eb7a63b8e22cd97f04b020328d6f",
+      "committedSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "currentSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "acceptedSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "b8cd3dbbcc67eb7a63b8e22cd97f04b020328d6f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "5542f357628ea4ca910fac7431cf6be49cfb8a5a",
+      "committedSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "currentSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "acceptedSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "5542f357628ea4ca910fac7431cf6be49cfb8a5a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "4a3e45e910dc41d7b6cf9e8af5997e33de85a68c",
+      "committedSha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "currentSha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "acceptedSha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "4a3e45e910dc41d7b6cf9e8af5997e33de85a68c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "664c138fa12869c7307a16e0a8401f2b8ee7923a",
+      "committedSha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "currentSha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "acceptedSha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "664c138fa12869c7307a16e0a8401f2b8ee7923a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "212b647e8c18afcd74a89316a128f078304cb8db",
+      "committedSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "currentSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "acceptedSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "212b647e8c18afcd74a89316a128f078304cb8db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "d882419ed55e6d1e9d387d3744bc11974fd23b5a",
+      "committedSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "currentSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "acceptedSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "d882419ed55e6d1e9d387d3744bc11974fd23b5a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "fe42de937a55ba27827efd443a0f793688c922d6",
+      "committedSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "currentSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "acceptedSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "fe42de937a55ba27827efd443a0f793688c922d6"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "bfa9f940e774e35d0e5374b902fc09a02d20dbe6",
+      "committedSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "currentSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "acceptedSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "bfa9f940e774e35d0e5374b902fc09a02d20dbe6"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "b3797dbedc9366caf20221e40652cf64150145ef",
+      "committedSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "currentSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "acceptedSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "b3797dbedc9366caf20221e40652cf64150145ef"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "2c2cb2a0ca142eb454384cbb2a9a4377d31a3e66",
+      "committedSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "currentSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "acceptedSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "2c2cb2a0ca142eb454384cbb2a9a4377d31a3e66"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "c25277a7b06572b2847b9bbaf68fd3261015143d",
+      "committedSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "currentSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "acceptedSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "c25277a7b06572b2847b9bbaf68fd3261015143d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "3f59e6a42a62c3bfcfb7152cb22908de7e194976",
+      "committedSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "currentSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "acceptedSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "3f59e6a42a62c3bfcfb7152cb22908de7e194976"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "10b0a2bd32a9be26daa3206d00be95cc899c0dec",
+      "committedSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "currentSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "acceptedSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "10b0a2bd32a9be26daa3206d00be95cc899c0dec"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "10c0badc9456b66afe5b9101c4d65d9e0da5bab0",
+      "committedSha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "currentSha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "acceptedSha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "10c0badc9456b66afe5b9101c4d65d9e0da5bab0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "4666db8210947c5273c27b27e2b1abffd00c8b11",
+      "committedSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "currentSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "acceptedSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "4666db8210947c5273c27b27e2b1abffd00c8b11"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "4741199cadacc21a5bcb51bcd183f9f3b7a488ab",
+      "committedSha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "currentSha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "acceptedSha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "4741199cadacc21a5bcb51bcd183f9f3b7a488ab"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "122a61ce6ce0fbca187404b345fd58c8f3982fa0",
+      "committedSha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "currentSha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "acceptedSha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "122a61ce6ce0fbca187404b345fd58c8f3982fa0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "98cab556ccd492a9ff5930c623f95d7ab3776d38",
+      "committedSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "currentSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "acceptedSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "98cab556ccd492a9ff5930c623f95d7ab3776d38"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "037dfd5f70de29f021ec5ed566add782b9d36e43",
+      "committedSha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "currentSha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "acceptedSha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "037dfd5f70de29f021ec5ed566add782b9d36e43"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "dea7f2d92f9a725153e9d33051164cf6ce8f9ad2",
+      "committedSha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "currentSha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "acceptedSha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "dea7f2d92f9a725153e9d33051164cf6ce8f9ad2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "c109fd09e769af04fd8df64031e0b170197ce6a0",
+      "committedSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "currentSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "acceptedSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "c109fd09e769af04fd8df64031e0b170197ce6a0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "0d6b46cff6c9218acb134b010f728187247cc403",
+      "committedSha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "currentSha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "acceptedSha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "0d6b46cff6c9218acb134b010f728187247cc403"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "f169f48eb9345ef0e62c38b45392e3f8d6c3ba3d",
+      "committedSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "currentSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "acceptedSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "f169f48eb9345ef0e62c38b45392e3f8d6c3ba3d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "1e65ca225281ca9f780fd5263c60bd28c25d8daa",
+      "committedSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "currentSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "acceptedSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "1e65ca225281ca9f780fd5263c60bd28c25d8daa"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "d982ccd0ca63b7056db866d9728c2f79af155c0d",
+      "committedSha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "currentSha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "acceptedSha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "d982ccd0ca63b7056db866d9728c2f79af155c0d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "754edf108d5425bf8c6726da3149f01a1e6b21cd",
+      "committedSha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "currentSha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "acceptedSha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "754edf108d5425bf8c6726da3149f01a1e6b21cd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "83ac1b97a71cd8dc6ffb5eee8322d69a97380d30",
+      "committedSha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "currentSha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "acceptedSha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "83ac1b97a71cd8dc6ffb5eee8322d69a97380d30"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "966d6afde7db89aa8011dcece71cba1014745055",
+      "committedSha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "currentSha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "acceptedSha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "966d6afde7db89aa8011dcece71cba1014745055"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/core-local-qa-guard.sh",
+      "change": "A",
+      "mode": "100644",
+      "blob": "41d99b0dec30afe8107509920114ca28ff46359e",
+      "committedSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "currentSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "acceptedSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "41d99b0dec30afe8107509920114ca28ff46359e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "6c5bb3b5d50240ea5f372ceb60bb4f985420484d",
+      "committedSha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "currentSha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "acceptedSha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "6c5bb3b5d50240ea5f372ceb60bb4f985420484d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "13e30d5111405f1cf5a91f6a393f22ba0fd3ff6c",
+      "committedSha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "currentSha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "acceptedSha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "13e30d5111405f1cf5a91f6a393f22ba0fd3ff6c"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "c41cb1e7b2e677ea232fd811f8706863a39bbb2f",
+      "committedSha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "currentSha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "acceptedSha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "c41cb1e7b2e677ea232fd811f8706863a39bbb2f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "81921c178cd53ac7d25461a5ee4bd7b22cc6009e",
+      "committedSha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "currentSha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "acceptedSha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "81921c178cd53ac7d25461a5ee4bd7b22cc6009e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "049dd184cca3abe090d8c9b8799afe952d0387af",
+      "committedSha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "currentSha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "acceptedSha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "049dd184cca3abe090d8c9b8799afe952d0387af"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "53002f848fda339227d7a3ae08ac4209f65b39a8",
+      "committedSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "currentSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "acceptedSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "53002f848fda339227d7a3ae08ac4209f65b39a8"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "11931171bd3aed686f6f2bd603b484d549c03d3c",
+      "committedSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "currentSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "acceptedSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "11931171bd3aed686f6f2bd603b484d549c03d3c"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "d0feebf6098e500d4e3c8e4df6058c23bc30285b",
+      "committedSha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "currentSha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "acceptedSha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "d0feebf6098e500d4e3c8e4df6058c23bc30285b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "5c0723f956112988e133a01f40b061d85d77c749",
+      "committedSha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "currentSha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "acceptedSha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "5c0723f956112988e133a01f40b061d85d77c749"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "change": "A",
+      "mode": "100644",
+      "blob": "48e92623df7fd468bef905256cf303132f3406da",
+      "committedSha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "currentSha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "acceptedSha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "filesystemMode": "0o100644",
+      "indexMode": "100644",
+      "indexBlob": "48e92623df7fd468bef905256cf303132f3406da"
+    }
+  ],
+  "producerFileIdentities": {
+    "source-manifest.json": "4e67da609a1be5bb4eee2f86994e3be84ae7ec4f8e93d5373636d6aee77da6f5",
+    "receipt.md": "11c6ed002a0b61cf9d12cae5ebaa3344c7675dbf92dbb0c1e476020b76e5081e",
+    "postcommit-checks.json": "5a708407810e1aa34a5c0eb472ad37407f6035dcf566691bc86d42a9a8394f9f",
+    "preservation-baseline.json": "241103da28e3a21464accbacef04b85dabd51a7920ff8a0f559f896a856c1bf4",
+    "staged.diff": "139c79163d56a29f089824a71d7cedbdb5da0a607f082c2c282ca7f110eaa0fc",
+    "remaining-status.txt": "7d715597021a35d6f0327465439e2a69490087c09dfd13f024e474267185d059"
+  },
+  "acceptanceDocumentChecks": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+      "expected": "09e0be2a48afa39437dbc18ddf06513fe9874185b591c6f1840d2ae726e63e55",
+      "actual": "09e0be2a48afa39437dbc18ddf06513fe9874185b591c6f1840d2ae726e63e55"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+      "expected": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9",
+      "actual": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/reviewed-input-identities.json",
+      "expected": "79a9bb50ff20923330a5447fea12c02b8e6f46f54f6b069abf5a92700ada32a4",
+      "actual": "79a9bb50ff20923330a5447fea12c02b8e6f46f54f6b069abf5a92700ada32a4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/execution-evidence.json",
+      "expected": "bc0d4627849ab014d524ce56e8802026da216e1dbc503e0e681ecfb4755158e5",
+      "actual": "bc0d4627849ab014d524ce56e8802026da216e1dbc503e0e681ecfb4755158e5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/corrected-receipt-audit.json",
+      "expected": "544c8492f1549708bc383739df6cd33257c073088dacc469ca491221a45656b8",
+      "actual": "544c8492f1549708bc383739df6cd33257c073088dacc469ca491221a45656b8"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/cleanup-and-preservation.json",
+      "expected": "96255d6c7c5ab17dfdb7ad1af9585c843b47426978ca01dace4cd85faca83365",
+      "actual": "96255d6c7c5ab17dfdb7ad1af9585c843b47426978ca01dace4cd85faca83365"
+    }
+  ],
+  "bindingPreservationChecks": [
+    {
+      "group": "sources",
+      "count": 2482,
+      "failures": []
+    },
+    {
+      "group": "artifacts",
+      "count": 932,
+      "failures": []
+    },
+    {
+      "group": "historical",
+      "count": 101,
+      "failures": []
+    }
+  ],
+  "originalIndexSerialization": "GIT_MASTER=1 git ls-files --stage -z (raw bytes)",
+  "originalIndexReconstructedFromParentSha256": "2dcff68860a4f16e66f9afba1f870507c64eb3e98b7aeeb7011702ad09a3fc69",
+  "currentIndexSha256": "2f991d84d21e7647d73a329bda0a0b479e08e5f3dd849c4a474e505cd49b9a41",
+  "unrelatedIndexEntriesEqual": true,
+  "unrelatedIndexEntriesSha256": "f6ca2130268f20ac4f9a434e52a38ed1cf96896faa1d286cb80a0bc9ce0bc196",
+  "initialStatusReconstructedSha256": "47c50540182ef4d7d22f43823a0b10c9b268f3f3469d040d53c1dde27cc24aeb",
+  "stagedChanges": "",
+  "trackedChangesIgnoringSharedSubmoduleLink": "",
+  "baselineDirtyCount": 7949,
+  "baselineDirtyFailures": [],
+  "retainedUnrelatedUntrackedCount": 7892,
+  "statusBeforeVerifierWritesCount": 7898,
+  "statusBeforeVerifierWritesSha256": "59670529fb62af2c0cca75df8138f7d326188892be80739785f8ed050c8eaa68",
+  "refsBefore": {
+    "refs/heads/main": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/heads/work/dtf-migration": "6e27ecaa242c4acca132e3575a160514aad07b11",
+    "refs/heads/work/dtf-migration-phase-01": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/heads/work/dtf-migration-phase-02": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+    "refs/heads/work/dtf-migration-phase-03": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+    "refs/heads/work/dtf-migration-phase-04": "6e27ecaa242c4acca132e3575a160514aad07b11",
+    "refs/remotes/origin/HEAD": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/remotes/origin/codex/robinhood-release-review": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0": "0c3558b2ec9571873a787eef4becbdddafc6ce7b",
+    "refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6": "a1a2b239593a90a062a8d477395f6b7fc3a473f7",
+    "refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9": "3a4001f8a017be2b8b3e988b3fb1fcff454b6a01",
+    "refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6": "41bbe4eec3ce9279b205058063b3b69f6be2b149",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8": "8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21": "3a8205815ac3f4307de10ab27e813a56847d779c",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21": "92eeb98dad898aa12b83191e029a9e74112c295b",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7": "27de3dc71df885634fda1b1fea448e3b499898c3",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13": "f0d69de54820d1b844f304dc0c7bcf990f0b57a1",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea": "74ef9f247f0b1a661fb338738e8300bd0c7f05eb",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731": "bdd8e74ea3902897ca98d8312e5c195d9dbd5a33",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb": "92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18": "f4f3a424d8b286c5b0940694835e958f91d24c74",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8": "1319a76e08a306e77926a20feb6b95250e64b348",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2": "549159d0b0c86fc0818f9e628315ddfef984ae4c",
+    "refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9": "fb6f85b84a9f85dbb6dcb368b75111ecb6257a6c",
+    "refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2": "05de656fd06346486bec9e9c7c17ce58508f5aac",
+    "refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24": "924b83b300fb1e3938cc48e3ecd474a855775a3e",
+    "refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1": "ad6c641aa4dcb582185a136fda6f342ffd8fb103",
+    "refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18": "ffb2652457d73cb8ced157853b9fd7b1ca883065",
+    "refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8": "4db81ae56cec60663566fd79f82c08bcf15859d7",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8": "eae337a55ff219b56208c6eff11bf9cdb45d6a34",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7": "98c7f0ac0cbf5c08666680a411a4b4a836fb0b73",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5": "27d0cbfada90a5f6b546ed712e04dc0c5d8e4154",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26": "f149ade544a68566d09a3ab3b7f6000873be6de8",
+    "refs/remotes/origin/docs/agent-inventory-navigation": "950e6b32ea8efff73226a0adf6a7e0b75828127a",
+    "refs/remotes/origin/feat/uniswap-v4-upper-lower-wings": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/feature/crane-ethereum-staking-ports": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/fix/legacy-v4-erc5115-interface": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/fix/uniswap-se-v2-delivery": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/frontend/multi-app-monorepo": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/gh-pages": "6724a5e5c762394797c3508ae1db7d6c0dbdac78",
+    "refs/remotes/origin/main": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/remotes/origin/refactor/frontend-shared-deployment-root": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/upgrade/nextjs-16": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/stash": "7321b70c984423699475cfb45907b6dd70bb8ef4"
+  },
+  "refsAfter": {
+    "refs/heads/main": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/heads/work/dtf-migration": "6e27ecaa242c4acca132e3575a160514aad07b11",
+    "refs/heads/work/dtf-migration-phase-01": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/heads/work/dtf-migration-phase-02": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+    "refs/heads/work/dtf-migration-phase-03": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+    "refs/heads/work/dtf-migration-phase-04": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+    "refs/remotes/origin/HEAD": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/remotes/origin/codex/robinhood-release-review": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0": "0c3558b2ec9571873a787eef4becbdddafc6ce7b",
+    "refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6": "a1a2b239593a90a062a8d477395f6b7fc3a473f7",
+    "refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9": "3a4001f8a017be2b8b3e988b3fb1fcff454b6a01",
+    "refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6": "41bbe4eec3ce9279b205058063b3b69f6be2b149",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8": "8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21": "3a8205815ac3f4307de10ab27e813a56847d779c",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21": "92eeb98dad898aa12b83191e029a9e74112c295b",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7": "27de3dc71df885634fda1b1fea448e3b499898c3",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13": "f0d69de54820d1b844f304dc0c7bcf990f0b57a1",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea": "74ef9f247f0b1a661fb338738e8300bd0c7f05eb",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731": "bdd8e74ea3902897ca98d8312e5c195d9dbd5a33",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb": "92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18": "f4f3a424d8b286c5b0940694835e958f91d24c74",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8": "1319a76e08a306e77926a20feb6b95250e64b348",
+    "refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2": "549159d0b0c86fc0818f9e628315ddfef984ae4c",
+    "refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9": "fb6f85b84a9f85dbb6dcb368b75111ecb6257a6c",
+    "refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2": "05de656fd06346486bec9e9c7c17ce58508f5aac",
+    "refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24": "924b83b300fb1e3938cc48e3ecd474a855775a3e",
+    "refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1": "ad6c641aa4dcb582185a136fda6f342ffd8fb103",
+    "refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18": "ffb2652457d73cb8ced157853b9fd7b1ca883065",
+    "refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8": "4db81ae56cec60663566fd79f82c08bcf15859d7",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8": "eae337a55ff219b56208c6eff11bf9cdb45d6a34",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7": "98c7f0ac0cbf5c08666680a411a4b4a836fb0b73",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5": "27d0cbfada90a5f6b546ed712e04dc0c5d8e4154",
+    "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26": "f149ade544a68566d09a3ab3b7f6000873be6de8",
+    "refs/remotes/origin/docs/agent-inventory-navigation": "950e6b32ea8efff73226a0adf6a7e0b75828127a",
+    "refs/remotes/origin/feat/uniswap-v4-upper-lower-wings": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/feature/crane-ethereum-staking-ports": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/fix/legacy-v4-erc5115-interface": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/fix/uniswap-se-v2-delivery": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/frontend/multi-app-monorepo": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/gh-pages": "6724a5e5c762394797c3508ae1db7d6c0dbdac78",
+    "refs/remotes/origin/main": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+    "refs/remotes/origin/refactor/frontend-shared-deployment-root": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/remotes/origin/upgrade/nextjs-16": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+    "refs/stash": "7321b70c984423699475cfb45907b6dd70bb8ef4"
+  },
+  "refChanges": {
+    "refs/heads/work/dtf-migration-phase-04": {
+      "before": "6e27ecaa242c4acca132e3575a160514aad07b11",
+      "after": "5021e8d4a62bcbddc555f580ef98f8666d993aab"
+    }
+  },
+  "dependencyLink": {
+    "path": "lib/crane",
+    "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "indexEntry": [
+      "160000",
+      "fc0618bf5c34d0564f4367130feff443bd4efc89",
+      "0"
+    ]
+  },
+  "fullDiffBytes": 371707,
+  "fullDiffSha256": "139c79163d56a29f089824a71d7cedbdb5da0a607f082c2c282ca7f110eaa0fc",
+  "commands": [
+    {
+      "command": "GIT_MASTER=1 git rev-parse HEAD",
+      "exit": 0,
+      "stdoutSha256": "b2bb51cf93d31af93769cc7d5a31016e8663ddf9309b4f7d86f7f0e2af69ddaf",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git branch --show-current",
+      "exit": 0,
+      "stdoutSha256": "eab12e05f82bc658d78fac17b1071858a06eb383f8e5be850a73922313e7e372",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file commit 5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "exit": 0,
+      "stdoutSha256": "3bf6fffc2e34ec6c251c5a372e091b8a4ee4873ed081a910d3412b05b2e221ac",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff-tree --no-commit-id --no-renames --name-status -r 5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "exit": 0,
+      "stdoutSha256": "a68ad64fe85d79b758ae02825a03d87b3b6f97327b3b232fef40c3709d534469",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git ls-tree -r -z 5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "exit": 0,
+      "stdoutSha256": "ee8e23cf5dcea81290a5e8e3ae2d9a11580a6e75cf33183a2ee0d3db2e6aa75f",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git ls-files --stage -z",
+      "exit": 0,
+      "stdoutSha256": "2f991d84d21e7647d73a329bda0a0b479e08e5f3dd849c4a474e505cd49b9a41",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git status --porcelain=v1 -z --untracked-files=all --ignore-submodules=all",
+      "exit": 0,
+      "stdoutSha256": "59670529fb62af2c0cca75df8138f7d326188892be80739785f8ed050c8eaa68",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git for-each-ref '--format=%(refname) %(objectname)'",
+      "exit": 0,
+      "stdoutSha256": "c52eb611e7a95c18b5fc506924e18105ce0717df8a7c6472a5e8e0b6b59ad428",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --cached --name-status --ignore-submodules=all",
+      "exit": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff HEAD --name-status --ignore-submodules=all",
+      "exit": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 9e798795bd9fef4c748a8662b4c7a47086795ac6",
+      "exit": 0,
+      "stdoutSha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 01150e4a76b361522a6cb5b8bed3fa42215815a8",
+      "exit": 0,
+      "stdoutSha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob b50f383051401553d849b1f566cd5fec336a5714",
+      "exit": 0,
+      "stdoutSha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob c9eaa15331f99e4631e66a0bc89a14283c36334e",
+      "exit": 0,
+      "stdoutSha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 0399ee79648573f0ae0b5aa277ff55d11bf9c023",
+      "exit": 0,
+      "stdoutSha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 71a3a4c03c699d62a3662d642d36995c4c0bce33",
+      "exit": 0,
+      "stdoutSha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 4dc3cbf2ea081d2d47a12a93b45b0409d4e35afd",
+      "exit": 0,
+      "stdoutSha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 4bb197c7b187108c9aab20c86e1f65c295334e3a",
+      "exit": 0,
+      "stdoutSha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob c01cd97d8d4c4000d175b1b35d2d8a090416aa44",
+      "exit": 0,
+      "stdoutSha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 448c6bff6f828e8d13e3d3403699dbd2b407da61",
+      "exit": 0,
+      "stdoutSha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob faca7b69859614f865e496a4944b82b5697ef056",
+      "exit": 0,
+      "stdoutSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob a08f5b265ed43542e9756b49cf4c1a9b981fe8bc",
+      "exit": 0,
+      "stdoutSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob c9c0daef8feee32c32ebeef8cefc087c3da6f8ea",
+      "exit": 0,
+      "stdoutSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob f149ffc3d39e186ff62d7c5a351fe077d20c6c58",
+      "exit": 0,
+      "stdoutSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 5ce9ad3e805a33c3898a8feb6ebf1e22775edf70",
+      "exit": 0,
+      "stdoutSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob c6c063eeb854a6920e2c6a3d59ad31f7910bf735",
+      "exit": 0,
+      "stdoutSha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 36ea4b810709b91dea948f395786b2ac18987e42",
+      "exit": 0,
+      "stdoutSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 6c8e8387ade97834f18ebf09068c66e8bdd9532c",
+      "exit": 0,
+      "stdoutSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob b8cd3dbbcc67eb7a63b8e22cd97f04b020328d6f",
+      "exit": 0,
+      "stdoutSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 5542f357628ea4ca910fac7431cf6be49cfb8a5a",
+      "exit": 0,
+      "stdoutSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 4a3e45e910dc41d7b6cf9e8af5997e33de85a68c",
+      "exit": 0,
+      "stdoutSha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 664c138fa12869c7307a16e0a8401f2b8ee7923a",
+      "exit": 0,
+      "stdoutSha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 212b647e8c18afcd74a89316a128f078304cb8db",
+      "exit": 0,
+      "stdoutSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob d882419ed55e6d1e9d387d3744bc11974fd23b5a",
+      "exit": 0,
+      "stdoutSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob fe42de937a55ba27827efd443a0f793688c922d6",
+      "exit": 0,
+      "stdoutSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob bfa9f940e774e35d0e5374b902fc09a02d20dbe6",
+      "exit": 0,
+      "stdoutSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob b3797dbedc9366caf20221e40652cf64150145ef",
+      "exit": 0,
+      "stdoutSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 2c2cb2a0ca142eb454384cbb2a9a4377d31a3e66",
+      "exit": 0,
+      "stdoutSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob c25277a7b06572b2847b9bbaf68fd3261015143d",
+      "exit": 0,
+      "stdoutSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 3f59e6a42a62c3bfcfb7152cb22908de7e194976",
+      "exit": 0,
+      "stdoutSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 10b0a2bd32a9be26daa3206d00be95cc899c0dec",
+      "exit": 0,
+      "stdoutSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 10c0badc9456b66afe5b9101c4d65d9e0da5bab0",
+      "exit": 0,
+      "stdoutSha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 4666db8210947c5273c27b27e2b1abffd00c8b11",
+      "exit": 0,
+      "stdoutSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 4741199cadacc21a5bcb51bcd183f9f3b7a488ab",
+      "exit": 0,
+      "stdoutSha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 122a61ce6ce0fbca187404b345fd58c8f3982fa0",
+      "exit": 0,
+      "stdoutSha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 98cab556ccd492a9ff5930c623f95d7ab3776d38",
+      "exit": 0,
+      "stdoutSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 037dfd5f70de29f021ec5ed566add782b9d36e43",
+      "exit": 0,
+      "stdoutSha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob dea7f2d92f9a725153e9d33051164cf6ce8f9ad2",
+      "exit": 0,
+      "stdoutSha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob c109fd09e769af04fd8df64031e0b170197ce6a0",
+      "exit": 0,
+      "stdoutSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 0d6b46cff6c9218acb134b010f728187247cc403",
+      "exit": 0,
+      "stdoutSha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob f169f48eb9345ef0e62c38b45392e3f8d6c3ba3d",
+      "exit": 0,
+      "stdoutSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 1e65ca225281ca9f780fd5263c60bd28c25d8daa",
+      "exit": 0,
+      "stdoutSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob d982ccd0ca63b7056db866d9728c2f79af155c0d",
+      "exit": 0,
+      "stdoutSha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 754edf108d5425bf8c6726da3149f01a1e6b21cd",
+      "exit": 0,
+      "stdoutSha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 83ac1b97a71cd8dc6ffb5eee8322d69a97380d30",
+      "exit": 0,
+      "stdoutSha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 966d6afde7db89aa8011dcece71cba1014745055",
+      "exit": 0,
+      "stdoutSha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 41d99b0dec30afe8107509920114ca28ff46359e",
+      "exit": 0,
+      "stdoutSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 6c5bb3b5d50240ea5f372ceb60bb4f985420484d",
+      "exit": 0,
+      "stdoutSha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 13e30d5111405f1cf5a91f6a393f22ba0fd3ff6c",
+      "exit": 0,
+      "stdoutSha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob c41cb1e7b2e677ea232fd811f8706863a39bbb2f",
+      "exit": 0,
+      "stdoutSha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 81921c178cd53ac7d25461a5ee4bd7b22cc6009e",
+      "exit": 0,
+      "stdoutSha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 049dd184cca3abe090d8c9b8799afe952d0387af",
+      "exit": 0,
+      "stdoutSha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 53002f848fda339227d7a3ae08ac4209f65b39a8",
+      "exit": 0,
+      "stdoutSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 11931171bd3aed686f6f2bd603b484d549c03d3c",
+      "exit": 0,
+      "stdoutSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob d0feebf6098e500d4e3c8e4df6058c23bc30285b",
+      "exit": 0,
+      "stdoutSha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 5c0723f956112988e133a01f40b061d85d77c749",
+      "exit": 0,
+      "stdoutSha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git cat-file blob 48e92623df7fd468bef905256cf303132f3406da",
+      "exit": 0,
+      "stdoutSha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git interpret-trailers --parse < actual-commit-message",
+      "exit": 0,
+      "stdout": "Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>\n",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git ls-tree -r -z 6e27ecaa242c4acca132e3575a160514aad07b11",
+      "exit": 0,
+      "stdoutSha256": "4df773c097c3e5bc2691309465d6eedc2761920886a6a94efacc14fc0fc131a2",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --no-ext-diff --no-textconv 6e27ecaa242c4acca132e3575a160514aad07b11 5021e8d4a62bcbddc555f580ef98f8666d993aab --",
+      "exit": 0,
+      "stdoutSha256": "139c79163d56a29f089824a71d7cedbdb5da0a607f082c2c282ca7f110eaa0fc",
+      "stderr": ""
+    }
+  ],
+  "issues": [],
+  "limits": "Bounded commit provenance and preservation only. No original plan gate closed; no suite rerun, source edit, commit, push, merge or runtime started."
+}

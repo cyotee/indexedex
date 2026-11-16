@@ -1,0 +1,28 @@
+{
+  "initialStatus": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/attempts/03-initial-status/stdout.log",
+  "baseline": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/baseline/worktree-hashes.json",
+  "checkedEntries": 68811,
+  "unchangedEntries": 68808,
+  "changesToInitiallyDirtyFiles": [
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "before": "4ccb78785ea6838aabc5944d7b544b524cfe99f1f83b263796dbe6c2f7c2cf37",
+      "after": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "before": "3fa56907627a4a1bf737b699bdd999745ec806e17006dcd33021f9e7b75d9268",
+      "after": "6fdc999ed41fa75b694f0efdb43c3f59a0e46c01d2338d10709ca5ecffb4911e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "before": "81166388c25d1283d73556c6e95c6599ee448cdc3e9f96d97bd14f7e9090d7c0",
+      "after": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93"
+    }
+  ],
+  "initiallyCleanMaterializer": {
+    "before": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+    "after": "01505bf4ca5fbb81d7466ec6cfe7e8b9382a949c8a6cd9a072973dba1ad62282"
+  },
+  "scope": "All pre-existing dirty/untracked paths were retained; only the four owned sources changed. New evidence is confined to the task 16 directory and final DoneClaim."
+}

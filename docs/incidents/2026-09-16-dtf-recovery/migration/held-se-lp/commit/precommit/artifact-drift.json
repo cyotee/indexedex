@@ -1,0 +1,51 @@
+{
+  "qualification": "Thirty-six repeated producer-manifest references resolve to these three exact original captures; all structural differences independently enumerated below. Fresh run has zero input drift. No artifact restoration.",
+  "restored": false,
+  "files": [
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "bytes": 103627,
+      "originalCaptureSha256": "c93ee1f607d3f95d0c28d9ce559467f11df286556574aa575781f29399d6feee",
+      "currentSha256": "9d5db7a8a1feababc1c418dbe1c9e6b1ee06b6cd009f292023fb65515bb4f2a6",
+      "recordedCurrentSha256": "9d5db7a8a1feababc1c418dbe1c9e6b1ee06b6cd009f292023fb65515bb4f2a6",
+      "differences": [
+        {
+          "path": "$.id",
+          "original": 758,
+          "current": 534
+        }
+      ],
+      "qualification": "Independent compilation changed only the recorded top-level source-unit id. Exact original capture remains. This commit lane did not restore, normalize, or rewrite the artifact."
+    },
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "bytes": 304055,
+      "originalCaptureSha256": "ca8565803eadc70c6c93a892617869dba1417c1654466e34a9d4e6a12a7ef443",
+      "currentSha256": "2390044653174e85ad007efd22b68821f7b1e831b7cfd20b63896dc65a04677f",
+      "recordedCurrentSha256": "2390044653174e85ad007efd22b68821f7b1e831b7cfd20b63896dc65a04677f",
+      "differences": [
+        {
+          "path": "$.id",
+          "original": 758,
+          "current": 534
+        }
+      ],
+      "qualification": "Independent compilation changed only the recorded top-level source-unit id. Exact original capture remains. This commit lane did not restore, normalize, or rewrite the artifact."
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "bytes": 98419,
+      "originalCaptureSha256": "3da38597a23ed9d460c132a971a30e3831c14ca70b7e7be2d49d50a63117dbbc",
+      "currentSha256": "0c5586a948c974a672d5260a5c24b478c660cdfaf04de720fd43147fcfa690ce",
+      "recordedCurrentSha256": "0c5586a948c974a672d5260a5c24b478c660cdfaf04de720fd43147fcfa690ce",
+      "differences": [
+        {
+          "path": "$.id",
+          "original": 760,
+          "current": 536
+        }
+      ],
+      "qualification": "Independent compilation changed only the recorded top-level source-unit id. Exact original capture remains. This commit lane did not restore, normalize, or rewrite the artifact."
+    }
+  ]
+}

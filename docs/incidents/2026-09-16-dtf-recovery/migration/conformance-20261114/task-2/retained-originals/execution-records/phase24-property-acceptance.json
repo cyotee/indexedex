@@ -1,0 +1,86 @@
+[
+  {
+    "property": 1,
+    "task": "Verify stateful wallet bound credit conservation",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "f94941fabb32ab3d975bae097559e4108b04ee63556b2cceb65140102bd18999",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 2,
+    "task": "Verify stateful missing and wrong wallet rejection",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "acfe49922e18b6985e149a08e03a2c880609ea2397d6e3d7b0a235c8ed983325",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 3,
+    "task": "Verify stateful corrections preserve existing delivery facts",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "da0fbb494c5441c7f06e605d57b9436d9e468906e112212881be0acba9e3d093",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 4,
+    "task": "Verify stateful credit requires custody or allocation",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "555808a0a2db97d38dff7eda01136dae5b8d388d08850bef30fd8cfa66f99b3a",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 5,
+    "task": "Verify stateful failed issuance restores all custody",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "0a9b5a524820986dc5eaaf3f674984bb3e309f413736d6d3766f58053f4afeae",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 6,
+    "task": "Verify stateful funded bond escrow solvency",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "b10fe38ccb0e80439ff93efcf593c5bd5389fab051351dfa6d8ab3328c091a69",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 7,
+    "task": "Verify stateful principal respects each fresh cliff",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "85deaf463f28e897c1be546597f75692f73e9b6bac9b16c5e8d9c81a8b984f60",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 8,
+    "task": "Verify stateful Stage One rewards stay unpaid",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "82dac34f2ebf9ab8606640820e833ae80235b0787fc309f9b6e41a1f099717b1",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 9,
+    "task": "Verify stateful activation never restores allocation authority",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "040de449ff9f2a62019aaa3e4a59366bbb0ea8065473499e32727ca73e9b16d5",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 10,
+    "task": "Verify stateful market changes preserve frozen credit",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "341db4d9ec2127004812ea1ccb2b50c9a9cf2fe98afe769cc166ef9f2e84f156",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 11,
+    "task": "Verify stateful recovery inventory and beneficiary conservation",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "a48dbf498edd01fd6643be354158f4f1231d4babc7f699a128aafec1af4f2f68",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  },
+  {
+    "property": 12,
+    "task": "Verify stateful ownership changes preserve protected state",
+    "reportSha256": "fd9aaa6531a1a3fddcd5fb7084c533a80588eddeee3ef72c269125d0f0654e60",
+    "rowSha256": "255d48f12f7fb96536adb13ea225e9c9add9a98207d13014be0207faacbad61f",
+    "scope": "bounded stateful gate over admitted supported units;not unsupported-source or full-plan closure"
+  }
+]

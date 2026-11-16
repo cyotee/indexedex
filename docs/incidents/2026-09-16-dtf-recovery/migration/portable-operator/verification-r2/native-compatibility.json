@@ -1,0 +1,14 @@
+{
+  "priorRuntime": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime-03/rehearsal-1794496225193",
+  "priorPreparedHash": "2db98d51c79ea0937fa1431f8b7612d8bbb10bb739bed744b50821d850432f04",
+  "currentPreparedHash": "2db98d51c79ea0937fa1431f8b7612d8bbb10bb739bed744b50821d850432f04",
+  "priorDomainRawSha256": "d915c4c017994d271cf5e576b75f7c3109a4c08d69ad7ef353cdf50e79d547b3",
+  "priorRecordedIntentDomainHashes": [
+    "aabb19b60dd77e8859ecf31d371cd3f2c09acf6702bae78ff869f6dacbe7c446"
+  ],
+  "currentDomainHash": "aabb19b60dd77e8859ecf31d371cd3f2c09acf6702bae78ff869f6dacbe7c446",
+  "domainStructuralEquality": true,
+  "allAbsolute": true,
+  "bundleAbsent": true,
+  "intentCount": 21
+}

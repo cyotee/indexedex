@@ -1,0 +1,965 @@
+{
+  "base": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+  "branch": "work/dtf-migration-phase-14-weighted-sy",
+  "authorities": [
+    {
+      "name": "phase14-brief.md",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+      "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+      "bytes": 7330,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "plan-r5.md",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "bytes": 79305,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "prd-r22.md",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "bytes": 108022,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "owner-first-bond-directive.md",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "bytes": 8528,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase11-weighted-contract.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/weighted/contract.md",
+      "sha256": "6748c44550417a8e89d655969d9c032158916345367003e4c2679c0c2490b192",
+      "bytes": 45670,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase11-independent-report.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+      "sha256": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc",
+      "bytes": 19702,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase11-independent-matrix.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+      "sha256": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c",
+      "bytes": 19878,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase13-independent-runtime-report.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/owner-bond-verification/report.md",
+      "sha256": "6f2b72c1a50919171790459be6699ce26fefdb4bdc09a2f577f9c01ba3fc365d",
+      "bytes": 22020,
+      "snapshot": "input-snapshots.json"
+    },
+    {
+      "name": "phase13-independent-commit-audit.md",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/commit/verification.md",
+      "sha256": "388a8ec99ab91200f5d65966cc6dbd05078263e9da698677e8bdcec4f0fb5f28",
+      "bytes": 11198,
+      "snapshot": "input-snapshots.json"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "1bbd5819595ada1f49d7516923bf7e7185d40f41a46bc0e0a24f7b8aeeb262f7",
+      "bytes": 22922,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "sha256": "1a9879c7ca4185deafe7d78cf44f20a4fde1d9dda29060a20247eb1f4f3e5d57",
+      "bytes": 2482,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "sha256": "401cc70895c56d06edac8fdf1d0c47aa05aff0368081615b9918899dae0c31ad",
+      "bytes": 4817,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "sha256": "1311ae0f046e1c7663ce7d45819eeca240ac695c7f1f843a667ce4de8318d64e",
+      "bytes": 3793,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "sha256": "aa6ad2e49a27a9f09a134052d5a2d06a3e0a57a062a87c30edecc7a841dd0c53",
+      "bytes": 18831,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "1b7f28427b27fa3d41aebfd57549310145bcb353680eb156791a0e97e54373d7",
+      "bytes": 20689,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "sha256": "7eea3bf2bd003d7dd6469e802f4f06754e574e90f1d2a2b78a7f593a8a4f3602",
+      "bytes": 3763,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "sha256": "c4d8b9e1e99cd5f3bc0eb85baf52b3c6500d796033108387c07569ddf3fb5274",
+      "bytes": 2004,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "sha256": "65ae1230d736a3c449dfd4f2a8235b3e1d5f890f16ffd30a48d2152cd1d8b2ca",
+      "bytes": 12685,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "sha256": "99882274820084b11f0fc1d5222a7556609d57f5a7606aab3a6e21d3c1fba5d9",
+      "bytes": 23506,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "5010c1d149cf5825a5debd692327da00ed5b33751b632f9b1b2847a664b9014e",
+      "bytes": 5741,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "024f4e135e207200f78462b8ee1ed90cde62e385b0eb6289266512dcf358b8b7",
+      "bytes": 7807,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "5e1616aed0aab30b0ae43c2bf1f8aaa75fcac3bc866c0f91e10171a8aa4c30ca",
+      "bytes": 5285,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "3d5f6850305896ac8a1618f081d643161df5b20c23cf2a22e6d3225b87c1bd91",
+      "bytes": 18770,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "63566a76842c315d0876586376c689f54595e427d72629f8e3bffe34eaf6ad65",
+      "bytes": 9646,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "539f70348d562f0daef6a8d0f6b5e41798a6fb6a90fd9f776cb2c4f16450728f",
+      "bytes": 8850,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "8592ed33c78a6e838bec2aaa2f177f6e82cb239c3eef3334f34f766ec9d9a68c",
+      "bytes": 14134,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "ced7289c2122fe533864c94dca9e85440fe79a2b7f6f1c90a82f4be169072e10",
+      "bytes": 6701,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "623058aef7bc8a71495b8206e0b3bce84e304536ba50ccc85ed0e5eb4716bd8f",
+      "bytes": 4089,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "1b10b3ebda6554c0e22aab2897e86f1f9329f46ee73044a97039806dc141a698",
+      "bytes": 6832,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "sha256": "aa73702d1b7cb6644ff9020ddb9faeb220aa11562cf3c2d73a801d0a7984b0b6",
+      "bytes": 4541,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "a50de70bda83dc22dc90275bcaa848d085d0a63fda0ad2a7c4ffcbf6a47fd7a9",
+      "bytes": 14757,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "0d44fc69a5d38f2baaf97dd69b90d1b43e5330046a2010c31b284ac9b0adf428",
+      "bytes": 5259,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "sha256": "0899298458361b5f1d152013bc78aed235837f9ef5fcdd10415c1e81c7f31b80",
+      "bytes": 21981,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "932f867af805810bb579f75fc5843e5d236cdf7b3d453125571dca0a0237e150",
+      "bytes": 18054,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "4a36e35f54f156a7030ab89aa684e22c84b457786e083bd44cb47764077d8b8d",
+      "bytes": 5506,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "sha256": "a3ba69b02f15b2e16ed03656d6c141e96cba876349712c9493e9061d00e092ea",
+      "bytes": 4614,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+      "sha256": "fbe1df3e04accf1eee378971c0e85ada1155fee6211203538cb0ddf9f8df0e05",
+      "bytes": 9150,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "sha256": "a5916996d7cca37561d57c0cbbb218001ad90b5ba16d8ca209165be32e97c912",
+      "bytes": 15428,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "sha256": "e7e664e693be6bea485c0afcdc470137f451d04f602227f4f501d354893743f8",
+      "bytes": 13935,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "sha256": "f1082398e8431e8b647a62d2e66ff71ff122fa8791a8945914779995dceaf5c4",
+      "bytes": 11806,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "sha256": "07d4b86c0c3ffcb02feb72bfca7b1b5321a76c42447c6b2bde9e2991566e3bbe",
+      "bytes": 7052,
+      "snapshot": "source-snapshots.json"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+      "sha256": "0c368fc495c1c2d821ce5ee26a92bb38f78821f4594514c864d83b5a5f7e6981",
+      "bytes": 11702,
+      "snapshot": "source-snapshots.json"
+    }
+  ],
+  "historicalFiles": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "bytes": 6447942
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+      "bytes": 17837
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+      "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f",
+      "bytes": 3520268
+    }
+  ],
+  "producerSeals": [
+    {
+      "path": "report.md",
+      "expected": "29daaa4d0db079f656f62cb122f62eb6ada954082a523337850a4e557a8884e5",
+      "actual": "29daaa4d0db079f656f62cb122f62eb6ada954082a523337850a4e557a8884e5",
+      "match": true
+    },
+    {
+      "path": "bindings.json",
+      "expected": "53cef93e4cacb60dbd53cd51d72b0a33de42ebde3312c8efe634948df39fd342",
+      "actual": "53cef93e4cacb60dbd53cd51d72b0a33de42ebde3312c8efe634948df39fd342",
+      "match": true
+    },
+    {
+      "path": "source-snapshots.json",
+      "expected": "3d02e646b9d0496988a61803beaf0a97d770ecad1ac081fa0a8485798968e918",
+      "actual": "3d02e646b9d0496988a61803beaf0a97d770ecad1ac081fa0a8485798968e918",
+      "match": true
+    },
+    {
+      "path": "input-snapshots.json",
+      "expected": "2ba264138a256aa89b24f2e5265763c58b5401168867caddd951dd9f80fcb07a",
+      "actual": "2ba264138a256aa89b24f2e5265763c58b5401168867caddd951dd9f80fcb07a",
+      "match": true
+    },
+    {
+      "path": "coverage.json",
+      "expected": "cee8b0b802361e078657620567170997c1d0592817275b117504576d007b975c",
+      "actual": "cee8b0b802361e078657620567170997c1d0592817275b117504576d007b975c",
+      "match": true
+    },
+    {
+      "path": "source-artifact-runtime.json",
+      "expected": "9ae3bbc1749dbe39172aebb0fd9909e8c735809074e12026109e7426db3fc7e0",
+      "actual": "9ae3bbc1749dbe39172aebb0fd9909e8c735809074e12026109e7426db3fc7e0",
+      "match": true
+    },
+    {
+      "path": "runtime-index.json",
+      "expected": "8a958ff5460b8610ed52b5dbb866467ead8119691a2c90792c419810b2f79ff8",
+      "actual": "8a958ff5460b8610ed52b5dbb866467ead8119691a2c90792c419810b2f79ff8",
+      "match": true
+    },
+    {
+      "path": "checks.json",
+      "expected": "f74a78f08fe01f5376bf4bb491cfd4c9703207cd8f2432f3c2f6d639fb58d7cf",
+      "actual": "f74a78f08fe01f5376bf4bb491cfd4c9703207cd8f2432f3c2f6d639fb58d7cf",
+      "match": true
+    },
+    {
+      "path": "cleanup.json",
+      "expected": "fddd9d37487c6fff56a521a62681f8c22dac4f5cea595cf44d609c4fb97a79cd",
+      "actual": "fddd9d37487c6fff56a521a62681f8c22dac4f5cea595cf44d609c4fb97a79cd",
+      "match": true
+    }
+  ],
+  "legacyRuntime": {
+    "facet": "0x4b6e65cfc9a16aae0dfa4257a680f4697275e5fc",
+    "chain": "4663",
+    "match": "exact_match",
+    "runtimeMatch": "exact_match",
+    "onchainHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d",
+    "recompiledHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d",
+    "transformations": [],
+    "compilation": {
+      "language": "Solidity",
+      "compiler": "solc",
+      "compilerVersion": "0.8.35+commit.47b9dedd",
+      "compilerSettings": {
+        "viaIR": false,
+        "metadata": {
+          "appendCBOR": true,
+          "bytecodeHash": "ipfs",
+          "useLiteralContent": false
+        },
+        "libraries": {},
+        "optimizer": {
+          "runs": 1,
+          "enabled": true
+        },
+        "evmVersion": "prague",
+        "remappings": [
+          "forge-std/=lib/crane/lib/forge-std/src/",
+          "@crane/=lib/crane/",
+          "contracts/solady/=lib/crane/contracts/external/solady/",
+          "contracts/external/solady/=lib/crane/contracts/external/solady/",
+          "contracts/protocols/launchpads/uniswap/continuous-clearing/=lib/crane/contracts/protocols/launchpads/uniswap/continuous-clearing/",
+          "tests/=lib/crane/test/foundry/spec/protocols/lending/aave/v4/",
+          "battlechain-lib/=lib/crane/lib/battlechain-lib/src/",
+          "@battlechain-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/src/",
+          "@chainlink/contracts-ccip/=lib/crane/lib/chainlink-local/lib/chainlink-ccip/chains/evm/",
+          "@chainlink/contracts/=lib/crane/lib/chainlink-local/lib/chainlink-evm/contracts/",
+          "@chainlink/local/src/=lib/crane/lib/chainlink-local/src/",
+          "@matterlabs/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/",
+          "@openzeppelin/contracts-upgradeable/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/contracts/",
+          "@openzeppelin/contracts/=lib/crane/contracts/external/openzeppelin-contracts/",
+          "@openzeppelin/contracts@4.8.3/=lib/crane/lib/chainlink-local/src/vendor/openzeppelin-solidity/v4.8.3/contracts/",
+          "@openzeppelin/contracts@5.0.2/=lib/crane/lib/chainlink-local/src/vendor/openzeppelin-solidity/v5.0.2/contracts/",
+          "@oz/=lib/crane/lib/openzeppelin-contracts/",
+          "@ozu/=lib/crane/contracts/external/openzeppelin-upgradeable/",
+          "@solady/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/solady/src/",
+          "battlechain-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/",
+          "battlechain-lib-mocks/=lib/crane/lib/battlechain-lib/test/mocks/",
+          "battlechain-safe-harbor-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/",
+          "chainlink-ccip/=lib/crane/lib/chainlink-local/lib/chainlink-ccip/chains/evm/contracts/vendor/optimism/interop-lib/v0/src/",
+          "chainlink-evm/=lib/crane/lib/chainlink-local/lib/chainlink-evm/",
+          "chainlink-local/=lib/crane/lib/chainlink-local/src/",
+          "clones/=lib/crane/contracts/external/clones-with-immutable-args/",
+          "crane/=lib/crane/",
+          "createx/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/src/",
+          "ds-test/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/crane/contracts/external/erc4626-tests/",
+          "gitlawb-contracts/=lib/crane/lib/gitlawb-contracts/",
+          "halmos-cheatcodes/=lib/crane/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+          "hardhat/=node_modules/hardhat/",
+          "l1-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/l1-contracts/contracts/",
+          "l2-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/l2-contracts/contracts/",
+          "murky/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/",
+          "openzeppelin-contracts-upgradeable-v4/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-upgradeable-v4/",
+          "openzeppelin-contracts-upgradeable/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/",
+          "openzeppelin-contracts-v4/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-v4/",
+          "openzeppelin-contracts/=lib/crane/lib/openzeppelin-contracts/",
+          "openzeppelin/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/openzeppelin-contracts/contracts/",
+          "solady/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/solady/src/",
+          "solmate/=lib/crane/contracts/external/solmate/",
+          "system-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/system-contracts/contracts/",
+          "lib/battlechain-lib/:src/=lib/crane/lib/battlechain-lib/src/"
+        ]
+      },
+      "name": "DETFSYFacet",
+      "fullyQualifiedName": "contracts/vaults/detf/common/sy/DETFSYFacet.sol:DETFSYFacet"
+    },
+    "metadataSources": [
+      {
+        "path": "contracts/vaults/detf/common/sy/DETFSYTarget.sol",
+        "sha256": "a5a8975a34d6d033fd7649c859ab4b319e1317f21063d493945cca6dea882b11",
+        "metadata": {
+          "keccak256": "0x4db7f89caa1a740c89b5512583de7596c1b5f9a69dc6dc4b69c99b67c5d97a08",
+          "license": "BSL-1.1",
+          "urls": [
+            "bzz-raw://3436056633d329231307b709b7f5fc2bd0c4c093d3f576a075361c7316d1cc0c",
+            "dweb:/ipfs/QmQAgrk7Ysc1iauMo5KCf5NfWvhwnjdgdAZLWEAMgaDcJo"
+          ]
+        },
+        "keccak256": "0x4db7f89caa1a740c89b5512583de7596c1b5f9a69dc6dc4b69c99b67c5d97a08"
+      },
+      {
+        "path": "contracts/vaults/detf/common/sy/DETFSYRepo.sol",
+        "sha256": "92226fd5440862f424aa0fecbf4337af1f96f9324296a9513c30d6570d0d990e",
+        "metadata": {
+          "keccak256": "0x5caa1f986c951670d7a9079ee40541e8aad21263e0c827d799c5210304e2638c",
+          "license": "BSL-1.1",
+          "urls": [
+            "bzz-raw://e3a08a4e947fe63160aa8cca3492f59da0934c42c76b13c31a65f56f8cf52858",
+            "dweb:/ipfs/QmUof1ejoCvsVJxFL4gwG63XA6WqFcCMPNYpKuza9NsmAg"
+          ]
+        },
+        "keccak256": "0x5caa1f986c951670d7a9079ee40541e8aad21263e0c827d799c5210304e2638c"
+      },
+      {
+        "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+        "sha256": "3ec13e4bb20549f5e3055e63212d6518cdc011bb616bab2783e22e5c7a20ba06",
+        "metadata": {
+          "keccak256": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+          "license": "BSL-1.1",
+          "urls": [
+            "bzz-raw://fc7a509795ebb6fd7d2f846a32b41393dcb95af5d971fcbb9f94456552a30033",
+            "dweb:/ipfs/QmR3c29B25hF2yg8XL2WNvQnVSZ8A6FrjFUBk51vCDr7pZ"
+          ]
+        },
+        "keccak256": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb"
+      }
+    ]
+  },
+  "archiveSourceChecks": [
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYTarget.sol",
+      "snapshotMatchesArchive": true
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYRepo.sol",
+      "snapshotMatchesArchive": true
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "snapshotMatchesArchive": true
+    }
+  ],
+  "historicalReceiptRange": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+    "startLine": 50241,
+    "endLine": 50963,
+    "custody": "0xf5b647c938dffd6f1b7803769278ed7346b12150d437803461d00055db12405d",
+    "redeem": "0x618b9e42c948cbb8bec5496ab57211c784ccd503ec840f17cf5cb9c5a05bb7ab",
+    "unstake": "0xe90907636f9b4f5cb689af0d6ced6bc1111329195b443be28614fbae1a5fd38b",
+    "conversion": "0xa3491916815cc29e641eed88560a2ae0464ca6fb0434958a16fcdb16ed7ddaa4",
+    "shares": "8094",
+    "receiptUnits": "9245",
+    "dtf": "52221256856930805",
+    "qualification": "Historical observation, not quote or current runtime acceptance; old ancestry UNPROVEN superseded only as eligibility requirement."
+  },
+  "preCliArtifacts": [
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "sha256": "48b1577004fdc53adbc602eaa3cebfe0c8b772f2ced0dfb0d8c5a646cdeb6366",
+      "admittedSha256": "48b1577004fdc53adbc602eaa3cebfe0c8b772f2ced0dfb0d8c5a646cdeb6366"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAccounting.json",
+      "sha256": "ef7aabf030633c8cce939c2efcf9b04279991dbf0a0796415302ed9abd4ec18a",
+      "admittedSha256": "ef7aabf030633c8cce939c2efcf9b04279991dbf0a0796415302ed9abd4ec18a"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "sha256": "ebdf0ebfaa4ffcf86cc1e5f4830ad091a92cef56d0d15554bccb8a44fdff144a",
+      "admittedSha256": "ebdf0ebfaa4ffcf86cc1e5f4830ad091a92cef56d0d15554bccb8a44fdff144a"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationBondNFTVault.sol/IUniswapV4DetfMigrationBondNFTVault.json",
+      "sha256": "9698ce8d52b2322b9f24753593a707457e2602fe3d036d6982d155fb161ec29d",
+      "admittedSha256": "9698ce8d52b2322b9f24753593a707457e2602fe3d036d6982d155fb161ec29d"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "sha256": "11c214c20e40e8895e029d01d1b11fe2d9086c55ad4748e8262bc89d0a149347",
+      "admittedSha256": "11c214c20e40e8895e029d01d1b11fe2d9086c55ad4748e8262bc89d0a149347"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "sha256": "db070f3b1e4f43866ff58111d315599c3dd40dae7e2121b266f38b7aafad494c",
+      "admittedSha256": "db070f3b1e4f43866ff58111d315599c3dd40dae7e2121b266f38b7aafad494c"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationRewardToken.sol/IUniswapV4DetfMigrationRewardToken.json",
+      "sha256": "a57aeb1cbd1a33a71e6658b37c1e3701e35d5c1ca1f2e735fe16773e91f966ea",
+      "admittedSha256": "a57aeb1cbd1a33a71e6658b37c1e3701e35d5c1ca1f2e735fe16773e91f966ea"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationRewardToken.sol/IUniswapV4DetfMigrationRewardTokenDFPkg.json",
+      "sha256": "421cc9c4bc3ea9ae6802092e6c57a1c491f7937d4e048087cdf707a80c29063c",
+      "admittedSha256": "421cc9c4bc3ea9ae6802092e6c57a1c491f7937d4e048087cdf707a80c29063c"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationSY.sol/IUniswapV4DetfMigrationSY.json",
+      "sha256": "9ebbded4dc2a22172097e4226ea6fc71874b23820a816924f17b96c628d4fd82",
+      "admittedSha256": "9ebbded4dc2a22172097e4226ea6fc71874b23820a816924f17b96c628d4fd82"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationSnapshot.sol/IUniswapV4DetfMigrationSnapshot.json",
+      "sha256": "cb30b10efca8387c304a7c0b16fc0807e4bf0445af2458c827edd8b6997347f9",
+      "admittedSha256": "cb30b10efca8387c304a7c0b16fc0807e4bf0445af2458c827edd8b6997347f9"
+    },
+    {
+      "path": "out/IUniswapV4DetfMigrationStakedDETF.sol/IUniswapV4DetfMigrationStakedDETF.json",
+      "sha256": "9dc548fa1c6d4480c85fe9195dcd1fa9263686ef7a257754f75b6bb9c9555d1f",
+      "admittedSha256": "9dc548fa1c6d4480c85fe9195dcd1fa9263686ef7a257754f75b6bb9c9555d1f"
+    },
+    {
+      "path": "out/MigrationAdministration.t.sol/MigrationAdministrationTest.json",
+      "sha256": "aa687c8b212d7317a1985ed50b0a12fedc473e260512dcc3ef8711c938c597ef",
+      "admittedSha256": "aa687c8b212d7317a1985ed50b0a12fedc473e260512dcc3ef8711c938c597ef"
+    },
+    {
+      "path": "out/MigrationAdministration.t.sol/MigrationOwnerReceiver.json",
+      "sha256": "a50b14f76b01cc3fc5c91c2a621d866e5aab1f5fbf195af249d91a8943d0a911",
+      "admittedSha256": "a50b14f76b01cc3fc5c91c2a621d866e5aab1f5fbf195af249d91a8943d0a911"
+    },
+    {
+      "path": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+      "sha256": "aa518bd00afa2d1ef4d27b95e59010126e55ae2513029efdbce820096b8b4d19",
+      "admittedSha256": "aa518bd00afa2d1ef4d27b95e59010126e55ae2513029efdbce820096b8b4d19"
+    },
+    {
+      "path": "out/MigrationEgress.t.sol/MigrationEgressTest.json",
+      "sha256": "3532a740163e4fcda7e2b3b3c749f509ba246345887fd1a9e1a9dde5461e7a10",
+      "admittedSha256": "3532a740163e4fcda7e2b3b3c749f509ba246345887fd1a9e1a9dde5461e7a10"
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalBase.json",
+      "sha256": "dbac186e9cdd1a49ff49144ce177069d56accc264ea4ac7c3723f0bfa6cef947",
+      "admittedSha256": "dbac186e9cdd1a49ff49144ce177069d56accc264ea4ac7c3723f0bfa6cef947"
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalDecimalsTest.json",
+      "sha256": "7c7e839be3095a47612d34ce3eea34287c99a194f38b11221ae6c698f0481163",
+      "admittedSha256": "7c7e839be3095a47612d34ce3eea34287c99a194f38b11221ae6c698f0481163"
+    },
+    {
+      "path": "out/MigrationGenesisCapital.t.sol/MigrationGenesisCapitalTest.json",
+      "sha256": "fc5c3a5e993dd846fa18389e38c4d19f27c9480ed35278be53e5f8297b2623b5",
+      "admittedSha256": "fc5c3a5e993dd846fa18389e38c4d19f27c9480ed35278be53e5f8297b2623b5"
+    },
+    {
+      "path": "out/MigrationHostileContribution.t.sol/MigrationHostileContribution.json",
+      "sha256": "d70450cededb0443913a55101b3a002847264c470dacde6cc4233500c4423086",
+      "admittedSha256": "d70450cededb0443913a55101b3a002847264c470dacde6cc4233500c4423086"
+    },
+    {
+      "path": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+      "sha256": "6b37c3700a998206da54c9616618033c53916871fad85a6135ebe2d1256e41f7",
+      "admittedSha256": "6b37c3700a998206da54c9616618033c53916871fad85a6135ebe2d1256e41f7"
+    },
+    {
+      "path": "out/MigrationLegacyNftLib.sol/MigrationLegacyNftLib.json",
+      "sha256": "4f68b04bbf47094dd6c24b7f952c6099dee66f657ba3eb7306531f0305c1519b",
+      "admittedSha256": "4f68b04bbf47094dd6c24b7f952c6099dee66f657ba3eb7306531f0305c1519b"
+    },
+    {
+      "path": "out/MigrationLegacyRecoveryLib.sol/MigrationLegacyRecoveryLib.json",
+      "sha256": "a506b0cf3e5a0e0dc1b22ce4ae6120ed91cd6cb2cfd8f4779a67b32bf1c34022",
+      "admittedSha256": "a506b0cf3e5a0e0dc1b22ce4ae6120ed91cd6cb2cfd8f4779a67b32bf1c34022"
+    },
+    {
+      "path": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+      "sha256": "87cf1afd5ca7b087a4046de74dbe1c64465471ed4eabb274c411d8e1e7aae54c",
+      "admittedSha256": "87cf1afd5ca7b087a4046de74dbe1c64465471ed4eabb274c411d8e1e7aae54c"
+    },
+    {
+      "path": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+      "sha256": "ce2805f910773787eca58d919e6b0d90314ff24f340485d1837e0e11a2f4948a",
+      "admittedSha256": "ce2805f910773787eca58d919e6b0d90314ff24f340485d1837e0e11a2f4948a"
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IEarlierClaims.json",
+      "sha256": "e348fbbeb162d13cb08fd9d135a24836b7557e3ea383cc56eb3235494edf2807",
+      "admittedSha256": "e348fbbeb162d13cb08fd9d135a24836b7557e3ea383cc56eb3235494edf2807"
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IEarlierParent.json",
+      "sha256": "bc652eeccd5f71882f8b59c866bf729e6a73d9c504bd631361d94a63fbe15adf",
+      "admittedSha256": "bc652eeccd5f71882f8b59c866bf729e6a73d9c504bd631361d94a63fbe15adf"
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/IWeightedClaims.json",
+      "sha256": "635f672f3b9f6d3756ddd43cbc7b7b3b3439e76dd58d5b28e3926fa366851d18",
+      "admittedSha256": "635f672f3b9f6d3756ddd43cbc7b7b3b3439e76dd58d5b28e3926fa366851d18"
+    },
+    {
+      "path": "out/MigrationNftForkBase.sol/MigrationNftForkBase.json",
+      "sha256": "0c41130f5cd693b5f8db2b215c765d5e106edbeb04eb02a4fddfc27333fb7836",
+      "admittedSha256": "0c41130f5cd693b5f8db2b215c765d5e106edbeb04eb02a4fddfc27333fb7836"
+    },
+    {
+      "path": "out/MigrationNftLifecycle.t.sol/MigrationNftHolder.json",
+      "sha256": "bcfa96cb2f7ce4c99c6b4a12cb3eac0ad2a2ee645b4ad4107061a234afbe7cba",
+      "admittedSha256": "bcfa96cb2f7ce4c99c6b4a12cb3eac0ad2a2ee645b4ad4107061a234afbe7cba"
+    },
+    {
+      "path": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+      "sha256": "d00142e45110badfa98609d247a8a45b3ecb8867171135deef8293a6e70b816c",
+      "admittedSha256": "d00142e45110badfa98609d247a8a45b3ecb8867171135deef8293a6e70b816c"
+    },
+    {
+      "path": "out/MigrationOriginalWallet.t.sol/MigrationOriginalWalletTest.json",
+      "sha256": "1b76b0658fc269e7fb96adb903ad932ddfb458a6960d47f0ad0ca4145d980a77",
+      "admittedSha256": "1b76b0658fc269e7fb96adb903ad932ddfb458a6960d47f0ad0ca4145d980a77"
+    },
+    {
+      "path": "out/MigrationOwnerBondCallbacks.t.sol/MigrationOwnerBondCallbacksTest.json",
+      "sha256": "1791e6a849d78473359ae347ed341cbfe6c36e8506f1feffe4880c5d7d628a6d",
+      "admittedSha256": "1791e6a849d78473359ae347ed341cbfe6c36e8506f1feffe4880c5d7d628a6d"
+    },
+    {
+      "path": "out/MigrationOwnerBondCallbacks.t.sol/PaidOwnerWallet.json",
+      "sha256": "2419650979e4f4e7306d26aa72d3ee30ab589f8db44553a22feca0c74823ab0d",
+      "admittedSha256": "2419650979e4f4e7306d26aa72d3ee30ab589f8db44553a22feca0c74823ab0d"
+    },
+    {
+      "path": "out/MigrationOwnerFirstBond.t.sol/MigrationOwnerFirstBondTest.json",
+      "sha256": "769fd6634b087036764447c7d2d88804d86b63d239c554064555e9fc4c84a532",
+      "admittedSha256": "769fd6634b087036764447c7d2d88804d86b63d239c554064555e9fc4c84a532"
+    },
+    {
+      "path": "out/MigrationPermit2.t.sol/MigrationPermit2Test.json",
+      "sha256": "b6f64f102e0b152c7a8b6d5813d8aaf4813914fa3ad9b251adb6c50fbdfbe3b6",
+      "admittedSha256": "b6f64f102e0b152c7a8b6d5813d8aaf4813914fa3ad9b251adb6c50fbdfbe3b6"
+    },
+    {
+      "path": "out/MigrationPermit2Callback.sol/MigrationPermit2Callback.json",
+      "sha256": "6f75176bb8e221c4e5f6de70f05563ace68211f706fcfe8b87c06363b268a937",
+      "admittedSha256": "6f75176bb8e221c4e5f6de70f05563ace68211f706fcfe8b87c06363b268a937"
+    },
+    {
+      "path": "out/MigrationPermitAndRetirement.t.sol/MigrationPermitAndRetirementTest.json",
+      "sha256": "99fe151dac1789d213d3dc1e6c068d091e2f8fd892122ed5666af46d9c5fe008",
+      "admittedSha256": "99fe151dac1789d213d3dc1e6c068d091e2f8fd892122ed5666af46d9c5fe008"
+    },
+    {
+      "path": "out/MigrationRecovery.t.sol/MigrationRecoveryCallbackTest.json",
+      "sha256": "6325aa1089bf3e172c9697d83a277918a3d1d5ece669a3b17957365cf6c60125",
+      "admittedSha256": "6325aa1089bf3e172c9697d83a277918a3d1d5ece669a3b17957365cf6c60125"
+    },
+    {
+      "path": "out/MigrationRecovery.t.sol/MigrationRecoveryTest.json",
+      "sha256": "66cb693bc0caeed1aa25da1ab3f9ed335a34836e7038f5ff669cdfdd0d683484",
+      "admittedSha256": "66cb693bc0caeed1aa25da1ab3f9ed335a34836e7038f5ff669cdfdd0d683484"
+    },
+    {
+      "path": "out/MigrationRecoveryAccrual.t.sol/MigrationRecoveryAccrualTest.json",
+      "sha256": "0e07b7f13883246ae18be4b2b2b10d925affb0ee43cfd845a3ceb678b222528c",
+      "admittedSha256": "0e07b7f13883246ae18be4b2b2b10d925affb0ee43cfd845a3ceb678b222528c"
+    },
+    {
+      "path": "out/MigrationRecoveryAccrualRollback.t.sol/MigrationRecoveryAccrualRollbackTest.json",
+      "sha256": "e95c5345844c8ba83cc6a319ebd9272d3a62f7f0a95d697a22645eef851ff2e7",
+      "admittedSha256": "e95c5345844c8ba83cc6a319ebd9272d3a62f7f0a95d697a22645eef851ff2e7"
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationForkBase.json",
+      "sha256": "4fb98db22be9e07b7d0a28808c8f55f78e2e020c453d09af523db70fd4b677eb",
+      "admittedSha256": "4fb98db22be9e07b7d0a28808c8f55f78e2e020c453d09af523db70fd4b677eb"
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/MigrationRecoveryDonationTest.json",
+      "sha256": "2f4afc51519da51ae8cced6e7c8675882ba6d1350758214a997d605acd1fe524",
+      "admittedSha256": "2f4afc51519da51ae8cced6e7c8675882ba6d1350758214a997d605acd1fe524"
+    },
+    {
+      "path": "out/MigrationRecoveryDonation.t.sol/RecoveryHostileRate.json",
+      "sha256": "7635c884001936ef52a80b5ac758240f2817e1e3af428cdc1c8a440ef863a2c3",
+      "admittedSha256": "7635c884001936ef52a80b5ac758240f2817e1e3af428cdc1c8a440ef863a2c3"
+    },
+    {
+      "path": "out/MigrationRecoveryEarlier.t.sol/MigrationRecoveryEarlierTest.json",
+      "sha256": "23f5065e0fac2e91efbb1471669bc587226e33f59dfbe70caf76cd5ed08fb2af",
+      "admittedSha256": "23f5065e0fac2e91efbb1471669bc587226e33f59dfbe70caf76cd5ed08fb2af"
+    },
+    {
+      "path": "out/MigrationRecoveryForkBase.sol/MigrationRecoveryForkBase.json",
+      "sha256": "59b5737270a66e4e73a53a753bab154e186a3b60a6d461be006a57d5d5266281",
+      "admittedSha256": "59b5737270a66e4e73a53a753bab154e186a3b60a6d461be006a57d5d5266281"
+    },
+    {
+      "path": "out/MigrationRecoveryGas.t.sol/MigrationRecoveryGasTest.json",
+      "sha256": "2721b63955097c5ed435744902e54df937d69af30aa07bc0e97c09ce9d587e2f",
+      "admittedSha256": "2721b63955097c5ed435744902e54df937d69af30aa07bc0e97c09ce9d587e2f"
+    },
+    {
+      "path": "out/MigrationRecoveryWeighted.t.sol/MigrationRecoveryWeightedTest.json",
+      "sha256": "cbe83e8c2f2209318eae8dd25b8a6848dd7890d939d8b6d88ecbcb1d744ef9a6",
+      "admittedSha256": "cbe83e8c2f2209318eae8dd25b8a6848dd7890d939d8b6d88ecbcb1d744ef9a6"
+    },
+    {
+      "path": "out/MigrationRecoveryWeightedSy.t.sol/MigrationRecoveryWeightedSyTest.json",
+      "sha256": "04574a4bb48645add55dfd38a58a024261ffecc81ce76a08eeff1415efafb91f",
+      "admittedSha256": "04574a4bb48645add55dfd38a58a024261ffecc81ce76a08eeff1415efafb91f"
+    },
+    {
+      "path": "out/MigrationRetainedAccounting.t.sol/MigrationRetainedAccountingTest.json",
+      "sha256": "9caaf5bc99d278ca45e5537bca26d99e89bb2b6c60c3f0e43aff8dbd1231bf10",
+      "admittedSha256": "9caaf5bc99d278ca45e5537bca26d99e89bb2b6c60c3f0e43aff8dbd1231bf10"
+    },
+    {
+      "path": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+      "sha256": "0a1de1bb927ea62bdb0c9317a851040e705b09076122a4ef2bf4353714b33d47",
+      "admittedSha256": "0a1de1bb927ea62bdb0c9317a851040e705b09076122a4ef2bf4353714b33d47"
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/MigrationWeightedLiquidTest.json",
+      "sha256": "b03edf5529c517ac22823683620d0e8182271573c57861f5bcced06096c4d1ae",
+      "admittedSha256": "b03edf5529c517ac22823683620d0e8182271573c57861f5bcced06096c4d1ae"
+    },
+    {
+      "path": "out/MigrationWeightedLiquid.t.sol/WeightedLiquidReceiver.json",
+      "sha256": "847397430b46fa52aa2f9d1e9c687615d0c0e12e7279078eb36d9bd9b30f84bb",
+      "admittedSha256": "847397430b46fa52aa2f9d1e9c687615d0c0e12e7279078eb36d9bd9b30f84bb"
+    },
+    {
+      "path": "out/MigrationWeightedLiquidConfiguration.t.sol/MigrationWeightedLiquidConfigurationTest.json",
+      "sha256": "2d0cb0622136473da8ff9ec6fc151a409c5ff3def6de17c3d25c0ffeca5fc946",
+      "admittedSha256": "2d0cb0622136473da8ff9ec6fc151a409c5ff3def6de17c3d25c0ffeca5fc946"
+    },
+    {
+      "path": "out/MigrationWeightedSy.t.sol/MigrationWeightedSyTest.json",
+      "sha256": "efe42c5d750371574540d81305b883dfeda16917ed5d2c1f06f18b1d09ce028d",
+      "admittedSha256": "efe42c5d750371574540d81305b883dfeda16917ed5d2c1f06f18b1d09ce028d"
+    },
+    {
+      "path": "out/MigrationWeightedSy.t.sol/WeightedSyReceiver.json",
+      "sha256": "5a9ebbbae22fc1d69c60fab10a29c44090f5acfb98f05967e2329568c2ed0422",
+      "admittedSha256": "5a9ebbbae22fc1d69c60fab10a29c44090f5acfb98f05967e2329568c2ed0422"
+    },
+    {
+      "path": "out/MigrationWeightedSyConfiguration.t.sol/MigrationWeightedSyConfigurationTest.json",
+      "sha256": "3a7f6bc8a95c4fdb98901719c72ddc1c546d9e6c2e8f03a36917b90ec49c7ebb",
+      "admittedSha256": "3a7f6bc8a95c4fdb98901719c72ddc1c546d9e6c2e8f03a36917b90ec49c7ebb"
+    },
+    {
+      "path": "out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+      "sha256": "43508f66c0d33ac907a817407ad3834c31079933cd7a07b4a01ec4e06d95c22c",
+      "admittedSha256": "43508f66c0d33ac907a817407ad3834c31079933cd7a07b4a01ec4e06d95c22c"
+    },
+    {
+      "path": "out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+      "sha256": "94cbf9640af41d0d1506cfe50e1c44746df7bf13580737c50b63d9c9a2086d03",
+      "admittedSha256": "94cbf9640af41d0d1506cfe50e1c44746df7bf13580737c50b63d9c9a2086d03"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "sha256": "02b8fb38a2ca2d636f6a39fb65d81d94bd18b9182409df677f1fb2ee7de90a40",
+      "admittedSha256": "02b8fb38a2ca2d636f6a39fb65d81d94bd18b9182409df677f1fb2ee7de90a40"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationAllocationTarget.sol/UniswapV4DetfMigrationAllocationTarget.json",
+      "sha256": "3fec055abfb97d7c48e49bcafdbaa7eb6de38756c50e77b058a6c5d7b965ce66",
+      "admittedSha256": "3fec055abfb97d7c48e49bcafdbaa7eb6de38756c50e77b058a6c5d7b965ce66"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondFacet.sol/UniswapV4DetfMigrationBondFacet.json",
+      "sha256": "d7fb51c063efd903cb7dd0b760106f9e10a5debb1b9ed6b810e32511266977f7",
+      "admittedSha256": "d7fb51c063efd903cb7dd0b760106f9e10a5debb1b9ed6b810e32511266977f7"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondMetadataFacet.sol/UniswapV4DetfMigrationBondMetadataFacet.json",
+      "sha256": "aee5b5cbcc839fee8f043a5bda789390600781c6414f2c4e2d0d3e8a53846347",
+      "admittedSha256": "aee5b5cbcc839fee8f043a5bda789390600781c6414f2c4e2d0d3e8a53846347"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondMetadataTarget.sol/UniswapV4DetfMigrationBondMetadataTarget.json",
+      "sha256": "d82a85d7f0b7788774e8cb104bbb6db8f32c32743937e01bc98b5a5f64645755",
+      "admittedSha256": "d82a85d7f0b7788774e8cb104bbb6db8f32c32743937e01bc98b5a5f64645755"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTRepo.sol/UniswapV4DetfMigrationBondNFTRepo.json",
+      "sha256": "c7c17c43ad816fc81e13c397f9967cb45a01eeaae5230d41652198893eed4f3d",
+      "admittedSha256": "c7c17c43ad816fc81e13c397f9967cb45a01eeaae5230d41652198893eed4f3d"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol/UniswapV4DetfMigrationBondNFTVaultDFPkg.json",
+      "sha256": "1d9f8c0c71d3825415735d866c43e07a73083b8e58f55c0f7af7953f92dbbf2c",
+      "admittedSha256": "1d9f8c0c71d3825415735d866c43e07a73083b8e58f55c0f7af7953f92dbbf2c"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultFacet.sol/UniswapV4DetfMigrationBondNFTVaultFacet.json",
+      "sha256": "5020d598358531144e2dd88c9d3f07937fc14453a58940ee81d75e2750d9d1a7",
+      "admittedSha256": "5020d598358531144e2dd88c9d3f07937fc14453a58940ee81d75e2750d9d1a7"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationBondNFTVaultTarget.sol/UniswapV4DetfMigrationBondNFTVaultTarget.json",
+      "sha256": "a498bbb524f4772cf20889a6e541e64d0ed715d59482fafa8f0d2e20b3cdd177",
+      "admittedSha256": "a498bbb524f4772cf20889a6e541e64d0ed715d59482fafa8f0d2e20b3cdd177"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "sha256": "ea770f0e0b5fa802ca463125789cb3b1ad2780cf79d7cc37b29f4934e6192753",
+      "admittedSha256": "ea770f0e0b5fa802ca463125789cb3b1ad2780cf79d7cc37b29f4934e6192753"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "sha256": "e3e134d912361347ae2fdb8713aab56c0d3b528b0dd8c15de8c92c940073c92f",
+      "admittedSha256": "e3e134d912361347ae2fdb8713aab56c0d3b528b0dd8c15de8c92c940073c92f"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "sha256": "fe92a18ac34ac3fd82dcb347f06b11da2d6a54ea6d35c0d6cbaa0bafb71903de",
+      "admittedSha256": "fe92a18ac34ac3fd82dcb347f06b11da2d6a54ea6d35c0d6cbaa0bafb71903de"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationMaintenanceFacet.sol/UniswapV4DetfMigrationMaintenanceFacet.json",
+      "sha256": "8372c212b776d7569fee85fa8503af46218fd0b19d69ec3081575adb010fff3a",
+      "admittedSha256": "8372c212b776d7569fee85fa8503af46218fd0b19d69ec3081575adb010fff3a"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationPolicy.sol/UniswapV4DetfMigrationPolicy.json",
+      "sha256": "198433a73fa1d3c2117278b152fd07bce69fb9314d44a4f019a6ece48e2eeba2",
+      "admittedSha256": "198433a73fa1d3c2117278b152fd07bce69fb9314d44a4f019a6ece48e2eeba2"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationQueryFacet.sol/UniswapV4DetfMigrationQueryFacet.json",
+      "sha256": "1c0716bc8ad40eeadb76623c7ea70418427ba6730be9e9806fb8847d9e70a88a",
+      "admittedSha256": "1c0716bc8ad40eeadb76623c7ea70418427ba6730be9e9806fb8847d9e70a88a"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "sha256": "5891703b014003bf52311c240513d4b2a7052f0eeab235cec61c9f5847a71f1d",
+      "admittedSha256": "5891703b014003bf52311c240513d4b2a7052f0eeab235cec61c9f5847a71f1d"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryRepo.sol/UniswapV4DetfMigrationRecoveryRepo.json",
+      "sha256": "6940fa62cec8d705a99ea417b4c0ad41da695ec66318351ed58179609ecf02e7",
+      "admittedSha256": "6940fa62cec8d705a99ea417b4c0ad41da695ec66318351ed58179609ecf02e7"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRecoveryTarget.sol/UniswapV4DetfMigrationRecoveryTarget.json",
+      "sha256": "e842956350e5934de95bf0662513794916cc2d5014fbbbb8195e933b3289a733",
+      "admittedSha256": "e842956350e5934de95bf0662513794916cc2d5014fbbbb8195e933b3289a733"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRepo.sol/UniswapV4DetfMigrationRepo.json",
+      "sha256": "6b01f97506d530713c6d18abd82272eb8b6878709e61ec0c64bf0440f7c1c4ed",
+      "admittedSha256": "6b01f97506d530713c6d18abd82272eb8b6878709e61ec0c64bf0440f7c1c4ed"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenDFPkg.sol/UniswapV4DetfMigrationRewardTokenDFPkg.json",
+      "sha256": "31e16d857fc807e92ef61931ac965419a19240c238752dba8d799d2c360af086",
+      "admittedSha256": "31e16d857fc807e92ef61931ac965419a19240c238752dba8d799d2c360af086"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenFacet.sol/UniswapV4DetfMigrationRewardTokenFacet.json",
+      "sha256": "00286cb4dad64e40e6e0f70cc0c9ecfffc3ddf5738e533d8eef5a149da047c0b",
+      "admittedSha256": "00286cb4dad64e40e6e0f70cc0c9ecfffc3ddf5738e533d8eef5a149da047c0b"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenRepo.sol/UniswapV4DetfMigrationRewardTokenRepo.json",
+      "sha256": "7e587b68f57955dbcbd95ccf1dcc5adde69bee0f9d496beffbddd70de79e51d9",
+      "admittedSha256": "7e587b68f57955dbcbd95ccf1dcc5adde69bee0f9d496beffbddd70de79e51d9"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationRewardTokenTarget.sol/UniswapV4DetfMigrationRewardTokenTarget.json",
+      "sha256": "b08aa8d6659a8b77e7c6dac578eb4e5f70f1b3e5fd388b8920b8c49bc5732c23",
+      "admittedSha256": "b08aa8d6659a8b77e7c6dac578eb4e5f70f1b3e5fd388b8920b8c49bc5732c23"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSYFacet.sol/UniswapV4DetfMigrationSYFacet.json",
+      "sha256": "ddeeb1fb8cf75f50324e56bc1f6007666c7cc7430bb6080bff5e7c79b4bc1f1a",
+      "admittedSha256": "ddeeb1fb8cf75f50324e56bc1f6007666c7cc7430bb6080bff5e7c79b4bc1f1a"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSYRepo.sol/UniswapV4DetfMigrationSYRepo.json",
+      "sha256": "18c5afb7a3040a68b846690f9eaca444844511ac5e06db1f79d8a38446bf203a",
+      "admittedSha256": "18c5afb7a3040a68b846690f9eaca444844511ac5e06db1f79d8a38446bf203a"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSYTarget.sol/UniswapV4DetfMigrationSYTarget.json",
+      "sha256": "5aa233269b365715e0b13ca67ef0b1fb3f0ffba6d66978263a8059103b1e52a1",
+      "admittedSha256": "5aa233269b365715e0b13ca67ef0b1fb3f0ffba6d66978263a8059103b1e52a1"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotDecimalsTest.json",
+      "sha256": "f75612b1d44a2ca7c32fa06acc04a517b367c0d199c08f5f0d614360971bf9b3",
+      "admittedSha256": "f75612b1d44a2ca7c32fa06acc04a517b367c0d199c08f5f0d614360971bf9b3"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotReceiptExclusionTest.json",
+      "sha256": "18d8b189a42448a6688145eaa25cde28cf9a93cc2f723b586785c9f5e1092831",
+      "admittedSha256": "18d8b189a42448a6688145eaa25cde28cf9a93cc2f723b586785c9f5e1092831"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotTest.json",
+      "sha256": "d6d4ccab1ba52912d77d31314fd794e88a86ef406cc7233f29218e9ecaf71da4",
+      "admittedSha256": "d6d4ccab1ba52912d77d31314fd794e88a86ef406cc7233f29218e9ecaf71da4"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationSnapshotLib.sol/UniswapV4DetfMigrationSnapshotLib.json",
+      "sha256": "f9738b4936e758182e2e69a0f82775dc66d1f4b7d1e342a93fa38579a3399480",
+      "admittedSha256": "f9738b4936e758182e2e69a0f82775dc66d1f4b7d1e342a93fa38579a3399480"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFFacet.sol/UniswapV4DetfMigrationStakedDETFFacet.json",
+      "sha256": "62e2821e79397e982eee29381bc255f7ec8cecaa73abb57064ea998a853da989",
+      "admittedSha256": "62e2821e79397e982eee29381bc255f7ec8cecaa73abb57064ea998a853da989"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFRepo.sol/UniswapV4DetfMigrationStakedDETFRepo.json",
+      "sha256": "683211c4c23420c7b261776c49528721f6c45707fb45b32d494ad5769c3a681f",
+      "admittedSha256": "683211c4c23420c7b261776c49528721f6c45707fb45b32d494ad5769c3a681f"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationStakedDETFTarget.sol/UniswapV4DetfMigrationStakedDETFTarget.json",
+      "sha256": "a327508907ef45372ea4949ed23d001d0034399d6602f9c1434779cbf87577f9",
+      "admittedSha256": "a327508907ef45372ea4949ed23d001d0034399d6602f9c1434779cbf87577f9"
+    },
+    {
+      "path": "out/UniswapV4DetfMigrationTarget.sol/UniswapV4DetfMigrationTarget.json",
+      "sha256": "4e115b8af4169a367cb9912b4a31a6bd6911c3e1e032889d1114e1514f6779cb",
+      "admittedSha256": "4e115b8af4169a367cb9912b4a31a6bd6911c3e1e032889d1114e1514f6779cb"
+    },
+    {
+      "path": "out/UniswapV4DetfMigration_Component_FactoryService.sol/UniswapV4DetfMigration_Component_FactoryService.json",
+      "sha256": "bd60bebb0e6bd8a892183d0ede1207729285ebe5f9f0b16e9e565f51564cb687",
+      "admittedSha256": "bd60bebb0e6bd8a892183d0ede1207729285ebe5f9f0b16e9e565f51564cb687"
+    },
+    {
+      "path": "out/UniswapV4DetfMigration_Pkg_FactoryService.sol/UniswapV4DetfMigration_Pkg_FactoryService.json",
+      "sha256": "c6ec3faf9d2b9d393f5c945d0cf99247087458b0a8f446058dae1758a3c163d8",
+      "admittedSha256": "c6ec3faf9d2b9d393f5c945d0cf99247087458b0a8f446058dae1758a3c163d8"
+    }
+  ]
+}
+

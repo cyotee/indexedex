@@ -1,0 +1,68 @@
+{
+  "version": "phase32-stopped-producer-seal-v1",
+  "status": "complete-bounded-source-handoff-with-precise-gaps",
+  "publishedAt": "2026-11-13T11:16:02.793Z",
+  "rows": 59,
+  "supportedEarlierPurchases": 16,
+  "unknownWeightedPurchases": 43,
+  "retainedFlags": 19,
+  "originPairs": 2,
+  "proofChecks": 4915,
+  "independentVerdict": "not-claimed-separate-downstream-role",
+  "pendingOwnedOperations": 0,
+  "bindings": [
+    {
+      "path": "manifest.json",
+      "bytes": 166736,
+      "sha256": "ee53c478424b2f79a015818ec81887989f566209233128b5ca43cc727c88fd8e"
+    },
+    {
+      "path": "report.md",
+      "bytes": 29993,
+      "sha256": "607a1a4dc90ee0f445df68e8b3f8b6eae95cf6ae5fdc43b5d390d72dc80e2cfe"
+    },
+    {
+      "path": "reconcile-01.stdout",
+      "bytes": 4313971,
+      "sha256": "362c9b2d992280533e7c8fa7bf90406e7e64ab67e591ca475be3b31ed6953cd6"
+    },
+    {
+      "path": "observe-02.stdout",
+      "bytes": 5761016,
+      "sha256": "26889b527c6179c886d0b1fb6a6c5893f43cfb4165a2b99df9860e773bb574de"
+    },
+    {
+      "path": "prove-01.stdout",
+      "bytes": 32835,
+      "sha256": "6f752e27a9a7dc8e1e6b9a2ee6b06abc4e7543e9f95ab7c5a1f1b2ad9fed6b80"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 2624,
+      "sha256": "896a3e69f602f1a5330e2176fac6d6a4c980e1b379d9f389cecddb3817299917"
+    },
+    {
+      "path": "inputs.json",
+      "bytes": 23315,
+      "sha256": "d3102bf7eccda4e3c187c3d63a73066a749dcee94750474d6b52862d02c9b89f"
+    },
+    {
+      "path": "http-manifest.json",
+      "bytes": 245959,
+      "sha256": "04184a66f112389a9d257204778d3decfe9a3b1284e7d397b8e624a82bde0c78"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 1664,
+      "sha256": "265ed0c21838db01270c7a910a586947fc97bf7625d169cc532e58e968c37b8f"
+    },
+    {
+      "path": "command-index.json",
+      "bytes": 15207,
+      "sha256": "624a0b60c4dfebf83c9153b64bbad95604068991654bb2595659ac14db2a2abe"
+    }
+  ],
+  "limits": "NON-ISSUABLE; proposed purchase token components only, not eligibility, configuration, C0, native-history completeness or financial approval",
+  "finalPublication": true,
+  "publisherExitRequired": true
+}

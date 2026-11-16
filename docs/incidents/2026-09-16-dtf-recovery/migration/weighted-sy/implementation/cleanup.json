@@ -1,0 +1,23 @@
+{
+  "cli": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/.omo-runtime/dtf-migration-weighted-sy/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 62267,
+    "runtime": "removed"
+  },
+  "externalProbe": "PORT_PROBE_EXIT=1\nPID_PROBE_EXIT=1\nCHECKPOINT_ABSENT_EXIT=0\nDIFF_CHECK_EXIT=0\n75d513cb8b36e53f14c8aa3a352f21703ad91ba1\nwork/dtf-migration-phase-14-weighted-sy",
+  "emptyOwnedParentRemoval": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/.omo-runtime/dtf-migration-weighted-sy",
+    "command": "rmdir .omo-runtime/dtf-migration-weighted-sy",
+    "exitCode": 0
+  },
+  "sourceModificationsStopped": true,
+  "ownedRuntimeRemaining": false,
+  "allOwnedMonitorCommandsCompleted": true,
+  "sourceSnapshotsMatchCurrent": 33,
+  "commitOrMergePerformed": false,
+  "providerRouteChanged": false,
+  "heldPhase09InspectedImportedReplayed": false,
+  "sharedWarmArtifactsPreserved": true
+}

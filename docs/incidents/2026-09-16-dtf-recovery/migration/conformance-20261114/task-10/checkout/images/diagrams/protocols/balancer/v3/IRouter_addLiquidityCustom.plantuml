@@ -1,0 +1,69 @@
+@startuml IRouter_addLiquidityCustom
+actor User
+participant Router
+participant Vault
+participant Pool
+participant Hooks
+
+== Initiation ==
+User -> Router: addLiquidityCustom(pool, maxAmountsIn, minBptAmountOut, wethIsEth, userData)
+note right: User calls Router to add liquidity with custom logic.\n**Code Citation**: Router.sol#L192-L215
+
+== Vault Unlocking ==
+Router -> Vault: unlock(encoded params)
+note right: Router encodes AddLiquidityHookParams and calls Vault.unlock.\n**Code Citation**: Router.sol#L198-L214\n**Code Citation (Vault)**: Vault.sol#L191-L197
+
+== Add Liquidity Hook ==
+Vault -> Router: addLiquidityHook(params)
+note right: Vault executes Router's addLiquidityHook.\n**Code Citation**: Router.sol#L192-L215
+
+== Add Liquidity Logic ==
+Router -> Vault: addLiquidity(AddLiquidityParams with kind=CUSTOM)
+note right: Router calls Vault.addLiquidity for custom liquidity addition.\n**Code Citation**: Router.sol#L200-L208\n**Code Citation (Vault)**: Vault.sol#L759-L845
+
+alt shouldCallBeforeAddLiquidity == true
+    Vault -> Hooks: onBeforeAddLiquidity(sender, pool, maxAmountsInScaled18, minBptAmountOut, balancesLiveScaled18, userData)
+    note right: Vault calls hook (if enabled) for pre-add liquidity logic.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L170-L179
+    Hooks --> Vault: true
+    note right: Hook returns true, signaling success.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L175
+end alt
+
+Vault -> Pool: onAddLiquidityCustom(router, maxAmountsInScaled18, minBptAmountOut, balancesScaled18, userData)
+note right: Vault calls pool's custom logic for liquidity addition.\n**Code Citation (Pool)**: IPoolLiquidity.sol#L11-L24\n**Code Citation (Vault)**: Vault.sol#L919-L927
+Pool --> Vault: amountsInScaled18, bptAmountOut, swapFeeAmounts, returnData
+
+alt shouldCallAfterAddLiquidity == true
+    Vault -> Hooks: onAfterAddLiquidity(sender, pool, amountsInScaled18, amountsInRaw, bptAmountOut, balancesLiveScaled18, userData)
+    note right: Vault calls hook (if enabled) for post-add liquidity logic.\nMay adjust amountsInRaw if enableHookAdjustedAmounts is true.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L192-L215
+    Hooks --> Vault: true
+    note right: Hook returns true, confirming success.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L210
+end alt
+
+Vault --> Router: amountsIn, bptAmountOut, returnData
+
+== Token Transfers ==
+loop for each token in tokens
+    alt wethIsEth == true and token == WETH
+        Router -> Vault: wrap ETH to WETH
+        note right: If wethIsEth is true and token is WETH, Router wraps ETH to WETH.\n**Code Citation**: Router.sol#L206-L208
+        Vault -> Vault: update _reservesOf[WETH]
+        note right: Vault updates WETH reserves.\n**Code Citation (Vault)**: Vault.sol#L199-L212
+    else
+        Router -> Vault: transferFrom(sender, vault, amountsIn[i], token)
+        note right: Router transfers amountsIn[i] from sender to Vault using Permit2.\n**Code Citation**: Router.sol#L210-L212
+        Vault -> Vault: settle(token, amountsIn[i])
+        note right: Vault settles the token amount.\n**Code Citation**: Router.sol#L213\n**Code Citation (Vault)**: Vault.sol#L199-L212
+    end alt
+end loop
+
+== Vault Settlement ==
+Vault -> Vault: check _tokenDeltas == 0
+note right: Vault ensures all transient debts are settled.\n**Code Citation (Vault)**: Vault.sol#L167-L189
+Vault --> Router: encoded result
+
+== Router Finalization ==
+Router -> User: amountsIn, bptAmountOut, returnData
+note right: Router returns deposited amounts, minted BPT, and custom data to user.\n**Code Citation**: Router.sol#L215
+note left: Delivers results to user, concluding the operation.
+
+@enduml

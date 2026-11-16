@@ -1,0 +1,45 @@
+{
+  "nameOk": true,
+  "stagedCount": 32,
+  "unexpected": [],
+  "missing": [],
+  "whitespaceOk": true,
+  "whitespace": {
+    "parent-to-candidate": {
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "staged": {
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "hashOk": true,
+  "bad": [],
+  "shortstat": "32 files changed, 1218 insertions(+), 75 deletions(-)",
+  "statTail": [
+    " .../rehearsal-weighted-receipt-source.ts           |   2 +-",
+    " scripts/recovery/dtf-migration/rehearse.ts         |  13 +-",
+    " scripts/recovery/dtf-migration/schema.ts           |   3 +",
+    " .../v4/migration/MigrationEarlierLiquid.t.sol      | 336 +++++++++++++++++++++",
+    " .../MigrationEarlierLiquidConfiguration.t.sol      | 174 +++++++++++",
+    " .../uniswap/v4/migration/MigrationRecovery.t.sol   |   6 +-",
+    " .../uniswap/v4/migration/MigrationSurface.t.sol    |  11 +-",
+    " 32 files changed, 1218 insertions(+), 75 deletions(-)"
+  ],
+  "producerDriftCount": 48,
+  "producerDriftPaths": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"
+  ],
+  "added": [
+    "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+    "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquidConfiguration.t.sol"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+  "originalRecoveryParent": "/Users/cyotee/Projects/indexedex/docs/incidents",
+  "originalPreExploitParent": "/Users/cyotee/Projects/indexedex/docs/incidents",
+  "recoveredParent": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration",
+  "gitCommon": "/Users/cyotee/Projects/indexedex/.git",
+  "ownWorktreeGitName": "dtf-migration-phase-27-data-candidates",
+  "held09NotOpened": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas"
+}

@@ -1,0 +1,70 @@
+{
+  "historicalMatches": [
+    {
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0x70a08231",
+      "facet": "0x9c90d4a476f3473b9a0e32b530af3474271a80b1",
+      "codeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+    },
+    {
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0xcc447fba",
+      "facet": "0x9c90d4a476f3473b9a0e32b530af3474271a80b1",
+      "codeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+    },
+    {
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0xa224dcb7",
+      "facet": "0x9c90d4a476f3473b9a0e32b530af3474271a80b1",
+      "codeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+    },
+    {
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0x095ea7b3",
+      "facet": "0x0000000000000000000000000000000000000000",
+      "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+    },
+    {
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0x23b872dd",
+      "facet": "0x0000000000000000000000000000000000000000",
+      "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+    },
+    {
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0xba087652",
+      "facet": "0x517234f78a4bcafc5f880024a3e45d49cf43b305",
+      "codeHash": "0x8c1ea71d607b09b21c4e78f850647a059dc7935b6772f7cd3aeaa700a995439f"
+    },
+    {
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x70a08231",
+      "facet": "0x4b6e65cfc9a16aae0dfa4257a680f4697275e5fc",
+      "codeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+    },
+    {
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0xa9059cbb",
+      "facet": "0x4b6e65cfc9a16aae0dfa4257a680f4697275e5fc",
+      "codeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+    },
+    {
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x23b872dd",
+      "facet": "0x4b6e65cfc9a16aae0dfa4257a680f4697275e5fc",
+      "codeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+    }
+  ],
+  "negative": {
+    "hash": "0x3944c5fe880dd8585cbaf4c5a146ece27628740fa8cd6c5c51fbdbf3b0288c05",
+    "output": "0x936d426d000000000000000000000000202b3b724ebcbb4a3b23dcb09ac492343f327a6100000000000000000000000000000000000000000000021ece4a10da325400110000000000000000000000000000000000000000000000006124fee993bc0000"
+  },
+  "tiny": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "sourceArchive": {
+    "match": null,
+    "creationMatch": null,
+    "runtimeMatch": null,
+    "chainId": "4663",
+    "address": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+  }
+}

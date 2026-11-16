@@ -1,0 +1,112 @@
+{
+  "type": "DoneClaim",
+  "task": 4,
+  "finding": "H1",
+  "failureClass": "harness",
+  "status": "complete",
+  "bindingSource": "new_run",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "completedAt": "2026-11-15T03:16:30.972Z",
+  "existingReceiptSearch": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1dd11/sessions/st_01a1dd11/2026-11-15T02-37-34.936Z_729fdd1f-0d38-4a85-aee3-602494af3e7c.jsonl",
+    "launchRecords": [
+      267,
+      270,
+      284,
+      287
+    ],
+    "completionRecords": [
+      279,
+      298
+    ],
+    "result": "Contemporaneous wrappers and exit records exist, but resolved monitor command arguments have argsTruncated=true. No untruncated resolved exact-argv receipt found; new runs selected."
+  },
+  "preExecutionSidecar": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/preflight.json",
+    "sha256": "2a79f6c645ecde3d1e1bf1778b452389e2535e4b2381586a939e9933dd26ccdc",
+    "writtenBeforeHelperStarted": true
+  },
+  "monitor": {
+    "id": "mon_TCEJP508685GDDJJ",
+    "exitCode": 0
+  },
+  "runs": [
+    {
+      "kind": "happy",
+      "argv": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration",
+        "--",
+        "-vv"
+      ],
+      "exactCommand": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "rawLog": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/happy.log",
+      "sha256": "2bb12559d2f9179db99115db30430fad387ab32e6fab89566015a6723a71f4f0",
+      "exitCode": 0,
+      "testsPassed": 229,
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "commandEchoedBeforeHelper": true,
+      "receiptValidated": true
+    },
+    {
+      "kind": "failures",
+      "argv": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration",
+        "--",
+        "--match-test",
+        "test.*(StaleBook|InvalidManual|UnsetPricing|UnauthorizedPricing|PricingRollback|OriginCollision|MaxIn|ZeroOutput|ActivationCut)",
+        "-vvvv"
+      ],
+      "exactCommand": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- --match-test 'test.*(StaleBook|InvalidManual|UnsetPricing|UnauthorizedPricing|PricingRollback|OriginCollision|MaxIn|ZeroOutput|ActivationCut)' -vvvv",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "rawLog": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/failures.log",
+      "sha256": "b58ca87e782c3f1e9c64279587975a58c689dd70de699449113ddfb043aec131",
+      "exitCode": 0,
+      "testsPassed": 29,
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "commandEchoedBeforeHelper": true,
+      "receiptValidated": true
+    }
+  ],
+  "originalLogs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log",
+      "sha256Before": "13bb4a68ee715d1fad56d62967b5a00d89ca6ab03fb18abb447b72c3bcb4a429",
+      "sha256After": "13bb4a68ee715d1fad56d62967b5a00d89ca6ab03fb18abb447b72c3bcb4a429",
+      "preservedByteForByte": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log",
+      "sha256Before": "b562ffaddfffb18dbcac47f45d4e9e3fe2b71dd145ba22881a38d6508a6dd662",
+      "sha256After": "b562ffaddfffb18dbcac47f45d4e9e3fe2b71dd145ba22881a38d6508a6dd662",
+      "preservedByteForByte": true
+    }
+  ],
+  "changes": {
+    "productSolidity": false,
+    "tests": false,
+    "existingLogs": false,
+    "commits": false,
+    "delegation": false
+  },
+  "productFailureExposed": false,
+  "unmetAcceptanceItems": []
+}

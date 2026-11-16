@@ -1,0 +1,18 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+  "executable": "env",
+  "args": [
+    "GIT_MASTER=1",
+    "GIT_OPTIONAL_LOCKS=0",
+    "GIT_PAGER=cat",
+    "git",
+    "--no-pager",
+    "diff",
+    "--check",
+    "--ignore-submodules=all"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/git-check-final.stdout",
+  "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/git-check-final.stderr"
+}

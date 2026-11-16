@@ -1,0 +1,32 @@
+{
+  "base": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+  "branch": "work/dtf-migration-phase-08-operator",
+  "algorithm": "SHA-256 of raw file bytes",
+  "authored": {
+    "scripts/recovery/dtf-migration/schema.ts": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+    "scripts/recovery/dtf-migration/provenance.ts": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+    "scripts/recovery/dtf-migration/payloads.ts": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+    "scripts/recovery/dtf-migration/quotes.ts": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+    "scripts/recovery/dtf-migration/preparation.ts": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+    "scripts/recovery/dtf-migration/cli.ts": "1e9a67ac8ec962c96c7df558fa4a7286fa5fc09da2b6837cdaa8784a14448b6b",
+    "scripts/recovery/dtf-migration/preparation.fixture.ts": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+    "scripts/recovery/dtf-migration/preparation.test.ts": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4"
+  },
+  "consumed": {
+    "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json": "c59a8411dc825527d341129c937f2d8204b75c9d6ce7dff06b55bece9613407e",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol": "dc0fd10bd5b3d345cfecbc5d9282884c1c2d3b0d983eeef846a8aff33cf79c2d",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol": "7f592439b07701e7e1e605390970b9aa1777d150df416688073e9c85a73f5afe",
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md": "c93a4cdfab6d959aa063b8bf605a4104bfeb39c939c4435ac686152b0dd6ed1d",
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-cli-contract.md": "3c166685e4a8277ba42a493ae10c106fb04602ded20895bd85f34849b0655d9e",
+    "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7"
+  },
+  "artifactMeaning": "Full warm artifact envelope identity; not a deployed runtime hash or a new build receipt",
+  "fixturePayloadHash": "890836bf556ac8cec25d32ea6f5e0f8b14943965cb4dd7bb4636c5504b2b68dc",
+  "runtime": {
+    "bun": "1.4.2 (50a8a8387)",
+    "nodesStarted": 0,
+    "publicTransactions": 0,
+    "ownedRuntimePending": false
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "scripts": [
+    {
+      "path": "evidence.mjs",
+      "bytes": 8418,
+      "sha256": "59289c10bb9fd8933d0e902a30a108a94e96976aa0a7eb09bb398d01cd4222ef",
+      "pureLines": 143
+    },
+    {
+      "path": "rows.mjs",
+      "bytes": 14713,
+      "sha256": "263772b1e4f78e55dfac5272c7fb33f5ebdd3b94fd6778d2d128d450539e597d",
+      "pureLines": 192
+    },
+    {
+      "path": "prove.mjs",
+      "bytes": 6202,
+      "sha256": "9e48da1dfb484ec8e3f155869209871662cdc7413522938a835e7bbcc2bba616",
+      "pureLines": 81
+    },
+    {
+      "path": "verify.mjs",
+      "bytes": 1553,
+      "sha256": "a69e678975113a789f9fa39099cceff250b2d74b95d4d46e4ab781466fb1d158",
+      "pureLines": 26
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/node_modules/ethers/lib.esm/index.js",
+      "bytes": 350,
+      "sha256": "586bc08ce4c6bdb64f2972f9284f9eca568b7211f33c387d5b83f63887ffc468"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/node_modules/ethers/package.json",
+      "bytes": 4945,
+      "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f"
+    }
+  ],
+  "responsibilities": [
+    "evidence authentication",
+    "per-original witness reconstruction",
+    "proof assembly",
+    "published-output comparison"
+  ],
+  "noProductionEdits": true
+}

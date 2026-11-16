@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"InvalidInitialization","inputs":[]},{"type":"error","name":"InvalidRouteToken","inputs":[{"name":"token","type":"address","internalType":"address"}]}],"id":1568}

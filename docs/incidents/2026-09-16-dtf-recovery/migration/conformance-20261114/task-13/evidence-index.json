@@ -1,0 +1,326 @@
+{
+  "capturedAt": "2026-11-15T08:29:09.512Z",
+  "algorithm": "sha256 raw bytes",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "files": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/build-artifact-audit.json",
+      "bytes": 1856,
+      "sha256": "ead35b7f1bb4c379f86c0ffb3d4bb88c5234165783ec6a98c0eb26ac9e476ad3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/completion-audit.json",
+      "bytes": 13999,
+      "sha256": "f230dfba5a81de28d906094703747bd26885650125ea0ad76539905b04a4c2b9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/dependency-versions.json",
+      "bytes": 9946,
+      "sha256": "e40aca4839ace453426b82e0ab00b839b84492725aad9cbbf45e89e664d77440"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/failure-dispositions.md",
+      "bytes": 5899,
+      "sha256": "73aa7bab1be9d72321e1cf1930510b2642b648dda8c72b4c89cc5d98ea424f9e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork-recorder.log",
+      "bytes": 285,
+      "sha256": "886ddefd5c98cc5081a869091d575a1137582c9f332343d8979300f95a522c54"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork-suite-summary.json",
+      "bytes": 27401,
+      "sha256": "76294cbbfd880255555bdcb060e7c82cd689fb784c21bfe4a3ed3f553ee929a6"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/00.log",
+      "bytes": 163,
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/00.log.command.json",
+      "bytes": 56,
+      "sha256": "3529e7b880873dd8795a4f803a9f8551c764c1f8f8ee33c9658db3b773455d56"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/01.log",
+      "bytes": 271,
+      "sha256": "07dd9ba2368e62a6a36e4ece9387d535b24ec8851273c8d39e66831de94f993f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/01.log.command.json",
+      "bytes": 56,
+      "sha256": "63a20c8f9f5f3e71ea6cdea74221388c94d6062934178f0cabd97c80b78bc39e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/02.log",
+      "bytes": 13,
+      "sha256": "16b8cd028eb757aab907ab404e1656e01783846457156eec99372a91fc1b104d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/02.log.command.json",
+      "bytes": 50,
+      "sha256": "d9af3a541b286524262013a57aefce18b3d2868a16917429eb8ea5b6175c8a52"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/03.log",
+      "bytes": 4439211,
+      "sha256": "e0862260e4e33003e9e6cb430ca93e4c95475e222b171144f54fac18a23d995d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/03.log.command.json",
+      "bytes": 343,
+      "sha256": "e5159f3d19c72b6505121dcfd20f750bde06fdab8770efa9319d5f10e00a7a69"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/environment.json",
+      "bytes": 1126,
+      "sha256": "df803936d715edf7d82df7f411a40115f492b885bd3b0a2d03eda2daf1c5a86d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/results.json",
+      "bytes": 1218,
+      "sha256": "504602638cfc909263428c3f5417fcecc83e71a5cf2e304bc17ab76f9819ca97"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/helper-typecheck.exit.log",
+      "bytes": 24,
+      "sha256": "e9b869b5661f135e17994ae53a746bccc17a42489674765dfa3b514b0eabefed"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/helper-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2-recorder.log",
+      "bytes": 374,
+      "sha256": "46995088a8e64ad9763946fb8c825721d12502f02557f7c7895eeaefed9ab4bd"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/00.log",
+      "bytes": 163,
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/00.log.command.json",
+      "bytes": 56,
+      "sha256": "3529e7b880873dd8795a4f803a9f8551c764c1f8f8ee33c9658db3b773455d56"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/01.log",
+      "bytes": 271,
+      "sha256": "07dd9ba2368e62a6a36e4ece9387d535b24ec8851273c8d39e66831de94f993f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/01.log.command.json",
+      "bytes": 56,
+      "sha256": "63a20c8f9f5f3e71ea6cdea74221388c94d6062934178f0cabd97c80b78bc39e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/02.log",
+      "bytes": 13,
+      "sha256": "16b8cd028eb757aab907ab404e1656e01783846457156eec99372a91fc1b104d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/02.log.command.json",
+      "bytes": 50,
+      "sha256": "d9af3a541b286524262013a57aefce18b3d2868a16917429eb8ea5b6175c8a52"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log",
+      "bytes": 4343519,
+      "sha256": "69a0397fb59237bef3756c1d3ccadae93eaafc1a09b05fe36d5a2754a9e99145"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log.command.json",
+      "bytes": 68,
+      "sha256": "12d99ca2cfc48318bf443209dc6ef9aebec4b5203d8743613d8dd71c3c7162ee"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/04.log",
+      "bytes": 9233554,
+      "sha256": "9ee62a42b7fcf2fb1a64bf7d04753238c6710f378f4b077faadb07e5efca5e79"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/04.log.command.json",
+      "bytes": 133,
+      "sha256": "f0399ad01bea3e6e3b3d2773f5de894fbef045b2bea6093be41bc62f85e16dbe"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/environment.json",
+      "bytes": 1129,
+      "sha256": "2cfd7048e822197e53d31d92e19a18c7704fb5a852242c57afb6220830c63242"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/results.json",
+      "bytes": 1282,
+      "sha256": "81de51eff8d5ae17e8126245a752baa1ebdafbb8354c30f0488188f854dcc676"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-recorder.log",
+      "bytes": 1073,
+      "sha256": "a1b43e4ba5b31832647315bd9a5e76d7426d2ff3c8aeac1503f5aea7182f3687"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-suite-summary.json",
+      "bytes": 223249,
+      "sha256": "1430b0227921ac9ec40cd5f958f4974d42a9bf982a82ca6fffd12a7e998eed0d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/00.log",
+      "bytes": 167,
+      "sha256": "ec0d2635308bda557b4566669d810b436d3719654fdacb1cdb8dbf5945f659b0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/00.log.command.json",
+      "bytes": 56,
+      "sha256": "3529e7b880873dd8795a4f803a9f8551c764c1f8f8ee33c9658db3b773455d56"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/environment.json",
+      "bytes": 1129,
+      "sha256": "2cfd7048e822197e53d31d92e19a18c7704fb5a852242c57afb6220830c63242"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic/results.json",
+      "bytes": 277,
+      "sha256": "12438de9c22bcbe60e9cb545aba8e212bd7a0741d44cd488e45590b521a63f00"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/invocation-inventory.json",
+      "bytes": 2972,
+      "sha256": "073063c4f7412437d6637d0fa75f9bf9d5724bf5386f27274bb5be1de7eec20b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2-recorder.log",
+      "bytes": 985,
+      "sha256": "d0e494ad5532f6291807bc0d9b4ee2e90df58d2f767eadc8eb3c97e94806c340"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/00.log",
+      "bytes": 163,
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/00.log.command.json",
+      "bytes": 56,
+      "sha256": "3529e7b880873dd8795a4f803a9f8551c764c1f8f8ee33c9658db3b773455d56"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/01.log",
+      "bytes": 271,
+      "sha256": "07dd9ba2368e62a6a36e4ece9387d535b24ec8851273c8d39e66831de94f993f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/01.log.command.json",
+      "bytes": 56,
+      "sha256": "63a20c8f9f5f3e71ea6cdea74221388c94d6062934178f0cabd97c80b78bc39e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/02.log",
+      "bytes": 13,
+      "sha256": "16b8cd028eb757aab907ab404e1656e01783846457156eec99372a91fc1b104d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/02.log.command.json",
+      "bytes": 50,
+      "sha256": "d9af3a541b286524262013a57aefce18b3d2868a16917429eb8ea5b6175c8a52"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/03.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/03.log.command.json",
+      "bytes": 310,
+      "sha256": "d16f250d269a56f309b7d0758deaf336473f5a732f9fe45ff8f31c09552a7279"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log",
+      "bytes": 29520,
+      "sha256": "ea428eaeadc993624ed88ca301bd4beb1a5871ef207ddbdcd0f330c2aba33861"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log.command.json",
+      "bytes": 122,
+      "sha256": "cff8afef6cd2c6093633985801ba3b0d311d3d945ac1420a132e73a4cdfabf64"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/environment.json",
+      "bytes": 1129,
+      "sha256": "2cfd7048e822197e53d31d92e19a18c7704fb5a852242c57afb6220830c63242"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/results.json",
+      "bytes": 1514,
+      "sha256": "8fa61a9c225b3a0aec0d18360fe16052d1d6fd38b23e98e9d74ae2158692193b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-recorder.log",
+      "bytes": 1073,
+      "sha256": "be7bedd94828292c501c668354044eda0302f0fa8f93c8f163b64698ab5ee582"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/00.log",
+      "bytes": 167,
+      "sha256": "ec0d2635308bda557b4566669d810b436d3719654fdacb1cdb8dbf5945f659b0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/00.log.command.json",
+      "bytes": 56,
+      "sha256": "3529e7b880873dd8795a4f803a9f8551c764c1f8f8ee33c9658db3b773455d56"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/environment.json",
+      "bytes": 1129,
+      "sha256": "2cfd7048e822197e53d31d92e19a18c7704fb5a852242c57afb6220830c63242"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator/results.json",
+      "bytes": 277,
+      "sha256": "ee92e58be7e2767238a339bd78984ba034c57ad14d27cf1f2810a509c1520078"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/report.md",
+      "bytes": 9316,
+      "sha256": "be610a690431d9a082e6e27f55814cb1765789a7172e43b30674c24a39c0031a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/runtime-versions.log",
+      "bytes": 315,
+      "sha256": "c9b381ae987144ca83c73f286d858f1c5b545c3b16db9328df99135ed9a1d766"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/source-before.json",
+      "bytes": 3764919,
+      "sha256": "3d5534b3020054ce675824885ffca3e24a3706c35a58fcea4c2af9b277b0b599"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/source-final.json",
+      "bytes": 3766536,
+      "sha256": "489cab55f8c500ee85611d232a207aca30f5972cc4e0b4331ccc4dd4e890ae2b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/task-11-receipt-hashes.json",
+      "bytes": 1585,
+      "sha256": "a635e2ac481d5e992a26c737780b707d828673d1b3b2910a5628411c14710269"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/task-11-reuse-audit.json",
+      "bytes": 2818,
+      "sha256": "447b8639eb6d4ce9a554c080f9a7ed3df9c7d8dca08de8f4e17eae13471fa68e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/witness-preexisting-audit.json",
+      "bytes": 2051,
+      "sha256": "400efc38023070b425bd0789ec3f2ec62aa1dae1c1a2c004516d1df71cac2b85"
+    }
+  ],
+  "exclusions": [
+    "This index excludes itself to avoid recursive self-hashing.",
+    "The final .omo/ulw-execute/dtf-conformance/task-13-done.json claim is written last and binds this index."
+  ]
+}

@@ -1,0 +1,398 @@
+{
+  "type": "SetterRepairEvidence",
+  "status": "narrow-repair-verified",
+  "productSources": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+      "bytes": 14667,
+      "pureLines": 219
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67",
+      "bytes": 29608,
+      "pureLines": 416
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "130932ca3a517b4753b3f3e34bdc2df11eca8f11c64429b629abc8eb66881acd",
+      "bytes": 14055,
+      "pureLines": 222
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "sha256": "d8834a16ed91152100a700b529bc0a52f9a04e7ef3a06017171031b6bc8ac6fe",
+      "bytes": 19308,
+      "pureLines": 290
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "bytes": 31166,
+      "pureLines": 424
+    }
+  ],
+  "evidenceSources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt.ts",
+      "sha256": "b2a32aede765def72b5b79a514acac61b3630fd32a681a38c928c7063ab3d0ea",
+      "bytes": 6512,
+      "pureLines": 108
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-context.ts",
+      "sha256": "a3d16b53de2a326f524d8ffac7944a60beff664c0e2667cb5997868dd9ea6f80",
+      "bytes": 5534,
+      "pureLines": 75
+    }
+  ],
+  "runs": [
+    {
+      "name": "synthetic-before",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts"
+      ],
+      "observedExit": 1,
+      "rawFiles": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/synthetic-before.stdout",
+          "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f",
+          "bytes": 28
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/synthetic-before.stderr",
+          "sha256": "216731fbe0ba58bdf34f6af5996977281f8f5a0377c11b891e4be4781fc45f7d",
+          "bytes": 3071
+        }
+      ]
+    },
+    {
+      "name": "focused-after",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts"
+      ],
+      "observedExit": 0,
+      "rawFiles": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/focused-after.stdout",
+          "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f",
+          "bytes": 28
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/focused-after.stderr",
+          "sha256": "73557e7103ad88c1459495b52210c156e9e8f48da8940970e4888da74a24b478",
+          "bytes": 1955
+        }
+      ]
+    },
+    {
+      "name": "manual-after",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "argv": [
+        "bun",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt.ts"
+      ],
+      "observedExit": 0,
+      "rawFiles": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-after.stdout",
+          "sha256": "18c0d781e5f1fb8d48a43d806d09661dd441e115ab80ca026f213383ebe6b48a",
+          "bytes": 2983
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-after.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      ]
+    },
+    {
+      "name": "guard-mutation",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts"
+      ],
+      "observedExit": 1,
+      "rawFiles": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/guard-mutation.stdout",
+          "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f",
+          "bytes": 28
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/guard-mutation.stderr",
+          "sha256": "4b1931ff6efb4aa45909aa1d9cf22f3e820017a53a8be81102cc9b9b1b697d4e",
+          "bytes": 5383
+        }
+      ]
+    },
+    {
+      "name": "focused-final",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts"
+      ],
+      "observedExit": 0,
+      "rawFiles": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/focused-final.stdout",
+          "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f",
+          "bytes": 28
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/focused-final.stderr",
+          "sha256": "ca6364712e11e97fb824fdbd9ff5598e089087080b594cbe7ccd0893603337ee",
+          "bytes": 1955
+        }
+      ]
+    },
+    {
+      "name": "test-audit",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "argv": [
+        "bun",
+        "/Users/cyotee/.omo/binary-runtime/5.1.70/plugin/skills/programming/scripts/typescript/check-test-junk.ts",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts"
+      ],
+      "observedExit": 0,
+      "rawFiles": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/test-audit.stdout",
+          "sha256": "3a02d691d753194a7279cf8d19883a77addb2373a4e59585a1188f151fa77986",
+          "bytes": 29
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/test-audit.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      ]
+    },
+    {
+      "name": "typescript-audit",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "argv": [
+        "bun",
+        "/Users/cyotee/.omo/binary-runtime/5.1.70/plugin/skills/programming/scripts/typescript/check-no-excuse-rules.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.test.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-context.ts"
+      ],
+      "observedExit": 2,
+      "rawFiles": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/typescript-audit.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/typescript-audit.stderr",
+          "sha256": "0ec7f7f633591c5aa35e2a0db9fd1bf2f22c058fabdb3a2a680b7a0e2a7dd1d8",
+          "bytes": 213
+        }
+      ]
+    }
+  ],
+  "historicalBytes": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/journal-set-pricing/b596ce099567412a62c0e767258f360d97f8d3562b37cbb422e14becf2a2ced2.canonical-chain.json",
+      "sha256": "c6b1e9c210ccce97c27d1fb051f2b70198af57302b367cc6952416aee8645666",
+      "after": "c6b1e9c210ccce97c27d1fb051f2b70198af57302b367cc6952416aee8645666",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/pricing-execution.json",
+      "sha256": "399d926f7d61aff65d74e79f11d7ead47e06369eb483c3065aef6ae866c5aa44",
+      "after": "399d926f7d61aff65d74e79f11d7ead47e06369eb483c3065aef6ae866c5aa44",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/journal-set-pricing/domain.json",
+      "sha256": "d6afa20561144bdd2057e8846b5e76009fdba03bd86083eeb047386aae60db36",
+      "after": "d6afa20561144bdd2057e8846b5e76009fdba03bd86083eeb047386aae60db36",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-05/rehearsal-1794756398330/journal-set-pricing/b596ce099567412a62c0e767258f360d97f8d3562b37cbb422e14becf2a2ced2.intent.json",
+      "sha256": "9117eb335e45c0d323c5dd5cf35ff38706f39717e328d776ef5d74e2b9e0cdca",
+      "after": "9117eb335e45c0d323c5dd5cf35ff38706f39717e328d776ef5d74e2b9e0cdca",
+      "unchanged": true
+    }
+  ],
+  "producerOnlyAuthorizedAddition": true,
+  "preservedAuthorityInputCount": 22,
+  "archive": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-repair-blocked-before-producer-authorization.json",
+    "sha256": "4736aeaeae6ea774130360d0f247aa4116034bc0d87e14df2d9ba0f157eef6a2"
+  },
+  "fileDiagnostics": [
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.ts",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.ts",
+          "severity": "error",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts",
+          "severity": "error",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "result": {
+        "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.test.ts within 3000ms.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.test.ts",
+          "severity": "error",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false,
+          "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-domain.test.ts within 3000ms.",
+          "errorKind": "freshness_timeout"
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.test.ts",
+      "result": {
+        "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.test.ts within 3000ms.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.test.ts",
+          "severity": "error",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false,
+          "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.test.ts within 3000ms.",
+          "errorKind": "freshness_timeout"
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "severity": "error",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt.ts",
+      "result": {
+        "text": "No diagnostics found",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/manual-receipt.ts",
+          "severity": "error",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false
+        },
+        "images": [],
+        "hasError": false
+      }
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-context.ts",
+      "result": {
+        "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-context.ts within 3000ms.",
+        "details": {
+          "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-context.ts",
+          "severity": "error",
+          "mode": "file",
+          "diagnostics": [],
+          "totalDiagnostics": 0,
+          "truncated": false,
+          "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/setter-context.ts within 3000ms.",
+          "errorKind": "freshness_timeout"
+        },
+        "images": [],
+        "hasError": false
+      }
+    }
+  ],
+  "mutation": {
+    "sha256": "7313fd8dae08908c15732d0e7d5a2c34d0554d25a2fb650158d9c524740fb31f",
+    "failed": "binding required and extra-topic/unexpected-data subtests",
+    "restoredSha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67"
+  },
+  "limits": {
+    "freshAnvilProof": "not run; parent-owned after both independently confirmed repairs",
+    "fullOperatorAndTypeChecks": "deferred as instructed",
+    "typescriptAudit": "exit 2: caller project cannot resolve required TypeScript API; no install performed",
+    "testAndFixtureDiagnostics": "freshness timeout; not a clean diagnostic result"
+  },
+  "cleanup": {
+    "fixtureServersClosed": true,
+    "providersDestroyed": true,
+    "temporaryFixturesRemoved": true,
+    "allMonitoredRunsExited": true,
+    "originalEvidenceReadOnly": true,
+    "anvilStarted": false,
+    "publicRpcUsed": false,
+    "transactionsSent": false,
+    "commitsCreated": false
+  }
+}

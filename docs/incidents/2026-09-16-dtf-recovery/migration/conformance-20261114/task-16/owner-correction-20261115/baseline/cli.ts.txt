@@ -1,0 +1,199 @@
+#!/usr/bin/env bun
+import { parseArgs } from "node:util";
+import { z } from "zod";
+import { prepareFile, validateManifest } from "./preparation.js";
+import { PreparationError } from "./schema.js";
+import { execute } from "./execution.js";
+import { ExecutionError, stage } from "./execution-schema.js";
+import type { Mode } from "./execution-schema.js";
+import { rehearse } from "./rehearse.js";
+import { exportBundle } from "./bundle.js";
+import { materializeBundle } from "./bundle-materialize.js";
+import { deriveCandidateFile } from "./candidates.js";
+import { collectReceiptFile } from "./receipt-evidence.js";
+import { receiptSelection } from "./receipt-input.js";
+
+export const help = `Bounded Migration operator
+  bun scripts/recovery/dtf-migration/cli.ts collect-receipts --input <complete-historical-tree> --output <new-directory> --rpc-alias robinhood_mainnet_alchemy
+    [--selection conversions-and-recoveries] (default: purchases-and-claims)
+  bun scripts/recovery/dtf-migration/cli.ts derive-candidates --input <complete-historical-tree> --output <new-directory>
+  bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
+  bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
+  bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
+  bun scripts/recovery/dtf-migration/cli.ts validate --manifest <file>
+  bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
+  bun scripts/recovery/dtf-migration/cli.ts resume --manifest <file> --checkpoint <directory>
+
+prepare reads caller-pinned evidence and the required manual pricing book.
+validate rehydrates immutable per-record preparation and accepted transaction evidence.
+RPC comes only from the manifest's rpcEnv environment variable. No signer is loaded.
+bundle-export preserves raw bytes offline; it is not chain authentication or award approval.
+bundle-materialize creates fresh local inputs; book-aware execution reauthenticates saved preparation.
+Copy the complete bundle directory before materializing elsewhere. Never relocate a live signed journal.
+Every rehearse invocation requires --bundle <complete-authority-bundle.json>.
+Forge/Anvil resolve from PATH or explicit FORGE_BIN/ANVIL_BIN; no installation is performed.
+All integers are decimal strings. Inputs are full replacements, not deltas.
+Unsupported categories fail closed. Synthetic datasets are loopback-only.
+Stages: deploy, fund, set-pricing, configure, independent-issue, owner-bond, verify, activate, harvest.
+owner-bond requires explicit token, amount, ordinary duration and deadline in the manifest.
+Activation requires the confirmed paid owner purchase; resume reconciles its original receipt.
+Every stage and resume defaults to read-only validation; no signer is loaded.
+Local execution: --execute-local --instance-id <exact observed Anvil instance ID>.
+Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
+  --confirm-book <id> --signer-key-env <selected environment variable name>.
+--reverse reorders only independent unsettled configuration/issuance rows.
+--fault-after-mined is restricted to synthetic-local interruption rehearsal.
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+    --fork-block 108944663 --port 18567
+    --checkpoint .omo-runtime/dtf-migration-weighted-receipt/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/implementation/runtime
+  Earlier ER custody/credit rehearsal (liquidation remains blocked):
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+    --fork-block 108944663 --port 18568
+    --checkpoint .omo-runtime/dtf-migration-earlier-receipt/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/implementation/runtime
+  Earlier liquid ED custody/credit rehearsal (conversion reaches disabled ES):
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+    --fork-block 108944663 --port 18569
+    --checkpoint .omo-runtime/dtf-migration-earlier-liquid/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/implementation/runtime
+  Three fixed native18 custody/credit sources (E-S and all three conversions blocked):
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+    --fork-block 108944663 --port 18571
+    --checkpoint .omo-runtime/dtf-migration-held-se-lp/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/runtime
+  Complete-original claimed SY (direct signed EOA preparation; not raw-weight pull):
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
+    --fork-block 108944663 --port 18573
+    --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime
+  Portable complete workflow:
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <complete-authority-bundle.json>
+    --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575
+    --checkpoint .omo-runtime/dtf-migration-portable/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime
+`;
+
+export async function main(args: readonly string[]): Promise<void> {
+  const { values, positionals, tokens } = parseArgs({
+    args: [...args], allowPositionals: true, strict: true, tokens: true,
+    options: { input: { type: "string" }, output: { type: "string" }, selection: { type: "string" },
+      manifest: { type: "string" }, bundle: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
+      "execute-local": { type: "boolean" }, "instance-id": { type: "string" },
+      broadcast: { type: "boolean" }, "confirm-chain": { type: "string" },
+      "confirm-proxy": { type: "string" }, "confirm-book": { type: "string" },
+      "signer-key-env": { type: "string" }, reverse: { type: "boolean" },
+      "fault-after-mined": { type: "boolean" }, "rpc-alias": { type: "string" },
+      "fork-block": { type: "string" }, port: { type: "string" }, evidence: { type: "string" } },
+  });
+  const suppliedOptions = tokens.filter((token) => token.kind === "option").map((token) => token.name);
+  if (values.selection !== undefined && positionals[0] !== "collect-receipts") {
+    throw new PreparationError("INPUT", "selection requires collect-receipts");
+  }
+  if (new Set(suppliedOptions).size !== suppliedOptions.length) {
+    throw new PreparationError("INPUT", "duplicate options are not accepted");
+  }
+  if (values.help && positionals.length === 0) {
+    console.log(help);
+    return;
+  }
+  if (positionals.length !== 1) throw new PreparationError("INPUT", "exactly one command required");
+  if (["prepare", "validate"].includes(positionals[0] ?? "")
+    && suppliedOptions.some((name) => !["input", "output", "manifest", "help"].includes(name))) {
+    throw new PreparationError("INPUT", "preparation commands accept no execution flags");
+  }
+  switch (positionals[0]) {
+    case "collect-receipts": {
+      if (!values.input || !values.output || !values["rpc-alias"]
+        || suppliedOptions.some((name) => !["input", "output", "rpc-alias", "selection"].includes(name))) {
+        throw new PreparationError("INPUT", "collect-receipts requires only input, output and existing rpc-alias");
+      }
+      const selection = receiptSelection.parse(values.selection ?? "purchases-and-claims");
+      const archive = await collectReceiptFile(values.input, values.output, values["rpc-alias"], selection);
+      console.log(JSON.stringify({ command: "collect-receipts", authenticated: archive.authenticated,
+        references: archive.references, distinctTransactions: archive.distinctTransactions,
+        completeAssociations: archive.completeAssociations, referenceConflicts: archive.referenceConflicts }));
+      if (!archive.authenticated || archive.completeAssociations !== archive.distinctTransactions) process.exitCode = 1;
+      return;
+    }
+    case "derive-candidates": {
+      if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
+        throw new PreparationError("INPUT", "derive-candidates requires only --input and --output");
+      }
+      console.log(JSON.stringify({ command: "derive-candidates", mode: "offline-non-issuable",
+        ...await deriveCandidateFile(values.input, values.output) }));
+      return;
+    }
+    case "bundle-export":
+    case "bundle-materialize": {
+      if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
+        throw new PreparationError("INPUT", "bundle commands require only --input and --output");
+      }
+      console.log(JSON.stringify(positionals[0] === "bundle-export"
+        ? { bundle: await exportBundle(values.input, values.output), mode: "offline-integrity-only" }
+        : await materializeBundle(values.input, values.output)));
+      return;
+    }
+    case "rehearse": {
+      if (!values.bundle || !values["rpc-alias"] || !values["fork-block"] || !values.port || !values.checkpoint || !values.evidence
+        || suppliedOptions.some((name) => !["bundle", "rpc-alias", "fork-block", "port", "checkpoint", "evidence"].includes(name))) {
+        throw new PreparationError("INPUT", "rehearse requires the exact pinned invocation");
+      }
+      console.log(JSON.stringify(await rehearse({ rpcAlias: values["rpc-alias"], forkBlock: values["fork-block"],
+        port: values.port, checkpoint: values.checkpoint, evidence: values.evidence, bundle: values.bundle })));
+      return;
+    }
+    case "prepare": {
+      if (!values.input || !values.output || values.manifest || values.help) {
+        throw new PreparationError("INPUT", "prepare requires only --input and --output");
+      }
+      const result = await prepareFile(values.input, values.output);
+      console.log(JSON.stringify({ command: "prepare", manifestHash: result.normalizedHash,
+        payloadHash: result.payloadHash, fullTask9: result.fullTask9, mode: "read-only" }));
+      return;
+    }
+    case "validate": {
+      if (!values.manifest || values.input || values.output || values.help) {
+        throw new PreparationError("INPUT", "validate requires only --manifest");
+      }
+      const result = await validateManifest(values.manifest);
+      console.log(JSON.stringify({ command: "validate", payloadHash: result.payloadHash,
+        fullTask9: result.fullTask9, mode: "read-only" }));
+      return;
+    }
+    default: {
+      const command = positionals[0] === "resume" ? "resume" : stage.parse(positionals[0]);
+      if (!values.manifest || !values.checkpoint || values.input || values.output || values.help) {
+        throw new PreparationError("INPUT", "stage requires only manifest, checkpoint, and explicit execution options");
+      }
+      if (values.bundle || values["rpc-alias"] || values["fork-block"] || values.port || values.evidence) throw new PreparationError("INPUT", "rehearsal flags require rehearse");
+      if (values["execute-local"] && values.broadcast) throw new PreparationError("INPUT", "execution modes are exclusive");
+      let mode: Mode = { kind: "simulate" };
+      if (values["execute-local"]) {
+        if (!values["instance-id"] || values["confirm-chain"] || values["confirm-proxy"]
+          || values["confirm-book"] || values["signer-key-env"]) throw new PreparationError("INPUT", "local requires only exact instance confirmation");
+        mode = { kind: "local", instanceId: values["instance-id"] };
+      } else if (values.broadcast) {
+        if (!values["confirm-chain"] || !values["confirm-proxy"]
+          || !values["signer-key-env"] || values["instance-id"]) throw new PreparationError("INPUT", "all fresh public confirmations required");
+        mode = { kind: "broadcast", chainId: values["confirm-chain"], proxy: values["confirm-proxy"].toLowerCase(),
+          bookId: values["confirm-book"]?.toLowerCase() ?? null, keyEnv: values["signer-key-env"] };
+      } else if (values["instance-id"] || values["confirm-chain"] || values["confirm-proxy"]
+        || values["confirm-book"] || values["signer-key-env"]) throw new PreparationError("INPUT", "confirmation requires explicit mode");
+      console.log(JSON.stringify(await execute({ command, manifestPath: values.manifest, checkpoint: values.checkpoint,
+        mode, reverse: values.reverse ?? false, faultAfterMined: values["fault-after-mined"] ?? false })));
+      return;
+    }
+  }
+}
+
+if (import.meta.main) {
+  try {
+    await main(process.argv.slice(2));
+  } catch (error) {
+    if (error instanceof PreparationError || error instanceof ExecutionError) console.error(JSON.stringify({ error: error.code, message: error.message }));
+    else if (error instanceof z.ZodError) console.error(JSON.stringify({ error: "INPUT", issues: error.issues }));
+    else console.error(JSON.stringify({ error: "INPUT", message: "command or file acquisition failed" }));
+    process.exitCode = 1;
+  }
+}

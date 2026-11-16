@@ -1,0 +1,28 @@
+{
+  "lane": "other-sources",
+  "date": "2026-11-10",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk",
+  "processAndPortReadback": [
+    {"pid":36711,"port":55910,"pidAbsent":true,"closed":true,"code":"ECONNREFUSED"},
+    {"pid":37918,"port":56090,"pidAbsent":true,"closed":true,"code":"ECONNREFUSED"},
+    {"pid":41189,"port":56466,"pidAbsent":true,"closed":true,"code":"ECONNREFUSED"},
+    {"pid":43834,"port":56769,"pidAbsent":true,"closed":true,"code":"ECONNREFUSED"},
+    {"pid":46983,"port":56959,"pidAbsent":true,"closed":true,"code":"ECONNREFUSED"}
+  ],
+  "readbackMethod": "process.kill(pid, 0) returned ESRCH; node:net connection to each owned 127.0.0.1 port returned ECONNREFUSED",
+  "perRunCleanup": "Every Anvil run records childExit=0, pidAbsent=true, portClosed=true and absent cache directories in its result JSON.",
+  "finalCacheFinding": "Read-back after summary commands found Bun compilation cache files regenerated under the owned runRoot/cache/bun; these were removed before completion.",
+  "cleanupCommand": "rm -rf '/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk/cache' && rmdir '/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk' && test ! -e '/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk' && printf 'OWNED_RUN_ROOT_REMOVED_AND_ABSENT\\n'",
+  "cleanupStdout": "OWNED_RUN_ROOT_REMOVED_AND_ABSENT",
+  "cleanupExitCode": 0,
+  "runRootAbsent": true,
+  "finalSourceChecks": {
+    "syntax": "node --check scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs",
+    "executable": "test -x scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs",
+    "stdout": "FINAL_SYNTAX_PASS EXECUTABLE_PASS",
+    "exitCode": 0,
+    "lsp": "Fresh diagnostics unavailable: timed out after 3000 ms"
+  },
+  "sharedResourcesRemoved": false
+}

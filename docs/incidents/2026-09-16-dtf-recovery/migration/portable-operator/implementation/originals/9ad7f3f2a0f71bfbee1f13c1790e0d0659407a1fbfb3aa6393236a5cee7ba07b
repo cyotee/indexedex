@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"BaseOutOfBounds","inputs":[]},{"type":"error","name":"ExponentOutOfBounds","inputs":[]},{"type":"error","name":"InvalidExponent","inputs":[]},{"type":"error","name":"OutOfBounds","inputs":[]},{"type":"error","name":"ProductOutOfBounds","inputs":[]}],"id":315}

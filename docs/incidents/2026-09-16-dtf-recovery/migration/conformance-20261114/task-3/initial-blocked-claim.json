@@ -1,0 +1,129 @@
+{
+  "type": "DoneClaim",
+  "task": 3,
+  "status": "blocked",
+  "acceptance_met": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "reason": "Required entry gates are not confirmed. Source recovery, index edits and execution must not proceed on an unverified recovery claim.",
+  "gates": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/ready.json",
+      "observation_method": "functions.read, first repository read in this task",
+      "required": "status confirmed",
+      "observed": "status needs-fix",
+      "result": "blocked",
+      "detail": "Bootstrap reports an incompatible lib/crane submodule symlink, restored empty submodule directory, and unseeded out/cache_forge. This mechanism was read, not independently reproduced."
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-2-verdict.json",
+      "observation_method": "tool.read through functions.eval; complete returned text inspected",
+      "required": "verdict confirmed",
+      "observed": "verdict needs-fix; acceptance_met false; failure_class harness",
+      "result": "blocked",
+      "detail": "Verifier reports blocked producer, missing delivered record-verification.ts and verify-bounded-deployments.ts, fixture commands exiting 1 and typecheck exiting 2. These are verifier observations, not commands rerun by task 3."
+    }
+  ],
+  "commands_executed": [],
+  "command_exit_codes": [],
+  "changes": [
+    ".omo/ulw-execute/dtf-conformance/task-3-done.json"
+  ],
+  "source_indexes_modified": false,
+  "source_tests_modified": false,
+  "source_observations_emitted": false,
+  "diagnostics": {
+    "lsp": "Unavailable: apply_patch reported configured biome server is not installed. No install attempted under the explicit no-installs scope.",
+    "receipt_validation": "JSON syntax and blocked acceptance fields checked through functions.eval; no shell exit code applies."
+  },
+  "manual_qa_artifacts": [],
+  "unrun_checks": [
+    {
+      "check": "Read original source tests and behavior; inspect archived runtime identities, pinned headers and receipts; link file hashes",
+      "reason": "Entry gates failed before authenticated source work was authorized."
+    },
+    {
+      "check": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test \"$M/legacy/MigrationLegacyNftLib.sol\" --test-root \"$K/MigrationLegacySources.t.sol\" --test-root \"$K/MigrationLegacyLpExit.t.sol\" -- -vv",
+      "reason": "Required readiness and task-2 confirmation are absent. No compile started, cache seeded, RPC invoked or bindings inferred from unverified recovery."
+    },
+    {
+      "check": "Real-source wrong-wallet, invalid/nonexistent-ID and unauthorized E-P exit rejection with unchanged holdings/supply",
+      "reason": "Source suites not run because entry gates failed; baseline pass/fail state remains unmeasured."
+    },
+    {
+      "check": "Deliberately wrong archived runtime hash must cause inventory-helper integrity failure without archive changes",
+      "reason": "Verified inventory helper delivery is unavailable according to task-2 verdict; no archive or fixture was changed."
+    },
+    {
+      "check": "Source observations JSON, source-negative.log and source-matrix witness links",
+      "reason": "No source execution or negative test occurred. Logs and observations were not fabricated."
+    }
+  ],
+  "adversarial_classes": {
+    "stale_state": {
+      "status": "gate rejection observed",
+      "evidence": "Read current ready.json first and current task-2 verdict directly; neither is confirmed. Historical claims were not substituted."
+    },
+    "dirty_worktree": {
+      "status": "execution probe unrun",
+      "evidence": "No Git clean-state claim made. Existing task-3-done.json read returned ENOENT before creation. Only this new receipt was written; unrelated files were not edited."
+    },
+    "misleading_success_output": {
+      "status": "gate rejection observed",
+      "evidence": "A verdict-file presence and reported command attempts were not treated as success. This DoneClaim explicitly records blocked and acceptance_met false."
+    },
+    "external_source_identity": {
+      "status": "unrun",
+      "reason": "Applicable to task 3 but blocked by dependency gates; no external runtime or facet identity was asserted."
+    },
+    "malformed_input": {
+      "status": "not-applicable to performed work",
+      "reason": "No parser or inventory helper was implemented or executed."
+    },
+    "symlink_boundaries": {
+      "status": "not-applicable to performed work",
+      "reason": "No dependency traversal, source-tree census or outward-link access was performed."
+    },
+    "generated_artifacts": {
+      "status": "source artifact checks unrun",
+      "reason": "No recovered inventory or compiled artifact was consumed; only a blocked execution receipt was generated."
+    },
+    "prompt_injection": {
+      "status": "not-applicable to performed work",
+      "reason": "No external source text was fetched or processed."
+    },
+    "cancel_resume": {
+      "status": "not-applicable to performed work",
+      "reason": "No resumable execution or background process was started."
+    },
+    "hung_or_long_commands": {
+      "status": "not-applicable to performed work",
+      "reason": "No shell command, compile or long-running job was invoked."
+    },
+    "flaky_tests": {
+      "status": "not-applicable to performed work",
+      "reason": "No tests were added, modified or run."
+    },
+    "repeated_interruptions": {
+      "status": "not-applicable to performed work",
+      "reason": "No mid-operation interruption or restart occurred."
+    }
+  },
+  "cleanup": {
+    "owned_temporary_resources": [],
+    "background_processes": [],
+    "removal_commands": [],
+    "result": "No temporary resources created; no cleanup needed. Shared dependencies and caches were not mutated."
+  },
+  "remaining_gates": [
+    "Lead must resolve bootstrap and obtain confirmed ready.json.",
+    "Task 2 must deliver and pass independent verification, producing verdict confirmed.",
+    "Task 3 authenticated source indexes and all required source checks remain incomplete.",
+    "Task 6 and final implementation completion remain blocked by unresolved task-3 source/custody/conservation evidence."
+  ],
+  "remaining_risks": [
+    "No reserved-ID, delegated-facet, surrender, rollback or permanent E-P custody conclusion was established.",
+    "The complete plan and original tests were not read after the mandatory entry gates failed.",
+    "No baseline test failures were reproduced or changed; no historical trace was retried."
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "version": "stage2-command-results-v1",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+  "shell": "set -o pipefail; /bin/zsh -lic <literal command> 2>&1 | tee <evidence log>",
+  "commands": [
+    {
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol -- -vv",
+      "log": "specs-sealed.log",
+      "exit": 1,
+      "result": {
+        "passed": 102,
+        "failed": 1,
+        "skipped": 0
+      },
+      "finding": "D1 MissingRewardWeight after activation with zero funded participants"
+    },
+    {
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv",
+      "log": "forks-verified.log",
+      "exit": 0,
+      "result": {
+        "passed": 52,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "log": "operator-stages.log",
+      "exit": 0
+    },
+    {
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts && bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts && cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18563 --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid",
+      "log": "rehearsal-accepted.log",
+      "exit": 0,
+      "result": {
+        "operatorTests": 56,
+        "operatorFailures": 0,
+        "strictTypesExit": 0,
+        "cli": "bounded-rehearsal-complete"
+      }
+    },
+    {
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol -- --match-test test_activationRemovesEntireAdministrationAndKeepsQueries -vvvv",
+      "log": "activation-cut-trace.log",
+      "exit": 1,
+      "result": "150000-gas call emits three removal events then ReentrancySentryOOG; rollback assertions pass; final ordinary acquisition hits D1"
+    }
+  ]
+}

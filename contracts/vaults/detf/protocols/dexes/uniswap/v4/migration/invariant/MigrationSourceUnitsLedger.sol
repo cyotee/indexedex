@@ -64,6 +64,7 @@ abstract contract MigrationSourceUnitsLedger is Test {
     bytes32 internal independentConfiguration;
     address internal constant EARLIER_NFT = 0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391;
     bytes32 internal snapshot;
+    bytes32 internal pricingId;
     address public currentOwner;
     uint256[10] public surrenderSuccesses;
     uint256[10] public rejectionCounts;
@@ -80,7 +81,8 @@ abstract contract MigrationSourceUnitsLedger is Test {
         baseBacking = IERC20(address(parent_)).balanceOf(address(receipt));
         baseGons = receipt.gonsOf(address(bonds));
         k = receipt.stakingState().gonsPerUnit;
-        snapshot = keccak256(abi.encode(parent_.migrationSnapshot()));
+        pricingId = parent_.migrationWeightedPricing().id;
+        snapshot = keccak256(abi.encode(parent_.migrationWeightedPricing()));
         currentOwner = parent_.owner();
         dtfFloor = IERC20(Legacy.DTF).balanceOf(address(parent_));
         syFloor = IERC20(Legacy.WEIGHTED_SY).balanceOf(address(parent_));
@@ -184,7 +186,7 @@ abstract contract MigrationSourceUnitsLedger is Test {
 
     function assertAll() public view {
         assertEq(parent.owner(), currentOwner);
-        assertEq(keccak256(abi.encode(parent.migrationSnapshot())), snapshot);
+        assertEq(keccak256(abi.encode(parent.migrationWeightedPricing())), snapshot);
         assertEq(IERC20(address(parent)).totalSupply(), baseSupply + issued);
         assertEq(IERC20(address(parent)).balanceOf(address(receipt)), baseBacking + issued);
         assertEq(receipt.stakingState().gonsPerUnit, k);

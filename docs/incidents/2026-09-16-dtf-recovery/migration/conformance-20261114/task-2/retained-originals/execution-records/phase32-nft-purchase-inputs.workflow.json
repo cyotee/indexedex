@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase32-nft-purchase-inputs",
+  "name": "Migration DETF phase 32: source-supported NFT purchase inputs",
+  "nodes": [
+    {
+      "id": "reconcile-purchase-inputs",
+      "label": "Reconcile historical NFT purchase inputs",
+      "category": "deep-low",
+      "task_summary": "Reconcile source-supported paid inputs for 59 purchases while retaining unresolved attribution",
+      "prompt": "TASK: Complete the read-only purchase-input reconciliation in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs-brief.md. Read the entire brief and required current and archived evidence before deriving values. SCOPE: Write only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/. No production or old-evidence edits, commits, installations, full-gate replay, signing, source changes, trace/range scans, provider changes or phase29 retry. DELIVERABLE: All 59 historical purchase dispositions, source/call/receipt evidence for any proposed paid components, exact unknowns, retained flags and origin links, reproducible proof, report, manifests, stopped cleanup and seal. VERIFY: Actual direct top-level entry semantics, historical used routing/code/ABI, pull/pretransfer/refund/input behavior, exact native18 WETH/DTF inputs versus routed/internal/unrelated amounts. Known-zero components require affirmative evidence; no gross-transfer shortcut, nonlinear requoting or financial approval. Keep the four indirect purchases unresolved rather than interpreting their outer bundle. Preserve all 19 purchase flags and both NFT/protocol-conversion pairs. Use only bounded existing-provider read methods when required; do not repeat accepted receipt collection. STOP WHEN: Actual complete bounded report with justified values or precise gaps and no pending operation; never a promise or an executable allocation."
+    },
+    {
+      "id": "verify-purchase-inputs",
+      "label": "Verify NFT purchase input attribution",
+      "category": "deep-low",
+      "dependsOn": [
+        "reconcile-purchase-inputs"
+      ],
+      "task_summary": "Independently verify each proposed input amount and every retained unknown across 59 purchases",
+      "prompt": "TASK: Independently verify the complete stopped attribution handoff against /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs-brief.md. Read the whole brief and actual source report, source/call evidence, manifests, cleanup and seal. SCOPE: Write only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/. No source or producer fixes, Git writes, full-gate replay, network expansion, signing, traces, delegation or phase29 retry. DELIVERABLE: Complete confirmed/needs-fix report with exact per-row reasoning, independent proof, input identities, stopped cleanup and final seal. VERIFY: Reconstruct all 59 original references and dispositions from authenticated inputs and actual inspected source/call/receipt semantics, not producer totals. Validate historical ABI/routing/code evidence and exact native units; distinguish logged paid inputs from net original capital, refund assumptions, protocol/self legs, rewards, routed amounts, duplicated representations and financial approval. Test each asserted known zero against affirmative evidence. Keep indirect purchases and other unsupported interpretations unknown, all prior flags preserved, and current ownership separate. No credit, eligibility or operational records are authorized. STOP WHEN: Actual complete bounded verdict and stopped evidence, with precise unsupported-claim findings if any and no pending operations."
+    }
+  ]
+}

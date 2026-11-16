@@ -1,0 +1,2202 @@
+{
+  "date": "2026-11-11",
+  "AdversarialVerify": "confirmed",
+  "scope": "bounded two-generation NFT surrender only; all non-NFT full-plan gates open",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+  "branch": "work/dtf-migration-phase-05",
+  "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "pin": {
+    "chain": 4663,
+    "block": 108944663,
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+    "fallback": false
+  },
+  "commands": [
+    {
+      "command": "/bin/zsh -lic 'cd \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05\"; export PATH=\"/Users/cyotee/.foundry/bin:$PATH\"; set -o pipefail; { FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vvvv; result=$?; printf \"VERIFIER_FORK_EXIT=%s\\n\" \"$result\"; exit \"$result\"; } 2>&1 | tee docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log'",
+      "exit": 0,
+      "tests": 16,
+      "suites": 2
+    },
+    {
+      "command": "/bin/zsh -lic 'cd \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05\"; export PATH=\"/Users/cyotee/.foundry/bin:$PATH\"; set -o pipefail; { FOUNDRY_PROFILE=fork forge script --use solar docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/NftStageOneWitness.s.sol:NftStageOneWitness --compute-units-per-second 10 --rpc-timeout 120 -vvvv; result=$?; printf \"VERIFIER_STAGE1_EXIT=%s\\n\" \"$result\"; exit \"$result\"; } 2>&1 | tee docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/stage1-independent.log'",
+      "exit": 1,
+      "classification": "verifier harness only",
+      "error": "Usage of address(this) detected in script contract; ephemeral script cannot host the inherited fixture"
+    },
+    {
+      "command": "/bin/zsh -lic 'cd \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05\"; export PATH=\"/Users/cyotee/.foundry/bin:$PATH\"; set -o pipefail; { FOUNDRY_PROFILE=fork forge script --use solar docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/NftStageOneWitness.s.sol:NftStageOneWitnessRunner --compute-units-per-second 10 --rpc-timeout 120 -vvvv; result=$?; printf \"VERIFIER_STAGE1_EXIT=%s\\n\" \"$result\"; exit \"$result\"; } 2>&1 | tee docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/stage1-independent-r2.log'",
+      "exit": 0,
+      "observations": "four surrenders, both-source mature Stage1 principal claims and raw DETF exits, six removals, fresh 90-day later clocks"
+    },
+    {
+      "command": "/bin/zsh -lic 'cd \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05\"; export PATH=\"/Users/cyotee/.foundry/bin:$PATH\"; set -o pipefail; { python3 scripts/forge-artifacts.py test --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol -- -vvv; result=$?; printf \"VERIFIER_CONFIG_EXIT=%s\\n\" \"$result\"; exit \"$result\"; } 2>&1 | tee docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/configuration-independent.log'",
+      "exit": 0,
+      "tests": 8,
+      "suites": 1
+    }
+  ],
+  "independentForkCases": [
+    {
+      "name": "[PASS] test_bothRoutesRemainUsableAfterActivationWithFreshLateClocks() (gas: 11968226)",
+      "line": 2828
+    },
+    {
+      "name": "[PASS] test_contractReceiverFailureRollsBackCustodySupplyFundingAndConsumption() (gas: 5572609)",
+      "line": 5679
+    },
+    {
+      "name": "[PASS] test_earlierContractHolderCallbackCannotReenterReplayOrActivate() (gas: 2664084)",
+      "line": 6892
+    },
+    {
+      "name": "[PASS] test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender() (gas: 3222166)",
+      "line": 7226
+    },
+    {
+      "name": "[PASS] test_replacementAfterConsumptionCannotResizeReopenOrCreateDescendantCredit() (gas: 5889790)",
+      "line": 7710
+    },
+    {
+      "name": "[PASS] test_separateRealInstancesHaveSeparateDomainsButCannotTakeHeldIdentityTwice() (gas: 68804206)",
+      "line": 8776
+    },
+    {
+      "name": "[PASS] test_burnedNonexistentReservedAndZeroCreditRejectWithoutCustody() (gas: 2857830)",
+      "line": 12222
+    },
+    {
+      "name": "[PASS] test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum() (gas: 3918943)",
+      "line": 12643
+    },
+    {
+      "name": "[PASS] test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp() (gas: 2202360)",
+      "line": 13665
+    },
+    {
+      "name": "[PASS] test_earlierRewardsAndHolderTransferPreserveOriginalSharesAndDisabledHarvest() (gas: 3153867)",
+      "line": 13966
+    },
+    {
+      "name": "[PASS] test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions() (gas: 2205871)",
+      "line": 14555
+    },
+    {
+      "name": "[PASS] test_missingApprovalRollsBackPretransferAcceptanceForBothSources() (gas: 7646822)",
+      "line": 14790
+    },
+    {
+      "name": "[PASS] test_rewardOnlyWeightedAndBurnedEarlierEarnNoCredit() (gas: 4472897)",
+      "line": 16741
+    },
+    {
+      "name": "[PASS] test_sameIdInTwoCollectionsIncludesStillLockedEarlierPrincipal() (gas: 5532472)",
+      "line": 17931
+    },
+    {
+      "name": "[PASS] test_transferredWeightedHolderNotPurchaserOrApprovedOperatorReceivesBond() (gas: 3809225)",
+      "line": 19121
+    },
+    {
+      "name": "[PASS] test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote() (gas: 4078422)",
+      "line": 20099
+    }
+  ],
+  "independentForkEvents": {
+    "surrendered": 18,
+    "migrationPositionCreated": 18
+  },
+  "independentWitness": {
+    "parent": "0x2328d231C43A15940f5E312dDEc0e720a8ACdF37",
+    "start": 1794110901,
+    "laterStart": 1804478901,
+    "firstUnlock": 1801886901,
+    "laterUnlock": 1812254901,
+    "weightedCredit": "16965232709984",
+    "earlierCredit": "2566655548570",
+    "laterWeightedCredit": "17785729540",
+    "laterEarlierCredit": "711428507",
+    "eventsAtLines": [
+      11792,
+      11812,
+      12029,
+      12049,
+      12523,
+      12582,
+      13004,
+      13411,
+      13849,
+      13933,
+      14220,
+      15034,
+      15054,
+      15271,
+      15291,
+      15396
+    ],
+    "transactionKind": "in-process Foundry fork calls; no mined or public transaction claims"
+  },
+  "verificationHashes": {
+    "fork-independent.log": {
+      "sha256": "c34d17d7fc436a3aad72f15231845df6e956bc54b28e41be73be9d3a0eb85406",
+      "bytes": 3646376
+    },
+    "configuration-independent.log": {
+      "sha256": "0b9ef1503a06a0730bc921abb988304658b1866533ac77ed99e8501dfca1b2b1",
+      "bytes": 203511
+    },
+    "stage1-independent.log": {
+      "sha256": "5450dfba0e989ac680cda478372545dbface7b183fd413c80016da951ff92680",
+      "bytes": 32446
+    },
+    "stage1-independent-r2.log": {
+      "sha256": "45b9a9baca4e55677c364e0bcdb097a755dbaf4720bfe3ac0dc80933c91ef009",
+      "bytes": 62592802
+    },
+    "NftStageOneWitness.s.sol": {
+      "sha256": "c10bee6dc2861bfd11d44311e99328d69530f5bbb1004f95ac6199c316a3b5e6",
+      "bytes": 7677
+    }
+  },
+  "producerContractChecks": [
+    {
+      "path": "weighted/contract.md",
+      "sha256": "02aad997374190bf8f5428029c8fb80eed102ba63a83752113250118bd313d85",
+      "match": true
+    },
+    {
+      "path": "earlier/contract.md",
+      "sha256": "f090bb5f1bcb9ae74fe2c7a9dbbe1d87f5fced9a6b3d346867d83b92265025b1",
+      "match": true
+    }
+  ],
+  "productionBinding": [
+    {
+      "name": "UniswapV4DetfMigrationFacet",
+      "initialSha256": "4f56cc1ce79e90b53bbac9a7bbf2bc75e89db2a8c522f816ecd506ff37ddcb8f",
+      "finalFileSha256": "12b1d084f66d8c11e2df09c4c442ce5225320095c98a274ae115f570b9c14a5e",
+      "creationEqual": true,
+      "runtimeEqual": true,
+      "metadataEqual": true,
+      "runtimeBytes": 20886,
+      "creationKeccak256": "0xc076c643e81f96fccdd9df1e4482f1ad1fd58e027308b74b431f6c55ed8f7e96",
+      "runtimeObjectKeccak256": "0x292d9f132ea197424b2efbceacd61763393676ee7805c454c17b347fc5e8890b",
+      "envelopeChanges": [
+        "deployedBytecode",
+        "id"
+      ]
+    },
+    {
+      "name": "UniswapV4DetfMigrationAllocationFacet",
+      "initialSha256": "2f068f103015f760e75e8663a8c8aca711b0d52481175fab03fa65aaada4f827",
+      "finalFileSha256": "1d7f5cfc08790c5501d6cc91a4e9aa5f7fe1b8303e878e41889e754be2d2cbb6",
+      "creationEqual": true,
+      "runtimeEqual": true,
+      "metadataEqual": true,
+      "runtimeBytes": 21204,
+      "creationKeccak256": "0x0b875a564363c4a75e5132febf0a47e6827353eeadf7b25f933c6524a49c959f",
+      "runtimeObjectKeccak256": "0x98a23e47bfe1558a353fc2f7fb858a63f5938ed3eb7916b6418c850a8a9aa70b",
+      "envelopeChanges": [
+        "deployedBytecode",
+        "id"
+      ]
+    },
+    {
+      "name": "UniswapV4DetfMigrationDFPkg",
+      "initialSha256": "bb95e5fcdbd262b2dc40b0d499acb56d1ffbecbfe59ee7919117cf41f69aa779",
+      "finalFileSha256": "9a755e9af6a88423d74fcca45dc2b9f6202d7fec06a529fd17216e171283db31",
+      "creationEqual": true,
+      "runtimeEqual": true,
+      "metadataEqual": true,
+      "runtimeBytes": 16646,
+      "creationKeccak256": "0x537ed966309b3df8d0765c2c71bffd273ea419d9aa4543f501b9b83afac85147",
+      "runtimeObjectKeccak256": "0xb9286d4a6e45eaac66e0a8d5117bb874190db6d6d4a85d3fc8edbd0c652dc76e",
+      "envelopeChanges": [
+        "bytecode",
+        "deployedBytecode",
+        "id"
+      ]
+    },
+    {
+      "name": "UniswapV4DetfMigrationBondNFTVaultFacet",
+      "initialSha256": "3f25518483e843e62ccd318c856f67149fd725a7d468a91cf43764525970ddbe",
+      "finalFileSha256": "039ebf6cb0c83420244a8d8098ffdb94343419d9f5eef6ea63fcaf6a099a1f42",
+      "creationEqual": true,
+      "runtimeEqual": true,
+      "metadataEqual": true,
+      "runtimeBytes": 9496,
+      "creationKeccak256": "0x0ccba77b41fdcd6bc47d1afb4d7355cb8f111aeb5bed9a9bd2893b38ccc6151b",
+      "runtimeObjectKeccak256": "0xd8ef2a4715e1d4339ade07a8ec2e4598ee28de65163d1d1bc4ae8385c2344ab3",
+      "envelopeChanges": [
+        "deployedBytecode",
+        "id"
+      ]
+    }
+  ],
+  "traceArtifactBindings": [
+    {
+      "name": "UniswapV4DetfMigrationBondNFTVaultFacet",
+      "traceLine": 6792,
+      "sha256": "039ebf6cb0c83420244a8d8098ffdb94343419d9f5eef6ea63fcaf6a099a1f42",
+      "creationMatchesReviewed": true,
+      "runtimeMatchesReviewed": true,
+      "metadataMatchesReviewed": true
+    },
+    {
+      "name": "UniswapV4DetfMigrationFacet",
+      "traceLine": 7134,
+      "sha256": "12b1d084f66d8c11e2df09c4c442ce5225320095c98a274ae115f570b9c14a5e",
+      "creationMatchesReviewed": true,
+      "runtimeMatchesReviewed": true,
+      "metadataMatchesReviewed": true
+    },
+    {
+      "name": "UniswapV4DetfMigrationFacet",
+      "traceLine": 7136,
+      "sha256": "12b1d084f66d8c11e2df09c4c442ce5225320095c98a274ae115f570b9c14a5e",
+      "creationMatchesReviewed": true,
+      "runtimeMatchesReviewed": true,
+      "metadataMatchesReviewed": true
+    },
+    {
+      "name": "UniswapV4DetfMigrationAllocationFacet",
+      "traceLine": 7206,
+      "sha256": "1d7f5cfc08790c5501d6cc91a4e9aa5f7fe1b8303e878e41889e754be2d2cbb6",
+      "creationMatchesReviewed": true,
+      "runtimeMatchesReviewed": true,
+      "metadataMatchesReviewed": true
+    },
+    {
+      "name": "UniswapV4DetfMigrationAllocationFacet",
+      "traceLine": 7208,
+      "sha256": "1d7f5cfc08790c5501d6cc91a4e9aa5f7fe1b8303e878e41889e754be2d2cbb6",
+      "creationMatchesReviewed": true,
+      "runtimeMatchesReviewed": true,
+      "metadataMatchesReviewed": true
+    },
+    {
+      "name": "UniswapV4DetfMigrationAllocationFacet",
+      "traceLine": 7254,
+      "sha256": "1d7f5cfc08790c5501d6cc91a4e9aa5f7fe1b8303e878e41889e754be2d2cbb6",
+      "creationMatchesReviewed": true,
+      "runtimeMatchesReviewed": true,
+      "metadataMatchesReviewed": true
+    },
+    {
+      "name": "UniswapV4DetfMigrationDFPkg",
+      "traceLine": 7425,
+      "sha256": "9a755e9af6a88423d74fcca45dc2b9f6202d7fec06a529fd17216e171283db31",
+      "creationMatchesReviewed": true,
+      "runtimeMatchesReviewed": true,
+      "metadataMatchesReviewed": true
+    }
+  ],
+  "metadataSourceBindings": {
+    "count": 215,
+    "failures": [],
+    "sources": {
+      "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol": {
+        "keccak256": "0x14d8ec9fadad01b66d2d8a1a751b1ce35768e42ae050cc18c62afa88518656b9",
+        "sha256": "199e39478beeb5720b81a6f4ac69ab73515ecbf8272d7505ff0cc9c81cae3378"
+      },
+      "contracts/fee/collector/IFeeCollectorSingleTokenPush.sol": {
+        "keccak256": "0x0b0997a7c0f35f6dfad4909ff26123b99b61c2314d607a43a843392d500cd98b",
+        "sha256": "871a867baba30ec8a4952732e9ea6390d12c5869dab7d6fac58a647c37cacd87"
+      },
+      "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol": {
+        "keccak256": "0x05437a534d91ab65ecb4aedf3b0cbeeab820f27aafedcc546a43f0e7f70b866c",
+        "sha256": "46602d967aacfc7fed5f64f83e7429c0faf2097ab9d0da94eabbdd27298098f4"
+      },
+      "contracts/fee/collector/IFeeCollectorManager.sol": {
+        "keccak256": "0x7c9adbf82a4bb292fa1e18ce218842a6ec82d0217cb1975ffba79a65625a9615",
+        "sha256": "d29980cfc3e143f5a03984599d87cfda61004ddf2fed9d0c926024268afd57d2"
+      },
+      "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol": {
+        "keccak256": "0x8d2588aef6eeac20f0c3932c1020dfaafe35613b2a629ef69c8e4490aa057a6e",
+        "sha256": "a69f3e636ec9d8e1e471cf2c3a4d6fb68fb96c8e1bb7e144702cf360b10af9c0"
+      },
+      "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol": {
+        "keccak256": "0xe7d778812bfa79b3422c4ea6590dc51e272144e8e42d6661553f3db92d70ff0e",
+        "sha256": "dee01f31ad8930c9dc43435e7614a45deba18f39e273fd57ceae9ca1f8cf3f8c"
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+        "keccak256": "0xef6940da4ab258dc94b707b8b1186a297bc50b738b7e0b9b3cd8a04784f0b736",
+        "sha256": "2d4c60b2943042ea8699cbd26f6b57ef8f99257ae5429dd3ed94940a29000430"
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol": {
+        "keccak256": "0xe42bed132d1a9a851cf29d686bcbc4357ca2102107aa6ad5d304aaacd680d685",
+        "sha256": "0e7504ac790f6934df323567d665c1fe25dd5dc51874309e8c0ca72b817d4483"
+      },
+      "contracts/interfaces/IBasicVault.sol": {
+        "keccak256": "0xf4c9fe3326e1e121f5f2eeff13dc5e3536d405e91a481653e99906fa82f03935",
+        "sha256": "371e8050d6406dbf25504458defc78820870113ab49c4b1cca15113294d35aa5"
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookRepo.sol": {
+        "keccak256": "0x50f25535501b199a93c22a27c06b85f31e25a84bd0b94460d7a0a6de2d91725f",
+        "sha256": "70c48d8e7f95829e79e1b855dd142679f3d2dc6c268e926f4442fb00a8496b6f"
+      },
+      "contracts/interfaces/IDETFNFTVault.sol": {
+        "keccak256": "0xa3992529704c17da1fd196f72b16556fcab2d93d54fc59f8d9d7650e44c592fe",
+        "sha256": "fd1581701882d6bf49b92f9500ff977fcfbe8e60f8c35668b92b96286a940287"
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol": {
+        "keccak256": "0xbed699c7d55c8d007e1f2c00974664b6a79e3017c52f7f9e0b08ad01fa7c6f23",
+        "sha256": "138137b39a8f2df0e0b8d922649a8d49d7caf7eb8945927513aabb77eae0f4f2"
+      },
+      "contracts/interfaces/IFeeCollectorManager.sol": {
+        "keccak256": "0xe75d7dce53125d240ac9cf2d87256730d708e300e92807b83fc0717d152cefc9",
+        "sha256": "3fae62e7f95196100bd4d53cf5b166e6389bca0478bde89e6ddc145eb381555a"
+      },
+      "contracts/interfaces/IDETFStandardizedYield.sol": {
+        "keccak256": "0x886be6be7804906b0d1e8ee45b1157003bb642e269192f22dccb3cfb07bc284e",
+        "sha256": "3e1d6232d284767895161d42ed914e9c682e2be87b75dd4a90f15099cf1bdca1"
+      },
+      "contracts/interfaces/IDetfBondNFT.sol": {
+        "keccak256": "0x95472254b83651ba35d96a54d998f035b00147674bec62c207f8abd70cbb7dbd",
+        "sha256": "056d41aa1585bfdc998fa62b7df65e87ab753609a5913bb3722e844da931464a"
+      },
+      "contracts/interfaces/IFeeCollectorSingleTokenPush.sol": {
+        "keccak256": "0xdf7356e84112a3cb7d4bfb192c335b8d61445d28874520f20fde0a7953e08ee2",
+        "sha256": "5d3bfb279e0ecaf6fa55d6270afb1bf4c91d38e46af1eef30823de8ba9f3aea8"
+      },
+      "contracts/interfaces/IStakedDETF.sol": {
+        "keccak256": "0x199681ffd1d0b0470c5117170530f46a47945b74b077cc0be80910eb3f39f70e",
+        "sha256": "dba3f9fb696822f01d0d58054fb607cf5ba07dbf845911143b476c8a9df9fb83"
+      },
+      "contracts/interfaces/ISecurePullErrors.sol": {
+        "keccak256": "0xa36b66e4e106b8d628c633c122d6e034c4010b1d4f318a3922027b4cc9197d24",
+        "sha256": "b2b57a724e93b111647978599297a6a861f556b2739460a1c1d8f42c40394b71"
+      },
+      "contracts/interfaces/IStandardExchange.sol": {
+        "keccak256": "0x71a5b46adf0a89f9e307ff8a133759d6378f7741f4e362bba56c85c2d719912a",
+        "sha256": "d5e3218eadfa55882b841140f28add593b5396a236cb386f5fb5ed7348fe9606"
+      },
+      "contracts/interfaces/IRebasingClaimToken.sol": {
+        "keccak256": "0x41f58906ea6da90f94c6ac14a9d5b2e4c12579133c396b7d062a93d0f64e9fa3",
+        "sha256": "d9de3bd122bc07b7ebb28eea7784715d35ac1e15b0107a201b1bd3ecb1a0c639"
+      },
+      "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol": {
+        "keccak256": "0x835972fbbdd9588189c3083b5c8f7cc7798c9533c6298c7e6c62f37a1b408d9c",
+        "sha256": "830d7db45d57a1b0ead60a6ba0ded60d447921244b0251fc30f0972670a11aa8"
+      },
+      "contracts/interfaces/IStandardExchangeTransitionQuote.sol": {
+        "keccak256": "0xa67c591adfcbc481dcbb7ed07914cb1ac3ebe2fec66d5126b8d2663e7e756fd9",
+        "sha256": "a1816004f5d0cb42fe8467795464693cee193ee917222f3beb39ac0e06896890"
+      },
+      "contracts/interfaces/IStandardExchangeInMulti.sol": {
+        "keccak256": "0xf1011b50b767687d90004fafc0a0c8de82d4ab8b7f0f41283d000866c2c879ae",
+        "sha256": "ce1f35be918be3b78f40fbdd64b66ed4f6258e0f9f392c416d6ec9968f0b9367"
+      },
+      "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol": {
+        "keccak256": "0xd844babf66aa4ca5cbf58b8b9c42bf0f6c01625121631bfc0d35632fe0f0612b",
+        "sha256": "ba05e7db8175d42a9e24b809772bfa03f54db02a1cd9f163e04148b7f84ceafc"
+      },
+      "contracts/interfaces/IStandardVault.sol": {
+        "keccak256": "0xbcfa03f6202cea76a4b1b3b9e93165c90a036bf587a40a68cc4c23285748ac68",
+        "sha256": "1a12d18371a09ab81ee192363da08280ecdd5b616f3a4f1ed81ae79d1954a811"
+      },
+      "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol": {
+        "keccak256": "0x2701dbc0cdbe84826a1c5c6974e67195b9784c5a12d6472c4097578ab7d27ebc",
+        "sha256": "009fc35f6fb2b44dd234632c7db88a1451391248d5c5a265b10e066f36172ea9"
+      },
+      "contracts/interfaces/IStandardVaultPkg.sol": {
+        "keccak256": "0xff4f166591b6992074ec8e954f9f467343227a98ccc993f74de75f564c400100",
+        "sha256": "a2992050cfa1218bde37f082fc14f41a62c3e217105088021b9fe18c5dc3fa8c"
+      },
+      "contracts/interfaces/IVaultFeeOracleQuery.sol": {
+        "keccak256": "0x019cc6ba9812de6b2c07f4aa5f9ceb5d475586dfee970b46d34f96b8198d9bcf",
+        "sha256": "6982722146ff41e1bbc8212e4e50a64e795adaf67edee7e3fa5630b63c16648e"
+      },
+      "contracts/interfaces/IVaultRegistryDisableQuery.sol": {
+        "keccak256": "0x3c79685d7c709df59575af516c7f31cfd253a1c6ce31332e276ed93093535b1e",
+        "sha256": "56f1bd90c0c4d1aced307aa32dc552717cbdec658f3df60f77663fc684870622"
+      },
+      "contracts/interfaces/IVaultRegistryDeployment.sol": {
+        "keccak256": "0x3ec058ccbb56365811e49e30fc8a4a66090c9d0f8a3d16ae5ab7975c0bedfff5",
+        "sha256": "d6de0615128088f5f50e530dea7b097975f7396d02153ad18681e756a80cfade"
+      },
+      "contracts/interfaces/IVaultRegistryEvents.sol": {
+        "keccak256": "0x10514bfc680a239d627394858a740fa9d0676ddb7fa3420d90a641babc1745a1",
+        "sha256": "c2df9e5594e2d886a8f4c2c93e08db6c84928ec0ea7de254320cc150ae8b329f"
+      },
+      "contracts/interfaces/VaultFeeTypes.sol": {
+        "keccak256": "0xa2cd57791aedab38b64b335a3202b84bdce8c071e2ddd078e6e8b9d8f92176e8",
+        "sha256": "0ad590ec839a8cfa64c75cd966e8f06845c03a8ea14ea4863dfc7d95eb9332a5"
+      },
+      "contracts/interfaces/proxies/IFeeCollectorProxy.sol": {
+        "keccak256": "0xa4353a5b3c77d937492b100b0c179288c42a1b291d3ec6bfec499b9526dfe3f1",
+        "sha256": "eeba90d145fa5e4e80795820d45f47334d14113ef185043384f60f7c06b58844"
+      },
+      "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol": {
+        "keccak256": "0x34a49653bd306f19c49f0bb303bfe1b35ea949b23b86c4008b29070242143b12",
+        "sha256": "090e966a4d15042ac45847c95830daf366b0538b1fb75bd3d0a965206305d8a0"
+      },
+      "contracts/interfaces/detf/IDetf.sol": {
+        "keccak256": "0x4be990b3c24ab04b96952acfbd44189ca7518e3f787554a0a6696fdb15afb67a",
+        "sha256": "4f836c8c5a5fcd2673abc3a347271105d4e4c0eccc07308908bc5b138aa51e60"
+      },
+      "contracts/utils/ExchangeInAmount.sol": {
+        "keccak256": "0x3bcf5d905f20f680051e992f5dc24616d5727e77c854079a52bb3e6cd55ea6d2",
+        "sha256": "040507e9c50e107045c36361aee80de5ede6fb594c69df1a9d598099cae408e5"
+      },
+      "contracts/utils/LocalCreditLib.sol": {
+        "keccak256": "0xc9b69dd7f6594b6eeb09067e9cfd08e854b59fd9909883cd7e0e7e1680860299",
+        "sha256": "6d66ed5be41ebcb7b59716c1af24023469ef4da4b1b2123a8d4a7b1beb02d411"
+      },
+      "contracts/utils/StandardExchangeFrozenQuoteLib.sol": {
+        "keccak256": "0x4e9bd69bf7a639b9f7f9a8ea66aef3c5247c778c609c8b96e9c568daf0d089bc",
+        "sha256": "210d5df7a3c7fc69937c37473770bc34c24146993b1ee3a9527136fa58547137"
+      },
+      "contracts/vaults/basic/IBasicVault.sol": {
+        "keccak256": "0xc0b6df6ada52539111db6db3c926f51d878d5765f61823a3432cc5e5c0ddd021",
+        "sha256": "56af64d33e35f38610d03f955596487321eb00283cd9d40eee1c9f311ab6d584"
+      },
+      "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol": {
+        "keccak256": "0xf1f673e78dd519145fedfa180ec8f107e3e2f29fd8095a4f20175abfcc478462",
+        "sha256": "032f68cfab3a06e5ec03f0f35fe174fe6c7ce85b258376d1c2919bc1187690f6"
+      },
+      "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol": {
+        "keccak256": "0x247fd0cea205654b77b606c0fc25813d9701fa07f8248098230c2931faeca2f6",
+        "sha256": "aa759b66d3354e5ad5d93060ba595b3794f98cd40bfaec772bc006869749829a"
+      },
+      "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol": {
+        "keccak256": "0x2d7b05214575bb9055bf008f0f6dcbd0580e379a8c06eb5ba7ca3b16a47e5cfd",
+        "sha256": "c4d9fd03bfa8c2acd3068c1f5c63bf765be21e0983f9a78de639a5474ccf154a"
+      },
+      "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol": {
+        "keccak256": "0x93a494b0a06a2116376cee4d53df1cbd0e3ee32bcdeb210a255589f62cc0cc88",
+        "sha256": "05c2d161ca1171bbf62efb8d0c8d344dc67745e231e0bb58d57fccc8735a2dcc"
+      },
+      "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol": {
+        "keccak256": "0xc5d343c5d5ad24a54914e2c38b077936ad8b121ba5c7f1bc0fcbf38d4d8f8685",
+        "sha256": "a5928f4869a9f7a23c4152278a248561c3478a70f342d493b5f27aa05a11d8fc"
+      },
+      "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol": {
+        "keccak256": "0x6e1161ad205ee512467420a48d2e5fd5a2b6029894eb58c6a238ea3b3bc3f712",
+        "sha256": "e452bdef62615e815d33bfe52aad87b1ca7713d4e55f5f39534b5010417b7424"
+      },
+      "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol": {
+        "keccak256": "0x17e1889cc88f6339e6d3342f27c06e71db088bcac0adea14ef0a9aac30429763",
+        "sha256": "c6cf01dafc6868b88531f70fa7157e21c0aeecb2dbf37f5e3c7f4eddaf98954d"
+      },
+      "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol": {
+        "keccak256": "0xdd71ba740f8f2e71995c03d055ec2f511114a717b8871cc0e032dbdfe38c12cb",
+        "sha256": "3ec13e4bb20549f5e3055e63212d6518cdc011bb616bab2783e22e5c7a20ba06"
+      },
+      "contracts/vaults/detf/common/core/DETFMintSplit.sol": {
+        "keccak256": "0x04605bbafcc291d39c5264ea330890f37ffe92e03151fa4da3a894f47f2a1c25",
+        "sha256": "9253a0547f978551d6886c966ad4e102c81408a1ea08b9a40a238f785dcebe94"
+      },
+      "contracts/vaults/detf/common/core/DETFMintSplitLib.sol": {
+        "keccak256": "0xd12bf334f6b6b4b5cf5a37221bd1140d181a971b87b424135907f3ed853205dd",
+        "sha256": "19a1a5d6054fdc16579f2254a3483349103f56acf5dfa06dcb15d2ce3178599d"
+      },
+      "contracts/vaults/detf/common/inventory/IDetfBondInventoryPolicy.sol": {
+        "keccak256": "0xd37021f48939748cbc312c392c45c24abc08bd85cbc3da02ae1301d792cc822f",
+        "sha256": "258bbddda3eecf398834465c1c2cbd9dba811174fca02565c90a45e830e0e19a"
+      },
+      "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol": {
+        "keccak256": "0x98be93b40e2144ad24175bc6d7bab81156cf9a284b1845d6d5200c9728b53d1c",
+        "sha256": "aca40fc346a938b4b656066146116e3d67de15232d2feb3502dbd4b8b1895358"
+      },
+      "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol": {
+        "keccak256": "0x1e277892b19d0242e3f37b517732305f7dfa0dca4424bd68d05a0be6c6bccca7",
+        "sha256": "baabf2270d7544d6632706d6deae56c45589f90107598a142153a6fc8032ab1e"
+      },
+      "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol": {
+        "keccak256": "0x23e9f71a2607aac7a509c90bfb4bfe2959e91f3f0134bf0c93883de4eb9ed005",
+        "sha256": "5d06f9ef248d9bf957ccb8d9fd5fccf4b149e42293fc3d59b7224af54918c86d"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol": {
+        "keccak256": "0x5c8a1aa353312a8e81be2a53b52fa1e69659b993b1cc28a906228cd0ec993a51",
+        "sha256": "e033f26b69ab6af963e96c3a68aee2eb0884294bb22569c312976cd3e36c2c2b"
+      },
+      "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol": {
+        "keccak256": "0x9c8611d2ab3c69335445592a95fa0948f89f1dd21969c619002ad95c91b8fa0a",
+        "sha256": "eaee3e154085d3070b98234b953a0beba44f664771fd17c59930060bf7299c1c"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol": {
+        "keccak256": "0x44d9084f68f3358d5b3f08f2eeafb8844dc932cab0104daad084458b092e1f5d",
+        "sha256": "b6af4f42526afb74b67e4ce43997b75fe3f10b7c47e7ba9f13070fb39ec86071"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol": {
+        "keccak256": "0xf101973d353a03fa95b4f73d8a02c5a0998253d919a7c0386e87ad122b0f6cfb",
+        "sha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol": {
+        "keccak256": "0x3e6b081d3d289b3c28073fa882c078a868b6fa6fb5711687275308d7209d61be",
+        "sha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol": {
+        "keccak256": "0x9e2acc8651df618a88dbb8804d862046f4be5758b60d75893d48c7b980bea094",
+        "sha256": "7f5365fcf5f4d91b3b08963a7239300ef6962a64eb95a9055b97f5ae6c8073d7"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol": {
+        "keccak256": "0x4e074fd1983ec908ad440bf18d2d3aeaaf8eb82afd85977cc7d9e14d69e887c0",
+        "sha256": "0597262cf348f0d56c90be7ec02dd5701020ca09c4f17769c47430170d6f43ce"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol": {
+        "keccak256": "0x9eae5f50d97a647ef81b53208b89459dac94d14fefc46814cc9712c69f538288",
+        "sha256": "ba859f1ebfaf71080660318ba9eaa28a1b9900366d5652a00b85f108b31a3844"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol": {
+        "keccak256": "0x0049370b90630ae35e0d7a31c606b0e55cc08d558fd862392ce208176a6560d6",
+        "sha256": "b7af401436bf14cd4cde351b5b3af70b27a7cb1a166f06fc23c515e2bff5b618"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol": {
+        "keccak256": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+        "sha256": "a18a4e44c739873a694c0caa27abbc1e0e1515f22d6391a81f0d2ab689bbe40e"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol": {
+        "keccak256": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+        "sha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol": {
+        "keccak256": "0xb31f2e00d9843fd58095ddd500ab9b25d8b40bbe42e4d464ea1ad97dfb1c6a06",
+        "sha256": "93b12ed360332a3b78649407002a43f207fc8dfdeaadf9f1e0c6608584f4c8e3"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol": {
+        "keccak256": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+        "sha256": "dc0fd10bd5b3d345cfecbc5d9282884c1c2d3b0d983eeef846a8aff33cf79c2d"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol": {
+        "keccak256": "0x3333cb9218571276b0b364b6e0818c6aa0d59b031cad57b3d37954a79bb26c22",
+        "sha256": "aa927b281d84741b7e71f47bcfea0fe1ca8c0dc5d12b18e6bcf3787d1ec994c3"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol": {
+        "keccak256": "0xa31029e1e95d644002ae81617154dac3c101a7d2af6ebb10faf7179c53d75f6e",
+        "sha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol": {
+        "keccak256": "0x356309a148a7d091a7b296cb6864e8018afa34d4a42b0d2938c4e4215b21c909",
+        "sha256": "6c2a26b7c85e9f075ec0b8188efed41d9d40f6fccd9aaf8b91447a5c613a9d00"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol": {
+        "keccak256": "0x89aec04a8fe86e36420e1f46f2ba2f3a516a947b33e3e1fbe88e9a2030312267",
+        "sha256": "ab471ddbf4c3f81fac2990d59913d9b940e76ca387b6f4c1d1509e4ab9f58de9"
+      },
+      "contracts/vaults/standard/StandardVaultRepo.sol": {
+        "keccak256": "0xbaede645d902b4873e85e127a23a0def4c926090f298312830e8a25c514b419d",
+        "sha256": "ac646dd48bf46fdd77bc780ef36987e7651fff88633678227e93bd3bca5255c7"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol": {
+        "keccak256": "0xad6714769ebef24776233146f9583d8411c10e2084b73e473f4c6aa58f787950",
+        "sha256": "ff0dfd14127ccdaa3f2ed73c5349879e7e578f909bf464478ae132101e12c6bf"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol": {
+        "keccak256": "0x4fd5e9f643150feb6eb12bac28197dcca6a4610ea4678b7a930272ea0cea7251",
+        "sha256": "38b97100cac7406e51fba1a7ab85291a203b8bead6b200efc413485423330891"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol": {
+        "keccak256": "0x07e3495feaa0f9c70437ecb5b70537ef875e76316d19b0a4a6c2e40ca50f19ad",
+        "sha256": "255386a415233a101edb04233cf10ee3f213694baf22b9e19290d826bb1bc1a5"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol": {
+        "keccak256": "0xf10a9b83a8094d01a1161d4b07f166c003dcf619ae5e01ac1163814ef30ac98f",
+        "sha256": "2e6ce7e3ceab079bf7dac03363ecaa0f306033b43f7185c9223ee1e1535a40cf"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryTarget.sol": {
+        "keccak256": "0x9c8380251fad1bc7dc54e93911b40bfc74d4456b29703ed6dc78571a417d4398",
+        "sha256": "84b90cd6ed95f1bedfc141f5451cd81f8c8e6e88768afd2a3d17789611ac0ab4"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol": {
+        "keccak256": "0x003032214bb0aa68ae9f7e4a9e2a4bb72c065e327f22c5b86eaf8635ef06972d",
+        "sha256": "04aabbc91ebc34af967171e259396ede574c9c518795bb9cf8c34aab72aaaba6"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultRepo.sol": {
+        "keccak256": "0x4b5f2063b8f9d74b9c4ea484209b4ed647dc65385cb685e155bf3dcc0e314574",
+        "sha256": "de38c467d98895712a15e3047b86a381901fd5969adff5e456b7a062f783f724"
+      },
+      "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol": {
+        "keccak256": "0xab3851b990bc7c69ac0ffafd3310adf53645974ff1c3fbe79983291365875e40",
+        "sha256": "6bf8a1edade4a34a946e185a7f2767a8eac89e9bd4934032b9b0cff5439c8a13"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol": {
+        "keccak256": "0x9eae59ad135d3636cc3ad6eef6fa77c8fa27939452bd2206339b474688993be6",
+        "sha256": "03da2aecdb3604c2a0cfc334a9e0f249386e184ebd1a5c6f688c1490b5603657"
+      },
+      "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPoolAwareRepo.sol": {
+        "keccak256": "0x08aab00e231d22e7795ee81d96e29be410ad0e5cf3abce1673763e504a2f6428",
+        "sha256": "f8c51004ab1ccd2b839b0472bc01137b29c63c7de5f81c48c0af56a29dc06963"
+      },
+      "lib/crane/contracts/access/reentrancy/IReentrancyLock.sol": {
+        "keccak256": "0xfe933deb5fb0df1b1f77bc88d4b106a8c885bebb55c943c5c558af2fa5e2a2bb",
+        "sha256": "f527e471064e1cbd917d33fb769794b13ceaa0007804cb9e33200e54a48af835"
+      },
+      "lib/crane/contracts/access/ERC8023/IMultiStepOwnable.sol": {
+        "keccak256": "0x95273bdb06c0ca90b65804a7270ec04d03f2cb13d0b3e29a8149328c536b221c",
+        "sha256": "bb1ac4e187c3fe6b62948e420429bdaaf8e71e76a2d4843d59c4d234781ebc9a"
+      },
+      "lib/crane/contracts/GeneralErrors.sol": {
+        "keccak256": "0x09c540574bf6af182cffc13e7a6b2077c69f646e7ccd5a3d8c01c2e73a05e193",
+        "sha256": "9f121215fd3ef1f2174c15a38cfa8c1de764cfb1f9c750165dac9748c59803f9"
+      },
+      "lib/crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol": {
+        "keccak256": "0xbffa485333e463a66711993f8a44485829fcc557c550a78dfaf1bd43923e9e10",
+        "sha256": "b9c17d765d6112f9dbb35954ca7399b8aa27031a875be4d6f75f4e50b822e831"
+      },
+      "lib/crane/contracts/external/balancer/v3/interfaces/contracts/solidity-utils/misc/IWETH.sol": {
+        "keccak256": "0xf41981f9f4ee564f76d6fbe2d7cb3d391f82903bf197914c014e33aff95db919",
+        "sha256": "390902f5bd521c23ff4afa7bebda80b30bb6ac0faedb2ca67733788c6063a8ec"
+      },
+      "lib/crane/contracts/constants/Constants.sol": {
+        "keccak256": "0x6a6cf1121cdb75283f84d6dcc4f9ea53f7bc0ded77cef99c23eaa91be2a61d16",
+        "sha256": "d8e00cc806b64b60a072b8448fa1562673729acb8a57c98328a1c79d10d104d4"
+      },
+      "lib/crane/contracts/access/reentrancy/ReentrancyLockRepo.sol": {
+        "keccak256": "0x7c7e0bc3e38267508c28ece289e9329bb4ec37dd0b2b416a601bbc03b8c264ae",
+        "sha256": "042b9972609c3eaf87ff3488416918f4062d483b6fb1a4dc21501a24798c2edc"
+      },
+      "lib/crane/contracts/external/balancer/v3/solidity-utils/contracts/math/FixedPoint.sol": {
+        "keccak256": "0x9a48cbd54aab3e974deb7edeb00276b185ad6c06fa1c86633c086b933d857da7",
+        "sha256": "1ebbfbbb6d51d1ad9159139e90d964355b2cc6cb3aac158473759726ccb8f88c"
+      },
+      "lib/crane/contracts/external/balancer/v3/solidity-utils/contracts/math/LogExpMath.sol": {
+        "keccak256": "0x70449e2b423b9850e39adddd7301205aa8b6e9e4ae788fd44d0968cac018eb2a",
+        "sha256": "1fc52532773f733ebb24a35dc4091c59a13bad938db794adf736b2e33f3b2910"
+      },
+      "lib/crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol": {
+        "keccak256": "0xd06d4763ec0a7dfdc31f9094f80745f791890271dfdb0838417d9198b19b7598",
+        "sha256": "70149a5e587b0da084689a207289d6c18b2feb3782cd6bacaa1112b12f9c1bcb"
+      },
+      "lib/crane/contracts/external/solady/utils/LibSort.sol": {
+        "keccak256": "0xd7ca7afbbf77ffc38f6cc3d8ada9b0fc1edfa706cec9e0630bff24387d864f4c",
+        "sha256": "2693e79b75a1d51cd0dda2cd73735542a7154e8d629bf3b9609230d3d7f41d44"
+      },
+      "lib/crane/contracts/factories/diamondPkg/IDiamondFactoryPackage.sol": {
+        "keccak256": "0xe16260329aa1b192bd3d165eef11b665ec997696f40f93651dad80196f8e4f3d",
+        "sha256": "7f766c1711a107fd309844422e7aa807f79d8e3ae7c3dcef93dec36d977ea95b"
+      },
+      "lib/crane/contracts/interfaces/IDiamond.sol": {
+        "keccak256": "0x333b5dd43cbdd0b939e26d3d9ad8c333f3379adfbe390a28987c90f697dd4814",
+        "sha256": "ecebc55087c240e51320519cb39036f4561cb1d96d52aa8dba1979e1de043c62"
+      },
+      "lib/crane/contracts/interfaces/IDiamondFactoryPackage.sol": {
+        "keccak256": "0x2c418c5fcbb86cd02557663c3c8358f3072485e49f921dcf3b650e5bd49edcb5",
+        "sha256": "32f29ed4ab57a507fff1a66da07ee62e6dc45ec29ab913420fc87f52eab06f70"
+      },
+      "lib/crane/contracts/interfaces/BetterIERC20.sol": {
+        "keccak256": "0x9f090d619cdb4bb5972f433ff934e71771f3e9eba3fdc035f832ac4eb3bcf706",
+        "sha256": "0e552241d757b89cba27020e7bdca8ab067b93ac5fbce7e7f931c2846615cc75"
+      },
+      "lib/crane/contracts/factories/diamondPkg/IFacet.sol": {
+        "keccak256": "0x7debe2930c65f7d79c674d0e062c8a7e6298f92160998cd639a1313a95078c54",
+        "sha256": "6c8a30b0f72eff14e88dff30aa4f1a9bfe210c54a56134efafc996939349ccb7"
+      },
+      "lib/crane/contracts/interfaces/IDiamondLoupe.sol": {
+        "keccak256": "0xf76ae28d1dc0d2c733d17917ac2605d2394858dde68b1439248f39691d21b1e0",
+        "sha256": "9c9cd3f08499572065a73be15db24c71194132778fa13bdc2bd292b81d37d057"
+      },
+      "lib/crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol": {
+        "keccak256": "0xfd0c189fb9a62be74914803da2f7a502dc68e6db182f30ab74166ad5c82e5e64",
+        "sha256": "acf5f3c5c969659f3b87e66b8e3f007e92d020f13499698415601a1b114ce8d1"
+      },
+      "lib/crane/contracts/interfaces/IERC20.sol": {
+        "keccak256": "0x08ab50600d4192b32ab88e6cf0e81ad616b002041b01ec37b61e3294edea7185",
+        "sha256": "538916378ef09fc718c8852f5893547698233c12dfa9a56142a64a636bdb8d9d"
+      },
+      "lib/crane/contracts/interfaces/IERC165.sol": {
+        "keccak256": "0x820f72b2179f2008ba6af46a19ebbbdfd48a9d561a64ec3d849975e6b30dfdba",
+        "sha256": "616fee7d48f93bb57bf8aec5e403b2df0ee51f94c5a7d5fbaa1d8684469f38a1"
+      },
+      "lib/crane/contracts/interfaces/IERC20Errors.sol": {
+        "keccak256": "0xa988446d926d5d5732f8b896aeb58e3756e630b8a702d0bae236aff2d9e606b6",
+        "sha256": "9565da78f9f72f3498ef992858d4b57f79a0e1185f2e9dc8fd3a1a35930f0273"
+      },
+      "lib/crane/contracts/interfaces/IERC20Events.sol": {
+        "keccak256": "0x6dec6e7229ed9bca5f19b34d998874cf92a038152fe57634a2331bb227f83644",
+        "sha256": "4c06b04c018cbec792a1532a5cc7fb72be092fe5c7a57278fc60b76e83a76968"
+      },
+      "lib/crane/contracts/interfaces/IERC20Metadata.sol": {
+        "keccak256": "0x56f386f2a4c7875c0ebc5113c1a003f0843dde789278df52148eb68e17d5e4b8",
+        "sha256": "7ca8a5d88b196cadbde93938fba03724d088d2e76a99fd17552a886d5bc8745f"
+      },
+      "lib/crane/contracts/interfaces/IERC20Permit.sol": {
+        "keccak256": "0x9e1708cbbd64defb37f47f942ecdea10d9d8a804fb6f838fb32488b597dfe622",
+        "sha256": "11bb977fc6dd13a411b840962abef6a3cb4c2fa563c8a0bcc3f173b8e2c63b52"
+      },
+      "lib/crane/contracts/interfaces/IERC20MintBurn.sol": {
+        "keccak256": "0xb83e2203aebdcdd4f4f9cbec9c3b20617f954d7a0acf9d7d575f76e7b753971c",
+        "sha256": "5ec4e6d6640f3421eafed03352c718bb92569064cd2b99e98572559539a857ca"
+      },
+      "lib/crane/contracts/interfaces/IERC721.sol": {
+        "keccak256": "0x8d3ea230f40b2738f80ba9d48473b081edde8091b3a6bc4812e1e8e73c2248ca",
+        "sha256": "bbea2109a3c7b13b3e394ff348e9e6b98ee03e9e29436d903579e30282ad79de"
+      },
+      "lib/crane/contracts/interfaces/IERC721Receiver.sol": {
+        "keccak256": "0x7a52be93ddb450f0975a5d878c34890643ff60157e1ef792f01858358d7f1a0c",
+        "sha256": "93950de42ed6ee7777278912716ac07bd08b2e7c455554500aeec18d402818b0"
+      },
+      "lib/crane/contracts/interfaces/IERC721Events.sol": {
+        "keccak256": "0x77b8bdd76239201e02c3463c49ae23ea959ada49e932a0b39d594489850a7f70",
+        "sha256": "535ce269aff798d5ff2c2a2711b6ee63d1f949d3f23eeb3f43af3b72dc8f88e5"
+      },
+      "lib/crane/contracts/interfaces/IFacet.sol": {
+        "keccak256": "0x8048b9b3bd7b72214485c14d176116bf8a224aaf489d35de79835290d2d9f97f",
+        "sha256": "884a4849e0404f9fbd4c2059f4c0828e23227e879ecf3c465d9ec2cd4debff4d"
+      },
+      "lib/crane/contracts/interfaces/IReentrancyLock.sol": {
+        "keccak256": "0x614c39b296b98652913b734d89660b28a502ba5c029b09e35f36259270396804",
+        "sha256": "3cd734ccb2f71ed7cc15e4a1b3a8a238c1f2fa007b2758fb65010e7675879517"
+      },
+      "lib/crane/contracts/interfaces/IStandardExchangeErrors.sol": {
+        "keccak256": "0x039c7f30a63c33ab770be86b8180759c9419f9a32747b91a4417bc6185e2d7b9",
+        "sha256": "fc1a57dda9095e554d7b94f1342200fe17d6672b543482df85a3c28438ecd2fa"
+      },
+      "lib/crane/contracts/interfaces/IStandardExchangeIn.sol": {
+        "keccak256": "0x4332735df6f1483f2a8f5b44c9b4a36ab6fb74223e0d6dc44046e8d56a23b0f9",
+        "sha256": "6e7dbf13092eb6f49bb9aa03bb9ad6a45e150a88ef316a83b016c42d6c27235a"
+      },
+      "lib/crane/contracts/interfaces/IStandardExchangeOut.sol": {
+        "keccak256": "0x4e2de02738bd040a1c5af36d9d7957e799303264050a0f12abf3be7d67463b4b",
+        "sha256": "3cdd3fab91b0f27041cc42a8879bde298a092be85405442f7ee4f0c0447d069d"
+      },
+      "lib/crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol": {
+        "keccak256": "0x3d31e0dec28bd56c085e4be2bf8eb9a2dec9e3c7b8a482e02162755ef171cad2",
+        "sha256": "fa60e5873e5561f3848e8eaaa7b15a6e1d905e911fdfb0f72f029a0464e509ca"
+      },
+      "lib/crane/contracts/interfaces/protocols/dexes/balancer/common/IRateProvider.sol": {
+        "keccak256": "0xc4888d14f38f687194408615c6a4aee5ff1979714e512a71caf3266c82aba613",
+        "sha256": "f553c0277eef534d3007a95fe618098e145446bbfde2d05b617f5bc41f621fe6"
+      },
+      "lib/crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol": {
+        "keccak256": "0xe326904db78237caef0b26ef92e84ed2de354707954e5cddeb348af500771d9d",
+        "sha256": "55f19125e6f65097be3c440291406e944d66dfb2fc7f5955e8a29a30b2b9806e"
+      },
+      "lib/crane/contracts/introspection/ERC165/IERC165.sol": {
+        "keccak256": "0xf1ac930ce8516a0aaf27de84a1328e78cbb90ea0baf773ca30bc0559722288ec",
+        "sha256": "ee97d4a32bfdd4e9c88333954010eb926d239b1dfd41ebb2468eeefa7ff713e9"
+      },
+      "lib/crane/contracts/introspection/ERC2535/IDiamond.sol": {
+        "keccak256": "0x6cd56d40891ce370133ab2e5c7cc7b5951a1730bc71008f9e54cc299910ad322",
+        "sha256": "2f03341b9b907f57f15371e8a4314bea04bb668123f7ec65bc0b57d2a6fbc910"
+      },
+      "lib/crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol": {
+        "keccak256": "0x716ae7e293b047ae1d37220852e5c02eafd34510054de04ec8a29e915fd88b63",
+        "sha256": "3b2200ff75d0291f814d4242d26759c769072bb002e0268ff60ba514e0c95563"
+      },
+      "lib/crane/contracts/protocols/dexes/camelot/v2/stubs/libraries/Math.sol": {
+        "keccak256": "0x61423c9698a6d28646af00b14669e7a33b3fc405ba04965a8531f7f20ab002ae",
+        "sha256": "07a80c8ab50f21b3dab84be2eb589eafa5b1081f3d8af849d5624a27570d79f4"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/libraries/BitMath.sol": {
+        "keccak256": "0x8459ec03a96c816f9129a30c5efdc9069f6b59688b733f908dd43ff6b0d2b04a",
+        "sha256": "69e2bc3c1773a4fd6644e3079ac938f2ef1ac95ff7e2e117384a6d2a1bc7ee62"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint96.sol": {
+        "keccak256": "0x7a66ac699caaf20e49e655cec50ede1a23dcf6043b4adaea314fa4ccbcf10ec2",
+        "sha256": "9c9062c8878f168c4b74e4de8086158056602d0b8cf7b4dabf037aa1afeecbbd"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint128.sol": {
+        "keccak256": "0x9348761b5fd360a07e5ee3eebf83939fb9f4ac6446938793a07e6982b1ece5ac",
+        "sha256": "413a8edb34559ce6eb851dba86119b04488cc63f80c36c5498b44785537652c5"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol": {
+        "keccak256": "0xb337d114379e5bc2006bce3e8ace7dd6eb981e0d060f585778a5c43fca30e81b",
+        "sha256": "51143d5d8cd510af6a494f339e3266d6db9bff091baaaa2c3c9e8f734cb59d59"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/libraries/SafeCast.sol": {
+        "keccak256": "0x41a6238b052aec79dc3504f83b505a0c2f52bd51c4b13ee6f1156b409616c0d0",
+        "sha256": "9e167023a9e83f9f50cf598e54b1a76367c9aacd340c11038cd4912099c93643"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v2/stubs/deps/libs/Conversion.sol": {
+        "keccak256": "0xdabe2279642fa470bef38eaaba0ae3bba838357504906f9cf2ff28bc8374b247",
+        "sha256": "d3fc5f3c86f420b8a38a8b17873c19ae7a7d4573fb5b6c7d730113ba79e067db"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v2/stubs/deps/libs/FixedPointWadMathLib.sol": {
+        "keccak256": "0xaafafa72a9a7b63b6f4c93850a9e7861dd602d999ba4589c4d4b6bd7fec04c30",
+        "sha256": "e6006a3b366703dc8f6e05ea54dff9e185ac2435c09b1d1773f6a28090fa1af8"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/libraries/UnsafeMath.sol": {
+        "keccak256": "0x084ce3f55b4f7f625401f714eaaa7436ad277cda195abfd22edda9b28cc6cb1d",
+        "sha256": "09bc7d41a83f2f16d947f97cc6aaf700d87a9b565b0ead65a4a65614f203548a"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v2/stubs/deps/libs/Fraction.sol": {
+        "keccak256": "0xb37f02577892b1ee35b4f264898d49f4e179987b3e40f7e50017fb11fdb2ecf6",
+        "sha256": "19e0e1222d7b099b1cd64532ec00465a87c106c937c4df8ae37bc98c07ebf89b"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v2/stubs/deps/libs/Math.sol": {
+        "keccak256": "0x5ccb0ae2bd0feaf6da62bd7b70d9efe18df21c5dcaae363125118b75ee6a8d4b",
+        "sha256": "64d7060892dfe6a4c13397519ca18906fb35d64c2e5487ae97ca2a842c7457a9"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v2/stubs/deps/libs/WadRayMath.sol": {
+        "keccak256": "0x67bd00a586ff7e78fad8d2f685a57c7e92a12252afb68104ca9c2d3009b030f6",
+        "sha256": "252c8dbf3fa32458447e314baaacd27ab644d4ec62a1e9dfce736390e0c5f1c5"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v2/stubs/deps/libs/MathEx.sol": {
+        "keccak256": "0xf368988ce87647072bc964f30d5435c48c730a28971794cd8b6268b02c850637",
+        "sha256": "446602a54e68df0636e53e902e2911cf82101385ed77dc8b88c48ab2852fcf9b"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v2/stubs/deps/libs/UQ112x112.sol": {
+        "keccak256": "0xbfcf764c4c270c12a1ffb3b1c665216d283a2249b292f008bf3f6bc734ae4932",
+        "sha256": "6b97441157879cad5fa9dcee06efe5358c1976117cda4c41a965917a001605e5"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/callback/IUniswapV3MintCallback.sol": {
+        "keccak256": "0x8c9a153395610066caf7e683eb450bd4e07302d8d4ef76e63acfcd99a121a7c7",
+        "sha256": "79854434600da677c9bbb19fd998d06fefe9d14a4ecb5ee724415c395490fb01"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/callback/IUniswapV3SwapCallback.sol": {
+        "keccak256": "0x73419eb0e02b7b4323928dfca61a84a1c13954a7a4dcb5d583f99cf54a64cf2d",
+        "sha256": "0f0073afabb367bb20da295c4a5987c88fb75f8655dcac530b2529cf50b7792c"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol": {
+        "keccak256": "0xd8d8ab830319ea169a2d6b552c7e97f4d757e4472779efb1f5e994cb0a6a27f7",
+        "sha256": "f4e96bc8ef6f76e97cd605e8b20cd19d0adf61cb1cd59230b113f28bad323842"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/pool/IUniswapV3PoolActions.sol": {
+        "keccak256": "0x9cd3c4a89e37d1e9ee1ed35748e759863ee0ad97ab54aa9c2bf0a98f01cf65ed",
+        "sha256": "fc20ccbfb954d7ace3dd5ba980fe24a8a635d9ed910f040358f435f0e37d1201"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/pool/IUniswapV3PoolEvents.sol": {
+        "keccak256": "0x58d6ff8fe89b1bce6a24fd3f20baac839d0e115731fa86f776949c2119c7da25",
+        "sha256": "37ae8ba9690dd696e57068e36b399c06d00d3d53a71c9915456a7a2a24352073"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/pool/IUniswapV3PoolDerivedState.sol": {
+        "keccak256": "0x71dfd7cc387cd0af05cbbe0397910a63d14e21fabefec57dccca82b9ed6f6f07",
+        "sha256": "c7703121bcd6bd9142dc339253da99e79b803288721b319b5d07e27c72e66f7c"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/pool/IUniswapV3PoolImmutables.sol": {
+        "keccak256": "0xf6e5d2cd1139c4c276bdbc8e1d2b256e456c866a91f1b868da265c6d2685c3f7",
+        "sha256": "ac6332f7e174db7fa3852a6c5ae3da3bd013e72c2ff8fa1cf2ec37f6916e2951"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/pool/IUniswapV3PoolOwnerActions.sol": {
+        "keccak256": "0xb31b34c00d3af5c8240fe74b4f5d301c947be04a253b3293ad8f7535ddff444c",
+        "sha256": "6c0cd718e519517defe6f4219f7aecb8bc123c2b10b3331be4fae63e182a0877"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/libraries/LiquidityMath.sol": {
+        "keccak256": "0x23b21a92f6c7b210afc66b84d9f1981cd99f0ae31cffc2ceb751b4f0dd8bc7c2",
+        "sha256": "9f332d766fa8cd3e80302c7363497227f23242c896c25ac63b374a643a4e98d3"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/interfaces/pool/IUniswapV3PoolState.sol": {
+        "keccak256": "0x852dc1f5df7dcf7f11e7bb3eed79f0cea72ad4b25f6a9d2c35aafb48925fd49f",
+        "sha256": "d8d3937703d08d95f7f867a0f49c2aa73c3f3ef5508a54d431e829295f5175ea"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/libraries/LowGasSafeMath.sol": {
+        "keccak256": "0xd03073367c53e50fec01828d9c5c6af6ded06395deafd7cb03983d9ecf9297a9",
+        "sha256": "df75307bee794d7bf1c7e0091c62cdc0f3e98fabbe0a666359d5d49460abcf63"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/libraries/SqrtPriceMath.sol": {
+        "keccak256": "0x38c2176379a9724b93503c552baccc72e63aed6867b1aa6ae1fd37a88eb522b4",
+        "sha256": "7e111c8e12a4d27475d56d28ad67c7cc229fbe2e83aebc680517bec1d3c9c026"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol": {
+        "keccak256": "0x8c4de4d486d09925a723da6cbfe5edbaf70cf4957696bcb73ecde161b62c8e87",
+        "sha256": "419bcdcdef961c547548e0ce993a388ffbf61113d232a354540ea93f4bdbdf05"
+      },
+      "lib/crane/contracts/tokens/ERC20/IERC20.sol": {
+        "keccak256": "0xf621d727b255ff731551b1db24452437d9f70be970ab424e37ed59ef5143520a",
+        "sha256": "3f2cc60922d1a8a54a8443c7acf125490c4e74e001bbb1d6d53157322390a672"
+      },
+      "lib/crane/contracts/tokens/ERC20/ERC20Repo.sol": {
+        "keccak256": "0x478c69f3a433f86e72a92bc6fe2d09667f3b9a6744bede2d89cb2f11d916d8b6",
+        "sha256": "0868f278039d59b7219aeb6430a4483857e833d65b89d27bc6bb6d83a771e9c9"
+      },
+      "lib/crane/contracts/protocols/dexes/uniswap/v3/libraries/SwapMath.sol": {
+        "keccak256": "0x1040f943a5c46706330d3fb7f1df0e07dde55ba334035ca25c96fcb83393ee8e",
+        "sha256": "d4b72cea755e13ebb87a4f4ab0bfa8082353f60ac456ca6017c968313fa730e0"
+      },
+      "lib/crane/contracts/tokens/ERC20/IERC20Events.sol": {
+        "keccak256": "0x0d7470fd386ef20374d5e53c34568d554caedf325c973776c54df01fac29ec66",
+        "sha256": "5a7c9a7d89428bea3814df1677f41686998660a19a62e61a5f52dcc1f3132913"
+      },
+      "lib/crane/contracts/tokens/ERC20/IERC20Metadata.sol": {
+        "keccak256": "0x93eaf687c94e599fa4add0026f6aa4078a82810f941afbcb4a35f17472303e98",
+        "sha256": "acaa22d7ae0024d67bbdd9c580ed319d73f06d35356352d3ff2541f4a625e0dc"
+      },
+      "lib/crane/contracts/tokens/ERC20/IERC20Errors.sol": {
+        "keccak256": "0x40871e8094e4b9ada2cd09f0e3d5dcde1511282ebc57358758276a78b28c9152",
+        "sha256": "b929dded7fe9278f5f3ac72ed415c7d3f09aa802bb889820b086f4d0f1a3e385"
+      },
+      "lib/crane/contracts/tokens/ERC20/IERC20Permit.sol": {
+        "keccak256": "0xfbacdc2133e1feafd706e60d649ef3b122f54507b0f830ae15517c62717b4a5e",
+        "sha256": "d62d19ee54d7442c0b339ab27c7a4bf274fc8491a672e1a898e17c4142f2d8a3"
+      },
+      "lib/crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol": {
+        "keccak256": "0x10283bc7aa8390e61ef7fcecb36e234e978ab7c17d373a22cff8d37a1b430d78",
+        "sha256": "272b1f4bcf06e78c84137565ee8718118b222df49d34f651be2a250775735d5f"
+      },
+      "lib/crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol": {
+        "keccak256": "0x489dca56d51231482f63cc1dbf6a7b1d482e99fabc9cd9c4e64061e9a27d9bf8",
+        "sha256": "ef010c362bb0892bcbdca9111a9f942bddb04087d55bbc3ca690cb3d3c49f229"
+      },
+      "lib/crane/contracts/tokens/ERC721/IERC721.sol": {
+        "keccak256": "0x17b972d5f148faceb60426d007a4d45ac5782bbfc938513c792f48395f13a996",
+        "sha256": "116fa21e2153811cd4ee2af6871e902cf1f290a493df385ec942028bc20ef8d1"
+      },
+      "lib/crane/contracts/tokens/ERC721/IERC721Events.sol": {
+        "keccak256": "0x4ae1c286e27d44b96cc4024df3e4069abebc0ac95515f216e30f5f2e57d321a7",
+        "sha256": "9fb94813789ebf0bb6047df80b808ebf8af30fd09ae13f54dd284b18bd9ea5d2"
+      },
+      "lib/crane/contracts/utils/BetterAddress.sol": {
+        "keccak256": "0x67a6e97310f16cedcc12322174147eeb0ecfda9dad85aff834a6f53edc4b26c4",
+        "sha256": "9a41a85d8a457b3b25ef1723bc3c635a6133e36f223a570487c618b6606258c5"
+      },
+      "lib/crane/contracts/utils/Address.sol": {
+        "keccak256": "0xa5ab39e106a7fb79f21d29b526c95f40effdc4d1e08db74cd770bbbc89b04cee",
+        "sha256": "9fa03054b98b7cf6aa968c56da52234bdd07316329389586b89c8da935f11360"
+      },
+      "lib/crane/contracts/utils/Bytecode.sol": {
+        "keccak256": "0xca157ad14f358835d78f67122ff051b9122d3b7a38b386d7b64f52533b338b5e",
+        "sha256": "597ebe7162c3651961a203958985be1bd4cee946c57a6b97c5a1005297fe9bb9"
+      },
+      "lib/crane/contracts/utils/BetterEfficientHashLib.sol": {
+        "keccak256": "0x6a30bc7dd81d895bbc95f19c578694c0cfb382ced1fe9fae477ae7a653653c41",
+        "sha256": "97e08c27193bf5a09bb58847887543875ba739684611310fd14257fd3754daf3"
+      },
+      "lib/crane/contracts/utils/Math.sol": {
+        "keccak256": "0x59dbc1b53ab6574064b429a50941e79909ff3a7dcbb2e6751af2ad4ced339dfb",
+        "sha256": "77d7500ef8fa98cf8e640424dc4f20294910e1d738401eb7f5cc770fc858d834"
+      },
+      "lib/crane/contracts/utils/Bytes32.sol": {
+        "keccak256": "0x87edcf98363a11adcf8baee1d4efadcc1a2b48e476392713086721d1ef86a04c",
+        "sha256": "d5b60bee71876e0128fec19115cb52357bd78e5ad3547dcab2666577b498526c"
+      },
+      "lib/crane/contracts/utils/Panic.sol": {
+        "keccak256": "0x612b44ab94fa99d285abbb8b5e45799047ff8560863a449d237d3f843b79ae6b",
+        "sha256": "65d8d5be6663c950c3e710b9972360266bbfd73506b17ebd0f6d892c4a5027b5"
+      },
+      "lib/crane/contracts/utils/FixedPointMathLib.sol": {
+        "keccak256": "0x047bfd9230031503f75a91beeafb8f1d96f08081278c6c96e74d357f6301e1fc",
+        "sha256": "0f23e8fc21eb24ddd26ed5c6247565f314eb89b0b1dcd22f7f629ecfa9c911b6"
+      },
+      "lib/crane/contracts/utils/SafeCastLib.sol": {
+        "keccak256": "0xa31d9ea5dc8c5666429d6adff23aa21a983d215261be333027de0043dd13088d",
+        "sha256": "b4b6e2d2f32d21459a8a1de9c2b9f0bcd6ea90744e056695cb84e711437a09f2"
+      },
+      "lib/crane/contracts/utils/SafeCast.sol": {
+        "keccak256": "0xff9ea583785b83681f2f9fb4126f016b4827f2d57186442502e774cc3c2f39c1",
+        "sha256": "8483fa216f43ddf7302037f57e6c9f69c1056fbba6581fbbc822a108dc886ba3"
+      },
+      "lib/crane/contracts/utils/SafeERC20.sol": {
+        "keccak256": "0x952a27339881b81420c525ad856971cf6bb14eaf0e1ccc5f374a9d29f52c681b",
+        "sha256": "6e36e2db67a99e83d98cfbadf1b0d96d54bd0fc304182ce833ca09f811e463f9"
+      },
+      "lib/crane/contracts/utils/TransientSlot.sol": {
+        "keccak256": "0xd488d6689005d4d4d38d05080a931df96249efd9e6763e4664d2160c530f76f0",
+        "sha256": "15cd4e7b963881a1247702c112e0f7f2fdbd2205a92c9456da8fc03fc5ef7195"
+      },
+      "lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol": {
+        "keccak256": "0xb8803565b0ed477410bde13bbf264ef910c167973e72b9035a4c6ebb872c8949",
+        "sha256": "11f1fec4702c6080273da768c32b689874f4c7b269b59c9fd80e7d1126b3355e"
+      },
+      "lib/crane/contracts/utils/collections/BetterArrays.sol": {
+        "keccak256": "0x843cdccabff7ead7bb5ee834d70e275dc97838a0c41d94e9d2875456da1a88d8",
+        "sha256": "0478af733f648c2a85bc9ec2fbfed3a3696a8bd4b122bb55c4934ef5858502e0"
+      },
+      "lib/crane/contracts/utils/collections/sets/Bytes4SetRepo.sol": {
+        "keccak256": "0x721a7b45b990f03f2944bdcd5eb2fa33d57b855af5a42acacab9461d7453bc09",
+        "sha256": "1d2db41a829452af7b4d53f1b7172318ae9485251cbdbab60a1547721afe5bce"
+      },
+      "lib/crane/contracts/utils/UInt256.sol": {
+        "keccak256": "0xf58ab832f1ed9a957c57d8f99fa4d3e92c8f5b010db2d05b132e57682a1897bb",
+        "sha256": "1694d79136b42897617bb8495039dac88c3bb5bc3185b72bf815db75c93f61fe"
+      },
+      "lib/crane/contracts/utils/math/UniswapV3Quoter.sol": {
+        "keccak256": "0x33a326fe242bfd314c2aa6dd71b8935aecc510f04231b88dbfe8e361a021449e",
+        "sha256": "9a75e9ffb6e10e9690dbd21eef067ba129c2c1bdfe99a3da846c3dfb08ed1d93"
+      },
+      "lib/crane/contracts/utils/math/BetterMath.sol": {
+        "keccak256": "0x79f9b41e00b7f47a4d336908700e767f0443ad0da027c1d2b1680443f32447b5",
+        "sha256": "cd4412d07ed29aaa03290c026481169764c060570c2afbdde0cd2766b5237ee7"
+      },
+      "lib/crane/contracts/utils/math/ConstProdUtils.sol": {
+        "keccak256": "0xcd8a3e797c5decaf9ecdaa1f8b6dd9be8732f1f74e4de5ccaa0e150f8d717b49",
+        "sha256": "82bbc913e52e6642a2eb5fa035b6ba20260f56b630f929823b14e6c91ebabf1a"
+      },
+      "lib/crane/contracts/utils/math/UniswapV3Utils.sol": {
+        "keccak256": "0x2c34d94b3ca110f4b2c85361c91e936998b52cf2a09391fce193bfa6c85f6d7b",
+        "sha256": "61f1af128ad93b68b8c17742f030dafc713607bc09e6ccaf767969cda57af621"
+      },
+      "contracts/vaults/detf/common/core/DETFBondNftIds.sol": {
+        "keccak256": "0x89305ce2d52b76a68e3ff591445131c948f84faa285e61696e36d2e7b9b647aa",
+        "sha256": "884034588041c41a9a4deb689cfb8f3d161f6ea22dcefd4e049a6ff686a084a9"
+      },
+      "contracts/vaults/detf/common/DETFChildTokenMetadata.sol": {
+        "keccak256": "0x61ba37e05cb2199eb98073aacdbed91d7f6f63b5765d4b5affe1de9bf1b5b304",
+        "sha256": "41d45e3cd90f52c4df51c957a98770bc56fa16dd15ac7cedd41bd93141d150f9"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol": {
+        "keccak256": "0x7d9a5fb34d30189b1150e5465f7a3adc5b76d57d5aab973e14593460ba7eaff6",
+        "sha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol": {
+        "keccak256": "0x7186d9d3c76e544ae95d22a005aa0e910dbf1e40184a86d02f0c8a94c88f6ff3",
+        "sha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1"
+      },
+      "lib/crane/contracts/interfaces/IMultiStepOwnable.sol": {
+        "keccak256": "0xfa5182284a613626ebe0a460915ca21201fcce6f482fb47278c92bd4103069e7",
+        "sha256": "84cfdf11268f22f08509d25f28a16b4ede3cc67cf424af551e6b9ecc55cdbcda"
+      },
+      "lib/crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol": {
+        "keccak256": "0x1c6a1aa2bb01fc3589f3173c9fd36f5822bda7dbaf7884b23584546c76c7868b",
+        "sha256": "81e3dc01f8ec35746da603f9f3977f42e0c13a3d621f7389ce84bd478259b3f6"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol": {
+        "keccak256": "0xad4e0b5f8b0d3f1e2c2a1c19975f8e7e1944db8f6724e87a93c47b80dbb38763",
+        "sha256": "903c1911a54398ef3a16a2f5007526530163aa68c502730f9cfd6581e388acdf"
+      },
+      "lib/crane/contracts/introspection/ERC165/ERC165Repo.sol": {
+        "keccak256": "0x4626ac2efc4fcadab31e70b9d347e4079c9f45fa85b862bf520d3f99e0d41e6c",
+        "sha256": "8f9bbca76b56664cc5e51fae3f189f0b81d426eee9ebf32704ab77b4d0694a1a"
+      },
+      "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol": {
+        "keccak256": "0xc8d9e0e326801ecb5848a12d16fb712b33d38cd045371304bfb234cad2bab073",
+        "sha256": "d4614f24214b1f54f43babcda6b3b260b55036c3fd48a83d85fcb1e2a655edd0"
+      },
+      "lib/crane/contracts/introspection/ERC2535/ERC2535Repo.sol": {
+        "keccak256": "0x833be22853dbd46525208c67299000cc0fd995359dc15d9c609311d9422a6645",
+        "sha256": "655f30b3d28088bfacd2a4c79a138250b058c3714df0092349fbeaa242cabc41"
+      },
+      "lib/crane/contracts/introspection/ERC8109/IERC8109Update.sol": {
+        "keccak256": "0x0cd280c12b3048c8a04c495b51e5e2a2fc85efc1160f3d31bcbc98034276089b",
+        "sha256": "9b6ab934f58b3419ac5d2ff8918257ce581312004f959ad23d35216c39b14f8c"
+      },
+      "contracts/registries/vault/VaultTypeUtils.sol": {
+        "keccak256": "0xcb6b9e05fa7da9f3ad8a2ee14e35a670477e44310b2416ffd719fb1d7b17178f",
+        "sha256": "fb6bdf201e78cd230f42b2edb7b31cb225d2968617ef37b9b5ea423ff4078e48"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol": {
+        "keccak256": "0xb1f689d9c2c05bea3a2ceaa4e00038018d0d2b00e1a61678eb9a83c7df8ae59a",
+        "sha256": "3729a59d4e238bced889f3a0d0eefade7bf30cf5dbfd95cf1d5b1830e2a31070"
+      },
+      "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol": {
+        "keccak256": "0xed29d53498a59c0ce6e7917ab536df26ed502d9749651d0823f8591ec169e2e6",
+        "sha256": "40385aa09de0a6bd37c2638bb9b83da1416954dacd7c4873681f3bbeb2084309"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol": {
+        "keccak256": "0x9dcbe3b95b65c6772259f0fb9b0d81b0e5534bcb9a2d1a252826080205d9926e",
+        "sha256": "a6835808e586eed607b91aa6ec545189026a3a0d7a1ad1609af38e2ffcde6532"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol": {
+        "keccak256": "0x3cf91c2b5498d326ae7672e2da07a3fe6667c5a17e26696284f71cf686abd1ba",
+        "sha256": "6e3a8c25dad4c01ca1e0b517ebe365b8340520237ca8bc269a9ac3eceb94af7c"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol": {
+        "keccak256": "0x9be3aa0733c4fdf511edac6d69a86a6494dbc79a52fe8885d9ae0e8c7c7bd305",
+        "sha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084"
+      },
+      "lib/crane/contracts/interfaces/IERC5267.sol": {
+        "keccak256": "0xf7e0a2ca4b40c8bf24934d8c05c13aa0e6b34399560ad5746094b5808d6ad2d8",
+        "sha256": "001e0de24e1f38c53b3501e5ff4b4bdbc5032590d01df7faf291bfea892a2361"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol": {
+        "keccak256": "0x67468ed4d7ddb966004c8d9652c438c7a7b267f8f28d36611407cc5f8a802de6",
+        "sha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d"
+      },
+      "lib/crane/contracts/interfaces/IPostDeployAccountHook.sol": {
+        "keccak256": "0xb1a447fc2eeb4dc533bb4278c9e92458565893000d7c8597a71f096eeb67891e",
+        "sha256": "e4ea622bebfe999aa68d0a1165c25f145a080f2895a32bc920121404fe450165"
+      },
+      "lib/crane/contracts/utils/ShortStrings.sol": {
+        "keccak256": "0x73e35d254e10e817e049e1d874946e5af1b4f0baabf199eaaee56cba9f682bac",
+        "sha256": "9792014d9e5fad26cba22632fb8c68781ec88a230d35bbca974c513d16caeb54"
+      },
+      "lib/crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol": {
+        "keccak256": "0x454d0c476a65e5127dc068c3737de4d3a3235dce17bf8ba9d7f26a79e1bd5240",
+        "sha256": "3696ff447383860a12fb18c50ac33bb498c92e48ceb1e5113417dc8850ddfad8"
+      },
+      "lib/crane/contracts/utils/cryptography/hash/MessageHashUtils.sol": {
+        "keccak256": "0x2213cc63b46b88a0ecd55224452aaffd575dbf90beeb377d3df8d5b47e16356d",
+        "sha256": "5639cd475d82743be2f47972a48f78a7585476cd54727a77a8e272a42075eedb"
+      },
+      "lib/crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol": {
+        "keccak256": "0x723368ed28c7f421784c3aebebcb0b1703d9009dc616a72425fd4f297bae3f7a",
+        "sha256": "70d7e970012c6a35057c2a93e9dc7181b8838e17beb9bbdf01d99a0eee6248cb"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol": {
+        "keccak256": "0x1d61404b10f4c1a1aae9a489f719e8a4c51dbe112f5835a1c594413b762a0367",
+        "sha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826"
+      },
+      "contracts/vaults/detf/common/bondNft/DETFFundedBondRepo.sol": {
+        "keccak256": "0x37ac6c93854fa14077601c1ed09b51884921b46dab880b2f9b32e72fba6b96ac",
+        "sha256": "23fbbc8494229c7f87e56d118d8931991e16bcdb8fb1425d6d8eb553926e58a4"
+      },
+      "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol": {
+        "keccak256": "0xa968d4f6af2d1302cd84e6f365cb49bf7b52f903e7868f2499063ebf5c61f4ac",
+        "sha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol": {
+        "keccak256": "0x878e67dd13c2479c8911b146fa996e0a423088e50596a3a5606614f77b1bbf9e",
+        "sha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol": {
+        "keccak256": "0xd704e390c129b7dbbd37ac4be0f21c51129a7c2da4ffba2ab927356e4df768a9",
+        "sha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0"
+      },
+      "lib/crane/contracts/interfaces/IERC721Errors.sol": {
+        "keccak256": "0x7e6ac66c3253ce918657c0cb94952683a292136b908c8f6dd5882b09b3b058cd",
+        "sha256": "cdf13ca38a94430484dd382dfa6845d265b700221549782dfd76f5d2821e8100"
+      },
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol": {
+        "keccak256": "0x8be86a422c692bf38818484f6a9fd499af739f41ba4ff562f03f8173f38f4607",
+        "sha256": "bc6162ee4c60cd23a44337f1c9dc57cfbd37258d7ae591c47db1da49878e325d"
+      },
+      "lib/crane/contracts/interfaces/IEIP712.sol": {
+        "keccak256": "0x82db25f354259bc4c33508ea34c1b449886ddd2da8920f8af723e8ed859c33ef",
+        "sha256": "b5679cc80dfcefcb4ac23a0ff880a0ab15e372e1c47fc693c10659bf78afd219"
+      },
+      "lib/crane/contracts/interfaces/protocols/utils/permit2/ISignatureTransfer.sol": {
+        "keccak256": "0xb61b21032600636ad3e7fec983dfc2246509788a9489f9f4ca47b4f49a6b8e0c",
+        "sha256": "339e646c4953e66f1985263ae08694297fa31bf8818a223d2891b591d1cdb6e6"
+      },
+      "lib/crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol": {
+        "keccak256": "0x2ff03ffcc70d5a51e710051109d837f2a0de7535b0c5270d78d5283557a83e3a",
+        "sha256": "dcd9ffb4665b27ef1ae22c52b6d0375a1b6f869618075f7916b806786376ca3a"
+      },
+      "lib/crane/contracts/tokens/ERC721/IERC721Errors.sol": {
+        "keccak256": "0x950eb5ef73e2aef79e87b47a801b8241ba786c94b3e2b54abf1c58b040585acf",
+        "sha256": "75c992c7dbecb94621ae458fdc64a88cf9fab2fe8c08330753f5acfc403dc975"
+      },
+      "lib/crane/contracts/tokens/ERC721/ERC721Repo.sol": {
+        "keccak256": "0x6353edf6aa73d76d69046c0ed4116b539af3fcc23fb962bec77772635aad138c",
+        "sha256": "65728a533e1523f1e60fceccdfbe9a86fc3d65f4a23d33ea2ec7f8b53f119dfc"
+      },
+      "lib/crane/contracts/utils/collections/sets/UInt256SetRepo.sol": {
+        "keccak256": "0x2afce51570537899c2d272beab21e39e26a259378dd1b76cc317ce5b42939c74",
+        "sha256": "723042d347e78fa3ab099048fd5e90ac6724983064fbea674a45cae8f61d1ab8"
+      }
+    }
+  },
+  "legacyBindings": [
+    {
+      "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "hash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "address": "0xde5a691cefe1830e8ff2b65f6657738b0d9b9279",
+      "hash": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8"
+    },
+    {
+      "address": "0x3a07364eaba092472d40f0e6788b8891a31fad4d",
+      "hash": "0x325a3b9bf3e616386e03d2a14d0a1fb29820f104a5f433d0b08a88dbdd0bef52"
+    },
+    {
+      "address": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+      "hash": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027",
+      "archiveEquality": true
+    },
+    {
+      "address": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "hash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "expected": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    }
+  ],
+  "archiveChecks": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "expected": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "actual": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "expected": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "actual": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "expected": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+      "actual": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "expected": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+      "actual": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+      "expected": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8",
+      "actual": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+      "expected": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510",
+      "actual": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+      "expected": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f",
+      "actual": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.sources.json",
+      "expected": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "actual": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.exit.json",
+      "expected": "e3b11df38b89338f99a02ecf0d33a7bfd3d13d789a3b6b9bb5d9d13de88fd241",
+      "actual": "e3b11df38b89338f99a02ecf0d33a7bfd3d13d789a3b6b9bb5d9d13de88fd241",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "expected": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232",
+      "actual": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "expected": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+      "actual": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "expected": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8",
+      "actual": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "expected": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "actual": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "expected": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+      "actual": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+      "expected": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe",
+      "actual": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.exit.json",
+      "expected": "2880ed08fbe2b836cf880fa34e250d1a604ddd19a00deadc713c796289051708",
+      "actual": "2880ed08fbe2b836cf880fa34e250d1a604ddd19a00deadc713c796289051708",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+      "expected": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9",
+      "actual": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9",
+      "match": true
+    }
+  ],
+  "excerptChecks": [
+    {
+      "source": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "hashMatches": true,
+      "ranges": true
+    },
+    {
+      "source": "lib/crane/contracts/tokens/ERC721/ERC721Repo.sol",
+      "hashMatches": true,
+      "ranges": true
+    },
+    {
+      "source": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "hashMatches": true,
+      "ranges": true
+    },
+    {
+      "source": "ERC721Facet.sol",
+      "hashMatches": true,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 13428,
+      "end": 13450,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 13465,
+      "end": 13482,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 13525,
+      "end": 13527,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 13541,
+      "end": 13566,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 14305,
+      "end": 14311,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 15566,
+      "end": 15601,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 15787,
+      "end": 15801,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16135,
+      "end": 16158,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16206,
+      "end": 16254,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16331,
+      "end": 16404,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16413,
+      "end": 16425,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16463,
+      "end": 16546,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16556,
+      "end": 16558,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16643,
+      "end": 16669,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16922,
+      "end": 16929,
+      "ranges": true
+    },
+    {
+      "source": "DETFNFTVaultFacet.sol",
+      "start": 16982,
+      "end": 17001,
+      "ranges": true
+    },
+    {
+      "source": "ERC721Facet.sol",
+      "start": 2754,
+      "end": 2756,
+      "ranges": true
+    }
+  ],
+  "purchaseReceipts": [
+    {
+      "kind": "weighted",
+      "id": "3",
+      "transactionHash": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+      "blockHash": "0x290860f0f8368766b57b381e233eba3930acd735a67f76d476e9521c9103599f",
+      "status": "0x1",
+      "units": "3772281649"
+    },
+    {
+      "kind": "weighted",
+      "id": "4",
+      "transactionHash": "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe",
+      "blockHash": "0xf443fcb220d6047f19919aa106511e2c25364c40583443f905d061fa490604fd",
+      "status": "0x1",
+      "units": "281387179"
+    },
+    {
+      "kind": "weighted",
+      "id": "5",
+      "transactionHash": "0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293",
+      "blockHash": "0x2716a24040e34f692a85e9f8c4ae1a638f4960e8632ea5c6798721b9383ec832",
+      "status": "0x1",
+      "units": "462445599"
+    },
+    {
+      "kind": "weighted",
+      "id": "6",
+      "transactionHash": "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917",
+      "blockHash": "0xe20972f34c935b219a6d600eba010a0d93cd6b5909991efcf8a490dbf314efda",
+      "status": "0x1",
+      "units": "740825635"
+    },
+    {
+      "kind": "weighted",
+      "id": "7",
+      "transactionHash": "0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296",
+      "blockHash": "0xbd4117187c6d7c428865d48b890cd4d22c7d772888a69b4257d6ec2ff9810b19",
+      "status": "0x1",
+      "units": "1200103129"
+    },
+    {
+      "kind": "weighted",
+      "id": "8",
+      "transactionHash": "0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb",
+      "blockHash": "0x5d0a474dacec9d61776c844de00b29714adccc507e37756c76dea65b3eb288c7",
+      "status": "0x1",
+      "units": "1937763154"
+    },
+    {
+      "kind": "weighted",
+      "id": "9",
+      "transactionHash": "0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a",
+      "blockHash": "0x772c7f54f0d8b3a435e94ff908908c1e3fa2a9c559ae8a4dfb44c13cf8474f37",
+      "status": "0x1",
+      "units": "3147607863"
+    },
+    {
+      "kind": "weighted",
+      "id": "10",
+      "transactionHash": "0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651",
+      "blockHash": "0x2634a2e0165100692444cfd4eb526576838ad99c369d9b77805da1934b3d9556",
+      "status": "0x1",
+      "units": "5077481904"
+    },
+    {
+      "kind": "weighted",
+      "id": "11",
+      "transactionHash": "0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b",
+      "blockHash": "0x3c5bb7dd5601e9847078ba7f9df7e27fb0c9e55155cb1006705d620e88a4696f",
+      "status": "0x1",
+      "units": "44048877"
+    },
+    {
+      "kind": "weighted",
+      "id": "12",
+      "transactionHash": "0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1",
+      "blockHash": "0x62b4d9ef80134d307c64034e2a676c145919650ed947f711d0c1b67d77982df3",
+      "status": "0x1",
+      "units": "1455956506"
+    },
+    {
+      "kind": "weighted",
+      "id": "13",
+      "transactionHash": "0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb",
+      "blockHash": "0x17cb96ed85e3b8627370db778c6eda4e99ef1606a0e8c4b13e75add2664db0b5",
+      "status": "0x1",
+      "units": "1915"
+    },
+    {
+      "kind": "weighted",
+      "id": "14",
+      "transactionHash": "0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd",
+      "blockHash": "0xfaa79769c7619011908d4b077ceba54d8d86bbf2f6ac296c9b62f53ed3c90e56",
+      "status": "0x1",
+      "units": "191603"
+    },
+    {
+      "kind": "weighted",
+      "id": "15",
+      "transactionHash": "0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27",
+      "blockHash": "0x8349b9a540b413ec5a7e10425471b3a47bb9125281743106d35954232409627b",
+      "status": "0x1",
+      "units": "1915"
+    },
+    {
+      "kind": "weighted",
+      "id": "16",
+      "transactionHash": "0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1",
+      "blockHash": "0x1cbc112a6021f33c7e955794623817e728676a8ab431503e1b9b5bd5b7425832",
+      "status": "0x1",
+      "units": "153080136"
+    },
+    {
+      "kind": "weighted",
+      "id": "17",
+      "transactionHash": "0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b",
+      "blockHash": "0x61420e051d761b0e1785775317b243ed5268e1ffd09cbc6877f3109f2d7ca50b",
+      "status": "0x1",
+      "units": "179696"
+    },
+    {
+      "kind": "weighted",
+      "id": "18",
+      "transactionHash": "0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd",
+      "blockHash": "0x7424bf1b16ed02469766da0b000be6d266e84202c4f3afd6689ba3c745c0956e",
+      "status": "0x1",
+      "units": "49053117"
+    },
+    {
+      "kind": "weighted",
+      "id": "19",
+      "transactionHash": "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9",
+      "blockHash": "0xf703b3ba66c02545ed0836964d5724e6d0daddf161f68d00ea9a9654f9c04078",
+      "status": "0x1",
+      "units": "133006119"
+    },
+    {
+      "kind": "weighted",
+      "id": "20",
+      "transactionHash": "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71",
+      "blockHash": "0xfde1b5be5b4013cf2832e20e99e69836b97a51445004e1ed11f356557b8e1375",
+      "status": "0x1",
+      "units": "266266893"
+    },
+    {
+      "kind": "weighted",
+      "id": "21",
+      "transactionHash": "0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d",
+      "blockHash": "0x2dd61f3d9eb0ae778533cd4787c8af35c84ea3440882c72482ac1da814066ae3",
+      "status": "0x1",
+      "units": "17650489"
+    },
+    {
+      "kind": "weighted",
+      "id": "22",
+      "transactionHash": "0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac",
+      "blockHash": "0x43ee8cb295e0b11903f83afaa18e331589c9eebc6aac48c45c6e332720812e54",
+      "status": "0x1",
+      "units": "1288034730"
+    },
+    {
+      "kind": "weighted",
+      "id": "23",
+      "transactionHash": "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a",
+      "blockHash": "0xe11fe6a865b5377dc24c4bdec1f07d3c14d8f401cf74d81ac9f32f4c0f9d38aa",
+      "status": "0x1",
+      "units": "252865083"
+    },
+    {
+      "kind": "weighted",
+      "id": "24",
+      "transactionHash": "0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352",
+      "blockHash": "0x55c2e12f983b1149d5c404d496aa312392892bf6801e94573b58b69af36990e0",
+      "status": "0x1",
+      "units": "1300890757"
+    },
+    {
+      "kind": "weighted",
+      "id": "25",
+      "transactionHash": "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970",
+      "blockHash": "0xe7b018c231617d725cd7dd5ee1bdd7c416b5c33ca20e4167929fd777ba1fa51f",
+      "status": "0x1",
+      "units": "53274997"
+    },
+    {
+      "kind": "weighted",
+      "id": "26",
+      "transactionHash": "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d",
+      "blockHash": "0x60ee48163ef1840df8d3fd2a77c286211e51a0217cd9e4ab32a02b9c1d611946",
+      "status": "0x1",
+      "units": "56299"
+    },
+    {
+      "kind": "weighted",
+      "id": "27",
+      "transactionHash": "0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0",
+      "blockHash": "0x33c7c1db4f7e2d4c1998a6727b73ca7f5fed4af0a284dd1d39a9b83b501f77a8",
+      "status": "0x1",
+      "units": "3302546215"
+    },
+    {
+      "kind": "weighted",
+      "id": "28",
+      "transactionHash": "0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737",
+      "blockHash": "0x1735c0d17b5e3b080ffcc4b1005d19e2cf20560e1325bcfb4d108577f7d7e180",
+      "status": "0x1",
+      "units": "3726336268"
+    },
+    {
+      "kind": "weighted",
+      "id": "29",
+      "transactionHash": "0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1",
+      "blockHash": "0x7576969a493e7f334a7967076141ab548d511489867610eaa8f2c4f0dd81f771",
+      "status": "0x1",
+      "units": "1777911406"
+    },
+    {
+      "kind": "weighted",
+      "id": "30",
+      "transactionHash": "0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9",
+      "blockHash": "0x3deb8d61e30a9e62e6d8c26c472cc832f344de8cc20c70c380fe8ab15d5bf4b7",
+      "status": "0x1",
+      "units": "457125470"
+    },
+    {
+      "kind": "weighted",
+      "id": "31",
+      "transactionHash": "0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04",
+      "blockHash": "0x8cff05d0ff1e92f8e578bf09579c82b2619bb240308d737025647aebbea754e1",
+      "status": "0x1",
+      "units": "4031493805"
+    },
+    {
+      "kind": "weighted",
+      "id": "32",
+      "transactionHash": "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914",
+      "blockHash": "0x4d503fa1f2bdd8ff86a97d52d299915801194decc051c5a611db3adf103550ee",
+      "status": "0x1",
+      "units": "54436459"
+    },
+    {
+      "kind": "weighted",
+      "id": "33",
+      "transactionHash": "0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc",
+      "blockHash": "0xf4e1d646b8e4db3d18b0b8d3e06140192ed5e05cfec3643641d7ec7e22e9b60a",
+      "status": "0x1",
+      "units": "13798634863"
+    },
+    {
+      "kind": "weighted",
+      "id": "34",
+      "transactionHash": "0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92",
+      "blockHash": "0x90a0d3614e56d7776d745ae7ef6afcb66e8683830ac903b8a0ca63215b4054fc",
+      "status": "0x1",
+      "units": "59081498"
+    },
+    {
+      "kind": "weighted",
+      "id": "35",
+      "transactionHash": "0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b",
+      "blockHash": "0x761a01c89bbd457d4a1a5b9818496082aa4fcd174a983df4e556fcb172c389f2",
+      "status": "0x1",
+      "units": "182228084"
+    },
+    {
+      "kind": "weighted",
+      "id": "36",
+      "transactionHash": "0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb",
+      "blockHash": "0x94d32ff635661ffe6e1e3e33f382e2f50909fdc6dfabce7e23d5d7961bff7b3c",
+      "status": "0x1",
+      "units": "1642192630"
+    },
+    {
+      "kind": "weighted",
+      "id": "37",
+      "transactionHash": "0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6",
+      "blockHash": "0x9477473ed211590f55f064bf2172a2c3b2d0ea73af29f1f0e2c2195aac7c6994",
+      "status": "0x1",
+      "units": "51168348039"
+    },
+    {
+      "kind": "weighted",
+      "id": "38",
+      "transactionHash": "0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f",
+      "blockHash": "0x3f30ce573dc71ab29b2750434241456027cfe5b4a1c8fccd3de729b7ba03f6d7",
+      "status": "0x1",
+      "units": "28366285153"
+    },
+    {
+      "kind": "weighted",
+      "id": "39",
+      "transactionHash": "0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47",
+      "blockHash": "0xeb597e19bbcbdbb8decf2f6d2b41c1a869ad1dcf639a6f09e5c7e0531c85183c",
+      "status": "0x1",
+      "units": "73833949104"
+    },
+    {
+      "kind": "weighted",
+      "id": "40",
+      "transactionHash": "0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9",
+      "blockHash": "0x4daae299d26a81d82e062a8c89d8b9cec41305719b170b7f8f732daacd4db77e",
+      "status": "0x1",
+      "units": "15681307429"
+    },
+    {
+      "kind": "weighted",
+      "id": "41",
+      "transactionHash": "0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4",
+      "blockHash": "0x24f908c0dc0cbe8ad6717113fd6bfe90476658782efc0457b3fcb2399512fbf7",
+      "status": "0x1",
+      "units": "746187269"
+    },
+    {
+      "kind": "weighted",
+      "id": "42",
+      "transactionHash": "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba",
+      "blockHash": "0x2b55a42cccf844f5a5594d6a0fd4067a0952495a1d1ecf5c8e3f224c468e336f",
+      "status": "0x1",
+      "units": "5129740381"
+    },
+    {
+      "kind": "weighted",
+      "id": "43",
+      "transactionHash": "0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27",
+      "blockHash": "0xe55db6da011c3cf1d96ce48dccd297e2944bbdad739d49f43f9b7c654748c8f1",
+      "status": "0x1",
+      "units": "1564401756"
+    },
+    {
+      "kind": "weighted",
+      "id": "44",
+      "transactionHash": "0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd",
+      "blockHash": "0xf6b5772b9a3a4f0caa45fa92cf1666a08b29a88a2314d0bc9e23fc2d664c5cff",
+      "status": "0x1",
+      "units": "81035885"
+    },
+    {
+      "kind": "weighted",
+      "id": "45",
+      "transactionHash": "0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731",
+      "blockHash": "0x1bdda64601068cfd624172959ff6730f7a8d2e46f7e4a3fa7989b1b3017c5d8d",
+      "status": "0x1",
+      "units": "12596732131"
+    },
+    {
+      "kind": "earlier",
+      "id": "3",
+      "transactionHash": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+      "blockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+      "status": "0x1",
+      "units": "562524912595035608166"
+    },
+    {
+      "kind": "earlier",
+      "id": "4",
+      "transactionHash": "0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4",
+      "blockHash": "0x21a834b0fcbfe4a0f2166b246cebd6eb71ca084cffea3e5c53ddf513fc2beff5",
+      "status": "0x1",
+      "units": "2281854312954086546"
+    },
+    {
+      "kind": "earlier",
+      "id": "5",
+      "transactionHash": "0x80a7af214d8aafe95e2b62b6c67a28b98ef1601f417a5c07b942e44e717f8fa1",
+      "blockHash": "0xf107b94abb3461fed11646ecd4b1b14af5ae650b0b6d5b0e1a402a7af0a7772a",
+      "status": "0x1",
+      "units": "4733571557235944381"
+    },
+    {
+      "kind": "earlier",
+      "id": "6",
+      "transactionHash": "0x68cf362d094e28799bb02943c0fa5d8b7a4577d40d701e360c791bc715ed7535",
+      "blockHash": "0xaed693410cd5b965d4485593e9a754e44a82819c4df503d6d976ee88aafe77ef",
+      "status": "0x1",
+      "units": "17499787460727814908"
+    },
+    {
+      "kind": "earlier",
+      "id": "7",
+      "transactionHash": "0x90ad17355e01e23c01e80ab93b246a61c0e791a7d85066c6341fcbf44b963067",
+      "blockHash": "0x9ad8b364a27fd83a5db71c3e6d6f0fbf948938366e693bd4f01887d34df03f07",
+      "status": "0x1",
+      "units": "101771406718761253180"
+    },
+    {
+      "kind": "earlier",
+      "id": "8",
+      "transactionHash": "0x176e169d8d7add51dce9f3f5009f6322f93264fc7cfdc17a5d2c969066a4a88f",
+      "blockHash": "0xdad7f0f160801f7e3d1d0ea393130e332f38ceca5455439ad7b2e90eb91debec",
+      "status": "0x1",
+      "units": "3177276484339682675"
+    },
+    {
+      "kind": "earlier",
+      "id": "9",
+      "transactionHash": "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55",
+      "blockHash": "0x6a4b173d967f7e4a7cf4c3eab19c27ee5c332a4ef5ac9ae7de2424c3cd406595",
+      "status": "0x1",
+      "units": "26355776123062198039"
+    },
+    {
+      "kind": "earlier",
+      "id": "10",
+      "transactionHash": "0x8ec17aa049770ee9c2d525d5e6e1c707ee42f2c039532526de56a132c9f5876f",
+      "blockHash": "0x02e6bd34884f315ae2017aad0b225fb75b821f71b41fee3acb5e959add4c13a5",
+      "status": "0x1",
+      "units": "635830119561554894104"
+    },
+    {
+      "kind": "earlier",
+      "id": "11",
+      "transactionHash": "0xb6292353395922bd69b073664afb0188d47cbdbfcc4d13cd185ac37d4cb4ad73",
+      "blockHash": "0xe10a87953680e6d5f34b1c6d2cafd87c31195a017ff4972846f399f867266189",
+      "status": "0x1",
+      "units": "63710177980044045505074"
+    },
+    {
+      "kind": "earlier",
+      "id": "12",
+      "transactionHash": "0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24",
+      "blockHash": "0x60257f9f34cea2460050eff1cb05ffc1d3c1fca04b3fcf3ce1af6361ccecb8cc",
+      "status": "0x1",
+      "units": "47848240999749918187208884"
+    },
+    {
+      "kind": "earlier",
+      "id": "13",
+      "transactionHash": "0xa18c5713d0e7f67099072b20ecca3418c89dc9bf61af2f503f9fa04f97f5625b",
+      "blockHash": "0x6015ed44641191909d880318e1af69a07ecb4207e4a5dcf676ebc6f46a0495c7",
+      "status": "0x1",
+      "units": "14076427465745415752889694594"
+    },
+    {
+      "kind": "earlier",
+      "id": "14",
+      "transactionHash": "0x1b17aaa9a895121a4b496bb5c74ba00e4ed445951f2ed1a6cc7ba3b1dc77a829",
+      "blockHash": "0x7061652a732614cb882702853ab1f45dcd82df85c3bc763f022ea36eb3eb572a",
+      "status": "0x1",
+      "units": "63994795678617495504331915305"
+    },
+    {
+      "kind": "earlier",
+      "id": "15",
+      "transactionHash": "0xa45445505ce0d5c5f8011d49bef9344f883a245d6a86a0752a610376c6bb5287",
+      "blockHash": "0x8a6d9b18a4bce91dbe19e7e3948cb427f6470df7a751e73cbc45840909684c2d",
+      "status": "0x1",
+      "units": "384036613756141320755161221429"
+    },
+    {
+      "kind": "earlier",
+      "id": "16",
+      "transactionHash": "0x0a902f1d04b7da358cc37504cb976901597febc12f72d13cf9d2db660190ec8a",
+      "blockHash": "0x523e6059230418c06ef8e7f3990b6638123b934b34c9eb5c05a8cc0ae6b240ce",
+      "status": "0x1",
+      "units": "682214153247983854950221048859993"
+    },
+    {
+      "kind": "earlier",
+      "id": "17",
+      "transactionHash": "0xb525bd3a74304840614be0fd894afd6f24b93f022be6b2c8d6be5df04d7314b6",
+      "blockHash": "0x87388258f7b397b42f6cdc2622b886264e61777021c3b7da3213b8a539e256d8",
+      "status": "0x1",
+      "units": "75379755917867944374016634265685128"
+    },
+    {
+      "kind": "earlier",
+      "id": "18",
+      "transactionHash": "0x46b804fa90b141eb7ec105162f11d9b70238f5cdd44284caffefab1c01574e1d",
+      "blockHash": "0xda2c21b2456a1affcde60395eb48514020d649c95a33a761a7e2fbf51966ab36",
+      "status": "0x1",
+      "units": "900849466801106375326463227667169"
+    }
+  ],
+  "contributionChecks": [
+    {
+      "kind": "weighted",
+      "id": "3",
+      "tx": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+      "actual": [
+        "3772281649",
+        "999999000000000",
+        "362893857600000000000"
+      ],
+      "expected": [
+        "3772281649",
+        "999999000000000",
+        "362893857600000000000"
+      ],
+      "match": true
+    },
+    {
+      "kind": "weighted",
+      "id": "4",
+      "tx": "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe",
+      "actual": [
+        "281387179",
+        "30000000000000000",
+        "0"
+      ],
+      "expected": [
+        "281387179",
+        "30000000000000000",
+        "0"
+      ],
+      "match": true
+    },
+    {
+      "kind": "weighted",
+      "id": "25",
+      "tx": "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970",
+      "actual": [
+        "53274997",
+        "0",
+        "50000000000000000000000"
+      ],
+      "expected": [
+        "53274997",
+        "0",
+        "50000000000000000000000"
+      ],
+      "match": true
+    },
+    {
+      "kind": "weighted",
+      "id": "26",
+      "tx": "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d",
+      "actual": [
+        "56299",
+        "0",
+        "50000000000000000000"
+      ],
+      "expected": [
+        "56299",
+        "0",
+        "50000000000000000000"
+      ],
+      "match": true
+    },
+    {
+      "kind": "weighted",
+      "id": "32",
+      "tx": "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914",
+      "actual": [
+        "54436459",
+        "0",
+        "56017714220190058289217"
+      ],
+      "expected": [
+        "54436459",
+        "0",
+        "56017714220190058289217"
+      ],
+      "match": true
+    },
+    {
+      "kind": "earlier",
+      "id": "3",
+      "tx": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+      "actual": [
+        "562524912595035608166",
+        "2000000000000000000",
+        "0"
+      ],
+      "expected": [
+        "562524912595035608166",
+        "2000000000000000000",
+        "0"
+      ],
+      "match": true
+    },
+    {
+      "kind": "earlier",
+      "id": "4",
+      "tx": "0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4",
+      "actual": [
+        "2281854312954086546",
+        "0",
+        "7215852540309913726431"
+      ],
+      "expected": [
+        "2281854312954086546",
+        "0",
+        "7215852540309913726431"
+      ],
+      "match": true
+    },
+    {
+      "kind": "earlier",
+      "id": "12",
+      "tx": "0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24",
+      "actual": [
+        "47848240999749918187208884",
+        "0",
+        "75081277576132719227716"
+      ],
+      "expected": [
+        "47848240999749918187208884",
+        "0",
+        "75081277576132719227716"
+      ],
+      "match": true
+    }
+  ],
+  "savedRegressionAudit": {
+    "build-01": {
+      "sha256": "b9d82f8acaf45290f823e8d7c0d87426271ab66a06beed9e5cf689a9e2d953f8",
+      "passes": 0,
+      "end": "ents\n\nwarning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`\n   ╭▸ test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol:65:17\n   │\n65 │         vm.warp(block.timestamp + 90 days);\n   │         ────────━━━━━━━━━━━━━━━─────────── `vm.warp` changes this environment here\n   │\n   ├ help: capture it with `vm.getBlockTimestamp()` instead\n   ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation\n\n"
+    },
+    "spec-01": {
+      "sha256": "23553277df0efd22befce5d54030434f66ba658218ec48ed094157a4ed6f70f6",
+      "passes": 90,
+      "summary": "Ran 14 test suites in 1.07s (8.70s CPU time): 90 tests passed, 1 failed, 0 skipped (91 total tests)",
+      "end": " tests:\nEncountered 1 failing test in test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol:MigrationHostileContributionTest\n[FAIL: EvmError: Revert] test_tokenCallbackCannotBorrowLockedParentChildSynchronization() (gas: 8675633)\n\nEncountered a total of 1 failing tests, 90 tests succeeded\n\nTip: Run `forge test --rerun` to retry only the 1 failed test\nTip: Run `forge test --debug --match-test <TEST_NAME>` to inspect one failing test in the debugger\n"
+    },
+    "spec-02": {
+      "sha256": "bf2e040d6eb6280c443bf1fd57419f1b109f305dd5ce3adf91d8dd4b3c6f81b5",
+      "passes": 91,
+      "summary": "Ran 14 test suites in 1.09s (10.02s CPU time): 91 tests passed, 0 failed, 0 skipped (91 total tests)",
+      "end": "ainedAccounting.t.sol:MigrationRetainedAccountingTest\n[PASS] test_creatorTransferDoesNotRetargetEarlierAllocations() (gas: 125420780)\n[PASS] test_standingWeightsRemainParticipantsAfterAllPrincipalExits() (gas: 279919425)\n[PASS] test_subRewardTokenRemainderPaysNativeUnitsWhenIndexBelowQuantum() (gas: 80858858)\nSuite result: ok. 3 passed; 0 failed; 0 skipped; finished in 1.09s (987.97ms CPU time)\n\nRan 14 test suites in 1.09s (10.02s CPU time): 91 tests passed, 0 failed, 0 skipped (91 total tests)\n"
+    },
+    "fork-01": {
+      "sha256": "459f5195f9d41e612965804f79d4ecbcffe0d5f6f26f0d59c9e2ba027951d3fa",
+      "passes": 0,
+      "end": "igration.rebasingClaimToken());\n    ╰╴                          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ expected `bytes32`, found `address`\n\n\nerror: mismatched types\n    ╭▸ test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol:164:19\n    │\n164 │         receipt = Receipt(migration.rebasingClaimToken());\n    ╰╴                  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ expected `contract IUniswapV4DetfMigrationStakedDETF`, found `struct StdCheatsSafe.Receipt memory`\n"
+    },
+    "fork-02": {
+      "sha256": "5be824fc1f39157944d141f1ba44d3e15ef86f6bb9510f325f283e9a56efa92b",
+      "passes": 0,
+      "summary": "Ran 2 test suites in 893.68ms (892.61ms CPU time): 0 tests passed, 2 failed, 0 skipped (2 total tests)",
+      "end": "4663] setUp() (block: 108944663) (gas: 0)\n\nEncountered 1 failing test in test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol:MigrationNftLifecycleTest\n[FAIL: assertion failed: 26367659 != 108944663] setUp() (block: 108944663) (gas: 0)\n\nEncountered a total of 2 failing tests, 0 tests succeeded\n\nTip: Run `forge test --rerun` to retry only the 2 failed tests\nTip: Run `forge test --debug --match-test <TEST_NAME>` to inspect one failing test in the debugger\n"
+    },
+    "fork-03": {
+      "sha256": "8d98b230f00e41ca6869629bb16f8dc81b4b9b925ce2b0f4d52abb81cc7c74c1",
+      "passes": 13,
+      "summary": "Ran 2 test suites in 66.68s (66.19s CPU time): 13 tests passed, 1 failed, 0 skipped (14 total tests)",
+      "end": "est in test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol:MigrationNftLifecycleTest\n[FAIL: assertion failed: 1794110901 != 1804478901] test_bothRoutesRemainUsableAfterActivationWithFreshLateClocks() (block: 108944663) (gas: 12711334)\n\nEncountered a total of 1 failing tests, 13 tests succeeded\n\nTip: Run `forge test --rerun` to retry only the 1 failed test\nTip: Run `forge test --debug --match-test <TEST_NAME>` to inspect one failing test in the debugger\n"
+    },
+    "fork-04": {
+      "sha256": "1e7b106890411cbe6221b0b6d6b45d9a81b8981391b8c306b2c3381e45102350",
+      "passes": 15,
+      "summary": "Ran 2 test suites in 3.25s (2.28s CPU time): 15 tests passed, 0 failed, 0 skipped (15 total tests)",
+      "end": "onfigurationId: 0xd7b458785f8a9285ca5d2c2850dab8ef2ba28e1e042b258137bdf49f7c3f5ef6, holder: 0x4dfeBb21D855115d4019819393e514977E490E5d, originalUnits: 54436459 [5.443e7], remainingUnits: 46365243 [4.636e7], credit: 16965232709984 [1.696e13], bondTokenId: 3, surrenderedAt: 1794110901 [1.794e9] })\n    └─ ← [Stop]\n\nSuite result: ok. 9 passed; 0 failed; 0 skipped; finished in 1.52s (59.88ms CPU time)\n\nRan 2 test suites in 3.25s (2.28s CPU time): 15 tests passed, 0 failed, 0 skipped (15 total tests)\n"
+    },
+    "fork-05": {
+      "sha256": "76f46ebc99c4335e8b82577019f3a75b377a2f49cc6b23a9044861ea0f07041b",
+      "passes": 16,
+      "summary": "Ran 2 test suites in 3.36s (2.21s CPU time): 16 tests passed, 0 failed, 0 skipped (16 total tests)",
+      "end": "0000000000000000000000000000000033ea26b0000000000000000000000000000000000000000000000000000000002c37a3b00000000000000000000000000000000000000000000000000000f6e06ab51600000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000006aeff5b5\n    └─ ← [Stop]\n\nSuite result: ok. 10 passed; 0 failed; 0 skipped; finished in 1.49s (48.64ms CPU time)\n\nRan 2 test suites in 3.36s (2.21s CPU time): 16 tests passed, 0 failed, 0 skipped (16 total tests)\n"
+    },
+    "regression-01": {
+      "sha256": "b894a0e9e80c36c2566f6e2301f0adbc91e28d42cbe1088c791f1e37ee74e032",
+      "passes": 9932,
+      "summary": "Ran 589 test suites in 116.29s (1657.81s CPU time): 9932 tests passed, 0 failed, 0 skipped (9932 total tests)",
+      "end": "2615)\n[PASS] test_neitherEligibleConsumesEpoch() (gas: 61422811)\n[PASS] test_reselectsHighestAfterReserveCompositionChanges() (gas: 277561103)\n[PASS] test_secondLegAloneTriggersExpansionAndKeepsRouteGates() (gas: 55974118)\n[PASS] test_stakingSyDepositSettlesHighestBeforeNewPrincipal() (gas: 161478287)\nSuite result: ok. 10 passed; 0 failed; 0 skipped; finished in 98.16s (1.31s CPU time)\n\nRan 589 test suites in 116.29s (1657.81s CPU time): 9932 tests passed, 0 failed, 0 skipped (9932 total tests)\n"
+    }
+  },
+  "preservation": {
+    "trackedDiffUnchanged": true,
+    "trackedDiffSha256": "63237a9a5f2aeb462d762509abb556bfe2f1fd8e790f1003a174c82f526c2cc1",
+    "preservedFinal": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+        "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+        "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+        "sha256": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+        "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+        "sha256": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+        "sha256": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+        "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.sources.json",
+        "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.exit.json",
+        "sha256": "e3b11df38b89338f99a02ecf0d33a7bfd3d13d789a3b6b9bb5d9d13de88fd241",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+        "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+        "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+        "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+        "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+        "sha256": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+        "sha256": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.exit.json",
+        "sha256": "2880ed08fbe2b836cf880fa34e250d1a604ddd19a00deadc713c796289051708",
+        "unchanged": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+        "sha256": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9",
+        "unchanged": true
+      }
+    ]
+  },
+  "cleanup": {
+    "ownedRuntimePending": false,
+    "anvilStarted": false,
+    "portsAcquired": [],
+    "temporaryRuntimeRootsCreated": [],
+    "monitors": [
+      {
+        "id": "mon_MZD5JMYJNGNR9RVW",
+        "exit": 0
+      },
+      {
+        "id": "mon_2NK1YHVDTKCPM61J",
+        "exit": 1
+      },
+      {
+        "id": "mon_JVS74YNF09XXPGVG",
+        "exit": 0
+      },
+      {
+        "id": "mon_M6X33HMWDRH02G1H",
+        "exit": 0
+      }
+    ],
+    "sharedServiceLeftUntouched": {
+      "pid": 20817,
+      "ppid": 10410,
+      "command": "/opt/homebrew/bin/forge lsp --stdio"
+    },
+    "sharedOutAndCachePreserved": true
+  },
+  "limits": [
+    "E1 complete category/caller/recovery closure",
+    "E2 authenticated ancestry and operational economic disjointness",
+    "E3/E4 actual recovery quote domain and funding inputs",
+    "E5 complete product payout matrix",
+    "Task8 bounded staged harvest/conversion/donation",
+    "Task9 operator inputs and interrupted/resumable rehearsal",
+    "Task10 complete invariants, gas and release validation",
+    "Final F1-F4 remain open"
+  ]
+}

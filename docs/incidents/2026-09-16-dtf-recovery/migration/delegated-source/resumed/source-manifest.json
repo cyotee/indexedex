@@ -1,0 +1,75 @@
+{
+  "timing": "Final source fingerprints recorded after successful local run and tests; not represented as contemporaneous command-start snapshots",
+  "versions": {
+    "bun": "1.4.2\n",
+    "ethers": "6.17.0",
+    "typescript": "5.9.2"
+  },
+  "files": [
+    {
+      "path": "probe/node.mjs",
+      "bytes": 2392,
+      "sha256": "d739a46798a93109b21d90a02a71e2c3b2646985c0feb66ecf7364a2c2f28f92"
+    },
+    {
+      "path": "probe/admission.test.ts",
+      "bytes": 4769,
+      "sha256": "b8d1151913c3cfc1f2b00e3ce493b630ec910e327a658352f1424e0263128c57"
+    },
+    {
+      "path": "probe/foundry.toml",
+      "bytes": 176,
+      "sha256": "d21a4312ca000c08a1f9a5f1a61fe80b12680f93aec581c9a05f967ec820a092"
+    },
+    {
+      "path": "probe/authenticate.ts",
+      "bytes": 7504,
+      "sha256": "eaf0af5182a157165b14e5cb7a30931d22dc629ba232445a71443bd443ef686a"
+    },
+    {
+      "path": "probe/admission.ts",
+      "bytes": 9473,
+      "sha256": "b3eec0de2920921383bb7a51adff26ea4579a93f86d5e78204b1b5036ff45186"
+    },
+    {
+      "path": "probe/common.ts",
+      "bytes": 9259,
+      "sha256": "14c03b3e7dd74b5fe01dcee569bff8dc9a0c556fc9ed7e48c884eebb942dc958"
+    },
+    {
+      "path": "probe/setup.ts",
+      "bytes": 6800,
+      "sha256": "493f8cd401f7351bd01eab4b06dc83fc324c9461034d40058a5cf87c830acf5a"
+    },
+    {
+      "path": "probe/credential-scan.mjs",
+      "bytes": 1169,
+      "sha256": "5e6778373094eca60e784a989d0c79975e53449b494bf2168fbb633e025aec5d"
+    },
+    {
+      "path": "probe/chain.ts",
+      "bytes": 6278,
+      "sha256": "8d727ad61e0ccb3f965a1307fcea8283d44f173446723e717c404537b8bfff61"
+    },
+    {
+      "path": "probe/audit.ts",
+      "bytes": 10288,
+      "sha256": "379ac70dceb2e2010ca32aa2320cde6f993d3db3eb3871f2143bcce56a68cf13"
+    },
+    {
+      "path": "probe/record-command.mjs",
+      "bytes": 1361,
+      "sha256": "1a809494a0340ed34d94974acf9d4203ff959fec67ebc32b71d81fd6ac77f992"
+    },
+    {
+      "path": "probe/run.ts",
+      "bytes": 9736,
+      "sha256": "54baaaf256d1f185e282ed04b416e93475cf21f7787311586f68c2b62db5006e"
+    },
+    {
+      "path": "probe/src/DelegatedSourceProbe.sol",
+      "bytes": 4434,
+      "sha256": "28b4372df9e652d2c8c883eb86387bd85eab651f3df45f85c96299795dffb9c7"
+    }
+  ]
+}

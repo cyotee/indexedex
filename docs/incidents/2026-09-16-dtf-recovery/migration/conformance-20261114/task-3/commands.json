@@ -1,0 +1,712 @@
+{
+  "version": 1,
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "aliases": {
+    "M": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "K": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "D": "docs/incidents/2026-09-16-dtf-recovery/migration",
+    "E": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3"
+  },
+  "sourceBindingScope": "Exact task-related sources, original shared fixture, source-only fork suites, artifact wrapper, Foundry config/remappings and the verified inventory helper. This is a scoped content fingerprint, not a new full transitive/vendor audit or clean-commit claim.",
+  "currentSourceFingerprint": "5c9111e657d552eb95054c24912dad33af16cf5ae59946a3f075162fdcfdded8",
+  "currentSourceBindings": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "bytes": 23860,
+      "sha256": "54d24706f72ebe4374db0fed0b11216a78f47433acdd4c8eaa688ceb2211894b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "bytes": 1262,
+      "sha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 24929,
+      "sha256": "d7a016b37e52e73f37e10ba115ee16da0f649ecadea5b72712373ef976da9e94"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "bytes": 1653,
+      "sha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "bytes": 19457,
+      "sha256": "1258b99b11920bf349bbbdbb3d1a25a93937c8515bc2e731e6bc30a35c7b2660"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 22464,
+      "sha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "bytes": 2676,
+      "sha256": "5db13ac0c4ac08b1c9c1ffee3d122052a107bf52abf84d9179dae2fac57f7a6c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "bytes": 6813,
+      "sha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "bytes": 2913,
+      "sha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "bytes": 2023,
+      "sha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "bytes": 27213,
+      "sha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "bytes": 5104,
+      "sha256": "03cca5f49fd5d553c713bb306406e267b6579fd5e23577a37e96f2089c704b70"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "bytes": 22933,
+      "sha256": "9525e5376ebb1e39d8c552065f8827adc3eaafea174e808eccbdfbdc1a6d3a4a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "bytes": 2996,
+      "sha256": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 40365,
+      "sha256": "658cba46918938f0bd645433b2d25acc01b9ccbeaaa4f0034d671c6a9cfcfcf5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 4172,
+      "sha256": "408f3fd01e93ee621a0f6fcfde65d4a3b9138d2ab4c046b2d7028fdbde144688"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "bytes": 5069,
+      "sha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "bytes": 16192,
+      "sha256": "b405d60ee9e444995cd9299c17c81ef7f7abc7036759adf6ff1660f23c53a6b0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "bytes": 12710,
+      "sha256": "c60778f5e33316557449de7c0779059808bfc8e44abfd0e8a67156ed9367b682"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "bytes": 14391,
+      "sha256": "daf2b16eaffff4004c61409bf0f6a3f0535e12c9369c5dae09f80b970476d428"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "bytes": 14172,
+      "sha256": "8b82ad755af9a0753651657d23f5023691377647c43afc7c44d75ad287c3e3f6"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "bytes": 12678,
+      "sha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "bytes": 3602,
+      "sha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "bytes": 4336,
+      "sha256": "78b68e8a56e45d704627d974e935d85094be0c171e2138eecb19e474d9fd4223"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 28343,
+      "sha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+      "bytes": 23157,
+      "sha256": "65beab1eb18a9d7737f0a956f658c1107bb3ff8b8a03be8a9d5942d5382b8ea9"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+      "bytes": 21807,
+      "sha256": "f5ec75011814b2e75281cba3d37d5ad0fe5ba859e3b8c37ed82bb1835df6000c"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+      "bytes": 39843,
+      "sha256": "4ca0269836825ce074ece493bbee636289d8151958adc771f4c6ebff65438e7c"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "bytes": 22542,
+      "sha256": "a63202a1c1e4bd77384a722e1a529c55f4b76d739183fdbff1245e9b1d4e9311"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "bytes": 19455,
+      "sha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "bytes": 26839,
+      "sha256": "2ef6b7e1cb8897ab326f264bf5c2cb57e6d07c03c5d5d311f064957033126d3d"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "bytes": 3536,
+      "sha256": "5b8cb4ccc8898fc0092c2f58afdc4bba5f0f75cffcb4433fc43558edc7bd2ea6"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLpConfiguration.t.sol",
+      "bytes": 14756,
+      "sha256": "1033f8bab7662c21a30563a6407e6c47fce29159d69f6b8fbbf8153d7519023a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "bytes": 17003,
+      "sha256": "fcebd726c8574fa88fd870a06fdb3bdfd801950fdb8d318f75e48027517e2c79"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "bytes": 12219,
+      "sha256": "eb13a7019ec5a35493ff08e0e0581d2ca3a364f3109ee97d9c00a4372fe81e9a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "bytes": 8639,
+      "sha256": "e62f7f81ca3dfb3941efa6bb830240e7ce9759a3820122d5f4e405ddd96d4a57"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 2059,
+      "sha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 28400,
+      "sha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 3688,
+      "sha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "bytes": 6911,
+      "sha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+      "bytes": 9749,
+      "sha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimedSyConfiguration.t.sol",
+      "bytes": 11329,
+      "sha256": "c065c6742c47809dfc1f63d36212575ef6d44b52892f42dc2d8793cb2869aadb"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 34723,
+      "sha256": "41d250612bdc64271bc6e9e296573d366214eda810e439958b4987e1fc9586d9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "bytes": 6762,
+      "sha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "bytes": 20293,
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "bytes": 14150,
+      "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "bytes": 13521,
+      "sha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1"
+    },
+    {
+      "path": "scripts/forge-artifacts.py",
+      "bytes": 22572,
+      "sha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8"
+    },
+    {
+      "path": "foundry.toml",
+      "bytes": 3814,
+      "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839"
+    },
+    {
+      "path": "remappings.txt",
+      "bytes": 520,
+      "sha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e"
+    }
+  ],
+  "baselineSourceFingerprint": "9c144778397f8ab760a21d6a75e1707210e92ea3e9c5bc1eb35a2031df4d439b",
+  "baselineSourceBindings": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "bytes": 23860,
+      "sha256": "54d24706f72ebe4374db0fed0b11216a78f47433acdd4c8eaa688ceb2211894b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "bytes": 1262,
+      "sha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 24929,
+      "sha256": "d7a016b37e52e73f37e10ba115ee16da0f649ecadea5b72712373ef976da9e94"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "bytes": 1653,
+      "sha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "bytes": 19457,
+      "sha256": "1258b99b11920bf349bbbdbb3d1a25a93937c8515bc2e731e6bc30a35c7b2660"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 22464,
+      "sha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "bytes": 2676,
+      "sha256": "5db13ac0c4ac08b1c9c1ffee3d122052a107bf52abf84d9179dae2fac57f7a6c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "bytes": 6813,
+      "sha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "bytes": 2913,
+      "sha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "bytes": 2023,
+      "sha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "bytes": 27213,
+      "sha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "bytes": 5104,
+      "sha256": "03cca5f49fd5d553c713bb306406e267b6579fd5e23577a37e96f2089c704b70"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "bytes": 22933,
+      "sha256": "9525e5376ebb1e39d8c552065f8827adc3eaafea174e808eccbdfbdc1a6d3a4a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "bytes": 2996,
+      "sha256": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 40365,
+      "sha256": "658cba46918938f0bd645433b2d25acc01b9ccbeaaa4f0034d671c6a9cfcfcf5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 4172,
+      "sha256": "408f3fd01e93ee621a0f6fcfde65d4a3b9138d2ab4c046b2d7028fdbde144688"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "bytes": 5069,
+      "sha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "bytes": 16192,
+      "sha256": "b405d60ee9e444995cd9299c17c81ef7f7abc7036759adf6ff1660f23c53a6b0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "bytes": 12710,
+      "sha256": "c60778f5e33316557449de7c0779059808bfc8e44abfd0e8a67156ed9367b682"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "bytes": 14391,
+      "sha256": "daf2b16eaffff4004c61409bf0f6a3f0535e12c9369c5dae09f80b970476d428"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "bytes": 14172,
+      "sha256": "8b82ad755af9a0753651657d23f5023691377647c43afc7c44d75ad287c3e3f6"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "bytes": 12678,
+      "sha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "bytes": 3602,
+      "sha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "bytes": 4336,
+      "sha256": "78b68e8a56e45d704627d974e935d85094be0c171e2138eecb19e474d9fd4223"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 28343,
+      "sha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+      "bytes": 23157,
+      "sha256": "65beab1eb18a9d7737f0a956f658c1107bb3ff8b8a03be8a9d5942d5382b8ea9"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+      "bytes": 21807,
+      "sha256": "f5ec75011814b2e75281cba3d37d5ad0fe5ba859e3b8c37ed82bb1835df6000c"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+      "bytes": 39843,
+      "sha256": "4ca0269836825ce074ece493bbee636289d8151958adc771f4c6ebff65438e7c"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "bytes": 22542,
+      "sha256": "a63202a1c1e4bd77384a722e1a529c55f4b76d739183fdbff1245e9b1d4e9311"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "bytes": 19455,
+      "sha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "bytes": 26839,
+      "sha256": "2ef6b7e1cb8897ab326f264bf5c2cb57e6d07c03c5d5d311f064957033126d3d"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "bytes": 3536,
+      "sha256": "5b8cb4ccc8898fc0092c2f58afdc4bba5f0f75cffcb4433fc43558edc7bd2ea6"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLpConfiguration.t.sol",
+      "bytes": 14756,
+      "sha256": "1033f8bab7662c21a30563a6407e6c47fce29159d69f6b8fbbf8153d7519023a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "bytes": 17003,
+      "sha256": "fcebd726c8574fa88fd870a06fdb3bdfd801950fdb8d318f75e48027517e2c79"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "bytes": 12219,
+      "sha256": "eb13a7019ec5a35493ff08e0e0581d2ca3a364f3109ee97d9c00a4372fe81e9a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "bytes": 8639,
+      "sha256": "e62f7f81ca3dfb3941efa6bb830240e7ce9759a3820122d5f4e405ddd96d4a57"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 2059,
+      "sha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 28400,
+      "sha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 3688,
+      "sha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "bytes": 6911,
+      "sha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+      "bytes": 9749,
+      "sha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimedSyConfiguration.t.sol",
+      "bytes": 11329,
+      "sha256": "c065c6742c47809dfc1f63d36212575ef6d44b52892f42dc2d8793cb2869aadb"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 34723,
+      "sha256": "41d250612bdc64271bc6e9e296573d366214eda810e439958b4987e1fc9586d9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "bytes": 6762,
+      "sha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "bytes": 20293,
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "bytes": 13761,
+      "sha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "bytes": 13521,
+      "sha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1"
+    },
+    {
+      "path": "scripts/forge-artifacts.py",
+      "bytes": 22572,
+      "sha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8"
+    },
+    {
+      "path": "foundry.toml",
+      "bytes": 3814,
+      "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839"
+    },
+    {
+      "path": "remappings.txt",
+      "bytes": 520,
+      "sha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e"
+    }
+  ],
+  "versions": {
+    "kernelBun": "1.4.4",
+    "nonlogin": "runtime-versions.log",
+    "acceptedShell": "runtime-versions-login.log",
+    "note": "Actual binaries report Homebrew Forge/Cast 1.9.0 and Solar 0.3.0-dev/Solidity 0.8.38. Actual artifact-wrapper output shows --use solar and successful Solar compilation; no solc fallback or install was selected."
+  },
+  "runs": [
+    {
+      "id": "warm-seed",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && rsync -a --ignore-existing /Users/cyotee/Projects/indexedex/out/ out/ && rsync -a --ignore-existing /Users/cyotee/Projects/indexedex/cache_forge/ cache_forge/ && printf 'TASK3_SEED_COMPLETE\\n'",
+      "exitCode": 0,
+      "monitor": "mon_GG4AF4YBES89X2P4",
+      "rawCompletion": "TASK3_SEED_COMPLETE",
+      "qualification": "Completion event is retained here; no separate rsync stdout file was created. Warm source is read-only; no deletion or copy-back."
+    },
+    {
+      "id": "initial-no-login",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && mkdir -p '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' FOUNDRY_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 && set -o pipefail; FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test 'contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol' --test-root 'test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol' --test-root 'test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol' -- -vv 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-suites.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_SOURCE_SUITES_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 1,
+      "log": "source-suites.log",
+      "sourceFingerprint": "9c144778397f8ab760a21d6a75e1707210e92ea3e9c5bc1eb35a2031df4d439b",
+      "result": "Solar build succeeded with existing warnings; both suites failed setUp because ALCHEMY_KEY was not present. No source/product defect claimed.",
+      "accepted": false
+    },
+    {
+      "id": "login-wrapper-quoting-failure",
+      "command": "/bin/zsh -lc \"/bin/bash -c \\\"cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && mkdir -p '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' FOUNDRY_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 GIT_ALLOW_PROTOCOL= FOUNDRY_OFFLINE=true && set -o pipefail; FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test 'contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol' --test-root 'test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol' --test-root 'test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol' -- -vv 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-suites-login.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_SOURCE_SUITES_EXIT=%s\\\\n' \\\\\\\"$rc\\\\\\\"; exit \\\\\\\"$rc\\\\\\\"\\\"\"",
+      "exitCode": 255,
+      "log": "source-suites-login.log",
+      "sourceFingerprint": "9c144778397f8ab760a21d6a75e1707210e92ea3e9c5bc1eb35a2031df4d439b",
+      "suiteCases": {
+        "passed": 13,
+        "failed": 0
+      },
+      "result": "Nested double quoting expanded the shell exit variable too early; marker was empty and wrapper exited 255. Case stdout is not treated as a successful command.",
+      "accepted": false
+    },
+    {
+      "id": "literal-wrapper-baseline",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && mkdir -p '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && export TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 GIT_ALLOW_PROTOCOL= FOUNDRY_OFFLINE=true && set -o pipefail; FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test '\\''\\'\\'''\\''contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol'\\''\\'\\'''\\'' -- -vv 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-final.log'\\''\\'\\'''\\''; rc=${PIPESTATUS[0]}; printf '\\''\\'\\'''\\''TASK3_SOURCE_SUITES_EXIT=%s\n'\\''\\'\\'''\\'' \"$rc\"; exit \"$rc\"'\\'''",
+      "exitCode": 0,
+      "log": "source-final.log",
+      "sourceFingerprint": "9c144778397f8ab760a21d6a75e1707210e92ea3e9c5bc1eb35a2031df4d439b",
+      "suiteCases": {
+        "passed": 13,
+        "failed": 0
+      },
+      "result": "Correct literal shell quoting; source baseline passed. HOME-based RPC cache isolation was not established for this attempt.",
+      "accepted": false
+    },
+    {
+      "id": "source-isolated",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && mkdir -p '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && mkdir -p '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home'\\''\\'\\'''\\'' && export HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home'\\''\\'\\'''\\'' FOUNDRY_DIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home/.foundry'\\''\\'\\'''\\'' TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 GIT_ALLOW_PROTOCOL= FOUNDRY_OFFLINE=true && set -o pipefail; FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test '\\''\\'\\'''\\''contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol'\\''\\'\\'''\\'' -- -vv 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-isolated.log'\\''\\'\\'''\\''; rc=${PIPESTATUS[0]}; printf '\\''\\'\\'''\\''TASK3_SOURCE_SUITES_EXIT=%s\n'\\''\\'\\'''\\'' \"$rc\"; exit \"$rc\"'\\'''",
+      "exitCode": 0,
+      "log": "source-isolated.log",
+      "sourceFingerprint": "9c144778397f8ab760a21d6a75e1707210e92ea3e9c5bc1eb35a2031df4d439b",
+      "suiteCases": {
+        "passed": 13,
+        "failed": 0
+      },
+      "result": "Passing isolated baseline before explicit invalid-ID postconditions were added.",
+      "accepted": false
+    },
+    {
+      "id": "source-state-assertions",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && mkdir -p '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && mkdir -p '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home'\\''\\'\\'''\\'' && export HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home'\\''\\'\\'''\\'' FOUNDRY_DIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home/.foundry'\\''\\'\\'''\\'' TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 GIT_ALLOW_PROTOCOL= FOUNDRY_OFFLINE=true && set -o pipefail; FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test '\\''\\'\\'''\\''contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol'\\''\\'\\'''\\'' --test-root '\\''\\'\\'''\\''test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol'\\''\\'\\'''\\'' -- -vv 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log'\\''\\'\\'''\\''; rc=${PIPESTATUS[0]}; printf '\\''\\'\\'''\\''TASK3_SOURCE_SUITES_EXIT=%s\n'\\''\\'\\'''\\'' \"$rc\"; exit \"$rc\"'\\'''",
+      "exitCode": 0,
+      "log": "source-state-assertions.log",
+      "sourceFingerprint": "5c9111e657d552eb95054c24912dad33af16cf5ae59946a3f075162fdcfdded8",
+      "suiteCases": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "result": "Accepted exact happy/failure source suites after five source-only assertion/observation additions; task-owned HOME/.foundry observed.",
+      "accepted": true
+    },
+    {
+      "id": "reserved-read-initial",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && export TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && set -eo pipefail; { printf '\\''\\'\\'''\\''CHAIN_ID\n'\\''\\'\\'''\\''; cast chain-id --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''PIN_HEADER\n'\\''\\'\\'''\\''; cast rpc --rpc-url robinhood_mainnet_alchemy eth_getBlockByNumber 0x67e5d17 false; printf '\\''\\'\\'''\\''EARLIER_RESERVED_WIRED\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''reservedBondNftsWired()(bool)'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''EARLIER_NFT_OWNER\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''owner()(address)'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy; for id in 0 1 2; do printf '\\''\\'\\'''\\''EARLIER_OWNER_ID_%s\n'\\''\\'\\'''\\'' \"$id\"; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''ownerOf(uint256)(address)'\\''\\'\\'''\\'' \"$id\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''EARLIER_POSITION_ID_%s\n'\\''\\'\\'''\\'' \"$id\"; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''getPosition(uint256)((uint256,uint256,uint256,uint256,uint256))'\\''\\'\\'''\\'' \"$id\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; done; printf '\\''\\'\\'''\\''RESERVED_WIRED_FACET\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' \"$(cast sig '\\''\\'\\'''\\''reservedBondNftsWired()'\\''\\'\\'''\\'')\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''PIN_HEADER_AFTER\n'\\''\\'\\'''\\''; cast rpc --rpc-url robinhood_mainnet_alchemy eth_getBlockByNumber 0x67e5d17 false; } 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-live.log'\\''\\'\\'''\\''; printf '\\''\\'\\'''\\''TASK3_RESERVED_READS_EXIT=0\n'\\''\\'\\'''\\'''\\'''",
+      "exitCode": 1,
+      "log": "source-reserved-live.log",
+      "result": "Wired flag true; unsupported NFT owner() getter reverted NoTargetFor. Source read limitation, not a product defect."
+    },
+    {
+      "id": "reserved-read-failed-removal",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && export TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && set -eo pipefail; { printf '\\''\\'\\'''\\''CHAIN_ID\n'\\''\\'\\'''\\''; cast chain-id --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''PIN_HEADER\n'\\''\\'\\'''\\''; cast rpc --rpc-url robinhood_mainnet_alchemy eth_getBlockByNumber 0x67e5d17 false; printf '\\''\\'\\'''\\''EARLIER_RESERVED_WIRED\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''reservedBondNftsWired()(bool)'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''EARLIER_NFT_OWNER\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''owner()(address)'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy; for id in 0 1 2; do printf '\\''\\'\\'''\\''EARLIER_OWNER_ID_%s\n'\\''\\'\\'''\\'' \"$id\"; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''ownerOf(uint256)(address)'\\''\\'\\'''\\'' \"$id\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''EARLIER_POSITION_ID_%s\n'\\''\\'\\'''\\'' \"$id\"; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''getPosition(uint256)((uint256,uint256,uint256,uint256,uint256))'\\''\\'\\'''\\'' \"$id\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; done; printf '\\''\\'\\'''\\''RESERVED_WIRED_FACET\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' \"$(cast sig '\\''\\'\\'''\\''reservedBondNftsWired()'\\''\\'\\'''\\'')\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''PIN_HEADER_AFTER\n'\\''\\'\\'''\\''; cast rpc --rpc-url robinhood_mainnet_alchemy eth_getBlockByNumber 0x67e5d17 false; } 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-final.log'\\''\\'\\'''\\''; printf '\\''\\'\\'''\\''TASK3_RESERVED_READS_EXIT=0\n'\\''\\'\\'''\\'''\\'''",
+      "exitCode": 1,
+      "log": "source-reserved-final.log",
+      "result": "Attempted string removal did not remove the unsupported getter because the command contained a literal newline. Preserved; corrected using exact substring boundaries."
+    },
+    {
+      "id": "reserved-read-complete",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && export TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && set -eo pipefail; { printf '\\''\\'\\'''\\''CHAIN_ID\n'\\''\\'\\'''\\''; cast chain-id --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''PIN_HEADER\n'\\''\\'\\'''\\''; cast rpc --rpc-url robinhood_mainnet_alchemy eth_getBlockByNumber 0x67e5d17 false; printf '\\''\\'\\'''\\''EARLIER_RESERVED_WIRED\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''reservedBondNftsWired()(bool)'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy; for id in 0 1 2; do printf '\\''\\'\\'''\\''EARLIER_OWNER_ID_%s\n'\\''\\'\\'''\\'' \"$id\"; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''ownerOf(uint256)(address)'\\''\\'\\'''\\'' \"$id\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''EARLIER_POSITION_ID_%s\n'\\''\\'\\'''\\'' \"$id\"; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''getPosition(uint256)((uint256,uint256,uint256,uint256,uint256))'\\''\\'\\'''\\'' \"$id\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; done; printf '\\''\\'\\'''\\''RESERVED_WIRED_FACET\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' \"$(cast sig '\\''\\'\\'''\\''reservedBondNftsWired()'\\''\\'\\'''\\'')\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''PIN_HEADER_AFTER\n'\\''\\'\\'''\\''; cast rpc --rpc-url robinhood_mainnet_alchemy eth_getBlockByNumber 0x67e5d17 false; } 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-complete.log'\\''\\'\\'''\\''; printf '\\''\\'\\'''\\''TASK3_RESERVED_READS_EXIT=0\n'\\''\\'\\'''\\'''\\'''",
+      "exitCode": 0,
+      "log": "source-reserved-complete.log",
+      "result": "Exact chain/header before and after, wired true, owners/position tuples for 0/1/2, and same delegated facet."
+    },
+    {
+      "id": "custody-routes",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && export TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && set -eo pipefail; { printf '\\''\\'\\'''\\''EP_OWNER\n'\\''\\'\\'''\\''; cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 '\\''\\'\\'''\\''owner()(address)'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy; for sig in '\\''\\'\\'''\\''withdraw(uint256,address,uint256,uint256,uint256)'\\''\\'\\'''\\'' '\\''\\'\\'''\\''withdrawSingle(uint256,address,address,uint256,uint256)'\\''\\'\\'''\\'' '\\''\\'\\'''\\''withdrawSeShares(uint256,address,uint256,uint256,uint256)'\\''\\'\\'''\\''; do sel=$(cast sig \"$sig\"); printf '\\''\\'\\'''\\''EP_ROUTE %s %s\n'\\''\\'\\'''\\'' \"$sig\" \"$sel\"; cast call 0x923877336b14662cfb5b3a60b14e7d716d54a888 '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' \"$sel\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; done; printf '\\''\\'\\'''\\''EP_PARENT_ACCEPTED\n'\\''\\'\\'''\\''; cast call 0xaf0e1967c8f755c747615c5427108bc549ca1122 '\\''\\'\\'''\\''acceptedBondTokens()(address[])'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''EP_PARENT_CLAIM_ROUTE\n'\\''\\'\\'''\\''; cast call 0xaf0e1967c8f755c747615c5427108bc549ca1122 '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' 0xcaaf4702 --block 108944663 --rpc-url robinhood_mainnet_alchemy; printf '\\''\\'\\'''\\''EP_NFT_FORWARDING_ROUTE\n'\\''\\'\\'''\\''; cast call 0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391 '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' \"$(cast sig '\\''\\'\\'''\\''transferHeldToken(address,address,uint256)'\\''\\'\\'''\\'')\" --block 108944663 --rpc-url robinhood_mainnet_alchemy; collector=$(cast call 0x09682b00d873d913ada0bb69b4d4c9631810d0bc '\\''\\'\\'''\\''feeTo()(address)'\\''\\'\\'''\\'' --block 108944663 --rpc-url robinhood_mainnet_alchemy); printf '\\''\\'\\'''\\''EP_COLLECTOR %s\n'\\''\\'\\'''\\'' \"$collector\"; cast call \"$collector\" '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' 0x45e94ee3 --block 108944663 --rpc-url robinhood_mainnet_alchemy; } 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-custody-live.log'\\''\\'\\'''\\''; printf '\\''\\'\\'''\\''TASK3_CUSTODY_READS_EXIT=0\n'\\''\\'\\'''\\'''\\'''",
+      "exitCode": 0,
+      "log": "source-custody-live.log",
+      "result": "Actual E-P owner, all three withdrawal facets, accepted parent tokens/claim route, NFT forwarding route and collector pullFee facet."
+    },
+    {
+      "id": "narrow-missing-runtimes",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && export TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && set -eo pipefail; { for facet in 0x6b771dd3fa9d577b5a7f3b52eb95234da5fb5e0f 0x461d94f18afef2c82bbffbdb63270e37c322da07 0x4d9976e8fd5c6f698df0303c6056efaff47e6f48; do printf '\\''\\'\\'''\\''PINNED_FACET %s\n'\\''\\'\\'''\\'' \"$facet\"; code=$(cast code \"$facet\" --block 108944663 --rpc-url robinhood_mainnet_alchemy); printf '\\''\\'\\'''\\''CODE %s\n'\\''\\'\\'''\\'' \"$code\"; cast keccak \"$code\"; done; sel=$(cast sig '\\''\\'\\'''\\''synchronizeRewards()'\\''\\'\\'''\\''); facet=$(cast call 0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7 '\\''\\'\\'''\\''facetAddress(bytes4)(address)'\\''\\'\\'''\\'' \"$sel\" --block 108944663 --rpc-url robinhood_mainnet_alchemy); printf '\\''\\'\\'''\\''WEIGHTED_SYNCHRONIZE_ROUTE %s %s\n'\\''\\'\\'''\\'' \"$sel\" \"$facet\"; code=$(cast code \"$facet\" --block 108944663 --rpc-url robinhood_mainnet_alchemy); printf '\\''\\'\\'''\\''CODE %s\n'\\''\\'\\'''\\'' \"$code\"; cast keccak \"$code\"; } 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-missing-runtime.log'\\''\\'\\'''\\''; printf '\\''\\'\\'''\\''TASK3_MISSING_RUNTIME_EXIT=0\n'\\''\\'\\'''\\'''\\'''",
+      "exitCode": 0,
+      "log": "source-missing-runtime.log",
+      "result": "Only three required missing conversion facet runtimes plus WD synchronization delegation/runtime."
+    },
+    {
+      "id": "reserved-mint-receipt-query",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && export TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' FOUNDRY_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/foundry'\\''\\'\\'''\\'' && set -eo pipefail; cast rpc --rpc-url robinhood_mainnet_alchemy eth_getLogs '\\''\\'\\'''\\''{\"address\":\"0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391\",\"fromBlock\":\"0x0\",\"toBlock\":\"0x67e5d17\",\"topics\":[\"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef\",\"0x0000000000000000000000000000000000000000000000000000000000000000\",null,[\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"0x0000000000000000000000000000000000000000000000000000000000000002\"]]}'\\''\\'\\'''\\'' 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-mints.log'\\''\\'\\'''\\''; printf '\\''\\'\\'''\\''TASK3_RESERVED_MINTS_EXIT=0\n'\\''\\'\\'''\\'''\\'''",
+      "exitCode": 1,
+      "log": "source-reserved-mints.log",
+      "result": "Approved RPC rejected exact collection/from-zero/IDs-0-1-2 filter because free tier permits a ten-block log range. No provider switch, range scan, service purchase or trace retry. Supplemental exact mint receipt remains unavailable."
+    },
+    {
+      "id": "integrity-inventory",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 && set -o pipefail; bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts' inventory '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/source' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/destination' 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_INVENTORY_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 0,
+      "log": "integrity-inventory.log",
+      "result": "One unchanged source entry and one identical destination entry; no divergent bytes."
+    },
+    {
+      "id": "integrity-positive",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 && set -o pipefail; bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts' delivery '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive' 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_DELIVERY_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 0,
+      "log": "integrity-positive.log",
+      "result": "DELIVERY_COMPLETE entries=1 failures=0"
+    },
+    {
+      "id": "integrity-wrong-hash",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 && set -o pipefail; bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts' delivery '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative' 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_DELIVERY_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "integrity-negative.log",
+      "result": "DELIVERY_FAILURE stale source inventory after only owned runtime descriptor hash was deliberately replaced by zeros; original archive unchanged."
+    },
+    {
+      "id": "nonlogin-tool-versions",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home' TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' XDG_CACHE_HOME='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache' && set -o pipefail; { for cmd in 'forge --version' 'cast --version' 'solar --version' 'python3 --version' 'bun --version' 'uname -sm'; do printf 'COMMAND %s\n' \"$cmd\"; /bin/bash -c \"$cmd\"; printf 'COMMAND_EXIT %s\n' \"$?\"; done; } 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-versions.log'; rc=${PIPESTATUS[0]}; printf 'TASK3_VERSIONS_EXIT=%s\n' \"$rc\"; exit \"$rc\"",
+      "exitCode": 0,
+      "log": "runtime-versions.log"
+    },
+    {
+      "id": "accepted-shell-tool-versions",
+      "command": "/bin/zsh -lc '/bin/bash -c '\\''cd '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1'\\''\\'\\'''\\'' && export HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/home'\\''\\'\\'''\\'' TMPDIR='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'\\''\\'\\'''\\'' XDG_CACHE_HOME='\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp/cache'\\''\\'\\'''\\'' && set -o pipefail; { for cmd in '\\''\\'\\'''\\''command -v forge cast solar'\\''\\'\\'''\\'' '\\''\\'\\'''\\''forge --version'\\''\\'\\'''\\'' '\\''\\'\\'''\\''cast --version'\\''\\'\\'''\\'' '\\''\\'\\'''\\''solar --version'\\''\\'\\'''\\'' '\\''\\'\\'''\\''python3 --version'\\''\\'\\'''\\'' '\\''\\'\\'''\\''bun --version'\\''\\'\\'''\\'' '\\''\\'\\'''\\''uname -sm'\\''\\'\\'''\\''; do printf '\\''\\'\\'''\\''COMMAND %s\n'\\''\\'\\'''\\'' \"$cmd\"; /bin/bash -c \"$cmd\"; printf '\\''\\'\\'''\\''COMMAND_EXIT %s\n'\\''\\'\\'''\\'' \"$?\"; done; } 2>&1 | tee '\\''\\'\\'''\\''/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-versions-login.log'\\''\\'\\'''\\''; rc=${PIPESTATUS[0]}; printf '\\''\\'\\'''\\''TASK3_VERSIONS_EXIT=%s\n'\\''\\'\\'''\\'' \"$rc\"; exit \"$rc\"'\\'''",
+      "exitCode": 0,
+      "log": "runtime-versions-login.log"
+    },
+    {
+      "id": "dirty-worktree-observation",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && set -o pipefail; { printf 'HEAD\n'; GIT_MASTER=1 git rev-parse HEAD; printf 'HEAD_EXIT %s\n' \"$?\"; printf 'DIRTY_WORKTREE\n'; GIT_MASTER=1 git status --short --untracked-files=normal; printf 'STATUS_EXIT %s\n' \"$?\"; printf 'MIGRATION_PRODUCTION_AND_FORK_DIFF\n'; GIT_MASTER=1 git diff --numstat -- 'contracts/vaults/detf/protocols/dexes/uniswap/v4/migration' 'test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration'; printf 'SOURCE_DIFF_EXIT %s\n' \"$?\"; printf 'OWNED_INDEX_DIFF_CHECK\n'; GIT_MASTER=1 git diff --check -- 'docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json' 'docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md' 'docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md'; printf 'DIFF_CHECK_EXIT %s\n' \"$?\"; } 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/worktree-state.log'",
+      "exitCode": 0,
+      "log": "worktree-state.log",
+      "qualification": "Status includes untracked files and concurrent task-1 changes; not claimed clean. This predates the allowed source-only test extension."
+    },
+    {
+      "id": "final-scoped-source-diff",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && set -o pipefail; { printf 'SOURCE_ONLY_DIFF\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff -- 'test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol'; printf 'TEST_DIFF_EXIT %s\n' \"$?\"; printf 'PRODUCTION_DIFF\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --numstat -- 'contracts/vaults/detf/protocols/dexes/uniswap/v4/migration'; printf 'PRODUCTION_DIFF_EXIT %s\n' \"$?\"; printf 'FINAL_OWNED_DIFF_CHECK\n'; GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --check -- 'test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol' 'docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json' 'docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md' 'docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md'; printf 'DIFF_CHECK_EXIT %s\n' \"$?\"; } 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/worktree-final.log'",
+      "exitCode": 0,
+      "log": "worktree-final.log",
+      "result": "Only five lines added to the allowed existing source test; production migration diff empty; scoped diff check exit 0."
+    }
+  ],
+  "runtimeHashCommands": {
+    "file": "runtime-hash-checks.json",
+    "count": 34,
+    "passed": 34,
+    "allExitCode": 0,
+    "qualification": "Every actual cast argv (including runtime hex), stdout, stderr, expected and computed keccak is recorded there."
+  },
+  "inKernelObservations": {
+    "method": "functions.eval: Bun.file JSON decode and SHA-256 of complete raw file bytes; no shell exit code applies",
+    "evidence": [
+      "source-observations.json",
+      "source-preservation.json"
+    ],
+    "archiveFiles": 26,
+    "unchanged": 26,
+    "baselineIndexesPreserved": 3
+  },
+  "preexistingWarnings": [
+    "Forge automatically attempted missing-submodule installation despite the populated plain Crane copy; it failed immediately because the directory already exists. No dependency installation succeeded; the warnings are preserved, not suppressed.",
+    "Existing Foundry fmt.skip and lint/compiler warnings remain in raw logs. No production source was edited to change them."
+  ],
+  "unrun": [
+    "The refused historical trace was never requested.",
+    "No new broad source/recovery census or whole-tree regression was run; task 3 indexes source-bound historical category receipts and runs only its exact current suites.",
+    "Exact reserved mint receipt lookup did not complete under the approved RPC range limit.",
+    "Biome LSP diagnostics are unavailable; no install was attempted. JSON structural/reference checks and scoped git diff checks provide artifact diagnostics."
+  ]
+}

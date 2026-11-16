@@ -1,0 +1,443 @@
+[
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/manifest.json",
+    "bytes": 3209,
+    "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+    "bytes": 24558,
+    "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-pre-exploit/stakers.csv",
+    "bytes": 10515,
+    "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-pre-exploit/snapshot.json",
+    "bytes": 3055,
+    "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+    "bytes": 1432,
+    "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+    "bytes": 41120,
+    "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+    "bytes": 186222,
+    "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/weighted-candidates.csv",
+    "bytes": 83558,
+    "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/weighted-bonds.csv",
+    "bytes": 12283,
+    "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-bonds.csv",
+    "bytes": 3709,
+    "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/earlier-cp-wallets.csv",
+    "bytes": 2542,
+    "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/transfers.csv",
+    "bytes": 4535122,
+    "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/bond-accounting.csv",
+    "bytes": 18666,
+    "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/index-events.csv",
+    "bytes": 111333,
+    "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/all-index-events.csv",
+    "bytes": 141460,
+    "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/evidence/post-incident-bond-claims.csv",
+    "bytes": 3012,
+    "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/account-ledger.csv",
+    "bytes": 285464,
+    "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/positions.csv",
+    "bytes": 123221,
+    "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/observed-recoveries.csv",
+    "bytes": 30839,
+    "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/conversions.csv",
+    "bytes": 91676,
+    "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/exceptions.csv",
+    "bytes": 3404,
+    "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/rounding.csv",
+    "bytes": 327,
+    "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/reconciliation.json",
+    "bytes": 1798,
+    "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/sources.json",
+    "bytes": 5502,
+    "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/LOSS_AND_RECOVERY_LEDGER.md",
+    "bytes": 15308,
+    "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/held-exclusions.csv",
+    "bytes": 188644,
+    "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/custody-inventory.csv",
+    "bytes": 139535,
+    "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery/CUSTODY_AND_HARVEST.md",
+    "bytes": 7357,
+    "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/seal.json",
+    "bytes": 2511,
+    "sha256": "3f434ec444c5ca3d274e6a7c6ee2a8b7a9c59d9b1e1ea63614459dbf1bfd0c04"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/manifest.json",
+    "bytes": 123457,
+    "sha256": "1964b2db2377db6fb17727a2998f8bfd41d823a082f2c2522d6018bbca512baf"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/report.md",
+    "bytes": 20647,
+    "sha256": "77bb12de3b210f0091d4f7409fdb52eff81b1fec5d8cc11dce0db38897bfa5aa"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/seal.json",
+    "bytes": 3535,
+    "sha256": "e74f19e925613353502798a343764227aa2a6e0d5f34ac7694d9839806329e08"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/manifest.json",
+    "bytes": 492300,
+    "sha256": "7c824332802d8b688644c5e02418323185d3798ba6aa7d91471b17983bf4f2ca"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/report.md",
+    "bytes": 13625,
+    "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/seal.json",
+    "bytes": 2469,
+    "sha256": "730c35b9bf335a0ba1bb4241035d96b76e134239a4b10f913f44ed0f4e5e84c6"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/manifest.json",
+    "bytes": 85423,
+    "sha256": "a0766fb2a222074b43ca764db27e4ba381a3456069b044f3ceae8146dfc473b6"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/report.md",
+    "bytes": 52769,
+    "sha256": "1565ad747b807bdcda74db0c74b5c0ad49dcf5fedcab9b67f61dccbc7d3a5293"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/seal.json",
+    "bytes": 1352,
+    "sha256": "24aa7958ee8a11abb01d3615688245520c3d6b6d3b8d959c1544b107518d9095"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/manifest.json",
+    "bytes": 1216,
+    "sha256": "fe695410a4af18e02f300f1e463f6d9a1f6d290432f6504e5ae73cc5c9301027"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/report.md",
+    "bytes": 13287,
+    "sha256": "bc82bdfd4964657223080b45852fc560513a2c9d8badb0ffa7962e734eccfd81"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/observed-recipient-flow-review-20261113.json",
+    "bytes": 902872,
+    "sha256": "ed8474ac3454453697308ce82adffebb8bbfe9d346050973e0753a46cf6af39e"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/archive.json",
+    "bytes": 3848804,
+    "sha256": "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/reconciliation.json",
+    "bytes": 251139,
+    "sha256": "c1717f1e35984ff03aeddd16c6a7571439e8066f4160fdeec2f7f844ced1577e"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+    "bytes": 5917231,
+    "sha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/reconciliation.json",
+    "bytes": 841408,
+    "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+    "bytes": 6447942,
+    "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+    "bytes": 4711975,
+    "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/observations.json",
+    "bytes": 871902,
+    "sha256": "31f957fb0821c63aaa7db8b8bcb404698b5294c0ca555b0bac37e420effbc956"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/report.md",
+    "bytes": 19047,
+    "sha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/report.md",
+    "bytes": 25267,
+    "sha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/seal.json",
+    "bytes": 828,
+    "sha256": "1d6e06d99d12727803020b27c13492f66820781969108107fb43a7eaf9e39ccc"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/seal.json",
+    "bytes": 1747,
+    "sha256": "5f5561a432309399331c3b2f95f9cabd50c2d65acd22b1de7d90edc7571996b8"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+    "bytes": 30781,
+    "sha256": "8ad79a2331b022698d73de0e00cdb1a01ee97a9b282b637a36981c071cdfb699"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/validation.json",
+    "bytes": 8926,
+    "sha256": "964302815216202a986ed851b0418e22a3abc2a85764294f2a923c59ab9d0c9f"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+    "bytes": 3520079,
+    "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/report.md",
+    "bytes": 20568,
+    "sha256": "1df2d1b6bffbe6cd241f89b9533cb5cea3f14b431df6593861bd44e4c6fa0440"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+    "bytes": 22872,
+    "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+    "bytes": 41316,
+    "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "bytes": 79305,
+    "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+    "bytes": 108022,
+    "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs-brief.md",
+    "bytes": 6156,
+    "sha256": "9073982462270a577e3e2f4d7e80859a60a1a72ff0ff3bd6f90456866bcb2685"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/foundry.toml",
+    "bytes": 3814,
+    "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/candidate-input.ts",
+    "bytes": 6757,
+    "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/scripts/recovery/dtf-migration/candidate-nfts.ts",
+    "bytes": 7120,
+    "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source-brief.md",
+    "bytes": 6496,
+    "sha256": "4bf38d6b9bd20e6e1e9d61235366d35c26b7d500344a2b6c89f5446945bd63ef"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/weighted-bond-facet-source-capture-20261113.json",
+    "bytes": 2219926,
+    "sha256": "a3d2444455a48df58a4dde064edca0b4c50038473c33af43f360b37ff6cc78e1"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/seal.json",
+    "bytes": 2159,
+    "sha256": "9a23abaca02519caffb77d66212689a6ea4142d222d50f3a181cf0f260d0c305"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/report.md",
+    "bytes": 29993,
+    "sha256": "607a1a4dc90ee0f445df68e8b3f8b6eae95cf6ae5fdc43b5d390d72dc80e2cfe"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/manifest.json",
+    "bytes": 166736,
+    "sha256": "ee53c478424b2f79a015818ec81887989f566209233128b5ca43cc727c88fd8e"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/cleanup.json",
+    "bytes": 1664,
+    "sha256": "265ed0c21838db01270c7a910a586947fc97bf7625d169cc532e58e968c37b8f"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/seal.json",
+    "bytes": 1983,
+    "sha256": "b13fccf4759fb16e0ed764091e4185112c937ceb4c1de287c3ee4c0272feefd6"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/report.md",
+    "bytes": 43946,
+    "sha256": "2b9ed7dc132976f298b60ad02632505025bcb39f80672ff90edc8b7562ee4350"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/manifest.json",
+    "bytes": 1967,
+    "sha256": "fa884c57726076bc46da3fc8a5d2c6bc32768260b1dac9ebbd0c17b62d9e32c0"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/cleanup.json",
+    "bytes": 1771,
+    "sha256": "7eb4725a4a09ddbe54b7102b2e20a053d4fe34feca9c0619215a10f71e3cdd9d"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/proof.json",
+    "bytes": 3303390,
+    "sha256": "4f28af08b2512341039f7d9643a4fe2fb9f31f5c408a7b6ed4238d3e9382a444"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/reconcile-01.stdout",
+    "bytes": 4313971,
+    "sha256": "362c9b2d992280533e7c8fa7bf90406e7e64ab67e591ca475be3b31ed6953cd6"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/observe-02.stdout",
+    "bytes": 5761016,
+    "sha256": "26889b527c6179c886d0b1fb6a6c5893f43cfb4165a2b99df9860e773bb574de"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/http-manifest.json",
+    "bytes": 245959,
+    "sha256": "04184a66f112389a9d257204778d3decfe9a3b1284e7d397b8e624a82bde0c78"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/seal.json",
+    "bytes": 2131,
+    "sha256": "77b99347dcf36a228e845dbcea61ed2a34aa6e2dbb58c3e665784f47962315d3"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/report.md",
+    "bytes": 24850,
+    "sha256": "26a34556d1f878da998fcc6d9aefe580b11ba25b5bc6a31338f922d524b09ece"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/manifest.json",
+    "bytes": 124315,
+    "sha256": "798336e0f7ab521067e6b6342f3fb65493c3c290bb69db69f5ea5861657b03af"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/cleanup.json",
+    "bytes": 14590,
+    "sha256": "015c002eb405c5831f31fcd8d5002650e844c189ce444b93f39df3d259f65c76"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/proof.json",
+    "bytes": 62328,
+    "sha256": "9a2c70af6b99867332f101849cb03a8e9ae601eec04c4cfc887502d533c39aee"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/seal.json",
+    "bytes": 1927,
+    "sha256": "200e180ef9543e53801fbee3199be6a60011d48e09e8ccf9c2c1695069bfe2a4"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/report.md",
+    "bytes": 27725,
+    "sha256": "c98d86de0376fa6d39bbad927acc9e9f408cda350dd4d5d0ff157909a4f9eacb"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/manifest.json",
+    "bytes": 32075,
+    "sha256": "b35a06f4de98bda0b0ae67427f59080e6051453b0f199ad51463737da14a3597"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/cleanup.json",
+    "bytes": 33942,
+    "sha256": "bb16b32cdbc5abc0e19c4f4be8077711cc0ed49bfa8cc796059d0f1f4fe0eaee"
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/proof.json",
+    "bytes": 540323,
+    "sha256": "a8281fd4bd6f3fc7be22629a162e291226faf88ce4e749c2b1a1b2a90f9888c8"
+  }
+]
+

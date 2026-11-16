@@ -1,0 +1,31 @@
+{
+  "monitor": "mon_K37ZF2YPMMT5V6E2",
+  "session": "bash_1",
+  "completion": "PREPARED_FIXTURE_COMPLETE exit=0; watcher completed (exit code 0)",
+  "pendingProcesses": 0,
+  "fixtureCleanup": [
+    {
+      "closed": true,
+      "fixtureRoot": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-FbzqBr",
+      "kind": "cleanup",
+      "rootStillExists": false
+    }
+  ],
+  "tempBefore": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "tempAfter": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "newTempDirectories": [],
+  "unknownPriorDirectoriesPreserved": true,
+  "removedResources": "Existing fixture finally/afterEach cleanup only; no manual blanket deletion or unknown-resource kill.",
+  "anvil": false,
+  "forge": false,
+  "publicRpc": false,
+  "installs": false,
+  "commits": false,
+  "delegation": false
+}

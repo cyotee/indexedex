@@ -1,0 +1,55 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "startedAt": "2026-11-15T08:14:26.526Z",
+  "environmentCorrection": "Initial inherited PATH selected Homebrew Forge 1.9.0 and lacked solar. Preserved both failed attempts; reruns prepend $HOME/.foundry/bin.",
+  "dependencies": {
+    "typescript": "5.9.2",
+    "ethers": "6.17.0",
+    "zod": "3.25.74",
+    "@types/node": "26.6.5"
+  },
+  "evidenceHelpers": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/run.ts",
+      "sha256": "0f66c35ac7135e593e6e5d8852e420f63aa2ac49f95af8f07691cf585f1d4847"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/signed-envelopes/source-manifest.json",
+      "sha256": "05072cd02ad8222fee797a9836de1f3ba6b4cd572a5104fd61c95f74e52e1835"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-signed-final/commands.json",
+      "sha256": "630cb08e5c31b5e1f36c339b50dfedd46308963d58c088cc55395dc28954857a"
+    }
+  ],
+  "commands": {
+    "hermetic": [
+      "forge --version",
+      "solar --version",
+      "uname -sm",
+      "forge build --use solar",
+      "forge test --use solar -vv --no-match-path '**/fork/**' --no-match-contract Fork"
+    ],
+    "fork": [
+      "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv"
+    ],
+    "operator": [
+      "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts",
+      "bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts",
+      "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+    ]
+  },
+  "helperTypecheck": {
+    "exitCode": 0,
+    "log": "helper-typecheck.log",
+    "exitLog": "helper-typecheck.exit.log"
+  }
+}

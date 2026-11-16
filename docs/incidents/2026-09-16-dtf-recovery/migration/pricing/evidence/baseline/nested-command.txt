@@ -1,0 +1,8 @@
+START_UTC=2026-11-10T13:53:31Z
+CWD=/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02
+RECORDER_PID=24033
+BINARY=/Users/cyotee/.foundry/bin/forge
+TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw
+NODE_COMPILE_CACHE=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw/node-compile-cache
+BUN_RUNTIME_TRANSPILER_CACHE_PATH=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw/bun-transpiler-cache
+COMMAND=forge test --use solar --match-path test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se.t.sol -vvvv 

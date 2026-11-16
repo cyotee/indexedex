@@ -1,0 +1,19 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+  "executable": "bun",
+  "args": [
+    "/Users/cyotee/.omo/binary-runtime/5.1.58/plugin/skills/programming/scripts/typescript/check-no-excuse-rules.ts",
+    "scripts/recovery/dtf-migration/candidate-input.ts",
+    "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+    "scripts/recovery/dtf-migration/candidate-inventory.ts",
+    "scripts/recovery/dtf-migration/candidate-nfts.ts",
+    "scripts/recovery/dtf-migration/candidate-proofs.ts",
+    "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+    "scripts/recovery/dtf-migration/candidates.ts",
+    "scripts/recovery/dtf-migration/candidates.test.ts"
+  ],
+  "exitCode": 2,
+  "signal": null,
+  "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/source-audit.stdout",
+  "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/source-audit.stderr"
+}

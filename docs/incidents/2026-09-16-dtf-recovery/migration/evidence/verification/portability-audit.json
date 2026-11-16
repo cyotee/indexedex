@@ -1,0 +1,341 @@
+{
+  "scope": "durable evidence reference audit, not source edits",
+  "scannedProducerEvidenceFiles": 83,
+  "relativeMarkdownLinks": 334,
+  "missingRelativeMarkdownLinks": [],
+  "manifestEvidenceEntries": 84,
+  "entriesWithRelativeCounterparts": 84,
+  "referenceCounts": [
+    {
+      "path": "weighted/loopback-rate-run.results.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "weighted/probe.results.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "weighted/rate-limited-run.results.json",
+      "absoluteWorktreeReferences": 3,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "weighted/report.md",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "weighted/initial-run.results.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "weighted/direct-first-run.results.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "weighted/cleanup-audit.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 6
+    },
+    {
+      "path": "other-sources/probe-alchemy.sources.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "other-sources/report.md",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "other-sources/probe-native.json",
+      "absoluteWorktreeReferences": 6,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/probe-public-r3.sources.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "other-sources/probe-public-r4.sources.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "other-sources/probe-public-r4.summary.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/probe-public.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/probe-public-r3.summary.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/probe-public-r2.json",
+      "absoluteWorktreeReferences": 5,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/alchemy-retry-receipt.json",
+      "absoluteWorktreeReferences": 7,
+      "temporaryReferences": 9
+    },
+    {
+      "path": "other-sources/probe-public-r3.json",
+      "absoluteWorktreeReferences": 5,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/probe.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 3
+    },
+    {
+      "path": "other-sources/probe-public-r2.sources.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "other-sources/cleanup-alchemy.json",
+      "absoluteWorktreeReferences": 0,
+      "temporaryReferences": 3
+    },
+    {
+      "path": "other-sources/probe-alchemy.json",
+      "absoluteWorktreeReferences": 5,
+      "temporaryReferences": 3
+    },
+    {
+      "path": "other-sources/probe-alchemy-r2.json",
+      "absoluteWorktreeReferences": 5,
+      "temporaryReferences": 3
+    },
+    {
+      "path": "other-sources/probe-public-r4.json",
+      "absoluteWorktreeReferences": 5,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/cleanup-receipt.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/probe-native.summary.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "other-sources/probe-alchemy-r2.sources.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "other-sources/probe-native.sources.json",
+      "absoluteWorktreeReferences": 4,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "provenance/report.md",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "attribution/witness.results.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "attribution/cleanup.stdout.log",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "attribution/witness.stdout.log",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "attribution/witness-r2.stdout.log",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "attribution/witness-r2.results.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "attribution/producer-audit.json",
+      "absoluteWorktreeReferences": 82,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "attribution/witness-r3.results.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "attribution/cleanup.json",
+      "absoluteWorktreeReferences": 54,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "attribution/invocations.md",
+      "absoluteWorktreeReferences": 9,
+      "temporaryReferences": 5
+    },
+    {
+      "path": "attribution/witness-r3.producer-audit.json",
+      "absoluteWorktreeReferences": 82,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "attribution/witness-r2.producer-audit.json",
+      "absoluteWorktreeReferences": 82,
+      "temporaryReferences": 4
+    },
+    {
+      "path": "attribution/witness-r3.stdout.log",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "attribution/verify-cleanup.mjs",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "attribution/witness.mjs",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "earlier-cp/probe-alchemy429.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "earlier-cp/probe-public429.summary.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "earlier-cp/probe.summary.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "earlier-cp/report.md",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 0
+    },
+    {
+      "path": "earlier-cp/probe-public429.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "earlier-cp/probe-fresh3.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "earlier-cp/probe-alchemy429.summary.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "earlier-cp/probe-attempt01.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "earlier-cp/probe-fresh2.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "earlier-cp/probe-fresh3.summary.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "earlier-cp/cleanup.log",
+      "absoluteWorktreeReferences": 0,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "earlier-cp/probe-fresh1.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "earlier-cp/probe-alchemy-retry.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 2
+    },
+    {
+      "path": "earlier-cp/probe.json",
+      "absoluteWorktreeReferences": 2,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "earlier-cp/cleanup-alchemy-retry.log",
+      "absoluteWorktreeReferences": 0,
+      "temporaryReferences": 1
+    },
+    {
+      "path": "earlier-cp/probe-alchemy-retry.summary.json",
+      "absoluteWorktreeReferences": 1,
+      "temporaryReferences": 1
+    }
+  ],
+  "functionalDependencies": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs",
+      "lines": [
+        8,
+        11,
+        15,
+        16
+      ],
+      "issue": "Hardcoded absolute worktree root and producer output plus lane-specific TMPDIR guard; unchanged replay fails after worktree relocation."
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/verify-cleanup.mjs",
+      "lines": [
+        6,
+        8,
+        9,
+        10
+      ],
+      "issue": "Hardcoded absolute worktree and original temporary run root; reads audit.inputs absolute paths. This is historical cleanup tooling, not a portable re-execution verifier."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/phase01/earlier-cp/probe.mjs",
+      "lines": [
+        14,
+        45
+      ],
+      "issue": "Worktree root derived portably from script location, but mkdtemp parent is fixed ephemeral host path. Create a fresh approved runtime parent when replaying elsewhere."
+    }
+  ],
+  "limits": [
+    "Absolute invocation/resource fields in archived receipts are historical provenance, not by themselves broken evidence links.",
+    "source-manifest evidence_index has migration_relative and worktree_relative alternatives for all entries.",
+    "All 334 inspected local Markdown links resolve now; no evidence payload depends on a deleted runtime cache.",
+    "Verification-only scripts authored in this unit also deliberately use the requested absolute worktree; they are audit reproduction artifacts, not portable production runners."
+  ]
+}

@@ -1,0 +1,28 @@
+
+admission.test.ts:
+(pass) direct signature from actually delegated EOA consumes complete original [12.94ms]
+(pass) relayed split consumes exactly the eligible weights including committed zero [26.56ms]
+(pass) rejects actual source case wrong-caller [4.85ms]
+(pass) rejects actual source case wrong-source [5.57ms]
+(pass) rejects actual source case outer-success-inner-failed [5.49ms]
+(pass) rejects actual source case source-success-outer-revert [4.31ms]
+(pass) rejects actual source case multiple-source-calls [5.75ms]
+(pass) rejects certificate with wrong original wallet [0.32ms]
+(pass) rejects certificate with wrong consumed weight [4.25ms]
+(pass) rejects certificate with changed transaction body [0.28ms]
+(pass) rejects certificate with changed receipt status [0.11ms]
+(pass) rejects certificate with jointly tampered before and after state [2.05ms]
+(pass) rejects certificate with changed trace caller [0.16ms]
+(pass) rejects certificate with unmatched asset action [0.15ms]
+(pass) rejects certificate with changed designation [5.68ms]
+(pass) rejects certificate with unreviewed delegate runtime [0.05ms]
+(pass) semantic matcher rejects unmatched asset call even before wire authentication [1.30ms]
+(pass) omitted zero-output member cannot satisfy complete coverage [2.84ms]
+(pass) duplicate member cannot fabricate another original [5.29ms]
+(pass) unrelated SY cannot increase measured original quantity [3.27ms]
+(pass) excluded raw weight cannot be certified as consumed [3.89ms]
+(pass) excluded floors remain separate from eligible budget [3.20ms]
+
+ 22 pass
+ 0 fail
+Ran 22 tests across 1 file. [207.00ms]

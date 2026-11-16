@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-11-10T23:24:07.952Z",
+  "command": "/Users/cyotee/.foundry/bin/anvil --host 127.0.0.1 --port 18548 --chain-id 31337 --gas-limit 100000000 --balance 1000000 --timestamp $(date +%s)",
+  "node": {
+    "clientVersion": "anvil/v1.9.1",
+    "clientSemver": "1.9.1-nightly+430523103f.1793686322.dist",
+    "clientCommitSha": "430523103f3e2f9ba432ffdd2031a9f966153d0d",
+    "chainId": 31337,
+    "instanceId": "0x86c73d741983bdf3fbff119692d28fb7951dd9b3b335e8105e9dd94a00fd477a",
+    "latestBlockNumber": 0,
+    "latestBlockHash": "0xe5df9c0b6b34880e3fdda17d42fccf3201819d47d5f3304cda1ab613703356dd",
+    "forkedNetwork": null,
+    "snapshots": {}
+  }
+}

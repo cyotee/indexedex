@@ -1,0 +1,349 @@
+{
+  "task": 8,
+  "misleading_success_output": {
+    "honestAccepted": true,
+    "nonzeroExitWithSuccessBannerRejected": true,
+    "zeroIssuanceRejected": true,
+    "zeroActivationRejected": true,
+    "zeroSelectedCasesRejected": true,
+    "missingTerminalExitRejected": true
+  },
+  "stale_state": {
+    "oldSourceBindingsRejected": true,
+    "changedSinceInitialBinding": [
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol"
+    ],
+    "onchain": "Stateful staleBook actions execute exact expected/actual BookMismatch; isolated-proxy hash and per-record books prevent current-book substitution."
+  },
+  "dirty_worktree": {
+    "protectedFilesCompared": 144,
+    "mismatches": [],
+    "baseline": "source-bindings.json captured after initial implementation; the read-only status before changes is session bash_1. worktree-final.log preserves full dirty/untracked state. Existing changes were retained, not reset.",
+    "unchangedTask6MigrationBindings": [
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+        "match": true
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+        "match": true
+      }
+    ]
+  },
+  "generated_or_cached_artifacts": {
+    "helperChecks": [
+      {
+        "log": "happy-5.log",
+        "firstLineIsExactExpandedCommand": true,
+        "solarBuildBeforeSolarTest": true
+      },
+      {
+        "log": "hostile-rollback.log",
+        "firstLineIsExactExpandedCommand": true,
+        "solarBuildBeforeSolarTest": true
+      },
+      {
+        "log": "fork-4.log",
+        "firstLineIsExactExpandedCommand": true,
+        "solarBuildBeforeSolarTest": true
+      }
+    ],
+    "actorArtifact": {
+      "path": "out/MigrationHostileContribution.t.sol/MigrationHostileContribution.json",
+      "sha256": "b504750fd5e6a6091f2be554a16c9ca1551960d1e4ff8f2f386fbaf74881de10",
+      "mtime": "2026-11-15T06:12:10.228Z"
+    },
+    "observation": "New callbackReason API and exact nested errors execute on the real externally deployed actor, so stale actor bytecode cannot satisfy these tests. Warm out/cache were retained. No stale artifact accepted as source evidence.",
+    "dependencyNoise": "Forge emits failed automatic submodule initialization attempts because lib/crane already exists; no dependency was installed and its existing symlink was retained. No explicit install command was run."
+  },
+  "hung_commands": {
+    "method": "Each Forge invocation began in a persistent monitor subscribed to its exit and decisive lines. All runs exited; none was killed for silence.",
+    "finalMonitors": [
+      "mon_856NYWNAMR1076RZ",
+      "mon_S7KTH5C55W42411H",
+      "mon_B9A4M992DVCZQXZK"
+    ],
+    "finalExitCodes": [
+      0,
+      0,
+      0
+    ],
+    "cancellations": 0
+  },
+  "notApplicable": {
+    "flaky": "No flakiness introduced; reruns followed diagnosed source/fixture changes, not stochastic retries.",
+    "cancel": "No run cancelled or interrupted.",
+    "interruptions": "No interrupted execution introduced.",
+    "untrusted_text": "No external instructions or prompt text consumed as authority; synthetic misleading stdout probes are recorded separately."
+  },
+  "diagnostics": {
+    "solidityLspErrors": 0,
+    "files": [
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol",
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol"
+    ],
+    "whitespaceDiffExit": 0,
+    "compilerWarnings": "Unsuppressed Forge lint warnings remain in the raw logs: bounded external-call loops and test ghost-state updates, unused ERC20 boolean returns, and bounded casts. No compiler error or test failure remains.",
+    "jsonLsp": "Biome unavailable; no installation was performed. Evidence JSON was serialized by JSON.stringify."
+  },
+  "failedAttempts": [
+    {
+      "log": "happy-1.log",
+      "reason": "Snapshot called pricing getter while unset; helper now observes the exact success/error bytes via staticcall."
+    },
+    {
+      "log": "happy-2.log",
+      "reason": "New exact-balance oracle excluded valid V3 native rounding residue; corrected to protect the old floor and bound this-call residual by exact payment, with zero caller refund and exact booked inventory."
+    },
+    {
+      "log": "fork-1.log",
+      "reason": "Non-login process lacked existing ALCHEMY_KEY; subsequent local read-only fork uses existing authenticated login environment without recording the value."
+    },
+    {
+      "log": "fork-2.log",
+      "reason": "New residue test reused the already activated deterministic proxy; new owner is part of the production salt and creates a distinct registry proxy."
+    }
+  ],
+  "limits": [
+    "No SUT, pricing implementation, operator core/schema, task 9 documentation, claimed-SY pin, public transaction, commit or package installation was changed.",
+    "Production mutation testing was not performed because SUT edits were explicitly forbidden."
+  ]
+}

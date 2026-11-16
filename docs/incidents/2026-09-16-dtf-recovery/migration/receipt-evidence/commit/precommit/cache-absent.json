@@ -1,0 +1,5 @@
+{
+  "cache": false,
+  "cache_forge": true,
+  "reason": "worktree cache/ does not exist; Foundry cache_path is cache_forge"
+}

@@ -1,0 +1,150 @@
+{
+  "task": 8,
+  "createdAt": "2026-11-15T06:20:44.047Z",
+  "sourceFingerprint": "fff34a8dc3f181b39cd28d4f1a5fd38afab657bbad40ce1bd4b9e71ee273042e",
+  "sourceFiles": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol",
+      "sha256": "eeda26cf81f610e6f78a0b9930ac91cca520b91d8eaca7334487c664937445cc"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "sha256": "b3aa57ad63e737467395f99f2ff9b3b9e1faf8c9fe05c4174a7aec4a44ebe0b2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "sha256": "994d79aaf449a15066dc86cfc13e9153856be2ad53a256b5b1345fe53003e578"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "sha256": "9e0928461d4ce6e2c06e7d0982ac2720ee54147454e6e4c36888a38b3c33eb7c"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol",
+      "sha256": "97331292af6ab2a747f9483380856310563b4e5d9d23147a98606cc71f22f375"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "sha256": "787e3b0dd904e89a2b7b036ba5e92cad54abe6f84f8222b2b3ec61a83ae4d0ab"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "sha256": "d7709beabbb24fa3884eee84c4c7229e27ce0725229169b7fe9b4a423ecd4e98"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "sha256": "807573ffcd3b6d50bb8fd283d82db43b284879789721f37f370391c5de70510e"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "sha256": "7c504d5bfca9d3c258832d740aa5343e45b1fc380b8f02697ecb314da2e8a015"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "sha256": "0dc03589b65477f0d89b022acf516bde4d335eb2d822c7ac7ae1aae0ab1b9aa9"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/action-counts.json",
+      "sha256": "dd380fe11e3485ed3950914082008fb2b919dbbd394372cf0d6bbdf39d03c591",
+      "bytes": 37621
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/adversarial-probes.json",
+      "sha256": "6bd671a0dc1f295d1ba78f63b2b1a229e53be4713f93414152d35fa7ccfbe8ca",
+      "bytes": 15434
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/coverage.md",
+      "sha256": "924602b31165369a1c11aa63030b0b82f872e712b916fd4267a3714b6babd756",
+      "bytes": 16277
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/effective-invariant-config.json",
+      "sha256": "bef4e210a4d52a0073f71cb0f779fb21c6e970c7da6190bbfb5947f8fba8ebd6",
+      "bytes": 194
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/final-source-hashes.json",
+      "sha256": "1007fbbb96860413f78780fbf2399c3c8eacc68b97d1c129a6dae2c476362964",
+      "bytes": 3253
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/fork-1.log",
+      "sha256": "c6ec8e61ad4e958a38e138460429c92c9964d44bb6200860b26e8583d1300d3d",
+      "bytes": 269335
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/fork-2.log",
+      "sha256": "40f3f532f7288137ae3e346a8506304101b6be09993e47f6a5b74d4a90a353bb",
+      "bytes": 4407588
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/fork-3.log",
+      "sha256": "f8d91e3bb9ee9633b6a18211b1736351bfb6f379341862f9f4c65791e8022788",
+      "bytes": 3092005
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/fork-4.log",
+      "sha256": "b589a8006d944c52a3c048f564535200f67d944b18206a0fdf85ec22094cbb01",
+      "bytes": 4410412
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/happy-1.log",
+      "sha256": "73d8102ecd15d69ad85c221a8efeb6361046509bf75c5e3e2ca870784708f47c",
+      "bytes": 6002685
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/happy-2.log",
+      "sha256": "e410d8f33d0ca4353d47a6884a10824c1af0baccc183746faa25d23c8e730819",
+      "bytes": 6002784
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/happy-3.log",
+      "sha256": "76a0525460de3ac99ada35c4af9cddcad62b74700b0bd782bd7dd31d8282cf5f",
+      "bytes": 6002135
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/happy-4.log",
+      "sha256": "b2dd69593ab2f12517ce748e9317f2b8c72c79e4bea8df3da86e57ff8307ea0a",
+      "bytes": 6005049
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/happy-5.log",
+      "sha256": "5227d35f956f201eadc36a41116acbb08fa46524e0d2316ba8aef76bedb79911",
+      "bytes": 6005106
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/hostile-rollback.log",
+      "sha256": "de7fb54b41e548efb4ac31e321678cf9a45d90cf2ce1ced7020951f8f4f56864",
+      "bytes": 271038
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/inherited.log",
+      "sha256": "89b8ce3456ccca38f3852fe344687c1ae223e363c61030c34dda631b95adc4e1",
+      "bytes": 242077
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/preflight.json",
+      "sha256": "7b149d23af8ab7bb60850598aed2e7fd38dc2a1cd81e7b1c47c14fb55f228138",
+      "bytes": 1282
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/source-bindings.json",
+      "sha256": "dfa05821d6fae6dadb7d39a325f0372a0a7af4cca4c230e01fb64dfd1eb2b74d",
+      "bytes": 30958
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/worktree-final.log",
+      "sha256": "cd7f8104ea22ab99e362f56a62f6ac2258df187eeb2a978afdc797d23c55e750",
+      "bytes": 10027802
+    }
+  ],
+  "generatedAuditRecordsWithoutRecursiveSelfHash": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/delivery-manifest.json",
+    ".omo/ulw-execute/dtf-conformance/task-8-done.json"
+  ],
+  "sourceScope": "Only the ten listed TestBase/handler/test files were edited. Existing task 1-7 changes in those files remain; the complete git diff includes those inherited edits and is not attributed entirely to task 8.",
+  "excludedTaskOwnedArtifacts": []
+}

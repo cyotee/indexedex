@@ -1,0 +1,56 @@
+Precommit inventory recipe v1
+Captured before staging or committing the phase30 conversion/recovery receipt source delivery.
+The walks completed before any file existed under migration/recovery-receipts/commit/.
+Inventory files were written only under /tmp/phase30-recovery-receipts-precommit during the walk.
+They are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, artifact restoration, relocation, test, collector, oracle, Forge, or runtime rerun is part of this recipe.
+Every Git invocation uses GIT_MASTER=1 and --no-pager. GIT_PAGER=cat and PAGER=cat are set.
+Read-only Git invocations also set GIT_OPTIONAL_LOCKS=0 so they do not refresh the index.
+Status and diff use --ignore-submodules=all.
+Index identity is the SHA-256 of the raw index file bytes. It is not git ls-files output and not a decoded string.
+No path under /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas was opened. The phase09 foreign index was hashed only at .git/worktrees/dtf-migration-phase-09-deployment-gas/index.
+No held09 worktree path was opened. Symlink targets were not opened. node_modules target lstat did not read directory entries.
+
+Content inventory
+Files: evidence.jsonl, input.jsonl.
+Walk: lstat, followlinks false. Symlinked directories are recorded and not descended. Ordinary directories are not content entries.
+evidence root: docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts, paths relative to the worktree.
+input root: /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery, paths relative to its parent and rooted at phase27-frozen-input-recovery.
+Fields, fixed key order: path, kind, gitMode, perm, st_mode, size, sha256, target.
+path sorted by UTF-8 byte order.
+kind: file, symlink, or other.
+gitMode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other. This collapses exact regular-file modes and is not the permission proof.
+perm: oct(st_mode & 0o777), written as 0o644 style text.
+st_mode: full lstat mode integer.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null otherwise. Symlink targets are not opened.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, compact JSON, one record per line, each line ending in \n, no extra trailing blank line.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the rows.
+
+Permission inventory
+Files: evidence-perms.jsonl, input-perms.jsonl.
+Same roots. Ordinary directories are included, including the walk root. Directory paths have no trailing slash.
+Fields, fixed key order: path, kind, perm, st_mode, size, sha256, target.
+Directory sha256 is null. File and symlink sha256 use the same rules as the content inventory.
+
+Directory bookkeeping
+Files: evidence-dirs.jsonl, input-dirs.jsonl.
+Fields, fixed key order: path, kind, perm, st_mode, size, nlink, childCount, childrenSha256, sha256, target.
+childrenSha256 is SHA-256 of the directory's child names sorted by UTF-8, each followed by \n. It is not a content hash. Directory sha256 is null.
+nlink is st_nlink. childCount is len(readdir). size is st_size.
+
+Other baselines
+indexes.json: raw SHA-256, size, mode, and permission of .git/index and every .git/worktrees/*/index. foreign is true except worktrees/dtf-migration-phase-30-recovery-receipts/index.
+refs.jsonl: raw bytes, length, mode, permission, and text when the file is at most 200 bytes, for every file under .git/refs except logs, plus .git/HEAD, .git/packed-refs when present, every worktree HEAD, and any worktree-local refs. Reflogs are not in this set.
+show-ref.txt: exact UTF-8 bytes of GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git --no-pager show-ref, captured before staging.
+links.json: node_modules symlink and one-level target lstat, lib/crane directory lstat without submodule checkout, absent out/cache/cache_forge, used artifact identity, and two review-pointer files. Targets' directory entries were not listed except the empty lib/crane directory.
+used artifact: phase28 out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json only. No out or cache tree was invented or copied.
+scope-files.json: five verifier scope bindings.
+frozen-source-modes.json: filesystem modes of all 70 tested operator/runbook identities. Tested manifests omit modes.
+source-bindings.json: the eight accepted paths, parent blobs, and filesystem modes.
+seal-check.json: implementation and verification seal members recomputed before staging.
+support-scripts.json: six producer/verifier support scripts recomputed before staging.
+source-diff-relation.json: sealed source.diff versus a fresh git diff. The sealed file matches its manifest and includes a status header captured while a temporary out link existed. That link is absent now.
+absence: worktree out/, cache/, and cache_forge/ do not exist. Absence is recorded; no tree was invented.
+This delivery does not claim a universal docs/incidents, out, or cache_forge walk.

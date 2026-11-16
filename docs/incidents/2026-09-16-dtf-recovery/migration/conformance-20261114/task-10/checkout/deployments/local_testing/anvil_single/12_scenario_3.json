@@ -1,0 +1,20 @@
+{
+  "balancerWethDetfPool": "0x40A78e9d53c425956822f717bb4b052dD11EeDe2",
+  "chainId": 11155111,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "detfNFTVaultPkg": "0x3c327fe329AB4f456F862cb5F84E6B5c12bB840a",
+  "liquiditySeeder": "0xF4630412045a680704F9BB3D91a13716a6dA7508",
+  "networkProfile": "local_testing",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "pairToken": "0x4C3EB655F511D0cB5F2Ab2C7EDe6137e17D7C5Fc",
+  "poolManager": "0x96bF4361bB9e3d1E12A2388730380aeAE4aa98b0",
+  "protocolDetf": "0xD6359e57572AF5685AbE48C6Fd928826c887096f",
+  "protocolDetfPkg": "0x7DD07F38a3AEF2596D9426A4d82034C980F21aDc",
+  "protocolNftVault": "0xa2D87A3F10AF46F11BC0646e4c910A47BbD65FEc",
+  "rebasingClaimToken": "0xB415dCdCC03014Ab6CC31d7DC40b3D719EE975e3",
+  "rebasingClaimTokenPkg": "0x4812C37A2641828130539ac23b55FC4a892471B9",
+  "reservePool": "0x2a7D1eec22e71Eec9d97cDAA43e47eA39C984A69",
+  "underlyingVault": "0x7c2108ce18Fa365D808708534023525dBC15383E",
+  "underlyingVaultPkg": "0x6be3AD5fBDCbF8760a99ad5b5BeA26E3600556E3",
+  "weightedPool8020Factory": "0xb5038e5242dA4B4b876f0F4481e6923e5DC27Beb"
+}

@@ -1,0 +1,40 @@
+{
+  "version": "independent-r2-cleanup-v1",
+  "monitorsStarted": 8,
+  "monitorsCompleted": 8,
+  "recordedSubprocesses": 20,
+  "recordedSubprocessesExited": 20,
+  "pendingOwnedOperations": 0,
+  "ownedSignerProviderChainServices": 0,
+  "subagentsStarted": 0,
+  "expectedRejectedDirectories": [
+    {
+      "path": "rejected-primary",
+      "absent": true
+    },
+    {
+      "path": "rejected-prepare",
+      "absent": true
+    },
+    {
+      "path": "rejected-execute",
+      "absent": true
+    }
+  ],
+  "retainedEvidence": [
+    "complete relocated-root with historical recovered bodies and pre-exploit sibling",
+    "full-a/candidates.json",
+    "full-b/candidates.json",
+    "full-relocated/candidates.json",
+    "independent-executed01.py.txt and failed independent command streams",
+    "all independent proof records, command metadata and full streams"
+  ],
+  "removedTemporaryRuntimeDirectories": [],
+  "remainingTemporaryRuntimeDirectories": [],
+  "testFixtures": "Existing finally/afterEach fixture cleanup completed in the single passing complete invocation.",
+  "sharedServices": "Untouched",
+  "originalFailedHistories": "Unchanged; exact identities authenticated in preservation.json",
+  "producerHandoff": "Unchanged; all 208 manifest entries reauthenticated",
+  "sourceFiles": "Unchanged since intake; all 62 identities reauthenticated",
+  "seal": "To be written last after this cleanup and final evidence manifest."
+}

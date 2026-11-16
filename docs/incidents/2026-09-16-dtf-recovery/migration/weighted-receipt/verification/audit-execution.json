@@ -1,0 +1,22 @@
+{
+  "bindings": {
+    "exitCode": 0,
+    "output": "BINDINGS_CONFIRMED sources=36 immutable=137 artifacts=25 compiled=675"
+  },
+  "receipts": {
+    "initialExitCode": 1,
+    "finalExitCode": 0,
+    "output": "RECEIPTS_CONFIRMED journals=49 resumes=3 signedWS=13"
+  },
+  "economics": {
+    "initialExitCode": 1,
+    "finalExitCode": 0,
+    "output": "ECONOMICS_CONFIRMED actual acquisition, guarded reward arithmetic, signed custody, credit, fresh cliffs, residual and failures"
+  },
+  "finalProbeTypes": {
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "preservedModes": []
+}

@@ -1,0 +1,529 @@
+{
+  "scope": "Read-only balances of additional retained original purchasers; not an original allocation or holder census. No transfer, fork, log-range scan, provider change or role action.",
+  "block": 108944663,
+  "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+  "sources": [
+    {
+      "row": "E-S",
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7"
+    },
+    {
+      "row": "E-P",
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888"
+    },
+    {
+      "row": "W-P",
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8"
+    }
+  ],
+  "candidates": [
+    {
+      "address": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "4",
+          "transaction": "0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4",
+          "block": "0x2b924fa"
+        }
+      ]
+    },
+    {
+      "address": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "5",
+          "transaction": "0x80a7af214d8aafe95e2b62b6c67a28b98ef1601f417a5c07b942e44e717f8fa1",
+          "block": "0x2b94082"
+        }
+      ]
+    },
+    {
+      "address": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "6",
+          "transaction": "0x68cf362d094e28799bb02943c0fa5d8b7a4577d40d701e360c791bc715ed7535",
+          "block": "0x2bb60df"
+        }
+      ]
+    },
+    {
+      "address": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "7",
+          "transaction": "0x90ad17355e01e23c01e80ab93b246a61c0e791a7d85066c6341fcbf44b963067",
+          "block": "0x2bba5dd"
+        },
+        {
+          "kind": "earlier-nft",
+          "tokenId": "13",
+          "transaction": "0xa18c5713d0e7f67099072b20ecca3418c89dc9bf61af2f503f9fa04f97f5625b",
+          "block": "0x2c5e33e"
+        },
+        {
+          "kind": "earlier-nft",
+          "tokenId": "14",
+          "transaction": "0x1b17aaa9a895121a4b496bb5c74ba00e4ed445951f2ed1a6cc7ba3b1dc77a829",
+          "block": "0x2c5e60f"
+        },
+        {
+          "kind": "earlier-nft",
+          "tokenId": "15",
+          "transaction": "0xa45445505ce0d5c5f8011d49bef9344f883a245d6a86a0752a610376c6bb5287",
+          "block": "0x2c5fb79"
+        }
+      ]
+    },
+    {
+      "address": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "8",
+          "transaction": "0x176e169d8d7add51dce9f3f5009f6322f93264fc7cfdc17a5d2c969066a4a88f",
+          "block": "0x2bc80b0"
+        }
+      ]
+    },
+    {
+      "address": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "9",
+          "transaction": "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55",
+          "block": "0x2c17094"
+        }
+      ]
+    },
+    {
+      "address": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "10",
+          "transaction": "0x8ec17aa049770ee9c2d525d5e6e1c707ee42f2c039532526de56a132c9f5876f",
+          "block": "0x2c5674e"
+        },
+        {
+          "kind": "earlier-nft",
+          "tokenId": "11",
+          "transaction": "0xb6292353395922bd69b073664afb0188d47cbdbfcc4d13cd185ac37d4cb4ad73",
+          "block": "0x2c5806c"
+        },
+        {
+          "kind": "earlier-nft",
+          "tokenId": "12",
+          "transaction": "0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24",
+          "block": "0x2c5a3ce"
+        }
+      ]
+    },
+    {
+      "address": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "16",
+          "transaction": "0x0a902f1d04b7da358cc37504cb976901597febc12f72d13cf9d2db660190ec8a",
+          "block": "0x2c7c544"
+        },
+        {
+          "kind": "earlier-nft",
+          "tokenId": "17",
+          "transaction": "0xb525bd3a74304840614be0fd894afd6f24b93f022be6b2c8d6be5df04d7314b6",
+          "block": "0x2c7f211"
+        }
+      ]
+    },
+    {
+      "address": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+      "evidence": [
+        {
+          "kind": "earlier-nft",
+          "tokenId": "18",
+          "transaction": "0x46b804fa90b141eb7ec105162f11d9b70238f5cdd44284caffefab1c01574e1d",
+          "block": "0x2d6a39a"
+        }
+      ]
+    },
+    {
+      "address": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "4",
+          "transaction": "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe",
+          "block": "0x3b742bc"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "5",
+          "transaction": "0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293",
+          "block": "0x3b7447d"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "6",
+          "transaction": "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917",
+          "block": "0x3b745e9"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "7",
+          "transaction": "0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296",
+          "block": "0x3b74774"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "8",
+          "transaction": "0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb",
+          "block": "0x3b749a7"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "9",
+          "transaction": "0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a",
+          "block": "0x3b74ebb"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "10",
+          "transaction": "0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651",
+          "block": "0x3b7512f"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "24",
+          "transaction": "0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352",
+          "block": "0x3c1f268"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "30",
+          "transaction": "0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9",
+          "block": "0x3c73cb9"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "31",
+          "transaction": "0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04",
+          "block": "0x3c740db"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "37",
+          "transaction": "0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6",
+          "block": "0x3c99bb4"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "38",
+          "transaction": "0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f",
+          "block": "0x3c9bc44"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "39",
+          "transaction": "0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47",
+          "block": "0x3c9c0ec"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "40",
+          "transaction": "0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9",
+          "block": "0x3c9c88c"
+        }
+      ]
+    },
+    {
+      "address": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "11",
+          "transaction": "0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b",
+          "block": "0x3ba79bd"
+        }
+      ]
+    },
+    {
+      "address": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "12",
+          "transaction": "0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1",
+          "block": "0x3bcf40e"
+        }
+      ]
+    },
+    {
+      "address": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "13",
+          "transaction": "0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb",
+          "block": "0x3bd3de0"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "15",
+          "transaction": "0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27",
+          "block": "0x3bd3f8c"
+        }
+      ]
+    },
+    {
+      "address": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "14",
+          "transaction": "0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd",
+          "block": "0x3bd3ecc"
+        }
+      ]
+    },
+    {
+      "address": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "16",
+          "transaction": "0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1",
+          "block": "0x3be0f33"
+        }
+      ]
+    },
+    {
+      "address": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "17",
+          "transaction": "0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b",
+          "block": "0x3be7e7e"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "27",
+          "transaction": "0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0",
+          "block": "0x3c57e40"
+        }
+      ]
+    },
+    {
+      "address": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "18",
+          "transaction": "0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd",
+          "block": "0x3bf008f"
+        }
+      ]
+    },
+    {
+      "address": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "19",
+          "transaction": "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9",
+          "block": "0x3bf4866"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "20",
+          "transaction": "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71",
+          "block": "0x3bf590f"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "23",
+          "transaction": "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a",
+          "block": "0x3c1b91a"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "42",
+          "transaction": "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba",
+          "block": "0x3cf4043"
+        }
+      ]
+    },
+    {
+      "address": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "21",
+          "transaction": "0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d",
+          "block": "0x3c05e77"
+        }
+      ]
+    },
+    {
+      "address": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "22",
+          "transaction": "0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac",
+          "block": "0x3c0776a"
+        }
+      ]
+    },
+    {
+      "address": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "25",
+          "transaction": "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970",
+          "block": "0x3c2a8bb"
+        }
+      ]
+    },
+    {
+      "address": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "26",
+          "transaction": "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d",
+          "block": "0x3c33fe6"
+        }
+      ]
+    },
+    {
+      "address": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "28",
+          "transaction": "0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737",
+          "block": "0x3c5e83d"
+        }
+      ]
+    },
+    {
+      "address": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "29",
+          "transaction": "0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1",
+          "block": "0x3c67e1b"
+        }
+      ]
+    },
+    {
+      "address": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "32",
+          "transaction": "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914",
+          "block": "0x3c748f0"
+        }
+      ]
+    },
+    {
+      "address": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "33",
+          "transaction": "0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc",
+          "block": "0x3c7c351"
+        }
+      ]
+    },
+    {
+      "address": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "34",
+          "transaction": "0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92",
+          "block": "0x3c80fb7"
+        }
+      ]
+    },
+    {
+      "address": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "35",
+          "transaction": "0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b",
+          "block": "0x3c89ddd"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "36",
+          "transaction": "0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb",
+          "block": "0x3c8b19f"
+        }
+      ]
+    },
+    {
+      "address": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "41",
+          "transaction": "0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4",
+          "block": "0x3cba266"
+        }
+      ]
+    },
+    {
+      "address": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "43",
+          "transaction": "0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27",
+          "block": "0x3d30406"
+        }
+      ]
+    },
+    {
+      "address": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "evidence": [
+        {
+          "kind": "weighted-nft",
+          "tokenId": "44",
+          "transaction": "0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd",
+          "block": "0x3d8dd9b"
+        },
+        {
+          "kind": "weighted-nft",
+          "tokenId": "45",
+          "transaction": "0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731",
+          "block": "0x3d8f040"
+        }
+      ]
+    }
+  ],
+  "existingCandidatesSkipped": [
+    "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+    "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+    "0x01b0b538d0201efacdde7bb0397abb2133723009",
+    "0x11c17f25e958e4637dd26ca362adeae12e24ed5b",
+    "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed"
+  ],
+  "inputPaths": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json"
+  ]
+}

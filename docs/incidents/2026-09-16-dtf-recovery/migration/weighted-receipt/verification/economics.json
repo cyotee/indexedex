@@ -1,0 +1,351 @@
+{
+  "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01/rehearsal-1794461873227",
+  "configuration": "0x08b371fca6dbf875314246f9a4437e7814e626b694ed60e58c87bf3af7bfaade",
+  "sources": [
+    {
+      "id": "migration-abi",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "bytes": 259031,
+      "sha256": "f57206ae9b320d74601ecddabb67565a533e5b455378c29555c8b0df9bc9bea2"
+    },
+    {
+      "id": "allocation-abi",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "bytes": 94847,
+      "sha256": "a0141c6d614b7b75b6028181457f8ee85b95de4b164f5e421fc177eda85c0685"
+    },
+    {
+      "id": "recovery-abi",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "bytes": 54711,
+      "sha256": "a3dc76db8b3b276a939061ddb36aff491915f42095f72660f7b98eba738224e1"
+    },
+    {
+      "id": "package-abi",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "bytes": 98419,
+      "sha256": "30f62764440edc213b3f44f1c56a2ec9eb647345ae868fcf302919d676968c39"
+    },
+    {
+      "id": "environment",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01/rehearsal-1794461873227/environment.json",
+      "bytes": 4139,
+      "sha256": "69fbc14405d324e8bc95c3ef6b64d796b9bc5dfbde447aeb367cf0bafb2bf572"
+    },
+    {
+      "id": "dtf-custody-se-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+      "bytes": 7542,
+      "sha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433"
+    },
+    {
+      "id": "dtf-custody-source-archive",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+      "bytes": 1047506,
+      "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7"
+    },
+    {
+      "id": "claim-vault-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+      "bytes": 9896,
+      "sha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1"
+    },
+    {
+      "id": "claim-vault-acquisition",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01/rehearsal-1794461873227/claim-vault-acquisition.json",
+      "bytes": 31499,
+      "sha256": "fde2e9e00870ff12d2f0ef6aadc030071db38e159f37c21a120bb46bfcd4e20a"
+    },
+    {
+      "id": "dtf-custody-acquisition",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01/rehearsal-1794461873227/dtf-custody-se-acquisition.json",
+      "bytes": 48519,
+      "sha256": "cae6f91d23944f0f3382c35a35db1dedcfcf8d2efdf772a01173128096c8dac2"
+    },
+    {
+      "id": "weighted-sy-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+      "bytes": 7330,
+      "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384"
+    },
+    {
+      "id": "owner-first-bond-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "bytes": 8528,
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92"
+    },
+    {
+      "id": "current-main-plan",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "bytes": 79305,
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+    },
+    {
+      "id": "current-main-prd",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "bytes": 108022,
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+    },
+    {
+      "id": "weighted-receipt-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-implementation-brief.md",
+      "bytes": 5693,
+      "sha256": "6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b"
+    },
+    {
+      "id": "weighted-receipt-contract",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md",
+      "bytes": 18779,
+      "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6"
+    },
+    {
+      "id": "weighted-receipt-admission",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md",
+      "bytes": 15387,
+      "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56"
+    },
+    {
+      "id": "weighted-receipt-acquisition",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01/rehearsal-1794461873227/weighted-receipt-acquisition.json",
+      "bytes": 82747,
+      "sha256": "2044d17432e4d43956f50df303467c09dbd99e02f89e5ee386f17273e9aaaaf8"
+    },
+    {
+      "id": "synthetic-proof",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01/rehearsal-1794461873227/synthetic-replacement-originals.json",
+      "bytes": 8737,
+      "sha256": "a5ac4bc68ff45eaa5e8f68c7681057be661dcef7abfdbdad1311183b55feb2db"
+    }
+  ],
+  "acquisition": {
+    "transactionHash": "0xd7da9452dbff57c5e4f616be712399183cc57edd0515964a3f9db9c5f12ff019",
+    "originalGons": "88423667347055516852883910490677229029",
+    "originalDivisor": "875481854921341751018652579115616129"
+  },
+  "originalCredit": "2774608",
+  "verified": [
+    {
+      "phase": "partial",
+      "transactionHash": "0xd5ffd4246b9279c9e444f1a6f92e0bc9881af0918dd75b9bcb4582846938dd80",
+      "q": "777115857147200976553683127870445154",
+      "credit": "24384",
+      "divisor": "777115857147200976553683127870445154",
+      "after": [
+        "777115857147200976553683127870445154",
+        "24384",
+        "87646551489908315876330227362806783875",
+        "2750224"
+      ],
+      "block": {
+        "hash": "0x8e7347e713cdbb9fe316936e1b612b7515fc31ea907419f5c68c0c3b4de27409",
+        "number": "0x67e5f33",
+        "timestamp": "0x6cd600e0",
+        "baseFeePerGas": "0x7",
+        "blobGasUsed": "0x0",
+        "difficulty": "0x0",
+        "excessBlobGas": "0x0",
+        "extraData": "0x",
+        "gasLimit": "0x5f5e100",
+        "gasUsed": "0x200abf",
+        "l1BlockNumber": "0x19258c7",
+        "logsBloom": "0x00000000000008400000000000000000000000010080000000100400001000100000004000000000010400000000000000002400010000801000080000200040081000280000000000000008008200000080000000008010010400000800000000840000830082001000000000000800000000000002000000000010020000000000000100000000000000000000000000000000000500000000000002000000020000400000020022000800000000000000004040000000000000000004000000000002000000200000000000000000000008000000000010000000000020200010000009000000024010000000020002000800100000000000040000000000",
+        "miner": "0x0000000000000000000000000000000000000000",
+        "mixHash": "0xc93c08c9bc8f4d1c32218bdd738d6d52561cf834f90ee53d5978bac9478fa50b",
+        "nonce": "0x0000000000000000",
+        "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "parentHash": "0xc54ecee34a4e0ae234220dad703e71d7edcdf86115fa653fab75fd6cd332b484",
+        "receiptsRoot": "0x2b0ce45d9e226399e9796cd8f9cc5cc1ed620a74bfc911886c39eec24b0fc338",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "0x356",
+        "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "totalDifficulty": "0x0",
+        "transactions": [
+          "0xd5ffd4246b9279c9e444f1a6f92e0bc9881af0918dd75b9bcb4582846938dd80"
+        ],
+        "transactionsRoot": "0xfa69a2e3ca220a2ac40499d1e5331289f31dcaf77b2ff1e20a0b130dbeea28ec",
+        "uncles": [],
+        "withdrawals": [],
+        "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
+      },
+      "pullIndex": 10,
+      "rewardIndex": 6
+    },
+    {
+      "phase": "residual",
+      "transactionHash": "0x56351ed111421ee389413b37a014f48bc2b1db9adaa726254d7924439280915c",
+      "q": "87009160927567232191952256653978938688",
+      "credit": "2730223",
+      "divisor": "776867508281850287428145148696240524",
+      "after": [
+        "87786276784714433168505939781849383842",
+        "2754607",
+        "637390562341083684377970708827845187",
+        "20001"
+      ],
+      "block": {
+        "hash": "0x0ea1cf9bb5f8a429a7956dad3f2f506766f77e92b85a25338714456158bf1dbb",
+        "number": "0x67e5f3a",
+        "timestamp": "0x6cd75266",
+        "baseFeePerGas": "0x7",
+        "blobGasUsed": "0x0",
+        "difficulty": "0x0",
+        "excessBlobGas": "0x0",
+        "extraData": "0x",
+        "gasLimit": "0x5f5e100",
+        "gasUsed": "0xc886a",
+        "l1BlockNumber": "0x19258ce",
+        "logsBloom": "0x00000000000008400000000000000000000000010080000000100400001000000000004000000000010000000000000000000400000000801000080000200000081000200000000000000008008000000080000000000010010000000000000000000000830080001000000000000800000000000002000000000010000000000000000100000000000000000000000000000000000100000000000002000000020000400000020000000800010000000000004000000000000000000004000000000002000000200000000000000000000000000000000000000000000020202010000009000000004010000000000002000000100000000000000000000000",
+        "miner": "0x0000000000000000000000000000000000000000",
+        "mixHash": "0x6b85ee3f27e96979843385b6493fa3014495466eb2596d2ac997debb0fce03cb",
+        "nonce": "0x0000000000000000",
+        "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "parentHash": "0x230aea6253dd07eacc1b9b7ffa9cd88b3be66e83e4e11f552174770927021701",
+        "receiptsRoot": "0x2b1c618e012fbcb50befa8928f5470cf5310e43d77ac6f6863d64b52f0128d2f",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "0x356",
+        "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "totalDifficulty": "0x0",
+        "transactions": [
+          "0x56351ed111421ee389413b37a014f48bc2b1db9adaa726254d7924439280915c"
+        ],
+        "transactionsRoot": "0x4286526ce42bee9b71967ef1a9de9e7787cff8107b5a7b47521702ec466035fb",
+        "uncles": [],
+        "withdrawals": [],
+        "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
+      },
+      "pullIndex": 1,
+      "rewardIndex": -1
+    }
+  ],
+  "failures": [
+    {
+      "phase": "stage1",
+      "transactionHash": "0xdd703db23c3c15086c01a62941ad1db2f1f4ab46d5de76624fe1c7c31625fe09",
+      "economicState": {
+        "oldState": "6655949558521958032913171356750440943871187819173,875481854921341751018652579115616129,7602612802435,2,1,1541188355964487815034477169549959076557717758680,3596106163917138235080446728949904511968008103587",
+        "roles": [
+          [
+            "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+            "40911492043385016746625137826457892997897143195"
+          ],
+          [
+            "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "0"
+          ]
+        ],
+        "wallet": "88423667347055516852883910490677229029",
+        "custody": "0",
+        "allowance": "1000000",
+        "remaining": "0,0,88423667347055516852883910490677229029,2774608",
+        "booked": "0",
+        "supply": "1000000001383",
+        "backing": "1383",
+        "newState": "1383000000000000000000000000000000000000,1000000000000000000000000000000000000,1383,0,0,276600000000000000000000000000000000000,645400000000000000000000000000000000000"
+      }
+    },
+    {
+      "phase": "stage1",
+      "transactionHash": "0xf24881541616c48cafcb836d136e60269e585a035665f9273be00c35f7fb9648",
+      "economicState": {
+        "oldState": "6655949558521958032913171356750440943871187819173,875481854921341751018652579115616129,7602612802435,2,1,1541188355964487815034477169549959076557717758680,3596106163917138235080446728949904511968008103587",
+        "roles": [
+          [
+            "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+            "40911492043385016746625137826457892997897143195"
+          ],
+          [
+            "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "0"
+          ]
+        ],
+        "wallet": "88423667347055516852883910490677229029",
+        "custody": "0",
+        "allowance": "1000000",
+        "remaining": "0,0,88423667347055516852883910490677229029,2774608",
+        "booked": "0",
+        "supply": "1000000001383",
+        "backing": "1383",
+        "newState": "1383000000000000000000000000000000000000,1000000000000000000000000000000000000,1383,0,0,276600000000000000000000000000000000000,645400000000000000000000000000000000000"
+      }
+    },
+    {
+      "phase": "partial",
+      "transactionHash": "0xcb2ec94bf9073f532f608c6d6439361b937200180cee262f8f051dfa1b4e9da8",
+      "economicState": {
+        "oldState": "7233196307007870024921967782744396610808488909877,777198671510936189509952754715590404,9306753307938,2,1,1541188355964487815034477169549959076557717758680,3596106163917138235080446728949904511968008103587",
+        "roles": [
+          [
+            "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+            "214112824207730428931372584933880113116318177620"
+          ],
+          [
+            "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "404136441718813947821646694156519412318001192270"
+          ]
+        ],
+        "wallet": "88423667347055516852883910490677229029",
+        "custody": "0",
+        "allowance": "1000000",
+        "remaining": "0,0,88423667347055516852883910490677229029,2774608",
+        "booked": "0",
+        "supply": "1067085248031",
+        "backing": "65423453280",
+        "newState": "28232388396271153499571143201516918476802141993,431533142646466653192501884008000814,65423453280,1,1,5646477679254230699914228640303383695360428398,13175114584926538299799866827374561955840999596"
+      }
+    },
+    {
+      "phase": "partial",
+      "transactionHash": "0x7d985996dfeffd3b0930d43f5defd933802844c1764a4959a4aa6c5abb4990e5",
+      "economicState": {
+        "oldState": "7233196307007870024921967782744396610808488909877,777198671510936189509952754715590404,9306753307938,2,1,1541188355964487815034477169549959076557717758680,3596106163917138235080446728949904511968008103587",
+        "roles": [
+          [
+            "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+            "214112824207730428931372584933880113116318177620"
+          ],
+          [
+            "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "404136441718813947821646694156519412318001192270"
+          ]
+        ],
+        "wallet": "87646468675544580663373957735961638625",
+        "custody": "0",
+        "allowance": "1000000",
+        "remaining": "0,0,88423667347055516852883910490677229029,2774608",
+        "booked": "0",
+        "supply": "1067085248031",
+        "backing": "65423453280",
+        "newState": "28232388396271153499571143201516918476802141993,431533142646466653192501884008000814,65423453280,1,1,5646477679254230699914228640303383695360428398,13175114584926538299799866827374561955840999596"
+      }
+    },
+    {
+      "phase": "residual",
+      "transactionHash": "0xda98713b931e80307a931f4bc3d1e5f043bddce8d82bca342767981e712d7470",
+      "economicState": {
+        "oldState": "7235385475704253485864358856713053858475564060119,776867508281850287428145148696240524,9313538535943,1,1,1541188355964487815034477169549959076557717758680,3596106163917138235080446728949904511968008103587",
+        "roles": [
+          [
+            "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+            "214769574816723228469577697359957763325062608134"
+          ],
+          [
+            "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "405668859806981725082979856675652692904202357152"
+          ]
+        ],
+        "wallet": "637390562341083684377970708827845187",
+        "custody": "87009160927567232191952256653978938688",
+        "allowance": "999887",
+        "remaining": "87786276784714433168505939781849383842,2754607,637390562341083684377970708827845187,20001",
+        "booked": "87009160927567232191952256653978938688",
+        "supply": "1067243322294",
+        "backing": "65581527543",
+        "newState": "28260354670432781773112178148929991320868009327,430919433103081741772220005008220511,65581527543,1,1,5652070934086556354622435629785998264173601865,13188165512868631494119016469500662616405071019"
+      }
+    }
+  ],
+  "residualGons": "637390562341083684377970708827845187",
+  "residualCredit": "20001"
+}

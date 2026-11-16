@@ -1,0 +1,236 @@
+{
+  "version": "dtf-phase27-independent-verification-coverage-v1",
+  "verdict": "needs-fix",
+  "reason": "implementation absent and complete binding gate fails",
+  "candidateDocumentsProduced": 0,
+  "historicalRecordCount": "unknown to this verifier; no raw table parsed",
+  "checks": [
+    {
+      "id": "bindings",
+      "status": "failed",
+      "evidence": "binding-audit.json",
+      "expected": 36,
+      "matched": 34,
+      "mismatched": 2
+    },
+    {
+      "id": "producer-seal",
+      "status": "confirmed-blocked-only",
+      "evidence": "producer-audit.json"
+    },
+    {
+      "id": "full-source-diff",
+      "status": "empty-at-parent",
+      "evidence": "commands.md"
+    },
+    {
+      "id": "strict-types",
+      "status": "pass",
+      "exit": 0
+    },
+    {
+      "id": "complete-operator-tests",
+      "status": "pass-existing-baseline-only",
+      "tests": 109,
+      "files": 11,
+      "failures": 0,
+      "invocations": 1,
+      "exit": 0
+    },
+    {
+      "id": "actual-candidate-cli",
+      "status": "not-implemented"
+    },
+    {
+      "id": "all-weighted-records",
+      "status": "blocked-not-derived",
+      "documentedExpectation": {
+        "purchases": 43,
+        "transactions": 43,
+        "mints": 43,
+        "preIncident": 41,
+        "postIncident": 2
+      },
+      "expectationIndependentlyVerified": false
+    },
+    {
+      "id": "all-earlier-cp-records",
+      "status": "blocked-not-derived",
+      "documentedExpectation": 16,
+      "expectationIndependentlyVerified": false
+    },
+    {
+      "id": "inventory-keys-links-duplicates-totals",
+      "status": "blocked-not-derived"
+    },
+    {
+      "id": "every-unresolved-record",
+      "status": "not-produced"
+    },
+    {
+      "id": "repeat-cwd-relocation-equality",
+      "status": "blocked-no-candidate-output"
+    },
+    {
+      "id": "candidate-loader-rejection",
+      "status": "unverified-no-candidate-document"
+    },
+    {
+      "id": "stopped-handoff-loader-rejection",
+      "status": "pass-not-a-candidate-proof",
+      "prepareExit": 1,
+      "validateExit": 1
+    },
+    {
+      "id": "input-and-operator-preservation",
+      "status": "pass",
+      "evidence": "unchanged-inputs.json"
+    }
+  ],
+  "sourceCoverage": [
+    {
+      "id": "W-L",
+      "category": "weighted liquid",
+      "unit": "native9",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "E-L",
+      "category": "earlier liquid",
+      "unit": "native18",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "W-N",
+      "category": "weighted NFT",
+      "unit": "native9 principal; whole NFT identity",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "E-N",
+      "category": "earlier CP NFT",
+      "unit": "LP accounting shares; not physical LP",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "W-R",
+      "category": "weighted receipt",
+      "unit": "native9 receipt and exact gons distinct",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "E-R",
+      "category": "earlier receipt",
+      "unit": "native18 display; exact internal shares distinct",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "W-Y",
+      "category": "weighted SY",
+      "unit": "native9 wrapper shares",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "T",
+      "category": "TokenStaking",
+      "unit": "raw native18 weights; controlled claimed descendants distinct",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "C",
+      "category": "claim vault",
+      "unit": "native19 direct shares; underlying SY distinct",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "E-S",
+      "category": "earlier underlying SE",
+      "unit": "native18",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "W-SW",
+      "category": "weighted WETH SE",
+      "unit": "native18 source shares; not standalone WETH",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "W-SD",
+      "category": "weighted DTF-custody SE",
+      "unit": "native28 source shares",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "E-P",
+      "category": "earlier physical LP",
+      "unit": "native18; not CP NFT accounting shares",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "W-P",
+      "category": "weighted physical LP",
+      "unit": "native18",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "ETH",
+      "category": "native contribution/recovery provenance",
+      "unit": "wei; not standalone compensated surrender",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    },
+    {
+      "id": "WETH",
+      "category": "wrapped contribution/recovery provenance",
+      "unit": "native18; not standalone compensated surrender",
+      "status": "not-derived",
+      "absenceProven": false,
+      "operationalApproval": false
+    }
+  ],
+  "retainedUnresolved": [
+    "original input and original-wallet review",
+    "unique transaction-to-NFT/recipient contribution attribution",
+    "direct-versus-routed CP input distinction and missing original CP receipts",
+    "refunds and actual net native/WETH contribution history",
+    "incomplete WETH/native/recovery coverage",
+    "source-defined original Q0 versus stale snapshot/current holdings",
+    "partial claims and previous delivered credit",
+    "raw TokenStaking rights and claimed SY conservation beyond complete originals",
+    "representation overlap and aliases across independent and surrender observations",
+    "earlier receipt supply discrepancy",
+    "unobserved accepted categories not proved absent",
+    "funded snapshot and reviewed operational values"
+  ],
+  "policyChanges": [],
+  "liveLoaderRecords": []
+}

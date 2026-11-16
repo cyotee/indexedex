@@ -1,0 +1,205 @@
+{
+  "checkedAt": "2026-11-10T15:53:20.040Z",
+  "inputs": [
+    "verification/source-artifact-binding.json",
+    "verification/preservation.json"
+  ],
+  "sourceManifestsAgree": true,
+  "comparisons": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+      "expected": "b7af401436bf14cd4cde351b5b3af70b27a7cb1a166f06fc23c515e2bff5b618",
+      "kind": "source",
+      "current": "b7af401436bf14cd4cde351b5b3af70b27a7cb1a166f06fc23c515e2bff5b618",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "expected": "6c2a26b7c85e9f075ec0b8188efed41d9d40f6fccd9aaf8b91447a5c613a9d00",
+      "kind": "source",
+      "current": "6c2a26b7c85e9f075ec0b8188efed41d9d40f6fccd9aaf8b91447a5c613a9d00",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "expected": "ba05e7db8175d42a9e24b809772bfa03f54db02a1cd9f163e04148b7f84ceafc",
+      "kind": "source",
+      "current": "ba05e7db8175d42a9e24b809772bfa03f54db02a1cd9f163e04148b7f84ceafc",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/utils/StandardExchangeFrozenQuoteLib.sol",
+      "expected": "210d5df7a3c7fc69937c37473770bc34c24146993b1ee3a9527136fa58547137",
+      "kind": "source",
+      "current": "210d5df7a3c7fc69937c37473770bc34c24146993b1ee3a9527136fa58547137",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "expected": "138137b39a8f2df0e0b8d922649a8d49d7caf7eb8945927513aabb77eae0f4f2",
+      "kind": "source",
+      "current": "138137b39a8f2df0e0b8d922649a8d49d7caf7eb8945927513aabb77eae0f4f2",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol",
+      "expected": "1dc6ff685e9159b6114bfc67f3a8f8e100ecdabd48bbbc179d957c1bc7eba7b6",
+      "kind": "source",
+      "current": "1dc6ff685e9159b6114bfc67f3a8f8e100ecdabd48bbbc179d957c1bc7eba7b6",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "expected": "ff8ce788a7d065928512b633aca06ba858aecc5345d17d76d0bd8f909f6a265c",
+      "kind": "source",
+      "current": "ff8ce788a7d065928512b633aca06ba858aecc5345d17d76d0bd8f909f6a265c",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "expected": "a1db24f94e177bedd3f8e8fb438783e0048de393d93513a27ecef99698707267",
+      "kind": "source",
+      "current": "a1db24f94e177bedd3f8e8fb438783e0048de393d93513a27ecef99698707267",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+      "expected": "b6bf0d3c0d119b378d391cd281b9c2af0942011eef84f76337615d42960f7ff3",
+      "kind": "source",
+      "current": "b6bf0d3c0d119b378d391cd281b9c2af0942011eef84f76337615d42960f7ff3",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+      "expected": "0e7504ac790f6934df323567d665c1fe25dd5dc51874309e8c0ca72b817d4483",
+      "kind": "source",
+      "current": "0e7504ac790f6934df323567d665c1fe25dd5dc51874309e8c0ca72b817d4483",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol",
+      "expected": "04aabbc91ebc34af967171e259396ede574c9c518795bb9cf8c34aab72aaaba6",
+      "kind": "source",
+      "current": "04aabbc91ebc34af967171e259396ede574c9c518795bb9cf8c34aab72aaaba6",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol",
+      "expected": "255386a415233a101edb04233cf10ee3f213694baf22b9e19290d826bb1bc1a5",
+      "kind": "source",
+      "current": "255386a415233a101edb04233cf10ee3f213694baf22b9e19290d826bb1bc1a5",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol",
+      "expected": "e518a13530090733f850435f2ca04ef138d9f8716019c48feff11008665bd944",
+      "kind": "source",
+      "current": "e518a13530090733f850435f2ca04ef138d9f8716019c48feff11008665bd944",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "expected": "984241e3393db5d6892ace87bd001ec57c5f53d9c7e179ba03d339c3d722d1b3",
+      "kind": "source",
+      "current": "984241e3393db5d6892ace87bd001ec57c5f53d9c7e179ba03d339c3d722d1b3",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+      "expected": "5b35b910d22182ee81884c702e53a6ef8869e91e2f3c82752b782f5a77198acc",
+      "kind": "source",
+      "current": "5b35b910d22182ee81884c702e53a6ef8869e91e2f3c82752b782f5a77198acc",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol",
+      "expected": "bccccaca4c9941b5865c02be487d5850b87a8ec610f52371389939df80e72a38",
+      "kind": "source",
+      "current": "bccccaca4c9941b5865c02be487d5850b87a8ec610f52371389939df80e72a38",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+      "expected": "003b66c4cdbcc30b8cf81ecdce58c66b824cf3c6f74d691d41560b47ab93d3ac",
+      "kind": "source",
+      "current": "835f94e84920865b29b4236be04020cf3bf54a4dbc0834bb2e7c30b0bc20f037",
+      "matches": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/source-manifest.json",
+      "expected": "8747ab56a87c183c7505d8ee6f0f5cd285b4a400f2873efe55e1c082292af93d",
+      "kind": "evidence",
+      "current": "8747ab56a87c183c7505d8ee6f0f5cd285b4a400f2873efe55e1c082292af93d",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final-command.txt",
+      "expected": "06400d7da3f2bc804330fa9e69e35d3677156850c3b1dffadb769c79798a4b66",
+      "kind": "evidence",
+      "current": "06400d7da3f2bc804330fa9e69e35d3677156850c3b1dffadb769c79798a4b66",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final-exit.txt",
+      "expected": "d20f6eb27e532f362096f85b2f3ec8817d618ad4cd78af7217aa028fb3a68c03",
+      "kind": "evidence",
+      "current": "d20f6eb27e532f362096f85b2f3ec8817d618ad4cd78af7217aa028fb3a68c03",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final.log",
+      "expected": "a11c888997a3670a5e9df25daf0508e5ae00308143af4d8035bfe8662d456b37",
+      "kind": "evidence",
+      "current": "a11c888997a3670a5e9df25daf0508e5ae00308143af4d8035bfe8662d456b37",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/real-proxy-trace.log",
+      "expected": "f0b630348aa7944a893decce3ebf069eab3e2c8be9220f7a607b830b6fd5a660",
+      "kind": "evidence",
+      "current": "f0b630348aa7944a893decce3ebf069eab3e2c8be9220f7a607b830b6fd5a660",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/local-rpc-07.log",
+      "expected": "849fea2f93cdc407fecdc4f544ea84f4bd2a529810adf4d025a560659b047c31",
+      "kind": "evidence",
+      "current": "849fea2f93cdc407fecdc4f544ea84f4bd2a529810adf4d025a560659b047c31",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/rpc-proof.json",
+      "expected": "ea1ab5f184e05d1f40159118264730545b8ae13a60907c358d633ee75b6b3b11",
+      "kind": "evidence",
+      "current": "ea1ab5f184e05d1f40159118264730545b8ae13a60907c358d633ee75b6b3b11",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/rpc-capture-trace.json",
+      "expected": "db0566663e5d02d5ef44308b26d1fb87bb7e258446e8294b1ea1014d8ee283c0",
+      "kind": "evidence",
+      "current": "db0566663e5d02d5ef44308b26d1fb87bb7e258446e8294b1ea1014d8ee283c0",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/rpc-evaluation-trace.json",
+      "expected": "d50ee8bf722c5fe93368d22bfa53a09a28ca3018c23adb6d49bf040e47497295",
+      "kind": "evidence",
+      "current": "d50ee8bf722c5fe93368d22bfa53a09a28ca3018c23adb6d49bf040e47497295",
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/broadcast/MigrationSnapshotLocalQA.s.sol/31337/run-latest.json",
+      "expected": "f94100792055950915d1d320316795396b761638529d70ff8b6ad3272c63a4c9",
+      "kind": "broadcast",
+      "current": "f94100792055950915d1d320316795396b761638529d70ff8b6ad3272c63a4c9",
+      "matches": true
+    }
+  ],
+  "expectedDifference": "Only the authorized corrected QA script differs; its pre-correction hash is retained in edited-before.sha256.",
+  "preservationRecheck": "PRESERVATION_RECHECK_EXIT=0",
+  "resourceSnapshot": "CHECKED_AT=Tue Nov 10 15:52:06 UTC 2026\n\nPHASE_OWNED_TEMP_DIRECTORIES\n/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI\n/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.qs0jth\n/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-dependencies.rws0ar\n\nRELEVANT_LIVE_COMMANDS\n96408 10410 Tue Nov 10 07:45:22 2026     /opt/homebrew/bin/forge lsp --stdio\n 1937 16046 Tue Nov 10 07:52:06 2026     /bin/bash -c cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02 && export PATH=\"/Users/cyotee/.foundry/bin:$PATH\" TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-correction.20261110-1549 NODE_COMPILE_CACHE=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-correction.20261110-1549/node-cache BUN_RUNTIME_TRANSPILER_CACHE_PATH=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-correction.20261110-1549/bun-cache; printf 'CHECKED_AT='; date -u; printf '\\012PHASE_OWNED_TEMP_DIRECTORIES\\012'; find /var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI -maxdepth 2 -type d -print; printf '\\012RELEVANT_LIVE_COMMANDS\\012'; ps -axo pid,ppid,lstart,command | awk '/[f]orge|[a]nvil|[p]ricing-(baseline|implement|verify|correction)|[d]tf-migration-phase-0[12]/ {print}'; printf '\\012LOCAL_QA_LISTENERS\\012'; for port in 18546 18547; do lsof -nP -iTCP:$port -sTCP:LISTEN; printf 'port_%s_probe_exit=%s\\012' \"$port\" \"$?\"; done; printf '\\012BASELINE_FILE_TIMESTAMPS\\012'; find docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline -type f -exec stat -f '%Sm %z %N' -t '%Y-%m-%dT%H:%M:%SZ' {} +\n\nLOCAL_QA_LISTENERS\nport_18546_probe_exit=1\nport_18547_probe_exit=1\n\nBASELINE_FILE_TIMESTAMPS\n2026-11-10T05:55:47Z 3803 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/boundary-cleanup.txt\n2026-11-10T05:50:39Z 3327 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/before-state.txt\n2026-11-10T05:50:39Z 0 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/before-code.diff\n2026-11-10T05:50:17Z 550 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/build-command.txt\n2026-11-10T05:53:12Z 659 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/weighted-command.txt\n2026-11-10T05:50:39Z 898179 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/before-code.sha256\n2026-11-10T05:57:12Z 11026 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/report.md\n2026-11-10T05:52:48Z 55 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/build-exit.txt\n2026-11-10T05:53:21Z 1667981 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/weighted.log\n2026-11-10T05:49:57Z 28949 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/toolchain.txt\n2026-11-10T05:53:21Z 55 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/weighted-exit.txt\n2026-11-10T05:55:41Z 4724 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/run.sh\n2026-11-10T05:57:30Z 453 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/validation.txt\n2026-11-10T05:54:19Z 0 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/after-code.diff\n2026-11-10T05:57:30Z 4764 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/artifacts.sha256\n2026-11-10T05:54:19Z 3900 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/after-state.txt\n2026-11-10T05:54:19Z 898179 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/after-code.sha256\n2026-11-10T05:55:41Z 2471 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/observations.json\n2026-11-10T05:50:39Z 1040 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/initial-status-symlink-warning.txt\n2026-11-10T05:53:31Z 675 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/nested-command.txt\n2026-11-10T05:53:42Z 55 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/nested-exit.txt\n2026-11-10T05:53:42Z 7003236 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/nested.log\n2026-11-10T05:52:47Z 3917279 docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/build.log",
+  "resourceDetailsUTC": "CHECKED_AT=Tue Nov 10 15:52:29 UTC 2026\n\nUNEXPECTED_TEMP_CONTENTS_UTC\n2026-11-10T15:38:18Z bytes=64 /var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.qs0jth\n2026-11-10T15:38:04Z bytes=64 /var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-dependencies.rws0ar\n\nLSP_PROCESS_CONTEXT\n96408 10410 /opt/homebrew/bin/forge lsp --stdio\nCOMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF     NODE NAME\nforge   96408 cyotee  cwd    DIR   1,19     1920 17322967 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03\n\nTEMP_ROOT_OPEN_HANDLES\nlsof_root_exit=1",
+  "phaseOneRootAbsence": "ABSENT /var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI\nABSENT /var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-final.xoextQ",
+  "limits": "Filesystem and process observations, not a proof of no side effects. Empty baseline/dependencies roots are not owned by this correction and were not removed."
+}

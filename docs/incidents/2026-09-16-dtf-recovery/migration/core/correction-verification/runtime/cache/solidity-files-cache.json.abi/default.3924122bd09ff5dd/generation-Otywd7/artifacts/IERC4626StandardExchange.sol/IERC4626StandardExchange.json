@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"protocolVault","inputs":[],"outputs":[{"name":"","type":"address","internalType":"contract IERC4626"}],"stateMutability":"view"}],"id":384}

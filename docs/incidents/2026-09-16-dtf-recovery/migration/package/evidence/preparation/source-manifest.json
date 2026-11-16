@@ -1,0 +1,46 @@
+{
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03",
+  "base": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol",
+      "sha256": "6e3a8c25dad4c01ca1e0b517ebe365b8340520237ca8bc269a9ac3eceb94af7c",
+      "keccak256": "0x3cf91c2b5498d326ae7672e2da07a3fe6667c5a17e26696284f71cf686abd1ba"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+      "sha256": "14112eb68aac3f67bcbae5d41d1a5e76fe3b526033f6dab782df5c1d396b899d",
+      "keccak256": "0x995a27cb27e26b078b3389c282f253e307d4fc8408e278e6ebbbc57e4f9b7f3d",
+      "beforeSha256": "dd66fe9b2bdb36d28d0c2d99420f578b5f1282141fe92f3bf05452fdfef72cc4"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "sha256": "ff3c95b45adec74973aabcb874be2a8d86aa79a9af8770949b0b7e635fbcc360",
+      "keccak256": "0x9af102f576bdc65223509812baa39a971992d1843576333f6e530b39d8f019db",
+      "beforeSha256": "10cbc1b1ad0a597b29053c2e14037c0e79d5432e81a9cb52b94dfcaae43931e6"
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "sha256": "fed9bd4bf324c8e1c3d71e1809c3ae516320d05beb580085b2deedb83bb24f82",
+      "keccak256": "0xd656cc3b805ff89dd8be8460a545386903f290f292bac97ceef9e01f8768bc62",
+      "beforeSha256": "2c9b6ea685fa974ad0632ef831ea23e574b5250704349cd10d3d68cbad4922a6"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+      "sha256": "d1a4a227847c32bb5b5f3a4b97d9fed8114d2fca47c4c4ff0106b8332248b41e",
+      "keccak256": "0x100be63c6bb32d7d9f72f0fa11be3b9ad26f60c7b1aa237e235e593b3ae1b5c9",
+      "beforeSha256": "e9ad58374e3626ca9d6f35f46f6b7174d273f5ac5c6f6b02bb9b55285d9f7929"
+    }
+  ],
+  "scope": {
+    "baselineReceipt": "baseline-scope.log",
+    "finalReceipt": "final-scope.log",
+    "trackedSourceAndConfigFilesCompared": 5207,
+    "trackedSourceAndConfigFilesUnchanged": 5203,
+    "trackedChanges": 4,
+    "newSources": 1,
+    "unallowedTrackedChanges": [],
+    "authoredEvidenceBoundary": "docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/",
+    "otherLaneReports": "Existing untracked package reports were preserved, not edited."
+  }
+}

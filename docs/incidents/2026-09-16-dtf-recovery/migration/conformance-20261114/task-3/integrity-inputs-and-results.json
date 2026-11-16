@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "archiveBinding": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+    "bytes": 3520079,
+    "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472"
+  },
+  "archiveJournalPointer": "/rpc/2",
+  "unchangedDescriptor": {
+    "chainId": 4663,
+    "blockNumber": 108944663,
+    "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "archive": "evidence/weighted/probe.results.json",
+    "rawJournalIndex": 2,
+    "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "runtimeCode": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+    "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+  },
+  "wrongHashDescriptor": {
+    "chainId": 4663,
+    "blockNumber": 108944663,
+    "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "archive": "evidence/weighted/probe.results.json",
+    "rawJournalIndex": 2,
+    "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+    "runtimeCode": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+    "runtimeCodeHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "helper": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "bytes": 20293,
+    "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+  },
+  "inventory": {
+    "concurrentScope": [],
+    "destination": [
+      {
+        "path": "runtime.json",
+        "sha256": "6f28e0381759a6daeaa2bb3e2fc1e3738fd9321e41073ec70b2de6e14204d318",
+        "size": 1125,
+        "type": "file"
+      }
+    ],
+    "destinationRoot": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/destination",
+    "generatedAuditRecords": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json"
+    ],
+    "qualification": "Raw content inventory, not current financial/source authentication or historical test re-execution. Every retained task-owned byte remains required. Audit JSON alone is exempt from recursive self-hashing.",
+    "recovery": null,
+    "rows": [
+      {
+        "disposition": "same-relative-path raw bytes",
+        "path": "runtime.json",
+        "status": "identical"
+      }
+    ],
+    "source": [
+      {
+        "path": "runtime.json",
+        "sha256": "6f28e0381759a6daeaa2bb3e2fc1e3738fd9321e41073ec70b2de6e14204d318",
+        "size": 1125,
+        "type": "file"
+      }
+    ],
+    "sourceRoot": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/source",
+    "supersessions": [],
+    "version": 1
+  },
+  "positive": {
+    "addedEntries": [],
+    "completed": true,
+    "concurrentScope": [],
+    "destinationEntries": 1,
+    "failures": [],
+    "generatedAuditRecords": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive/inventory.json",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive/delivery.json"
+    ],
+    "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json",
+    "inputSha256": "1f26f2d67af8fc27c22ccec773ebc51a56db78b10fff6ca1095c177e83a0e4a5",
+    "qualification": "Raw content inventory, not current financial/source authentication or historical test re-execution. Every retained task-owned byte remains required. Audit JSON alone is exempt from recursive self-hashing.",
+    "sourceEntries": 1
+  },
+  "negative": {
+    "addedEntries": [],
+    "completed": false,
+    "concurrentScope": [],
+    "destinationEntries": 1,
+    "failures": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture/source/runtime.json: stale source inventory; source bytes/type changed or missing"
+    ],
+    "generatedAuditRecords": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative/inventory.json",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative/delivery.json"
+    ],
+    "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json",
+    "inputSha256": "1f26f2d67af8fc27c22ccec773ebc51a56db78b10fff6ca1095c177e83a0e4a5",
+    "qualification": "Raw content inventory, not current financial/source authentication or historical test re-execution. Every retained task-owned byte remains required. Audit JSON alone is exempt from recursive self-hashing.",
+    "sourceEntries": 1
+  },
+  "interpretation": "The helper rejects raw-byte changes to an inventoried runtime descriptor; it does not independently compute EVM keccak. The separate runtime-hash-checks.json computes every indexed runtime keccak. Only the owned descriptor fixture was tampered; the raw archive was never edited.",
+  "cleanupPlan": "Remove integrity-fixture after recording exact original/wrong descriptors and raw helper outputs; preserve inventory/delivery records as historical observed fixtures."
+}

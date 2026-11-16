@@ -1,0 +1,185 @@
+{
+  "baseline": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+    "sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+    "entries": 123368
+  },
+  "recorderInventory": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery/recorder-inventory.json",
+    "sha256": "72956c5efea705e292d17842b1ec959d2252781c721289357986acf18e22ec51",
+    "entries": 123373
+  },
+  "scope": "Raw array identity comparisons from the one required changed-input recorder run; no second rehash of the migration tree.",
+  "priorEntriesCompared": 123368,
+  "missingPrior": [],
+  "changedPrior": [],
+  "baselineIdentityVectorSha256": "ecd9c75bae3386989da9517f1308396e370ea31f7beddf716c6298c0655c6d6d",
+  "currentProjectionVectorSha256": "ecd9c75bae3386989da9517f1308396e370ea31f7beddf716c6298c0655c6d6d",
+  "allPriorIdentitiesMatch": true,
+  "retainedSourceVectorUnchanged": true,
+  "additions": [
+    {
+      "path": "conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+      "sha256": "3e585a1be4d948804af6e6b97a474087b02360bb1c8492b8a93c4dbe8cae2345",
+      "size": 37865,
+      "type": "file"
+    },
+    {
+      "path": "conformance-20261114/final/owner-correction-20261115/F2-quality.md",
+      "sha256": "c9b789771418e99bd6c022bcc6baa89f70194ebdeb60eb7d1dfa52c6c7b919c6",
+      "size": 14571,
+      "type": "file"
+    },
+    {
+      "path": "conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+      "sha256": "2b50cdc1e6eee7acb7c1b6a1391163df85901459f4121e0f15c4a853af00e49f",
+      "size": 15031,
+      "type": "file"
+    },
+    {
+      "path": "conformance-20261114/final/owner-correction-20261115/F4-fidelity.md",
+      "sha256": "5bd252cd84dadcec427565c6fbefebe4d8b9b99a0bc9bbec959f6b9a8f5bae58",
+      "size": 21379,
+      "type": "file"
+    },
+    {
+      "path": "conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+      "sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+      "size": 33680555,
+      "type": "file"
+    }
+  ],
+  "finalReports": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+      "sha256": "3e585a1be4d948804af6e6b97a474087b02360bb1c8492b8a93c4dbe8cae2345",
+      "bytes": 37865,
+      "id": "F1",
+      "verdict": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F1-verdict.json",
+        "sha256": "e01453a302b67c724be3520ad9aa84b6392acaf0d08b7f1d1242d09f406d50fc",
+        "bytes": 11119
+      },
+      "verdictConfirmed": true,
+      "verdictFullGoalMet": false,
+      "rawMatchesVerdict": true,
+      "inActualRecorderInventory": true,
+      "entry": {
+        "path": "conformance-20261114/final/owner-correction-20261115/F1-compliance.md",
+        "sha256": "3e585a1be4d948804af6e6b97a474087b02360bb1c8492b8a93c4dbe8cae2345",
+        "size": 37865,
+        "type": "file"
+      }
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F2-quality.md",
+      "sha256": "c9b789771418e99bd6c022bcc6baa89f70194ebdeb60eb7d1dfa52c6c7b919c6",
+      "bytes": 14571,
+      "id": "F2",
+      "verdict": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F2-verdict.json",
+        "sha256": "42bea1c53565374693cea85fba6a80ce4f03499ff9c257c9ab836d22c8658bf5",
+        "bytes": 9141
+      },
+      "verdictConfirmed": true,
+      "verdictFullGoalMet": false,
+      "rawMatchesVerdict": true,
+      "inActualRecorderInventory": true,
+      "entry": {
+        "path": "conformance-20261114/final/owner-correction-20261115/F2-quality.md",
+        "sha256": "c9b789771418e99bd6c022bcc6baa89f70194ebdeb60eb7d1dfa52c6c7b919c6",
+        "size": 14571,
+        "type": "file"
+      }
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+      "sha256": "2b50cdc1e6eee7acb7c1b6a1391163df85901459f4121e0f15c4a853af00e49f",
+      "bytes": 15031,
+      "id": "F3",
+      "verdict": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F3-verdict.json",
+        "sha256": "4aafdc2029348c89ad1af48c6133a52bcb39ac6c060670e1581cbc3d37b96fa3",
+        "bytes": 15435
+      },
+      "verdictConfirmed": true,
+      "verdictFullGoalMet": false,
+      "rawMatchesVerdict": true,
+      "inActualRecorderInventory": true,
+      "entry": {
+        "path": "conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+        "sha256": "2b50cdc1e6eee7acb7c1b6a1391163df85901459f4121e0f15c4a853af00e49f",
+        "size": 15031,
+        "type": "file"
+      }
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F4-fidelity.md",
+      "sha256": "5bd252cd84dadcec427565c6fbefebe4d8b9b99a0bc9bbec959f6b9a8f5bae58",
+      "bytes": 21379,
+      "id": "F4",
+      "verdict": {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F4-verdict.json",
+        "sha256": "85184bee222917a67ce910523c955cfce67607536fcb5ffa18107d9550580b8e",
+        "bytes": 14633
+      },
+      "verdictConfirmed": true,
+      "verdictFullGoalMet": false,
+      "rawMatchesVerdict": true,
+      "inActualRecorderInventory": true,
+      "entry": {
+        "path": "conformance-20261114/final/owner-correction-20261115/F4-fidelity.md",
+        "sha256": "5bd252cd84dadcec427565c6fbefebe4d8b9b99a0bc9bbec959f6b9a8f5bae58",
+        "size": 21379,
+        "type": "file"
+      }
+    }
+  ],
+  "helpers": [
+    {
+      "path": "resumed-integration/record-verification.ts",
+      "baseline": {
+        "path": "resumed-integration/record-verification.ts",
+        "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "size": 20293,
+        "type": "file"
+      },
+      "current": {
+        "path": "resumed-integration/record-verification.ts",
+        "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+        "size": 20293,
+        "type": "file"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "resumed-integration/verify-bounded-deployments.ts",
+      "baseline": {
+        "path": "resumed-integration/verify-bounded-deployments.ts",
+        "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+        "size": 18846,
+        "type": "file"
+      },
+      "current": {
+        "path": "resumed-integration/verify-bounded-deployments.ts",
+        "sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+        "size": 18846,
+        "type": "file"
+      },
+      "unchanged": true
+    }
+  ],
+  "actualStrictResult": {
+    "actualExit": 1,
+    "completed": false,
+    "failures": 340,
+    "reasons": {
+      "different retained bytes/type; unresolved divergence": 4,
+      "unresolved symlink in delivered tree": 166,
+      "different bytes/type": 4,
+      "unresolved new symlink": 166
+    },
+    "inheritedFailureSetUnchanged": true
+  },
+  "selfReferenceException": "Only the new published inventory and final-closeout-done.json lack their own recursive hashes; original baseline inventory is immutable and actually hashed in this run."
+}

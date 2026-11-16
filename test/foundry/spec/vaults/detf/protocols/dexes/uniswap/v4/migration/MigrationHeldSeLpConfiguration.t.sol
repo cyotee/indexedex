@@ -11,6 +11,8 @@ import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation 
 import {MigrationLegacyRecoveryLib as Legacy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
 
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+
 /// @notice Each admitted source uses synthetic original records; real-source custody is covered in the pinned forks.
 abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMigration {
     function _source() internal pure virtual returns (address);
@@ -30,19 +32,19 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
         uint256 supply_ = IERC20(detf).totalSupply();
         Migration.HeldSeLpEntitlementInput[] memory a_ = _input(ORIGIN);
         vm.startPrank(migrationOwner);
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         a_[0].originalUnits = 1e18;
         a_[0].originalEth = 0.6 ether;
         a_[0].originalDtf = 0.1 ether;
         a_[0].originalWallet = address(0xBEEF);
-        allocation.configureHeldSeLpEntitlements(a_);
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         vm.stopPrank();
         Migration.HeldSeLpEntitlement memory c_ = migration.heldSeLpEntitlement(ORIGIN);
         assertEq(c_.original.originalUnits, 1e18);
         assertEq(c_.original.originalWallet, address(0xBEEF));
         assertEq(c_.credit, migration.previewOriginalCredit(0.6 ether, 0.1 ether));
-        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, a_[0])));
+        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, a_[0])));
         Migration.HeldSeLpSurrender memory s_ = migration.heldSeLpSurrender(ORIGIN);
         assertEq(s_.remainingUnits, 1e18);
         assertEq(s_.remainingCredit, c_.credit);
@@ -55,7 +57,7 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
     function test_invalidFieldsSourceChainAndOwnerRejectWholeBatch() public {
         Migration.HeldSeLpEntitlementInput[] memory a_ = _input(ORIGIN);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         for (uint256 i_; i_ < 5; ++i_) {
             a_ = _input(ORIGIN);
             if (i_ == 0) a_[0].originalId = bytes32(0);
@@ -65,36 +67,36 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
             else a_[0].evidenceId = bytes32(0);
             vm.prank(migrationOwner);
             vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpEntitlement.selector, a_[0].originalId));
-            allocation.configureHeldSeLpEntitlements(a_);
+            allocation.configureHeldSeLpEntitlements(a_, pricingId);
         }
         a_ = _input(ORIGIN);
         a_[0].source = Legacy.WEIGHTED_RECEIPT;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedHeldSeLpSource.selector, 4663, a_[0].source));
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         a_ = _input(ORIGIN);
         vm.chainId(1);
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedHeldSeLpSource.selector, 1, a_[0].source));
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         vm.chainId(4663);
         address next_ = makeAddr("ED next owner");
         vm.prank(migrationOwner); migration.initiateOwnershipTransfer(next_);
         vm.prank(next_);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, next_));
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         vm.prank(next_); migration.acceptOwnershipTransfer();
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, migrationOwner));
-        allocation.configureHeldSeLpEntitlements(a_);
-        vm.prank(next_); allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
+        vm.prank(next_); allocation.configureHeldSeLpEntitlements(a_, pricingId);
         bytes memory before_ = abi.encode(migration.heldSeLpEntitlement(ORIGIN), migration.heldSeLpSurrender(ORIGIN));
         Migration.HeldSeLpEntitlementInput[] memory batch_ = new Migration.HeldSeLpEntitlementInput[](2);
         batch_[0] = a_[0]; batch_[0].originalEth = 2 ether;
         batch_[1] = a_[0]; batch_[1].originalId = bytes32("bad"); batch_[1].contributionsKnown = false;
         vm.prank(next_);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpEntitlement.selector, bytes32("bad")));
-        allocation.configureHeldSeLpEntitlements(batch_);
+        allocation.configureHeldSeLpEntitlements(batch_, pricingId);
         assertEq(abi.encode(migration.heldSeLpEntitlement(ORIGIN), migration.heldSeLpSurrender(ORIGIN)), before_);
     }
 
@@ -107,7 +109,7 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
                     : address(0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391),
                 3, address(this), 3, 1 ether, 0, bytes32("NFT"), true
             );
-            vm.prank(migrationOwner); allocation.configureNftEntitlements(n_); return;
+            vm.prank(migrationOwner); allocation.configureNftEntitlements(n_, pricingId); return;
         }
         if (category_ >= 9) {
             Migration.HeldSeLpEntitlementInput[] memory held_ = _input(origin_);
@@ -122,7 +124,7 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
                 selector_ = Allocation.configureHeldSeLpEntitlements.selector;
             }
             vm.prank(migrationOwner);
-            (bool ok_, bytes memory reason_) = detf.call(abi.encodeWithSelector(selector_, held_));
+            (bool ok_, bytes memory reason_) = detf.call(abi.encodeWithSelector(selector_, held_, pricingId));
             if (!ok_) assembly { revert(add(reason_, 32), mload(reason_)) }
             return;
         }
@@ -138,7 +140,7 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
         Migration.HeldSeLpEntitlementInput[] memory a_ = _input(origin_);
         a_[0].source = sources_[category_ - 3];
         vm.prank(migrationOwner);
-        (bool ok_, bytes memory reason_) = detf.call(abi.encodeWithSelector(selectors_[category_ - 3], a_));
+        (bool ok_, bytes memory reason_) = detf.call(abi.encodeWithSelector(selectors_[category_ - 3], a_, pricingId));
         if (!ok_) assembly { revert(add(reason_, 32), mload(reason_)) }
     }
 
@@ -152,16 +154,16 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
                         : address(0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391), 3) : ORIGIN;
                 Migration.HeldSeLpEntitlementInput[] memory a_ = _input(origin_);
                 if (direction_ == 0) {
-                    vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_);
+                    vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_, pricingId);
                     a_[0].originalWallet = address(0xBEEF);
-                    vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_);
+                    vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_, pricingId);
                     vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, origin_));
                     _other(category_, origin_);
                 } else {
                     _other(category_, origin_);
                     vm.prank(migrationOwner);
                     vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, origin_));
-                    allocation.configureHeldSeLpEntitlements(a_);
+                    allocation.configureHeldSeLpEntitlements(a_, pricingId);
                 }
                 assertTrue(vm.revertToStateAndDelete(snap_));
             }
@@ -170,11 +172,11 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
         _configure(address(this), 2 ether, bytes32("replacement"));
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
-        allocation.configureHeldSeLpEntitlements(_input(ORIGIN));
+        allocation.configureHeldSeLpEntitlements(_input(ORIGIN), pricingId);
     }
 
     function test_paidOwnerBondActivationRemovesLoaderAndRetainsRecordsAndQueries() public {
-        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(_input(ORIGIN));
+        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(_input(ORIGIN), pricingId);
         vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
         migration.surrenderMigrationHeldSeLp(ORIGIN, 1, 0, block.timestamp);
         vm.prank(migrationOwner); vm.expectRevert(Migration.MigrationOwnerFirstBondRequired.selector);
@@ -184,7 +186,7 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureHeldSeLpEntitlements.selector), address(0));
         assertNotEq(IDiamondLoupe(detf).facetAddress(Migration.surrenderMigrationHeldSeLp.selector), address(0));
         vm.prank(migrationOwner);
-        (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (_input(ORIGIN))));
+        (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (_input(ORIGIN), pricingId)));
         assertFalse(ok_);
         assertEq(migration.heldSeLpSurrender(ORIGIN).remainingUnits, 2e18);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpEntitlement.selector, bytes32("absent")));
@@ -193,7 +195,7 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
     function test_fullPrecisionPreviewRetainsTerminalResidue() public {
         Migration.HeldSeLpEntitlementInput[] memory a_ = _input(ORIGIN);
         a_[0].originalUnits = type(uint256).max;
-        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_);
+        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_, pricingId);
         uint256 c_ = migration.heldSeLpEntitlement(ORIGIN).credit;
         assertEq(migration.previewHeldSeLpSurrender(ORIGIN, type(uint256).max / 2), (c_ - 1) / 2);
         assertEq(migration.previewHeldSeLpSurrender(ORIGIN, type(uint256).max), c_);
@@ -211,10 +213,10 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
         a_[3].contributionsKnown = false;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpEntitlement.selector, bytes32(uint256(4))));
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         for (uint256 i_; i_ < 4; ++i_) assertFalse(migration.heldSeLpEntitlement(bytes32(i_ + 1)).configured);
         a_[3].contributionsKnown = true;
-        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_);
+        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_, pricingId);
         uint256 credits_;
         for (uint256 i_; i_ < 4; ++i_) {
             uint256 c_ = migration.heldSeLpEntitlement(bytes32(i_ + 1)).credit;
@@ -230,9 +232,34 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
         a_[0].source = Legacy.DTF;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedHeldSeLpSource.selector, 4663, a_[0].source));
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         assertFalse(migration.heldSeLpEntitlement(ORIGIN).configured);
     }
+    /// @notice A-prepared rows cannot clear or reprice storage after installing B; explicit B reload replaces only configuration.
+    function test_StaleBook_HeldSeLpReplacementPreservesRecords() public {
+        Migration.HeldSeLpEntitlementInput[] memory a_ = _input(ORIGIN);
+        bytes32 old_ = pricingId;
+        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_, old_);
+        bytes memory record_ = abi.encode(migration.heldSeLpEntitlement(ORIGIN));
+        bytes memory remaining_ = abi.encode(migration.heldSeLpSurrender(ORIGIN));
+        uint256 supply_ = IERC20(detf).totalSupply();
+        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        next_.swapFeeWad = 1e17;
+        vm.prank(migrationOwner); pricingId = allocation.setMigrationWeightedPricing(next_);
+        assertEq(abi.encode(migration.heldSeLpEntitlement(ORIGIN)), record_);
+        assertEq(abi.encode(migration.heldSeLpSurrender(ORIGIN)), remaining_);
+        vm.prank(migrationOwner);
+        vm.expectRevert(abi.encodeWithSelector(Pricing.MigrationWeightedPricingBookMismatch.selector, old_, pricingId));
+        allocation.configureHeldSeLpEntitlements(a_, old_);
+        assertEq(abi.encode(migration.heldSeLpEntitlement(ORIGIN)), record_);
+        assertEq(abi.encode(migration.heldSeLpSurrender(ORIGIN)), remaining_);
+        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_, pricingId);
+        assertEq(migration.heldSeLpEntitlement(ORIGIN).configurationId, keccak256(abi.encode(block.chainid, detf, pricingId, a_[0])));
+        assertNotEq(abi.encode(migration.heldSeLpEntitlement(ORIGIN)), record_);
+        assertEq(IERC20(detf).totalSupply(), supply_);
+        assertEq(receipt.stakingState().totalGons, 0);
+    }
+
 }
 
 contract MigrationWeightedWethSeConfigurationTest is MigrationHeldSeLpConfigurationTest {

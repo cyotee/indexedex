@@ -1,0 +1,82 @@
+{
+  "links": {
+    "node_modules": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/node_modules",
+      "present": true,
+      "kind": "symlink",
+      "perm": "0o755",
+      "st_mode": 41453,
+      "size": 88,
+      "sha256": "acf868327b383965a8bf26f779fe138544a5a2e2f4f8a7c17546c431393f397f",
+      "target": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/node_modules",
+      "opened": false
+    },
+    "node_modulesTarget": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/node_modules",
+      "kind": "symlink",
+      "perm": "0o755",
+      "st_mode": 41453,
+      "size": 45,
+      "opened": false,
+      "target": "/Users/cyotee/Projects/indexedex/node_modules"
+    },
+    "craneDirectory": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/lib/crane",
+      "present": true,
+      "kind": "dir",
+      "perm": "0o755",
+      "st_mode": 16877,
+      "size": 64,
+      "nlink": 2,
+      "childCount": 0,
+      "children": [],
+      "sha256": null,
+      "openedContents": false
+    },
+    "out": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/out",
+      "present": false
+    },
+    "cache": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/cache",
+      "present": false
+    },
+    "cache_forge": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/cache_forge",
+      "present": false
+    }
+  },
+  "usedArtifact": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+    "present": true,
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 394495,
+    "sha256": "b623239c02a6c647a9160b6e6f1c0b1108f082e41f4c4d40a6b2866e8e0dc15b",
+    "target": null
+  },
+  "craneGitlink": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0\tlib/crane",
+  "pointers": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/receipt-review-index-20261113.json",
+      "present": true,
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 112345,
+      "sha256": "b3f3f710dd22c6f61dcd45c9f3bf74f5541ec32a9ffe33dbfeef93376c14b3a3",
+      "target": null
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/conversion-recovery-review-20261113.json",
+      "present": true,
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 341774,
+      "sha256": "c1f8b1a70ecfd7f739a1a9238d6dbc0970c4f6d64d93de6e9ddc3e063c7654dc",
+      "target": null
+    }
+  ]
+}

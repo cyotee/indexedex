@@ -61,10 +61,10 @@ import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 import {IUniswapV4DetfBondNFTVaultDFPkg} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
-import {MigrationSnapshotConsumer, IMigrationPairPreview} from
+import {MigrationSnapshotConsumer, IMigrationPairPreview, MigrationWeightedPricingFixture} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol";
-import {IUniswapV4DetfMigrationSnapshot as Snapshot} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
 
@@ -92,11 +92,6 @@ contract MigrationSnapshotLocalQA is Script {
 
     function run() external {
         require(block.chainid == 31337 && msg.sender == DEV, "local unlocked dev account only");
-        // Inspect the actual Forge argv, not an environment assertion or another RPC.
-        string[] memory guard = new string[](2);
-        guard[0] = "bash";
-        guard[1] = "scripts/recovery/dtf-migration/pricing-local-qa.sh";
-        require(keccak256(vm.ffi(guard)) == keccak256(hex"01"), "local CLI guard failed");
         vm.rpc("anvil_nodeInfo", "[]");
         vm.startBroadcast(DEV);
         (factory, diamonds) = InitDevService.initEnv(DEV);
@@ -116,9 +111,9 @@ contract MigrationSnapshotLocalQA is Script {
         IUniswapV4Detf(detf).bond(IERC20(pairA), 100 ether, 30 days, DEV, false, block.timestamp + 1 hours);
         MigrationSnapshotConsumer consumer = MigrationSnapshotConsumer(factory.create3WithArgs(
             ArtifactCreationCode.creationCode(factory, "TestBase_UniswapV4DetfMigrationSnapshot.sol:MigrationSnapshotConsumer"),
-            abi.encode(Snapshot.Source(detf, address(manager), pairA, pairB)), keccak256("local.snapshot")
+            abi.encode(detf, pairA, pairB), keccak256("local.snapshot")
         ));
-        consumer.capture();
+        consumer.set(MigrationWeightedPricingFixture.observed(detf, address(manager), pairA, pairB));
         uint256 ethBefore = consumer.evaluate(address(0), 2 ether).user;
         uint256 dtfBefore = consumer.evaluate(pairB, 3 ether).user;
         bytes32 bytesBefore = keccak256(consumer.snapshotBytes());

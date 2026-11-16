@@ -1,0 +1,86 @@
+{
+  "capturedBeforeStaging": true,
+  "commitDirectoryExistedDuringWalk": false,
+  "exclusions": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/commit/"
+  ],
+  "aggregates": {
+    "docs-incidents.jsonl": "363d87323065b135d9b58c0fd4bfc3cf7f539bd781d0d3284162bfac4bf96a99",
+    "docs-incidents-perms.jsonl": "5fbb993da1344951dad811dda4db01dedd908ae6bcd4a70399be728519b9391e",
+    "out.jsonl": "a8ee22bfe6a9dc2a8b3d7945fce853250695ab1a2845752016b9f9c8c5a0a3b4",
+    "cache_forge.jsonl": "c47eb850636d9345741cd480f3ead9a10505941e7cc7c2b94e1e31e5ff9c6388",
+    "host-dependencies.jsonl": "1fec2ce75aeb420b3269ea9ded81b88312d0b2061fcfd5ea4f01b379691337f4",
+    "show-ref.txt": "eea60689ef187361a0e74c6679a0bf5148a636e8a88e3c970a32ea32dbf2eb5a",
+    "status-before.txt": "827a5a00c7480f2feceae15ff3ef8b5b8a77d8b9a59ffb7b62e4c111b6e6b13d",
+    "indexes.json": "1ac78f9eb5222d8cbd4186e61e040738e28449381c039a892804ecad2705119a",
+    "source-identity-before.json": "06eed26601644de7dce00c2cea72572a87ab8590d98e7f397422ceccc662a50b",
+    "tracked-diff.txt": "eb9ca432107a6f3c0b73983d75eec6210e70ebf27a6e925a126cc859dda6b53f",
+    "whitespace-before.txt": "28d3b9e880a77975493dc7e359144c0295a4f694cfe0af4f928c22307bc5c320",
+    "whitespace-staged.txt": "711371f4fa25334ae6c0c4b2cbdb25278b32933d796bb214778ca39e33526520",
+    "gate-result.json": "44226f5ae7d29ec6e082a61231711ef7a82a043d367e10d5ebbeacbd66e9d07e",
+    "recipe.txt": "973c763f3dfef88926f39c10208ef1ec61acbe602c5a47195e4989bb24e05484"
+  },
+  "counts": {
+    "docsIncidents": 1268,
+    "docsIncidentsPerms": 1339,
+    "out": 7353,
+    "cacheForge": 607,
+    "hostDependencies": 2621,
+    "authority": 11,
+    "immutableExternal": 1224,
+    "immutableInWorktree": 13,
+    "parentPreserved": 1386,
+    "indexes": 23,
+    "sourceModified": 30,
+    "sourceAdded": 5
+  },
+  "inWtImmutable": [
+    "docs/incidents/2026-09-16-dtf-pre-exploit/DTF_SOLD.md",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/SNAPSHOT.md",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-summary.json",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/holders.csv",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/sdtf-detf-summary.json",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/snapshot.json",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/stakers.csv",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+    "docs/incidents/2026-09-16-dtf-pre-exploit/sy-sdtf-detf-summary.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/quote-evidence.md"
+  ],
+  "links": [
+    {
+      "path": "lib/crane",
+      "kind": "symlink",
+      "perm": "0o755",
+      "mode": "0o120755",
+      "size": 42,
+      "inode": 19607440,
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "sha256": "3dcc99d9c280a1a007d6284e027f5543690bc104fd2b33cf4626f14871b963ab"
+    },
+    {
+      "path": "node_modules",
+      "kind": "symlink",
+      "perm": "0o755",
+      "mode": "0o120755",
+      "size": 45,
+      "inode": 19607441,
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "sha256": "c8ce23751ae468dd00158f2465a4c8ced85fb4811e0f46af46d458d9b79bc861"
+    }
+  ],
+  "listener18571Exit": 1,
+  "listener18571Output": "",
+  "checkpointExists": false,
+  "runtimeParentExists": false,
+  "whitespaceBeforeExit": 0,
+  "head": "3ec0912bafebf9c0aa66770a72f04501e5c11865",
+  "branch": "work/dtf-migration-phase-21-held-se-lp",
+  "showRefSha256": "eea60689ef187361a0e74c6679a0bf5148a636e8a88e3c970a32ea32dbf2eb5a",
+  "thisIndexBefore": "c7826a05a19e32d5027007602a91cac4941d7409cfde62502cd9923efb9ad6f8",
+  "note": "Aggregate hashes are not a substitute for the per-entry rows. extra.json does not claim its own raw digest.",
+  "dualRolePaths": 6,
+  "dualRoleRule": "Host JSONL path is not unique. Six authority rows are also immutable rows. Byte reproduction is per row."
+}

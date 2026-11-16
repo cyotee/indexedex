@@ -1,0 +1,40 @@
+{
+  "conclusion": "Independently reproduced, pre-existing in task 7 and still unmet; pin not changed.",
+  "prior": {
+    "commandReceipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/dependent-acceptance.command.json",
+    "receiptSha256": "171c5c40ecf83478492257df9ad42b978d5aa3bef11c51947554105f68c6ee9a",
+    "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/dependent-acceptance.log",
+    "logSha256": "f19e6ed061a124ad15faa271fa839b82d64fad50dfa2a4bf94f2abd68d245869",
+    "exitCode": 1,
+    "passed": 162,
+    "failed": 1
+  },
+  "unchangedSources": [
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "sha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231",
+      "currentSha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "sha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c",
+      "currentSha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "sha256": "583558715dae13f2c405655ab18b5dd0a44b54fbd294de73472e3b8080b7c4d8",
+      "currentSha256": "583558715dae13f2c405655ab18b5dd0a44b54fbd294de73472e3b8080b7c4d8"
+    }
+  ],
+  "current": {
+    "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log",
+    "sha256": "ea428eaeadc993624ed88ca301bd4beb1a5871ef207ddbdcd0f330c2aba33861",
+    "exitCode": 1,
+    "passed": 240,
+    "failed": 1,
+    "total": 241,
+    "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+    "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899"
+  },
+  "disposition": "The actual compiled router hash differs from the fixed authentication pin. Do not present the green subset as full operator acceptance; do not retune the pin."
+}

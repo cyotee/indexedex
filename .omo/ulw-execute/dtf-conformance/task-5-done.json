@@ -1,0 +1,91 @@
+{
+  "kind": "DoneClaim",
+  "task": 5,
+  "title": "Require separate contributions for weighted NFT three",
+  "status": "complete",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "changedFiles": [
+    "scripts/recovery/dtf-migration/schema.ts",
+    "scripts/recovery/dtf-migration/payloads.ts",
+    "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+    "scripts/recovery/dtf-migration/preparation.test.ts",
+    "scripts/recovery/dtf-migration/preparation.fixture.ts"
+  ],
+  "result": "Schema and payload preparation require separateContributions=true and exact raw18 ETH 999999000000000 / DTF 362893857600000000000 for weighted collection token 3 on chain 4663, before quote acquisition. Existing proof validation binds the complete original tuple. Other NFT identities retain their existing mode options.",
+  "tests": {
+    "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/nft-contributions.test.ts ./scripts/recovery/dtf-migration/preparation.test.ts",
+    "runtime": "Bun 1.4.2 (50a8a8387)",
+    "passed": 56,
+    "failed": 0,
+    "exitCode": 0,
+    "regressionBeforeFix": {
+      "passed": 51,
+      "failed": 5,
+      "exitCode": 1,
+      "failures": [
+        "two-bond loader test: missing expected payload exception",
+        "absent mode accepted by schema",
+        "altered ETH amount accepted by schema",
+        "altered DTF amount accepted by schema",
+        "stale combined fixture accepted by schema"
+      ]
+    },
+    "diagnostics": "No TypeScript errors reported for all five changed files",
+    "diffCheck": "git diff --check on all five changed TS files: exit 0"
+  },
+  "manualQa": {
+    "channel": "bun test output and generated-payload.json",
+    "result": "PASS",
+    "loader": "configureNftContributionEntitlements",
+    "originals": [
+      {
+        "originalEth": "999999000000000",
+        "originalDtf": "0",
+        "credit": "99999900000000"
+      },
+      {
+        "originalEth": "0",
+        "originalDtf": "362893857600000000000",
+        "credit": "32990350690909090909"
+      }
+    ],
+    "combinedOriginalAbsent": true,
+    "combinedOtherNftLoader": "configureNftEntitlements",
+    "proof": "Local fixture evidence file is fingerprinted and its full original tuple must match; absent and mismatched proof tested. No historical allocation authority inferred."
+  },
+  "adversarial": {
+    "malformed_input": "PASS: absent, false, combined string, each missing leg, each zero leg, each altered raw amount rejected with INPUT before any transport; no output directory or accepted manifest.",
+    "stale_state": "PASS: old combined 100/22 NFT 3 fixture rejected.",
+    "dirty_worktree": "Preserved all initial dirty/untracked work and concurrent pricing source renames. Wrote only five scoped TS files, task-5 evidence, and required DoneClaim.",
+    "misleading_success_output": "Inspected named assertions, 56 pass / 0 fail, TEST_EXIT_CODE=0, and monitor exit 0.",
+    "generated_or_cached_artifacts": "Generated payload retained only as task-5/generated-payload.json evidence; not reused as preparation input. Tests use existing warm ABI artifacts; no Solidity build or source attestation claimed.",
+    "hung_or_long_commands": "Not applicable: --timeout 15000 unchanged; suite completed in 2.46 seconds.",
+    "flaky_tests": "Not applicable: no sleeps, retries, or timing-dependent assertions added; subprocess deadline follows existing suite pattern.",
+    "untrusted_external_text": "Not applicable: local fixtures only.",
+    "cancel_resume": "Not applicable.",
+    "repeated_interruptions": "Not applicable."
+  },
+  "evidence": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/happy.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/rejection.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/generated-payload.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/diagnostics.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/qa.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/git-status-before.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-5/git-status-after.log"
+  ],
+  "cleanup": "Fixture teardown closes local wire servers, clears fixture environment variables, and removes temporary directories. No git commit, merge, push, signer or transaction submission. No task-owned process left running.",
+  "risks": [
+    "This is an offline input-boundary result using synthetic loopback wire fixtures and warm ABIs, not a live chain or on-chain two-bond execution claim.",
+    "Only the two required suites were run; concurrent Solidity pricing changes were preserved and not compiled or reviewed.",
+    "JSON evidence was serialized with JSON.stringify; JSON editor diagnostics were unavailable because the configured Biome LSP is not installed. No dependency installation attempted."
+  ],
+  "unmetItems": [],
+  "assumptions": [
+    "The exact NFT 3 identity and raw18 amounts in the task are authoritative.",
+    "The existing local synthetic transport fixture is the required offline QA channel; no public network or live RPC was used.",
+    "A non-NFT-3 earlier collection row remains the positive combined-loader control."
+  ],
+  "forbiddenOperationsPerformed": [],
+  "concurrentChanges": "Observed SnapshotLib/interface deletion and WeightedPricingLib/interface creation by the pricing writer; preserved without reading or editing those Solidity files."
+}

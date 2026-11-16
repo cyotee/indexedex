@@ -1,0 +1,984 @@
+{
+  "label": "schema validation, not contract QA",
+  "purpose": "Reproduce F2-02 before editing the omission tests",
+  "bun": "1.4.2",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "validControlSuccess": true,
+  "validControlIssues": [],
+  "caseCount": 28,
+  "cases": [
+    {
+      "category": "claimVault",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "claimVault.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "claimVault.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "claimVault",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "claimVault.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "claimVault.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "claimVault",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "claimVault.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "claimVault.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "claimVault",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "claimVault.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "claimVault.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "claimVault",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "claimVault.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "claimVault.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "claimVault",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "claimVault.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "claimVault.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "claimVault",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "claimVault.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "claimVault.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "claimVault.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "dtfCustodySe.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "dtfCustodySe.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "dtfCustodySe.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "dtfCustodySe.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedLiquid.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedLiquid.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedLiquid.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedLiquid.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedSy.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedSy.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedSy.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedSy.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedSy.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedSy.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedSy.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedSy.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedSy.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedSy.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedSy",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedSy.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedSy.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    },
+    {
+      "category": "weightedSy",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "oldShapeHasPricing": false,
+      "isolatedHasPricing": true,
+      "oldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        },
+        {
+          "path": "weightedSy.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "fieldRestoredOldShapeIssues": [
+        {
+          "path": "weightedSy.0.pricing",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "isolatedIssues": [
+        {
+          "path": "weightedSy.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "restoredIssues": []
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "8698f081eccd5fc7d359479e74ef04cdfc5764efddef48451dd17a9d12bd540c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "sha256": "36e4fccd336ad8dffdac38c633d845587e5fd7b1f5d7d530d70b7a8a00d18bd2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "sha256": "4c54dd134cdaf5fd6d46ebf8bdbf02c741509d447c8e664ba2cacb888feb6154"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "sha256": "9d3d647dfb1e30060da8748e10ac1e7d1d902eeea52cfbc237a8848123644e37"
+    }
+  ],
+  "cleanup": {
+    "fixtureClosed": false
+  }
+}

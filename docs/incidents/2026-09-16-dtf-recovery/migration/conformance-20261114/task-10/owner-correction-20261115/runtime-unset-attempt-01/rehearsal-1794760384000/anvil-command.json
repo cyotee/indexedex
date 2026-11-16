@@ -1,0 +1,1 @@
+{"command":["/Users/cyotee/.foundry/versions/foundry-rs/foundry/nightly-430523103f3e2f9ba432ffdd2031a9f966153d0d/anvil","--host","127.0.0.1","--port","18575","--chain-id","4663","--fork-url","<resolved archive alias>","--fork-block-number","108944663","--gas-limit","100000000","--disable-min-priority-fee","--balance","1000000"]}

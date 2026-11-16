@@ -31,7 +31,7 @@ contract MigrationRecoveryWeightedSyTest is MigrationRecoveryDonationForkBase {
             ORIGIN, HOLDER, Legacy.WEIGHTED_SY, SHARES, 0.01 ether, 0, bytes32("synthetic WY inputs"), true
         );
         vm.prank(migrationOwner);
-        allocation.configureWeightedSyEntitlements(inputs_);
+        allocation.configureWeightedSyEntitlements(inputs_, pricingId);
         _activate();
         vm.startPrank(HOLDER);
         IERC20(Legacy.WEIGHTED_SY).approve(detf, SHARES);

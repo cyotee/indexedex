@@ -1,0 +1,2491 @@
+{
+  "status": "INDEPENDENT_AUDIT_PASS",
+  "bindings": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt-brief.md",
+      "bytes": 6347,
+      "sha256": "40fd0d428ea9b36282e488928c36ef01bdad3b3fb6d1d2464e383948136d5d32",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "bytes": 79305,
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "bytes": 108022,
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/commit/receipt.md",
+      "bytes": 10366,
+      "sha256": "6beb85a062839fdc23e3e286a68af64afd444779eeeea5a43fc7efdc20406716",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/commit/verification.md",
+      "bytes": 12660,
+      "sha256": "c7fd09009df1e69062d7f9cc7491bc63bc822af0599490ce47498f7a4c43d496",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+      "bytes": 19702,
+      "sha256": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+      "bytes": 19878,
+      "sha256": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/report.md",
+      "bytes": 22616,
+      "sha256": "65108f5890f7c7371f1d8a7c2752e35a6a61705adc7ca70fd9c724ed445e9490",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/earlier/contract.md",
+      "bytes": 42556,
+      "sha256": "4ff5266e8faba4a5eac2931af329596bedcc6ecd704932d096c36da88faa32ea",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "bytes": 4711975,
+      "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+      "bytes": 2684148,
+      "sha256": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "bytes": 2683989,
+      "sha256": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "bytes": 22872,
+      "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "bytes": 21559,
+      "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/provenance/report.md",
+      "bytes": 17922,
+      "sha256": "7f523d563ca30a5d103a96a3f6dc8f860bfd06683e37cefec8eeb16b88c958c1",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/earlier/contract.md",
+      "bytes": 24477,
+      "sha256": "d2b2ca71da9f5fd14640e2194a4ee62253c47d525fc36eeeda60bd3027ccb305",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/earlier/source-evidence.json",
+      "bytes": 80321,
+      "sha256": "e94e8da9fee0c563a94c24fd294d88e21f647bf1f8dec2b666955427a7db5897",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/report.md",
+      "bytes": 36883,
+      "sha256": "c3a1b60b8f9cbbf8edfde2b79c669f6aea3cdf9916a433fad78bd445316ecf2c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/correction-verification/report.md",
+      "bytes": 20175,
+      "sha256": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md",
+      "bytes": 18779,
+      "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "bytes": 4541,
+      "sha256": "aa73702d1b7cb6644ff9020ddb9faeb220aa11562cf3c2d73a801d0a7984b0b6",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "bytes": 2857,
+      "sha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "bytes": 8426,
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/scripts/recovery/dtf-migration/execution-schema.ts",
+      "bytes": 4957,
+      "sha256": "f71a8a00f17914a198a65d33e61654cfd378ba69ab8e8a97ff1e10aed92e3141",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 19254,
+      "sha256": "d23a5d74e05d19a7aa12ee83445bb4c4f1daab0c9d6f79951711f5c96ae0de6a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 4306,
+      "sha256": "9ebca91d33298cf28bd0d4624368a30080b3734ee629abd3f880768c80202a38",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 6513,
+      "sha256": "39c0a63fb4b536d8882436aac7677738a3e2bf7519a2da756595bfe316f19d11",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 17130,
+      "sha256": "920f600327920f9ea74bb701dc9ab920b238393447ca083bcf198ad8da36e269",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "bytes": 1933,
+      "sha256": "5ac4ffeb5305ba674f3c2c826e0cdc04b838de84a1be7f924175835fbdef4d96",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "bytes": 3930,
+      "sha256": "ae8272d6cfff98a48f6703a36b62d0ef833cf10e4e2a3c6d9a2629c5b70c3f35",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/ReceiptCustodyProbe.sol",
+      "bytes": 5308,
+      "sha256": "75e9daf94f2ee7d9772d221a6c28cb2ae0b54d3598e1f9563f4a24c1febb6860",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/audit.ts",
+      "bytes": 9233,
+      "sha256": "d2a73ac4feda749366f7c7eb893b906509db1eaa6fea7cbf2d615697ba8df7e1",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/FixedPointMathLib.sol/FixedPointMathLib.json",
+      "bytes": 40252,
+      "sha256": "2fca9b5c81ead07a7f17fc1bb5f17f4cbe9dd53247d4e5c4d94dfdd02a8004f5",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/Math.sol/Math.json",
+      "bytes": 38211,
+      "sha256": "49ff65cf05409a6f3cf9264229261c8e527a0ceeba0b035ab893622d09b0ab3f",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/ReceiptCustodyProbe.sol/IEarlierReceiptProbe.json",
+      "bytes": 41676,
+      "sha256": "2aa0bc184fa1f6a9b05db88cfc5bc961de1facabf3713185e6551ab2898c6e08",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/ReceiptCustodyProbe.sol/ReceiptCustodyProbe.json",
+      "bytes": 57250,
+      "sha256": "620a6dab99141178dd871549a591b17db6c7f8c4b74af881be0ad6f4b8be5a66",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/SafeCast.sol/SafeCast.json",
+      "bytes": 39465,
+      "sha256": "ee68aa466540d160083bd061ff44884b35c29bf6b185031785d0732c28bfadf1",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/SafeCastLib.sol/SafeCastLib.json",
+      "bytes": 36861,
+      "sha256": "daf8d04d9da14b9e44c1528ad68ba19e8f1c2dd3e9d0496c0a4552153b8f9146",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/build-info/0594d2974891c3b7.json",
+      "bytes": 359,
+      "sha256": "da3ba2d7df18f0d45239fdeb6adb2354aabb7efb9926e43c1fbc1e043545b866",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build/build-info/cdfff7d652403f35.json",
+      "bytes": 359,
+      "sha256": "6affe3807d6ecec4751c5c2dae243e2654a6d1d55010b9cabd48a21adc217bc0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/cache/solidity-files-cache.json",
+      "bytes": 21205,
+      "sha256": "c7efb8a8954f602e9d9d95fbf8ceccdea4c877315aea3435715812503d2361b0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/cleanup.json",
+      "bytes": 2344,
+      "sha256": "77788512f51de004c05ff786e10c23f3b84f11466c77c4d78304b846efeb24a7",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands.json",
+      "bytes": 5607,
+      "sha256": "209c7a03a956dbfd9776ab8cf519f3653e160b09a1e5c762ab6062467c73845b",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands.md",
+      "bytes": 4229,
+      "sha256": "ec585817875dea816844c015f5445fcd1358d80ca9605ab6301bbe0998d8eb06",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/audit-failed.log",
+      "bytes": 507,
+      "sha256": "855102470bd3055d35f548138294fba18c73684cc07b5d398d59f43f5bf981e6",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/audit-final.log",
+      "bytes": 140,
+      "sha256": "06f77783d9717e64a25076023161df9443355f5c6015cdcd1d058e0c34491edd",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_10.log",
+      "bytes": 1329,
+      "sha256": "cf562db256f3cb5360fb263ea66ef94a3da484d820f58ee62ad83c50ff54e878",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_11.log",
+      "bytes": 51,
+      "sha256": "8a00de6a8cc5e09abdc2e2ca211f3d1d0efab3a658e28b7852266562caecb5e1",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_12.log",
+      "bytes": 47,
+      "sha256": "696e16a1e6319fd2fb49bd305defedd7054654381972c94390883cfaf1f4e724",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_14.log",
+      "bytes": 47,
+      "sha256": "696e16a1e6319fd2fb49bd305defedd7054654381972c94390883cfaf1f4e724",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_4.log",
+      "bytes": 329,
+      "sha256": "4e644f155cd65b57619f2b14b986a3dd02447445413b9acc7ce2facb8f57a1ad",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_6.log",
+      "bytes": 418,
+      "sha256": "e42f4c61594eef1fcfdc6a045913fcacc6f627fc29f49068cbefec5649bf37ba",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_7.log",
+      "bytes": 905,
+      "sha256": "7bd5b98387348b9d7751180ec67a446b60c11acb9f7991c07bbcf85b87e1ea9c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_8.log",
+      "bytes": 47,
+      "sha256": "696e16a1e6319fd2fb49bd305defedd7054654381972c94390883cfaf1f4e724",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/commands/bash_9.log",
+      "bytes": 919,
+      "sha256": "1bc0009ddd439a21f245f041f9724acc9d011784a921f6ba488acd47b8d0b5be",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/contract.md",
+      "bytes": 22508,
+      "sha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/history/ReceiptCustodyProbe-v1.sol.txt",
+      "bytes": 4305,
+      "sha256": "d4970ee935f847abf7c0b1940644d7d3e6771ad0d3dd53dbff82c150dff0cb45",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/history/probe-attempt01.ts.txt",
+      "bytes": 9988,
+      "sha256": "2420f7f2ba0388a56b4f374351cb5e87fb351b767d984994d982e4c48cd7ac2e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/history/rate-probe-attempt01.ts.txt",
+      "bytes": 4647,
+      "sha256": "86ab43b851529ff159c6764c8e6fe02445f7196e4f6673c831100cf6110c2a84",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/history/rate-probe-attempt02.ts.txt",
+      "bytes": 5258,
+      "sha256": "57b1e5d83dc5fb34ee207db5d67d503bda09f0050826d2eaece25f60f3e7f533",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe-runtime.ts",
+      "bytes": 9343,
+      "sha256": "de7396c57d94675890feddc638dfd6d8854644da17b9d2205d231425960aa675",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe.ts",
+      "bytes": 8374,
+      "sha256": "0453aa978e10408db76a72d9b3cb69f9f550da8f1d1326668c9a2878a35388dc",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/proof.json",
+      "bytes": 12878,
+      "sha256": "276bad24766c89b5806a58229b282023eab61daed658f54b05378cb3872ff7b0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/rate-probe.ts",
+      "bytes": 5670,
+      "sha256": "04b797ac0f9d7de6e8875c3e29f68aade707227f280414ea38391673cecf1d91",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/report.md",
+      "bytes": 17415,
+      "sha256": "b2d082ff67033178edb1710e0409c2bc8163bf0b75239c28f39b210989cf4aa5",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/acquisition-10.json",
+      "bytes": 27406,
+      "sha256": "6f5187fe4f65ea21fc598a3b9a30c21fa4f3073efba16db98e39286b4b89e381",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/acquisition-12.json",
+      "bytes": 27477,
+      "sha256": "18bd33c9124cf442e9af79181f0f2b92cbba421b69cfccaf7e64a9410525cb99",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/acquisition-14.json",
+      "bytes": 28126,
+      "sha256": "e936d6582e2e037691e422dc3195b0aa7093574e84e00d57bc750c9268620911",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/acquisition-4.json",
+      "bytes": 25202,
+      "sha256": "45d7bc465a50bf4fb1fe5bcfcb6f930f288a6f9a3e7bf0a92224fc2c010a6bb2",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/acquisition-6.json",
+      "bytes": 25779,
+      "sha256": "31203a214e22d30a012db1915843458c4649342f8b7a4a7775f58081a5540262",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/acquisition-8.json",
+      "bytes": 26880,
+      "sha256": "bf4b0092b6dc0771c5b3dab7ecb894dcbe79b7de99632778d417f9921d9bbfca",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/anvil.log",
+      "bytes": 40822,
+      "sha256": "ac51fcc33d4ef8b04d4b02b96940b0e99a2db7e65cd5fffb2095595ae1302be8",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/approve-mixed.json",
+      "bytes": 5232,
+      "sha256": "575fb9f409ce9ab86cfaf4a0ef718ef0d1c0eb3f1c13b46529e5b27e373e0481",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/approve-residue.json",
+      "bytes": 7398,
+      "sha256": "578e0a717b448c040d672764310c01efd15e2564ffaffbf8636c3037f1669584",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/approve-terminal.json",
+      "bytes": 6863,
+      "sha256": "31eb845d7333e3496a868419dde81f4c2d2ec3700c87a0bea6ac1f017516f33a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/approve-zero-credit.json",
+      "bytes": 5788,
+      "sha256": "6b35d8a494020c4bcc2ff3ec725fd59f5cc6f6746050a992de9c37907f1ab5c0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/cleanup.json",
+      "bytes": 127,
+      "sha256": "b60d6bcd0787876933149fc6579e634c591c1dfcc8e3d235c61ad84784f611fc",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-mixed-runtime.json",
+      "bytes": 3006,
+      "sha256": "d660c5e7396205167b9d6c05af3817ee819ea81609f4d1e1d74265fdf0206d74",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-mixed.json",
+      "bytes": 15610,
+      "sha256": "93af5db4805c7a8703520d311806be4233d1133d0a31add2e14a998a3da2e85a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-no-approval-runtime.json",
+      "bytes": 3006,
+      "sha256": "a37b46e7e12131aff47b7e4e797c4dd0cb6f6072b65a6dc79cd840d675a332a6",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-no-approval.json",
+      "bytes": 16748,
+      "sha256": "7034ed8bcb5e9c9ceff890d76bf79d82be82ee9916ebf11b5f4dd5692d4c343e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-residue-runtime.json",
+      "bytes": 3009,
+      "sha256": "da032b286898c723d4b492c9686d772af63c20ad4eaf849a3099dd88e0d907fc",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-residue.json",
+      "bytes": 17842,
+      "sha256": "07e7473262bdfff148f74201419ae2009c2304548c1c9e02e732f755ec5158b3",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-terminal-runtime.json",
+      "bytes": 3003,
+      "sha256": "4a0450145ad547443dc92e31e729d3a42acf1558ba93119a4c10ca2e9a597b06",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-terminal.json",
+      "bytes": 17246,
+      "sha256": "1bc5549d1374b08fe1f3137669e32430042dd87b3b5ab93562d9a2c26ce29cc7",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-zero-credit-runtime.json",
+      "bytes": 3000,
+      "sha256": "079c2ef07ad45f9bc8eb67064f0a8fb27c243823969833186019821fe08e9c67",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/deploy-zero-credit.json",
+      "bytes": 16250,
+      "sha256": "6d5ffd0687fed398479433fbc6a7ecf9fbb6b1613e71bc3219382c34238e4c8d",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/identity.json",
+      "bytes": 312417,
+      "sha256": "1bf3c9e4bd5351c51a791254dd42bebc5382c2eb480ac2082e216af050f29f8f",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/isolated-last.json",
+      "bytes": 28603,
+      "sha256": "4819dd8936f4a8704863c20feb011d9e7de0345521f9b21384370c661c860ad3",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/isolated-partial.json",
+      "bytes": 28653,
+      "sha256": "997653ca6c47474f47f7a67c673f50622e1d94180468d052beb183abb87966c8",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/isolated-source-reject.json",
+      "bytes": 28137,
+      "sha256": "d8023b82ff8dbd3d1875c754ca97161f33a7bfb67a565e32cfbf6900212947ea",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/late-rollback.json",
+      "bytes": 163927,
+      "sha256": "bb2680a48dc1cefce68f24d7ebd32e9e6059c8801c6aa27ac7705c2537eaafe1",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/missing-approval.json",
+      "bytes": 74911,
+      "sha256": "81396e1704d6af70b3639fa7a3be1f11ddf68485650ad7df8a7f385f494376bf",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/recipient-carry-arithmetic.json",
+      "bytes": 330,
+      "sha256": "f34aaa6e9c348b06dfa923da45b1ab624461b8b3a3c6440d166fa065189a780f",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/recipient-carry.json",
+      "bytes": 165804,
+      "sha256": "630cba8580cd7104c3e49b69390c5858fc2ec60a99e6e71b7233d8931f185235",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/residue-cap-reject.json",
+      "bytes": 74655,
+      "sha256": "6d78fd25b103f0d4f65a4fd8e97e160e28a742a04a11414f36d26932335b25c9",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/residue-last-representable-arithmetic.json",
+      "bytes": 314,
+      "sha256": "71795a5ede574fe333f2bec5df52d1f5bfb4db7038e8ca6d3f1690ae2f3cecee",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/residue-last-representable.json",
+      "bytes": 168057,
+      "sha256": "034810ef35661149b06b14eaf725ce98270b2fc94a95ba9785ea7127ee5eade5",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/residue-partial-arithmetic.json",
+      "bytes": 297,
+      "sha256": "e6fa46d966ea0bc92ccc6289aece8eb2dba7f428822b5533e23cec4fa4c8df33",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/residue-partial.json",
+      "bytes": 168004,
+      "sha256": "ff0b60c1f969a6ec304e659f36bbd0602dace9a72c21683e4e8bbd148b0a540a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/sender-carry-arithmetic.json",
+      "bytes": 327,
+      "sha256": "9708ccf31847ec998a4fe1c124cf2a598ac187657c3575541ed848a38c5a7898",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/sender-carry.json",
+      "bytes": 165827,
+      "sha256": "b750188bac19f9bace523adeff281208780c75707833fbe709e358f5d7b11faa",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/terminal-final-arithmetic.json",
+      "bytes": 339,
+      "sha256": "e9ed9fc440b6234bbfc17af771744c9be51cc422804368ecb6c7c7f4549a26c1",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/terminal-final.json",
+      "bytes": 167452,
+      "sha256": "17c470205d1645c10892a697babe7ba904b541b5d041ffd8327449ce91d5737b",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/terminal-partial-arithmetic.json",
+      "bytes": 339,
+      "sha256": "da6395ec8af190d933860a80a873cd442b2be5bd6a79595b645a2382727cbfb8",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/terminal-partial.json",
+      "bytes": 167445,
+      "sha256": "78326ee88421676c68a155d9115c29caa136af4a256177142243d415f29c4832",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/wrong-wallet.json",
+      "bytes": 3584,
+      "sha256": "0e1c2ac31e34bc2f315f007c12b67c9190d80928e586bd71dc9b38c1b64a0887",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/zero-credit.json",
+      "bytes": 72950,
+      "sha256": "ed388597da816d619b7a161208f45ff843c9426ac2750ecd000d4a746c5e9609",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-01/zero-input.json",
+      "bytes": 3582,
+      "sha256": "aff052da77e9f713b3ac0a9c587d2a39eb811ee2f6fe9f19052cbe9c30d39e66",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/acquisition-4.json",
+      "bytes": 25202,
+      "sha256": "f541221ad178fcfe2db7c461c7626e39f424084beae4f5a1136138f0cf2d7087",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/acquisition-6.json",
+      "bytes": 25779,
+      "sha256": "69acfa879acd95eaeebd64fb752efdd3a1823dd2fe1c0968bb3effa41ed6de0f",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/anvil.log",
+      "bytes": 10291,
+      "sha256": "d6f3ec2f4be064e1b43b361e240cb913841eec77c1f76016a478a8aa36d9106b",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/approve-rate.json",
+      "bytes": 5229,
+      "sha256": "312f4c7fac00cf25b9278858a1d1f845d000cfac853ee26345200564699237c9",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/before-movement-pull.json",
+      "bytes": 165802,
+      "sha256": "3332c4c015d05f251ec68c99950b765b984ee7cf9fe81cfaac8823028f08aac3",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/cleanup.json",
+      "bytes": 127,
+      "sha256": "60e6f897f70b59ae3a5622d77507f638aeb76d25aea3683e8c1fa150bbdb434c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/deploy-rate-runtime.json",
+      "bytes": 3006,
+      "sha256": "d660c5e7396205167b9d6c05af3817ee819ea81609f4d1e1d74265fdf0206d74",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/deploy-rate.json",
+      "bytes": 15609,
+      "sha256": "5480f8eeb4c20e7b75618c17df7485de6c465a9c5b0909033699e4b6f361860e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/ed-acquisition.json",
+      "bytes": 1652,
+      "sha256": "6126f5f22b85e2406d35b994b65b52552b02191866ed3ee2f63382b6d81da1e9",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/identity.json",
+      "bytes": 25826,
+      "sha256": "a26a550ccfd65d43ff190862beed9d0388695ee050b21c969658af2fe2e9db0c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/rate-movement.json",
+      "bytes": 1626,
+      "sha256": "e7634c6d72aeccd92a234bf2a36c77de475e40d809a31479098cdf4433cb710f",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/real-donor-balances.json",
+      "bytes": 411,
+      "sha256": "e9b2a6065ad8334b8078891d86e4cf40b187002b84b9ecfaea39317a07a9da7e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-02/real-reserve-donation.json",
+      "bytes": 4655,
+      "sha256": "1207c21ebab75a189e8ee1b66fc143cd257fd4f2f3aafa83b290069695e40426",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/acquisition-10.json",
+      "bytes": 27406,
+      "sha256": "2f8a4e0bbfbcf7a105d2589575cbbd6c992d5bfc346eb20ca2aed7202bb09dad",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/acquisition-12.json",
+      "bytes": 27477,
+      "sha256": "0c5048c40871124540a20b48887149782dd40b24e593292207a79eb55bab4bd6",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/acquisition-14.json",
+      "bytes": 28126,
+      "sha256": "9f28ff03de10f4390e45d76687ec25cb6896888a57cfb4d20c130114a3109045",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/acquisition-4.json",
+      "bytes": 25202,
+      "sha256": "45d7bc465a50bf4fb1fe5bcfcb6f930f288a6f9a3e7bf0a92224fc2c010a6bb2",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/acquisition-6.json",
+      "bytes": 25779,
+      "sha256": "2130c44a7608a06f3594f58432a453de4e847f0ddf0443a325f23e3971c87e8a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/acquisition-8.json",
+      "bytes": 26880,
+      "sha256": "89eac6a69a66c176617e156d3f700af5d37c1b707b5ea066ff10987c4dcf1749",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/anvil.log",
+      "bytes": 41306,
+      "sha256": "72dd3f95cd469d617f1a4fd8e71c39acccbc33d9227dff692134c823a447d203",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-mixed.json",
+      "bytes": 5232,
+      "sha256": "28a42b094db7aada834d16277af5154cc720075d8ffcbec30744442c4e5e65ac",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-residue.json",
+      "bytes": 7398,
+      "sha256": "cff23ad018740c4af336d9aeeb7ae89fb261a486f469030db5ced81739d0b7e0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-terminal.json",
+      "bytes": 6863,
+      "sha256": "03c783462215b6f950bc6da4c396b9a8379c919036a62780cf47d3dc349c4b8b",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-zero-credit.json",
+      "bytes": 5788,
+      "sha256": "a339053e6405cea1cc1323dfea633eb309e50d74b8b4050e0ed950f89a4ae4b9",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/cleanup.json",
+      "bytes": 127,
+      "sha256": "0d9362cc8ac425f3fd7680b277cc02c498ebac35efed79be9e3d53563ab1490c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-mixed-runtime.json",
+      "bytes": 3262,
+      "sha256": "6e240b796091ae8d0d5c179139807404c90c74b6aa51ac410f544ac8b5d10525",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-mixed.json",
+      "bytes": 16634,
+      "sha256": "14e6883d8f14f7d898b9c3f5971f40db7a70273b27a6a499552e053407ac4288",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-no-approval-runtime.json",
+      "bytes": 3262,
+      "sha256": "5cd2f2b37054949dcea462d338391e5a378ee48bda05212178dfa7a784b1defa",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-no-approval.json",
+      "bytes": 17772,
+      "sha256": "3796e9c9a85788e9eac49609dc13b2a143c1d588c805a79295d1e946ba64be95",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-residue-runtime.json",
+      "bytes": 3265,
+      "sha256": "40a95316eb0eff5e9601b8ab5ccca845a479665462eb52da21687b88777fe507",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-residue.json",
+      "bytes": 18866,
+      "sha256": "c996ab7ebd5f447704694badbe4eb4a4fcc509359b12f2853b037f2c095078e6",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-terminal-runtime.json",
+      "bytes": 3259,
+      "sha256": "f4abf3950695df5f8046d3720376c183bd24cfc42e2b4d43485618fdaf8074f7",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-terminal.json",
+      "bytes": 18270,
+      "sha256": "f62c3babc5e0db75ab465a875a306c21e8f780728e58cf96a0977cefad092f20",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-zero-credit-runtime.json",
+      "bytes": 3256,
+      "sha256": "0c2472411b47af6a2ceb44ed23d7561ec3fffe70e24c18c2a67bff0c117f849a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-zero-credit.json",
+      "bytes": 17274,
+      "sha256": "21d1f2f4883b0f06d3235d7d91a5b57f0d78ac8b32da8b573df4dabb3bc96a95",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/identity.json",
+      "bytes": 312417,
+      "sha256": "84fb5f922b81b661c02d16104a938bd640817aec25a9beb4b27d20bcac6d57bc",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/isolated-last.json",
+      "bytes": 28603,
+      "sha256": "e3a28d67b22ebf973f42e465f9d33183e82471b7b216f2d5eca87b7b85794e21",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/isolated-partial.json",
+      "bytes": 28653,
+      "sha256": "d26e0cfca9bbd9cec7963afb0460060c9cbe6a07437baa15d0cd9a763efc9a99",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/isolated-source-reject.json",
+      "bytes": 28137,
+      "sha256": "410038211d956aa389882034b819632354b39fce59eacee4b0a1fdd8e6653fbd",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/late-rollback.json",
+      "bytes": 163927,
+      "sha256": "0ad12329719e10d57f7180c15f498e57dd885dc2e2bba6647fd3112d42fad9de",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/missing-approval.json",
+      "bytes": 74911,
+      "sha256": "5311935ad7d9d003af6d641041a3180f19770c047fc347d59ef6bf9608267b08",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/recipient-carry-arithmetic.json",
+      "bytes": 330,
+      "sha256": "91846ac3770a823b4e6bd031cbd1f844c5e26b81d2e02c28ff08c337d5ec1258",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/recipient-carry.json",
+      "bytes": 165804,
+      "sha256": "a1809f0d2c4ec1a7c94aa206ef873baa369b5a36c8693a3075f6e8294595571d",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-cap-reject.json",
+      "bytes": 74655,
+      "sha256": "b2b551c43605d8aa4a34df69b4decac6aa59391adc592ab8251f980bfa12b904",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-last-representable-arithmetic.json",
+      "bytes": 314,
+      "sha256": "bd5c426a5961b9b7856d967af3ecdaa8f4c295cdc1e09cbabdf595e1a510efde",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-last-representable.json",
+      "bytes": 168057,
+      "sha256": "8ec864be4b9652d162ef378392c2ed6e6c92c91c603778ed4db06699bf5ab6f8",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-partial-arithmetic.json",
+      "bytes": 297,
+      "sha256": "d853354787535de014c7397a0f8a4fb1fc0c82c34f20348ea1d668616e05248e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-partial.json",
+      "bytes": 168004,
+      "sha256": "67c0e9106fe5d8bbd40abc6dc0338b8b2415ed08d71ac44ee3df3fc2fc234798",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/result.json",
+      "bytes": 7505,
+      "sha256": "e18d36494f1ba53fae05422c7a268e6823d010babcfc0190ea50f186284577b9",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/sender-carry-arithmetic.json",
+      "bytes": 327,
+      "sha256": "fa997eeb2aeee193d77d80df01fef4b4c2c9e7ef1504a72dccca38b1d1d8b74e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/sender-carry.json",
+      "bytes": 165827,
+      "sha256": "9fe23190f592130756fa4799442673d70d14670aef775eaa25326c2f7fad38d1",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-final-arithmetic.json",
+      "bytes": 339,
+      "sha256": "d9bf3128d713b63d0f7a7c77399fde741d0d4ae1adbe0a4d34281b63a674ab69",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-final.json",
+      "bytes": 167452,
+      "sha256": "bc6f5f3b96bb0b021a439c3a570cadc766e6a2507efe7acc1376a3257c5de670",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-partial-arithmetic.json",
+      "bytes": 339,
+      "sha256": "b0835930f8ce03675dae426cab2d46b6a9cdeac48ae3b17979dfa6d0c30f0cb7",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-partial.json",
+      "bytes": 167445,
+      "sha256": "a2ea754b2172e09b0457f08381b7cd583536a94e5b37fa90651578b84c45c1c4",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/wrong-wallet.json",
+      "bytes": 3584,
+      "sha256": "8cc8cb6ac9c7583a81d428092a33e1d41850e8edc95c94ada48d447fb867e298",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/zero-credit.json",
+      "bytes": 72950,
+      "sha256": "aaa1f350e7b0f8a29151c15706ace45703722c17284d197af5252ad686beb2ae",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/zero-input.json",
+      "bytes": 3582,
+      "sha256": "021961e4adde380830a78c801041db36e3d8493375e295e7e5a4a55d85497fa5",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/acquisition-4.json",
+      "bytes": 25202,
+      "sha256": "f541221ad178fcfe2db7c461c7626e39f424084beae4f5a1136138f0cf2d7087",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/acquisition-6.json",
+      "bytes": 25779,
+      "sha256": "b802df391200c7d714742de6ad2c3e86baa52160fc3f43572c77a144509d53a9",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/anvil.log",
+      "bytes": 11909,
+      "sha256": "d18ef94c722469bcb821c56e9d5e3c3bd17d790b0782b0d39931e83b34863c41",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/approve-rate.json",
+      "bytes": 5229,
+      "sha256": "5c275423043db4f43a56bee976e685fd87c54b4f404b082e34395ea6905ca22b",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/before-movement-pull.json",
+      "bytes": 165802,
+      "sha256": "299b64e6ad67c9d544e67af625a06fd49fbc8daa6e38449351d5244c57ded1b5",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/cleanup.json",
+      "bytes": 127,
+      "sha256": "2ce05b01054fab884759b6f62590d4a3cca84bdfcbf07123e8872e16b6a686e4",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/deploy-rate-runtime.json",
+      "bytes": 3262,
+      "sha256": "6e240b796091ae8d0d5c179139807404c90c74b6aa51ac410f544ac8b5d10525",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/deploy-rate.json",
+      "bytes": 16633,
+      "sha256": "3d763b6959164dc71544613b021225369bcea4a24913069294518b7f794af7f0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/dtf-acquisition.json",
+      "bytes": 244780,
+      "sha256": "7a3d17a7a3515d881ed08e0d5a843eb35bc5f8ba47bfe8811deb2b48ab4c9505",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/identity.json",
+      "bytes": 25826,
+      "sha256": "072804358d5a48bc2173632db9dc875737903a81627be267a5c186f84993b6d0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/rate-movement.json",
+      "bytes": 1619,
+      "sha256": "4e98b46eb441aed76167524a5ca32eb76063fc1af60165c97b76287047058add",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/real-donor-balances.json",
+      "bytes": 411,
+      "sha256": "e9b2a6065ad8334b8078891d86e4cf40b187002b84b9ecfaea39317a07a9da7e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/real-reserve-donation.json",
+      "bytes": 4242,
+      "sha256": "77a3b67373d5a96a4822839a4301c99ed5038ae3a72ae9248cc248f9f2283254",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/wd-acquisition.json",
+      "bytes": 1652,
+      "sha256": "eb896eec410f734f63d179fd193260d459a271cbe117ac956ed3f26aeffeb21a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-04/wd-approval.json",
+      "bytes": 4645,
+      "sha256": "95ae6b44c0e38f2651d620a14e9485a5ffd9c2ee3034c18900789b5c51015a6f",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/acquisition-4.json",
+      "bytes": 25202,
+      "sha256": "f541221ad178fcfe2db7c461c7626e39f424084beae4f5a1136138f0cf2d7087",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/acquisition-6.json",
+      "bytes": 25779,
+      "sha256": "b802df391200c7d714742de6ad2c3e86baa52160fc3f43572c77a144509d53a9",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/anvil.log",
+      "bytes": 13805,
+      "sha256": "09e803910a9e6df27a95e958f7b54eef928f0bc37cd19b8ab9d7b35f70e29cab",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/approve-rate.json",
+      "bytes": 5229,
+      "sha256": "5c275423043db4f43a56bee976e685fd87c54b4f404b082e34395ea6905ca22b",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/before-movement-pull.json",
+      "bytes": 165802,
+      "sha256": "299b64e6ad67c9d544e67af625a06fd49fbc8daa6e38449351d5244c57ded1b5",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/changed-rate-late-rollback.json",
+      "bytes": 163936,
+      "sha256": "e7c77847465965a43690e40f3057413683eeedd7bf8245ac5128835dc295e6a5",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/changed-rate-pull.json",
+      "bytes": 165826,
+      "sha256": "fa4c56cb641a7657361ba287759da06e606c558bb527b93f94feab90d76daa34",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/cleanup.json",
+      "bytes": 127,
+      "sha256": "56a2d91e7c7540f7617eafd528a86c0f24534f84a5f255788788a84127f66cff",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/deploy-rate-runtime.json",
+      "bytes": 3262,
+      "sha256": "6e240b796091ae8d0d5c179139807404c90c74b6aa51ac410f544ac8b5d10525",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/deploy-rate.json",
+      "bytes": 16633,
+      "sha256": "3d763b6959164dc71544613b021225369bcea4a24913069294518b7f794af7f0",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/dtf-acquisition.json",
+      "bytes": 244780,
+      "sha256": "7a3d17a7a3515d881ed08e0d5a843eb35bc5f8ba47bfe8811deb2b48ab4c9505",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/identity.json",
+      "bytes": 25826,
+      "sha256": "0bd387b9e8d36b485227a9401ec8da0f44b14a7f5fe8ec7577e447cacfce6e00",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/rate-movement.json",
+      "bytes": 1679,
+      "sha256": "4ea1a4c7632c3b0b913d9fa9e5490b8a9cf0441e040195dbfab7d1ef32efb3b2",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/real-donor-balances.json",
+      "bytes": 411,
+      "sha256": "e9b2a6065ad8334b8078891d86e4cf40b187002b84b9ecfaea39317a07a9da7e",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/real-reserve-donation.json",
+      "bytes": 4243,
+      "sha256": "81b9946449195894399796c2c0f854fdc534806b614bf7b0af3096bc66f86ec4",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/result.json",
+      "bytes": 3941,
+      "sha256": "99e43df773249f6b7b3f4a006a730431f30545e1e11bed54a9eae205bc6cfe4c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/wd-acquisition.json",
+      "bytes": 1652,
+      "sha256": "eb896eec410f734f63d179fd193260d459a271cbe117ac956ed3f26aeffeb21a",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/wd-approval.json",
+      "bytes": 4645,
+      "sha256": "95ae6b44c0e38f2651d620a14e9485a5ffd9c2ee3034c18900789b5c51015a6f",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/source-evidence.json",
+      "bytes": 151966,
+      "sha256": "63fbcce64734969290cb323b5ed3b03851b3dbbec71d36ad0e8452a8c155eb0c",
+      "mode": 420
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/seal.json",
+      "bytes": 40512,
+      "sha256": "4acc1e105445519dbe50975e375f07de886dad9328bdc083d71f8d0893af597d",
+      "mode": 420
+    }
+  ],
+  "producerSealSha256": "4acc1e105445519dbe50975e375f07de886dad9328bdc083d71f8d0893af597d",
+  "signatures": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-mixed.json",
+      "sha256": "28a42b094db7aada834d16277af5154cc720075d8ffcbec30744442c4e5e65ac",
+      "hash": "0xd337092be492de6c64ad9719b85d99c56007767a1d02ea4224f415155ec252f4",
+      "nonce": 1,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b3000000000000000000000000fdb28ac8f97af7839eb77e365bebc298677b9df300000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-residue.json",
+      "sha256": "cff23ad018740c4af336d9aeeb7ae89fb261a486f469030db5ced81739d0b7e0",
+      "hash": "0x2deb763509604ab150458d05881f768eb690952f707dd51ea189ce77e40ad193",
+      "nonce": 16,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b3000000000000000000000000e09949ea009b324d5e4e6cb91c9d960edc58666d00000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-terminal.json",
+      "sha256": "03c783462215b6f950bc6da4c396b9a8379c919036a62780cf47d3dc349c4b8b",
+      "hash": "0xdc678e1aa8697b8a032715e7eaf036eed74483922d59df9b1ad5e9f96fc921d2",
+      "nonce": 12,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b30000000000000000000000000dc65a3526d79a5d92f1097e04cb729769202c3200000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/approve-zero-credit.json",
+      "sha256": "a339053e6405cea1cc1323dfea633eb309e50d74b8b4050e0ed950f89a4ae4b9",
+      "hash": "0xbf587e0a55e83e051c9f0f26f63ef430d00094690fbe0fbfc761c63ee593cd42",
+      "nonce": 7,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b3000000000000000000000000d084437b0809f7d9cc40baaea1494a59a16ea02200000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-mixed.json",
+      "sha256": "14e6883d8f14f7d898b9c3f5971f40db7a70273b27a6a499552e053407ac4288",
+      "hash": "0x5420c2f27b36a893a293b1f6704929a533cfc0bb3708ea3f6708d3e741aa900f",
+      "nonce": 0,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab34786200000000000000000000000000000000000000000eb50bc88d147523ac65243d00000000000000000000000000000000000000000000000000000000000f4241",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-no-approval.json",
+      "sha256": "3796e9c9a85788e9eac49609dc13b2a143c1d588c805a79295d1e946ba64be95",
+      "hash": "0xa85be84d9af6a7c9129053f8e9d8268c9a80492234844e7dda2f57c3a0bebbe9",
+      "nonce": 9,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab34786200000000000000000000000000000000000000000eb50bc88d147523ac65243d00000000000000000000000000000000000000000000000000000000000f4241",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-residue.json",
+      "sha256": "c996ab7ebd5f447704694badbe4eb4a4fcc509359b12f2853b037f2c095078e6",
+      "hash": "0x1bbc0714a33a15d1579ef65e24f41b8f825f7ac655ab106531ac4064b6d4ab41",
+      "nonce": 15,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab3478620000000000000000000000000000000000000000033b2e3c9fd0803ce8000000000000000000000000000000000000000000000000000000000000003b9aca00",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-terminal.json",
+      "sha256": "f62c3babc5e0db75ab465a875a306c21e8f780728e58cf96a0977cefad092f20",
+      "hash": "0x774d2d03df6dce0ec30c60a7fc679c87819799ea6577b9b2008b2b0a93ad55a9",
+      "nonce": 11,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab347862000000000000000000000000000000000000000006765c793fa10079d000000000000000000000000000000000000000000000000000000000000000000003e9",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-zero-credit.json",
+      "sha256": "21d1f2f4883b0f06d3235d7d91a5b57f0d78ac8b32da8b573df4dabb3bc96a95",
+      "hash": "0xfb8a066daf08b49019dca8e20eed6fac8947faf8e518d46190bb0c74c26595f3",
+      "nonce": 6,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab34786200000000000000000000000000000000000000000eb50bc88d147523ac65243d0000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/isolated-last.json",
+      "sha256": "e3a28d67b22ebf973f42e465f9d33183e82471b7b216f2d5eca87b7b85794e21",
+      "hash": "0x076d7b6c2459f224db7d4adfbb1e6685252173917d8d5902e64df4a4e469b3d5",
+      "nonce": 2,
+      "signer": "0x9818DBC159BCC58C7feA87E82E738BDb0fcF03F8",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0xa9059cbb00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab3478620000000000000000000000000000000000000000000000000000000000000894",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/isolated-partial.json",
+      "sha256": "d26e0cfca9bbd9cec7963afb0460060c9cbe6a07437baa15d0cd9a763efc9a99",
+      "hash": "0x455c5ac295c0aeea0407611a7adc3400b3b356c49b17a1b0acef313735559130",
+      "nonce": 1,
+      "signer": "0x9818DBC159BCC58C7feA87E82E738BDb0fcF03F8",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0xa9059cbb00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab3478620000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/isolated-source-reject.json",
+      "sha256": "410038211d956aa389882034b819632354b39fce59eacee4b0a1fdd8e6653fbd",
+      "hash": "0x1ed169eaba4ae2afbd327d34f1ce5713086c18b3db0f17ff0d02eda2f8973411",
+      "nonce": 3,
+      "signer": "0x9818DBC159BCC58C7feA87E82E738BDb0fcF03F8",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0xa9059cbb00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab3478620000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/late-rollback.json",
+      "sha256": "0ad12329719e10d57f7180c15f498e57dd885dc2e2bba6647fd3112d42fad9de",
+      "hash": "0x3d7b5b43e80e0ec18ab1884ec7f4ae954df775a7324cd0b25f29447aee552800",
+      "nonce": 4,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/missing-approval.json",
+      "sha256": "5311935ad7d9d003af6d641041a3180f19770c047fc347d59ef6bf9608267b08",
+      "hash": "0x201a20f10b3d5c442194d0429aa8b0faaa50bc7f1af44851f5845ee21132406b",
+      "nonce": 10,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x3958549EA013768Ab816c75C80090A501B341BEF",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/recipient-carry.json",
+      "sha256": "a1809f0d2c4ec1a7c94aa206ef873baa369b5a36c8693a3075f6e8294595571d",
+      "hash": "0xfd8ba1e04b3f6311985b40d83a5b0b966cf5b7fc600c2fec48817bb38a28b780",
+      "nonce": 2,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-cap-reject.json",
+      "sha256": "b2b551c43605d8aa4a34df69b4decac6aa59391adc592ab8251f980bfa12b904",
+      "hash": "0x6c6a329fc5cf089f5863b8e95d79a95b9cb0992c7adb84bbf1a3b2efc0502ace",
+      "nonce": 19,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xe09949eA009B324D5E4E6Cb91c9d960eDc58666d",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-last-representable.json",
+      "sha256": "8ec864be4b9652d162ef378392c2ed6e6c92c91c603778ed4db06699bf5ab6f8",
+      "hash": "0x60adfbcf1129ac843a28fe2d3fffc30d344cd8c46eff0f30d6a7e0164fac81ea",
+      "nonce": 18,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xe09949eA009B324D5E4E6Cb91c9d960eDc58666d",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000008940000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-partial.json",
+      "sha256": "67c0e9106fe5d8bbd40abc6dc0338b8b2415ed08d71ac44ee3df3fc2fc234798",
+      "hash": "0xb2681d4b2fa2a552dfb017ac01c7b3336299100d276aaf7727cf987162311172",
+      "nonce": 17,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xe09949eA009B324D5E4E6Cb91c9d960eDc58666d",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/sender-carry.json",
+      "sha256": "9fe23190f592130756fa4799442673d70d14670aef775eaa25326c2f7fad38d1",
+      "hash": "0xea9bae18bfd3e8e79e0b9b3a96e638d2fe0c686685e4d09daab1582607df051d",
+      "nonce": 3,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-final.json",
+      "sha256": "bc6f5f3b96bb0b021a439c3a570cadc766e6a2507efe7acc1376a3257c5de670",
+      "hash": "0x9ba15cd9dd0fbe82890de2bebf7b9e860dffc0295ff5a271ba97b46e6b42c267",
+      "nonce": 14,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x0DC65A3526D79a5D92F1097E04Cb729769202c32",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000008950000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-partial.json",
+      "sha256": "a2ea754b2172e09b0457f08381b7cd583536a94e5b37fa90651578b84c45c1c4",
+      "hash": "0x38e893bf07e70b37840f8e53922129e4b239f244f34d9e1ca8c7bf409383a28c",
+      "nonce": 13,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x0DC65A3526D79a5D92F1097E04Cb729769202c32",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000008950000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/wrong-wallet.json",
+      "sha256": "8cc8cb6ac9c7583a81d428092a33e1d41850e8edc95c94ada48d447fb867e298",
+      "hash": "0x1168ec8aa7309600028688ea657daebed1136ae06977ceb1dfa95bc73e33bf48",
+      "nonce": 0,
+      "signer": "0x9818DBC159BCC58C7feA87E82E738BDb0fcF03F8",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/zero-credit.json",
+      "sha256": "aaa1f350e7b0f8a29151c15706ace45703722c17284d197af5252ad686beb2ae",
+      "hash": "0xd81d02b176af913b9ba75c6088a9e96e095abe95f61a1f8ef32f272256036a91",
+      "nonce": 8,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xd084437B0809f7D9cC40bAAEA1494a59a16ea022",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/zero-input.json",
+      "sha256": "021961e4adde380830a78c801041db36e3d8493375e295e7e5a4a55d85497fa5",
+      "hash": "0xd80d94c3377b4590e24fcd68093d8930eb681f2ebe60e97aa9b24c84d52c2feb",
+      "nonce": 5,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/approve-rate.json",
+      "sha256": "5c275423043db4f43a56bee976e685fd87c54b4f404b082e34395ea6905ca22b",
+      "hash": "0x830b4c0985beccfe10e9bf36bb8e7eaaafc88c7a72ffbc7559ddfe06306f31b7",
+      "nonce": 1,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b3000000000000000000000000fdb28ac8f97af7839eb77e365bebc298677b9df30000000000000000000000000000000000000000000000000000000000002710",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/before-movement-pull.json",
+      "sha256": "299b64e6ad67c9d544e67af625a06fd49fbc8daa6e38449351d5244c57ded1b5",
+      "hash": "0x9816939cb39f6d69f5da983aada0e971e9de6db727b15d7dbee2be216afd74bb",
+      "nonce": 2,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/changed-rate-late-rollback.json",
+      "sha256": "e7c77847465965a43690e40f3057413683eeedd7bf8245ac5128835dc295e6a5",
+      "hash": "0xf29d72e111ae788c4dfa848c6661b4d55eeb97f04b2451df9d3635e74853b9df",
+      "nonce": 7,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/changed-rate-pull.json",
+      "sha256": "fa4c56cb641a7657361ba287759da06e606c558bb527b93f94feab90d76daa34",
+      "hash": "0x9d6dccdfdc8a58aaf114ce9712608f9dcce43710f2924d3fd87761e3ae84a439",
+      "nonce": 6,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xfDb28ac8f97AF7839EB77E365beBC298677B9df3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/deploy-rate.json",
+      "sha256": "3d763b6959164dc71544613b021225369bcea4a24913069294518b7f794af7f0",
+      "hash": "0x5420c2f27b36a893a293b1f6704929a533cfc0bb3708ea3f6708d3e741aa900f",
+      "nonce": 0,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b00000000000000000000000033b1ce5357959ec0043e0d77556a5093ab34786200000000000000000000000000000000000000000eb50bc88d147523ac65243d00000000000000000000000000000000000000000000000000000000000f4241",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/dtf-acquisition.json",
+      "sha256": "7a3d17a7a3515d881ed08e0d5a843eb35bc5f8ba47bfe8811deb2b48ab4c9505",
+      "hash": "0xad983e97a8f3eb139be78597b4240f3e2c114854cce80bd2a8227f4c75ae1bcb",
+      "nonce": 4,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "calldata": "0xd02d30630000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000005f5e100000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb010000000000000000000000000000000000000000000000056bc75e2d6310000000000000000000000000000033b1ce5357959ec0043e0d77556a5093ab3478620000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006af003d1",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/real-reserve-donation.json",
+      "sha256": "81b9946449195894399796c2c0f854fdc534806b614bf7b0af3096bc66f86ec4",
+      "hash": "0x23e3b2c01573446bd8a68b9e20f0d4281826e6d8d467769d707eae3330750fc4",
+      "nonce": 5,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "calldata": "0xa9059cbb000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a70000000000000000000000000000000000000000000000056bc75e2d63100000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/wd-approval.json",
+      "sha256": "95ae6b44c0e38f2651d620a14e9485a5ffd9c2ee3034c18900789b5c51015a6f",
+      "hash": "0xff7672ccc2daff0a5896af828a5b74afeed97a8382a7852a1a3b0bcc9d487258",
+      "nonce": 3,
+      "signer": "0x33B1ce5357959ec0043e0d77556a5093AB347862",
+      "target": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "calldata": "0x095ea7b30000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000005f5e100",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/approve-mixed.json",
+      "sha256": "fb2833ab4fad70d452592b53d07515ceb7053c0c7d3397cdf4ca5ce504d71ed2",
+      "hash": "0x52390447b0e39989462e447fec10ef6062036da8e49a600841a6fdd51691aa80",
+      "nonce": 2,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b30000000000000000000000001b90ca46587f98186498ce5d26b51f4fe59d7ac300000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/approve-residual.json",
+      "sha256": "af70dd9d24a24f1acb6ba2ebb23c01c860ffe87b838403bca21693cd699615f6",
+      "hash": "0x34119b65fe2790c7818af819cb7340216f72d586cf01eec3396bd6b6b7db80f9",
+      "nonce": 15,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b3000000000000000000000000d9b48df962bd6622f6b5c2ecb3c2866947ec5d2900000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/approve-terminal.json",
+      "sha256": "bbc5eceba795d8be97d81a81c56ab3d989314eaed8568fb046e8a532fd926869",
+      "hash": "0x0d2d1ac85b5e9803bad41b5f21cc9a11c5758ce88b34453ae0a0d86e951295fe",
+      "nonce": 11,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b3000000000000000000000000496940a47de2eb2e41011c2808b826a84f0b2f6900000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/approve-zero.json",
+      "sha256": "a08ef951a1b46d6996ae1bab98a80e75099ca3b319d24132df46f85d903db20b",
+      "hash": "0xf689eb5acf2645a1a47780bd8a622bcc9fd179a3c247a7e52ebb14eeabf94118",
+      "nonce": 8,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0x095ea7b30000000000000000000000001970db91abeaf60205c210059c8a4665c82e204b00000000000000000000000000000000000000000000000000000000000f4240",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/cap-reject.json",
+      "sha256": "17740ca2a421a464c7de014afdc56b65cefe49d3a802d9b80e14241497eeb8de",
+      "hash": "0x65c71c6f1d5eacf88c433a343dac563347d1467c36d964a0e67c8231e621d51a",
+      "nonce": 18,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0xd9b48dF962BD6622f6B5c2ecB3c2866947ec5d29",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/carry-recipient.json",
+      "sha256": "aaad4ca5428786afd7c5c49a24a4d7d8d8de60da8c9e1d0e6f331b616ccd86a8",
+      "hash": "0x70158ff8ae9b2faee9f8e00006bfebdab9f2c1ffa4d99eaa070bc75de3a76974",
+      "nonce": 3,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/carry-sender.json",
+      "sha256": "3d1ad59aff97c848f97053309df040a58633e1a6ef0a9e0f183bd677521d4bc3",
+      "hash": "0xebe0b70eeec37671d512fcfeab3a5b3adebb69c5dddef3d0277a8a0c8ae46ac7",
+      "nonce": 4,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/changed-late.json",
+      "sha256": "1e445e5126bb11a61b9dc91ac221e3b2d3ffe4a337afd71eb17d6eb75e42c913",
+      "hash": "0xc3c4e8c70a74b671215b5afae31bf90752c0515a8365e0e162b1317ad61054f4",
+      "nonce": 23,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/changed-rate.json",
+      "sha256": "2f27871f0b7e04a65a28a48e4ed5114bb61f0d45755c922584c11de57497b3cc",
+      "hash": "0xf5ef59a506d928f82d3db64ad9ef63cf7315fed1fc48c50809fb2f95aeff81c9",
+      "nonce": 22,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/dtf-funding.json",
+      "sha256": "592aba63cb5e37c15f7cbaaace18f7bbf6529ba58096856afb5f2f9a148634e0",
+      "hash": "0x60079a9064b1c76d87b9609637955490016524effb86a0951084f8a246754ab7",
+      "nonce": 20,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "calldata": "0xd02d30630000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000005f5e100000000000000000000000000ee5576fa1bcaa380e591d01245f406f3f384eb010000000000000000000000000000000000000000000000056bc75e2d63100000000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006af003ee",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/isolated-last.json",
+      "sha256": "006131095b7a3e9c0caa2a220c7d63c382df6bc6808bd058b4dc2c665ce04485",
+      "hash": "0x3c6934fe96c1f7a112fc70d571a822ccb03b66aca0c08900513362c5eb9b1903",
+      "nonce": 2,
+      "signer": "0x4Daf3470DBA87DA934D22048ef416D6428EFFd1A",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0xa9059cbb000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b0000000000000000000000000000000000000000000000000000000000000894",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/isolated-one.json",
+      "sha256": "0f937bd50a780af4ae18dc753b691f53b584ffef80eed595d7872d0a51685073",
+      "hash": "0xff99da7816aed501262b0e55339d7508bfdf311168ffa964b93b8ac52bac704e",
+      "nonce": 1,
+      "signer": "0x4Daf3470DBA87DA934D22048ef416D6428EFFd1A",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0xa9059cbb000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b0000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/isolated-reject.json",
+      "sha256": "aa57da2ee52f31fdd28a8efefab84a055963aad7acd381802c1cfad230b988bb",
+      "hash": "0xb53083a9033427a7d6fff1af343d0816bef5f2153058b766afa0ec7aa18956d5",
+      "nonce": 3,
+      "signer": "0x4Daf3470DBA87DA934D22048ef416D6428EFFd1A",
+      "target": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "calldata": "0xa9059cbb000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b0000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/late.json",
+      "sha256": "b9d74d48a40e00237c8847805cfc2421516a039808228472fe89fab5d2115ce3",
+      "hash": "0xca02aae98b0c8651d80cc76b638705943c7beb908d7823e98a5e54d983c1f241",
+      "nonce": 5,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/mixed.json",
+      "sha256": "93ce09ead2c55375e50c6816d26033bbb9cc70cb87f1089fc069eab1a62f010e",
+      "hash": "0xcf7341aff24fa61a839a1c814015a0ace79678870ca7138244a46b77fa3e3cdd",
+      "nonce": 0,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b00000000000000000000000000000000000000000eb50bc88d147523ac65243d00000000000000000000000000000000000000000000000000000000000f4261",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/no-approval.json",
+      "sha256": "85580d2adae5e432b5e66468a2373f14fc1c77f32b32585cc14a83343fdd3ee5",
+      "hash": "0x57bc154dad8444d172c6419bb0ebcea5bde3e02ec2d68dcca449e3bc8d23633a",
+      "nonce": 1,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/rate-donation.json",
+      "sha256": "beb034b100ccef82c0fbbcb36707de8b03c9dc947d227bd436eb4f64a5b09d3c",
+      "hash": "0x8dad9045c48d143ce819ca14f8ea49bd0266542bbbf67ac4016b632c711d90da",
+      "nonce": 21,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+      "calldata": "0xa9059cbb000000000000000000000000b7d4bb379d361ad442cddee53ea71a33957826a70000000000000000000000000000000000000000000000056bc75e2d63100000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/residual-last.json",
+      "sha256": "d98ba6eda5f771b377dedae559fbbec292cccbab89650b4e5bf724b0cb07ee68",
+      "hash": "0x1e6feeee3b71ad9b28e3f5e0d0b193db5c55cca741a6613e5567b21a38f8fed4",
+      "nonce": 17,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0xd9b48dF962BD6622f6B5c2ecB3c2866947ec5d29",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000008940000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/residual-partial.json",
+      "sha256": "e223988103abaf01331ab251769ebf608cf5685305fc733521f21c9ee4a58ffe",
+      "hash": "0xe539735dc5ec0d0ae28fa64341923eea64d4af358d744fac77a065d38a88db4d",
+      "nonce": 16,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0xd9b48dF962BD6622f6B5c2ecB3c2866947ec5d29",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/residual.json",
+      "sha256": "58d04788e6d8ff1c0129e40229742dd3cfceee8aa93968c560fe17d5430ba6dd",
+      "hash": "0x474d7511c38f7cf31337416b431b9e7be1a4600242fce1682b1bd68755bf4675",
+      "nonce": 14,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b0000000000000000000000000000000000000000033b2e3c9fd0803ce8000000000000000000000000000000000000000000000000000000000000003b9aca00",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/terminal-final.json",
+      "sha256": "38f0a54f34b790b649405a0cf327c974f78fd317b43aa5710ab52035a9190648",
+      "hash": "0xf85b1698fdc68e07d7cdef51338c647d2edab920ce97258f0db213eb156d5dd2",
+      "nonce": 13,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x496940A47dE2eb2e41011C2808B826A84f0b2f69",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000008950000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/terminal-partial.json",
+      "sha256": "1c8b81c3390340527d7ab246a9e9b3c1f513cada0f58dd78963611ffad75fa00",
+      "hash": "0x0f231c0e37b348b41b0d8a43586bfd4a38eb48c22b795ed0a1e58ea64f13620a",
+      "nonce": 12,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x496940A47dE2eb2e41011C2808B826A84f0b2f69",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000008950000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/terminal.json",
+      "sha256": "334901c1925dceedca1675daa985ccc53bff11b33da7cf8ae82e317af87317af",
+      "hash": "0xa094f5689b35562c031046177d94508d6f8fc4218e66ec6cd6ff9a79216e82b2",
+      "nonce": 10,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b000000000000000000000000000000000000000006765c793fa10079d000000000000000000000000000000000000000000000000000000000000000000003ef",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/wd-approve.json",
+      "sha256": "76e3cb0da08e10528deef7ab4179b99d4874568961d3a8856a433a0911070b6f",
+      "hash": "0x3eed4ceb3e637e981d9e74b85cecc21cbb777ee0fe4ca222e500826d3ed4d2d8",
+      "nonce": 19,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "calldata": "0x095ea7b30000000000000000000000004a5cfdc2b07016fcf917f4ed5a51c52111a0fcc70000000000000000000000000000000000000000000000000000000005f5e100",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/wrong-wallet.json",
+      "sha256": "89a152e669c57fd109939730805ac5b2218bcfd5fa7eee205a32094791856606",
+      "hash": "0xbbc04fa8414ea148160b4cb88f528d7375ce8d03fda9a012f06966bc64170007",
+      "nonce": 0,
+      "signer": "0x4Daf3470DBA87DA934D22048ef416D6428EFFd1A",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/zero-credit-helper.json",
+      "sha256": "a2d971b064cfe306f200e491b2e921cc350c099a1a71dada8578a12a1fbf991d",
+      "hash": "0x965234e20dd1814731be33c892f012908e6763f039bf8207c7c19cc9a6707a78",
+      "nonce": 7,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": null,
+      "calldata": "0x6106d43803806106d46101203961012001601f01601f1916604052610120806106d43803016060820111341760b0575160a01c60b05761014051610160516101205160c052815f559060e05280600155610100526106208060b46101203960c05160601b6101db5160a01b60a01c176101db5260e0516101f8526101005161021d5260c05160601b6102dd5160a01b60a01c176102dd5260c05160601b6106715160a01b60a01c1761067152610120f35b5f5ffd346069575f3560e01c806314fc78fc1461013b57806325b49ab61460d657806344c3630f1461012d578063521eb2731460b95780638aeac98914610120578063a999340e146101a8578063bbdfbfba14610134578063da48f13f1460fb578063fc9f472c14610126575b5f5ffd5b3d5f5f3e3d5ffd5b6011602052634e487b715f526024601cfd5b8051801560b0576105745b6b033b2e3c9fd0803ce800000090565b63569e98155b5f526004601cfd5b63b4fa3fb360a8565b7300000000000000000000000000000000000000005b5f5260205ff35b7f000000000000000000000000000000000000000000000000000000000000000060cf565b7f000000000000000000000000000000000000000000000000000000000000000060cf565b5f5460cf565b60015460cf565b60025460cf565b60035460cf565b6101406040526101745b61052f63540385a35b5f5260205f60045b601c6105cb5b734ac89ad061a531fa62ddceed53520c2750113b0190565b8051608052602081015160a052604081015160c052606081015160e05260808101516101005260a001516101205260c06080f35b608060405260243560011c604436101760695773000000000000000000000000000000000000000080330360b057600435801560b0576087610145565b5f54600154821560b05781831160b05780808484146103c3578385826103c55b82820282810484148315178502156103fa579390930491505090565b8051885190810360a25760a089015160a08301510360a257602082015160208a015180821160a257604084015160408c015180821060a257606086015160608e015180821160a25796608001519d60800151808f1060a25794909303633b9aca008d04633b9aca008e068082846102ad5b82821461046c57921560a2579060010180156075570360a257565b929093039183836102bc610292565b818118828210810282818118911460a2575f1901633b9aca00810290633b9aca0082040360755760010192821102186001018015607557633b9aca00810290633b9aca008204036075578082101560a25761057d6092565b6001018015607557850360a2576105866092565b840360a2575061058f6092565b906105996092565b990398909861034a610292565b859094035f558381039084116075576001555050600254828101908110607557600255600354818101908110607557600355602435610472576040519384528260208501528160408501526060840152505060807f3997849f5fe0e95d0d0f0fb564450dd6d9570c77715ef1dfa663be474099fe9a91a1005b805b801560b0576040516323b872dd60e01b815260048101998a523060208b01529860400188905260205f60648b5f6105a961015c565b5f19848409818110820190039385919309845f0385168486111561047b57809504600381026002188082026002030280820260020302808202600203028082026002030280820260020302908102600203028582850304865f0396909604600101939091119093039091029092170290565b92505050565b6396ecf62960a8565b63ae47f70260a8565b5afa15606d573d6020116069575f5160a082015290565b5afa15606d573d6020116069575f516080820152610484633a98ef3961014e565b5afa15606d573d6020116069575f51606082015261049b6370a082315b5f52305b60205260205f6024610156565b5afa15606d573d6020116069575f5160408301526370a082315f526104bc906104dd565b5afa15606d573d6020116069575f5160208301526104ea63f5eb42dc6104d9565b5afa15606d573d6020116069575f5160405160c081810160405236823790815273000000000000000000000000000000000000000063f5eb42dc5f5261050e816104dd565b836101e5610205565b8f610314610205565b8e610328610205565b838b610335610205565b848c09940381859161033d610292565b5af115606d573d6020116069575f518060011c6069571560a257610221610145565b909192939456fea264697066735822122097bf967e220cd8f087340611e5bfc09081fd8d45ad97667ca8f1321c15b1eff765736f6c61727819302e332e302d6465762b636f6d6d69742e6537613931666337004b000000000000000000000000cd2afccd6ea22a59235fd99260754a5df136a22b00000000000000000000000000000000000000000eb50bc88d147523ac65243d0000000000000000000000000000000000000000000000000000000000000001",
+      "status": "0x1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/zero-credit.json",
+      "sha256": "14d527fd8173c23e1fcd978f2eaaaa867f34ba5fa492634d6e4ddf026ecf7c92",
+      "hash": "0xb14e96cbfb39a8ce28d03ddf32eef21ca38651cc54978dd820cf2067bf5b1607",
+      "nonce": 9,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1970db91AbEaf60205C210059c8a4665C82e204B",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/zero.json",
+      "sha256": "a6f42ba6e2c8cf680953c42518921d178883383fe9c7a63d58ddee4a40446124",
+      "hash": "0x225bcd94aba2dc475be96fbbad42fe2c255780486c4ba350fb2c3f40f8346a57",
+      "nonce": 6,
+      "signer": "0xCd2AFcCd6EA22a59235FD99260754A5Df136a22b",
+      "target": "0x1b90cA46587F98186498cE5d26b51f4Fe59d7aC3",
+      "calldata": "0xa999340e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "status": "0x0"
+    }
+  ],
+  "pulls": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/recipient-carry.json",
+      "hash": "0xfd8ba1e04b3f6311985b40d83a5b0b966cf5b7fc600c2fec48817bb38a28b780",
+      "n": "4",
+      "q": "1820664542558033682294037",
+      "c": "400",
+      "ds": "1820664542558033",
+      "dm": "1820664542558034",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "4549840691852526172052799272",
+      "C": "999601"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-last-representable.json",
+      "hash": "0x60adfbcf1129ac843a28fe2d3fffc30d344cd8c46eff0f30d6a7e0164fac81ea",
+      "n": "2196",
+      "q": "999544833864360491579426490",
+      "c": "999544833",
+      "ds": "999544833864360492",
+      "dm": "999544833864360491",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "0",
+      "Q": "1",
+      "C": "1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-partial.json",
+      "hash": "0xb2681d4b2fa2a552dfb017ac01c7b3336299100d276aaf7727cf987162311172",
+      "n": "1",
+      "q": "455166135639508420573509",
+      "c": "455166",
+      "ds": "455166135639508",
+      "dm": "455166135639508",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "0",
+      "Q": "999544833864360491579426491",
+      "C": "999544834"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/sender-carry.json",
+      "hash": "0xea9bae18bfd3e8e79e0b9b3a96e638d2fe0c686685e4d09daab1582607df051d",
+      "n": "1",
+      "q": "455166135639508420573509",
+      "c": "100",
+      "ds": "455166135639509",
+      "dm": "455166135639508",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "4549385525716886663632225763",
+      "C": "999501"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-final.json",
+      "hash": "0x9ba15cd9dd0fbe82890de2bebf7b9e860dffc0295ff5a271ba97b46e6b42c267",
+      "n": "2197",
+      "q": "1000000000000000000000000000",
+      "c": "501",
+      "ds": "1000000000000000000",
+      "dm": "1000000000000000000",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "0",
+      "C": "0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/terminal-partial.json",
+      "hash": "0x38e893bf07e70b37840f8e53922129e4b239f244f34d9e1ca8c7bf409383a28c",
+      "n": "2197",
+      "q": "1000000000000000000000000000",
+      "c": "500",
+      "ds": "1000000000000000000",
+      "dm": "1000000000000000000",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "1000000000000000000000000000",
+      "C": "501"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/before-movement-pull.json",
+      "hash": "0x9816939cb39f6d69f5da983aada0e971e9de6db727b15d7dbee2be216afd74bb",
+      "n": "1",
+      "q": "455166135639508420573509",
+      "c": "100",
+      "ds": "455166135639508",
+      "dm": "455166135639508",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "4551206190259444697314519800",
+      "C": "999901"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/changed-rate-pull.json",
+      "hash": "0x9d6dccdfdc8a58aaf114ce9712608f9dcce43710f2924d3fd87761e3ae84a439",
+      "n": "1",
+      "q": "247157686604053386060306",
+      "c": "54",
+      "ds": "247157686604054",
+      "dm": "247157686604054",
+      "rLow": "4046",
+      "rHigh": "4046",
+      "unbooked": "455166135639508420573509",
+      "Q": "4550959032572840643928459494",
+      "C": "999847"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/carry-recipient.json",
+      "hash": "0x70158ff8ae9b2faee9f8e00006bfebdab9f2c1ffa4d99eaa070bc75de3a76974",
+      "n": "4",
+      "q": "1820664542558033682294037",
+      "c": "400",
+      "ds": "1820664542558033",
+      "dm": "1820664542558034",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "4549840691852526172052799272",
+      "C": "999633"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/carry-sender.json",
+      "hash": "0xebe0b70eeec37671d512fcfeab3a5b3adebb69c5dddef3d0277a8a0c8ae46ac7",
+      "n": "1",
+      "q": "455166135639508420573509",
+      "c": "100",
+      "ds": "455166135639509",
+      "dm": "455166135639508",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "4549385525716886663632225763",
+      "C": "999533"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/changed-rate.json",
+      "hash": "0xf5ef59a506d928f82d3db64ad9ef63cf7315fed1fc48c50809fb2f95aeff81c9",
+      "n": "1",
+      "q": "247157686604053386060306",
+      "c": "54",
+      "ds": "247157686604053",
+      "dm": "247157686604053",
+      "rLow": "4046",
+      "rHigh": "4046",
+      "unbooked": "455166135639508420573509",
+      "Q": "4549138368030282610246165457",
+      "C": "999479"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/residual-last.json",
+      "hash": "0x1e6feeee3b71ad9b28e3f5e0d0b193db5c55cca741a6613e5567b21a38f8fed4",
+      "n": "2196",
+      "q": "999544833864360491579426490",
+      "c": "999544833",
+      "ds": "999544833864360492",
+      "dm": "999544833864360491",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "0",
+      "Q": "1",
+      "C": "1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/residual-partial.json",
+      "hash": "0xe539735dc5ec0d0ae28fa64341923eea64d4af358d744fac77a065d38a88db4d",
+      "n": "1",
+      "q": "455166135639508420573509",
+      "c": "455166",
+      "ds": "455166135639508",
+      "dm": "455166135639508",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "0",
+      "Q": "999544833864360491579426491",
+      "C": "999544834"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/terminal-final.json",
+      "hash": "0xf85b1698fdc68e07d7cdef51338c647d2edab920ce97258f0db213eb156d5dd2",
+      "n": "2197",
+      "q": "1000000000000000000000000000",
+      "c": "504",
+      "ds": "1000000000000000000",
+      "dm": "1000000000000000000",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "0",
+      "C": "0"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/terminal-partial.json",
+      "hash": "0x0f231c0e37b348b41b0d8a43586bfd4a38eb48c22b795ed0a1e58ea64f13620a",
+      "n": "2197",
+      "q": "1000000000000000000000000000",
+      "c": "503",
+      "ds": "1000000000000000000",
+      "dm": "1000000000000000000",
+      "rLow": "2197",
+      "rHigh": "2197",
+      "unbooked": "455166135639508420573509",
+      "Q": "1000000000000000000000000000",
+      "C": "504"
+    }
+  ],
+  "failures": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/isolated-source-reject.json",
+      "hash": "0x1ed169eaba4ae2afbd327d34f1ce5713086c18b3db0f17ff0d02eda2f8973411",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/late-rollback.json",
+      "hash": "0x3d7b5b43e80e0ec18ab1884ec7f4ae954df775a7324cd0b25f29447aee552800",
+      "lateAfterSuccessfulPull": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/missing-approval.json",
+      "hash": "0x201a20f10b3d5c442194d0429aa8b0faaa50bc7f1af44851f5845ee21132406b",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/residue-cap-reject.json",
+      "hash": "0x6c6a329fc5cf089f5863b8e95d79a95b9cb0992c7adb84bbf1a3b2efc0502ace",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/wrong-wallet.json",
+      "hash": "0x1168ec8aa7309600028688ea657daebed1136ae06977ceb1dfa95bc73e33bf48",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/zero-credit.json",
+      "hash": "0xd81d02b176af913b9ba75c6088a9e96e095abe95f61a1f8ef32f272256036a91",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/zero-input.json",
+      "hash": "0xd80d94c3377b4590e24fcd68093d8930eb681f2ebe60e97aa9b24c84d52c2feb",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/changed-rate-late-rollback.json",
+      "hash": "0xf29d72e111ae788c4dfa848c6661b4d55eeb97f04b2451df9d3635e74853b9df",
+      "lateAfterSuccessfulPull": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/cap-reject.json",
+      "hash": "0x65c71c6f1d5eacf88c433a343dac563347d1467c36d964a0e67c8231e621d51a",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/changed-late.json",
+      "hash": "0xc3c4e8c70a74b671215b5afae31bf90752c0515a8365e0e162b1317ad61054f4",
+      "lateAfterSuccessfulPull": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/isolated-reject.json",
+      "hash": "0xb53083a9033427a7d6fff1af343d0816bef5f2153058b766afa0ec7aa18956d5",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/late.json",
+      "hash": "0xca02aae98b0c8651d80cc76b638705943c7beb908d7823e98a5e54d983c1f241",
+      "lateAfterSuccessfulPull": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/no-approval.json",
+      "hash": "0x57bc154dad8444d172c6419bb0ebcea5bde3e02ec2d68dcca449e3bc8d23633a",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/wrong-wallet.json",
+      "hash": "0xbbc04fa8414ea148160b4cb88f528d7375ce8d03fda9a012f06966bc64170007",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/zero-credit.json",
+      "hash": "0xb14e96cbfb39a8ce28d03ddf32eef21ca38651cc54978dd820cf2067bf5b1607",
+      "lateAfterSuccessfulPull": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/zero.json",
+      "hash": "0x225bcd94aba2dc475be96fbbad42fe2c255780486c4ba350fb2c3f40f8346a57",
+      "lateAfterSuccessfulPull": false
+    }
+  ],
+  "vectors": 86800,
+  "singletons": 38790,
+  "runtimes": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-residue-runtime.json",
+      "helper": "0xe09949ea009b324d5e4e6cb91c9d960edc58666d",
+      "keccak256": "0xc2a57b76e90329eeb7545ce1635ca5cc3352c76ddc14f8b0e19712dd13a75aa5",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "0000000000000000000000000000000000000000033b2e3c9fd0803ce8000000"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "000000000000000000000000000000000000000000000000000000003b9aca00"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-mixed-runtime.json",
+      "helper": "0xfdb28ac8f97af7839eb77e365bebc298677b9df3",
+      "keccak256": "0x45d4ccdb4ffe76157eeb26f68e91913b4840ff7c1a20e08bb161a39118ce5c84",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000eb50bc88d147523ac65243d"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000000000000000000000f4241"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-no-approval-runtime.json",
+      "helper": "0x3958549ea013768ab816c75c80090a501b341bef",
+      "keccak256": "0x45d4ccdb4ffe76157eeb26f68e91913b4840ff7c1a20e08bb161a39118ce5c84",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000eb50bc88d147523ac65243d"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000000000000000000000f4241"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-terminal-runtime.json",
+      "helper": "0x0dc65a3526d79a5d92f1097e04cb729769202c32",
+      "keccak256": "0x5122e2780bbb220c969edbee99284b68e2acda398715881bf20eba8e17d1bbf2",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "000000000000000000000000000000000000000006765c793fa10079d0000000"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000000000000000000000003e9"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/deploy-zero-credit-runtime.json",
+      "helper": "0xd084437b0809f7d9cc40baaea1494a59a16ea022",
+      "keccak256": "0xce4dcad2840f712a63a450f77fe312d1398767d44b15c421230e62e5d27e6b57",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000eb50bc88d147523ac65243d"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "0000000000000000000000000000000000000000000000000000000000000001"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-05/deploy-rate-runtime.json",
+      "helper": "0xfdb28ac8f97af7839eb77e365bebc298677b9df3",
+      "keccak256": "0x45d4ccdb4ffe76157eeb26f68e91913b4840ff7c1a20e08bb161a39118ce5c84",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "33b1ce5357959ec0043e0d77556a5093ab347862"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000eb50bc88d147523ac65243d"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000000000000000000000f4241"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/residual-runtime.json",
+      "helper": "0xd9b48df962bd6622f6b5c2ecb3c2866947ec5d29",
+      "keccak256": "0xc633294f12f85f550cd903f032db562db177cdedda6f1bdb033c4e68db498809",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "0000000000000000000000000000000000000000033b2e3c9fd0803ce8000000"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "000000000000000000000000000000000000000000000000000000003b9aca00"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/terminal-runtime.json",
+      "helper": "0x496940a47de2eb2e41011c2808b826a84f0b2f69",
+      "keccak256": "0xb8441854eacb817a4f429457e9ee6d02acaeb23ccc064bec085672732d4054d9",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "000000000000000000000000000000000000000006765c793fa10079d0000000"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000000000000000000000003ef"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/mixed-runtime.json",
+      "helper": "0x1b90ca46587f98186498ce5d26b51f4fe59d7ac3",
+      "keccak256": "0xae1b51e67ee9e9e1a0c5afbe14dd12b6224c8bb26da7bb8f09b34efc4514a5ce",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000eb50bc88d147523ac65243d"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000000000000000000000f4261"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/runtime-01/zero-credit-helper-runtime.json",
+      "helper": "0x1970db91abeaf60205c210059c8a4665c82e204b",
+      "keccak256": "0x911a3989c84d71585cffb8a59940b08fdd01c079c69575ca0bf785705bc2e886",
+      "spans": [
+        {
+          "id": "304",
+          "start": 187,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 445,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "304",
+          "start": 1361,
+          "length": 20,
+          "observed": "cd2afccd6ea22a59235fd99260754a5df136a22b"
+        },
+        {
+          "id": "305",
+          "start": 216,
+          "length": 32,
+          "observed": "00000000000000000000000000000000000000000eb50bc88d147523ac65243d"
+        },
+        {
+          "id": "306",
+          "start": 253,
+          "length": 32,
+          "observed": "0000000000000000000000000000000000000000000000000000000000000001"
+        }
+      ]
+    }
+  ],
+  "compiler": {
+    "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+  }
+}

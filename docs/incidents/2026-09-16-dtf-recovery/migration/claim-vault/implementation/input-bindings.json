@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-12",
+  "algorithm": "sha256",
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+      "sha256": "4becd1e7004a89c1d2d0c9bd6e173b4ca869a01c4d5531ece7235440a7c20737"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/report.md",
+      "sha256": "77e67678c3180b4ef487fb40567131e9aea0e6c03f7f0f0f1f66003d1226669e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/verification.md",
+      "sha256": "8e5f291d701451e1df225078905391feb47a6d37edee5ca31b1c521e5d412b9e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/claims/contract.md",
+      "sha256": "a657b9e8a5a6925130a6a56f7334a26536162effac321254144063774fd98d41"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+      "sha256": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+      "sha256": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.sources.json",
+      "sha256": "026c9ab02a2fde5738b2e290d875e55d0b2ff762cae975b7a8ca0bf3454231ab"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.json",
+      "sha256": "8752356e523adcd85af806ff044520cc76d89c12fc285a7de43a9610ccf7d702"
+    }
+  ],
+  "sourceChanges": [],
+  "compiledArtifacts": [],
+  "actualAcquisitionReceipts": [],
+  "snapshot": "Complete actual pinned runtime bytes and raw read outputs in source-admission.json; no unavailable implementation source or acquired-state snapshot invented"
+}

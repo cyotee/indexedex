@@ -1,0 +1,18 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions:
+  - name: custom-dictionary
+    path: ./.cspell/custom-dictionary.txt
+    addWords: true
+    scope: null
+dictionaries:
+  - custom-dictionary
+words:
+  - Example
+  - RICHAI
+  - operationalized
+  - whetstoneresearch
+  - permissionlessly
+  - Streamable
+ignoreWords: []
+import: []

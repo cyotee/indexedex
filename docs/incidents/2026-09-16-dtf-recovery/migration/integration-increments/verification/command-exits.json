@@ -1,0 +1,32 @@
+{
+  "seed": {
+    "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration' && test -d lib/crane && test -z \"$(ls -A lib/crane)\" && test ! -e node_modules && test ! -e out && test ! -e cache_forge && test ! -e '/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration/.integration-verification-runtime-st01a1c6fd' && rmdir lib/crane && ln -s /Users/cyotee/Projects/indexedex/lib/crane lib/crane && ln -s /Users/cyotee/Projects/indexedex/node_modules node_modules && mkdir '/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration/.integration-verification-runtime-st01a1c6fd' && cp -a '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/out' out && cp -a '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/cache_forge' cache_forge && printf 'INTEGRATION_WARM_SEED_READY\n'",
+    "exit": 0,
+    "stdout": "INTEGRATION_WARM_SEED_READY\n"
+  },
+  "syntax": {
+    "command": "/bin/bash -n '/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration/docs/incidents/2026-09-16-dtf-recovery/migration/integration-increments/verification/run.sh'",
+    "exit": 0
+  },
+  "run": {
+    "command": "/bin/bash '/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration/docs/incidents/2026-09-16-dtf-recovery/migration/integration-increments/verification/run.sh'",
+    "monitor": "mon_X42ZFT4GSND9ZXKA",
+    "exit": 0,
+    "rawFinalOutput": "PIPE_COMMAND_EXIT=0 TEE_EXIT=0\n",
+    "timeout": "persistent completion subscription with no kill deadline; finite command exited naturally"
+  },
+  "toolingLimitations": [
+    "Biome is not installed; no JSON LSP pass is claimed.",
+    "bash-language-server is not installed; bash -n passed instead."
+  ],
+  "nonExecutionAuditErrors": [
+    "Initial correction binding JSON parse attempted against a truncated read; only relevant source/guard rows were subsequently read and used.",
+    "An apply_patch call with patch instead of input was rejected with input is required; no file was changed by that rejected call.",
+    "Artifact loader lookup at contracts/test/ArtifactCreationCode.sol was absent; canonical contracts/utils/foundry/ArtifactCreationCode.sol was found via the production FactoryServices and read completely.",
+    "One post-run eval could not resolve its previously declared git function; no Git call ran in that failed cell. The helper was rebound and the read-only preservation checks succeeded."
+  ],
+  "briefbinding": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/integration-increments-brief.md",
+    "sha256": "121c4b37109edfda5d7ca230599cc046a4a3a76e59936d1f2f65a269eeff137a"
+  }
+}

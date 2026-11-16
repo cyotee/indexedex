@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-11",
+  "verdict": "confirmed",
+  "commit": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+  "branch": "work/dtf-migration-phase-14-weighted-sy",
+  "refsCount": 53,
+  "refsIdentical": true,
+  "indexEntriesIdentical": true,
+  "indexTree": "7cce28c369bd5889da9ea10bc8954c07ece0f678",
+  "headUnchanged": true,
+  "trackedDiff": "",
+  "stagedDiff": "",
+  "whitespaceOutput": "",
+  "sourceFilesRechecked": 33,
+  "sourceProblems": [],
+  "artifactFilesRechecked": 95,
+  "artifactProblems": [],
+  "preservedEvidenceFileCount": 730,
+  "preservedEvidenceProblems": [],
+  "existingUntrackedRemoved": [],
+  "newUntrackedObserved": [
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/commit/audit-evidence.json",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/commit/audited-commit.diff",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/commit/verification.md"
+  ],
+  "dependencyLinksIdentical": true,
+  "links": [
+    {
+      "path": "lib/crane",
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "inode": 18626650,
+      "mode": "755"
+    },
+    {
+      "path": "node_modules",
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "inode": 18626652,
+      "mode": "755"
+    }
+  ],
+  "ownedRuntimeStarted": false,
+  "ownedPendingOperation": false,
+  "unchangedRuntimeSuitesRerun": false,
+  "jsonLsp": "Unavailable: configured biome executable is not installed; no installation or configuration change permitted or performed",
+  "ownedNewFiles": [
+    "verification.md",
+    "audit-evidence.json",
+    "audited-commit.diff",
+    "audit-cleanup.json",
+    "audit-seal.sha256"
+  ],
+  "auditOnly": true
+}

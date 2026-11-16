@@ -1,0 +1,105 @@
+{
+  "retrieved": "2026-11-11",
+  "notes": [
+    "Current upstream documentation/source snapshots, not exact deployed Nitro build attestations.",
+    "Full response SHA-256 hashes identify the text fetched; HTML-converted documents are explicitly identified.",
+    "The truncated general Solidity contracts page is not relied on; events.rst was fetched instead."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/master/precompiles/ArbSys.go",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/main/ArbSys.sol",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "55251738b340761189c5ef8874c9de135cce76e7a8b4bbe682a46db75f5fd87d"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mds1/multicall3/main/src/Multicall3.sol",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "2054218939d3fa0f52f8ce1a33658d570a550671f63197356ee5744f7e188b1e"
+    },
+    {
+      "url": "https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time",
+      "httpStatus": 200,
+      "converted": true,
+      "sha256Text": "cad563334ac2c6b88919736630d4c96632eaf76711c2c1ba5e570e98b27267d7"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ethereum/solidity/develop/docs/contracts/events.rst",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "e3dd2f368795481b64d7fec0568b5bbaea145c8b401c039fba77ffb646a3abb5"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ethereum/go-ethereum/master/core/types/receipt.go",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "96fc564b4e20c21679aac544ef9e84fabbf87cfb9c2e15a9fd69d3c524bb328a"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/main/ArbInfo.sol",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "d9ce39a86d5e167bf2fa954d9d3c58a210103526e3ff2f98ed6e9d67826167a0"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/main/ArbStatistics.sol",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "680bfb36762a508154613605958ab139e231589b12bbc61c0fb093093c4f829d"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/main/ArbGasInfo.sol",
+      "httpStatus": 200,
+      "converted": false,
+      "sha256Text": "ec622f01a4e4a2fa191a62415df3c5d2c5e008c581570fb5f0b16a270b0a6949"
+    }
+  ],
+  "supplementalRpc": [
+    {
+      "endpoint": "robinhood_mainnet_alchemy",
+      "method": "eth_call",
+      "params": [
+        {
+          "from": "0x000000000000000000000000000000000000e603",
+          "to": "0x000000000000000000000000000000000000006f",
+          "data": "0xc59d4847"
+        },
+        "0x67e5d17"
+      ],
+      "status": 200,
+      "raw": "{\"jsonrpc\":\"2.0\",\"id\":106,\"result\":\"0x00000000000000000000000000000000000000000000000000000000067e5d1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}"
+    },
+    {
+      "endpoint": "robinhood_mainnet_alchemy",
+      "method": "debug_traceCall",
+      "params": [
+        {
+          "from": "0x000000000000000000000000000000000000e603",
+          "to": "0xca11bde05977b3631167028862be2a173976ca11",
+          "data": "0x42cbb15c"
+        },
+        "0x67e5d17",
+        {
+          "disableMemory": true,
+          "disableStorage": true
+        }
+      ],
+      "status": 400,
+      "raw": "{\"jsonrpc\":\"2.0\",\"id\":107,\"error\":{\"code\":-32600,\"message\":\"debug_traceCall is not available on the Free tier - upgrade to Pay As You Go, or Enterprise for access.\"}}"
+    }
+  ],
+  "multicallOpcodeEvidence": {
+    "runtimeHash": "0xd5c15df687b16f2ff992fc8d767b4216323184a2bbc6ee2f9c398c318e770891",
+    "selector": "0x42cbb15c",
+    "entryOffset": "0x1d9",
+    "bytes": "5b3480156101e557600080fd5b504361010756",
+    "interpretation": "JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x01e5 JUMPI PUSH1 0 DUP1 REVERT; JUMPDEST POP NUMBER PUSH2 0x0107 JUMP; return word observed 26367659."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-10T13:24:14.534Z",
+  "command": "export TMPDIR='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz' NODE_COMPILE_CACHE='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/node-compile' BUN_RUNTIME_TRANSPILER_CACHE_PATH='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/bun-transpiler'; cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01'; /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cleanup.mjs'",
+  "commandExit": 0,
+  "monitor": "mon_0N6SSXM5M94T7XY4",
+  "inheritedReceipt": "cleanup.json",
+  "inherited": {
+    "pass": true,
+    "pids": 44,
+    "ports": 6,
+    "directories": 40
+  },
+  "extraProcesses": [
+    {
+      "pid": 86603,
+      "absent": true,
+      "code": "ESRCH"
+    }
+  ],
+  "processScan": {
+    "command": "ps -axo pid=,ppid=,stat=,command=",
+    "filters": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification",
+      "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz",
+      "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI"
+    ],
+    "matches": []
+  },
+  "recoveryRoot": {
+    "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz",
+    "operation": "lstat directory and non-symlink check; rm recursive of this owned root only; lstat ENOENT",
+    "absent": true
+  },
+  "pass": true
+}

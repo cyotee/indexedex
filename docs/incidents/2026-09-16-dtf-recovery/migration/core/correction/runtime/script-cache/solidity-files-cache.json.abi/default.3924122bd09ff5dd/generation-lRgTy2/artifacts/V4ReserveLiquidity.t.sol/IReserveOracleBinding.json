@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"feeOracle","inputs":[],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"}],"id":1714}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "started": "2026-11-10T12:52:27.352Z",
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-sources-original",
+  "binaryPassObservable": "exit 0 AND overall=PASS; any harness gap or unsupported required route yields exit 2",
+  "runtime": {
+    "bun": "1.4.2",
+    "execPath": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 83173
+  },
+  "sourceObservations": [],
+  "cases": [
+    {
+      "name": "probe harness",
+      "verdict": "UNPROVEN",
+      "evidence": {
+        "error": "ProbeError: Output must be inside the owned evidence directory",
+        "productProof": false
+      }
+    }
+  ],
+  "attempts": [],
+  "cleanup": {
+    "noChildStarted": true
+  },
+  "overall": "UNPROVEN",
+  "harnessError": "ProbeError: Output must be inside the owned evidence directory",
+  "finished": "2026-11-10T12:52:27.352Z"
+}

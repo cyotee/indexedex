@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+
+/**
+ * @title IUniswapV4StandardExchangeCurveQuadStableBufferHookInit
+ * @notice Thin SE Curve quad alias of the shared staged pair-init surface (S58).
+ * @dev No extra functions. Unmatched on the proxy after finalizeInitialization.
+ *      Do not add these views to IUniswapV4StandardExchangeCurveQuadStableBufferHook.
+ */
+interface IUniswapV4StandardExchangeCurveQuadStableBufferHookInit is IUniswapV4HookStagedPairInit {}

@@ -1,0 +1,248 @@
+{
+  "scope": "Return-data dependency closure, not audit of unrelated implementation internals",
+  "sourcePathPrefix": "sources/",
+  "flows": {
+    "account": {
+      "meaning": "Selected account balance or code, not account/storage trie root or ordered effects.",
+      "readers": [
+        "nitro/precompiles/ArbInfo.go:18-37"
+      ],
+      "writers": [
+        "go-ethereum/core/state/statedb.go"
+      ],
+      "updates": "StateDB AddBalance/SubBalance/SetBalance, SetCode and creation/selfdestruct update selected account fields. Ordinary token transfers can change unrelated storage without changing a selected balance/code. No global-root return."
+    },
+    "addressTable": {
+      "meaning": "Address-to-index registry and RLP supplied-data codec, not transaction register.",
+      "readers": [
+        "nitro/precompiles/ArbAddressTable.go:17-77"
+      ],
+      "writers": [
+        "nitro/arbos/addressTable/addressTable.go:34-55",
+        "nitro/arbos/addressTable/addressTable.go:58-126"
+      ],
+      "updates": "Register alone appends an explicitly supplied address and increments numItems; repeat registration returns existing slot. Compress only reads lookup or encodes address (despite nonpayable ABI); Decompress decodes supplied bytes or supplied index. Size counts registrations, not transfers."
+    },
+    "legacy": {
+      "meaning": "Constant, empty-table error, or no-op.",
+      "readers": [
+        "nitro/precompiles/ArbFunctionTable.go:18-31",
+        "nitro/precompiles/ArbosTest.go:18-25",
+        "nitro/precompiles/ArbStatistics.go:17-25",
+        "nitro/precompiles/ArbAggregator.go:23-36",
+        "nitro/precompiles/ArbAggregator.go:95-109"
+      ],
+      "writers": [],
+      "updates": "No history producer. burnArbGas consumes caller-chosen gas; getStats returns current L2 number plus five zeros; aggregator defaults are BatchPosterAddress; deprecated tx base fee is zero/no-op."
+    },
+    "l1Pricing": {
+      "meaning": "Pricing/configuration values and aggregate fee accounting, not an ordered commitment.",
+      "readers": [
+        "nitro/precompiles/ArbGasInfo.go:27-287"
+      ],
+      "writers": [
+        "nitro/arbos/l1pricing/l1pricing.go:119-316",
+        "nitro/arbos/l1pricing/l1pricing.go:320-515",
+        "nitro/arbos/internal_tx.go:115-200",
+        "nitro/arbos/tx_processor.go:603-646",
+        "nitro/arbos/tx_processor.go:875-883",
+        "nitro/precompiles/ArbOwner.go:241-243",
+        "nitro/precompiles/ArbOwner.go:318-383"
+      ],
+      "updates": "PricePerUnit, inertia, reward payee/rate, equilibration, batch charge, cap and floor have owner setters. unitsSinceUpdate += compressed calldata units before EVM; batch report allocates/subtracts units, adjusts rewards/refunds, update time, last surplus and price with integer arithmetic. L1FeesAvailable receives PosterFee after transaction and loses batch payments. GetL1PricingSurplus = feesAvailable - totalFundsDue - rewardDebt at v61. No transaction content, transfer log list or order hash is accumulated."
+    },
+    "l2Pricing": {
+      "meaning": "Gas limits, min price, model parameters, resource backlogs and base fees.",
+      "readers": [
+        "nitro/precompiles/ArbGasInfo.go:160-223",
+        "nitro/precompiles/ArbGasInfo.go:289-389"
+      ],
+      "writers": [
+        "nitro/arbos/l2pricing/l2pricing.go:237-331",
+        "nitro/arbos/l2pricing/model.go",
+        "nitro/arbos/l2pricing/gas_constraint.go",
+        "nitro/arbos/l2pricing/multi_gas_constraint.go",
+        "nitro/arbos/l2pricing/multi_gas_fees.go:38-68",
+        "nitro/arbos/tx_processor.go:834-920",
+        "nitro/arbos/internal_tx.go:106-114",
+        "nitro/arbos/block_processor.go:372-381",
+        "nitro/precompiles/ArbOwner.go:246-290",
+        "nitro/precompiles/ArbOwner.go:574-677"
+      ],
+      "updates": "EndTxHook grows active scalar/resource backlogs by gas usage, not ordered transaction bytes; retryable redeem shrinks donated-gas backlog. StartBlock decays backlogs by elapsed time and computes fees. Owner changes limits/constraints/backlogs. Current per-resource fees rotate from next before block execution; v61 SingleDim uses actual block base fee. Saturating arithmetic, weighted sums and decay discard information/order; not cryptographic commitments."
+    },
+    "posterFee": {
+      "meaning": "Fee for the current top-level message only.",
+      "readers": [
+        "nitro/precompiles/ArbGasInfo.go:205-208"
+      ],
+      "writers": [
+        "nitro/arbos/tx_processor.go:603-646",
+        "nitro/arbos/l1pricing/l1pricing.go:518-617"
+      ],
+      "updates": "GasChargingHook computes PosterDataCost from message transaction/compressed calldata and configured prices, converts to posterGas and stores PosterFee. It is no receipt prefix, execution position or prior-transfer content."
+    },
+    "posters": {
+      "meaning": "Poster membership and per-poster fee-recipient configuration.",
+      "readers": [
+        "nitro/precompiles/ArbAggregator.go:38-93"
+      ],
+      "writers": [
+        "nitro/arbos/l1pricing/batchPoster.go:57-141",
+        "nitro/precompiles/ArbAggregator.go:43-61",
+        "nitro/precompiles/ArbAggregator.go:74-93",
+        "nitro/arbos/l1pricing/l1pricing.go:334-336"
+      ],
+      "updates": "Owner addBatchPoster or internal batch-spending report adds poster. SetFeeCollector writes PayTo after caller-role check. TotalFundsDue is an arithmetic debt sum. Enumeration bounded to 65536; no log/transaction commitment."
+    },
+    "config": {
+      "meaning": "Chain configuration, membership and scheduled parameters.",
+      "readers": [
+        "nitro/precompiles/ArbOwnerPublic.go:20-130"
+      ],
+      "writers": [
+        "nitro/precompiles/ArbOwner.go:64-383",
+        "nitro/precompiles/ArbOwner.go:501-677",
+        "nitro/arbos/addressSet/addressSet.go:108-201",
+        "nitro/arbos/arbosState/arbosstate.go:393-590",
+        "nitro/arbos/arbosState/arbosstate.go:611-736",
+        "nitro/arbos/features/features.go"
+      ],
+      "updates": "Owner changes member sets, fee accounts, flags and enable timestamps; ArbOS initializes/upgrades defaults. rectifyChainOwner is public but repairs an already-member corrupt mapping, not arbitrary admission. Membership enumeration caps at 65536. ScheduledUpgrade reads version/time, suppresses already-applied schedule. These are current configuration facts, not history commitments."
+    },
+    "stylusParams": {
+      "meaning": "Stylus metering/version/lifetime configuration, no execution-history value.",
+      "readers": [
+        "nitro/precompiles/ArbWasm.go:103-183",
+        "nitro/precompiles/ArbOwnerPublic.go:124-129"
+      ],
+      "writers": [
+        "nitro/arbos/programs/params.go:45-258",
+        "nitro/precompiles/ArbOwner.go:385-498",
+        "nitro/precompiles/ArbOwner.go:670-684",
+        "nitro/arbos/programs/programs.go:92-102"
+      ],
+      "updates": "Params decodes packed fields; Save writes owner-specified parameters only when executed onchain, otherwise charges equivalent gas; init/upgrades also set fields. PageRamp is an initialized constant in Params, not live activity. ActivationGas is separate stored uint64. MinInitGas body rejects versions <32, admitted at61."
+    },
+    "stylusProgram": {
+      "meaning": "Selected codehash activation/version/size/init-cost/expiry/cache metadata, not global state root.",
+      "readers": [
+        "nitro/precompiles/ArbWasm.go:35-101",
+        "nitro/precompiles/ArbWasm.go:185-245",
+        "nitro/precompiles/ArbWasmCache.go:15-78"
+      ],
+      "writers": [
+        "nitro/arbos/programs/programs.go:112-194",
+        "nitro/arbos/programs/programs.go:543-744",
+        "nitro/arbos/programs/data_pricer.go:63-89",
+        "nitro/precompiles/ArbOwner.go:501-516"
+      ],
+      "updates": "Activation reads selected program codehash/Wasm, compiles it and records version, init/cached cost, footprint, estimated asm KB, activation hour and cache flag keyed by codehash. Keepalive resets activation hour and updates byte-demand fee model. Authorized cache changes only cached flag. Program getters resolve supplied address to codehash. Module hash is compiled-code identity/event data, never an executing-history accumulator."
+    },
+    "retryable": {
+      "meaning": "A selected ticket, timeout/beneficiary, scheduled retry hash or current redeemer, not all transactions.",
+      "readers": [
+        "nitro/precompiles/ArbRetryableTx.go:49-270"
+      ],
+      "writers": [
+        "nitro/arbos/retryables/retryable.go:73-272",
+        "nitro/arbos/retryables/retryable.go:315-387",
+        "nitro/arbos/tx_processor.go:403-415",
+        "nitro/arbos/tx_processor.go:543-568",
+        "nitro/arbos/tx_processor.go:834-850"
+      ],
+      "updates": "Submit processing creates ticket with submitted from/to/value/data/beneficiary and lifetime. Keepalive increments timeoutWindowsLeft; reap advances/removes expired ticket; success/cancel deletes it. Redeem increments NumTries and constructs a future ArbitrumRetryTx from ticket, chainId, nonce, basefee, donated gas and refund caller; returned Hash commits that scheduled transaction only. CurrentRefundTo is set only for the active retry transaction. submitRetryable ABI always reverts when called normally."
+    },
+    "sysContext": {
+      "meaning": "Block/chain/version or call-frame/alias context only.",
+      "readers": [
+        "nitro/precompiles/ArbSys.go:35-109",
+        "nitro/precompiles/ArbSys.go:243-246"
+      ],
+      "writers": [
+        "nitro/arbos/block_processor.go:197-235",
+        "nitro/arbos/arbosState/arbosstate.go:393-590",
+        "nitro/gethhook/geth-hook.go:46-67",
+        "nitro/arbos/tx_processor.go"
+      ],
+      "updates": "BlockContext populated for the block; chain config/ArbOS format state determine domain/version. ArbOSVersion ABI returns 55+format. Depth, TopTxType, Origin and Contracts call stack determine alias booleans/caller. Alias mapping is a pure transform of supplied sender; unused destination ignored. No executing receipt or global root."
+    },
+    "l2History": {
+      "meaning": "Completed-L2 ancestor hash, not current-block or executing-prefix root.",
+      "readers": [
+        "nitro/precompiles/ArbSys.go:40-59"
+      ],
+      "writers": [
+        "nitro/arbos/block_processor.go:197-235",
+        "nitro/arbos/block_processor.go:775-826",
+        "go-ethereum/core/evm.go"
+      ],
+      "updates": "ArbBlockHash explicitly requires n-256<=k<n and reads BlockContext.GetHash(k), backed by ancestor headers. Current transaction/receipt trie roots assembled in NewBlock after execution; header.Root finalized using IntermediateRoot. No current-prefix root exposed."
+    },
+    "outbox": {
+      "meaning": "L2-to-L1 send sequence only, excluding arbitrary ordinary ERC20 transfers.",
+      "readers": [
+        "nitro/precompiles/ArbSys.go:112-240"
+      ],
+      "writers": [
+        "nitro/precompiles/ArbSys.go:149-217",
+        "nitro/arbos/merkleAccumulator/merkleAccumulator.go:133-235"
+      ],
+      "updates": "sendTxToL1 hashes caller,destination,L2/L1 numbers,time,value and supplied data, then Append hashes leaf, increments size and folds partials. Returns new leaf index at61, not root. withdrawEth calls same with empty bytes. export root/size/partials is zero-caller-only; even if accessible it commits sends only, not preceding arbitrary transfers."
+    },
+    "internal": {
+      "meaning": "Explorer-facing internal ABI always rejects ordinary calls.",
+      "readers": [
+        "nitro/precompiles/ArbosActs.go:16-26"
+      ],
+      "writers": [
+        "nitro/arbos/internal_tx.go:62-204"
+      ],
+      "updates": "Handlers always CallerNotArbOS, including a nominal ordinary caller equal to system address. Protocol processing intercepts actual ArbitrumInternalTx and executes startBlock/batch reports outside these handlers. StartBlock writes preceding hash and updates pricing/reaping/upgrades; no current prefix getter."
+    },
+    "nativeToken": {
+      "meaning": "Role-restricted mint/burn of caller native balance, no commitment output.",
+      "readers": [
+        "nitro/precompiles/ArbNativeTokenManager.go:27-62"
+      ],
+      "writers": [
+        "nitro/precompiles/ArbNativeTokenManager.go:27-62",
+        "nitro/precompiles/ArbOwner.go:131-181"
+      ],
+      "updates": "hasAccess checks NativeTokenOwners membership, then AddBalance/SubBalance(caller, supplied amount) and event. Feature timestamp gates admitting new role members, not a substitute for membership at mint/burn."
+    },
+    "filter": {
+      "meaning": "Membership of a caller-supplied tx hash in a mutable privileged filter list.",
+      "readers": [
+        "nitro/precompiles/ArbFilteredTransactionsManager.go:25-61"
+      ],
+      "writers": [
+        "nitro/arbos/filteredTransactions/state.go:26-65",
+        "nitro/precompiles/ArbFilteredTransactionsManager.go:25-48"
+      ],
+      "updates": "Add stores hash=>1 and Delete clears after TransactionFilterers check; IsTransactionFiltered is PUBLIC, wrapper only varies gas charging. DeleteFree is a defined cleanup entrypoint. Does not authenticate inclusion, order, execution or complete prefix; arbitrary hash can be listed before execution."
+    },
+    "owner": {
+      "meaning": "All 60 methods behind chain-owner wrapper, including view methods.",
+      "readers": [
+        "nitro/precompiles/ArbOwner.go:64-684",
+        "nitro/precompiles/wrapper.go:84-140"
+      ],
+      "writers": [
+        "nitro/precompiles/ArbOwner.go:64-684"
+      ],
+      "updates": "Caller must be current ChainOwners member. Mutation parameters are owner supplied; releaseL1PricerSurplusFunds returns min(max, poolBalance-recognizedFees) and credits feesAvailable. Other reads expose configuration/membership. No ordinary Migration authority or full executing-prefix output."
+    },
+    "debug": {
+      "meaning": "Debug-config-only mutators/events/errors, not admitted on advertised production configuration.",
+      "readers": [
+        "nitro/precompiles/ArbDebug.go:28-76",
+        "nitro/precompiles/wrapper.go:34-51"
+      ],
+      "writers": [
+        "nitro/precompiles/ArbDebug.go:58-70"
+      ],
+      "updates": "Requires ChainConfig.DebugMode; inherited official chain config says false, not attested runtime config. Methods return supplied paid/flag/caller, old selected code, or errors; BecomeChainOwner and Overwrite mutate only when debug enabled. No prefix producer even in debug."
+    }
+  }
+}

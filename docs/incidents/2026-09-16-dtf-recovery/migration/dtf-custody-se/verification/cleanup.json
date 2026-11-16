@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-12",
+  "run": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/rehearsal-1794441946023/",
+  "cliCleanup": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/.omo-runtime/dtf-migration-dtf-custody-se/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 2461,
+    "runtime": "removed"
+  },
+  "externalProbes": {
+    "port18565": {
+      "command": "lsof -nP -iTCP:18565 -sTCP:LISTEN",
+      "exitCode": 1,
+      "output": ""
+    },
+    "pid2461": {
+      "command": "ps -p 2461 -o pid=,command=",
+      "exitCode": 1,
+      "output": ""
+    },
+    "checkpointAbsent": {
+      "command": "test ! -e .omo-runtime/dtf-migration-dtf-custody-se/checkpoints",
+      "exitCode": 0
+    },
+    "emptyOwnedParentRemoval": {
+      "command": "rmdir .omo-runtime/dtf-migration-dtf-custody-se",
+      "exitCode": 0
+    },
+    "whitespace": {
+      "command": "GIT_MASTER=1 git diff --check",
+      "exitCode": 0
+    }
+  },
+  "monitors": {
+    "executions": [
+      {
+        "monitor_id": "mon_9X07S8TM3PJ3D7AF",
+        "bash_id": "bash_12",
+        "monitor": true,
+        "exitCode": 0
+      },
+      {
+        "monitor_id": "mon_D7TZBC3DFXDC4ZC3",
+        "bash_id": "bash_14",
+        "monitor": true,
+        "exitCode": 0
+      },
+      {
+        "monitor_id": "mon_NQVGNMZ2Q108K6NN",
+        "bash_id": "bash_15",
+        "monitor": true,
+        "exitCode": 0
+      },
+      {
+        "monitor_id": "mon_JCXDS0MNJP26HD7T",
+        "bash_id": "bash_16",
+        "monitor": true,
+        "exitCode": 0
+      },
+      {
+        "monitor_id": "mon_KBSAPWJTK6PQAHHP",
+        "bash_id": "bash_17",
+        "monitor": true,
+        "exitCode": 0
+      },
+      {
+        "monitor_id": "mon_XW37CQP95C20KDAV",
+        "bash_id": "bash_18",
+        "monitor": true,
+        "exitCode": 0
+      }
+    ],
+    "producerReportWatcher": "mon_JZ09Y3701VB6NG9R fired create and completed",
+    "rootHandoffWatcher": "rpc_1 / mon_PG34ME689TZ3WVHJ killed after handoff; kill_bash succeeded"
+  },
+  "base": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+  "branch": "work/dtf-migration-phase-15-dtf-custody-se",
+  "index": "empty",
+  "links": {
+    "crane": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "nodeModules": "/Users/cyotee/Projects/indexedex/node_modules"
+  },
+  "warmArtifactsAndCaches": "retained",
+  "sourceModification": "none by verifier; all34 producer source bytes unchanged",
+  "diagnostics": {
+    "configuration": "No diagnostics found",
+    "surrender": "No diagnostics found",
+    "recovery": "No diagnostics found",
+    "json": "Biome LSP unavailable; no dependency/configuration change. Generated evidence is JSON-serialized."
+  },
+  "ownedPendingRuntime": false
+}
+

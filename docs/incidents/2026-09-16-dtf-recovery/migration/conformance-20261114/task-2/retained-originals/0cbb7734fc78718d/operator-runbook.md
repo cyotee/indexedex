@@ -1,0 +1,292 @@
+# Bounded Migration operator runbook
+
+## Preparation and read-only validation
+
+Entrypoint: `bun scripts/recovery/dtf-migration/cli.ts`.
+Use `--help` for the implemented command domain.
+
+```text
+bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
+bun scripts/recovery/dtf-migration/cli.ts validate --manifest <file>
+```
+
+Supply real paths and set the environment variable named by `domain.rpcEnv`
+outside the command line. Never put a private endpoint or signer in evidence.
+The complete input and execution-consumer contracts are in
+`operator/preparation/interface.md`; the runtime schemas are in
+`scripts/recovery/dtf-migration/schema.ts`.
+
+Preparation requires an actual funded and captured snapshot. It verifies raw
+source SHA-256 and byte lengths, full original proof objects, origin
+partitions, code/domain identities, the complete immutable snapshot and
+separate ETH/DTF frozen quotes. It writes full `independent.json` and
+`nfts.json` review mirrors plus the accepted `manifest.json`. These contain
+configuration, not issued bonds. Every write is exclusive; retain a failed
+directory as failed evidence and select a fresh output directory.
+
+Validation reconstructs the manifest from its pinned sources and read-only
+RPC calls. Execution must consume the typed return of `validateManifest`,
+not the review mirrors or a manually edited payload. `blocked.json` is
+rejected evidence, never an executable manifest. Unknown original inputs
+remain errors. No unimplemented fungible or TokenStaking allocation is
+generated, and earlier claim/sale holding is not earlier liquidation.
+
+Every NFT original now requires a nonzero `originalWallet` from its explicit
+acquisition record. The full source proof must match that field; omission,
+zero, or a changed wallet without matching recorded proof rejects preparation.
+The configuration ABI and hash include it immediately after `tokenId`.
+The wallet-independent economic-origin key does not change. Existing payloads
+without this field must be regenerated, not filled from live `ownerOf`.
+The retained surrender caller must equal this wallet and the live owner;
+approval alone is insufficient. A transfer back permits surrender without
+transfer-history proof. Configuration correction never resets consumption.
+
+Local script checks:
+
+```sh
+bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts
+```
+
+`operator/preparation/deterministic-fixture.json` records exact synthetic
+wire-fixture replacements, IDs and quote outputs. It is not an EVM
+execution, real pricing evidence, approved allocation or public loader input.
+
+## Execution and recovery
+
+The fixed stage names remain `deploy`, `fund`, `capture`, `configure`,
+`independent-issue`, `verify`, `activate`, `harvest`, `resume`, and `rehearse`.
+The execution schema is `scripts/recovery/dtf-migration/execution-schema.ts`.
+An execution manifest is a strict `dtf-operator-execution-v1` object. It binds
+chain, RPC environment-variable name, signer, proxy, registry, package, every
+installed facet runtime, raw source/ABI fingerprints, optional exact local
+instance/fork identity, typed package arguments and funding inputs. It accepts
+no arbitrary target/calldata. The `sources` array must include the genuine
+`migration-abi`, `allocation-abi`, `recovery-abi` and `package-abi` artifacts.
+All source paths are absolute, quantities decimal strings and unknown values
+invalid.
+
+Before capture, `snapshotId` and `preparedManifest` are null. Deployment
+receives complete `IUniswapV4DetfMigrationDFPkg.PkgArgs` as `deployment`;
+the package calls the actual manager registry. `funding.donations` contains
+unique identities and complete token/amount/native/minimum/deadline values.
+`funding.genesis` is the optional complete external-leg bootstrap. After
+capture, create the preparation input from the actual snapshot, run `prepare`,
+and bind its path and snapshot ID in a new execution manifest. The execution
+lane always calls `validateManifest`; it never trusts a payload hash alone.
+
+```text
+bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
+bun scripts/recovery/dtf-migration/cli.ts resume --manifest <file> --checkpoint <directory>
+```
+
+Each checkpoint directory belongs to one complete manifest and one stage.
+Use a new directory for a new stage or changed full replacement. Defaults are
+read-only domain/plan validation, not a stateful EVM simulation and not a
+receipt. Nothing inherits execution mode from an earlier process.
+
+For an owned local fork, explicitly add
+`--execute-local --instance-id <observed anvil_metadata.instanceId>`.
+The RPC must be loopback and the manifest's chain, instance, fork height and
+fork hash must all match. Only the public Anvil development account is selected.
+Public mode requires fresh `--broadcast`, `--confirm-chain`,
+`--confirm-proxy`, `--confirm-snapshot` and `--signer-key-env`; synthetic-local
+inputs reject it. Public execution has not been authorized for this task.
+For the typed pre-capture domain, the fresh snapshot confirmation is the
+literal `uncaptured`; it is not a bytes32 snapshot or a quote. After capture
+the actual snapshot ID is mandatory.
+
+The journal publishes a fully signed transaction intent and hash, nonce,
+starting block, complete typed operation and domain fingerprint before sending.
+Files are exclusively created and synced before publication, then the directory
+is synced. A crash before a receipt checkpoint leaves the same signed hash
+available for reconciliation. Resume checks the canonical receipt, exact
+transaction and receipt-block contract state, including actual bond IDs,
+principal, recipient, issuance clock and 90-day cliff. A reverted transaction,
+missing completed receipt, changed nonce without a known receipt, pending
+transaction or conflicting domain fails closed. There is no blanket retry.
+
+Configuration and issuance use bounded singleton rows. `--reverse` may reorder
+only their unsettled rows; prior intents are reconciled first. Donations,
+genesis and selected recovery stages preserve their order and identity.
+Complete configuration replacements do not change prior issued bonds.
+`--fault-after-mined` is synthetic-local only and interrupts a donation or
+independent issuance after its actual mined receipt and before completion.
+
+`verify` reads complete configurations and issuance independently of transaction
+submission. `activate` checks those configurations before executing and records
+the atomic removal of every allocation selector. `harvest` uses only the
+admitted enum tuples from preparation. Weighted receipt amounts are selected
+from attributed gons and a source index, then the actual operation is simulated
+before signing. Stored native inventory is not treated as a live quote;
+unrelated balances never expand its budget.
+
+## Local rehearsal
+
+The fixed rehearsal invocation is:
+
+```sh
+bun scripts/recovery/dtf-migration/cli.ts rehearse \
+  --rpc-alias robinhood_mainnet_alchemy \
+  --fork-block 108944663 \
+  --port 18562 \
+  --checkpoint .omo-runtime/dtf-migration-wallet-admission/checkpoints \
+  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission
+```
+
+The source pin is chain4663, L2 block108944663, hash
+`0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733`,
+not the post-funding snapshot. Rehearsal retains actual registry
+deployment and mined receipts, both mined-before-checkpoint interruptions,
+fresh-process resume, no duplicate funding/issuance, unchanged unclaimed
+supply, reordered remaining work, domain rejections, accrued attributed-gon
+recovery and owned runtime cleanup. Current original-wallet implementation
+and independent verification evidence are in
+`wallet-admission/implementation/report.md` and
+`wallet-admission/verification/report.md`. Historical baseline evidence
+remains in `operator/execution/report.md` and `operator/rehearsal/report.md`;
+the presence of a command is not proof that its rehearsal passed.
+
+The environment stage is
+`Phase_08_Stage_00_OperatorEnvironment.s.sol`; typed transaction simulations
+are in `Phase_08_Stage_01_MigrationExecution.s.sol`. Both compile with Solar.
+The local environment uses real holder-funded historical DTF and genuine
+production packages; its new WETH/rate/liquidity configuration is synthetic
+and not a proposed public deployment. The environment computes a proxy in
+simulation; the `deploy` CLI separately mines its actual registry deployment.
+Every local command and receipt is retained under an exclusive rehearsal
+evidence directory. Journals are copied there before the owned node exits
+and its temporary checkpoint root is removed.
+
+Run from the wallet-admission worktree on
+`work/dtf-migration-phase-12-wallet-admission`, based on
+`3f577eeca049c1bd70a812d130941c8a38dd4781`. The existing archive alias is
+resolved through `forge config --json`. On this workstation its credential
+is in the existing interactive login environment; `/bin/zsh -lic` can wrap
+the exact command above. Do not print the resolved endpoint. The wrapper
+uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
+and the existing warm `out/`, `cache_forge/` and dependency links.
+
+Port 18562 must be unused and the chosen checkpoint directory absent before
+starting. The command creates its own node and checkpoint directory; it
+does not adopt an existing node or overwrite an old checkpoint. EIP-170
+remains enabled. The local 100-million block gas cap, one-billion Forge
+simulation budget and legacy fee selection are rehearsal parameters, not
+target-chain transaction limits or a live funding quote.
+
+The independently verified original-wallet local parent deployment consumed
+**42,985,865 gas** (the prior operator baseline used **42,985,843**), exceeding
+the separately recorded historical `getMaxTxGasLimit()` value of
+**32,000,000**. The permissive local fork mined it; this does not establish
+that the same deployment can run publicly. Preserve this deployment
+feasibility issue for the separately authorized production/package lane.
+
+### Stage and evidence order
+
+| Step | Required input | Recorded result |
+| --- | --- | --- |
+| `deploy` | Complete pre-capture execution manifest and genuine registered package | Registry membership, runtime/facet bindings and actual owner |
+| `fund` | Distinct donation identities, full values and optional all-leg genesis | Actual received-capital events, protected inventory and genesis supply |
+| `capture` | Actually funded reserve | Immutable snapshot ID and both RPC block and emitted EVM block provenance |
+| `prepare`, `validate` | Pinned source originals and actual captured snapshot | Separate whole independent/NFT replacements, native quotes and fingerprints |
+| `configure` | Validated post-capture manifest | Actual replacement IDs/credits; unchanged supply |
+| `independent-issue` | Explicit selected recipients | Actual new funded bond IDs, principal, recipient and fresh cliff |
+| Original-wallet surrender | Explicit configured original wallet, actual ownership, approval and `surrenderMigrationNft` | Actual old NFT custody/consumption and a separate exactly funded fresh bond |
+| `verify`, `activate` | Final replacement manifest and completed selected issuance | Effective configurations, atomic selector removal and postactivation verification |
+| `harvest` | Consumed custody or attributed inventory; bounded typed selection | Measured claim/conversion/sale/donation and separate revaluation events |
+
+The rehearsal performs bounded recovery before activation, then verifies
+activation and both generations' late original-wallet surrender. Each phase
+executes approved-but-unconfigured, wrong-holder, approved-operator, and
+original-wallet-without-ownership rejections, checks unchanged custody,
+consumption and funding, and proves transfer-back success. Weighted ID26
+starts with its real transferred holder and is returned by an actual local
+source transaction to the explicitly recorded purchaser. No live owner is
+substituted into configuration. Recovery remains a separate retained API.
+Earlier sale is sale-and-hold, not receipt redemption or DTF liquidation.
+
+### Interruption and recovery procedure
+
+1. Keep the original manifest, its raw source files and checkpoint directory.
+   Start `resume` without execution flags to validate the domain without
+   selecting a signer or sending a transaction.
+2. For the same owned local instance, explicitly repeat `--execute-local`
+   and its exact `--instance-id`. The dead writer's lock is released only
+   after its process is proven absent.
+3. The journal first reconciles every existing signed intent against the
+   canonical transaction, receipt and receipt-block state. A mined donation
+   or issuance uses the same hash/nonce; it is not sent again.
+4. Only independent unsettled configuration/issuance rows may use
+   `--reverse`. Funding, genesis and recovery order cannot be reversed.
+   A changed manifest, snapshot, proxy, package, source or payload requires
+   review and a new domain, not editing an old checkpoint to bypass rejection.
+5. Stop on ambiguity, a canonical revert or a domain mismatch. Preserve the
+   failed files and diagnose the exact intent; there is no automatic retry,
+   rollback of already mined transactions or permission to duplicate a
+   donation under a new identity.
+
+The real rehearsal retains `donation-before-resume.json` and
+`issuance-before-resume.json` while the successful receipt exists but its
+completion file does not. Matching `*-resumed.json` files bind that same
+receipt to the fresh-process completion, including emitted bond identity.
+Four synthetic independent recipients leave three selected and one
+unclaimed. After the first selected issuance is interrupted, two unsettled
+rows remain; `reordered-issuance.json` checks their actual nonce order is
+reversed, with exactly one bond per selected recipient.
+
+The original and reordered preparation inputs must produce byte-identical
+`manifest.json`, `independent.json` and `nfts.json` within the same pinned
+domain. `deterministic-preparation.json` records their SHA-256 and sizes.
+Different node instances, evidence paths or snapshot domains legitimately
+change domain-bound fingerprints; they are not claimed byte-identical.
+
+Every deliberate rejection must exit 1 with `DOMAIN` and leave the signer
+nonce unchanged. The five wrong-domain cases are chain, proxy, package,
+snapshot and prepared payload. A sixth case rejects reversing funding.
+Default resumes are separately checked to leave the nonce unchanged.
+
+### Reading receipts and cleanup
+
+Each `wallet-admission/implementation/rehearsal-<run>/` retains the redacted Anvil argv, Solar
+environment command, numbered CLI command/exit records and logs, actual
+infrastructure/fixture receipts, deterministic data and `journal-*`
+directories. `.intent.json` contains signed local-development transaction
+bytes; `.receipt.json` contains canonical receipt and checked state.
+Simulation/read-only output is never counted as a mined receipt.
+
+Use `wallet-admission/verification/report.md` and its referenced
+`execution-index.json`, `source-artifact-parity.json`, `cleanup.json` and
+independent rehearsal evidence to join commands, nonces, actual bond IDs,
+native gas used, executable artifacts and source/evidence fingerprints.
+The earlier `operator/rehearsal/` records remain historical baseline evidence.
+Receipt gas describes these specific local transactions only. Retain the
+admitted bound of at most eight weighted claims or one other recovery step,
+and estimate each exact selected operation against actual chain limits
+before any separately authorized operation.
+
+The CLI awaits node exit, closes receipt subscriptions/providers, stops
+holder impersonation in `finally`, copies checkpoint bytes into evidence,
+then removes its owned checkpoint root. `cleanup.json` records that sequence.
+The rehearsal report also records port/PID absence and removal of the empty
+task-created runtime parent. Preserve evidence, shared services, warm
+artifacts and dependency links.
+
+### Required categories still blocked
+
+| Category | Unclosed gate |
+| --- | --- |
+| Weighted liquid DETF | H3/H4 original native-unit configuration and fungible surrender ledger absent |
+| Earlier liquid DETF | H3/H6 original native-unit configuration/surrender absent; ED liquidation unproved |
+| Weighted receipt | H3/H4 original gon/credit mapping and synchronized fungible surrender absent |
+| Earlier receipt | H3/H6 original share denominator/fractional attribution unproved; earlier SE exits disabled |
+| Weighted SY | H3/H5 original share mapping and proxy surrender/recovery composition absent |
+| TokenStaking raw weight | `reassign` debits caller, with no approved pull or recipient callback; ordinary Migration atomic surrender unsupported |
+| Claim-vault rights | Direct-user 19-decimal share records/integration absent; infrastructure ownership does not prove user authority |
+| Underlying SE shares | Direct-user records/integration absent; earlier and weighted WETH SE disabled; working 28-decimal DTF SE needs its own composition |
+| Fungible LP | Original records/integration absent; owner-restricted exits and earlier `UnsupportedRoute` remain |
+| Earlier liquidation | SB-E1/E2/E3 disabled exits; SB-E4 unproved liquid conversion |
+
+These categories remain in every disposition matrix, even with zero input
+rows. None obtains invented credit, an executable substitute or a no-op
+success. Synthetic originals, external liquidity and local funding are
+operational test data, not approved allocations. Full original task 9 and
+release remain open.

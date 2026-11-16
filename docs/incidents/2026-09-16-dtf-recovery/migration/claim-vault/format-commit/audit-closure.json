@@ -1,0 +1,424 @@
+{
+  "date": "2026-11-12",
+  "at": "2026-11-12T03:31:33.694Z",
+  "disposition": "needs-fix",
+  "head": "9c227900b280713305d4a1a1d1cdc3d8d273f23d",
+  "followupReceiptAbsent": true,
+  "gitChecks": [
+    {
+      "command": "GIT_MASTER=1 git rev-parse HEAD",
+      "exitCode": 0,
+      "stdout": "9c227900b280713305d4a1a1d1cdc3d8d273f23d\n",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git status --short --ignore-submodules=all",
+      "exitCode": 0,
+      "stdout": " M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol\n M scripts/recovery/dtf-migration/claim-vault.test.ts\n M scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n M scripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol\n M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/\n",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --ignore-submodules=all --cached --exit-code",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --ignore-submodules=all --check 4a53299b490343ed904d70c92ecbc7360fcb7659 HEAD",
+      "exitCode": 2,
+      "stdout": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol:20: new blank line at EOF.\ncontracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol:58: new blank line at EOF.\nscripts/recovery/dtf-migration/claim-vault.test.ts:83: new blank line at EOF.\nscripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts:110: new blank line at EOF.\nscripts/recovery/dtf-migration/rehearsal-claim-vault.ts:298: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol:201: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol:95: new blank line at EOF.\ntest/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol:194: new blank line at EOF.\ntest/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol:251: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git for-each-ref --format=%(refname) %(objectname)",
+      "exitCode": 0,
+      "stdout": "refs/heads/main 90ff0307a7a8e084aa073e02eff125e9c7973933\nrefs/heads/work/dtf-migration 6e27ecaa242c4acca132e3575a160514aad07b11\nrefs/heads/work/dtf-migration-phase-01 90ff0307a7a8e084aa073e02eff125e9c7973933\nrefs/heads/work/dtf-migration-phase-02 215c2bba6aa75e3e79bf68b7980b730927a85817\nrefs/heads/work/dtf-migration-phase-03 6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd\nrefs/heads/work/dtf-migration-phase-04 5021e8d4a62bcbddc555f580ef98f8666d993aab\nrefs/heads/work/dtf-migration-phase-05 6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31\nrefs/heads/work/dtf-migration-phase-06-e2 5021e8d4a62bcbddc555f580ef98f8666d993aab\nrefs/heads/work/dtf-migration-phase-07-recovery 421072a7630a0d3d47a6f36e1062d9eae98c93e2\nrefs/heads/work/dtf-migration-phase-08-operator 3f577eeca049c1bd70a812d130941c8a38dd4781\nrefs/heads/work/dtf-migration-phase-09-deployment-gas 421072a7630a0d3d47a6f36e1062d9eae98c93e2\nrefs/heads/work/dtf-migration-phase-11-same-wallet-sources 3f577eeca049c1bd70a812d130941c8a38dd4781\nrefs/heads/work/dtf-migration-phase-12-wallet-admission 2c2b3370ded30cae1662329025d4fb58f7197330\nrefs/heads/work/dtf-migration-phase-13-weighted-liquid 75d513cb8b36e53f14c8aa3a352f21703ad91ba1\nrefs/heads/work/dtf-migration-phase-14-weighted-sy 2baab6e58dafcc3fe5f9a94570d99987d58bf42b\nrefs/heads/work/dtf-migration-phase-15-dtf-custody-se 4a53299b490343ed904d70c92ecbc7360fcb7659\nrefs/heads/work/dtf-migration-phase-16-claim-vault 9c227900b280713305d4a1a1d1cdc3d8d273f23d\nrefs/remotes/origin/HEAD 90ff0307a7a8e084aa073e02eff125e9c7973933\nrefs/remotes/origin/codex/robinhood-release-review 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0 0c3558b2ec9571873a787eef4becbdddafc6ce7b\nrefs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6 a1a2b239593a90a062a8d477395f6b7fc3a473f7\nrefs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9 3a4001f8a017be2b8b3e988b3fb1fcff454b6a01\nrefs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6 41bbe4eec3ce9279b205058063b3b69f6be2b149\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8 8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21 3a8205815ac3f4307de10ab27e813a56847d779c\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21 92eeb98dad898aa12b83191e029a9e74112c295b\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7 27de3dc71df885634fda1b1fea448e3b499898c3\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13 f0d69de54820d1b844f304dc0c7bcf990f0b57a1\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea 74ef9f247f0b1a661fb338738e8300bd0c7f05eb\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731 bdd8e74ea3902897ca98d8312e5c195d9dbd5a33\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb 92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18 f4f3a424d8b286c5b0940694835e958f91d24c74\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8 1319a76e08a306e77926a20feb6b95250e64b348\nrefs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2 549159d0b0c86fc0818f9e628315ddfef984ae4c\nrefs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9 fb6f85b84a9f85dbb6dcb368b75111ecb6257a6c\nrefs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2 05de656fd06346486bec9e9c7c17ce58508f5aac\nrefs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24 924b83b300fb1e3938cc48e3ecd474a855775a3e\nrefs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1 ad6c641aa4dcb582185a136fda6f342ffd8fb103\nrefs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18 ffb2652457d73cb8ced157853b9fd7b1ca883065\nrefs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8 4db81ae56cec60663566fd79f82c08bcf15859d7\nrefs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8 eae337a55ff219b56208c6eff11bf9cdb45d6a34\nrefs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7 98c7f0ac0cbf5c08666680a411a4b4a836fb0b73\nrefs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5 27d0cbfada90a5f6b546ed712e04dc0c5d8e4154\nrefs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26 f149ade544a68566d09a3ab3b7f6000873be6de8\nrefs/remotes/origin/docs/agent-inventory-navigation 950e6b32ea8efff73226a0adf6a7e0b75828127a\nrefs/remotes/origin/feat/uniswap-v4-upper-lower-wings 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/remotes/origin/feature/crane-ethereum-staking-ports 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/remotes/origin/fix/legacy-v4-erc5115-interface 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/remotes/origin/fix/uniswap-se-v2-delivery 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/remotes/origin/frontend/multi-app-monorepo 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/remotes/origin/gh-pages 6724a5e5c762394797c3508ae1db7d6c0dbdac78\nrefs/remotes/origin/main 90ff0307a7a8e084aa073e02eff125e9c7973933\nrefs/remotes/origin/refactor/frontend-shared-deployment-root 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/remotes/origin/upgrade/nextjs-16 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3\nrefs/stash 7321b70c984423699475cfb45907b6dd70bb8ef4\n",
+      "stderr": ""
+    }
+  ],
+  "sourceClosure": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "sha256": "f24bba95d01d2d23abbd7ce4f310845428d4dacc143549e9a0bbd07adf79daca",
+      "actual": "f24bba95d01d2d23abbd7ce4f310845428d4dacc143549e9a0bbd07adf79daca"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "sha256": "de3aeb7770dfeb0105c82cc05abf72fa9f9708e2ae944b897ca3a2bcc60ce9e4",
+      "actual": "de3aeb7770dfeb0105c82cc05abf72fa9f9708e2ae944b897ca3a2bcc60ce9e4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "c3a0b7ef8fe7ef3b7e03934420dbeb16c2c1bcfadc709fe427c28cde2537be4e",
+      "actual": "c3a0b7ef8fe7ef3b7e03934420dbeb16c2c1bcfadc709fe427c28cde2537be4e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "sha256": "007efb814785b8a5a28336785a74ff80b135ecc236f023f3e679aac15938f788",
+      "actual": "007efb814785b8a5a28336785a74ff80b135ecc236f023f3e679aac15938f788"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "sha256": "f575db5e7baa8acd986772963124e07d914cc79125598fcd70f47ac7a1632945",
+      "actual": "f575db5e7baa8acd986772963124e07d914cc79125598fcd70f47ac7a1632945"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "644976c7dd465d0443014e8220f1d6e03fb4815c18763b1099eb0e5fb7edd13b",
+      "actual": "644976c7dd465d0443014e8220f1d6e03fb4815c18763b1099eb0e5fb7edd13b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "sha256": "553403763bab57d05c4e2cc080adc92d2f07bda468a195159b3cc362ae57e99b",
+      "actual": "553403763bab57d05c4e2cc080adc92d2f07bda468a195159b3cc362ae57e99b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "sha256": "09ee47bdce9c8077ed61ecf6f55f05fe68ec9867917bb467a8933ce717a54faf",
+      "actual": "09ee47bdce9c8077ed61ecf6f55f05fe68ec9867917bb467a8933ce717a54faf"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "sha256": "efcd2d657ed9046b492d40ac525c87728426c22323549cab3da29ee42882e803",
+      "actual": "efcd2d657ed9046b492d40ac525c87728426c22323549cab3da29ee42882e803"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "50101967d1ed2e58af8aa16878fc9a200dc17b705efe850f6ee0d154613f4c9f",
+      "actual": "50101967d1ed2e58af8aa16878fc9a200dc17b705efe850f6ee0d154613f4c9f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "500228877c9795d53312295e506ddf6797eca1cee8d04a76f0d09f73f0116bb5",
+      "actual": "500228877c9795d53312295e506ddf6797eca1cee8d04a76f0d09f73f0116bb5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "sha256": "ae8272d6cfff98a48f6703a36b62d0ef833cf10e4e2a3c6d9a2629c5b70c3f35",
+      "actual": "ae8272d6cfff98a48f6703a36b62d0ef833cf10e4e2a3c6d9a2629c5b70c3f35"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "sha256": "28587a9599b5f6452e3ccd9ed06e4a6de5fd0d292262e15f076619928a02eb5a",
+      "actual": "28587a9599b5f6452e3ccd9ed06e4a6de5fd0d292262e15f076619928a02eb5a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "sha256": "d5b634cd0857a564960d3c47da506f1ad049c8818091fe9b22f883e35bd94ab0",
+      "actual": "d5b634cd0857a564960d3c47da506f1ad049c8818091fe9b22f883e35bd94ab0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "sha256": "819dedd9d4d7ffd43d929874f68ae1d0edc5087f548cf8fc4f68944bea842778",
+      "actual": "819dedd9d4d7ffd43d929874f68ae1d0edc5087f548cf8fc4f68944bea842778"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "da0b00ad6eb7fa87231b81a78a4f2c629cfafed447154460fb62f9c8fe8629f6",
+      "actual": "da0b00ad6eb7fa87231b81a78a4f2c629cfafed447154460fb62f9c8fe8629f6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+      "actual": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "ac226d12173801a4a7b2bbceb6605cfb57706fd73d6acac67d725cba84c94ebc",
+      "actual": "ac226d12173801a4a7b2bbceb6605cfb57706fd73d6acac67d725cba84c94ebc"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "0a12beba165e9865178daa28b7b5ee5bf8f57505f94e7950d240cc9a22615b9b",
+      "actual": "0a12beba165e9865178daa28b7b5ee5bf8f57505f94e7950d240cc9a22615b9b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "c925a9a4abf05d94f918584de120687717193c729513b1e77902e646147e2681",
+      "actual": "c925a9a4abf05d94f918584de120687717193c729513b1e77902e646147e2681"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "4e643ff82038e6874566e4984f4da3fc775749bee9e4c1ee1552f244f9443f28",
+      "actual": "4e643ff82038e6874566e4984f4da3fc775749bee9e4c1ee1552f244f9443f28"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "9acd4c99c4b024d955e2de5fabf3e4bc7830c298135f31fd781f153f09b82f11",
+      "actual": "9acd4c99c4b024d955e2de5fabf3e4bc7830c298135f31fd781f153f09b82f11"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "e236e871a0ee97fa18b095f15d4e7c5acca5bb3e729aab4ec56849246e355b92",
+      "actual": "e236e871a0ee97fa18b095f15d4e7c5acca5bb3e729aab4ec56849246e355b92"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "94f914f30ae0d7036b14c9e13300eda6822249d244b53a319436b3a2317a6660",
+      "actual": "94f914f30ae0d7036b14c9e13300eda6822249d244b53a319436b3a2317a6660"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "9636a9d90f1151562277b82c1c0b96395be846c639067ad113251f47c318793f",
+      "actual": "9636a9d90f1151562277b82c1c0b96395be846c639067ad113251f47c318793f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "58579a42727a66702f6ccb3b00017ff3a8ec2ec91fc579540f0ea8cdc9c64008",
+      "actual": "58579a42727a66702f6ccb3b00017ff3a8ec2ec91fc579540f0ea8cdc9c64008"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "sha256": "80bc8e357b774890b83e03707eeacafd566ef35c66ff9fc02483fb25e844a93f",
+      "actual": "80bc8e357b774890b83e03707eeacafd566ef35c66ff9fc02483fb25e844a93f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "sha256": "71211c2c3ace5f7735a9f85d315e03d9749f52754ac6ada3b60fc2b54053a6f6",
+      "actual": "71211c2c3ace5f7735a9f85d315e03d9749f52754ac6ada3b60fc2b54053a6f6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "7628e5ce5437bb53cfd1908f5b2f5fcc7e66ab755bdf907b54967e6f650e295a",
+      "actual": "7628e5ce5437bb53cfd1908f5b2f5fcc7e66ab755bdf907b54967e6f650e295a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "5af2ee76ab02c6a6da5b0c56cf434c21436d0ffd44f1bfa5f20673dd6b7bffea",
+      "actual": "5af2ee76ab02c6a6da5b0c56cf434c21436d0ffd44f1bfa5f20673dd6b7bffea"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "b4fde89928479b81a588b56c58d6c6787a668853367f50766ce964e9a9640ab6",
+      "actual": "b4fde89928479b81a588b56c58d6c6787a668853367f50766ce964e9a9640ab6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "1cbb1505d150ca8c026568d7eb2d89a38eb0f374dfaa16af9617a9dab669f0df",
+      "actual": "1cbb1505d150ca8c026568d7eb2d89a38eb0f374dfaa16af9617a9dab669f0df"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "eb610000ac822708abb23e7bc046f92a530ca1c9a3ee780c4d46d622724448f0",
+      "actual": "eb610000ac822708abb23e7bc046f92a530ca1c9a3ee780c4d46d622724448f0"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "sha256": "7be0cc5440fee63ff9bbdcdd7c3397dde0b545889e83c5e19462b30c4917e425",
+      "actual": "7be0cc5440fee63ff9bbdcdd7c3397dde0b545889e83c5e19462b30c4917e425"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "sha256": "33e9f1b77ece6b8804e79816b1df462a3818c9ea1d4f05059047963f8c214dfe",
+      "actual": "33e9f1b77ece6b8804e79816b1df462a3818c9ea1d4f05059047963f8c214dfe"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "sha256": "374dcaaeaf0ce1fc1de10ae53a1bf4865ff2e25389c0265ab7596f4954c4b5f2",
+      "actual": "374dcaaeaf0ce1fc1de10ae53a1bf4865ff2e25389c0265ab7596f4954c4b5f2"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "sha256": "cc2b903a19fdb08e4fe854fab8c772596ca899b9d1b3c20edb22c80b0768ae9f",
+      "actual": "cc2b903a19fdb08e4fe854fab8c772596ca899b9d1b3c20edb22c80b0768ae9f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "sha256": "b36207cc1c27db5b92c4b59e4ae36d3907aa0048e690b263ce306acce3b2678d",
+      "actual": "b36207cc1c27db5b92c4b59e4ae36d3907aa0048e690b263ce306acce3b2678d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "sha256": "b61e7e3f551f1122eb4602cba0161b45d88ccc04f7ddaa6e5a4ce607dde0a8c5",
+      "actual": "b61e7e3f551f1122eb4602cba0161b45d88ccc04f7ddaa6e5a4ce607dde0a8c5"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "sha256": "38898ae898c39125c9340f64edbd978c4b2ed9ad81ef7aa703b5145cfc8cbfd5",
+      "actual": "38898ae898c39125c9340f64edbd978c4b2ed9ad81ef7aa703b5145cfc8cbfd5"
+    }
+  ],
+  "evidenceClosure": [
+    {
+      "path": "format-correction/report.md",
+      "expected": "0f1249a50b5a210df8ef77967ad00b8096c89ebbb2e143ac9406adc4797dd8fb",
+      "actual": "0f1249a50b5a210df8ef77967ad00b8096c89ebbb2e143ac9406adc4797dd8fb"
+    },
+    {
+      "path": "format-correction/seal.json",
+      "expected": "d0c49aac0d178f589d626a8639ce9790db92abcebc5eb6a287543057a3885934",
+      "actual": "d0c49aac0d178f589d626a8639ce9790db92abcebc5eb6a287543057a3885934"
+    },
+    {
+      "path": "format-correction/validation-results.json",
+      "expected": "bd2b881003fe1d3e6124f58e4b4bf75d6f88d44fd742ad1ff8a7c0f273bd6b70",
+      "actual": "bd2b881003fe1d3e6124f58e4b4bf75d6f88d44fd742ad1ff8a7c0f273bd6b70"
+    },
+    {
+      "path": "format-verification/report.md",
+      "expected": "c18b2c9adbddaa6190bda525c8f2302e6276b35ce44b4f8ba50bbcd7cbd16656",
+      "actual": "c18b2c9adbddaa6190bda525c8f2302e6276b35ce44b4f8ba50bbcd7cbd16656"
+    },
+    {
+      "path": "format-verification/closure.json",
+      "expected": "c0765d7961f6c4d6daaa7551273276bda01d4b9396be5f4b73625b93cbb56594",
+      "actual": "c0765d7961f6c4d6daaa7551273276bda01d4b9396be5f4b73625b93cbb56594"
+    },
+    {
+      "path": "format-verification/audit-bindings.json",
+      "expected": "ea1ced6834ef49df83cf1e72d3c9d82e75fb27eb3a04545d34fb9826c8a9275b",
+      "actual": "ea1ced6834ef49df83cf1e72d3c9d82e75fb27eb3a04545d34fb9826c8a9275b"
+    },
+    {
+      "path": "commit/verification.md",
+      "expected": "55a9eb3f128addf8f10d668015ff7c97985418bb2726534cc86e4bcab73751a3",
+      "actual": "55a9eb3f128addf8f10d668015ff7c97985418bb2726534cc86e4bcab73751a3"
+    }
+  ],
+  "initialClosure": [
+    {
+      "path": "source-manifest.json",
+      "expected": "a2d5599854282782a3443d910f8f78a8bddd813537ccf44fd652c5651cc787ea",
+      "actual": "a2d5599854282782a3443d910f8f78a8bddd813537ccf44fd652c5651cc787ea"
+    },
+    {
+      "path": "receipt.md",
+      "expected": "ec9e0264c79259bd6e7d2b081af2acd99cf55be08bb1fa5a96f89bc3350ef6a6",
+      "actual": "ec9e0264c79259bd6e7d2b081af2acd99cf55be08bb1fa5a96f89bc3350ef6a6"
+    },
+    {
+      "path": "audit-source-identities.json",
+      "expected": "eb758c2d1db213a7cdc6bc93edc71fa6d880e908a3f15d40756fea9ec7f09cd9",
+      "actual": "eb758c2d1db213a7cdc6bc93edc71fa6d880e908a3f15d40756fea9ec7f09cd9"
+    },
+    {
+      "path": "verification.md",
+      "expected": "55a9eb3f128addf8f10d668015ff7c97985418bb2726534cc86e4bcab73751a3",
+      "actual": "55a9eb3f128addf8f10d668015ff7c97985418bb2726534cc86e4bcab73751a3"
+    },
+    {
+      "path": "audit-git-checks.json",
+      "expected": "6e0737b427288afe08d490b22cb649a5c4676bbb18b6cda09e11c7119782b71b",
+      "actual": "6e0737b427288afe08d490b22cb649a5c4676bbb18b6cda09e11c7119782b71b"
+    },
+    {
+      "path": "audit-preservation.json",
+      "expected": "cab1fc7ec27dddd4772e9f4c744397d296d021f9aa8198569a9094463224493f",
+      "actual": "cab1fc7ec27dddd4772e9f4c744397d296d021f9aa8198569a9094463224493f"
+    },
+    {
+      "path": "precommit/docs-incidents.jsonl",
+      "expected": "53690222c0e48e6391a983defa96e7173760469a66c7a2fce77fb271030540ab",
+      "actual": "53690222c0e48e6391a983defa96e7173760469a66c7a2fce77fb271030540ab"
+    },
+    {
+      "path": "precommit/cache_forge.jsonl",
+      "expected": "59f14a7400dfddad607032730144de3c280e5b44e483561ac280b0d0d8bab0b7",
+      "actual": "59f14a7400dfddad607032730144de3c280e5b44e483561ac280b0d0d8bab0b7"
+    },
+    {
+      "path": "precommit/show-ref.txt",
+      "expected": "341e22d7b2e837ea239820cd243beb8a174eb8708a21b3d8db0d5bb83ebde2e2",
+      "actual": "341e22d7b2e837ea239820cd243beb8a174eb8708a21b3d8db0d5bb83ebde2e2"
+    },
+    {
+      "path": "precommit/status-before.txt",
+      "expected": "5aab41a93e8d4cc63ade9f2a1b1e6e015226852927e1bede734fe05abb259632",
+      "actual": "5aab41a93e8d4cc63ade9f2a1b1e6e015226852927e1bede734fe05abb259632"
+    },
+    {
+      "path": "precommit/out.jsonl",
+      "expected": "bfe01d54b8c2e90c6386905ac881b860553f552571d01c64cdaa41531e2a939f",
+      "actual": "bfe01d54b8c2e90c6386905ac881b860553f552571d01c64cdaa41531e2a939f"
+    },
+    {
+      "path": "precommit/recipe.txt",
+      "expected": "45c2c071e55e759d45dae306ef15133cbf314a22af6a0ce80b9d28dc62924804",
+      "actual": "45c2c071e55e759d45dae306ef15133cbf314a22af6a0ce80b9d28dc62924804"
+    },
+    {
+      "path": "precommit/docs-incidents-perms.jsonl",
+      "expected": "63c69e9609eccc19f61690d00f267f230ab8cf34e09a3dd095ef4072ba119845",
+      "actual": "63c69e9609eccc19f61690d00f267f230ab8cf34e09a3dd095ef4072ba119845"
+    }
+  ],
+  "indexUnchanged": true,
+  "refsUnchanged": true,
+  "supporting": [
+    {
+      "path": "audit-checks.json",
+      "sha256": "6b2bd5db3426c0532a7586b44c37c71c4e9bf58cfb777031a6bab09cdaefe687"
+    },
+    {
+      "path": "audit-preservation.json",
+      "sha256": "e4e588b466e6b25de6a507891ad3082ebfce5bd7c93b4ac286ff303621806eaf"
+    },
+    {
+      "path": "verification.md",
+      "sha256": "54d4df79b8d769d685061506dd26d2acf5466284d552bbab54f3732f5d6c9167"
+    }
+  ],
+  "jsonValidation": {
+    "auditChecks": true,
+    "preservation": true,
+    "method": "JSON.parse of serialized evidence prior to apply_patch; no JSON LSP available"
+  },
+  "cleanup": {
+    "probes": [
+      {
+        "command": "lsof -nP -iTCP:18566 -sTCP:LISTEN",
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": "ps -p 67199,57230,57324,48079,49746 -o pid=,command=",
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    ],
+    "states": [
+      {
+        "path": ".omo-runtime/dtf-migration-claim-vault/checkpoints",
+        "absent": true
+      },
+      {
+        "path": ".omo-runtime/dtf-migration-claim-vault",
+        "absent": true
+      },
+      {
+        "path": "MERGE_HEAD",
+        "absent": true
+      },
+      {
+        "path": "CHERRY_PICK_HEAD",
+        "absent": true
+      },
+      {
+        "path": "REVERT_HEAD",
+        "absent": true
+      },
+      {
+        "path": "rebase-merge",
+        "absent": true
+      },
+      {
+        "path": "rebase-apply",
+        "absent": true
+      },
+      {
+        "path": "index.lock",
+        "absent": true
+      }
+    ],
+    "pendingOwnedOperations": 0,
+    "startedRuntime": false
+  },
+  "writes": [
+    "format-commit/audit-checks.json",
+    "format-commit/audit-preservation.json",
+    "format-commit/verification.md",
+    "format-commit/audit-closure.json"
+  ]
+}

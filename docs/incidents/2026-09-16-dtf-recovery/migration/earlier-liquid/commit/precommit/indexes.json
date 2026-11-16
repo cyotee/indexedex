@@ -1,0 +1,247 @@
+{
+  "capturedBeforeStaging": true,
+  "indexes": [
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex",
+      "branch": "refs/heads/main",
+      "head": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/index",
+      "size": 2049344,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "3cc0d21e28487e7e5af9762e2d584ef8f2254e09a370831f3a57e5eaaf9ab277",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration",
+      "branch": "refs/heads/work/dtf-migration",
+      "head": "6e27ecaa242c4acca132e3575a160514aad07b11",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-integration/index",
+      "size": 2051311,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "aa8006174469c69a0b117d6916c4d8c6439074ba842a4b23e80309765eba373d",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "branch": "refs/heads/work/dtf-migration-phase-01",
+      "head": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-01/index",
+      "size": 2049344,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "749de311dc63fa71d84f6c86c1c5a8ca4d282277704577de756ca41061759b6d",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02",
+      "branch": "refs/heads/work/dtf-migration-phase-02",
+      "head": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-02/index",
+      "size": 2051159,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "9126e38348b1d52a80568fc3190e576f2f8b8498d8b03a28669a547bfee6e4dc",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03",
+      "branch": "refs/heads/work/dtf-migration-phase-03",
+      "head": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-03/index",
+      "size": 2049496,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "8f7331c9ae5157787c63474325d1075ebc8d1edd55ace7cb322fd527ab6f7b43",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04",
+      "branch": "refs/heads/work/dtf-migration-phase-04",
+      "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-04/index",
+      "size": 2059345,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "2ea7388ea59115bbc13aa24220bc2bc54b3473c235d090542e5b2882b16aaf00",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+      "branch": "refs/heads/work/dtf-migration-phase-05",
+      "head": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-05/index",
+      "size": 2060522,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "ac042893ccb68302441a8bf7541b11d2f5cc7e0a4bf63be30eff1fc97c3ffe67",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2",
+      "branch": "refs/heads/work/dtf-migration-phase-06-e2",
+      "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-06-e2/index",
+      "size": 2059345,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "92403be633233bedc23824bce7d1157ce041aec505684d1b90f60afc849f5366",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery",
+      "branch": "refs/heads/work/dtf-migration-phase-07-recovery",
+      "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-07-recovery/index",
+      "size": 2062817,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "2fbafd4df15947c89b8d3f0b852b49640b0ae1692996d7acbdc37a7fa40cd33b",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+      "branch": "refs/heads/work/dtf-migration-phase-08-operator",
+      "head": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-08-operator/index",
+      "size": 2065731,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "ebb6f20c078bd6544c3c578527afb8fe978d32b01fc4e69423259608f38bfebe",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas",
+      "branch": "refs/heads/work/dtf-migration-phase-09-deployment-gas",
+      "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-09-deployment-gas/index",
+      "size": 2062817,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "6a719d99866e71c51f78d9845d12acb3e8e3ed199b1e153be6416acd62a54ef8",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources",
+      "branch": "refs/heads/work/dtf-migration-phase-11-same-wallet-sources",
+      "head": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-11-same-wallet-sources/index",
+      "size": 2065731,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "f352931cef814c84990fa46e29d70653fe56616288e327474eb69f09050319dd",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission",
+      "branch": "refs/heads/work/dtf-migration-phase-12-wallet-admission",
+      "head": "2c2b3370ded30cae1662329025d4fb58f7197330",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-12-wallet-admission/index",
+      "size": 2066011,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "69885674d2a9248874a27082ace9959cb5c2accc914242a635c7d2cb9d236e71",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+      "branch": "refs/heads/work/dtf-migration-phase-13-weighted-liquid",
+      "head": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-13-weighted-liquid/index",
+      "size": 2067163,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "65041499f12f27f70be8f313e75be6f71ad386ff5dd14c2749d5082cf31b1edd",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy",
+      "branch": "refs/heads/work/dtf-migration-phase-14-weighted-sy",
+      "head": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-14-weighted-sy/index",
+      "size": 2067899,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "718bef8129d313f1af5e6d5eef22bea8b3a54309cf14cf0580676ddcfe609d8b",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se",
+      "branch": "refs/heads/work/dtf-migration-phase-15-dtf-custody-se",
+      "head": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-15-dtf-custody-se/index",
+      "size": 2068947,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "1046c4affdbe682780d8bef45c77cdf2361edc3d123f3bde5009a7c74992a342",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault",
+      "branch": "refs/heads/work/dtf-migration-phase-16-claim-vault",
+      "head": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-16-claim-vault/index",
+      "size": 2070332,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "f18d287fdf541739bd300e9ab60fd0ebc93dba805b542a16a65c80d94d1e8b59",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt",
+      "branch": "refs/heads/work/dtf-migration-phase-17-weighted-receipt",
+      "head": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-17-weighted-receipt/index",
+      "size": 2071388,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "ca6c853db62e934f402e816ff23702ca8fffba7f74923e4fb4e97ae770c83f6e",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt",
+      "branch": "refs/heads/work/dtf-migration-phase-18-earlier-receipt",
+      "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-18-earlier-receipt/index",
+      "size": 2071972,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "a2c5742f0e9c18b5ce04298b218b0fb82fb77ec3f00ff5ee6d3dc53be1422057",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid",
+      "branch": "refs/heads/work/dtf-migration-phase-19-earlier-liquid",
+      "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-19-earlier-liquid/index",
+      "size": 2071972,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "1fb8d0ea7e8a03bc8eb6e93de3ee92812c6f52f29381093df5a26a214c70da7a",
+      "foreign": false
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source",
+      "branch": "refs/heads/work/dtf-migration-phase-19-earlier-liquid-source",
+      "head": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-19-earlier-liquid-source/index",
+      "size": 2071388,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "309e652d1b7af81697773abe682771f50562aad5a2ad34f292255c4959eee9a1",
+      "foreign": true
+    },
+    {
+      "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source",
+      "branch": "refs/heads/work/dtf-migration-phase-20-se-lp-source",
+      "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "indexPath": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-20-se-lp-source/index",
+      "size": 2071972,
+      "mode": "100644",
+      "perm": "0o644",
+      "sha256": "922910a886493195b17f66f34e0990ae1f15d3f559c017be88695a5b1316766f",
+      "foreign": true
+    }
+  ]
+}

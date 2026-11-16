@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "validation-results.json",
+      "bytes": 2594,
+      "sha256": "6b933633e858b16e29d47dd5d865b3c584dc8a6e043997133759aac25bfb2609"
+    },
+    {
+      "path": "correction.json",
+      "bytes": 890,
+      "sha256": "f6f0f9946cc2b1ad4c580c983b70a20612896d4678a062f1c9e4f2a4729374c2"
+    },
+    {
+      "path": "report.md",
+      "bytes": 737,
+      "sha256": "d6163483945bfd3353a31c3cab9bf5606b89195bc456446d6159f4dde41c054f"
+    }
+  ]
+}

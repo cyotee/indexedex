@@ -1,0 +1,45 @@
+# Separate forge test commands for each Foundry profile (including default).
+# Run each line from repo root: lib/indexedex
+# Profiles from foundry.toml as of this file.
+
+# default
+forge test -vv
+
+# research
+FOUNDRY_PROFILE=research forge test -vv
+
+# universal_router
+FOUNDRY_PROFILE=universal_router forge test -vv
+
+# coordinator
+FOUNDRY_PROFILE=coordinator forge test -vv
+
+# orbital
+FOUNDRY_PROFILE=orbital forge test -vv
+
+# quad_stable
+FOUNDRY_PROFILE=quad_stable forge test -vv
+
+# single_se_buffer_cp_hook
+FOUNDRY_PROFILE=single_se_buffer_cp_hook forge test -vv
+
+# dual_se_buffer_cp_hook
+FOUNDRY_PROFILE=dual_se_buffer_cp_hook forge test -vv
+
+# single_se_buffer_hook
+FOUNDRY_PROFILE=single_se_buffer_hook forge test -vv
+
+# hook_factory
+FOUNDRY_PROFILE=hook_factory forge test -vv
+
+# uv4_single_se_cp_detf
+FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test -vv
+
+# fork (requires RPC)
+FOUNDRY_PROFILE=fork forge test -vv
+
+# coordinator_fork (requires RPC)
+FOUNDRY_PROFILE=coordinator_fork forge test -vv
+
+# se_erc4626 (requires RPC)
+FOUNDRY_PROFILE=se_erc4626 forge test -vv

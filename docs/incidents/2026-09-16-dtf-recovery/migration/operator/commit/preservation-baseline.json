@@ -1,0 +1,40 @@
+{
+  "schema": "dtf-operator-delivery-preservation-v1",
+  "date": "2026-11-11",
+  "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+  "parent": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "branch": "work/dtf-migration-phase-08-operator",
+  "initialStagedPaths": [],
+  "index": {
+    "path": "index-before.txt",
+    "sha256": "14b1c6e410f5b9fc72ca26410eccc5ab711e6f9f7a92f915428d0afacbd9b113",
+    "records": 12981,
+    "serialization": "LC-independent Unicode sorted Git ls-files --stage records, newline terminated"
+  },
+  "protectedRefs": {
+    "path": "refs-before.txt",
+    "sha256": "2970336f915261b7e4b56eba2896cf4fb8b894a1c5991a4b6a7861ef237b3cba",
+    "serialization": "Git for-each-ref refname/objectname, newline terminated; excludes only owned branch"
+  },
+  "worktree": {
+    "path": "worktree-before.jsonl",
+    "sha256": "6bfe81f9e585989af28b24efbcabd4c11ee7536356dbae00479c4e0dc251f714",
+    "entries": 22187,
+    "serialization": "sorted relative paths; compact sort_keys JSON per line, final newline",
+    "sha256Files": 14195,
+    "statOnlyFiles": 7838,
+    "symlinks": 154,
+    "excluded": [
+      ".git administrative entry",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/operator/commit/**"
+    ],
+    "statOnlyRoots": [
+      ".next",
+      "broadcast",
+      "cache",
+      "cache_forge",
+      "out"
+    ],
+    "limits": "Does not hash every cache/artifact/broadcast byte; links are lstat/readlink only, targets are not traversed. Four accepted executable artifacts separately SHA-256/Keccak checked."
+  }
+}

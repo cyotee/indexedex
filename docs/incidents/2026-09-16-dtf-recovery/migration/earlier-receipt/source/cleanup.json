@@ -1,0 +1,99 @@
+{
+  "runs": [
+    {
+      "run": "run-01",
+      "allImpersonationsStopped": true,
+      "checkpointCreated": false,
+      "pid": 89388,
+      "port": 18568,
+      "stopped": true,
+      "subscriptionsClosed": true
+    },
+    {
+      "run": "run-02",
+      "allImpersonationsStopped": true,
+      "checkpointCreated": false,
+      "pid": 91077,
+      "port": 18568,
+      "stopped": true,
+      "subscriptionsClosed": true
+    },
+    {
+      "run": "run-03",
+      "allImpersonationsStopped": true,
+      "checkpointCreated": false,
+      "pid": 94135,
+      "port": 18568,
+      "stopped": true,
+      "subscriptionsClosed": true
+    },
+    {
+      "run": "run-04",
+      "allImpersonationsStopped": true,
+      "checkpointCreated": false,
+      "pid": 94201,
+      "port": 18568,
+      "stopped": true,
+      "subscriptionsClosed": true
+    },
+    {
+      "run": "run-05",
+      "allImpersonationsStopped": true,
+      "checkpointCreated": false,
+      "pid": 95785,
+      "port": 18568,
+      "stopped": true,
+      "subscriptionsClosed": true
+    }
+  ],
+  "independentReadback": {
+    "pids": [
+      89388,
+      91077,
+      94135,
+      94201,
+      95785
+    ],
+    "pidCheckExit": 1,
+    "port": 18568,
+    "portCheckExit": 1,
+    "output": "empty for both checks",
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/.omo-runtime/dtf-migration-earlier-receipt/checkpoints",
+    "checkpointExists": false
+  },
+  "worktree": {
+    "base": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+    "branch": "work/dtf-migration-phase-18-earlier-receipt",
+    "trackedDiffEmpty": true,
+    "stagedDiffEmpty": true,
+    "craneLink": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "nodeModulesLink": "/Users/cyotee/Projects/indexedex/node_modules"
+  },
+  "validation": {
+    "jsonChecked": 141,
+    "secretFileCount": 0,
+    "probeLoc": [
+      {
+        "path": "rate-probe.ts",
+        "nonblankNoncomment": 83
+      },
+      {
+        "path": "probe-runtime.ts",
+        "nonblankNoncomment": 133
+      },
+      {
+        "path": "probe.ts",
+        "nonblankNoncomment": 121
+      },
+      {
+        "path": "ReceiptCustodyProbe.sol",
+        "nonblankNoncomment": 89
+      },
+      {
+        "path": "audit.ts",
+        "nonblankNoncomment": 145
+      }
+    ]
+  },
+  "pendingOwnedOperation": false
+}

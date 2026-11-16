@@ -1,0 +1,11 @@
+# design.yaml - Task management configuration
+# This file is shared with the team (checked into git)
+
+repo_prefix: IDXEX
+repo_name: IndexedEx
+
+# Optional: define submodules for root repos
+# submodules:
+#   - prefix: DAO
+#     path: lib/daosys
+#     name: DAOsys

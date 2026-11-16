@@ -1,0 +1,11 @@
+{
+  "chainId": 4663,
+  "chir": "0x9E3245Df28714896759635AE7E1620406c66E404",
+  "creationPairPerDetfWad": 10000000000000000000,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "frontendDir": "frontend/packages/protocol/src/addresses/chain/4663",
+  "reserveHook": "0x3D41bc6a5fb98185dB4219ceeC0C801cA820E888",
+  "rich": "0x7d243b992f32BE821Feb90CfEcb3123a8bC5B8ed",
+  "uiWallet": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+  "uniV3Se_rich": "0xC79D214AF075EC5EBC01fE78a6A63206f3D6aC78"
+}

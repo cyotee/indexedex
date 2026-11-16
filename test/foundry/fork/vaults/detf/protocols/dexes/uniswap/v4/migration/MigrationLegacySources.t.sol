@@ -181,18 +181,23 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
         a_[0] = _original(WEIGHTED, 4);
         a_[0].originalEth = 0;
         vm.prank(migrationOwner);
-        allocation.configureNftEntitlements(a_);
+        allocation.configureNftEntitlements(a_, pricingId);
         _activate();
+        uint256 invalidSupply_ = IERC20(detf).totalSupply();
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, WEIGHTED, 25));
         migration.surrenderMigrationNft(WEIGHTED, 25, 0, block.timestamp);
+        _assertNotConsumed(WEIGHTED, 25, address(0), invalidSupply_);
         address[2] memory collections_ = [WEIGHTED, EARLIER];
         for (uint256 i_; i_ < 2; ++i_) {
             for (uint256 id_; id_ < 3; ++id_) {
+                address reservedOwner_ = IERC721(collections_[i_]).ownerOf(id_);
                 vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, collections_[i_], id_));
                 migration.surrenderMigrationNft(collections_[i_], id_, 0, block.timestamp);
+                _assertNotConsumed(collections_[i_], id_, reservedOwner_, invalidSupply_);
             }
             vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, collections_[i_], 999999));
             migration.surrenderMigrationNft(collections_[i_], 999999, 0, block.timestamp);
+            _assertNotConsumed(collections_[i_], 999999, address(0), invalidSupply_);
         }
         address holder_ = IERC721(WEIGHTED).ownerOf(4);
         uint256 supply_ = IERC20(detf).totalSupply();
@@ -229,7 +234,7 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
             // Deliberately invalid loader metadata, not a mutation of the legacy position.
             a_[0].originalUnits += 1;
             vm.prank(migrationOwner);
-            allocation.configureNftEntitlements(a_);
+            allocation.configureNftEntitlements(a_, pricingId);
         }
         _activate();
         for (uint256 i_; i_ < 2; ++i_) {

@@ -1,0 +1,95 @@
+{
+  "kind": "DoneClaim",
+  "task": 7,
+  "lane": "F2-02-omissions",
+  "title": "Repair isolated original-field omission negatives",
+  "status": "complete",
+  "scope": "lane only; does not close task 7, mark plan checkboxes, or claim full conformance",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "completedAt": "2026-11-15T13:40:52.014Z",
+  "changedFiles": [
+    "scripts/recovery/dtf-migration/claim-vault.test.ts",
+    "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+    "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+    "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+  ],
+  "evidenceFiles": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/reproduce-before.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/reproduce-before.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/focused-test.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/focused-test.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.command.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/adversarial.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/cleanup.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/git-status-before.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/git-status-after.log"
+  ],
+  "result": "Each of the 28 original-field omission checks now starts from the complete valid row, including its pricing directive, removes only the intended original field, requires the issue path category.0.original.field with code invalid_type and message Required, and requires the same candidate to parse after that field is restored.",
+  "regressions": {
+    "originalId": "schema stops requiring the original identity key",
+    "originalWallet": "schema stops requiring the original wallet",
+    "originalUnits": "schema stops requiring the positive original quantity",
+    "originalEth": "schema stops requiring the ETH component",
+    "originalDtf": "schema stops requiring the DTF component",
+    "source": "schema stops requiring the fixed source address",
+    "evidenceId": "schema stops requiring the evidence binding"
+  },
+  "tests": {
+    "argv": [
+      "bun",
+      "test",
+      "--timeout",
+      "15000",
+      "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "exitCode": 0,
+    "runtime": "bun 1.4.2 (50a8a8387)",
+    "passed": 15,
+    "failed": 0,
+    "elapsedMs": 300,
+    "output": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/focused-test.log",
+    "sourceHashes": {
+      "scripts/recovery/dtf-migration/claim-vault.test.ts": "75aeece9077d5e4030344fc06d24ec11054f66a861574908cba0d5c306da4bc8",
+      "scripts/recovery/dtf-migration/dtf-custody-se.test.ts": "6e5aebb5c965959823441f8dd8d346e86166ed2901b8eedd70c0ba9f4c7e979c",
+      "scripts/recovery/dtf-migration/weighted-liquid.test.ts": "c2af2343c48f106e1fe77d2892896c98a42ffddf80333d0dbceea805dfc604e1",
+      "scripts/recovery/dtf-migration/weighted-sy.test.ts": "7ab5b5e1218c7ae89de49169930ca0394cd99221f95b44f65e2db655aeadbba8"
+    }
+  },
+  "manualQa": {
+    "channel": "schema validation, not contract QA",
+    "argv": [
+      "bun",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.ts"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+    "exitCode": 0,
+    "result": "MANUAL_PASS",
+    "pass": true,
+    "artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.json",
+    "validRows": 4,
+    "isolatedOmissions": 28,
+    "pricingReported": false
+  },
+  "adversarial": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/adversarial.json",
+  "cleanup": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/cleanup.json",
+  "risks": [
+    "weighted-sy.test.ts is 204 non-blank, non-comment lines, inside the 200-250 warning band. It was not split: the certificate tests are witness-adjacent and this lane cannot reshuffle them. The next edit that adds lines should split those tests out.",
+    "The production schema was not mutated. It is outside this lane. The pre-fix reconstruction shows a boolean failure stays green when the field is restored and pricing is absent.",
+    "Two /tmp/dtf-prepare-test directories with execution checkpoints were left untouched. This lane's fixture does not write those files.",
+    "Full operator suite, Forge, and full typecheck were not run, as instructed while sibling lanes are editing."
+  ],
+  "unmetItems": [],
+  "assumptions": [
+    "The existing preparation fixture is the valid priced row for all four categories.",
+    "Zod 3.25 reports a missing required key as invalid_type / Required at the omitted path. The repaired assertion pins that observed issue."
+  ],
+  "forbiddenOperationsPerformed": [],
+  "concurrentChanges": "Preserved the pre-existing bookId edits in the four owned tests and all unrelated dirty work. Did not edit census implementation, witness-pin files, shared fixtures, or production code.",
+  "limits": "This claim covers the F2-02 omission lane only. It does not replace task 7, authorize implementation beyond these tests, or mark a plan checkbox."
+}

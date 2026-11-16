@@ -1,0 +1,107 @@
+{
+  "status": "STOPPED",
+  "pendingOwnedOperations": 0,
+  "commands": [
+    {
+      "path": "types.command.json",
+      "phase": "types",
+      "code": 0,
+      "started": "2026-11-13T08:34:29.526Z",
+      "stopped": "2026-11-13T08:34:30.609Z"
+    },
+    {
+      "path": "collect.command.json",
+      "phase": "collect",
+      "code": 0,
+      "started": "2026-11-13T08:34:34.649Z",
+      "stopped": "2026-11-13T08:36:32.574Z"
+    },
+    {
+      "path": "suite.command.json",
+      "phase": "suite",
+      "code": 1,
+      "started": "2026-11-13T08:34:38.721Z",
+      "stopped": "2026-11-13T08:34:40.164Z"
+    },
+    {
+      "path": "suite-final.command.json",
+      "phase": "suite-final",
+      "code": 0,
+      "started": "2026-11-13T08:35:24.359Z",
+      "stopped": "2026-11-13T08:35:25.949Z"
+    },
+    {
+      "path": "support-types.command.json",
+      "phase": "support-types",
+      "code": 2,
+      "started": "2026-11-13T08:39:10.418Z",
+      "stopped": "2026-11-13T08:39:11.576Z"
+    },
+    {
+      "path": "oracle.command.json",
+      "phase": "oracle",
+      "code": 1,
+      "started": "2026-11-13T08:39:16.522Z",
+      "stopped": "2026-11-13T08:39:16.820Z"
+    },
+    {
+      "path": "support-types-final.command.json",
+      "phase": "support-types-final",
+      "code": 0,
+      "started": "2026-11-13T08:39:55.919Z",
+      "stopped": "2026-11-13T08:39:57.101Z"
+    },
+    {
+      "path": "oracle-final.command.json",
+      "phase": "oracle-final",
+      "code": 0,
+      "started": "2026-11-13T08:40:00.247Z",
+      "stopped": "2026-11-13T08:40:01.361Z"
+    }
+  ],
+  "terminalCompletions": [
+    {
+      "id": "bash_1",
+      "purpose": "initial boundary and process check",
+      "exit": 0
+    },
+    {
+      "id": "bash_10",
+      "purpose": "final complete tracked source diff and whitespace/index check",
+      "exit": 0
+    },
+    {
+      "id": "bash_11",
+      "purpose": "post-cleanup process inspection",
+      "exit": 0
+    }
+  ],
+  "ownedRuntimeCleanup": {
+    "started": "2026-11-13T08:43:26.820Z",
+    "stopped": "2026-11-13T08:43:26.821Z",
+    "removed": [
+      "runtime/out read-only symlink",
+      "runtime/scripts read-only symlink",
+      "runtime/tmp empty directory",
+      "runtime empty directory"
+    ],
+    "sharedTargetsUntouched": true
+  },
+  "processInspection": "bash_11 completed with exit 0. Its original output contained only PID 82616, PPID 82615, the harness-managed TypeScript tsserver.js for this worktree. No verifier collector, test, recorder, oracle or cleanup process remained. A subsequent incremental output read had no new output.",
+  "harnessLanguageServer": "PID 82616 is the harness-managed TypeScript language server, not a verifier-owned collector/test/oracle; left untouched.",
+  "actualCollections": 1,
+  "actualRequests": 1278,
+  "actualFailures": 0,
+  "retained": "All command attempts, compiler diagnostics, full raw captures and proofs.",
+  "notPerformed": [
+    "source fixes",
+    "commits or staging",
+    "installs or configuration changes",
+    "Forge or full rehearsal",
+    "phase29 retry",
+    "alternate provider or methods",
+    "delegation",
+    "operational signing or transaction submission",
+    "financial or source-admission approval"
+  ]
+}

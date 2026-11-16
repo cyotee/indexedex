@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-11-11T05:58:59.246Z",
+  "checks": [
+    {
+      "check": "deterministic-manifest.json",
+      "pass": true
+    },
+    {
+      "check": "deterministic-independent.json",
+      "pass": true
+    },
+    {
+      "check": "deterministic-nfts.json",
+      "pass": true
+    },
+    {
+      "check": "independent-supply-exactly-selected",
+      "pass": true,
+      "nativeIncrease": "1383"
+    },
+    {
+      "check": "unclaimed-after-activation",
+      "pass": true,
+      "observed": {
+        "recipient": "0xc4c81d5c1851702d27d602aa8ff830a7689f17cc",
+        "issued": false,
+        "bondTokenId": "0"
+      }
+    }
+  ],
+  "allFinalRunJsonParsed": 232,
+  "reportJsonParsed": 6,
+  "privateResolvedEndpointMatches": 0,
+  "sourceBindingFile": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/rehearsal/source-evidence-bindings.json",
+    "bytes": 250502,
+    "sha256": "8d464118b35785d2acdb9ffafe458ee781a57c27c6831c18afb7d99ca42e53cd"
+  },
+  "scopeCommand": "git diff --check --ignore-submodules=all; git status --short --ignore-submodules=all; git rev-parse HEAD (all prefixed GIT_MASTER=1)",
+  "scopeOutput": " M scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/operator/\n?? scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol\n?? scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol\n?? scripts/recovery/dtf-migration/cli.ts\n?? scripts/recovery/dtf-migration/execution-domain.ts\n?? scripts/recovery/dtf-migration/execution-plan.ts\n?? scripts/recovery/dtf-migration/execution-rpc.ts\n?? scripts/recovery/dtf-migration/execution-schema.ts\n?? scripts/recovery/dtf-migration/execution-state.ts\n?? scripts/recovery/dtf-migration/execution.test.ts\n?? scripts/recovery/dtf-migration/execution.ts\n?? scripts/recovery/dtf-migration/journal.ts\n?? scripts/recovery/dtf-migration/payloads.ts\n?? scripts/recovery/dtf-migration/preparation.fixture.ts\n?? scripts/recovery/dtf-migration/preparation.test.ts\n?? scripts/recovery/dtf-migration/preparation.ts\n?? scripts/recovery/dtf-migration/provenance.ts\n?? scripts/recovery/dtf-migration/quotes.ts\n?? scripts/recovery/dtf-migration/rehearsal-chain.ts\n?? scripts/recovery/dtf-migration/rehearsal-data.ts\n?? scripts/recovery/dtf-migration/rehearsal-process.ts\n?? scripts/recovery/dtf-migration/rehearsal-proof.ts\n?? scripts/recovery/dtf-migration/rehearsal-recovery.ts\n?? scripts/recovery/dtf-migration/rehearse.ts\n?? scripts/recovery/dtf-migration/schema.ts\n421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "scriptEditsAfterFinalSuite": false,
+  "noPendingOwnedRuntime": true,
+  "remaining": "Independent verifier must still execute both real interruptions. Full task 9 and public deployment feasibility remain open."
+}

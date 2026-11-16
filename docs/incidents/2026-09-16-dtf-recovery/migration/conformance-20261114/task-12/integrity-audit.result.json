@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "bun",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/audit.ts"
+  ],
+  "exit": 0,
+  "signal": null,
+  "logSha256": "e245d83ff2427ec017fa31cd25e703e6dcf0fd9d4f9957a32a6d40e29376668c",
+  "recorderSha256": "cc8f59ad0803b7caf4df3373c0d8ea3d756494501f6d93cc57765c917ab22f48",
+  "sourcesUnchanged": true
+}

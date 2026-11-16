@@ -1,0 +1,71 @@
+{
+  "version": "dtf-phase27-stopped-source-manifest-v1",
+  "status": "blocked",
+  "requestedParent": "0856a5c56e5d09b81c669f59b613efef79133e19",
+  "parentVerified": false,
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-brief.md",
+      "bytes": 8437,
+      "sha256": "9c69ab0f288e7fe806d6be7c4909a5455b26b42cda536c7d3d6fe3976bc88b54"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md",
+      "bytes": 57366,
+      "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/sources.json",
+      "bytes": 5502,
+      "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/manifest.json",
+      "bytes": 3209,
+      "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "bytes": 108022,
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "bytes": 79305,
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+      "bytes": 41316,
+      "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 11340,
+      "sha256": "88ac81ad4c455bab81bf47929d82574a3e5aeaf196413578a248ac3dd5f94705"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 9484,
+      "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 10087,
+      "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 6200,
+      "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/preparation.test.ts",
+      "bytes": 14484,
+      "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814"
+    }
+  ],
+  "rawBindings": "binding-audit.json",
+  "sourceEdits": [],
+  "candidateOutputs": []
+}

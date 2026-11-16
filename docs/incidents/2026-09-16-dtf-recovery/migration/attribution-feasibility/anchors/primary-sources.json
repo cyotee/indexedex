@@ -1,0 +1,645 @@
+{
+  "retrievedAt": "2026-11-11T01:33:15.152Z",
+  "archiveReportedNitroCommit": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+  "archiveGethSubmodule": "5eee8f546e7602b7deeef7909f291bbebc77e233",
+  "sourceBindingLimit": "Client version is provider-reported, not a proof of executable identity. History runtime bytes independently match the published constant. Public build 960ca0a resolution failed; master exploration is not substituted for the archive build.",
+  "files": [
+    {
+      "path": "nitro/precompiles/ArbSys.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbSys.go",
+      "status": 200,
+      "sha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "excerpts": [
+        {
+          "start": 20,
+          "end": 70,
+          "text": "\n// ArbSys provides system-level functionality for interacting with L1 and understanding the call stack.\ntype ArbSys struct {\n\tAddress                 addr // 0x64\n\tL2ToL1Tx                func(ctx, mech, addr, addr, huge, huge, huge, huge, huge, huge, []byte) error\n\tL2ToL1TxGasCost         func(addr, addr, huge, huge, huge, huge, huge, huge, []byte) (uint64, error)\n\tSendMerkleUpdate        func(ctx, mech, huge, bytes32, huge) error\n\tSendMerkleUpdateGasCost func(huge, bytes32, huge) (uint64, error)\n\tInvalidBlockNumberError func(huge, huge) error\n\n\t// deprecated event\n\tL2ToL1Transaction        func(ctx, mech, addr, addr, huge, huge, huge, huge, huge, huge, huge, []byte) error\n\tL2ToL1TransactionGasCost func(addr, addr, huge, huge, huge, huge, huge, huge, huge, []byte) (uint64, error)\n}\n\n// ArbBlockNumber gets the current L2 block number\nfunc (con *ArbSys) ArbBlockNumber(c ctx, evm mech) (huge, error) {\n\treturn evm.Context.BlockNumber, nil\n}\n\n// ArbBlockHash gets the L2 block hash, if sufficiently recent\nfunc (con *ArbSys) ArbBlockHash(c ctx, evm mech, arbBlockNumber *big.Int) (bytes32, error) {\n\tif !arbBlockNumber.IsUint64() {\n\t\tif c.State.ArbOSVersion() >= params.ArbosVersion_11 {\n\t\t\treturn bytes32{}, con.InvalidBlockNumberError(arbBlockNumber, evm.Context.BlockNumber)\n\t\t}\n\t\treturn bytes32{}, errors.New(\"invalid block number\")\n\t}\n\trequestedBlockNum := arbBlockNumber.Uint64()\n\n\tcurrentNumber := evm.Context.BlockNumber.Uint64()\n\tif requestedBlockNum >= currentNumber || requestedBlockNum+256 < currentNumber {\n\t\tif c.State.ArbOSVersion() >= params.ArbosVersion_11 {\n\t\t\treturn common.Hash{}, con.InvalidBlockNumberError(arbBlockNumber, evm.Context.BlockNumber)\n\t\t}\n\t\treturn common.Hash{}, errors.New(\"invalid block number for ArbBlockHAsh\")\n\t}\n\n\treturn evm.Context.GetHash(requestedBlockNum), nil\n}\n\n// ArbChainID gets the rollup's unique chain identifier\nfunc (con *ArbSys) ArbChainID(c ctx, evm mech) (huge, error) {\n\treturn evm.ChainConfig().ChainID, nil\n}\n\n// ArbOSVersion gets the current ArbOS version\nfunc (con *ArbSys) ArbOSVersion(c ctx, evm mech) (huge, error) {\n\tversion := new(big.Int).SetUint64(55 + c.State.ArbOSVersion()) // Nitro starts at version 56\n\treturn version, nil\n}"
+        },
+        {
+          "start": 207,
+          "end": 226,
+          "text": "\t\tsendHash.Big(),\n\t\tleafNum,\n\t\tevm.Context.BlockNumber,\n\t\tbigL1BlockNum,\n\t\t&blockTime,\n\t\tvalue,\n\t\tcalldataForL1,\n\t)\n\n\tif c.State.ArbOSVersion() >= params.ArbosVersion_4 {\n\t\treturn leafNum, nil\n\t}\n\treturn sendHash.Big(), err\n}\n\n// SendMerkleTreeState gets the root, size, and partials of the outbox Merkle tree state (caller must be the 0 address)\nfunc (con ArbSys) SendMerkleTreeState(c ctx, evm mech) (huge, bytes32, []bytes32, error) {\n\tif c.caller != (addr{}) {\n\t\treturn nil, bytes32{}, nil, errors.New(\"method can only be called by address zero\")\n\t}"
+        }
+      ]
+    },
+    {
+      "path": "nitro/arbos/internal_tx.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/internal_tx.go",
+      "status": 200,
+      "sha256": "c48800495c1d4fa564c10948ea753b66be9ef47baf2c592064eb2ae01b96110a",
+      "excerpts": [
+        {
+          "start": 62,
+          "end": 97,
+          "text": "func ApplyInternalTxUpdate(tx *types.ArbitrumInternalTx, state *arbosState.ArbosState, evm *vm.EVM) error {\n\tif len(tx.Data) < 4 {\n\t\treturn fmt.Errorf(\"internal tx data is too short (only %v bytes, at least 4 required)\", len(tx.Data))\n\t}\n\tselector := *(*[4]byte)(tx.Data[:4])\n\tswitch selector {\n\tcase InternalTxStartBlockMethodID:\n\t\tinputs, err := util.UnpackInternalTxDataStartBlock(tx.Data)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\n\t\tvar prevHash common.Hash\n\t\tif evm.Context.BlockNumber.Sign() > 0 {\n\t\t\tprevHash = evm.Context.GetHash(evm.Context.BlockNumber.Uint64() - 1)\n\t\t}\n\t\t// For ArbOS versions >= 40 we need to call ProcessParentBlockHash to fill\n\t\t// the historyStorage with the block hash to support EIP-2935.\n\t\tif state.ArbOSVersion() >= params.ArbosVersion_40 {\n\t\t\t// A nil block access list is only valid below\n\t\t\t// params.ArbosVersion_Amsterdam: ProcessParentBlockHash merges the\n\t\t\t// EIP-7928 access list returned by StateDB.Finalise into it, and that\n\t\t\t// list is nil below Amsterdam. Once ArbOS supports Amsterdam, a real\n\t\t\t// accumulator must be threaded through here.\n\t\t\tcore.ProcessParentBlockHash(prevHash, evm, nil)\n\t\t}\n\t\tl1BlockNumber := util.SafeMapGet[uint64](inputs, \"l1BlockNumber\")\n\t\ttimePassed := util.SafeMapGet[uint64](inputs, \"timePassed\")\n\t\tif state.ArbOSVersion() < params.ArbosVersion_3 {\n\t\t\t// (incorrectly) use the L2 block number instead\n\t\t\ttimePassed = util.SafeMapGet[uint64](inputs, \"l2BlockNumber\")\n\t\t}\n\t\tif state.ArbOSVersion() < params.ArbosVersion_8 {\n\t\t\t// in old versions we incorrectly used an L1 block number one too high\n\t\t\tl1BlockNumber++\n\t\t}"
+        }
+      ]
+    },
+    {
+      "path": "nitro/arbos/block_processor.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/block_processor.go",
+      "status": 200,
+      "sha256": "1a847ed646a64f8df933d44dcce75f7dd062890363927739395f077cd906ac34",
+      "excerpts": [
+        {
+          "start": 197,
+          "end": 234,
+          "text": "func createNewHeader(prevHeader *types.Header, l1info *L1Info, baseFee *big.Int, _chainConfig *params.ChainConfig) *types.Header {\n\tvar lastBlockHash common.Hash\n\tblockNumber := big.NewInt(0)\n\ttimestamp := uint64(0)\n\tcoinbase := common.Address{}\n\tif l1info != nil {\n\t\ttimestamp = l1info.l1Timestamp\n\t\tcoinbase = l1info.poster\n\t}\n\textra := common.Hash{}.Bytes()\n\tmixDigest := common.Hash{}\n\tif prevHeader != nil {\n\t\tlastBlockHash = prevHeader.Hash()\n\t\tblockNumber.Add(prevHeader.Number, big.NewInt(1))\n\t\tif timestamp < prevHeader.Time {\n\t\t\ttimestamp = prevHeader.Time\n\t\t}\n\t\tcopy(extra, prevHeader.Extra)\n\t\tmixDigest = prevHeader.MixDigest\n\t}\n\theader := &types.Header{\n\t\tParentHash:  lastBlockHash,\n\t\tUncleHash:   types.EmptyUncleHash, // Post-merge Ethereum will require this to be types.EmptyUncleHash\n\t\tCoinbase:    coinbase,\n\t\tRoot:        [32]byte{},    // Filled in later\n\t\tTxHash:      [32]byte{},    // Filled in later\n\t\tReceiptHash: [32]byte{},    // Filled in later\n\t\tBloom:       [256]byte{},   // Filled in later\n\t\tDifficulty:  big.NewInt(1), // Eventually, Ethereum plans to require this to be zero\n\t\tNumber:      blockNumber,\n\t\tGasLimit:    l2pricing.GethBlockGasLimit,\n\t\tGasUsed:     0,\n\t\tTime:        timestamp,\n\t\tExtra:       extra,     // used by NewEVMBlockContext\n\t\tMixDigest:   mixDigest, // used by NewEVMBlockContext\n\t\tNonce:       [8]byte{}, // Filled in later; post-merge Ethereum will require this to be zero\n\t\tBaseFee:     baseFee,\n\t}"
+        },
+        {
+          "start": 775,
+          "end": 793,
+          "text": "\tbinary.BigEndian.PutUint64(header.Nonce[:], delayedMessagesRead)\n\n\tFinalizeBlock(header, buildState.statedb, chainConfig)\n\n\t// Touch up the block hashes in receipts\n\ttmpBlock := types.NewBlock(header, &types.Body{Transactions: buildState.complete}, buildState.receipts, trie.NewStackTrie(nil))\n\tblockHash := tmpBlock.Hash()\n\n\tfor _, receipt := range buildState.receipts {\n\t\treceipt.BlockHash = blockHash\n\t\tfor _, txLog := range receipt.Logs {\n\t\t\ttxLog.BlockHash = blockHash\n\t\t}\n\t}\n\n\tblock := types.NewBlock(header, &types.Body{Transactions: buildState.complete}, buildState.receipts, trie.NewStackTrie(nil))\n\n\tif len(block.Transactions()) != len(buildState.receipts) {\n\t\treturn nil, nil, nil, fmt.Errorf(\"block has %d txes but %d receipts\", len(block.Transactions()), len(buildState.receipts))"
+        },
+        {
+          "start": 809,
+          "end": 854,
+          "text": "// FinalizeBlock writes the Arbitrum header info into header and sets header.Root; no-op if header is nil.\nfunc FinalizeBlock(header *types.Header, statedb vm.StateDB, chainConfig *params.ChainConfig) {\n\tif header == nil {\n\t\treturn\n\t}\n\tvar arbitrumHeader *types.HeaderInfo\n\tgenesisBlockNum := chainConfig.ArbitrumChainParams.GenesisBlockNum\n\tswitch blockNum := header.Number.Uint64(); {\n\tcase blockNum < genesisBlockNum:\n\t\tpanic(\"cannot finalize blocks before genesis\")\n\tcase blockNum == genesisBlockNum:\n\t\tarbitrumHeader = &types.HeaderInfo{ArbOSFormatVersion: chainConfig.ArbitrumChainParams.InitialArbOSVersion}\n\tdefault:\n\t\tarbitrumHeader = postGenesisHeaderInfo(statedb, header)\n\t}\n\n\tarbitrumHeader.UpdateHeaderWithInfo(header)\n\theader.Root = statedb.IntermediateRoot(true)\n}\n\nfunc postGenesisHeaderInfo(statedb vm.StateDB, header *types.Header) *types.HeaderInfo {\n\tarbState, err := arbosState.OpenSystemArbosState(statedb, nil, true)\n\tif err != nil {\n\t\tpanic(fmt.Errorf(\"%w while opening arbos state. Block: %d root: %v\", err, header.Number, header.Root))\n\t}\n\tcollectTips, err := arbState.CollectTips()\n\tif err != nil {\n\t\tpanic(fmt.Errorf(\"%w while reading collect tips setting. Block: %d root: %v\", err, header.Number, header.Root))\n\t}\n\t// Delayed-message blocks never collect tips, regardless of the chain-wide setting.\n\t// All transactions in a block share the same Coinbase, so this is a block-level property.\n\tif collectTips && header.Coinbase != l1pricing.BatchPosterAddress {\n\t\tcollectTips = false\n\t}\n\tacc := arbState.SendMerkleAccumulator()\n\tsendRoot, _ := acc.Root()\n\tsendCount, _ := acc.Size()\n\tnextL1BlockNumber, _ := arbState.Blockhashes().L1BlockNumber()\n\n\treturn &types.HeaderInfo{\n\t\tSendRoot:           sendRoot,\n\t\tSendCount:          sendCount,\n\t\tL1BlockNumber:      nextL1BlockNumber,\n\t\tArbOSFormatVersion: arbState.ArbOSVersion(),\n\t\tCollectTips:        collectTips,\n\t}"
+        }
+      ]
+    },
+    {
+      "path": "nitro/arbos/tx_processor.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/tx_processor.go",
+      "status": 200,
+      "sha256": "f639d682351430d0ce751d0774f890dcf2fd9e292836e60538e0e3c2593c3c54",
+      "excerpts": [
+        {
+          "start": 960,
+          "end": 993,
+          "text": "func (p *TxProcessor) L1BlockNumber(blockCtx vm.BlockContext) (uint64, error) {\n\tif p.cachedL1BlockNumber != nil {\n\t\treturn *p.cachedL1BlockNumber, nil\n\t}\n\ttracingInfo := util.NewTracingInfo(p.evm, p.msg.From, arbosAddress, util.TracingDuringEVM)\n\tstate, err := arbosState.OpenSystemArbosState(p.evm.StateDB, tracingInfo, false)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\tblockNum, err := state.Blockhashes().L1BlockNumber()\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\tp.cachedL1BlockNumber = &blockNum\n\treturn blockNum, nil\n}\n\nfunc (p *TxProcessor) L1BlockHash(blockCtx vm.BlockContext, l1BlockNumber uint64) (common.Hash, error) {\n\thash, cached := p.cachedL1BlockHashes[l1BlockNumber]\n\tif cached {\n\t\treturn hash, nil\n\t}\n\ttracingInfo := util.NewTracingInfo(p.evm, p.msg.From, arbosAddress, util.TracingDuringEVM)\n\tstate, err := arbosState.OpenSystemArbosState(p.evm.StateDB, tracingInfo, false)\n\tif err != nil {\n\t\treturn common.Hash{}, err\n\t}\n\thash, err = state.Blockhashes().BlockHash(l1BlockNumber)\n\tif err != nil {\n\t\treturn common.Hash{}, err\n\t}\n\tp.cachedL1BlockHashes[l1BlockNumber] = hash\n\treturn hash, nil\n}"
+        }
+      ]
+    },
+    {
+      "path": "nitro/arbos/blockhash/blockhash.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/blockhash/blockhash.go",
+      "status": 200,
+      "sha256": "3c70cec4d47a9cd744152ad6c4dfc43536b698cd0170cf0bde66570e14432ec8",
+      "excerpts": [
+        {
+          "start": 29,
+          "end": 79,
+          "text": "func (bh *Blockhashes) L1BlockNumber() (uint64, error) {\n\treturn bh.l1BlockNumber.Get()\n}\n\nfunc (bh *Blockhashes) BlockHash(number uint64) (common.Hash, error) {\n\tcurrentNumber, err := bh.l1BlockNumber.Get()\n\tif err != nil {\n\t\treturn common.Hash{}, err\n\t}\n\tif number >= currentNumber || number+256 < currentNumber {\n\t\treturn common.Hash{}, errors.New(\"invalid block number for BlockHash\")\n\t}\n\treturn bh.backingStorage.GetByUint64(1 + (number % 256))\n}\n\nfunc (bh *Blockhashes) RecordNewL1Block(number uint64, blockHash common.Hash, arbosVersion uint64) error {\n\tnextNumber, err := bh.l1BlockNumber.Get()\n\tif err != nil {\n\t\treturn err\n\t}\n\tif number < nextNumber {\n\t\t// we already have a stored hash for the block, so just return\n\t\treturn nil\n\t}\n\tif nextNumber+256 < number {\n\t\tnextNumber = number - 256 // no need to record hashes that we're just going to discard\n\t}\n\tfor nextNumber+1 < number {\n\t\t// fill in hashes for any \"skipped over\" blocks\n\t\tnextNumber++\n\t\tvar nextNumBuf [8]byte\n\t\tif arbosVersion >= params.ArbosVersion_8 {\n\t\t\tbinary.LittleEndian.PutUint64(nextNumBuf[:], nextNumber)\n\t\t}\n\n\t\tfill, err := bh.backingStorage.KeccakHash(blockHash.Bytes(), nextNumBuf[:])\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\terr = bh.backingStorage.SetByUint64(1+(nextNumber%256), fill)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t}\n\n\terr = bh.backingStorage.SetByUint64(1+(number%256), blockHash)\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn bh.l1BlockNumber.Set(number + 1)\n}"
+        }
+      ]
+    },
+    {
+      "path": "nitro/arbos/arbosState/arbosstate.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/arbosState/arbosstate.go",
+      "status": 200,
+      "sha256": "d784755e8b24c799e374206f613f606f7a184d60df4040885ec2175dfd706faf",
+      "excerpts": [
+        {
+          "start": 487,
+          "end": 490,
+          "text": "\t\tcase params.ArbosVersion_40:\n\t\t\t// EIP-2935: Add support for historical block hashes.\n\t\t\tstateDB.SetNonce(params.HistoryStorageAddress, 1, tracing.NonceChangeUnspecified)\n\t\t\tstateDB.SetCode(params.HistoryStorageAddress, params.HistoryStorageCodeArbitrum, tracing.CodeChangeUnspecified)"
+        }
+      ]
+    },
+    {
+      "path": "nitro/execution/nodeinterface/node_interface.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/execution/nodeinterface/node_interface.go",
+      "status": 200,
+      "sha256": "95d1112f677a9285e1884c032eec6172d00c268600871e8d63e0aa4c267f7439",
+      "excerpts": [
+        {
+          "start": 33,
+          "end": 38,
+          "text": "// To avoid creating new RPC methods for client-side tooling, nitro Geth's InterceptRPCMessage() hook provides\n// an opportunity to swap out the message its handling before deriving a transaction from it.\n//\n// This mechanism handles messages sent to 0xc8 and uses NodeInterface.sol to determine what to do. No contract\n// actually exists at 0xc8, but the abi methods allow the incoming message's calldata to specify the arguments.\ntype NodeInterface struct {"
+        },
+        {
+          "start": 84,
+          "end": 102,
+          "text": "func (n NodeInterface) FindBatchContainingBlock(c ctx, evm mech, blockNum uint64) (uint64, error) {\n\tfindBatchContainingBlockCallsCounter.Inc(1)\n\n\tmsgIdx, found, err := n.blockNumToMessageIndex(blockNum)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\tif !found {\n\t\treturn 0, fmt.Errorf(\"block %v is part of genesis\", blockNum)\n\t}\n\n\tnode, err := gethExecFromNodeInterfaceBackend(n.backend)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn node.ExecEngine.GetBatchFetcher().FindBatchContainingMessage(msgIdx).Await(n.context)\n}\n\nfunc (n NodeInterface) GetL1Confirmations(c ctx, evm mech, blockHash bytes32) (uint64, error) {"
+        }
+      ]
+    },
+    {
+      "path": "go-ethereum/params/protocol_params.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/protocol_params.go",
+      "status": 200,
+      "sha256": "f5ec4a8345962f208613329a38ce4b0c9bcf4d0b94c2ec25954a78c513165f80",
+      "excerpts": [
+        {
+          "start": 239,
+          "end": 246,
+          "text": "\t// EIP-2935 - Serve historical block hashes from state\n\tHistoryStorageAddress = common.HexToAddress(\"0x0000F90827F1C53a10cb7A02335B175320002935\")\n\tHistoryStorageCode    = common.FromHex(\"3373fffffffffffffffffffffffffffffffffffffffe14604657602036036042575f35600143038111604257611fff81430311604257611fff9006545f5260205ff35b5f5ffd5b5f35611fff60014303065500\")\n\t// EIP-2935 - Serve historical block hashes from state (Arbitrum), majorly differ from the original in two aspects:\n\t// 1. The buffer size is 393168 blocks instead of 8191.\n\t// 2. Instead of using number (L1 block number), it uses arb_block_num (L2 block number).\n\t// https://github.com/OffchainLabs/sys-asm/blob/main/src/execution_hash/main.eas\n\tHistoryStorageCodeArbitrum = common.FromHex(\"3373fffffffffffffffffffffffffffffffffffffffe1460605760203603605c575f3563a3b1b31d5f5260205f6004601c60645afa15605c575f51600181038211605c57816205ffd0910311605c576205ffd09006545f5260205ff35b5f5ffd5b5f356205ffd0600163a3b1b31d5f5260205f6004601c60645afa15605c575f5103065500\")"
+        }
+      ]
+    },
+    {
+      "path": "go-ethereum/core/types/block.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/block.go",
+      "status": 200,
+      "sha256": "f76e3bd2f3acc9488727419afce5c94a38beedb14c3ff2954ec0a9065a85502b",
+      "excerpts": [
+        {
+          "start": 68,
+          "end": 108,
+          "text": "type Header struct {\n\tParentHash  common.Hash    `json:\"parentHash\"       gencodec:\"required\"`\n\tUncleHash   common.Hash    `json:\"sha3Uncles\"       gencodec:\"required\"`\n\tCoinbase    common.Address `json:\"miner\"`\n\tRoot        common.Hash    `json:\"stateRoot\"        gencodec:\"required\"`\n\tTxHash      common.Hash    `json:\"transactionsRoot\" gencodec:\"required\"`\n\tReceiptHash common.Hash    `json:\"receiptsRoot\"     gencodec:\"required\"`\n\tBloom       Bloom          `json:\"logsBloom\"        gencodec:\"required\"`\n\tDifficulty  *big.Int       `json:\"difficulty\"       gencodec:\"required\"`\n\tNumber      *big.Int       `json:\"number\"           gencodec:\"required\"`\n\tGasLimit    uint64         `json:\"gasLimit\"         gencodec:\"required\"`\n\tGasUsed     uint64         `json:\"gasUsed\"          gencodec:\"required\"`\n\tTime        uint64         `json:\"timestamp\"        gencodec:\"required\"`\n\tExtra       []byte         `json:\"extraData\"        gencodec:\"required\"`\n\tMixDigest   common.Hash    `json:\"mixHash\"`\n\tNonce       BlockNonce     `json:\"nonce\"`\n\n\t// BaseFee was added by EIP-1559 and is ignored in legacy headers.\n\tBaseFee *big.Int `json:\"baseFeePerGas\" rlp:\"optional\"`\n\n\t// WithdrawalsHash was added by EIP-4895 and is ignored in legacy headers.\n\tWithdrawalsHash *common.Hash `json:\"withdrawalsRoot\" rlp:\"optional\"`\n\n\t// BlobGasUsed was added by EIP-4844 and is ignored in legacy headers.\n\tBlobGasUsed *uint64 `json:\"blobGasUsed\" rlp:\"optional\"`\n\n\t// ExcessBlobGas was added by EIP-4844 and is ignored in legacy headers.\n\tExcessBlobGas *uint64 `json:\"excessBlobGas\" rlp:\"optional\"`\n\n\t// ParentBeaconRoot was added by EIP-4788 and is ignored in legacy headers.\n\tParentBeaconRoot *common.Hash `json:\"parentBeaconBlockRoot\" rlp:\"optional\"`\n\n\t// RequestsHash was added by EIP-7685 and is ignored in legacy headers.\n\tRequestsHash *common.Hash `json:\"requestsHash\" rlp:\"optional\"`\n\n\t// BlockAccessListHash was added by EIP-7928 and is ignored in legacy headers.\n\tBlockAccessListHash *common.Hash `json:\"blockAccessListHash\" rlp:\"optional\"`\n\n\t// SlotNumber was added by EIP-7843 and is ignored in legacy headers.\n\tSlotNumber *uint64 `json:\"slotNumber\" rlp:\"optional\"`\n}"
+        },
+        {
+          "start": 125,
+          "end": 129,
+          "text": "// Hash returns the block hash of the header, which is simply the keccak256 hash of its\n// RLP encoding.\nfunc (h *Header) Hash() common.Hash {\n\treturn rlpHash(h)\n}"
+        },
+        {
+          "start": 249,
+          "end": 265,
+          "text": "\n\tif len(txs) == 0 {\n\t\tb.header.TxHash = EmptyTxsHash\n\t} else {\n\t\tb.header.TxHash = DeriveSha(Transactions(txs), hasher)\n\t\tb.transactions = make(Transactions, len(txs))\n\t\tcopy(b.transactions, txs)\n\t}\n\n\tif len(receipts) == 0 {\n\t\tb.header.ReceiptHash = EmptyReceiptsHash\n\t} else {\n\t\tb.header.ReceiptHash = DeriveSha(Receipts(receipts), hasher)\n\t\t// Receipts must go through MakeReceipt to calculate the receipt's bloom\n\t\t// already. Merge the receipt's bloom together instead of recalculating\n\t\t// everything.\n\t\tb.header.Bloom = MergeBloom(receipts)"
+        }
+      ]
+    },
+    {
+      "path": "go-ethereum/core/types/receipt.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/receipt.go",
+      "status": 200,
+      "sha256": "1cde670b59ff52582bfc60c5c9c076ee37b9d285cf9049cb5c3d490ed364e6eb",
+      "excerpts": [
+        {
+          "start": 54,
+          "end": 81,
+          "text": "// Receipt represents the results of a transaction.\ntype Receipt struct {\n\t// Arbitrum Implementation fields\n\tGasUsedForL1 uint64            `json:\"gasUsedForL1\"`\n\tMultiGasUsed multigas.MultiGas `json:\"multiGasUsed\"`\n\n\t// Consensus fields: These fields are defined by the Yellow Paper\n\tType              uint8  `json:\"type,omitempty\"`\n\tPostState         []byte `json:\"root\"`\n\tStatus            uint64 `json:\"status\"`\n\tCumulativeGasUsed uint64 `json:\"cumulativeGasUsed\" gencodec:\"required\"`\n\tBloom             Bloom  `json:\"logsBloom\"         gencodec:\"required\"`\n\tLogs              []*Log `json:\"logs\"              gencodec:\"required\"`\n\n\t// Implementation fields: These fields are added by geth when processing a transaction.\n\tTxHash            common.Hash    `json:\"transactionHash\" gencodec:\"required\"`\n\tContractAddress   common.Address `json:\"contractAddress\"`\n\tGasUsed           uint64         `json:\"gasUsed\" gencodec:\"required\"`\n\tEffectiveGasPrice *big.Int       `json:\"effectiveGasPrice\"` // required, but tag omitted for backwards compatibility\n\tBlobGasUsed       uint64         `json:\"blobGasUsed,omitempty\"`\n\tBlobGasPrice      *big.Int       `json:\"blobGasPrice,omitempty\"`\n\n\t// Inclusion information: These fields provide information about the inclusion of the\n\t// transaction corresponding to this receipt.\n\tBlockHash        common.Hash `json:\"blockHash,omitempty\"`\n\tBlockNumber      *big.Int    `json:\"blockNumber,omitempty\"`\n\tTransactionIndex uint        `json:\"transactionIndex\"`\n}"
+        },
+        {
+          "start": 99,
+          "end": 105,
+          "text": "// receiptRLP is the consensus encoding of a receipt.\ntype receiptRLP struct {\n\tPostStateOrStatus []byte\n\tCumulativeGasUsed uint64\n\tBloom             Bloom\n\tLogs              []*Log\n}"
+        },
+        {
+          "start": 472,
+          "end": 491,
+          "text": "func (rs Receipts) EncodeIndex(i int, w *bytes.Buffer) {\n\tr := rs[i]\n\tdata := &receiptRLP{r.statusEncoding(), r.CumulativeGasUsed, r.Bloom, r.Logs}\n\tif r.Type == LegacyTxType || r.Type == ArbitrumLegacyTxType {\n\t\trlp.Encode(w, data)\n\t\treturn\n\t}\n\tw.WriteByte(r.Type)\n\tswitch r.Type {\n\tcase AccessListTxType, DynamicFeeTxType, BlobTxType, SetCodeTxType:\n\t\trlp.Encode(w, data)\n\tcase ArbitrumDepositTxType, ArbitrumUnsignedTxType, ArbitrumContractTxType, ArbitrumRetryTxType, ArbitrumSubmitRetryableTxType, ArbitrumInternalTxType:\n\t\t// Arbitrum: same as above, but this should help prevent future merge conflicts,\n\t\t// by keeping above case statement the same.\n\t\trlp.Encode(w, data)\n\tdefault:\n\t\t// For unsupported types, write nothing. Since this is for\n\t\t// DeriveSha, the error will be caught matching the derived hash\n\t\t// to the block.\n\t}"
+        }
+      ]
+    },
+    {
+      "path": "go-ethereum/core/types/hashing.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/hashing.go",
+      "status": 200,
+      "sha256": "346239a88d49c479aad1da564a226cd186a6794546f356fdb86979b44bce1377",
+      "excerpts": [
+        {
+          "start": 107,
+          "end": 139,
+          "text": "// DeriveSha creates the tree hashes of transactions, receipts, and withdrawals in a block header.\nfunc DeriveSha(list DerivableList, hasher ListHasher) common.Hash {\n\thasher.Reset()\n\n\t// Allocate a buffer for value encoding. As the hasher is claimed that all\n\t// supplied key value pairs will be copied by hasher and safe to reuse the\n\t// encoding buffer.\n\tvalueBuf := encodeBufferPool.Get().(*bytes.Buffer)\n\tdefer encodeBufferPool.Put(valueBuf)\n\n\t// StackTrie requires values to be inserted in increasing hash order, which is not the\n\t// order that `list` provides hashes in. This insertion sequence ensures that the\n\t// order is correct.\n\t//\n\t// The error returned by hasher is omitted because hasher will produce an incorrect\n\t// hash in case any error occurs.\n\tvar indexBuf []byte\n\tfor i := 1; i < list.Len() && i <= 0x7f; i++ {\n\t\tindexBuf = rlp.AppendUint64(indexBuf[:0], uint64(i))\n\t\tvalue := encodeForDerive(list, i, valueBuf)\n\t\thasher.Update(indexBuf, value)\n\t}\n\tif list.Len() > 0 {\n\t\tindexBuf = rlp.AppendUint64(indexBuf[:0], 0)\n\t\tvalue := encodeForDerive(list, 0, valueBuf)\n\t\thasher.Update(indexBuf, value)\n\t}\n\tfor i := 0x80; i < list.Len(); i++ {\n\t\tindexBuf = rlp.AppendUint64(indexBuf[:0], uint64(i))\n\t\tvalue := encodeForDerive(list, i, valueBuf)\n\t\thasher.Update(indexBuf, value)\n\t}\n\treturn hasher.Hash()"
+        }
+      ]
+    },
+    {
+      "path": "go-ethereum/core/vm/instructions.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/instructions.go",
+      "status": 200,
+      "sha256": "b2f27b875ade767429a30669d5ef49d800d3c04da28ebf2124e78b99cef26196",
+      "excerpts": [
+        {
+          "start": 416,
+          "end": 449,
+          "text": "func opBlockhash(pc *uint64, evm *EVM, scope *ScopeContext) ([]byte, error) {\n\tnum := scope.Stack.peek()\n\tnum64, overflow := num.Uint64WithOverflow()\n\tif overflow {\n\t\tnum.Clear()\n\t\treturn nil, nil\n\t}\n\n\tupper, err := evm.ProcessingHook.L1BlockNumber(evm.Context)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tvar lower uint64\n\tif upper < 257 {\n\t\tlower = 0\n\t} else {\n\t\tlower = upper - 256\n\t}\n\tif num64 >= lower && num64 < upper {\n\t\th, err := evm.ProcessingHook.L1BlockHash(evm.Context, num64)\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tif witness := evm.StateDB.Witness(); witness != nil {\n\t\t\twitness.AddBlockHash(num64)\n\t\t}\n\t\tif tracer := evm.Config.Tracer; tracer != nil && tracer.OnBlockHashRead != nil {\n\t\t\ttracer.OnBlockHashRead(num64, h)\n\t\t}\n\t\tnum.SetBytes(h[:])\n\t} else {\n\t\tnum.Clear()\n\t}\n\treturn nil, nil"
+        },
+        {
+          "start": 462,
+          "end": 469,
+          "text": "func opNumber(pc *uint64, evm *EVM, scope *ScopeContext) ([]byte, error) {\n\tbnum, err := evm.ProcessingHook.L1BlockNumber(evm.Context)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\tscope.Stack.get().SetFromBig(new(big.Int).SetUint64(bnum))\n\treturn nil, nil"
+        }
+      ]
+    }
+  ],
+  "officialChainInfo": {
+    "url": "https://cdn.robinhood.com/assets/generated_assets/hoodchain_docsite/chain-node-configs/robinhood-chain-info.json",
+    "status": 200,
+    "sha256": "cf6c0aa2bc520a28fe8983f783676bc43de94cc25a57a1cdc9b1f0afc5208f0a",
+    "parsed": [
+      {
+        "chain-id": 4663,
+        "parent-chain-id": 1,
+        "parent-chain-is-arbitrum": false,
+        "chain-name": "Robinhood Chain",
+        "chain-config": {
+          "chainId": 4663,
+          "homesteadBlock": 0,
+          "daoForkBlock": null,
+          "daoForkSupport": true,
+          "eip150Block": 0,
+          "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "eip155Block": 0,
+          "eip158Block": 0,
+          "byzantiumBlock": 0,
+          "constantinopleBlock": 0,
+          "petersburgBlock": 0,
+          "istanbulBlock": 0,
+          "muirGlacierBlock": 0,
+          "berlinBlock": 0,
+          "londonBlock": 0,
+          "clique": {
+            "period": 0,
+            "epoch": 0
+          },
+          "arbitrum": {
+            "EnableArbOS": true,
+            "AllowDebugPrecompiles": false,
+            "DataAvailabilityCommittee": false,
+            "InitialArbOSVersion": 51,
+            "InitialChainOwner": "0xc8451c5DE260E7ea1b879e7994967077e71230Ca",
+            "GenesisBlockNum": 0,
+            "MaxCodeSize": 98304,
+            "MaxInitCodeSize": 196608
+          }
+        },
+        "rollup": {
+          "bridge": "0xDf8755334ce7A73cCF6b581C02eA649AE3E864b3",
+          "inbox": "0x1A07cc4BD17E0118BdB54D70990D2158AbAD7a2D",
+          "sequencer-inbox": "0xBd0D173EEb87D57A09521c24388a12789F33ba96",
+          "rollup": "0x23A19d23e89166adedbDcB432518AB01e4272D94",
+          "validator-utils": "0x0000000000000000000000000000000000000000",
+          "validator-wallet-creator": "0xB7FE37712e46F28C8f22Ec4bAA33A09fb8B52BD0",
+          "stake-token": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+          "deployed-at": 24994238
+        }
+      }
+    ]
+  },
+  "documentation": [
+    {
+      "url": "https://docs.arbitrum.io/how-arbitrum-works/reference/finality-and-reorgs.md",
+      "status": 200,
+      "sha256": "a910bcb2cc8cbdaaec6e58b7709c8e6103b0e0cd9024e7ec7967defcde5d887b",
+      "headings": [
+        "# Finality and chain reorganizations (/how-arbitrum-works/reference/finality-and-reorgs)",
+        "## The three confirmation levels [#the-three-confirmation-levels]",
+        "### The Fast Feed is not a fourth level [#the-fast-feed-is-not-a-fourth-level]",
+        "### What \"seconds to finality\" really means [#what-seconds-to-finality-really-means]",
+        "## How the node derives `safe` and `finalized` [#how-the-node-derives-safe-and-finalized]",
+        "## Per-chain-type guarantees [#per-chain-type-guarantees]",
+        "### Parent chains outside the Ethereum and Arbitrum stacks [#parent-chains-outside-the-ethereum-and-arbitrum-stacks]",
+        "## AnyTrust and the DAC: what changes and what doesn't [#anytrust-and-the-dac-what-changes-and-what-doesnt]",
+        "## The reorg model [#the-reorg-model]",
+        "## How deep can a reorg go? [#how-deep-can-a-reorg-go]",
+        "## `ArbitrumInternalTx` behavior under a parent-chain reorg [#arbitruminternaltx-behavior-under-a-parent-chain-reorg]",
+        "## Recommended confirmation levels for indexers [#recommended-confirmation-levels-for-indexers]",
+        "## Reorg detection patterns [#reorg-detection-patterns]",
+        "## The `--node.bold.rpc-block-number` flag [#the---nodeboldrpc-block-number-flag]",
+        "## Corner cases [#corner-cases]",
+        "### A parent-chain reorg moves a block that held one of our state-root attestations [#a-parent-chain-reorg-moves-a-block-that-held-one-of-our-state-root-attestations]",
+        "### A reorg on Base's parent (Ethereum) affects a block holding some of our data [#a-reorg-on-bases-parent-ethereum-affects-a-block-holding-some-of-our-data]",
+        "### The DAC has an outage and cannot sign attestations [#the-dac-has-an-outage-and-cannot-sign-attestations]",
+        "### The DAC is completely down and the batch poster cannot reach it [#the-dac-is-completely-down-and-the-batch-poster-cannot-reach-it]",
+        "### The Sequencer cannot post batches (or DACerts) to the parent chain [#the-sequencer-cannot-post-batches-or-dacerts-to-the-parent-chain]",
+        "## Related resources [#related-resources]"
+      ]
+    },
+    {
+      "url": "https://docs.arbitrum.io/arbitrum-essentials/arbitrum-vs-ethereum/block-numbers-and-time.md",
+      "status": 200,
+      "sha256": "39e864e58b968864079334c63ab0bb0248c2fd112ccf0cc4779fdfc67dfbd9cd",
+      "headings": [
+        "# Block gas limit, numbers and time (/arbitrum-essentials/arbitrum-vs-ethereum/block-numbers-and-time)",
+        "## Block gas limit [#block-gas-limit]",
+        "## Block numbers: Arbitrum vs. Ethereum [#block-numbers-arbitrum-vs-ethereum]",
+        "### Ethereum (or parent chain) block numbers within Arbitrum [#ethereum-or-parent-chain-block-numbers-within-arbitrum]",
+        "### Arbitrum block numbers [#arbitrum-block-numbers]",
+        "### Example [#example]",
+        "### Case study: the Multicall contract [#case-study-the-multicall-contract]",
+        "## Block timestamps: Arbitrum vs. Ethereum [#block-timestamps-arbitrum-vs-ethereum]",
+        "### Timestamp boundaries of the sequencer [#timestamp-boundaries-of-the-sequencer]"
+      ]
+    }
+  ],
+  "documentationNotes": {
+    "arbitrumFinality": {
+      "url": "https://docs.arbitrum.io/how-arbitrum-works/reference/finality-and-reorgs.md",
+      "locations": [
+        "The three confirmation levels",
+        "How the node derives safe and finalized",
+        "The reorg model"
+      ],
+      "observations": [
+        "Safe/finalized heads are derived from batch posting and parent-chain confirmation tags, subject to node configuration.",
+        "Parent-chain reorgs roll back child state and transactions after the common ancestor.",
+        "RPC finality is not an application-callable certificate."
+      ]
+    },
+    "robinhoodFinality": {
+      "url": "https://docs.robinhood.com/chain/transaction-finality",
+      "sha256": "481090590ecccac3568797a745036d80c5823ba316f640822ea8f080f099e90e",
+      "locations": [
+        "Stages of finality",
+        "Withdrawals to Ethereum",
+        "Reorganizations"
+      ],
+      "observations": [
+        "Sequencer execution, Ethereum batch posting, and Ethereum finality are separate stages.",
+        "Documentation reports a seven-day canonical withdrawal challenge period, separate from transaction finality; no deployment-parameter audit was performed."
+      ]
+    },
+    "robinhoodGovernance": {
+      "url": "https://docs.robinhood.com/chain/governance",
+      "sha256": "6d1237a5e3b09206e4b0965d560ce434d62aa18fb4726d9edbdbfcb5accf0e1d",
+      "locations": [
+        "Overview",
+        "Validators"
+      ],
+      "observations": [
+        "Protocol governance and permissioned BoLD validators remain chain trust assumptions.",
+        "These are primary documentation observations, not independently verified L1 governance storage."
+      ]
+    }
+  },
+  "discovery": [
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro/commits/960ca0a",
+      "status": 422,
+      "sha256": "2d3f225863759137cc529293f63ba027d5c7ac31dabeb0691d629ee91b429e30",
+      "bytes": 141
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/master/precompiles/ArbSys.go",
+      "status": 200,
+      "sha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "bytes": 8307
+    },
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro/commits/master",
+      "status": 200,
+      "sha256": "4378975297404b824dc910ae2f531dfbf12c6005278b62932ac545ffa21a0888",
+      "bytes": 43530
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/precompiles/ArbSys.go",
+      "status": 200,
+      "sha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "bytes": 8307
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/arbos/block_processor.go",
+      "status": 200,
+      "sha256": "1a847ed646a64f8df933d44dcce75f7dd062890363927739395f077cd906ac34",
+      "bytes": 33259
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/arbos/l1pricing/l1pricing.go",
+      "status": 200,
+      "sha256": "73dc5dc56215d3617c816884e76491bffce93bd93f1626fe2e886cea0e140dd6",
+      "bytes": 20102
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/arbos/arbosState/arbosstate.go",
+      "status": 200,
+      "sha256": "d784755e8b24c799e374206f613f606f7a184d60df4040885ec2175dfd706faf",
+      "bytes": 28493
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/arbos/blockhash/blockhash.go",
+      "status": 200,
+      "sha256": "3c70cec4d47a9cd744152ad6c4dfc43536b698cd0170cf0bde66570e14432ec8",
+      "bytes": 2235
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/geth",
+      "status": 404,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed",
+      "bytes": 14
+    },
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro/contents/go-ethereum?ref=ccc5c828d9ea22f161efc784bac4d4a6559b7e59",
+      "status": 200,
+      "sha256": "33bdcf6decacc3ab0eed286534d103a7b707d2fffbc09aa074b9fc5efdbbe3c0",
+      "bytes": 898
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/arbos/tx_processor.go",
+      "status": 200,
+      "sha256": "0e9a8e2e56f348b4bbd86edeaaad1aaeb5a1fe419909a3d8ee51526eb99a1f6c",
+      "bytes": 44824
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/arbos/arbostypes/block_header_info.go",
+      "status": 404,
+      "sha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed",
+      "bytes": 14
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/51d716ccf8293072077feb9764d63d73f5e4ff20/core/vm/instructions.go",
+      "status": 200,
+      "sha256": "b2f27b875ade767429a30669d5ef49d800d3c04da28ebf2124e78b99cef26196",
+      "bytes": 38685
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/51d716ccf8293072077feb9764d63d73f5e4ff20/core/state_processor.go",
+      "status": 200,
+      "sha256": "bdcf2423180e6dadc6b3fd419195deca64c1cc6fae66dfb8e0839575e351da5c",
+      "bytes": 19567
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/main/ArbSys.sol",
+      "status": 200,
+      "sha256": "55251738b340761189c5ef8874c9de135cce76e7a8b4bbe682a46db75f5fd87d",
+      "bytes": 5488
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/main/ArbOwnerPublic.sol",
+      "status": 200,
+      "sha256": "465a52a90d0657c473432949342531e863475df49510969c907a1283d12fc005",
+      "bytes": 4521
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro-precompile-interfaces/main/ArbInfo.sol",
+      "status": 200,
+      "sha256": "d9ce39a86d5e167bf2fa954d9d3c58a210103526e3ff2f98ed6e9d67826167a0",
+      "bytes": 781
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/51d716ccf8293072077feb9764d63d73f5e4ff20/params/protocol_params.go",
+      "status": 200,
+      "sha256": "f5ec4a8345962f208613329a38ce4b0c9bcf4d0b94c2ec25954a78c513165f80",
+      "bytes": 21395
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/51d716ccf8293072077feb9764d63d73f5e4ff20/params/config_arbitrum.go",
+      "status": 200,
+      "sha256": "229c8897ce78450384d53ad21e091d4876fc35be70103656372a382fbf7714ac",
+      "bytes": 5344
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/51d716ccf8293072077feb9764d63d73f5e4ff20/core/types/block.go",
+      "status": 200,
+      "sha256": "f76e3bd2f3acc9488727419afce5c94a38beedb14c3ff2954ec0a9065a85502b",
+      "bytes": 18888
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/51d716ccf8293072077feb9764d63d73f5e4ff20/core/types/receipt.go",
+      "status": 200,
+      "sha256": "1cde670b59ff52582bfc60c5c9c076ee37b9d285cf9049cb5c3d490ed364e6eb",
+      "bytes": 18297
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/51d716ccf8293072077feb9764d63d73f5e4ff20/core/types/hashing.go",
+      "status": 200,
+      "sha256": "346239a88d49c479aad1da564a226cd186a6794546f356fdb86979b44bce1377",
+      "bytes": 4744
+    },
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro/git/trees/ccc5c828d9ea22f161efc784bac4d4a6559b7e59?recursive=1",
+      "status": 200,
+      "sha256": "7bfc28d929ad3f01413cdf7647cc299a9d756a2a6a73facaf1136c7193bd7bdd",
+      "bytes": 862640
+    },
+    {
+      "url": "https://docs.robinhood.com/chain/connecting/",
+      "status": 200,
+      "sha256": "c312c7b2873ff9198c123842e0df0803cd12cfcd55a22a582ad829e7e5e59285",
+      "bytes": 35233
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/arbos/internal_tx.go",
+      "status": 200,
+      "sha256": "c48800495c1d4fa564c10948ea753b66be9ef47baf2c592064eb2ae01b96110a",
+      "bytes": 7313
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/execution/nodeinterface/node_interface.go",
+      "status": 200,
+      "sha256": "95d1112f677a9285e1884c032eec6172d00c268600871e8d63e0aa4c267f7439",
+      "bytes": 21674
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/ccc5c828d9ea22f161efc784bac4d4a6559b7e59/execution/nodeinterface/virtual_contracts.go",
+      "status": 200,
+      "sha256": "5c2017b4657b8a84d850b292c658e715937f571007a13133af2e68167de371ea",
+      "bytes": 6256
+    },
+    {
+      "url": "https://docs.robinhood.com/chain/run-a-full-node",
+      "status": 200,
+      "sha256": "baab868e2148fd4ad5c7de553825be12a6c137bebbff9d236e2f268d55524185",
+      "bytes": 65065
+    },
+    {
+      "url": "https://cdn.robinhood.com/assets/generated_assets/hoodchain_docsite/chain-node-configs/robinhood-chain-info.json",
+      "status": 200,
+      "sha256": "cf6c0aa2bc520a28fe8983f783676bc43de94cc25a57a1cdc9b1f0afc5208f0a",
+      "bytes": 1563
+    },
+    {
+      "url": "https://docs.robinhood.com/chain/transaction-finality",
+      "status": 200,
+      "sha256": "481090590ecccac3568797a745036d80c5823ba316f640822ea8f080f099e90e",
+      "bytes": 26539
+    },
+    {
+      "url": "https://docs.robinhood.com/chain/governance",
+      "status": 200,
+      "sha256": "6d1237a5e3b09206e4b0965d560ce434d62aa18fb4726d9edbdbfcb5accf0e1d",
+      "bytes": 24240
+    },
+    {
+      "url": "https://docs.robinhood.com/chain/differences-from-ethereum",
+      "status": 200,
+      "sha256": "d6d8a722e4ee888fcd8f8190628245d1e8c60c23d1c7f266de6aad247bdb0f84",
+      "bytes": 35037
+    },
+    {
+      "url": "https://docs.robinhood.com/chain/protocol-contracts",
+      "status": 200,
+      "sha256": "a9a571d208459e79091712cdbc9f31608ca719e589a8163d2750405cfd9636a4",
+      "bytes": 58317
+    },
+    {
+      "url": "https://docs.arbitrum.io/how-arbitrum-works/reference/finality-and-reorgs.md",
+      "status": 200,
+      "sha256": "a910bcb2cc8cbdaaec6e58b7709c8e6103b0e0cd9024e7ec7967defcde5d887b",
+      "bytes": 23747
+    },
+    {
+      "url": "https://docs.arbitrum.io/arbitrum-essentials/arbitrum-vs-ethereum/block-numbers-and-time.md",
+      "status": 200,
+      "sha256": "39e864e58b968864079334c63ab0bb0248c2fd112ccf0cc4779fdfc67dfbd9cd",
+      "bytes": 10018
+    },
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro/commits/70fa99a",
+      "status": 200,
+      "sha256": "b6dedcf3efaa35e7fe9b3efb954290f8cbe82eafa885df9c3d573fbed5dd546d",
+      "bytes": 11246
+    },
+    {
+      "url": "https://api.github.com/repos/OffchainLabs/nitro/contents/go-ethereum?ref=70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+      "status": 200,
+      "sha256": "a0c9e46a8f3953df45e84603499c52ddcc436619c6dc192955855e7a66c2ab5e",
+      "bytes": 898
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbSys.go",
+      "status": 200,
+      "sha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "bytes": 8307
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/internal_tx.go",
+      "status": 200,
+      "sha256": "c48800495c1d4fa564c10948ea753b66be9ef47baf2c592064eb2ae01b96110a",
+      "bytes": 7313
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/block_processor.go",
+      "status": 200,
+      "sha256": "1a847ed646a64f8df933d44dcce75f7dd062890363927739395f077cd906ac34",
+      "bytes": 33259
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/tx_processor.go",
+      "status": 200,
+      "sha256": "f639d682351430d0ce751d0774f890dcf2fd9e292836e60538e0e3c2593c3c54",
+      "bytes": 44938
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/blockhash/blockhash.go",
+      "status": 200,
+      "sha256": "3c70cec4d47a9cd744152ad6c4dfc43536b698cd0170cf0bde66570e14432ec8",
+      "bytes": 2235
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/arbos/arbosState/arbosstate.go",
+      "status": 200,
+      "sha256": "d784755e8b24c799e374206f613f606f7a184d60df4040885ec2175dfd706faf",
+      "bytes": 28493
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/execution/nodeinterface/node_interface.go",
+      "status": 200,
+      "sha256": "95d1112f677a9285e1884c032eec6172d00c268600871e8d63e0aa4c267f7439",
+      "bytes": 21674
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/params/protocol_params.go",
+      "status": 200,
+      "sha256": "f5ec4a8345962f208613329a38ce4b0c9bcf4d0b94c2ec25954a78c513165f80",
+      "bytes": 21395
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/block.go",
+      "status": 200,
+      "sha256": "f76e3bd2f3acc9488727419afce5c94a38beedb14c3ff2954ec0a9065a85502b",
+      "bytes": 18888
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/receipt.go",
+      "status": 200,
+      "sha256": "1cde670b59ff52582bfc60c5c9c076ee37b9d285cf9049cb5c3d490ed364e6eb",
+      "bytes": 18297
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/types/hashing.go",
+      "status": 200,
+      "sha256": "346239a88d49c479aad1da564a226cd186a6794546f356fdb86979b44bce1377",
+      "bytes": 4744
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OffchainLabs/go-ethereum/5eee8f546e7602b7deeef7909f291bbebc77e233/core/vm/instructions.go",
+      "status": 200,
+      "sha256": "b2f27b875ade767429a30669d5ef49d800d3c04da28ebf2124e78b99cef26196",
+      "bytes": 38685
+    }
+  ]
+}

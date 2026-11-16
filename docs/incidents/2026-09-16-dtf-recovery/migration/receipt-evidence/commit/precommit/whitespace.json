@@ -1,0 +1,25 @@
+[
+  {
+    "args": [
+      "diff",
+      "--cached",
+      "--ignore-submodules=all",
+      "--check",
+      "789fced820ed494d9651c598fb8f75c646d727a7"
+    ],
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stderrBytes": 0
+  },
+  {
+    "args": [
+      "diff",
+      "--cached",
+      "--ignore-submodules=all",
+      "--check"
+    ],
+    "exit": 0,
+    "stdoutBytes": 0,
+    "stderrBytes": 0
+  }
+]

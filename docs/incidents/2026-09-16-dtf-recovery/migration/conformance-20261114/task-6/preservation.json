@@ -1,0 +1,635 @@
+{
+  "status": "PASS",
+  "scope": "104 source/config/protected prior-task files bound before QA; all unchanged after QA",
+  "bindings": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "beforeSha256": "294492b0045f05ef4106d203ba78e55aa534099218f006cb80de44576421d373",
+      "afterSha256": "294492b0045f05ef4106d203ba78e55aa534099218f006cb80de44576421d373",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookTarget.sol",
+      "beforeSha256": "e5d34dd8726b31faba071a8b6c264e85a903ef4f6ca8c729f4a26332a78b0e29",
+      "afterSha256": "e5d34dd8726b31faba071a8b6c264e85a903ef4f6ca8c729f4a26332a78b0e29",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "beforeSha256": "a2695d87fda6ba7424c30674b15f6a200c251e4584544a0a07a18668a5e1b4d9",
+      "afterSha256": "a2695d87fda6ba7424c30674b15f6a200c251e4584544a0a07a18668a5e1b4d9",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "beforeSha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db",
+      "afterSha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+      "beforeSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "afterSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "beforeSha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c",
+      "afterSha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "beforeSha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d",
+      "afterSha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+      "beforeSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "afterSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "beforeSha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f",
+      "afterSha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "beforeSha256": "cae8158660b7ca37e353407aaa466e722dac88ff086aec1367818bb5b094a44d",
+      "afterSha256": "cae8158660b7ca37e353407aaa466e722dac88ff086aec1367818bb5b094a44d",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+      "beforeSha256": "c4945faa5e9a3bae8eedd5d3a45ea617a3091d0005a630b447c628c13de81ee8",
+      "afterSha256": "c4945faa5e9a3bae8eedd5d3a45ea617a3091d0005a630b447c628c13de81ee8",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "beforeSha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b",
+      "afterSha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "beforeSha256": "99380ffff76132e19dcfdf2d2051280523331ee85d54678b7e45e98647575cb4",
+      "afterSha256": "99380ffff76132e19dcfdf2d2051280523331ee85d54678b7e45e98647575cb4",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+      "beforeSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "afterSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "beforeSha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2",
+      "afterSha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "beforeSha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67",
+      "afterSha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+      "beforeSha256": "8c3b5ee20863a8fdf05f23808c6258d78f59e0bea5402f36a7e7632672053a05",
+      "afterSha256": "8c3b5ee20863a8fdf05f23808c6258d78f59e0bea5402f36a7e7632672053a05",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "beforeSha256": "514fb54a14f0fde6d43622694d167f0c36528ae647de85823d8b6ba96881a920",
+      "afterSha256": "514fb54a14f0fde6d43622694d167f0c36528ae647de85823d8b6ba96881a920",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+      "beforeSha256": "9a1b6d52be1dd6b478e4b4b97bf2428db11f759ab9a758f0f04c2f6138224862",
+      "afterSha256": "9a1b6d52be1dd6b478e4b4b97bf2428db11f759ab9a758f0f04c2f6138224862",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+      "beforeSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "afterSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "beforeSha256": "0727d187dcdeed9ab09331551ede6ffcfeca715215b7661e5ed7167210e49c42",
+      "afterSha256": "0727d187dcdeed9ab09331551ede6ffcfeca715215b7661e5ed7167210e49c42",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "beforeSha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45",
+      "afterSha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol",
+      "beforeSha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395",
+      "afterSha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "beforeSha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800",
+      "afterSha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "beforeSha256": "98e01a423cf543c09386fb205c796944c124251f462fbe1de5ca0d333936f045",
+      "afterSha256": "98e01a423cf543c09386fb205c796944c124251f462fbe1de5ca0d333936f045",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+      "beforeSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "afterSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+      "beforeSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "afterSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+      "beforeSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "afterSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+      "beforeSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "afterSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "beforeSha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a",
+      "afterSha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "beforeSha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e",
+      "afterSha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol",
+      "beforeSha256": "d71c777d4a685b17c6e5231970c7b458cedd1501cbfff65dd404f04c887cdb54",
+      "afterSha256": "d71c777d4a685b17c6e5231970c7b458cedd1501cbfff65dd404f04c887cdb54",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "beforeSha256": "5ef058fa8b316182dbf139d263db4330d4b5648f21cd45a3d5c2581ae5967eb4",
+      "afterSha256": "5ef058fa8b316182dbf139d263db4330d4b5648f21cd45a3d5c2581ae5967eb4",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "beforeSha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347",
+      "afterSha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "beforeSha256": "d26a5e76c703774a2a6a7a455f73a1689c0d299851d249c1c2c9c2b8c8385b90",
+      "afterSha256": "d26a5e76c703774a2a6a7a455f73a1689c0d299851d249c1c2c9c2b8c8385b90",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "beforeSha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53",
+      "afterSha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+      "beforeSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "afterSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+      "beforeSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "afterSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+      "beforeSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "afterSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+      "beforeSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "afterSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+      "beforeSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "afterSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "beforeSha256": "3f60c4c5ab04d54dd94ccd71d5bb3e35d144a49394b12a6af3e3e22ccbdc8883",
+      "afterSha256": "3f60c4c5ab04d54dd94ccd71d5bb3e35d144a49394b12a6af3e3e22ccbdc8883",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "beforeSha256": "fe4b2eba13557e311ec824f723a442a78bdbb46eb0bb4f18f90a484959240703",
+      "afterSha256": "fe4b2eba13557e311ec824f723a442a78bdbb46eb0bb4f18f90a484959240703",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "beforeSha256": "001fe52dc4cb135e6ed7d90445ab2dcaf3885c7ef7a95096e1431a587dadbbe9",
+      "afterSha256": "001fe52dc4cb135e6ed7d90445ab2dcaf3885c7ef7a95096e1431a587dadbbe9",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "beforeSha256": "265a30306d97d134a15dd9f4c4b0bc824aed06f1c5432179a90f92a5a0b496cd",
+      "afterSha256": "265a30306d97d134a15dd9f4c4b0bc824aed06f1c5432179a90f92a5a0b496cd",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol",
+      "beforeSha256": "fe5e61c3dbe69a22d51536325b4257c8052cfcf119462b90a92137711368d0a5",
+      "afterSha256": "fe5e61c3dbe69a22d51536325b4257c8052cfcf119462b90a92137711368d0a5",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "beforeSha256": "4aac3dad7bf6b051994deac97cec3331a4c059259d9fa6db961d6498b201aeca",
+      "afterSha256": "4aac3dad7bf6b051994deac97cec3331a4c059259d9fa6db961d6498b201aeca",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "beforeSha256": "d908281791e911bcdaf72cc742a58dc825e3949bb489c4143f7e8406d21ff2c4",
+      "afterSha256": "d908281791e911bcdaf72cc742a58dc825e3949bb489c4143f7e8406d21ff2c4",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "beforeSha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22",
+      "afterSha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "beforeSha256": "529d3f830cddafc5ee7329a82ef4cf595713acb10897f094ee1c8fac3fb3ae8a",
+      "afterSha256": "529d3f830cddafc5ee7329a82ef4cf595713acb10897f094ee1c8fac3fb3ae8a",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "beforeSha256": "3bc0d8c7062b056375cb6858f3b37a4ccd26a4845bc296e74cd78d3d02eae4cb",
+      "afterSha256": "3bc0d8c7062b056375cb6858f3b37a4ccd26a4845bc296e74cd78d3d02eae4cb",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "beforeSha256": "585a26a81505ab6e43f6d860ee3d023b6f97e4aed0525f4e370d4d45e73731dc",
+      "afterSha256": "585a26a81505ab6e43f6d860ee3d023b6f97e4aed0525f4e370d4d45e73731dc",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "beforeSha256": "774475bdcb0f48b4da8aad3d95e3731b8a6c4edd8e4a265e5a512932e4daff80",
+      "afterSha256": "774475bdcb0f48b4da8aad3d95e3731b8a6c4edd8e4a265e5a512932e4daff80",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+      "beforeSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "afterSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+      "beforeSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "afterSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+      "beforeSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "afterSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+      "beforeSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "afterSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "beforeSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "afterSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+      "beforeSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "afterSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+      "beforeSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "afterSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+      "beforeSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "afterSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+      "beforeSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "afterSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+      "beforeSha256": "87c01551d85ab0f72f5eb63df9c12785bfb1936ec2241b7a313571174c521b15",
+      "afterSha256": "87c01551d85ab0f72f5eb63df9c12785bfb1936ec2241b7a313571174c521b15",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+      "beforeSha256": "7042db6fc57c3c75b46776031253c10d8b0c8a5c149a794d979cc6ef53a137e7",
+      "afterSha256": "7042db6fc57c3c75b46776031253c10d8b0c8a5c149a794d979cc6ef53a137e7",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+      "beforeSha256": "0d3f74b8b8be5d09615e9daf1ed5c33832fc3d92b54b75601930516b319d60c9",
+      "afterSha256": "0d3f74b8b8be5d09615e9daf1ed5c33832fc3d92b54b75601930516b319d60c9",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "beforeSha256": "e44c0984c65dc36cfda02c4829295a915042420409d5715905b3e9b331add69e",
+      "afterSha256": "e44c0984c65dc36cfda02c4829295a915042420409d5715905b3e9b331add69e",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptForkBase.sol",
+      "beforeSha256": "909139dbffcfbd56dd8efc297b4c49a2a698170c090da7ca648d5be78b07e78e",
+      "afterSha256": "909139dbffcfbd56dd8efc297b4c49a2a698170c090da7ca648d5be78b07e78e",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+      "beforeSha256": "329d958033171d69bd97f87e9da4fdacc14b3ff2d8729d621a4704bbc185abaf",
+      "afterSha256": "329d958033171d69bd97f87e9da4fdacc14b3ff2d8729d621a4704bbc185abaf",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "beforeSha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4",
+      "afterSha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+      "beforeSha256": "ae5a9d259c6499b728608ba5e563c199610fecdac9157611899cb1690f83f6dc",
+      "afterSha256": "ae5a9d259c6499b728608ba5e563c199610fecdac9157611899cb1690f83f6dc",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "beforeSha256": "0270a0067ac8f822048231b4045100e09f2cf1f8aeb0b6f454bc961dcb5e6794",
+      "afterSha256": "0270a0067ac8f822048231b4045100e09f2cf1f8aeb0b6f454bc961dcb5e6794",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "beforeSha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc",
+      "afterSha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+      "beforeSha256": "9050d0d3b75b5d663974c6fc9598e06c9941fed6fcbb2adffe4165096a172bf7",
+      "afterSha256": "9050d0d3b75b5d663974c6fc9598e06c9941fed6fcbb2adffe4165096a172bf7",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol",
+      "beforeSha256": "5cbf23c014a59eca21a0559d234e8fece1b1b54b7fce198573d7bbeda07d6a54",
+      "afterSha256": "5cbf23c014a59eca21a0559d234e8fece1b1b54b7fce198573d7bbeda07d6a54",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+      "beforeSha256": "3e113ac8751b9976673193e5a42e9aa112e6d7afe72716f7dcbe72b0a1892223",
+      "afterSha256": "3e113ac8751b9976673193e5a42e9aa112e6d7afe72716f7dcbe72b0a1892223",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryForkBase.sol",
+      "beforeSha256": "eb234fe3d03c5c32d5abebfee3b6f0ea9d4efe2a66cdbc6e40399654b6824d81",
+      "afterSha256": "eb234fe3d03c5c32d5abebfee3b6f0ea9d4efe2a66cdbc6e40399654b6824d81",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "beforeSha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433",
+      "afterSha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol",
+      "beforeSha256": "54b1b102e71a6fee2791347357b55779452827d599d13a9244eeea94da9cebdf",
+      "afterSha256": "54b1b102e71a6fee2791347357b55779452827d599d13a9244eeea94da9cebdf",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+      "beforeSha256": "1fee951417d32719ff05785f7ad6dd5442fd14b3075e324e4175d7ef644f7803",
+      "afterSha256": "1fee951417d32719ff05785f7ad6dd5442fd14b3075e324e4175d7ef644f7803",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "beforeSha256": "7f26c2686a9f787e8e95d81ea128644ffd40f91807b486d280edd74996baa122",
+      "afterSha256": "7f26c2686a9f787e8e95d81ea128644ffd40f91807b486d280edd74996baa122",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+      "beforeSha256": "d8d5b24f9869acdd21225d6a11396802065aae6ef6533bf3dab5ac7a0583c333",
+      "afterSha256": "d8d5b24f9869acdd21225d6a11396802065aae6ef6533bf3dab5ac7a0583c333",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+      "beforeSha256": "d93c0760bd6c5b03392b5339edbf140a2ab4150ea4f09809fba488f891a55d88",
+      "afterSha256": "d93c0760bd6c5b03392b5339edbf140a2ab4150ea4f09809fba488f891a55d88",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+      "beforeSha256": "3e0bacae12cd81a6557b293ec9a5e51a9ef416043e651078bba1d42784a3e475",
+      "afterSha256": "3e0bacae12cd81a6557b293ec9a5e51a9ef416043e651078bba1d42784a3e475",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "beforeSha256": "763fdeecdd610b4fba9bc464224c4c58c21ec87df4e1605a4c781e4724fac2d4",
+      "afterSha256": "763fdeecdd610b4fba9bc464224c4c58c21ec87df4e1605a4c781e4724fac2d4",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+      "beforeSha256": "288e45f67fb5cbba47dd51cd9ea34fc9b99fea5e970946dc7b13567fe0ae59ea",
+      "afterSha256": "288e45f67fb5cbba47dd51cd9ea34fc9b99fea5e970946dc7b13567fe0ae59ea",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "beforeSha256": "a4a002aeccde30b197b6eeea3ff61334865b30127c3301b73813a7e41047d15d",
+      "afterSha256": "a4a002aeccde30b197b6eeea3ff61334865b30127c3301b73813a7e41047d15d",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+      "beforeSha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14",
+      "afterSha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "beforeSha256": "0c1faed22ed05e358bb533e55aaba83c018816872e57f9e213aaf741e539f97a",
+      "afterSha256": "0c1faed22ed05e358bb533e55aaba83c018816872e57f9e213aaf741e539f97a",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "beforeSha256": "5c5589e571fe33948f53fc98143f9584ae6814b3d4e6834346864a6956655ab1",
+      "afterSha256": "5c5589e571fe33948f53fc98143f9584ae6814b3d4e6834346864a6956655ab1",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "beforeSha256": "56eea3a9c99c4236c13dd0187f18a4877aa79f45becdb540cdfe6ecd470cc45b",
+      "afterSha256": "56eea3a9c99c4236c13dd0187f18a4877aa79f45becdb540cdfe6ecd470cc45b",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol",
+      "beforeSha256": "9924864974c40195532228d12a126edc78ba1b76a70b7baf91f7a4697161daeb",
+      "afterSha256": "9924864974c40195532228d12a126edc78ba1b76a70b7baf91f7a4697161daeb",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "beforeSha256": "5b8cb4ccc8898fc0092c2f58afdc4bba5f0f75cffcb4433fc43558edc7bd2ea6",
+      "afterSha256": "5b8cb4ccc8898fc0092c2f58afdc4bba5f0f75cffcb4433fc43558edc7bd2ea6",
+      "unchanged": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "beforeSha256": "d67c4b5a761da319ddd5805f2885893b4dd30d3553168a3ec4b95d5034baab87",
+      "afterSha256": "d67c4b5a761da319ddd5805f2885893b4dd30d3553168a3ec4b95d5034baab87",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "beforeSha256": "c18c8e24e5054dadf15a2a8b5684bca7c9035fe79df34a939ea98ffea41e74d4",
+      "afterSha256": "c18c8e24e5054dadf15a2a8b5684bca7c9035fe79df34a939ea98ffea41e74d4",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "beforeSha256": "06ea1feff633e182defddc28858f27a274e050735eebcff3b5ac6279e3663424",
+      "afterSha256": "06ea1feff633e182defddc28858f27a274e050735eebcff3b5ac6279e3663424",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "beforeSha256": "9d09b14e1e4f74cb55c716e5cfa9b97ef09635db4650cd29e0b70515e3206ce9",
+      "afterSha256": "9d09b14e1e4f74cb55c716e5cfa9b97ef09635db4650cd29e0b70515e3206ce9",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "beforeSha256": "bb215b89ccfa5165920aa16c513863cf1498958b5611babe1eace7e09a965ebb",
+      "afterSha256": "bb215b89ccfa5165920aa16c513863cf1498958b5611babe1eace7e09a965ebb",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "beforeSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "afterSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "beforeSha256": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677",
+      "afterSha256": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "beforeSha256": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298",
+      "afterSha256": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "beforeSha256": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64",
+      "afterSha256": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/forge-artifacts.py",
+      "beforeSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8",
+      "afterSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8",
+      "unchanged": true
+    },
+    {
+      "path": "foundry.toml",
+      "beforeSha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "afterSha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "unchanged": true
+    },
+    {
+      "path": "remappings.txt",
+      "beforeSha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "afterSha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "unchanged": true
+    }
+  ],
+  "initialObservation": "Initial git status was read in bash_1 before task-6 edits; raw session output contains tasks 1-5 dirty changes. Saved worktree-before-qa.log follows the single allowed test addition.",
+  "beforeQaStatusSha256": "880db3cb0ff1d5e6b7594a87d486fb9a81673f81182f3f61df50aaac86001913",
+  "afterStatusSha256": "880db3cb0ff1d5e6b7594a87d486fb9a81673f81182f3f61df50aaac86001913",
+  "statusesIdentical": true,
+  "ownedTest": "MigrationOriginalWallet.t.sol: added initialized-role witness only; existing task-4 expected-book caller adaptations preserved."
+}

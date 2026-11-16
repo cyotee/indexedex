@@ -1,0 +1,110 @@
+{
+  "DoneClaim": "The task-10 empty compensation census classification blocker is reproduced and repaired, with focused and saved-fact manual proof.",
+  "status": "complete",
+  "scope": "Empty-census repair only; not task-10 completion or release authorization",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "rootCause": "verifyEmptyCensus selected every Configured suffix, so the real package deployment ThresholdsConfigured event was incorrectly treated as compensation history.",
+  "change": "Select the explicit compensation event mapped to each existing configurationKinds category plus IndependentAllocationIssued, using the source-bound migration ABI. Missing required event ABIs fail closed. Deployment authentication and the deployment-through-latest range remain unchanged.",
+  "files": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+      "bytes": 15361,
+      "pureLines": 229
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "bytes": 15178,
+      "pureLines": 242
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts",
+      "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+      "bytes": 6624,
+      "pureLines": 103
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+      "bytes": 5375,
+      "pureLines": 83
+    }
+  ],
+  "sourceBoundPricingRepairPreserved": true,
+  "originalHistoryPreserved": true,
+  "evidence": {
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/report.md",
+    "ledger": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/results.json",
+    "reproduction": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-02-reproduction",
+    "focused": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-08-final-focused",
+    "affected": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/attempt-09-historical-census",
+    "manual": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/result.json",
+    "sourceBindings": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/source-bindings.json",
+    "cleanup": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/cleanup.json"
+  },
+  "results": {
+    "focused": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "exit": 0,
+      "passed": 33,
+      "failed": 0
+    },
+    "affected": {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 0,
+      "passed": 81,
+      "failed": 0
+    },
+    "manual": {
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "exit": 0,
+      "outcomes": 28,
+      "transport": "Synthetic isolated HTTP fixture replaying exact saved deployment transaction/header/receipt; range census contains saved initialization plus separately injected compensation probes.",
+      "preservedOriginalFiles": 41,
+      "contractCalls": 0,
+      "nonceRequests": 0,
+      "sends": 0,
+      "originalDomainHash": "be76538efae814c63f22d9c99fd6878734da1e3b76d135df3b3c7fdf02428289"
+    },
+    "mutations": {
+      "singletonGuard": {
+        "exit": 1,
+        "failed": 22
+      },
+      "deploymentCutoff": {
+        "exit": 1,
+        "failed": 11
+      },
+      "deploymentAuthentication": {
+        "exit": 1,
+        "failure": "stale deployment header must reject"
+      },
+      "restored": true
+    },
+    "scopedDiffCheckExit": 0
+  },
+  "unresolved": [
+    "Shared full operator/typecheck and independent combined verification remain parent-owned after both writers finish.",
+    "Native LSP freshness timed out; JSON Biome LSP is absent. No clean-diagnostics claim or installation.",
+    "At inspection, sibling-owned execution-state.ts verifyConfiguration also used suffix selection. This is an unverified adjacent source observation: not reproduced with these deployment logs and not changed in this lane."
+  ],
+  "notClaimed": [
+    "Live current-chain census",
+    "Real paid owner-bond execution or success",
+    "Activation or task-10 lifecycle completion",
+    "Readiness marker or shared integration gate"
+  ],
+  "constraints": {
+    "delegation": false,
+    "forge": false,
+    "anvil": false,
+    "publicRpc": false,
+    "installations": false,
+    "commits": false,
+    "planCheckboxEdits": false,
+    "siblingOwnedWrites": false
+  },
+  "cleanup": "Owned providers, loopback listeners and temporary fixture directories closed/removed. Original RPC alias restored after provider construction; all original manifest/receipt/domain/source bytes preserved.",
+  "writtenLast": true
+}

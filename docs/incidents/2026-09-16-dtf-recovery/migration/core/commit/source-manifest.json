@@ -1,0 +1,1028 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-11T00:02:36.387Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04",
+  "branch": "work/dtf-migration-phase-04",
+  "expectedParent": "6e27ecaa242c4acca132e3575a160514aad07b11",
+  "purpose": "One coherent independently accepted bounded Migration core; source-only local commit",
+  "pathCount": 57,
+  "stagedDiff": {
+    "sha256": "139c79163d56a29f089824a71d7cedbdb5da0a607f082c2c282ca7f110eaa0fc",
+    "bytes": 371707,
+    "lines": 6530
+  },
+  "acceptance": {
+    "verdict": "AdversarialVerify: confirmed for corrected bounded phase04 core",
+    "evidence": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "sha256": "09e0be2a48afa39437dbc18ddf06513fe9874185b591c6f1840d2ae726e63e55"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+        "sha256": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/reviewed-input-identities.json",
+        "sha256": "79a9bb50ff20923330a5447fea12c02b8e6f46f54f6b069abf5a92700ada32a4"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/execution-evidence.json",
+        "sha256": "bc0d4627849ab014d524ce56e8802026da216e1dbc503e0e681ecfb4755158e5"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/corrected-receipt-audit.json",
+        "sha256": "544c8492f1549708bc383739df6cd33257c073088dacc469ca491221a45656b8"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/cleanup-and-preservation.json",
+        "sha256": "96255d6c7c5ab17dfdb7ad1af9585c843b47426978ca01dace4cd85faca83365"
+      }
+    ],
+    "retainedExecutedCounts": {
+      "focused": 83,
+      "combined": 10102,
+      "minedLocalQaReceipts": 246,
+      "independent": 24
+    },
+    "reruns": 0,
+    "guardBindingNote": "Shell source is absent from Solidity artifact-source sources; exact accepted hash comes from earlier independent verification/reviewed-input-identities.json. Corrected independent audit executes the unchanged guard, and current bytes match that earlier identity."
+  },
+  "files": [
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadata.sol",
+      "mode": "100644",
+      "sha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "acceptedSha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "currentSha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "stagedSha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "stagedBlob": "9e798795bd9fef4c748a8662b4c7a47086795ac6",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadata.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "mode": "100644",
+      "sha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "acceptedSha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "currentSha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "stagedSha256": "6e9f40d98375d28a8943acf981347de9ed9840a00f3ebe85743b65f27d49b62b",
+      "stagedBlob": "01150e4a76b361522a6cb5b8bed3fa42215815a8",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol",
+      "mode": "100644",
+      "sha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "acceptedSha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "currentSha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "stagedSha256": "31db80706354137a92d83438a8d4eb8de8094c4ddc00ef63bc8dd5f4d276e7af",
+      "stagedBlob": "b50f383051401553d849b1f566cd5fec336a5714",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+      "mode": "100644",
+      "sha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "acceptedSha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "currentSha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "stagedSha256": "b3f440e29fab56d95f91bd76e92ab4a19d1214ad40f6b243f7cd4d8bf5cc2c87",
+      "stagedBlob": "c9eaa15331f99e4631e66a0bc89a14283c36334e",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "mode": "100644",
+      "sha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "acceptedSha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "currentSha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "stagedSha256": "eda9a0815c5760874ab4e3e4685f3be37693cfaf172651ebdee4486547959920",
+      "stagedBlob": "0399ee79648573f0ae0b5aa277ff55d11bf9c023",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol",
+      "mode": "100644",
+      "sha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "acceptedSha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "currentSha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "stagedSha256": "c73f7a52b94f1718e1979fea96f357b475850b5ab0dbb83078c288311431dd79",
+      "stagedBlob": "71a3a4c03c699d62a3662d642d36995c4c0bce33",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/common/sy/DETFSYTarget.sol",
+      "mode": "100644",
+      "sha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "acceptedSha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "currentSha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "stagedSha256": "bc980c6d866866bf629986e39bdd53ae8571a7a1001673dbe52716d6e6e94324",
+      "stagedBlob": "4dc3cbf2ea081d2d47a12a93b45b0409d4e35afd",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/common/sy/DETFSYTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "mode": "100644",
+      "sha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "acceptedSha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "currentSha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "stagedSha256": "6c907028f9966b46526522f6cd87c3e40915e81629d4dcbcb4e0d0eca12039be",
+      "stagedBlob": "4bb197c7b187108c9aab20c86e1f65c295334e3a",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "mode": "100644",
+      "sha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "acceptedSha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "currentSha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "stagedSha256": "dec49572fd6fc883fd6dee6df9635cacafab5d0c597ec73e5caff6ef8e86a3c1",
+      "stagedBlob": "c01cd97d8d4c4000d175b1b35d2d8a090416aa44",
+      "initialStatus": " M",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "mode": "100644",
+      "sha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "acceptedSha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "currentSha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "stagedSha256": "2752249edefe931213827bc763deeea1c58c5a24743c4b95a0a17d2934de5fce",
+      "stagedBlob": "448c6bff6f828e8d13e3d3403699dbd2b407da61",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+      "mode": "100644",
+      "sha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "acceptedSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "currentSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "stagedSha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2",
+      "stagedBlob": "faca7b69859614f865e496a4944b82b5697ef056",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+      "mode": "100644",
+      "sha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "acceptedSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "currentSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "stagedSha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "stagedBlob": "a08f5b265ed43542e9756b49cf4c1a9b981fe8bc",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+      "mode": "100644",
+      "sha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "acceptedSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "currentSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "stagedSha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826",
+      "stagedBlob": "c9c0daef8feee32c32ebeef8cefc087c3da6f8ea",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+      "mode": "100644",
+      "sha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "acceptedSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "currentSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "stagedSha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa",
+      "stagedBlob": "f149ffc3d39e186ff62d7c5a351fe077d20c6c58",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+      "mode": "100644",
+      "sha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "acceptedSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "currentSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "stagedSha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd",
+      "stagedBlob": "5ce9ad3e805a33c3898a8feb6ebf1e22775edf70",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "mode": "100644",
+      "sha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "acceptedSha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "currentSha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "stagedSha256": "e133c891defe5a4d42767f394feb0806fd2d4ea5d9362fffa0a3f53308719e9e",
+      "stagedBlob": "c6c063eeb854a6920e2c6a3d59ad31f7910bf735",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+      "mode": "100644",
+      "sha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "acceptedSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "currentSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "stagedSha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0",
+      "stagedBlob": "36ea4b810709b91dea948f395786b2ac18987e42",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+      "mode": "100644",
+      "sha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "acceptedSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "currentSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "stagedSha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c",
+      "stagedBlob": "6c8e8387ade97834f18ebf09068c66e8bdd9532c",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+      "mode": "100644",
+      "sha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "acceptedSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "currentSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "stagedSha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408",
+      "stagedBlob": "b8cd3dbbcc67eb7a63b8e22cd97f04b020328d6f",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+      "mode": "100644",
+      "sha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "acceptedSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "currentSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "stagedSha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e",
+      "stagedBlob": "5542f357628ea4ca910fac7431cf6be49cfb8a5a",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "sha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "acceptedSha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "currentSha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "stagedSha256": "6b307fb77c7a1910954544d62d2358124c8a7ce25d643616df1f75a6d4d7de24",
+      "stagedBlob": "4a3e45e910dc41d7b6cf9e8af5997e33de85a68c",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "mode": "100644",
+      "sha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "acceptedSha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "currentSha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "stagedSha256": "a64e69b3d8d5fee08d52ad6d49a7057ab584cb12ae37ef30caf54a072d6e1084",
+      "stagedBlob": "664c138fa12869c7307a16e0a8401f2b8ee7923a",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+      "mode": "100644",
+      "sha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "acceptedSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "currentSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "stagedSha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9",
+      "stagedBlob": "212b647e8c18afcd74a89316a128f078304cb8db",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "mode": "100644",
+      "sha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "acceptedSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "currentSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "stagedSha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d",
+      "stagedBlob": "d882419ed55e6d1e9d387d3744bc11974fd23b5a",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+      "mode": "100644",
+      "sha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "acceptedSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "currentSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "stagedSha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb",
+      "stagedBlob": "fe42de937a55ba27827efd443a0f793688c922d6",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+      "mode": "100644",
+      "sha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "acceptedSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "currentSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "stagedSha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a",
+      "stagedBlob": "bfa9f940e774e35d0e5374b902fc09a02d20dbe6",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+      "mode": "100644",
+      "sha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "acceptedSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "currentSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "stagedSha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d",
+      "stagedBlob": "b3797dbedc9366caf20221e40652cf64150145ef",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+      "mode": "100644",
+      "sha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "acceptedSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "currentSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "stagedSha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d",
+      "stagedBlob": "2c2cb2a0ca142eb454384cbb2a9a4377d31a3e66",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+      "mode": "100644",
+      "sha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "acceptedSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "currentSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "stagedSha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58",
+      "stagedBlob": "c25277a7b06572b2847b9bbaf68fd3261015143d",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+      "mode": "100644",
+      "sha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "acceptedSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "currentSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "stagedSha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c",
+      "stagedBlob": "3f59e6a42a62c3bfcfb7152cb22908de7e194976",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+      "mode": "100644",
+      "sha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "acceptedSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "currentSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "stagedSha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27",
+      "stagedBlob": "10b0a2bd32a9be26daa3206d00be95cc899c0dec",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "sha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "acceptedSha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "currentSha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "stagedSha256": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789",
+      "stagedBlob": "10c0badc9456b66afe5b9101c4d65d9e0da5bab0",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+      "mode": "100644",
+      "sha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "acceptedSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "currentSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "stagedSha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba",
+      "stagedBlob": "4666db8210947c5273c27b27e2b1abffd00c8b11",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "mode": "100644",
+      "sha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "acceptedSha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "currentSha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "stagedSha256": "d021dc60d049829ed72c32e5662d4085d526b21a9df707c9febcdee363b5d5f4",
+      "stagedBlob": "4741199cadacc21a5bcb51bcd183f9f3b7a488ab",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "mode": "100644",
+      "sha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "acceptedSha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "currentSha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "stagedSha256": "2049a489371abb656dee8c7a9ab9ef4205012a734be79adc314363e5d895ee6d",
+      "stagedBlob": "122a61ce6ce0fbca187404b345fd58c8f3982fa0",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "mode": "100644",
+      "sha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "acceptedSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "currentSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "stagedSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+      "stagedBlob": "98cab556ccd492a9ff5930c623f95d7ab3776d38",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+      "mode": "100644",
+      "sha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "acceptedSha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "currentSha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "stagedSha256": "b3b5acfd281cf9c74fd816e70d88c58e8d1c573707c15312a877bb76b75f9ba7",
+      "stagedBlob": "037dfd5f70de29f021ec5ed566add782b9d36e43",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "mode": "100644",
+      "sha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "acceptedSha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "currentSha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "stagedSha256": "3e0d7cddde64edf9f3aef7a4704e7188eb8d1dd72cc267d9684996a347bc5d0f",
+      "stagedBlob": "dea7f2d92f9a725153e9d33051164cf6ce8f9ad2",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+      "mode": "100644",
+      "sha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "acceptedSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "currentSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "stagedSha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7",
+      "stagedBlob": "c109fd09e769af04fd8df64031e0b170197ce6a0",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "mode": "100644",
+      "sha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "acceptedSha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "currentSha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "stagedSha256": "3a7d3aa79fa4e1a12296887fa5850e282a3388df8d3588dd9949bcc794103a06",
+      "stagedBlob": "0d6b46cff6c9218acb134b010f728187247cc403",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+      "mode": "100644",
+      "sha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "acceptedSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "currentSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "stagedSha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "stagedBlob": "f169f48eb9345ef0e62c38b45392e3f8d6c3ba3d",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+      "mode": "100644",
+      "sha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "acceptedSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "currentSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "stagedSha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e",
+      "stagedBlob": "1e65ca225281ca9f780fd5263c60bd28c25d8daa",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "mode": "100644",
+      "sha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "acceptedSha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "currentSha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "stagedSha256": "32bd391e9f9918c6e880086b52faec0d15bba3d8d1be19a783fb29f78e20a431",
+      "stagedBlob": "d982ccd0ca63b7056db866d9728c2f79af155c0d",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "mode": "100644",
+      "sha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "acceptedSha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "currentSha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "stagedSha256": "a14b59f046eb3793d673050f15c3bbef649b31ad92401b66e37ea139b611129b",
+      "stagedBlob": "754edf108d5425bf8c6726da3149f01a1e6b21cd",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "mode": "100644",
+      "sha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "acceptedSha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "currentSha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "stagedSha256": "27d305c20a6b3b70db4962f18ef0797288d62e7e63a8589426df34f07e229243",
+      "stagedBlob": "83ac1b97a71cd8dc6ffb5eee8322d69a97380d30",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "mode": "100644",
+      "sha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "acceptedSha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "currentSha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "stagedSha256": "93e83703fb93e2214333aa60987dd942fe426f283bcc6eeb9073a9e01ecde777",
+      "stagedBlob": "966d6afde7db89aa8011dcece71cba1014745055",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/core-local-qa-guard.sh",
+      "mode": "100644",
+      "sha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "acceptedSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "currentSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "stagedSha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "stagedBlob": "41d99b0dec30afe8107509920114ca28ff46359e",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/reviewed-input-identities.json",
+        "entry": "array[].path",
+        "value": "scripts/recovery/dtf-migration/core-local-qa-guard.sh"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+      "mode": "100644",
+      "sha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "acceptedSha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "currentSha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "stagedSha256": "5f2c39ccd33e2ae13c13e89d80567c809f065ee3110b862b4c66ae8669f7033b",
+      "stagedBlob": "6c5bb3b5d50240ea5f372ceb60bb4f985420484d",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "mode": "100644",
+      "sha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "acceptedSha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "currentSha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "stagedSha256": "607104c33e5f1b0b328088c65ba5c0fec47fb4b31ff3068bf83bcdb73c30b13e",
+      "stagedBlob": "13e30d5111405f1cf5a91f6a393f22ba0fd3ff6c",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+      "mode": "100644",
+      "sha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "acceptedSha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "currentSha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "stagedSha256": "b2c723a7e1647a07a3b11955f94a35413ba041dd89f921603f83df6d344613a8",
+      "stagedBlob": "c41cb1e7b2e677ea232fd811f8706863a39bbb2f",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+      "mode": "100644",
+      "sha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "acceptedSha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "currentSha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "stagedSha256": "32b55815b5dede2cf5696065ae584988bde452bbdf04e956c2a83d0f66fd4aa3",
+      "stagedBlob": "81921c178cd53ac7d25461a5ee4bd7b22cc6009e",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "mode": "100644",
+      "sha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "acceptedSha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "currentSha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "stagedSha256": "1f54eb372e14ec216d57c750dcebd63ea6c91702e3ec00de785377c107fa0736",
+      "stagedBlob": "049dd184cca3abe090d8c9b8799afe952d0387af",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+      "mode": "100644",
+      "sha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "acceptedSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "currentSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "stagedSha256": "51900ad3c98e867717a10e76d336e2af037a3be2cc4e956b2841ea4cf78de100",
+      "stagedBlob": "53002f848fda339227d7a3ae08ac4209f65b39a8",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol",
+      "mode": "100644",
+      "sha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "acceptedSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "currentSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "stagedSha256": "b31fd2c2e99bbfea7bb5afc953779cb8285503f159e6221ab5da6ce979f72f11",
+      "stagedBlob": "11931171bd3aed686f6f2bd603b484d549c03d3c",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+      "mode": "100644",
+      "sha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "acceptedSha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "currentSha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "stagedSha256": "8f5585aedcf871c31e09bb49841c0dff897182f245556f1c5fdb046c23a8828e",
+      "stagedBlob": "d0feebf6098e500d4e3c8e4df6058c23bc30285b",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+      "mode": "100644",
+      "sha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "acceptedSha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "currentSha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "stagedSha256": "17e005477c9c2bba583edc33cbda880f25a54be96f2d8dce50b23d3cbae38226",
+      "stagedBlob": "5c0723f956112988e133a01f40b061d85d77c749",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "mode": "100644",
+      "sha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "acceptedSha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "currentSha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "stagedSha256": "b5264a8df159810a287b4e4ca4e419a2df47389334136b6223fd92fae1b5b9c3",
+      "stagedBlob": "48e92623df7fd468bef905256cf303132f3406da",
+      "initialStatus": "??",
+      "acceptanceEvidence": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/artifact-source-binding.json",
+        "entry": "sources[].path",
+        "value": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol"
+      },
+      "verdictEvidence": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md"
+    }
+  ],
+  "preservation": {
+    "initialIndexSerialization": "git ls-files --stage -z (raw bytes)",
+    "initialIndexSha256": "2dcff68860a4f16e66f9afba1f870507c64eb3e98b7aeeb7011702ad09a3fc69",
+    "stagedIndexSha256": "2f991d84d21e7647d73a329bda0a0b479e08e5f3dd849c4a474e505cd49b9a41",
+    "initialStatusSha256": "47c50540182ef4d7d22f43823a0b10c9b268f3f3469d040d53c1dde27cc24aeb",
+    "initialDirtyPathCount": 7949,
+    "refsBefore": [
+      "refs/heads/main 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/heads/work/dtf-migration 6e27ecaa242c4acca132e3575a160514aad07b11",
+      "refs/heads/work/dtf-migration-phase-01 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/heads/work/dtf-migration-phase-02 215c2bba6aa75e3e79bf68b7980b730927a85817",
+      "refs/heads/work/dtf-migration-phase-03 6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+      "refs/heads/work/dtf-migration-phase-04 6e27ecaa242c4acca132e3575a160514aad07b11",
+      "refs/remotes/origin/HEAD 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/remotes/origin/codex/robinhood-release-review 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0 0c3558b2ec9571873a787eef4becbdddafc6ce7b",
+      "refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6 a1a2b239593a90a062a8d477395f6b7fc3a473f7",
+      "refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9 3a4001f8a017be2b8b3e988b3fb1fcff454b6a01",
+      "refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6 41bbe4eec3ce9279b205058063b3b69f6be2b149",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8 8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21 3a8205815ac3f4307de10ab27e813a56847d779c",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21 92eeb98dad898aa12b83191e029a9e74112c295b",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7 27de3dc71df885634fda1b1fea448e3b499898c3",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13 f0d69de54820d1b844f304dc0c7bcf990f0b57a1",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea 74ef9f247f0b1a661fb338738e8300bd0c7f05eb",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731 bdd8e74ea3902897ca98d8312e5c195d9dbd5a33",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb 92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18 f4f3a424d8b286c5b0940694835e958f91d24c74",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8 1319a76e08a306e77926a20feb6b95250e64b348",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2 549159d0b0c86fc0818f9e628315ddfef984ae4c",
+      "refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9 fb6f85b84a9f85dbb6dcb368b75111ecb6257a6c",
+      "refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2 05de656fd06346486bec9e9c7c17ce58508f5aac",
+      "refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24 924b83b300fb1e3938cc48e3ecd474a855775a3e",
+      "refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1 ad6c641aa4dcb582185a136fda6f342ffd8fb103",
+      "refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18 ffb2652457d73cb8ced157853b9fd7b1ca883065",
+      "refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8 4db81ae56cec60663566fd79f82c08bcf15859d7",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8 eae337a55ff219b56208c6eff11bf9cdb45d6a34",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7 98c7f0ac0cbf5c08666680a411a4b4a836fb0b73",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5 27d0cbfada90a5f6b546ed712e04dc0c5d8e4154",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26 f149ade544a68566d09a3ab3b7f6000873be6de8",
+      "refs/remotes/origin/docs/agent-inventory-navigation 950e6b32ea8efff73226a0adf6a7e0b75828127a",
+      "refs/remotes/origin/feat/uniswap-v4-upper-lower-wings 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/feature/crane-ethereum-staking-ports 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/fix/legacy-v4-erc5115-interface 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/fix/uniswap-se-v2-delivery 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/frontend/multi-app-monorepo 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/gh-pages 6724a5e5c762394797c3508ae1db7d6c0dbdac78",
+      "refs/remotes/origin/main 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/remotes/origin/refactor/frontend-shared-deployment-root 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/upgrade/nextjs-16 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/stash 7321b70c984423699475cfb45907b6dd70bb8ef4"
+    ],
+    "dependencyLinks": [
+      {
+        "path": "lib/crane",
+        "gitEntry": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0\tlib/crane",
+        "symlink": true,
+        "target": "/Users/cyotee/Projects/indexedex/lib/crane"
+      }
+    ],
+    "baselineFile": "preservation-baseline.json"
+  },
+  "limits": "No original plan checkbox closed. All legacy, source/attribution, recovery, surrender, harvest, operator/resume, full-release and production authorization gates remain open."
+}

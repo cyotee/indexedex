@@ -1,0 +1,50 @@
+[
+  {
+    "claimant": "0x00dd7939597bc43820ffb2b4e834f26924012b3d",
+    "eligible": "18077396",
+    "floor": "100",
+    "final": {
+      "weight": "7000000000000000000",
+      "weightSupply": "15318051546808403036783894",
+      "shares": "276550981740467441073",
+      "vaultSupply": "276550981740467441073",
+      "walletSy": "100",
+      "vaultSy": "27655098206",
+      "sySupply": "54373903396",
+      "custodySy": "18077396",
+      "allowance": "0",
+      "booked": "18077396",
+      "rewards": "204498784479836920680",
+      "donorWeight": "44847781291192882058339",
+      "relayerSy": "0",
+      "walletShares": "0"
+    },
+    "nonceBefore": "0x4",
+    "nonceAfter": "0x5",
+    "lateFailure": "0xa31adcd3ccfb22420f3ab5d7419fabad1bc98b36a19585d8ea0e05ffe4631e12"
+  },
+  {
+    "claimant": "0xb6958d92ff436fa5d7ea550a22283fe9eaf458e9",
+    "eligible": "18077396",
+    "floor": "101",
+    "final": {
+      "weight": "7000000000000000000",
+      "weightSupply": "15318051546808403036783894",
+      "shares": "276550981740467441073",
+      "vaultSupply": "276550981740467441073",
+      "walletSy": "101",
+      "vaultSy": "27655098206",
+      "sySupply": "54373903396",
+      "custodySy": "36154792",
+      "allowance": "0",
+      "booked": "18077396",
+      "rewards": "204498784479836920680",
+      "donorWeight": "44847781291192882058339",
+      "relayerSy": "0",
+      "walletShares": "0"
+    },
+    "nonceBefore": "0x2",
+    "nonceAfter": "0x3",
+    "lateFailure": "0x72ec1d9bf464bc40f4906b710de967cfa9f66a7a9f841af2c888061730c4f2e8"
+  }
+]

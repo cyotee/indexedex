@@ -11,6 +11,8 @@ import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation 
 import {MigrationLegacyRecoveryLib as Legacy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
 
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+
 /// @notice Synthetic eligibility fractions, not evidence of approved historical exclusions or allocations.
 contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration {
     bytes32 constant ORIGIN = bytes32("synthetic remaining original");
@@ -39,13 +41,13 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         assertNotEq(expected_, requoted_);
         uint256 supply_ = IERC20(detf).totalSupply();
         vm.prank(migrationOwner);
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         Migration.WeightedSyEntitlement memory c_ = migration.weightedSyEntitlement(ORIGIN);
         assertEq(c_.credit, expected_);
         assertEq(c_.original.originalEth, 1 ether);
         assertEq(c_.original.originalDtf, 1 ether);
         assertEq(c_.original.originalUnits, 7);
-        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, a_[0])));
+        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, a_[0])));
         (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(ORIGIN);
         assertEq(original_, 3 ether);
         assertEq(eligible_, 2 ether);
@@ -63,11 +65,11 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         a_[0].eligibleWeight = (type(uint256).max - 1) / 2;
         assertGt(full_, type(uint256).max / a_[0].eligibleWeight);
         vm.prank(migrationOwner);
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         assertEq(migration.weightedSyEntitlement(ORIGIN).credit, full_ / 2);
         a_[0].eligibleWeight = a_[0].originalWeight;
         vm.prank(migrationOwner);
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         assertEq(migration.weightedSyEntitlement(ORIGIN).credit, full_);
         bytes memory before_ = abi.encode(migration.weightedSyEntitlement(ORIGIN));
         for (uint256 i_; i_ < 5; ++i_) {
@@ -84,7 +86,7 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
             }
             vm.prank(migrationOwner);
             vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, ORIGIN));
-            allocation.configureClaimedSyEntitlements(a_);
+            allocation.configureClaimedSyEntitlements(a_, pricingId);
             assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), before_);
         }
     }
@@ -97,20 +99,20 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         uint256 supply_ = IERC20(detf).totalSupply();
         uint256 full_ = migration.previewOriginalCredit(1 ether, 1 ether);
         vm.startPrank(migrationOwner);
-        allocation.configureWeightedSyEntitlements(ordinary_);
-        allocation.configureClaimedSyEntitlements(a_);
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureWeightedSyEntitlements(ordinary_, pricingId);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         vm.stopPrank();
         assertEq(migration.weightedSySurrender(ORIGIN).remainingCredit, full_ * 2 / 3);
         assertEq(migration.weightedSySurrender(ORIGIN).remainingUnits, 7);
         vm.prank(migrationOwner);
-        allocation.configureWeightedSyEntitlements(ordinary_);
+        allocation.configureWeightedSyEntitlements(ordinary_, pricingId);
         (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(ORIGIN);
         assertEq(original_, 0);
         assertEq(eligible_, 0);
         assertEq(migration.weightedSySurrender(ORIGIN).remainingCredit, full_);
         assertEq(migration.weightedSyEntitlement(ORIGIN).configurationId,
-            keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, ordinary_[0])));
+            keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, ordinary_[0])));
         assertEq(migration.weightedSySurrender(ORIGIN).deliveredCredit, 0);
         assertEq(migration.weightedSySurrender(ORIGIN).consumedUnits, 0);
         assertEq(IERC20(detf).totalSupply(), supply_);
@@ -120,14 +122,14 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
     function test_sourceAuthorityAndInvalidSecondInputRollbackBothWeightsAndCredit() public {
         Migration.ClaimedSyEntitlementInput[] memory a_ = _input();
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         a_[0].original.source = Legacy.WEIGHTED_DETF;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedWeightedSySource.selector, 4663, Legacy.WEIGHTED_DETF));
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         a_ = _input();
         vm.prank(migrationOwner);
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         bytes memory before_ = abi.encode(migration.weightedSyEntitlement(ORIGIN));
         Migration.ClaimedSyEntitlementInput[] memory batch_ = new Migration.ClaimedSyEntitlementInput[](2);
         batch_[0] = a_[0];
@@ -137,7 +139,7 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         batch_[1].original.contributionsKnown = false;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, batch_[1].original.originalId));
-        allocation.configureClaimedSyEntitlements(batch_);
+        allocation.configureClaimedSyEntitlements(batch_, pricingId);
         assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), before_);
         (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(ORIGIN);
         assertEq(original_, 3 ether);
@@ -149,7 +151,7 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
     function test_partialOriginCollidesWithIndependentAndLiquidInBothDirections() public {
         Migration.ClaimedSyEntitlementInput[] memory a_ = _input();
         vm.prank(migrationOwner);
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
         _configure(address(this), 1 ether, ORIGIN);
         Migration.WeightedLiquidEntitlementInput[] memory d_ = new Migration.WeightedLiquidEntitlementInput[](1);
@@ -158,27 +160,27 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         );
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
-        allocation.configureWeightedLiquidEntitlements(d_);
+        allocation.configureWeightedLiquidEntitlements(d_, pricingId);
         d_[0].originalId = bytes32("liquid first");
         vm.prank(migrationOwner);
-        allocation.configureWeightedLiquidEntitlements(d_);
+        allocation.configureWeightedLiquidEntitlements(d_, pricingId);
         a_[0].original.originalId = d_[0].originalId;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, d_[0].originalId));
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         bytes32 independent_ = bytes32("independent first");
         _configure(address(this), 1 ether, independent_);
         a_[0].original.originalId = independent_;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, independent_));
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
     }
 
     /// @notice Both loaders retire while the bound weights, hash and remaining ledger stay readable.
     function test_activationRemovesBothLoadersAndRetainsBoundWeights() public {
         Migration.ClaimedSyEntitlementInput[] memory a_ = _input();
         vm.prank(migrationOwner);
-        allocation.configureClaimedSyEntitlements(a_);
+        allocation.configureClaimedSyEntitlements(a_, pricingId);
         bytes memory before_ = abi.encode(migration.weightedSyEntitlement(ORIGIN));
         _buyOwnerFirstBond();
         vm.prank(migrationOwner);
@@ -186,11 +188,36 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureClaimedSyEntitlements.selector), address(0));
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedSyEntitlements.selector), address(0));
         assertNotEq(IDiamondLoupe(detf).facetAddress(Migration.claimedSyWeights.selector), address(0));
-        (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureClaimedSyEntitlements, (a_)));
+        (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureClaimedSyEntitlements, (a_, pricingId)));
         assertFalse(ok_);
         assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), before_);
         (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(ORIGIN);
         assertEq(original_, 3 ether);
         assertEq(eligible_, 2 ether);
+    }
+
+    /// @notice A-prepared rows cannot clear or reprice storage after installing B; explicit B reload replaces only configuration.
+    function test_StaleBook_ClaimedSyReplacementPreservesRecords() public {
+        Migration.ClaimedSyEntitlementInput[] memory a_ = _input();
+        bytes32 old_ = pricingId;
+        vm.prank(migrationOwner); allocation.configureClaimedSyEntitlements(a_, old_);
+        bytes memory record_ = abi.encode(migration.weightedSyEntitlement(ORIGIN));
+        bytes memory remaining_ = abi.encode(migration.weightedSySurrender(ORIGIN));
+        uint256 supply_ = IERC20(detf).totalSupply();
+        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        next_.swapFeeWad = 1e17;
+        vm.prank(migrationOwner); pricingId = allocation.setMigrationWeightedPricing(next_);
+        assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), record_);
+        assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), remaining_);
+        vm.prank(migrationOwner);
+        vm.expectRevert(abi.encodeWithSelector(Pricing.MigrationWeightedPricingBookMismatch.selector, old_, pricingId));
+        allocation.configureClaimedSyEntitlements(a_, old_);
+        assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), record_);
+        assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), remaining_);
+        vm.prank(migrationOwner); allocation.configureClaimedSyEntitlements(a_, pricingId);
+        assertEq(migration.weightedSyEntitlement(ORIGIN).configurationId, keccak256(abi.encode(block.chainid, detf, pricingId, a_[0])));
+        assertNotEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), record_);
+        assertEq(IERC20(detf).totalSupply(), supply_);
+        assertEq(receipt.stakingState().totalGons, 0);
     }
 }

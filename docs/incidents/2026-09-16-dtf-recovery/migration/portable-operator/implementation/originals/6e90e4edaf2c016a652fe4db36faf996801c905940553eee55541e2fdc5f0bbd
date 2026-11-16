@@ -1,0 +1,1 @@
+{"abi":[{"type":"event","name":"StandardizedYieldWired","inputs":[{"name":"rawSY","type":"address","indexed":true,"internalType":"address"},{"name":"stakingSY","type":"address","indexed":true,"internalType":"address"}],"anonymous":false}],"id":1612}

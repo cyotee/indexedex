@@ -1,0 +1,84 @@
+{
+  "date": "2026-11-11",
+  "purpose": "Finite scope clarification requested by root; not a complete native handler/runtime audit",
+  "revision": "70fa99a6e711f09eedd96a907290c3df0f3bcf7d",
+  "sources": [
+    {
+      "path": "precompiles/precompile.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/precompile.go",
+      "sha256": "c284cea90f037b84048ba59306d73fb7bce25b15e2e469ebc898c0d8b9838d3d",
+      "bytes": 33644,
+      "inspectedRanges": [
+        [
+          1,
+          300
+        ],
+        [
+          515,
+          895
+        ]
+      ]
+    },
+    {
+      "path": "precompiles/ArbInfo.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbInfo.go",
+      "sha256": "d7ba3232f9587c93fb020d24405c20cf8f99373972a53152c0286826d4e3a401",
+      "bytes": 1203,
+      "inspectedRanges": [
+        [
+          1,
+          38
+        ]
+      ]
+    },
+    {
+      "path": "precompiles/ArbStatistics.go",
+      "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/ArbStatistics.go",
+      "sha256": "84d420a95f8fa1c10aa78db0ffc4009a542cec4ab502b6bba4a7486393605e7a",
+      "bytes": 1282,
+      "inspectedRanges": [
+        [
+          1,
+          27
+        ]
+      ]
+    }
+  ],
+  "registrationNames": [
+    "ArbInfo",
+    "ArbAddressTable",
+    "ArbBLS",
+    "ArbFunctionTable",
+    "ArbosTest",
+    "ArbGasInfo",
+    "ArbAggregator",
+    "ArbStatistics",
+    "ArbOwnerPublic",
+    "ArbWasm",
+    "ArbWasmCache",
+    "ArbRetryableTx",
+    "ArbSys",
+    "ArbOwner",
+    "ArbDebug",
+    "ArbosActs",
+    "ArbNativeTokenManager",
+    "ArbFilteredTransactionsManager"
+  ],
+  "sourceObservations": {
+    "registry": "precompile.go:515-701 constructs a finite 18-family registration set; 736-766 checks version, method selector, caller context, purity and value",
+    "abiBinding": "precompile.go:120-241 binds metadata ABI methods to handlers and rejects missing exported handlers",
+    "ArbInfo": "ArbInfo.go:18-36 returns account balance/code only, not a history root",
+    "ArbStatistics": "ArbStatistics.go:17-25 returns current L2 number and five zero legacy statistics"
+  },
+  "limits": [
+    "Not all 18 handler families or ABI metadata were audited",
+    "Source revision is archive-reported, not runtime attestation of whole native implementation",
+    "No extra public RPC calls, fork or compilation",
+    "Absence of a current-prefix root from previously tested interfaces remains established; no new concrete freshness capability discovered"
+  ],
+  "failedDiscovery": {
+    "url": "https://raw.githubusercontent.com/OffchainLabs/nitro/70fa99a6e711f09eedd96a907290c3df0f3bcf7d/precompiles/precompiles.go",
+    "result": "404: Not Found",
+    "correction": "GitHub contents API at the same revision identified precompile.go"
+  }
+}

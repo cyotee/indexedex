@@ -1,0 +1,244 @@
+{
+  "checkedAt": "2026-11-10T15:12:22.576Z",
+  "solidity": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/utils/StandardExchangeFrozenQuoteLib.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/utils/StandardExchangeFrozenQuoteLib.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+      "text": "warning[solar] (2018) at 351:4: function state mutability can be restricted to pure",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [
+          {
+            "file": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+            "diagnostic": {
+              "range": {
+                "start": {
+                  "line": 350,
+                  "character": 4
+                },
+                "end": {
+                  "line": 352,
+                  "character": 5
+                }
+              },
+              "severity": 2,
+              "code": "2018",
+              "source": "solar",
+              "message": "function state mutability can be restricted to pure"
+            }
+          }
+        ],
+        "totalDiagnostics": 1,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+      "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol within 3000ms.",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false,
+        "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol within 3000ms.",
+        "errorKind": "freshness_timeout"
+      }
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol",
+      "text": "No diagnostics found",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false
+      }
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+      "text": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol within 3000ms.",
+      "details": {
+        "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+        "severity": "all",
+        "mode": "file",
+        "diagnostics": [],
+        "totalDiagnostics": 0,
+        "truncated": false,
+        "error": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol within 3000ms.",
+        "errorKind": "freshness_timeout"
+      }
+    }
+  ],
+  "auxiliary": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/run.sh",
+      "status": "bash-language-server not installed; no install attempted"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/runtime-sizes.json",
+      "status": "biome not installed; JSON was generated from parsed artifacts; no install attempted"
+    }
+  ],
+  "earlierScriptError": "Missing @crane/contracts/interfaces/IStandardExchangeInMulti.sol import corrected to contracts/interfaces/IStandardExchangeInMulti.sol; interim 3000ms diagnostic timeouts were not counted as clean."
+}

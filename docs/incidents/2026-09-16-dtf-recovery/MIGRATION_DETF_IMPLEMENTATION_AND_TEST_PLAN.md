@@ -1,14 +1,16 @@
 # Migration DETF implementation and test plan
 
+- **Owner scope correction, 2026-11-15:** Remove the custom migration operator application. The current deliverable is working migration contracts and simple native Foundry scripts. Earlier requirements for a TypeScript CLI, preparation application, portable execution bundles, custom transaction journals and application-level crash recovery are withdrawn, including where they appear in historical plans or completion criteria. Contract authorization, pricing, custody, funded issuance, activation and conservation requirements remain. Use [the Foundry runbook](migration/foundry-runbook.md); historical operator reports are retained as evidence only.
 - **Date:** 2026-11-10.
 - **Revision:** migration-detf-implementation-plan-r7-token-staking-migrated-exposure.
 - **Scope clarification:** 2026-11-13; TokenStaking is included because its backing was migrated into the old DTF DETF. Plain DTF holdings are not compensation claims. Section 1.6 supersedes the earlier exclusion.
 - **Owner clarification:** 2026-11-11; original-wallet configured surrender is Stage 2-only, enabled atomically with ordinary deposits and permanent entitlement-loader removal; sections 1.3-1.5 govern, including the paid owner-first-bond prerequisite.
 - **Status:** Implementation-and-test work plan; execution and deployment are not authorized by this file.
 - **Baseline:** [MIGRATION_DETF_DRAFT_PRD.md](MIGRATION_DETF_DRAFT_PRD.md), revision `migration-detf-discussion-r20`, with the later owner-approved clarifications in section 1 of this plan.
+- **Pricing amendment:** 2026-11-14; section 1.10 governs all conflicting pricing, capture, replacement and activation language. The older PRD, evidence archives and review reports remain historical and are not rewritten.
 - **Approval:** After reviewing the initialization, arguments, stored data, formulas, surrender and harvesting workflow, the owner said: "Good, all of that looks correct. Please write the implementation plan file."
 - **Deliverable boundary:** This plan is the only new artifact produced by the planning task. The PRD, historical ledger, frozen evidence, contracts and scripts are not changed.
-- **Execution prerequisites:** Source-specific custody, surrender conservation and frozen-quote reproduction must pass the explicit evidence gates below. Historical holder ancestry is not a prerequisite. Planning does not establish that all deployed legacy routes already work.
+- **Execution prerequisites:** Source-specific custody, surrender conservation and supported manual Weighted pricing reproduction must pass the explicit evidence gates below. Historical holder ancestry is not a prerequisite. Planning does not establish that all deployed legacy routes already work.
 
 ## 1. Accepted requirements and precedence
 
@@ -16,8 +18,8 @@ The later owner clarifications govern where r20 differs. An executor must read t
 
 | ID | Accepted requirement |
 | --- | --- |
-| MIG-P01 | Quote the **original entitlement** once, using its verified original ETH and DTF contributions against the same frozen post-funding snapshot. Sum the two user-DETF outputs. Neither configuration nor quoting mints DETF. |
-| MIG-P02 | Distribute that precomputed credit proportionally as eligible assets are surrendered. Do not run the nonlinear mint preview again on smaller partial contributions. Combining already quoted entitlements sums their credits; batching does not redefine the economic quote unit. |
+| MIG-P01 | Quote the **original entitlement** once at each explicit configuration load, using its verified original ETH and DTF contributions against one complete, domain-bound manual Weighted pricing book. Sum the two user-DETF outputs. Neither configuration nor quoting mints DETF. |
+| MIG-P02 | Distribute the credit stored by that explicit load proportionally as eligible assets are surrendered. Do not run the nonlinear mint preview again on smaller partial contributions. Combining already quoted entitlements sums their credits; batching does not redefine the economic quote unit. A later pricing-book change does not alter stored credit; only explicit full configuration replacement computes replacement credit. |
 | MIG-P03 | For a fixed-principal old NFT, read original principal and actual remaining principal. The new credit is `floor(originalCredit * remainingPrincipal / originalPrincipal)`. Remaining principal includes still-locked principal, excludes already withdrawn principal, and excludes rewards. |
 | MIG-P04 | A burned, nonexistent or empty old NFT earns no migration credit. Its configuration need not be deleted. Check the actual position at surrender; configuration is not proof that principal remains. |
 | MIG-P05 | Whole-NFT surrender consumes that source NFT identity completely. The credit corresponding to withdrawn principal does not remain available for another NFT migration. A supported token/receipt obtained by claiming follows its own source-defined surrender rule; do not pay twice for the same remaining underlying claim. |
@@ -25,10 +27,10 @@ The later owner clarifications govern where r20 differs. An executor must read t
 | MIG-P07 | Each new compensation/migration bond has a 90-day principal cliff from its actual creation timestamp. Later surrender creates a new clock, not an addition to or restart of an earlier bond. Migration has no new expiry deadline. |
 | MIG-P08 | Rewards participate from actual bond creation, but every new-instance reward payout requires activation. Activation neither backdates nor discards accrual. Preserve the separate principal obligation. |
 | MIG-P09 | Independent compensation remains a distinct, recipient-keyed Stage 1 path without surrender. Configuration does not issue it; explicit execution creates a funded bond. It cannot overlap exposure awaiting surrender. |
-| MIG-P10 | Stage 1 supports idempotent, complete configuration replacement, including previously processed records. Keep configuration separate from issuance, consumption and custody. Corrections cannot resize delivered bonds, reopen consumption, or create retroactive top-ups/deductions. |
-| MIG-P11 | Activation atomically opens ordinary new money, eligible legacy surrender and reward payouts, and removes all entitlement configuration/amendment and discretionary compensation issuance selectors. Stage 1 rejects every surrender-triggered credit route before custody or consumption. No owner, factory, initializer, generic cut or indirect execution route may restore configuration or expose an intermediate open state. |
-| MIG-P12 | The proxy's current Crane Ownable owner administers configuration, activation and harvesting. Initial ownership is explicit in `PkgArgs`. Fee recipient, creator, deployer and registry authority remain distinct. There is no contribution-price setter. |
-| MIG-P13 | Scripts arrange reserve funding before dependent snapshot/configuration/issuance work. No independent funding-complete or configuration-finalization gates. All-leg donations and later harvested-asset donations remain supported. |
+| MIG-P10 | Stage 1 supports idempotent, complete configuration replacement, including previously processed records, under the book current for that explicit load. Keep configuration separate from issuance, consumption and custody. A pricing-book replacement alone changes no existing configuration; explicit configuration replacement cannot resize delivered bonds, reopen consumption, or create retroactive top-ups/deductions. A recipient's current configuration under book B may coexist with its immutable earlier issuance under book A. |
+| MIG-P11 | Activation atomically opens ordinary new money, eligible legacy surrender and reward payouts, and removes the manual Weighted pricing setter, every entitlement configuration/amendment loader and every discretionary compensation issuance selector. Stage 1 rejects every surrender-triggered credit route before custody or consumption. Activation requires the completed paid owner-first bond, not a set book or all-records-current pricing. No owner, factory, initializer, generic cut or indirect execution route may restore configuration or expose an intermediate open state. |
+| MIG-P12 | The proxy's current Crane Ownable owner administers complete manual Weighted pricing, configuration, activation and harvesting throughout Stage 1. Initial ownership is explicit in `PkgArgs`. Fee recipient, creator, deployer and registry authority remain distinct. The pricing setter remains available after the paid first ordinary bond and is removed only by successful activation; there is no separate pricing lock. |
+| MIG-P13 | Scripts arrange reserve funding before dependent configuration/issuance work. Pricing correctness is not a new on-chain funding gate. No independent funding-complete, pricing-readiness or configuration-finalization gates. All-leg donations and later harvested-asset donations remain supported. |
 | MIG-P14 | Harvesting is owner-only, bounded, whole-batch atomic and optionally staged. Assets stay in recovery custody between stages, with the new DETF as their fixed eventual donation destination. No ordinary bond purchase with harvested DETF. |
 | MIG-P15 | Retain every accepted legacy category and both generations. The surrendering wallet must be the wallet recorded for the original qualifying acquisition/contribution, have a matching configured entitlement, and actually hold and surrender the eligible asset. A different current holder does not inherit that wallet's configured compensation. Partial surrender consumes only the applicable proportional credit from the recorded entitlement. No intermediate-transfer ancestry proof or legacy-transfer notification is required. |
 
@@ -36,10 +38,10 @@ The later owner clarifications govern where r20 differs. An executor must read t
 
 - MIG-D07, MIG-D13, MIG-D26, MIG-D29, MIG-R13, MIG-R16, MIG-R25 and MIG-R42 must be read with MIG-P03 through MIG-P05: the original contribution is still the quote input, but remaining eligible principal determines the **fraction delivered**.
 - The original contribution is not reduced and re-quoted. `preview(originalContribution) * remainingFraction` is the rule, not `preview(originalContribution * remainingFraction)`.
-- MIG-R24 through MIG-R26 and MIG-AC21 through MIG-AC24 continue to fix pricing, but subsequent surrender consumes stored credit rather than calling a live or partial-input mint preview.
+- MIG-R24 through MIG-R26 and MIG-AC21 through MIG-AC24 are superseded by section 1.10 where they require automatic capture or prohibit a pricing setter. Explicit loads fix stored credit against the selected manual book, and subsequent surrender consumes stored credit rather than calling a live or partial-input mint preview.
 - MIG-R33/MIG-R36 and MIG-AC35/MIG-AC39/MIG-AC41 must be read with the later same-wallet restriction in section 1.3: actual surrender is required, but configured compensation does not move to another wallet with a token transfer. No ledger observing intermediate legacy transfers is required.
 - MIG-AC07, MIG-AC36 and MIG-AC49 no longer require the same delivered amount after principal has been withdrawn. Rewards still do not add credit.
-- The stale "price setting" role in MIG-R41 grants no authority.
+- The stale "price setting" role in MIG-R41 grants no separate authority; section 1.10 instead gives the current proxy owner the complete manual Weighted pricing setter during Stage 1 only.
 - Older loss-ledger valuation formulas, blanket 1:1 conversion, linear output-rate setters, no-credit-after-custody wording and linear vesting do not supersede these requirements.
 
 The plan records these overrides without rewriting the PRD or historical evidence. Numerical recipient allocations, funding split and real deployment addresses remain execution inputs, not approved amounts.
@@ -62,13 +64,13 @@ For every token, receipt, NFT or claim surrender, require a matching configured 
 
 Check configuration and wallet identity before taking custody, consuming credit or minting/funding a bond. Missing configuration or a mismatched wallet reverts the entire transaction without asset movement, consumption, supply change or a new bond. Existing consumed/issued records and the remaining eligible amount still limit subsequent use. Successful surrender credits the same eligible wallet, never an arbitrary beneficiary.
 
-An ordinary transfer to another wallet does not transfer the configured compensation record. The recorded original wallet can surrender only assets it actually controls; no intermediate transfer history is required. Original ETH/DTF records and frozen quotes remain attached to the configured entitlement, with partial delivery and rounding tracked against that record. Independent compensation remains its separate no-surrender path; permissionless capital donations do not require a personal entitlement and do not earn one.
+An ordinary transfer to another wallet does not transfer the configured compensation record. The recorded original wallet can surrender only assets it actually controls; no intermediate transfer history is required. Original ETH/DTF records and stored quotes remain attached to the configured entitlement until explicit full replacement, with partial delivery and rounding tracked against that record. Independent compensation remains its separate no-surrender path; permissionless capital donations do not require a personal entitlement and do not earn one.
 
 ### 1.4 Owner-approved Stage 2-only surrender
 
-The owner explicitly approved rejecting legacy-asset surrender in Stage 1 and enabling it only in the same atomic activation that enables ordinary new-capital deposits and removes every entitlement configuration/amendment and discretionary compensation issuance selector. This supersedes all earlier statements allowing preactivation surrender.
+The owner explicitly approved rejecting legacy-asset surrender in Stage 1 and enabling it only in the same atomic activation that enables ordinary new-capital deposits and removes the manual Weighted pricing setter, every entitlement configuration/amendment loader and every discretionary compensation issuance selector. This supersedes all earlier statements allowing preactivation surrender.
 
-Stage 1 permits configuration, reserve funding, independent compensation issuance, and the current owner's paid first ordinary bond under section 1.5. Every token/NFT/claim surrender-triggered credit entrypoint rejects before taking custody, changing consumption or issuing a bond. Stage 2 allows surrender only against frozen configured original-wallet entitlements. Use the same finalized activation state; no extra switch or callback-accessible intermediate state is allowed.
+Stage 1 permits configuration, reserve funding, independent compensation issuance, and the current owner's paid first ordinary bond under section 1.5. Every token/NFT/claim surrender-triggered credit entrypoint rejects before taking custody, changing consumption or issuing a bond. Stage 2 allows surrender only against stored configured original-wallet entitlements. Use the same finalized activation state; no extra switch or callback-accessible intermediate state is allowed.
 
 Because configuration and surrender cannot overlap, no partly surrendered migration entitlement can be amended. Delete the proposed remaining-fraction correction versus post-use lock choice: neither is needed. Independent compensation already issued during Stage 1 remains governed by its distinct issued-fact preservation rules. Principal clocks start when each bond is actually created; activation does not reset existing independent-compensation clocks.
 
@@ -80,9 +82,9 @@ This is a narrow first-purchase exception, not an owner bypass for all acquisiti
 
 All other Stage 1 ordinary acquisitions and all legacy surrender remain closed. Reward accrual follows existing funded accounting, while every Stage 1 reward payout, including fee/creator delivery, remains gated. The purchased bond retains ordinary purchased-bond terms; compensation and surrender bonds retain their separate 90-day cliff. The purchase is paid capital, not compensation or a use of harvested recovery inventory.
 
-Activation checks completed owner purchase before changing selectors or stage. Independent compensation alone must not unlock activation. After the purchase, activation retains its all-or-nothing cut and opens ordinary deposits, eligible surrender and reward payouts. Postactivation ordinary purchases retain their normal permissions. Preserve frozen snapshot semantics and all previously configured credit; do not recapture or reprice the snapshot because a bond was purchased. Operator sequencing includes the paid purchase and reconciles a confirmed purchase rather than replaying it on resume.
+Activation checks completed owner purchase before changing selectors or stage. Independent compensation alone must not unlock activation. After the purchase, activation retains its all-or-nothing cut and opens ordinary deposits, eligible surrender and reward payouts. Postactivation ordinary purchases retain their normal permissions. Preserve all previously configured credit across pricing-book updates and the paid purchase; the purchase does not replace or reprice the current manual book. The setter remains available after the purchase until activation. Operator sequencing includes the paid purchase and reconciles a confirmed purchase rather than replaying it on resume.
 
-Acceptance: prove current-owner-only real Stage 1 purchase and normal economics, failed-purchase rollback, nonowner/pending-owner/former-owner and other-acquisition rejection, activation rejection without that purchase even with independent compensation, successful activation and ordinary deposit after purchase, Stage 1 reward-payout closure, and unchanged Stage 2 NFT/W-L surrender/recovery. No test may hide D1 by merely adding unrelated compensation to the fixture.
+Acceptance: prove current-owner-only real Stage 1 purchase and normal economics, failed-purchase rollback, nonowner/pending-owner/former-owner and other-acquisition rejection, activation rejection without that purchase even with independent compensation, continued current-owner pricing replacement after purchase and its activation removal, successful activation and ordinary deposit after purchase, Stage 1 reward-payout closure, and unchanged Stage 2 NFT/W-L surrender/recovery. No test may hide D1 by merely adding unrelated compensation to the fixture.
 
 ### 1.6 Owner correction: TokenStaking contains migrated old-DETF exposure
 
@@ -96,15 +98,15 @@ Plain DTF holdings still use ordinary new-money deposits and do not create a mig
 
 On 2026-11-13 the owner directed: "Count the WETH and DTF as separate contributions producing two new compensationbond NFTs." This applies to weighted collection `0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e`, token ID `3`: `999999000000000` raw18 WETH and `362893857600000000000` raw18 DTF.
 
-Keep these as two original contributions, quote each against the same frozen funded snapshot, and create two separately funded compensation bonds rather than summing them into one bond. This overrides the single-bond wording of MIG-P06 for this configured two-original position. The existing original-wallet, Stage 2, remaining-principal and whole-NFT surrender rules still apply: one successful surrender consumes the old NFT once and delivers both contribution bonds atomically. Apply the remaining-principal fraction separately to each stored original credit, without re-quoting partial inputs. A failure creating either bond reverts both issuances, source custody and consumption. This is not independent compensation or permission to credit the same original through another representation.
+Keep these as two original contributions, quote each against the same complete manual Weighted pricing book current for that explicit load, and create two separately funded compensation bonds rather than summing them into one bond. This overrides the single-bond wording of MIG-P06 for this configured two-original position. The existing original-wallet, Stage 2, remaining-principal and whole-NFT surrender rules still apply: one successful surrender consumes the old NFT once and delivers both contribution bonds atomically. Apply the remaining-principal fraction separately to each stored original credit, without re-quoting partial inputs. A failure creating either bond reverts both issuances, source custody and consumption. This is not independent compensation or permission to credit the same original through another representation.
 
-Acceptance: verify distinct frozen quotes and funded bond principals, one source custody/consumption record, replay rejection, Stage 1 complete replacement without accumulating old components, and rollback when the second issuance fails. Both bonds receive their actual creation-time 90-day cliffs. The decision fixes the original quantities and separate-bond treatment; it does not approve a funded snapshot, final numerical credits or an operational issuance transaction.
+Acceptance: verify distinct manual-book quotes and funded bond principals, one source custody/consumption record, replay rejection, Stage 1 complete replacement without accumulating old components, and rollback when the second issuance fails. Both bonds receive their actual creation-time 90-day cliffs. The decision fixes the original quantities and separate-bond treatment; it does not approve a particular pricing book, selected live production reserve composition, final numerical credits or an operational issuance transaction.
 
 ### 1.8 Partially claimed TokenStaking: one conserved original
 
 On 2026-11-13, the owner selected "One conserved original" for still-held eligible TokenStaking claims and their already-claimed SY, with disposed or previously compensated portions excluded. Keep one canonical economic original and its full ETH/DTF contribution quote across those representations. Neither a conversion nor a second representation creates another full-credit entitlement.
 
-An eligible remainder uses the original frozen credit multiplied by its verified eligible fraction, never the mint preview of reduced contributions. Where the admitted source preparation consolidates that eligible remainder into measured SY, retain the original raw-weight denominator, eligible raw-weight numerator and measured SY quantity as distinct fields. Require complete coverage of the configured eligible remainder and exclude competing representations. Partial SY surrender then uses section 5.4's remaining-Q/remaining-C rule, including its final rounding residue.
+An eligible remainder uses the original stored credit multiplied by its verified eligible fraction, never the mint preview of reduced contributions. Where the admitted source preparation consolidates that eligible remainder into measured SY, retain the original raw-weight denominator, eligible raw-weight numerator and measured SY quantity as distinct fields. Require complete coverage of the configured eligible remainder and exclude competing representations. Partial SY surrender then uses section 5.4's remaining-Q/remaining-C rule, including its final rounding residue.
 
 This clarification does not make raw TokenStaking weights approved-pull tokens, waive actual custody, or authenticate an unsupported delegated-wallet claim. A preliminary source claim does not itself pay compensation; failure of a later Migration surrender restores that surrender's SY and credit, not a previously completed source transaction. Historical eligibility and exclusions still require reviewed evidence.
 
@@ -118,6 +120,20 @@ The owner conditionally accepts permanent custody only where there truly is no w
 
 This clarification governs MIG-P14, E1, tasks 1/8/10 and the completion standard. A source-specific permanent-custody disposition requires the above evidence; it does not remove surrender, compensation, custody or any still-possible future reward harvest.
 
+### 1.10 Owner amendment: complete manual Weighted pricing and keep-until-reloaded
+
+**Date:** 2026-11-14.
+
+The owner selects Weighted Hook compensation pricing from complete manually configured calculation inputs. Inputs may represent observed state or deliberately adjusted compensation policy. The current proxy owner may atomically replace the complete manual book throughout Stage 1, including after the paid first ordinary bond, until the existing activation transaction removes every pricing/configuration/independent-issuance selector. There is no separate pricing lock, readiness lifecycle, compare-and-swap setter or all-records-current gate.
+
+Each full economic original is quoted with the supported canonical Weighted calculation at explicit configuration time. Manual pricing changes affect new previews and subsequent explicit loads only; existing credits and configuration identities remain unchanged until explicit full replacement. Immutable issuance, consumption, custody and bond facts are never resized, reopened or repriced by either operation. Every quote-sensitive loader checks one expected book ID atomically before quotation or mutation. Economic-original identity excludes mutable pricing; replaceable configuration provenance includes the complete domain-bound book ID.
+
+Raw inventory, SE inventory, rates, scales, weights, fee, seigniorage and supported V3 deposit operands are the authoritative calculation inputs. Preserve canonical mapping, units, rounding, fee/user split and limits. Do not substitute linear output prices, flat buffered conversion rates, independently editable derived balances, live fallback, partial-input re-quotation or a universal nested-vault model. Source identity, original contributions, custody and conservation still require authenticated evidence. Manual inputs are not historical-state attestations.
+
+E3 closes when the declared supported manual models reproduce canonical supported observed-state fixtures, honor deliberately adjusted inputs and reject unsupported domains, with no live dependency during evaluation. No selected live production reserve composition or numerical award is approved by this amendment. Funding remains before dependent operational configuration and issuance; pricing correctness is not a new on-chain funding gate. All unrelated requirements and owner clarifications remain in force.
+
+Precedence and review reconciliation: this section supersedes conflicting active capture/no-setter language in the baseline PRD and earlier sections. The older `MIGRATION_DETF_DRAFT_PRD.md`, evidence archives and `docs/reviews/dtf-migration-plan-execution-20261114/REMEDIATION_PRD.md` remain historical and are not rewritten. Review F2's live-composition prerequisite is superseded for pricing; its canonical supported-domain differential-evidence obligation remains in amended E3. Review F1 and F3-F6 still require closure: named completion artifacts, authenticated source closure and operator records, the full resumable rehearsal, a substantive adversarial TestBase and target-gas measurements remain implementation/evidence obligations. This amendment closes none of those runtime gates and authorizes no allocation or deployment.
+
 ## 2. Implementation grounding
 
 All paths in this plan are repository-relative. A proposed file is explicitly marked new.
@@ -127,8 +143,8 @@ All paths in this plan are repository-relative. A proposed file is explicitly ma
 | Base interface and arguments | `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol`, `PkgArgs` | Reuse compatible base arguments; define Migration args on a new interface. Do not add owner fields to every ordinary package. |
 | Package composition and initialization | `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol`, `facetCuts`, `initAccount`, `calcSalt`, `postDeploy` | Compose a distinct package; preserve metadata, registry, self-leg and child wiring. Include owner in Migration salt material while preserving deliberate hook-address prediction behavior. |
 | Registry deployment | `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol` | Existing helper uses `vaultRegistry.deployPkg` and artifact bytecode; use the same registered path. |
-| Mint preview | `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:175` | `_entryPreviewMint` is live and includes a swap fallback. Calling it unchanged does not implement frozen migration pricing. |
-| Pair conversion and gross quote | `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:170` and `:259` | Preserve `_pairEq` route semantics and `_quoteMintGross` uplift; freeze their dependencies. |
+| Mint preview | `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:175` | `_entryPreviewMint` is live and includes a swap fallback. Calling it unchanged does not implement manual Weighted migration pricing. |
+| Pair conversion and gross quote | `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:170` and `:259` | Preserve `_pairEq` route semantics and `_quoteMintGross` uplift; supply their complete effective dependencies through the manual book. |
 | User/inventory split | `contracts/vaults/detf/common/core/DETFMintSplitLib.sol:19` | Use `_splitLiveGross` user output, not gross, ordinary bond bonus, or an invented linear rate. |
 | Weighted quote orchestration | `contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol:39` and `:138` | Quote can use raw/buffered reserves, provider rates, underlying SE deposit/redemption previews and disable-dependent branches. Two raw balances alone are insufficient. |
 | Weighted fee/math | `contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol`, `applyTradingFeeNet`, `quoteExactIn` | Preserve fee rounding, scales, weighted exact-in domain limits and output-budget conversion. |
@@ -159,7 +175,7 @@ Use these existing incident artifacts:
 - `positions.csv`, `held-exclusions.csv`, `custody-inventory.csv`, `observed-recoveries.csv`, `conversions.csv`, `exceptions.csv`: reconciliation inputs, not ready-to-issue allocations.
 - `account-ledger.csv`: historically non-issuable. Never upload it directly as current compensation.
 
-The recorded chain is Robinhood Chain, ID 4663. The pre-incident last full block is 64394556; attack block is 64394557. The later weighted evidence cutoff is 108944663 on November 8, 2026. None of these is the new reserve's funded snapshot.
+The recorded chain is Robinhood Chain, ID 4663. The pre-incident last full block is 64394556; attack block is 64394557. The later weighted evidence cutoff is 108944663 on November 8, 2026. None of these selects or authenticates the new reserve's manual pricing book.
 
 Recorded identities below come from the provenance report, not a fresh on-chain validation:
 
@@ -187,7 +203,7 @@ These gates are work-product checks, **not new on-chain lifecycle flags**. They 
 | --- | --- | --- |
 | E1: source route closure | For every accepted category/generation, pin address, runtime identity, units, ownership read, surrender operation, remaining-unit read and harvest/conversion route. Demonstrate custody and rollback on a local fork. | Record the concrete missing method or incompatible behavior. Do not mark a category supported, silently omit it, or change its entitlement rule. |
 | E2: configured-wallet surrender and conservation | Demonstrate actual surrender by the recorded original wallet against its matching configured entitlement, only after activation, with preactivation rejection proven. Reject unconfigured wallets and other current holders. Measure eligible units received or claims extinguished; consume only that record's available credit and prevent double use. No intermediate-transfer proof or owner update is needed. | Fix concrete configuration, wallet-binding, custody or consumption failures. Do not accept balances alone, create entitlements during surrender, introduce mutable postactivation approvals or require transfer ancestry. |
-| E3: frozen quote closure | Implement a snapshot evaluator reproducing the mint branch and all amount-dependent nested quote inputs under the actual configured weighted reserve routes. Later changes to any live dependency must not affect it. | Do not replace the calculation with rates, current reads, a different hook, or split large entitlements to bypass quote limits. Report unsupported quote domains concretely. |
+| E3: manual Weighted quote closure | Implement one manual-book evaluator for the declared supported Weighted models. Reproduce canonical supported observed-state fixtures, honor deliberately adjusted inputs and reject unsupported domains, with no live dependency during evaluation. | Do not substitute linear output prices, flat buffered conversion rates, independently editable derived balances, live fallback, a different hook or split large entitlements to bypass quote limits. Report unsupported quote domains concretely. No selected live production reserve composition or numerical award is required by this gate. |
 | E4: donation bootstrap | Demonstrate an empty new instance reaching a funded, quoteable reserve with ordinary new money disabled, without fabricating user bonds or preminting migration entitlements. Separately account for any required reserve self-leg. | Existing live donation success does not close this gate. Specify and test the Migration-only bootstrap adaptation before loading operational entitlements. |
 | E5: payout closure | Enumerate DETF, bond, staking/SY and callback paths; no Stage 1 reward payout, no early migration principal, no ordinary-package behavioral regression. Include unexpectedly long Stage 1. | Do not rely on the operator activating quickly, and do not invent a principal lock extension or defer accrual. Fix the route composition before completion. |
 
@@ -206,11 +222,12 @@ This directory and the Migration files below are new. Reuse compatible ordinary 
 | Planned component | Responsibility |
 | --- | --- |
 | `interfaces/IUniswapV4DetfMigration.sol` | Product structs, events, errors and persistent/configuration surfaces |
+| `interfaces/IUniswapV4DetfMigrationWeightedPricing.sol` | Complete manual pricing tuples, book type, setter/getter types and pricing events/errors |
 | `interfaces/IUniswapV4DetfMigrationDFPkg.sol` | Interface-owned `PkgInit`/`PkgArgs`, including explicit owner and compatible base args |
-| `UniswapV4DetfMigrationRepo.sol` | Lifecycle, snapshot, source configs, entitlement configs, separate consumption and custody accounting |
-| `UniswapV4DetfMigrationAllocationTarget.sol` / `Facet.sol` | Stage 1 source/entitlement loading and replacement, snapshot capture, independent compensation issuance and one-time activation; all callable selectors removable |
-| `UniswapV4DetfMigrationTarget.sol` / `Facet.sol` | Persistent surrender, quote/entitlement queries and bounded custody/harvest operations |
-| `UniswapV4DetfMigrationSnapshotLib.sol` | Frozen-state evaluation using existing mint split and canonical weighted arithmetic; no live fallback |
+| `UniswapV4DetfMigrationRepo.sol` | Lifecycle, replaceable manual pricing book, source configs, entitlement configs, separate consumption and custody accounting |
+| `UniswapV4DetfMigrationAllocationTarget.sol` / `Facet.sol` | Stage 1 complete manual pricing setter, source/entitlement loading with expected-book checks and replacement, independent compensation issuance and one-time activation; all callable selectors removable |
+| `UniswapV4DetfMigrationWeightedHookTarget.sol` / `Facet.sol` | Persistent surrender, manual-book/original-credit queries and bounded custody/harvest operations |
+| `UniswapV4DetfMigrationWeightedPricingLib.sol` | Pure manual-book evaluation using existing mint split and canonical weighted arithmetic; no live dependency |
 | `UniswapV4DetfMigrationDFPkg.sol` | Registered package composition, ownable initialization, child packages, gated ordinary issuance surfaces |
 | `UniswapV4DetfMigration_Component_FactoryService.sol` and `UniswapV4DetfMigration_Pkg_FactoryService.sol` | CREATE3 facets and registry package deployment using artifact bytecode |
 | `bondNft/UniswapV4DetfMigrationBondNFTVault{Target,Facet,DFPkg}.sol` and interface | Reuse funded custody/accounting; migration-position cliff and new-instance reward gating |
@@ -236,21 +253,21 @@ If selector or bytecode size requires splitting a target, split within this boun
 
 ## 5. Data and arithmetic contract
 
-### 5.1 Domains, units and immutable snapshot
+### 5.1 Domains, units and replaceable manual pricing book
 
-Use native integer units throughout. ETH/WETH and historical DTF are 18-decimal inputs for this recovery; DETF credit is native 9-decimal units. Earlier receipts, LP shares, gons and staking weights retain source-specific units. Snapshot observations are not automatically original eligible quantities. Parse CSV/JSON quantities as integer strings, never floating point. An unknown blank value is not zero.
+Use native integer units throughout. ETH/WETH and historical DTF are 18-decimal inputs for this recovery; DETF credit is native 9-decimal units. Earlier receipts, LP shares, gons and staking weights retain source-specific units. Manual pricing inputs are not automatically original eligible quantities and may represent observed state or deliberately adjusted policy. Parse CSV/JSON quantities as integer strings, never floating point. An unknown blank value is not zero.
 
-Identify a source by chain, deployed source contract and source kind. The NFT entitlement key includes collection and token ID. Domain-separate any commitments by chain ID, Migration proxy and snapshot identity to prevent cross-instance replay.
+Identify a source by chain, deployed source contract and source kind. The NFT entitlement key includes collection and token ID. Domain-separate replaceable configuration commitments by chain ID, Migration proxy and complete manual book ID to prevent cross-instance replay. Economic-original identity excludes mutable pricing; configuration provenance includes the book ID.
 
-Snapshot storage must contain, or make immutably available, the complete evaluator inputs:
+Manual pricing storage contains one complete current evaluator book:
 
-- Hook/token ordering, effective raw and buffered balances, weights and scales.
-- Frozen fee and seigniorage fractions.
-- Provider-rate values and source-specific nested deposit/redemption quote state where required.
-- Contribution-to-pair routes and output-budget conversion state.
-- Snapshot identity and capture block provenance.
+- Hook/token ordering, effective raw and SE inventories, weights and scales.
+- Fee and seigniorage fractions.
+- Stored rates and supported V3 deposit operands for the declared Raw, RawRate, DisabledBuffer and EnabledV3Buffer models.
+- Contribution-to-pair routes and output-budget conversion operands.
+- Domain-bound book identity and setter provenance. That provenance authenticates owner-configured inputs, not historical pool state.
 
-A hash or timestamp alone is not an evaluator. Snapshot capture reads the configured contracts; the owner does not submit arbitrary output prices. Capture once after actual funding and before dependent configuration. Later funding is a donation, not permission to recapture or reprice. Scripts check the observed state against their intended funding transaction receipts.
+A hash or timestamp alone is not an evaluator. The current owner atomically replaces the complete calculation inputs, never a caller-provided output credit or linear output price. The setter validates mathematical and structural domains without live calls or live-state equality. Every quote-sensitive loader checks its expected book ID before quotation or mutation. Replacing the book changes new previews and later explicit loads only; it does not mutate stored configurations, credits, economic originals, issuance, consumption, custody or bonds. Explicit full configuration replacement uses the then-current book. Scripts keep funding before dependent operational configuration and issuance, without a new funding or pricing-finalization gate. Later donations and live-state changes do not alter the current book or stored credits.
 
 ### 5.2 Original-credit calculation
 
@@ -258,8 +275,8 @@ For each original entitlement `i`, retain original ETH/DTF components `E_i` and 
 
 ```text
 W = 10^18
-p = frozen seigniorage fraction
-S = frozen quote book
+p = manual-book seigniorage fraction
+S = selected complete manual Weighted pricing book
 
 pairEq(a, x) = existing contribution-to-pair preview evaluated on S
 boosted(a, x) = floor(pairEq(a, x) * (W + p) / W)
@@ -273,7 +290,7 @@ C_i = U(ETH, E_i) + U(DTF, D_i)
 The hook fee is inside `gross`, once:
 
 ```text
-fee = floor(boosted * frozenSwapFeeWad / W)
+fee = floor(boosted * manualSwapFeeWad / W)
 net = boosted - fee
 ```
 
@@ -291,12 +308,12 @@ Minimum semantic fields (packing is an implementation detail):
 | --- | --- | --- |
 | NFT | Source identity, original acquiring wallet, original components, original eligible units, computed `C_i`, explicit configuration/evidence identity | Consumed flag, same-wallet surrendering owner, measured eligible units, minted credit, custody position and new bond ID |
 | Independent compensation | Recipient, consolidated distinct original-entitlement components/credits and evidence identity | Issued flag/record, actual delivered amount and bond ID(s) |
-| Fungible entitlement | Original acquiring wallet, supported source/class or claim identity, original contribution/native units and frozen credit basis, explicit configuration identity; no intermediate-holder history | Actual eligible units surrendered by that wallet, remaining/delivered credit, source consumption and recovery custody; ordinary transfers do not move this record |
+| Fungible entitlement | Original acquiring wallet, supported source/class or claim identity, original contribution/native units and stored credit basis, explicit configuration identity; no intermediate-holder history | Actual eligible units surrendered by that wallet, remaining/delivered credit, source consumption and recovery custody; ordinary transfers do not move this record |
 | Custody position | Immutable source identity and permitted recovery route | Actual assets held, claimed amounts, intermediate conversions, undonated amounts and remaining rights |
 
-Query surfaces live in the retained facet. Keep only configuration/administration operations on the removable facet so its entire callable surface can disappear.
+Query surfaces live in the retained facet. Keep only configuration/administration operations on the removable facets so their entire callable surfaces can disappear.
 
-Setters accept complete replacement values and recompute configuration with the same snapshot. They never accept a caller-provided `creditToMint`. Identical configuration is idempotent. Configuration revision/evidence events permit scripts to reconcile replacements.
+The pricing setter accepts complete replacement manual inputs and atomically replaces the current book without recomputing any configuration. Configuration setters accept complete replacement values and recompute configuration with the current book only during an explicit load, after checking the expected book ID and before quotation or mutation. They never accept a caller-provided `creditToMint`. Identical configuration under the same book is idempotent. Configuration revision/evidence events permit scripts to reconcile replacements and retain accepted A/B histories. Economic-original identity excludes the book ID; configuration identity includes it. Replacing the book alone leaves configuration and credit unchanged, and a recipient's current B configuration may coexist with immutable A issuance.
 
 Migration entitlement configurations may be replaced only in Stage 1, when all surrender is disabled and no migration units or credit can have been consumed. Once activation enables surrender, every configuration/amendment route is permanently removed. There is no partially surrendered entitlement correction policy: such a correction is unreachable. Independent compensation issuance remains a separate Stage 1 operation; its actual issued amounts and bond facts are preserved across authorized configuration replacements, without duplicate payment or retroactive adjustments.
 
@@ -318,7 +335,7 @@ Read the remaining **total principal**, not just currently vested/claimable prin
 
 After whole-NFT custody, mark the whole identity consumed. `C_i - creditToMint` is not another remaining NFT claim. A return/cancellation route is forbidden.
 
-For partial fungible surrender against the source-defined eligible claim and frozen credit basis:
+For partial fungible surrender against the source-defined eligible claim and stored credit basis:
 
 ```text
 Q = remaining eligible units
@@ -392,18 +409,18 @@ The following fixes semantic arguments and authority. Final source-adapter tuple
 | --- | --- | --- |
 | Deploy Migration package/instance | Registry path; interface-defined base args, nonzero owner, ownership buffer initialization | Initialize proxy once, wire real children, start Stage 1 |
 | All-leg donation/bootstrap | Supported assets/amounts, native ETH value where selected, deadline/minimums appropriate to route | Measure receipt, initialize or add reserve liquidity; no personal credit |
-| `captureMigrationSnapshot()` | Current owner; no arbitrary prices | Capture once after funding; no token issuance |
+| `setMigrationWeightedPricing(Inputs)` | Current owner; complete manually configured calculation inputs | Atomically set or replace the complete Stage 1 book and return its ID; no token issuance or configuration/credit mutation; remains available after the paid first bond and is removed by activation |
 | Source configuration batch | Current owner; typed verified source definitions | Stage 1 only; replace complete config without changing execution history |
-| NFT configuration batch | Current owner; original acquiring wallet, collection, ID, original components, verified baseline when source cannot expose it | Compute/store `C_i` and wallet binding; do not issue |
-| Fungible/claim configuration batch | Current owner; original acquiring wallet, matching source/claim, original units and frozen valuation configuration | Stage 1 only; no reset of prior consumption; no intermediate-holder history |
-| Independent allocation batch | Current owner; recipient and distinct original-entitlement components | Consolidate by recipient, quote and store; do not issue |
+| NFT configuration batch | Current owner; original acquiring wallet, collection, ID, original components, verified baseline when source cannot expose it, expected book ID as the final scalar | Check the expected book, then compute/store `C_i` and wallet binding; do not issue |
+| Fungible/claim configuration batch | Current owner; original acquiring wallet, matching source/claim, original units and stored valuation configuration, expected book ID as the final scalar | Stage 1 only; check the expected book before quotation/mutation; no reset of prior consumption; no intermediate-holder history |
+| Independent allocation batch | Current owner; recipient and distinct original-entitlement components, expected book ID as the final scalar | Check the expected book, consolidate by recipient, quote and store; do not issue |
 | Independent issuance batch | Current owner; recipients/configuration identities | Create funded cliff bonds exactly once under current configurations |
 | First paid ordinary bond | Current owner in Stage 1; existing paid purchase arguments | Actual payment and funded principal; records the completed prerequisite under section 1.5; normal reward accounting and Stage 1 payout gate |
-| `activateMigration()` | Current owner; no caller-selected cut; completed owner-paid first bond required | Atomic activation and removal, including its own one-time administration selector |
+| `activateMigration()` | Current owner; no caller-selected cut; completed owner-paid first bond required | Atomic activation and removal, including the pricing setter and its own one-time administration selector; no set-book or all-records-current gate |
 | NFT surrender | Recorded original wallet, also the actual owner; collection, ID, minimum credit, deadline | Stage 2 only; require matching configuration; verify remaining position; whole custody; proportional credit into a fresh bond |
 | Fungible surrender | Recorded original wallet holding the asset; source, quantity, source-specific claim identifier only where needed, minimum credit, deadline | Stage 2 only; require matching configuration; partial atomic measured custody/consumption and a fresh bond; no transfer-ancestry proof |
 | Nontransferable claim surrender | Recorded original wallet controlling the claim; typed source claim identity and supported operation | Stage 2 only; require matching configuration; atomically extinguish/control the old claim and receive assets/rights; no surviving independent credited claim |
-| Read/preview operations | Public; source/position/amount | Show frozen original credit, live eligible fraction and expected current award; no live repricing |
+| Read/preview operations | Public; source/position/amount | `migrationWeightedPricing()` and `previewOriginalCredit(...)` expose the current book and full-original quote and revert while unset; configured views show stored original credit, live eligible fraction and expected current award; no live repricing |
 | Harvest/convert/donate batches | Current owner; bounded source positions, fixed supported routes, minimum outputs/deadlines | No beneficiary parameter; proceeds stay in recovery custody or enter the new DETF |
 
 No user-controlled historical amounts, original principal, output credit, arbitrary beneficiary, trusted pretransfer flag or source adapter address on surrender. Missing matching entitlement configuration or a wrong original-wallet identity reverts before custody, consumption or issuance; no automatic configuration fallback exists. Safe-transfer callbacks accept only the expected source/token/operation and do not trigger a second credit. Unsolicited asset transfers are not migrations.
@@ -411,12 +428,14 @@ No user-controlled historical amounts, original principal, output credit, arbitr
 ### 6.1 Activation implementation
 
 1. Verify current owner, Stage 1 and completed owner-paid first bond under section 1.5; enter the shared reentrancy guard.
-2. Assemble the exact removable selector set from the deployed Migration administration facet definition. Resolve and check actual current facet ownership.
+2. Assemble the exact removable selector set from both deployed Migration administration facet definitions, including the manual pricing setter, every quote-sensitive loader, independent issuance and activation. Resolve and check actual current facet ownership.
 3. Apply the local ERC2535 removal with each selector's owning facet address; use no arbitrary initializer/delegatecall. The current `_processFacetCut` skips a zero facet address entirely, so a generic zero-address removal cut would not remove the selectors.
 4. Set finalized activation within the same transaction, emit the activation event, and return. No external callback may observe usable partial activation.
 5. Any failure reverts routing, activation and all other state.
 
 A repeat call may be an absent selector after removal. It must never reinstall authority or modify finalized state. Verify all factory, package, ERC8109/cut, initialization and callback surfaces, not just a public `diamondCut` name. Ownership transfers after activation move only still-available permissions.
+
+All reads survive activation. Activation does not require pricing to be set or every accepted record to use the latest book. Mixed A/B configurations and a recipient's current B configuration with immutable A issuance remain verifiable after the cut.
 
 Normal Vault Registry disable/re-enable remains independent. Map existing inbound and exit checks route by route; do not blanket-disable mature exits or interpret finalized activation as bypassing the registry.
 
@@ -429,14 +448,14 @@ Test strategy: implement each behavior with a regression test capable of failing
 | Task | Depends on | Deliverable |
 | --- | --- | --- |
 | 1 | None | Source/custody/conservation closure and reproducible valuation inputs |
-| 2 | Source routes from 1 | Exact frozen preview evaluator and oracle vectors |
+| 2 | Source routes from 1 | Exact manual Weighted preview evaluator and differential vectors |
 | 3 | 1, 2 | Migration package, owner, bootstrap, lifecycle and real TestBase |
-| 4 | 2, 3; E2 for fungible path | Configuration/execution storage and loaders |
+| 4 | 2, 3; E2 for fungible path | Configuration/execution storage and expected-book loaders |
 | 5 | 3 | Funded migration bond child and payout gates |
 | 6 | 1, 4, 5 | Atomic source-specific surrender and credit |
-| 7 | 3, 4, 5, 6 | Complete ordinary gate and irreversible activation |
+| 7 | 3, 4, 5, 6 | Complete ordinary gate and irreversible activation including the pricing cut |
 | 8 | 1, 3, 6 | Bounded staged custody recovery/donation |
-| 9 | 1 through 8 | Reproducible preparation and resumable scripts |
+| 9 | 1 through 8 | Reproducible mixed-book preparation and resumable scripts |
 | 10 | 1 through 9 | Full integration, adversarial, invariant and fork evidence |
 
 ## Todos
@@ -452,14 +471,14 @@ Test strategy: implement each behavior with a regression test capable of failing
   - QA: pinned fork `MigrationLegacySources` suite; include transferred NFTs, burned and reward-only NFTs, partial claims, rebasing receipts, wrapped ownership, and source-defined nontransferable-claim custody/consumption and rollback. Do not infer a raw-weight approved pull from a claimed-SY success. Record chain/block/hash and code identity.
   - Evidence: `migration/source-manifest.json`, `migration/source-route-matrix.md`, `migration/surrender-spec.md` and fork run receipts. Preserve older attribution-investigation artifacts as historical evidence, not current prerequisites.
 
-- [ ] 2. Implement exact frozen original-entitlement pricing.
+- [ ] 2. Implement exact manual Weighted original-entitlement pricing.
   - Recommended task executor category: deep-high.
-  - Add `UniswapV4DetfMigrationSnapshotLib.sol` and narrowly factor existing quote math only where required for reuse. Read the source anchors in section 2.
-  - Close E3 with a full dependency inventory and exact frozen-state evaluator for the actual reserve/routes. Freeze fee/provider/SE-dependent values, not only reserves. A stored hash or scalar price is insufficient.
+  - Add `interfaces/IUniswapV4DetfMigrationWeightedPricing.sol` and `UniswapV4DetfMigrationWeightedPricingLib.sol`, reshaping the prior pricing interface/library into one evaluator. Narrowly factor existing quote math only where required for reuse. Read the source anchors in section 2.
+  - Close E3 with a complete manual-input inventory and exact pure evaluator for the declared supported reserve models. The owner supplies fee/provider/SE-dependent values, not only reserves; evaluation makes no live calls. A stored hash or scalar price is insufficient.
   - Use section 5.2. Preserve zero-component handling, native units, fee rounding, seigniorage rounding, nonlinear quote domains and original-entitlement grouping.
-  - Acceptance: on identical pre-capture state, frozen calculation equals the canonical mint-branch result; live-state changes cannot alter it. Large original contributions outside existing quote limits fail explicitly rather than being secretly chunked.
-  - QA: `MigrationSnapshot` suite with real weighted hooks, rate-bearing buffered legs, asymmetric decimals, threshold below mint gate, fee changes, pool movements, zero/one/two contribution components, rounding boundaries and invalid quote domains.
-  - Evidence: frozen input vectors and differential outputs in `migration/quote-evidence.md`; exact source-read inventory.
+  - Acceptance: supported observed-state fixtures equal the canonical mint-branch result; deliberately adjusted inputs change new quotes without live-state equality; later live-state changes and book replacement cannot alter existing stored credit. Large original contributions outside existing quote limits fail explicitly rather than being secretly chunked. Setting B after loading A preserves A credit, configuration identity and originals until explicit B replacement.
+  - QA: `MigrationWeightedPricing` suite with real weighted hooks, Raw/RawRate/DisabledBuffer/EnabledV3Buffer models, rate-bearing buffered legs, asymmetric decimals, threshold below mint gate, deliberate manual adjustments, fee changes, pool movements, zero/one/two contribution components, rounding boundaries and invalid quote domains.
+  - Evidence: manual input vectors and differential outputs in `migration/quote-evidence.md`; exact supported-input inventory.
 
 - [ ] 3. Compose the owner-configured package and donation bootstrap.
   - Recommended task executor category: deep-low.
@@ -476,11 +495,11 @@ Test strategy: implement each behavior with a regression test capable of failing
 - [ ] 4. Implement separate configuration and consumption records.
   - Recommended task executor category: deep-high.
   - Add removable allocation target/facet and retained queries. Implement typed source, NFT, fungible/claim and recipient configuration with full-value replacement.
-  - Compute credit on-chain from the frozen snapshot. Scripts supply verified quantities, not arbitrary quoted awards.
+  - Compute credit on-chain from the current manual book at explicit configuration load. Every quote-sensitive loader takes the expected book ID as its final scalar and checks it before quotation or mutation. Scripts supply verified quantities, not arbitrary quoted awards. Economic-original identity excludes the book; configuration identity includes it.
   - Keep consumed NFT identities, independent issuance, custody and partial-fungible execution records outside replaceable configuration semantics.
   - Identical replays leave state equivalent and never issue. Correcting an already consumed identity never enables another payout. Correcting an unconsumed remainder must not recalculate delivered credit as a delta.
-  - Acceptance: Stage 1 `100 -> 60 -> 60` configuration stores 60 without duplication; increases/decreases after delivery preserve bonds and history; source collections sharing a numeric ID remain distinct.
-  - QA: `MigrationConfiguration` suite, including partial consumption/transfer followed by correction, batch regrouping, mixed independent and held exposure, unauthorized callers and source-definition replacements that must not redirect existing custody.
+  - Acceptance: Stage 1 `100 -> 60 -> 60` configuration stores 60 without duplication; increases/decreases after delivery preserve bonds and history; source collections sharing a numeric ID remain distinct. An A-prepared load after B is set reverts; setting B alone preserves A credit/configuration/originals; explicit B replacement preserves immutable A issuance, bonds and custody, including a recipient with current B configuration and issuance A.
+  - QA: `MigrationConfiguration` suite, including partial consumption/transfer followed by correction, batch regrouping, mixed independent and held exposure, A/B stale-load and same-recipient cases, unauthorized callers and source-definition replacements that must not redirect existing custody.
   - Evidence: configuration/execution state transition table and exact event reconciliation.
 
 - [ ] 5. Add funded cliff bonds and activation-gated rewards.
@@ -498,7 +517,7 @@ Test strategy: implement each behavior with a regression test capable of failing
   - Recommended task executor category: deep-high.
   - Add persistent Migration entrypoints and E1/E2-verified source adapters. Do not expose arbitrary executors, beneficiary selection or supplied principal/credit.
   - NFT path: require matching configured entitlement and the recorded original wallet as actual owner; verify source, unused identity and current eligible principal; take whole custody; calculate `floor(C0 * Pr / P0)`; mint exact delivered principal and create a fresh bond.
-  - Fungible path: require matching configured entitlement for the recorded original wallet, verify its supported source and actual holding, pull or consume the eligible quantity, apply the record's frozen proportional credit, retain rounding residue and preserve the remainder. No intermediate-holder proof or legacy-transfer notification is required.
+  - Fungible path: require matching configured entitlement for the recorded original wallet, verify its supported source and actual holding, pull or consume the eligible quantity, apply the record's stored proportional credit, retain rounding residue and preserve the remainder. No intermediate-holder proof or legacy-transfer notification is required.
   - Reject missing entitlement configuration, wrong original wallet, nonexistent/empty/reward-only positions, zero-credit delivery, unsupported sources, prior consumption, short receipt and stale minimum/deadline. Missing configuration must leave balances, custody, consumption, supply and bonds unchanged.
   - Guard reentrancy across validation, receipt, consumption, child funding and safe-transfer callbacks. Final state must be all-or-nothing.
   - Acceptance: section 5.4 examples and conservation laws pass only after activation, with preactivation rejection proven; a long-delayed surrender gets its own full clock.
@@ -508,11 +527,11 @@ Test strategy: implement each behavior with a regression test capable of failing
 - [ ] 7. Complete startup gating and irreversible activation.
   - Recommended task executor category: deep-high.
   - Inventory every installed ordinary issuance selector, alias, indirect route and child callback. Compose gated versions or narrow shared policy hooks that leave ordinary packages unchanged.
-  - Implement section 6.1 with local Remove semantics. Remove the administration facet's whole callable surface, including source updates, snapshot capture, allocation setters, issuance and activation itself.
-  - Test actual registry-deployed proxy routing before/after; retained queries, surrender, donation, harvesting and bond claims remain reachable.
+  - Implement section 6.1 with local Remove semantics. Remove both administration facets' whole callable surfaces, including source updates, the manual pricing setter, allocation setters, issuance and activation itself.
+  - Test actual registry-deployed proxy routing before/after; retained manual-book/original-credit queries, surrender, donation, harvesting and bond claims remain reachable.
   - Inspect inherited factory/package/post-deploy/initializer and ERC8109 surfaces for restoration paths. An owner-change test alone is insufficient.
-  - Acceptance: failed cut leaves Stage 1 and every selector intact; successful cut cannot be reversed through any exposed route; no callback reward payout or ordinary mint sees intermediate state.
-  - QA: `MigrationActivation`, `MigrationSurface` and registry-disable tests with old/current/pending owners, distinct deployer/fee recipient, reentrant caller, repeated activation and package callback attempts.
+  - Acceptance: failed cut leaves Stage 1 and every selector intact; successful cut cannot be reversed through any exposed route; no callback reward payout or ordinary mint sees intermediate state. Mixed A/B records do not block activation, and a funded/purchased instance with no entitlements or issuance may activate with unset pricing.
+  - QA: `MigrationActivation`, `MigrationSurface` and registry-disable tests with old/current/pending owners, setter use after the paid owner-first bond, mixed-book and unset-pricing activation, distinct deployer/fee recipient, reentrant caller, repeated activation and package callback attempts.
   - Evidence: removed/retained selector census, loupe receipts and interface-support declarations.
 
 - [ ] 8. Implement bounded custody recovery and donations.
@@ -524,21 +543,19 @@ Test strategy: implement each behavior with a regression test capable of failing
   - QA: `MigrationHarvest` with failing middle item, smaller retry, partial maturity, repeated harvest, conversion failure, donation failure, malicious route callback, registry states and a large unrelated custody population.
   - Evidence: per-source recovery traces, asset-conservation ledger and measured batch gas.
 
-- [ ] 9. Build deterministic preparation and resumable operator scripts.
+- [ ] 9. Retain simple native Foundry migration scripts.
   - Recommended task executor category: deep-low.
-  - New tooling under `scripts/recovery/dtf-migration/`; Foundry transaction stages under `scripts/foundry/recovery/dtf-migration/`, following the existing `scripts/foundry/` layout. Keep preparation separate from broadcast.
-  - Build a reproducible CLI: acquire pinned source and valuation evidence, normalize native integers, reconcile actual claim units/custody/recoveries, generate distinct independent and migration configuration datasets, and validate against snapshot quotes. Historical original-contribution records support the independent path and agreed valuation inputs, not a token-holder ancestry gate.
-  - Checkpoints include chain/proxy/package identity, snapshot identity, source/evidence fingerprints, full configuration payload hashes, confirmed transaction receipts, actual bond IDs and consumption.
-  - Separate deploy, fund, capture, configure, independent-issue, verify, activate and harvest commands. Default to read-only validation or simulation; no accidental broadcast on resume.
-  - Before resending, compare observed on-chain state and confirmed receipts. Reorganize batches without replaying donations or issuance. Correct configuration with full replacement values, not script-generated deltas.
-  - Acceptance: interrupted/reordered runs resume correctly; missing evidence is not zero; wrong chain/proxy/snapshot is rejected; an unclaimed entitlement remains unminted.
-  - QA: script tests using deterministic fixtures and real local-chain integration. Subscribe to exact receipts/events with bounded timeouts; no timing sleeps. Exercise interruption after mining but before checkpoint completion.
-  - Evidence: command help, input schemas, fixture outputs and resumable rehearsal report in `migration/operator-runbook.md`.
+  - Use the typed Solidity stages under `scripts/foundry/recovery/dtf-migration/` directly with `forge script --use solar`. Select an explicit function and supply reviewed arguments and the sender.
+  - Keep deployment preparation, deployment, reserve funding, pricing, configuration, independent issuance, paid owner purchase, activation and harvesting as explicit native calls. Forge controls simulation and transaction broadcasting.
+  - Preserve the contracts' full-replacement, stored-credit, consumption, issuance and stale-book rules. Review actual chain state and receipts before repeating a transaction.
+  - Acceptance: contracts and retained scripts compile; the existing native Foundry suites establish the relevant migration behavior. Configuration does not mint an unclaimed entitlement, and activation removes the administrative loading routes.
+  - No replacement custom CLI, bundle format or checkpoint framework is part of this task. Historical allocation review remains separate from contract execution.
+  - Usage: `migration/foundry-runbook.md`.
 
 - [ ] 10. Complete integration, invariant, adversarial and fork validation.
   - Recommended task executor category: deep-high.
   - Complete sections 8 and 9, with one production fixture across deployment, funding, configuration, claims and custody. Add a local per-source/generation integration matrix and update applicable repository coverage records.
-  - Extend invariants with actual successful-action witnesses: credit conservation, custody/issuance atomicity, escrow solvency, irrevocable activation, snapshot immutability, separate instances and unchanged ordinary behavior.
+  - Extend invariants with actual successful-action witnesses: credit conservation, custody/issuance atomicity, escrow solvency, irrevocable activation, live independence, keep-until-reloaded credit, stable originals, postactivation pricing immutability, separate instances and unchanged ordinary behavior.
   - Benchmark bounded loading, independent issuance and harvest batches at small and large population sizes; select operational batch limits from measured gas and target-chain limits, not the permissive hermetic gas setting.
   - Run ordinary weighted DETF and common bond/staking regressions whenever shared code changes.
   - Acceptance: every baseline acceptance row has the disposition in section 9 and passing observable coverage; all additional Migration tests pass; no required source category is deferred.
@@ -562,15 +579,15 @@ Use new Migration TestBases composed from existing production deployment helpers
 | Test group | Required observations |
 | --- | --- |
 | Deployment/ownership | Full args initialization, metadata/decimals, registry discovery, all facets nonzero, two proxy owners, completed/pending transfer, invalid owner, no reinitialization |
-| Funding/snapshot | Empty-reserve donation bootstrap; actual receipts, no personal credit, separate self-leg supply; immutable complete quote dependencies; exact user split |
-| Configuration | Both paths, complete overwrite, identical replay, already-delivered record, partial remainder corrections, no payout on load, no consumed reset |
+| Funding/manual pricing | Empty-reserve donation bootstrap; actual receipts, no personal credit, separate self-leg supply; complete manual input replacement without configuration/credit mutation; canonical differential vectors and exact user split |
+| Configuration | Both paths, expected-book checks, complete overwrite, identical replay, already-delivered record, partial remainder corrections, no payout on load, no consumed reset, mixed A/B and same-recipient B/A preservation |
 | Legacy NFTs | Matching configured original wallet and actual owner, original contributions, actual remaining principal, unconfigured/wrong-wallet/empty/burned/reward-only rejection, duplicate IDs across collections, whole identity consumption |
 | Fungible surrendered-claim conservation | Configured original-wallet surrender only after activation, with preactivation rejection, unconfigured/different-holder rejection without state changes, no ancestry proof or owner update, measured custody, source-unit wrapper/claim conservation, partial surrender, residue and no double use |
 | Bond/claims | New NFT each time, exact funded gons, 90-day cliff, no backdating, rewards from creation but no Stage 1 payout, transfer/exit bypass negatives |
-| Activation | All selectors removed atomically, failure rollback, actual loupe, no restoration, no callbacks in intermediate state, persistent routes work |
+| Activation | Pricing setter, configuration loaders and issuance selectors removed atomically, failure rollback, actual loupe, no restoration, no callbacks in intermediate state, persistent read/surrender/donation/harvest/claim routes work, mixed-book and eligible unset-pricing activation |
 | Harvest | Owner-only, selected bounded work, rollback, staged retry, actual token receipts, no duplicate recovery, no user harvest entitlement |
 | Ordinary regression | Non-Migration package lacks exceptional roles/issuance; ordinary Stage 2 routes preserve expected behavior and registry rules |
-| Script integration | Reproducible integer datasets, stale evidence detected, transactions reconciled on resume, corrections not deltas, no repeated donation/issuance |
+| Script integration | Reproducible integer datasets, stale evidence and unsent stale-book loads detected, mined A reconciled after B without resend, same-recipient B/A history, corrections not deltas, no repeated donation/issuance |
 
 ### 8.1 Exact arithmetic examples
 
@@ -592,16 +609,16 @@ Use native DETF units in tests; human-readable quantities below are explanatory.
 
 ### 8.2 Stateful invariants
 
-- For unchanged configuration, remaining/delivered wallet-bound frozen credit conserves the configured eligible claim subject only to explicitly retained integer residue. Ordinary ownership transfers do not move that compensation record.
+- For unchanged configuration, remaining/delivered wallet-bound stored credit conserves the configured eligible claim subject only to explicitly retained integer residue. Ordinary ownership transfers do not move that compensation record.
 - No surrender succeeds without a matching configured entitlement and the recorded original wallet's actual eligible asset; rejected unconfigured/wrong-wallet calls leave custody, credit, supply and bonds unchanged.
-- A configuration correction cannot modify any existing bond, consumption fact or custody event.
+- A configuration correction cannot modify any existing bond, consumption fact or custody event. A pricing-book replacement cannot modify any stored configuration, credit, economic original, issuance, consumption or custody fact; economic-original identity remains stable across books while configuration provenance retains its book ID.
 - No successful credit exists without matching irreversible custody or an authorized independent allocation.
 - No custody debit or entitlement consumption survives failed issuance.
 - `stakingValue(position) >= remainingPrincipal(position)` for every live funded bond.
 - No migration principal leaves before its own `unlockTime`.
 - No Stage 1 route pays new-instance rewards.
 - No Stage 2 action restores or emulates configuration/independent-issuance authority.
-- Pool trading, fee changes, provider-rate changes and later donations do not alter configured original credit.
+- Pool trading, fee changes, provider-rate changes, later donations and manual book replacement do not alter configured original credit; explicit full configuration replacement under a new book changes only replaceable configuration.
 - Total recovery balances reconcile by asset and stage; no recovered asset reaches an alternative beneficiary.
 - Changing a current owner does not change pricing, registry ownership, an existing bond or consumed entitlement.
 
@@ -627,30 +644,30 @@ All 53 r20 acceptance IDs remain accounted for. "Revised" means apply the owner-
 | MIG-AC12 | Tasks 3/10: ordinary package isolation |
 | MIG-AC13 | Tasks 4/5/6: independent versus surrender path |
 | MIG-AC14 | Task 5: common migration cliff class and reward gate |
-| MIG-AC15 | Tasks 3/4/7/8: owner, not fee recipient/deployer; no price setter |
+| MIG-AC15 | Tasks 3/4/7/8: current owner, not fee recipient/deployer, administers the Stage 1 manual pricing setter; activation removes it with configuration/issuance authority |
 | MIG-AC16 | Task 3: closed-stage all-leg funding and backing |
 | MIG-AC17 | Task 8: recovered DTF/legacy DETF donation, no ordinary bond |
 | MIG-AC18 | Tasks 1/6: every category has a verified route; no silent deferral |
 | MIG-AC19 | Task 5: cliff boundary principal checks |
 | MIG-AC20 | Task 5: preserved accrued rewards and repeat-claim safety |
-| MIG-AC21 | Revised: task 2 calculates full original credit once with exact mint split/fee; task 6 allocates it |
-| MIG-AC22 | Revised: same original quote and same eligible fraction give same award; neither live nor partial-input re-quote |
+| MIG-AC21 | Revised: task 2 calculates full original credit once per explicit load with exact canonical mint split/fee against the selected manual book; task 6 allocates the stored credit |
+| MIG-AC22 | Revised: same stored original quote and same eligible fraction give same award; manual book changes affect only new previews/explicit loads; neither live nor partial-input re-quote |
 | MIG-AC23 | Tasks 1/6: routed inputs, prior claims and recoveries do not duplicate |
-| MIG-AC24 | Tasks 2/7: snapshot and original-credit immutability |
+| MIG-AC24 | Tasks 2/7: live independence, keep-until-reloaded credit, explicit Stage 1 replacement and postactivation immutability. A/B witness: setting B after loading A leaves A credit, configuration identity, originals and issuance unchanged; explicit B replacement changes configuration only; activation removes the setter and preserves stored records |
 | MIG-AC25 | Tasks 5/6: actual per-surrender creation timestamps |
 | MIG-AC26 | Task 7: activation/removal atomicity |
 | MIG-AC27 | Task 7: actual selectors absent, including indirect restoration paths |
 | MIG-AC28 | Task 7: repeated activation cannot change state; absent selector acceptable |
 | MIG-AC29 | Tasks 6/7/8: retained operations after cut |
 | MIG-AC30 | Task 7: no migration pause switch; normal registry semantics |
-| MIG-AC31 | Tasks 3/4/9: funding-first resumable scripts without new gates |
+| MIG-AC31 | Tasks 3/4/9: funding-first resumable scripts without new funding, pricing-readiness or configuration-finalization gates |
 | MIG-AC32 | Task 8: current owner alone harvests |
 | MIG-AC33 | Tasks 8/10: selected work and measured gas independent of inventory size |
 | MIG-AC34 | Task 8: repeat/overlapping harvest reconciliation |
 | MIG-AC35 | Revised: tasks 1/6 require the configured original wallet and actual surrender; another holder does not inherit its compensation |
-| MIG-AC36 | Revised: remaining principal changes delivered fraction, not original quote; rewards and live values do not reprice |
+| MIG-AC36 | Revised: remaining principal changes delivered fraction, not the stored original quote; rewards, live values and later manual book sets do not reprice stored credit |
 | MIG-AC37 | Tasks 4/7: no Stage 2 source/config/root/approval mutation |
-| MIG-AC38 | Task 4: complete overwrite preserves delivered compensation and consumption |
+| MIG-AC38 | Task 4: complete overwrite preserves delivered compensation and consumption. Same-recipient witness: current configuration B coexists with immutable issuance A and its original principal/history, without resize or replay |
 | MIG-AC39 | Revised: tasks 1/6 conserve wallet-bound original entitlement and proportional frozen credit through actual surrender, without intermediate-holder history |
 | MIG-AC40 | Task 6: final surrender and full failure rollback |
 | MIG-AC41 | Task 6: partial fungibles and whole NFTs |
@@ -661,10 +678,10 @@ All 53 r20 acceptance IDs remain accounted for. "Revised" means apply the owner-
 | MIG-AC46 | Task 3: per-proxy owner and initialization isolation |
 | MIG-AC47 | Tasks 3/7/8: current/pending/former owner semantics |
 | MIG-AC48 | Tasks 3/7/10: composition reuse and full actual selector checks |
-| MIG-AC49 | Revised: tasks 4/6 load original NFT quote without minting, then inspect principal and deliver proportional credit |
+| MIG-AC49 | Revised: tasks 4/6 load the original NFT quote from the expected manual book without minting, then inspect principal and deliver proportional credit; later book sets change neither the stored quote nor original identity |
 | MIG-AC50 | Tasks 4/6: collection+ID identity, matching configured original wallet and actual current ownership |
-| MIG-AC51 | Task 4: recipient consolidation excludes held exposure; sum original-entitlement credits |
-| MIG-AC52 | Tasks 4/7: overwrite/replay/cut end-to-end scenario |
+| MIG-AC51 | Task 4: recipient consolidation excludes held exposure; sum original-entitlement credits quoted on one selected book per load while preserving distinct accepted A/B configuration and immutable issuance histories |
+| MIG-AC52 | Tasks 4/7: overwrite/replay/cut end-to-end scenario. A/B witnesses: mined A resumes after B without resend, unsent A under B rejects, mixed-book records activate, and same-recipient B-configuration/A-issuance verifies |
 | MIG-AC53 | Tasks 5/7: complete preactivation reward-payout closure |
 
 Additional mandatory acceptance: MIG-P01 through MIG-P15, E1 through E5, section 8.1 exact examples, unclaimed-entitlement zero issuance, and migration remaining open with fresh per-surrender bond clocks.
@@ -709,9 +726,9 @@ The evidence report records exact commands, environment/compiler versions, exit 
   - Recommended task executor category: deep-high.
   - Execute the local complete lifecycle and pinned legacy forks, inspect real loupe/registry/child surfaces, conservation and custody. Check ordinary-family regressions and the adversarial/invariant results.
 
-- [ ] F3. Verify reproducibility and operator recovery.
+- [ ] F3. Verify native Foundry execution.
   - Recommended task executor category: deep-low.
-  - Rebuild configuration from saved evidence, replay interrupted script scenarios, confirm no duplicated funding/issuance and verify activation removes every administrator loading route.
+  - Compile the retained Foundry scripts and run the affected native contract suites. Confirm the contract's replay, funding/issuance and activation behavior without depending on an offchain operator application.
 
 - [ ] F4. Record implementation completion and deployment limits.
   - Recommended task executor category: writing.
@@ -720,6 +737,6 @@ The evidence report records exact commands, environment/compiler versions, exit 
 
 ## 11. Completion standard
 
-Implementation is complete only when the full accepted migration behavior works through the real registry-deployed package, every required legacy source is supported with configured original-wallet surrender/custody and source-claim conservation, missing configuration and wrong wallets revert atomically, agreed original credit is frozen and proportionally consumed without intermediate-holder history, every surrender creates an exactly funded fresh cliff bond, activation is structurally irreversible, and the tests and resumable rehearsal demonstrate those facts.
+Implementation is complete only when the full accepted migration behavior works through the real registry-deployed package, every required legacy source is supported with configured original-wallet surrender/custody and source-claim conservation, missing configuration and wrong wallets revert atomically, agreed original credit is calculated with the supported canonical Weighted calculation from complete manual inputs at explicit configuration, remains unchanged until explicit full replacement, and is proportionally consumed without intermediate-holder history, economic-original identities remain stable across pricing books, mixed A/B records and same-recipient current B configuration with immutable A issuance are supported, every surrender creates an exactly funded fresh cliff bond, activation is structurally irreversible and removes pricing/configuration/independent-issuance authority without requiring all records to be current, and the tests and resumable rehearsal demonstrate those facts.
 
 This plan does not claim those conditions already hold. Its planning deliverable is the scoped architecture, accepted precedence, data/formula contract, ordered work packages, acceptance traceability and verification obligations needed to establish them.

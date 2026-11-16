@@ -1,0 +1,8 @@
+EEXIST: file already exists, open '/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/inputs.json'
+    path: "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/inputs.json",
+ syscall: "open",
+   errno: -17,
+    code: "EEXIST"
+
+
+Bun v1.4.2 (macOS arm64)

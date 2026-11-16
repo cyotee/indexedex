@@ -1,0 +1,734 @@
+{
+  "initialState": {
+    "block": "0x67e5d17",
+    "weights": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "64890781291192882058375",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0"
+    },
+    "rewards": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0"
+    },
+    "sy": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+      "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+      "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691258414"
+    },
+    "vaultShares": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+      "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912583840862116302"
+    },
+    "weightSupply": "15338080546808403036783930",
+    "vaultSupply": "276912583840862116302",
+    "vaultAssets": "27691258414",
+    "sySupply": "54373903396"
+  },
+  "preparedState": {
+    "block": "0x67e5d1c",
+    "weights": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "10023000000000000000017",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10023000000000000000017"
+    },
+    "rewards": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+    },
+    "sy": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+      "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+      "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691258414"
+    },
+    "vaultShares": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+      "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912583840862116302"
+    },
+    "weightSupply": "15338080546808403036783930",
+    "vaultSupply": "276912583840862116302",
+    "vaultAssets": "27691258414",
+    "sySupply": "54373903396"
+  },
+  "observations": [
+    {
+      "label": "Excluded seed converts to unrelated positive SY floor",
+      "wallet": "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec",
+      "weight": "3000000000000000000",
+      "before": {
+        "block": "0x67e5d1c",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "10023000000000000000017",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10023000000000000000017"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691258414"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912583840862116302"
+        },
+        "weightSupply": "15338080546808403036783930",
+        "vaultSupply": "276912583840862116302",
+        "vaultAssets": "27691258414",
+        "sySupply": "54373903396"
+      },
+      "preview": "5416",
+      "vaultPreview": "5416",
+      "simulated": "0x0000000000000000000000000000000000000000000000000000000000001528",
+      "transactionHash": "0x200b97d4a59a1fba6a995b797dc4228bc1576d70d369c74edd5b358b08716f89",
+      "traceReturn": "0x0000000000000000000000000000000000000000000000000000000000001528",
+      "after": {
+        "block": "0x67e5d1d",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "10020000000000000000017",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10023000000000000000017"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "5416",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691252998"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912529679081638794"
+        },
+        "weightSupply": "15338077546808403036783930",
+        "vaultSupply": "276912529679081638794",
+        "vaultAssets": "27691252998",
+        "sySupply": "54373903396"
+      },
+      "output": "5416",
+      "sharesBurned": "54161780477508",
+      "weightShareFloor": {
+        "numerator": "830737751522586348906000000000000000000",
+        "denominator": "15338080546808403036783930",
+        "quotient": "54161780477508",
+        "remainder": "13755730989958515979153560"
+      },
+      "vaultRoundingCandidate": {
+        "numerator": "1499807859419176123229820",
+        "denominator": "276912583850862116302",
+        "quotient": "5416",
+        "remainder": "49305282906901338188"
+      }
+    },
+    {
+      "label": "Excluded seed converts to unrelated positive SY floor",
+      "wallet": "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4",
+      "weight": "3000000000000000000",
+      "before": {
+        "block": "0x67e5d1d",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "10020000000000000000017",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10023000000000000000017"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "5416",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691252998"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912529679081638794"
+        },
+        "weightSupply": "15338077546808403036783930",
+        "vaultSupply": "276912529679081638794",
+        "vaultAssets": "27691252998",
+        "sySupply": "54373903396"
+      },
+      "preview": "5416",
+      "vaultPreview": "5416",
+      "simulated": "0x0000000000000000000000000000000000000000000000000000000000001528",
+      "transactionHash": "0x423b19522b2dc2f6ad0aa814ab4e3ba3260197565860fa52fe55bdfb831c9797",
+      "traceReturn": "0x0000000000000000000000000000000000000000000000000000000000001528",
+      "after": {
+        "block": "0x67e5d1e",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "10020000000000000000017",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10020000000000000000017"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "5416",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "5416",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691247582"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912475517301161286"
+        },
+        "weightSupply": "15338074546808403036783930",
+        "vaultSupply": "276912475517301161286",
+        "vaultAssets": "27691247582",
+        "sySupply": "54373903396"
+      },
+      "output": "5416",
+      "sharesBurned": "54161780477508",
+      "weightShareFloor": {
+        "numerator": "830737589037244916382000000000000000000",
+        "denominator": "15338077546808403036783930",
+        "quotient": "54161780477508",
+        "remainder": "13755730989958515979153560"
+      },
+      "vaultRoundingCandidate": {
+        "numerator": "1499807566078973057046492",
+        "denominator": "276912529689081638794",
+        "quotient": "5416",
+        "remainder": "49305282906901338188"
+      }
+    },
+    {
+      "label": "Complete eligible original in one signed claim",
+      "wallet": "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec",
+      "weight": "10013000000000000000017",
+      "before": {
+        "block": "0x67e5d1e",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "10020000000000000000017",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10020000000000000000017"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "5416",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "5416",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691247582"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912475517301161286"
+        },
+        "weightSupply": "15338074546808403036783930",
+        "vaultSupply": "276912475517301161286",
+        "vaultAssets": "27691247582",
+        "sySupply": "54373903396"
+      },
+      "preview": "18077396",
+      "vaultPreview": "18077396",
+      "simulated": "0x000000000000000000000000000000000000000000000000000000000113d6d4",
+      "transactionHash": "0xea7afd133cf12a9fbec52845d902c2658efd524a279b40215de346ae7ef4f47a",
+      "traceReturn": "0x000000000000000000000000000000000000000000000000000000000113d6d4",
+      "after": {
+        "block": "0x67e5d1f",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10020000000000000000017"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "5416",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27673170186"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276731701547994062425"
+        },
+        "weightSupply": "15328061546808403036783913",
+        "vaultSupply": "276731701547994062425",
+        "vaultAssets": "27673170186",
+        "sySupply": "54373903396"
+      },
+      "output": "18077396",
+      "sharesBurned": "180773969307098861",
+      "weightShareFloor": {
+        "numerator": "2772724617354736527961425512083794119741862",
+        "denominator": "15338074546808403036783930",
+        "quotient": "180773969307098861",
+        "remainder": "5192389732740338113638132"
+      },
+      "vaultRoundingCandidate": {
+        "numerator": "5005856740644517519408302963",
+        "denominator": "276912475527301161286",
+        "quotient": "18077396",
+        "remainder": "263197185615581411707"
+      }
+    },
+    {
+      "label": "Incomplete eligible preparation must reject candidate admission",
+      "wallet": "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4",
+      "weight": "3337000000000000000005",
+      "before": {
+        "block": "0x67e5d1f",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10020000000000000000017"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "5416",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27673170186"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276731701547994062425"
+        },
+        "weightSupply": "15328061546808403036783913",
+        "vaultSupply": "276731701547994062425",
+        "vaultAssets": "27673170186",
+        "sySupply": "54373903396"
+      },
+      "preview": "6024595",
+      "vaultPreview": "6024595",
+      "simulated": "0x00000000000000000000000000000000000000000000000000000000005bed93",
+      "transactionHash": "0xd2c51af22975731a1cd0c81ecdf2c4cc8459fe4cb74baa5a8adc116936dd705a",
+      "traceReturn": "0x00000000000000000000000000000000000000000000000000000000005bed93",
+      "after": {
+        "block": "0x67e5d20",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "6683000000000000000012"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "6030011",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27667145591"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276671455594176246696"
+        },
+        "weightSupply": "15324724546808403036783908",
+        "vaultSupply": "276671455594176246696",
+        "vaultAssets": "27667145591",
+        "sySupply": "54373903396"
+      },
+      "output": "6024595",
+      "sharesBurned": "60245953817815729",
+      "weightShareFloor": {
+        "numerator": "923453688065656186313608658507739970312125",
+        "denominator": "15328061546808403036783913",
+        "quotient": "60245953817815729",
+        "remainder": "8894486011900401344744548"
+      },
+      "vaultRoundingCandidate": {
+        "numerator": "1667196533078557061222471323",
+        "denominator": "276731701557994062425",
+        "quotient": "6024595",
+        "remainder": "107530773822707128448"
+      }
+    },
+    {
+      "label": "Terminal split completes eligible original",
+      "wallet": "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4",
+      "weight": "6676000000000000000012",
+      "before": {
+        "block": "0x67e5d20",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "6683000000000000000012"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "6030011",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27667145591"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276671455594176246696"
+        },
+        "weightSupply": "15324724546808403036783908",
+        "vaultSupply": "276671455594176246696",
+        "vaultAssets": "27667145591",
+        "sySupply": "54373903396"
+      },
+      "preview": "12052801",
+      "vaultPreview": "12052801",
+      "simulated": "0x0000000000000000000000000000000000000000000000000000000000b7e941",
+      "transactionHash": "0xd3e3ca7bef57d5f6276f973443a75ce395250407cf72049717ea74b506320c8f",
+      "traceReturn": "0x0000000000000000000000000000000000000000000000000000000000b7e941",
+      "after": {
+        "block": "0x67e5d21",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "7000000000000000000"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "18082812",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27655092790"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276550927578686963565"
+        },
+        "weightSupply": "15318048546808403036783896",
+        "vaultSupply": "276550927578686963565",
+        "vaultAssets": "27655092790",
+        "sySupply": "54373903396"
+      },
+      "output": "12052801",
+      "sharesBurned": "120528015489283131",
+      "weightShareFloor": {
+        "numerator": "1847058637546720622945816057467130114960352",
+        "denominator": "15324724546808403036783908",
+        "quotient": "120528015489283131",
+        "remainder": "11627308147336971438304404"
+      },
+      "vaultRoundingCandidate": {
+        "numerator": "3334666152456827501086608552",
+        "denominator": "276671455604176246696",
+        "quotient": "12052801",
+        "remainder": "155679356430732813056"
+      }
+    }
+  ],
+  "finalPreparedState": {
+    "block": "0x67e5d21",
+    "weights": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "7000000000000000000"
+    },
+    "rewards": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+    },
+    "sy": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "18082812",
+      "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+      "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27655092790"
+    },
+    "vaultShares": {
+      "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+      "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+      "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+      "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276550927578686963565"
+    },
+    "weightSupply": "15318048546808403036783896",
+    "vaultSupply": "276550927578686963565",
+    "vaultAssets": "27655092790",
+    "sySupply": "54373903396"
+  },
+  "failures": {
+    "repeated": {
+      "before": {
+        "block": "0x67e5d21",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "7000000000000000000"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "18082812",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27655092790"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276550927578686963565"
+        },
+        "weightSupply": "15318048546808403036783896",
+        "vaultSupply": "276550927578686963565",
+        "vaultAssets": "27655092790",
+        "sySupply": "54373903396"
+      },
+      "hash": "0x2e5a995977ff8d69011fc70bb47880e18cf142a0a8af6c16231d8f2d7f6adc4b",
+      "after": {
+        "block": "0x67e5d22",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "7000000000000000000"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "18082812",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27655092790"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276550927578686963565"
+        },
+        "weightSupply": "15318048546808403036783896",
+        "vaultSupply": "276550927578686963565",
+        "vaultAssets": "27655092790",
+        "sySupply": "54373903396"
+      },
+      "expectedError": "0x936d426d00000000000000000000000025c3f1035f2db92ea79072fdd76b64f71178f7ec00000000000000000000000000000000000000000000021ece4a10da325400110000000000000000000000000000000000000000000000006124fee993bc0000"
+    },
+    "tiny": {
+      "before": {
+        "block": "0x67e5d22",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "7000000000000000000"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "18082812",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27655092790"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276550927578686963565"
+        },
+        "weightSupply": "15318048546808403036783896",
+        "vaultSupply": "276550927578686963565",
+        "vaultAssets": "27655092790",
+        "sySupply": "54373903396"
+      },
+      "from": "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4",
+      "weight": "1",
+      "result": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "kind": "read-only simulation; not mined",
+      "after": {
+        "block": "0x67e5d22",
+        "weights": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "7000000000000000000",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "7000000000000000000"
+        },
+        "rewards": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+        },
+        "sy": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "18082812",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "18082812",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+          "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27655092790"
+        },
+        "vaultShares": {
+          "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+          "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+          "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+          "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276550927578686963565"
+        },
+        "weightSupply": "15318048546808403036783896",
+        "vaultSupply": "276550927578686963565",
+        "vaultAssets": "27655092790",
+        "sySupply": "54373903396"
+      }
+    }
+  },
+  "partialCoverage": {
+    "eligibleConsumed": "3337000000000000000005",
+    "eligibleRemaining": "6676000000000000000012",
+    "measuredSy": "6024595",
+    "complete": false,
+    "admission": "rejected as incomplete; not an executed Migration rejection"
+  },
+  "acquisition": {
+    "before": {
+      "block": "0x67e5d1a",
+      "weights": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "64890781291192882058375",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0"
+      },
+      "rewards": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0"
+      },
+      "sy": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+        "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+        "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691258414"
+      },
+      "vaultShares": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+        "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912583840862116302"
+      },
+      "weightSupply": "15338080546808403036783930",
+      "vaultSupply": "276912583840862116302",
+      "vaultAssets": "27691258414",
+      "sySupply": "54373903396"
+    },
+    "impersonationStart": null,
+    "impersonationStop": null,
+    "after": {
+      "block": "0x67e5d1c",
+      "weights": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "44844781291192882058341",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "10023000000000000000017",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "10023000000000000000017"
+      },
+      "rewards": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "915239846737831941489",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "204560011660818907782",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "204560011660818907782"
+      },
+      "sy": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+        "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "0",
+        "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0": "27691258414"
+      },
+      "vaultShares": {
+        "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3": "0",
+        "0x25c3f1035f2db92ea79072fdd76b64f71178f7ec": "0",
+        "0xadc86b12c5a3a7d1e99a4282ef48eb9e56e174a4": "0",
+        "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00": "276912583840862116302"
+      },
+      "weightSupply": "15338080546808403036783930",
+      "vaultSupply": "276912583840862116302",
+      "vaultAssets": "27691258414",
+      "sySupply": "54373903396"
+    }
+  },
+  "runtimeAfter": [
+    {
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "unchanged": true
+    },
+    {
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "unchanged": true
+    },
+    {
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "unchanged": true
+    }
+  ]
+}

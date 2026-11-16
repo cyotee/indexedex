@@ -1,0 +1,134 @@
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol
+ D contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol
+ D contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol
+ D contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol
+ D contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol
+ M docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md
+ M scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol
+ M scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol
+ M scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+ M scripts/recovery/dtf-migration/nft-contributions.test.ts
+ M scripts/recovery/dtf-migration/payloads.ts
+ M scripts/recovery/dtf-migration/preparation.fixture.ts
+ M scripts/recovery/dtf-migration/preparation.test.ts
+ M scripts/recovery/dtf-migration/schema.ts
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptForkBase.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol
+ M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimedSyConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquidConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceiptConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLpConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol
+?? .omo/drafts/dtf-migration-conformance-remediation-20261114.md
+?? .omo/drafts/hyperplan-dtf-conformance-insights-20261114.md
+?? .omo/drafts/hyperplan-weighted-migration-insights-20261114.md
+?? .omo/evidence/dtf-conformance-task-1-gate-review.md
+?? .omo/plans/dtf-migration-conformance-remediation-20261114.md
+?? .omo/ulw-execute/
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookTarget.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol
+?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-all-operator-tests-20261113.log.command.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-checks-20261113-types.log.command.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-checks-20261113-unit.log.command.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-final-checks-20261113-types.log.command.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-final-checks-20261113-unit.log.command.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r1/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r2/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r3/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r4/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/core/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas-resumed/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/evidence/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/final-gate-review-20261113.md
+?? docs/incidents/2026-09-16-dtf-recovery/migration/final-hermetic-r2-20261113/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/final-operator-20261113/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/final-reward-operator-20261113.log.command.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/final-source-20261113.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/final-verification-recovered/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/full-hermetic/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/integration-increments/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/operator/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/package/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md
+?? docs/incidents/2026-09-16-dtf-recovery/migration/remaining-sy-rehearsal/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md
+?? docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/verification.md
+?? docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/
+?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/
+?? test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedPricing.t.sol

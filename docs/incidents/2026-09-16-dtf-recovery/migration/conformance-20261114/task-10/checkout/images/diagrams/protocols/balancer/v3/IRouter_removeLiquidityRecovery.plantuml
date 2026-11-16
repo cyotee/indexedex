@@ -1,0 +1,52 @@
+@startuml IRouter_removeLiquidityRecovery
+actor User
+participant Router
+participant Vault
+participant Hooks
+
+== Initiation ==
+User -> Router: removeLiquidityRecovery(pool, exactBptAmountIn, minAmountsOut)
+note right: User initiates liquidity removal in Recovery Mode.
+
+== Vault Unlocking ==
+Router -> Vault: unlock(encoded params)
+note right: Router encodes parameters and unlocks Vault for processing.
+
+== Remove Liquidity Recovery Hook ==
+Vault -> Router: removeLiquidityRecoveryHook(pool, sender, exactBptAmountIn, minAmountsOut)
+note right: Vault triggers Router's recovery hook.
+
+== Recovery Logic ==
+Router -> Vault: removeLiquidityRecovery(pool, sender, exactBptAmountIn, minAmountsOut)
+note right: Router requests Vault to execute recovery removal.
+
+alt shouldCallBeforeRemoveLiquidity == true
+    Vault -> Hooks: onBeforeRemoveLiquidity(...)
+    note right: Optional pre-removal hook if configured.
+    Hooks --> Vault: true
+end alt
+
+Vault -> Vault: computeProportionalAmountsOut(balancesRaw, totalSupply, exactBptAmountIn)
+note right: Vault calculates proportional token amounts from raw balances.
+
+alt shouldCallAfterRemoveLiquidity == true
+    Vault -> Hooks: onAfterRemoveLiquidity(...)
+    note right: Optional post-removal hook if configured.
+    Hooks --> Vault: true
+end alt
+
+Vault --> Router: amountsOut
+
+== Token Transfers ==
+loop for each token in tokens
+    Router -> Vault: sendTo(token, user, amountsOut[i])
+    note right: Router directs Vault to transfer tokens to user.
+    Vault -> User: transfer token
+    note right: Vault sends tokens to user.
+end loop
+
+== Finalization ==
+Router -> User: amountsOut
+note right: Router returns withdrawn token amounts to user.
+
+@enduml

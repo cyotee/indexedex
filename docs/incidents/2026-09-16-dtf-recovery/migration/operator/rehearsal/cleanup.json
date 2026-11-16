@@ -1,0 +1,31 @@
+{
+  "recordedAt": "2026-11-11T05:54:32.736Z",
+  "runReceipts": [
+    {
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 65441,
+      "runtime": "removed"
+    },
+    {
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 65935,
+      "runtime": "removed"
+    }
+  ],
+  "verification": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator && test ! -e .omo-runtime/dtf-migration-operator/checkpoints && rmdir .omo-runtime/dtf-migration-operator && printf 'OWNED_RUNTIME_PARENT_REMOVED\n' && if /usr/sbin/lsof -nP -iTCP:18560 -sTCP:LISTEN; then exit 1; else printf 'PORT_18560_NO_LISTENER\n'; fi && if kill -0 65935 2>/dev/null; then exit 1; else printf 'OWNED_ANVIL_65935_ABSENT\n'; fi",
+    "output": "OWNED_RUNTIME_PARENT_REMOVED\nPORT_18560_NO_LISTENER\nOWNED_ANVIL_65935_ABSENT",
+    "exitCode": 0
+  },
+  "preserved": {
+    "out": true,
+    "cache_forge": true,
+    "crane": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "nodeModules": "/Users/cyotee/Projects/indexedex/node_modules"
+  },
+  "pendingOwnedRuntime": false
+}

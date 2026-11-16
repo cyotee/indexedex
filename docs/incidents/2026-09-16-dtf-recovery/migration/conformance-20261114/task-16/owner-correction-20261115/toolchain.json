@@ -1,0 +1,24 @@
+{
+  "typescript": {
+    "version": "5.9.2",
+    "path": "/Users/cyotee/Projects/indexedex/node_modules/typescript/package.json",
+    "sha256": "5a0bb7f286c4b3f1413a42c05f902311b161f70e5f52d9da10490443bfd595a3"
+  },
+  "zod": {
+    "version": "3.25.74",
+    "path": "/Users/cyotee/Projects/indexedex/node_modules/zod/package.json",
+    "sha256": "f2d8e294bb39f78a945cd602ee5635781f66081f032d991f61548f7e550ae74d"
+  },
+  "ethers": {
+    "version": "6.17.0",
+    "path": "/Users/cyotee/Projects/indexedex/node_modules/ethers/package.json",
+    "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f"
+  },
+  "runtime": {
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "bun": "1.4.2",
+    "node": "26.3.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  }
+}

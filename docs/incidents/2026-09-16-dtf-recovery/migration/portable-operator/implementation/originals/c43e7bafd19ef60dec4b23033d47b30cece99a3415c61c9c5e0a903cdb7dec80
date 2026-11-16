@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"quoteRate","inputs":[{"name":"exchange","type":"address","internalType":"address"},{"name":"asset","type":"address","internalType":"address"},{"name":"state","type":"bytes","internalType":"bytes"}],"outputs":[{"name":"rate","type":"uint256","internalType":"uint256"}],"stateMutability":"view"}],"id":136}

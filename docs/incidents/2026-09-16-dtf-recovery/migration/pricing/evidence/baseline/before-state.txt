@@ -1,0 +1,47 @@
+UTC=2026-11-10T13:50:39Z
+CWD=/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02
+TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw
+NODE_COMPILE_CACHE=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw/node-compile-cache
+BUN_RUNTIME_TRANSPILER_CACHE_PATH=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw/bun-transpiler-cache
+RECORDER_PID=21988
+90ff0307a7a8e084aa073e02eff125e9c7973933
+work/dtf-migration-phase-02
+?? docs/incidents/2026-09-16-dtf-recovery/CUSTODY_AND_HARVEST.md
+?? docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md
+?? docs/incidents/2026-09-16-dtf-recovery/LOSS_AND_RECOVERY_LEDGER.md
+?? docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md
+?? docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md
+?? docs/incidents/2026-09-16-dtf-recovery/account-ledger.csv
+?? docs/incidents/2026-09-16-dtf-recovery/conversions.csv
+?? docs/incidents/2026-09-16-dtf-recovery/custody-inventory.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/all-index-events.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/bond-accounting.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/earlier-cp-bonds.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/earlier-cp-wallets.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/index-events.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/post-incident-bond-claims.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/transfers.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/weighted-bonds.csv
+?? docs/incidents/2026-09-16-dtf-recovery/evidence/weighted-candidates.csv
+?? docs/incidents/2026-09-16-dtf-recovery/exceptions.csv
+?? docs/incidents/2026-09-16-dtf-recovery/held-exclusions.csv
+?? docs/incidents/2026-09-16-dtf-recovery/manifest.json
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/before-code.diff
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/before-code.sha256
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/before-state.txt
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/build-command.txt
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/initial-status-symlink-warning.txt
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/run.sh
+?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/toolchain.txt
+?? docs/incidents/2026-09-16-dtf-recovery/observed-recoveries.csv
+?? docs/incidents/2026-09-16-dtf-recovery/positions.csv
+?? docs/incidents/2026-09-16-dtf-recovery/reconciliation.json
+?? docs/incidents/2026-09-16-dtf-recovery/rounding.csv
+?? docs/incidents/2026-09-16-dtf-recovery/sources.json
+STATUS_EXIT=0
+drwxr-xr-x@    6 cyotee  staff     192 Oct 22 05:15 cache_forge
+lrwxr-xr-x@    1 cyotee  staff      42 Nov 10 05:43 lib/crane -> /Users/cyotee/Projects/indexedex/lib/crane
+lrwxr-xr-x@    1 cyotee  staff      45 Nov 10 05:43 node_modules -> /Users/cyotee/Projects/indexedex/node_modules
+drwxr-xr-x@ 6108 cyotee  staff  195456 Nov  7 12:24 out
+/Users/cyotee/Projects/indexedex/lib/crane
+/Users/cyotee/Projects/indexedex/node_modules

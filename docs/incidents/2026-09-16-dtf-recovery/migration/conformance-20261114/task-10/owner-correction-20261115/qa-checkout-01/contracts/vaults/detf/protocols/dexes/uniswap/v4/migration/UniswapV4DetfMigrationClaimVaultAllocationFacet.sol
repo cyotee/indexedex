@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IUniswapV4DetfMigrationAllocation as Allocation} from "./interfaces/IUniswapV4DetfMigration.sol";
+import {UniswapV4DetfMigrationClaimVaultAllocationTarget} from "./UniswapV4DetfMigrationClaimVaultAllocationTarget.sol";
+
+/// @notice Scoped source-entitlement loaders; all removed at activation.
+contract UniswapV4DetfMigrationClaimVaultAllocationFacet is UniswapV4DetfMigrationClaimVaultAllocationTarget, IFacet {
+    function facetName() public pure returns (string memory) { return "UniswapV4DetfMigrationClaimVaultAllocationFacet"; }
+    function facetInterfaces() public pure returns (bytes4[] memory ids_) { return new bytes4[](0); }
+    function facetFuncs() public pure returns (bytes4[] memory funcs_) {
+        funcs_ = new bytes4[](8);
+        funcs_[0] = Allocation.configureClaimVaultEntitlements.selector;
+        funcs_[1] = Allocation.configureWeightedReceiptEntitlements.selector;
+        funcs_[2] = Allocation.configureEarlierReceiptEntitlements.selector;
+        funcs_[3] = Allocation.configureWeightedLiquidEntitlements.selector;
+        funcs_[4] = Allocation.configureEarlierLiquidEntitlements.selector;
+        funcs_[5] = Allocation.configureHeldSeLpEntitlements.selector;
+        funcs_[6] = Allocation.configureNftEntitlements.selector;
+        funcs_[7] = Allocation.configureNftContributionEntitlements.selector;
+    }
+    function facetMetadata() external pure returns (string memory, bytes4[] memory, bytes4[] memory) {
+        return (facetName(), facetInterfaces(), facetFuncs());
+    }
+}

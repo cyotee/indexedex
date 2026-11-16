@@ -1,0 +1,385 @@
+{
+  "schema": "dtf-wallet-admission-local-commit-verification-v1",
+  "date": "2026-11-11",
+  "commit": {
+    "hash": "2c2b3370ded30cae1662329025d4fb58f7197330",
+    "parent": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+    "subject": "Add verified bounded original-wallet Migration admission",
+    "pathCount": 24,
+    "coauthorTrailer": "Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>",
+    "allCommittedModesAndBlobsMatch": true
+  },
+  "verificationKind": "Local packaging verification; reuses and qualifies prior independent runtime verification, not a new runtime audit",
+  "committedSources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "blob": "a01924fb56a71a3129226d99167b625dee22873d",
+      "sha256": "27d646c4ac9297b0ec236dafd165c1687e13f7d61fbe02f8f258e924a811164c",
+      "acceptedSha256": "27d646c4ac9297b0ec236dafd165c1687e13f7d61fbe02f8f258e924a811164c",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "mode": "100644",
+      "blob": "6027f70f0ed50cbd2c571d792964bfb44dce9ede",
+      "sha256": "fd0b55698db6f5ee8d0f6b1a8bf8b090ae871f693bfc34ed43b20922493a43d7",
+      "acceptedSha256": "fd0b55698db6f5ee8d0f6b1a8bf8b090ae871f693bfc34ed43b20922493a43d7",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "mode": "100644",
+      "blob": "f44eb8841dbc37ae6b79fce3236a8f05d14cf1b1",
+      "sha256": "5403895223e5d742bf39ceb0b0f9e6c000956fc5c55f833b080714b7b1e1ce73",
+      "acceptedSha256": "5403895223e5d742bf39ceb0b0f9e6c000956fc5c55f833b080714b7b1e1ce73",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "mode": "100644",
+      "blob": "6320ce5f118a9eb8dcd256796609cfb11c315359",
+      "sha256": "8a528053067d253f438c63ee201d3caa56638854a6fa255703cb525e3c0c4e81",
+      "acceptedSha256": "f9f910e0a7258caba782f8d36e9315bdbf158f3e16d33692b16f493cb8bc2a88",
+      "acceptedRelation": "documented post-runtime wording exception with exact reverse-hash proof"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "mode": "100644",
+      "blob": "8d129b37ad62ce81cd016f1e2161fb25669a46c0",
+      "sha256": "a524bf9943ff72ee225ade84e96c2b624c14f2316ff018886408463f3f6c0443",
+      "acceptedSha256": "a524bf9943ff72ee225ade84e96c2b624c14f2316ff018886408463f3f6c0443",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "mode": "100644",
+      "blob": "ab2e06a9887fbf1a82c47c779485cb9c29d27030",
+      "sha256": "f7ef8752b523fbcb4420b0cc0a95720e3a0037e7eee2993a8b54c4d295678bab",
+      "acceptedSha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "acceptedRelation": "documented post-runtime wording exception with exact reverse-hash proof"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "mode": "100644",
+      "blob": "3931831632409e557b238a782f4ee36448afd056",
+      "sha256": "28f647053d97412ad94006b0d872d78dc47768fa43cc27ffc46416098285ee27",
+      "acceptedSha256": "28f647053d97412ad94006b0d872d78dc47768fa43cc27ffc46416098285ee27",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "mode": "100644",
+      "blob": "01d5ae93ff75c7cc2b2ca417e7578edc03401cc9",
+      "sha256": "e00b53f30fb9433d637306d713313a0d2f79256cecfc9f343d4a8c3eb659c44e",
+      "acceptedSha256": "e00b53f30fb9433d637306d713313a0d2f79256cecfc9f343d4a8c3eb659c44e",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "mode": "100644",
+      "blob": "b0934117773831a851885d2a3055b779350845c7",
+      "sha256": "9bcc67b497f5a4c97ebfbf568148c5b3cab28b2fe1597e8e239bed21cc9f4731",
+      "acceptedSha256": "9bcc67b497f5a4c97ebfbf568148c5b3cab28b2fe1597e8e239bed21cc9f4731",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "mode": "100644",
+      "blob": "3a8d1a045f5e658b103a296049e28c22d9e139b2",
+      "sha256": "6a9fd84383ae2a33ccee8b15c87f398aa4b96f52ae9587012551e136546e1d9b",
+      "acceptedSha256": "6a9fd84383ae2a33ccee8b15c87f398aa4b96f52ae9587012551e136546e1d9b",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "mode": "100644",
+      "blob": "921f41fc353541bbc6bfc6c8fa0e51a989825d52",
+      "sha256": "c79417c4b288a42ab0683ec7e3e1f8acfed4346f05dce5c873727202ee15dc3e",
+      "acceptedSha256": "c79417c4b288a42ab0683ec7e3e1f8acfed4346f05dce5c873727202ee15dc3e",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "mode": "100644",
+      "blob": "d84882e78877a2f944be859b42890912c16480a6",
+      "sha256": "36974f60166a645bd54bfe7ce991f58a48656ca3d5d4fe8aec98189d7add8f94",
+      "acceptedSha256": "36974f60166a645bd54bfe7ce991f58a48656ca3d5d4fe8aec98189d7add8f94",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "mode": "100644",
+      "blob": "29ef159f53cb986cdfa4096e500dab6d142617a0",
+      "sha256": "89779cf145f35f789b8515b62c2442772ea0560021485ebcbdb479df580d2c21",
+      "acceptedSha256": "89779cf145f35f789b8515b62c2442772ea0560021485ebcbdb479df580d2c21",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "mode": "100644",
+      "blob": "1328c9a476fb7d79f12b81a5aa128742f17c85ee",
+      "sha256": "bb5d1249f1941e93a78067443d94ca70d420ccf0a8c6ed59d1cd50671212f633",
+      "acceptedSha256": "bb5d1249f1941e93a78067443d94ca70d420ccf0a8c6ed59d1cd50671212f633",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "mode": "100644",
+      "blob": "a93156670e463f9345193a2b3459d01a60a97668",
+      "sha256": "15698210f6a257d359105afed65113f184ab5d5962a4574b5953dec21533ee26",
+      "acceptedSha256": "15698210f6a257d359105afed65113f184ab5d5962a4574b5953dec21533ee26",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "mode": "100644",
+      "blob": "5bdf67f72ec735bd85a3e33890193d89c66dce6b",
+      "sha256": "cff51105a677d1d0a7115181878db71bdda239f1b89e2d2628e151a553d9421e",
+      "acceptedSha256": "cff51105a677d1d0a7115181878db71bdda239f1b89e2d2628e151a553d9421e",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "mode": "100644",
+      "blob": "e7df3467c8128c038ab658169dcf56df4def1d56",
+      "sha256": "1c26db3b5bf473c089e81d6d84594d38a7fb67708d9daabec7dd904c937ec713",
+      "acceptedSha256": "1c26db3b5bf473c089e81d6d84594d38a7fb67708d9daabec7dd904c937ec713",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "mode": "100644",
+      "blob": "686770817329261472c42309e5b3be89765a5818",
+      "sha256": "65be9375389cad686649192a2afe3ab7de70596fa204d403451bd01136d775fa",
+      "acceptedSha256": "65be9375389cad686649192a2afe3ab7de70596fa204d403451bd01136d775fa",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "mode": "100644",
+      "blob": "8fd59d5054192e2cd637340cf66ef4075d336902",
+      "sha256": "ad64a823b44faf61fe50a2540a0be81cafe75cb8467c078e760d8782f8c53057",
+      "acceptedSha256": "ad64a823b44faf61fe50a2540a0be81cafe75cb8467c078e760d8782f8c53057",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+      "mode": "100644",
+      "blob": "5d4c1ec72e79fa1e9b2261887490bca604e92c6d",
+      "sha256": "01ff726305372a09414c5180ba14f40d9489b629b0d78a77b59a9d43929c6a38",
+      "acceptedSha256": "01ff726305372a09414c5180ba14f40d9489b629b0d78a77b59a9d43929c6a38",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+      "mode": "100644",
+      "blob": "37c1b86b2531067b7ffbcb1632e65e4cbaa06bd0",
+      "sha256": "bf4c05a2b5dbb7a1360bb746c6b5b2db378f98e89f050ca4a7f1e14f81fe5381",
+      "acceptedSha256": "bf4c05a2b5dbb7a1360bb746c6b5b2db378f98e89f050ca4a7f1e14f81fe5381",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+      "mode": "100644",
+      "blob": "767caf3e0db00498cb7cb5c3ece3a5c53f652293",
+      "sha256": "41f77e12a9b986a51e828d20865a1f70724c385f4bc749e9acbe5e5cfbce4551",
+      "acceptedSha256": "41f77e12a9b986a51e828d20865a1f70724c385f4bc749e9acbe5e5cfbce4551",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+      "mode": "100644",
+      "blob": "814796e76bdf8372254ff0828d887ae95a09821c",
+      "sha256": "b6290e2d78cac3a21c349262ac32bd977d7132d7657ac546e8d9f0edb85cb743",
+      "acceptedSha256": "b6290e2d78cac3a21c349262ac32bd977d7132d7657ac546e8d9f0edb85cb743",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "mode": "100644",
+      "blob": "c929c404274b34b62fa9770b6b80caa7e760b442",
+      "sha256": "d2db6fa07ab5afddac5b47d750d3c274879ad7805ab6a7e3c93a35c6fc9403f1",
+      "acceptedSha256": "d2db6fa07ab5afddac5b47d750d3c274879ad7805ab6a7e3c93a35c6fc9403f1",
+      "acceptedRelation": "byte-identical runtime-audited source"
+    }
+  ],
+  "reviewedExceptions": [
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "kind": "Post-runtime help-string-only correction",
+      "acceptedSha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "currentSha256": "f7ef8752b523fbcb4420b0cc0a95720e3a0037e7eee2993a8b54c4d295678bab",
+      "review": "One 18560 -> 18562 literal inside exported help template; every other byte equals runtime-audited source. Actual --help exit 0 on Bun 1.4.2, port agrees with rehearse.ts fixed domain.",
+      "reverseReplacements": [
+        {
+          "current": "--fork-block 108944663 --port 18562 --checkpoint",
+          "accepted": "--fork-block 108944663 --port 18560 --checkpoint"
+        }
+      ]
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "kind": "Post-runtime runbook wording corrections",
+      "acceptedSha256": "f9f910e0a7258caba782f8d36e9315bdbf158f3e16d33692b16f493cb8bc2a88",
+      "currentSha256": "8a528053067d253f438c63ee201d3caa56638854a6fa255703cb525e3c0c4e81",
+      "review": "Current independently mined deployment 42,985,865 distinguished from baseline 42,985,843; both exceed 32,000,000. Current wallet-admission implementation and verification locators replace historical operator pointers; historical evidence remains linked. Exact reversals reproduce accepted historical hash; no runbook hash is falsely claimed runtime-audited.",
+      "reverseReplacements": [
+        {
+          "current": "recovery and owned runtime cleanup. Current original-wallet implementation\nand independent verification evidence are in\n`wallet-admission/implementation/report.md` and\n`wallet-admission/verification/report.md`. Historical baseline evidence\nremains in `operator/execution/report.md` and `operator/rehearsal/report.md`;",
+          "accepted": "recovery and owned runtime cleanup. Implementation evidence remains in\n`operator/execution/report.md`. The subsequent fixed-command rehearsal,\ncorrections, gas, source bindings and cleanup are in `operator/rehearsal/report.md`;"
+        },
+        {
+          "current": "The independently verified original-wallet local parent deployment consumed\n**42,985,865 gas** (the prior operator baseline used **42,985,843**), exceeding",
+          "accepted": "The final local parent deployment consumed **42,985,843 gas**, exceeding"
+        },
+        {
+          "current": "Use `wallet-admission/verification/report.md` and its referenced\n`execution-index.json`, `source-artifact-parity.json`, `cleanup.json` and\nindependent rehearsal evidence to join commands, nonces, actual bond IDs,",
+          "accepted": "Use `operator/rehearsal/transactions.json`, `gas.json` and\n`source-evidence-bindings.json` to join commands, nonces, actual bond IDs,"
+        },
+        {
+          "current": "The earlier `operator/rehearsal/` records remain historical baseline evidence.\n",
+          "accepted": ""
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "exactSingleChildOfExpectedParent": true,
+    "exactCandidatePathSet": true,
+    "committedCurrentBytesAndModesMatchManifest": true,
+    "nonExceptionSourcesEqualHistoricalAcceptedHashes": true,
+    "exceptionReversalReproducesHistoricalAcceptedHashes": true,
+    "oneRequiredCoauthorTrailer": true,
+    "stagedAndUnstagedTrackedEmpty": true,
+    "noEvidenceOrGeneratedPathCommitted": true,
+    "allProtectedRefsUnchanged": true,
+    "foreignIndexEntriesUnchanged": true,
+    "previousUntrackedNonCandidatesUnchanged": true,
+    "historicalEvidenceInventoryUnchanged": true,
+    "cacheMetadataInventoriesUnchanged": true,
+    "dependencyLinksUnchanged": true,
+    "finalArtifactHashesUnchanged": true,
+    "diffCheckExit": 0
+  },
+  "preservation": {
+    "historicalEvidenceEntries": 614,
+    "outMetadataEntries": 7302,
+    "cacheMetadataEntries": 512,
+    "protectedRefs": [
+      "refs/heads/main 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/heads/work/dtf-migration 6e27ecaa242c4acca132e3575a160514aad07b11",
+      "refs/heads/work/dtf-migration-phase-01 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/heads/work/dtf-migration-phase-02 215c2bba6aa75e3e79bf68b7980b730927a85817",
+      "refs/heads/work/dtf-migration-phase-03 6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+      "refs/heads/work/dtf-migration-phase-04 5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "refs/heads/work/dtf-migration-phase-05 6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+      "refs/heads/work/dtf-migration-phase-06-e2 5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "refs/heads/work/dtf-migration-phase-07-recovery 421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "refs/heads/work/dtf-migration-phase-08-operator 3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "refs/heads/work/dtf-migration-phase-09-deployment-gas 421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "refs/heads/work/dtf-migration-phase-11-same-wallet-sources 3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "refs/remotes/origin/HEAD 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/remotes/origin/codex/robinhood-release-review 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0 0c3558b2ec9571873a787eef4becbdddafc6ce7b",
+      "refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6 a1a2b239593a90a062a8d477395f6b7fc3a473f7",
+      "refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9 3a4001f8a017be2b8b3e988b3fb1fcff454b6a01",
+      "refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6 41bbe4eec3ce9279b205058063b3b69f6be2b149",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8 8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21 3a8205815ac3f4307de10ab27e813a56847d779c",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21 92eeb98dad898aa12b83191e029a9e74112c295b",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7 27de3dc71df885634fda1b1fea448e3b499898c3",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13 f0d69de54820d1b844f304dc0c7bcf990f0b57a1",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea 74ef9f247f0b1a661fb338738e8300bd0c7f05eb",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731 bdd8e74ea3902897ca98d8312e5c195d9dbd5a33",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb 92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18 f4f3a424d8b286c5b0940694835e958f91d24c74",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8 1319a76e08a306e77926a20feb6b95250e64b348",
+      "refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2 549159d0b0c86fc0818f9e628315ddfef984ae4c",
+      "refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9 fb6f85b84a9f85dbb6dcb368b75111ecb6257a6c",
+      "refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2 05de656fd06346486bec9e9c7c17ce58508f5aac",
+      "refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24 924b83b300fb1e3938cc48e3ecd474a855775a3e",
+      "refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1 ad6c641aa4dcb582185a136fda6f342ffd8fb103",
+      "refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18 ffb2652457d73cb8ced157853b9fd7b1ca883065",
+      "refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8 4db81ae56cec60663566fd79f82c08bcf15859d7",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8 eae337a55ff219b56208c6eff11bf9cdb45d6a34",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7 98c7f0ac0cbf5c08666680a411a4b4a836fb0b73",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5 27d0cbfada90a5f6b546ed712e04dc0c5d8e4154",
+      "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26 f149ade544a68566d09a3ab3b7f6000873be6de8",
+      "refs/remotes/origin/docs/agent-inventory-navigation 950e6b32ea8efff73226a0adf6a7e0b75828127a",
+      "refs/remotes/origin/feat/uniswap-v4-upper-lower-wings 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/feature/crane-ethereum-staking-ports 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/fix/legacy-v4-erc5115-interface 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/fix/uniswap-se-v2-delivery 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/frontend/multi-app-monorepo 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/gh-pages 6724a5e5c762394797c3508ae1db7d6c0dbdac78",
+      "refs/remotes/origin/main 90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs/remotes/origin/refactor/frontend-shared-deployment-root 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/remotes/origin/upgrade/nextjs-16 70aa8e28336e35c6df92d07e2ccdb352d4fd20c3",
+      "refs/stash 7321b70c984423699475cfb45907b6dd70bb8ef4"
+    ],
+    "links": {
+      "lib/crane": {
+        "mode": 41453,
+        "ino": 18413130,
+        "target": "/Users/cyotee/Projects/indexedex/lib/crane"
+      },
+      "node_modules": {
+        "mode": 41453,
+        "ino": 18413131,
+        "target": "/Users/cyotee/Projects/indexedex/node_modules"
+      }
+    },
+    "baseline": "preservation-baseline.json",
+    "historicalInventorySha256": "b52cd5d152b45f97cee8669008f8075a4ff62ecf50232712ff6becce1f2313fb",
+    "outMetadataSha256": "1913dde08d946fa28fb1de5c8f5e23426ed3f4bb506d931c8c9540c782062a8c",
+    "cacheMetadataSha256": "fcb71ccfdf460f3f2eef3ce1e5c8c42237db2d711af8a75de5c7dce2b2f96ebf"
+  },
+  "cleanup": {
+    "port": {
+      "argv": [
+        "/usr/sbin/lsof",
+        "-nP",
+        "-iTCP:18562",
+        "-sTCP:LISTEN"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "pids": {
+      "argv": [
+        "/bin/ps",
+        "-p",
+        "71170,75636",
+        "-o",
+        "pid="
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "runtimeAbsent": true
+  },
+  "commands": {
+    "commit": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission' && GIT_MASTER=1 git -c trailer.ifexists=addIfDifferent commit -m 'Add verified bounded original-wallet Migration admission' --trailer 'Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>'",
+    "commitProcessStatus": {
+      "status": "completed"
+    },
+    "help": [
+      "/bin/zsh",
+      "-lic",
+      "bun --version && bun scripts/recovery/dtf-migration/cli.ts --help"
+    ],
+    "helpExit": 0,
+    "inspection": "All Git invocations carried GIT_MASTER=1. Full diff, staged diff identity, HEAD^, diff-tree, ls-tree, show, index, refs, status and diff --check were checked. No fetch, push, merge, reset, stash or source fix."
+  },
+  "limitations": [
+    "Full-category Migration support and task 9 remain open",
+    "Current local deployment 42,985,865 gas and baseline 42,985,843 exceed 32,000,000; target feasibility unresolved",
+    "Synthetic local records are not operational award approvals",
+    "No public readiness or complete-source-audit acceptance",
+    "Biome diagnostics unavailable: missing existing executable; JSON parsed and checked, no dependency/config changes"
+  ],
+  "pendingRuntime": false
+}

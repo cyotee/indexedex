@@ -1,0 +1,938 @@
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+index 0e2ab13e..1737b863 100644
+--- a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -1,5 +1,70 @@
+ # Bounded Migration operator runbook
+ 
++## Finite named receipt evidence
++
++```sh
++bun scripts/recovery/dtf-migration/cli.ts collect-receipts \
++  --input "$COMPLETE_HISTORICAL_TREE" --output "$NEW_RECEIPT_DIRECTORY" \
++  --rpc-alias robinhood_mainnet_alchemy
++```
++
++Use the existing login-shell archive credential bootstrap. The command reads
++only `ALCHEMY_KEY` and the configured alias in `foundry.toml`; never place an
++endpoint or credential in argv. There is no endpoint override, signer,
++automatic retry, provider fallback or installation. Invalid historical bindings
++fail before RPC configuration is read. Offline tests use a local wire server;
++the live CLI accepts only the existing Robinhood Alchemy alias.
++
++All manifest/source raw bindings authenticate before deriving the complete
++S008 weighted purchases, S009 earlier CP purchases, and `legacy_weight_to_sy`
++conversion references. Every original row is retained. Duplicate transaction
++hashes share requests, not economic attribution. The observed full historical
++population is 43 weighted, 16 earlier and 18 raw claims (77 distinct hashes);
++these counts are derived, not a hardcoded request list.
++
++Before named collection, authenticate chain 4663 and canonical block 108944663,
++hash `0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733`.
++Only `eth_chainId`, `eth_getTransactionByHash`, `eth_getTransactionReceipt`,
++`eth_getBlockByHash`, and `eth_getBlockByNumber` are sent. Each distinct named
++transaction and receipt is requested once. Exact blocks are cached by hash and
++number, without range scans. A failed request stays failed; unaffected finite
++requests continue. Wrong chain/anchor stops named requests and accounts for
++every reference as unavailable. Provider refusal is evidence, never permission
++to switch providers, methods, scan ranges or trace execution.
++
++`http/` preserves request bytes and complete safe response entity bytes (not
++HTTP framing or original signed transactions). `http-manifest.json` binds byte
++lengths, SHA-256, request IDs/methods/parameters, HTTP status and response outcome.
++Credential-bearing responses are sanitized, named `.response.redacted`, marked
++`raw: false`, and rejected as successful observations. Transport failures retain
++sanitized error details, never an endpoint-bearing exception. `archive.json`
++records normalized successes, partial failures, canonical associations and exact
++request links. `references.json` retains source rows and request deduplication;
++`reconciliation.json` accounts for every reference, conflict and qualification.
++Output creation and every file write are exclusive. Preserve any partial output
++and command failure; never reuse an output directory.
++
++Transaction/receipt/block identities, index membership, receipt endpoints,
++every log identity/order, canonical block agreement, successful receipt status
++and the anchor upper bound are checked. Purchase reconciliation requires both
++the exact NFT mint/recipient and its generation-specific purchase event/basis.
++Direct DTF/WETH and routed inputs stay separate. Shared/multiaction or indirect
++purchases never attribute the whole transaction input to each original.
++Claim reconciliation retains caller/callee/value/calldata, source/SY logs and
++exact known output locators/amounts. Only a direct exact-length call to the fixed
++TokenStaking address is decoded as `withdrawClaim`; arbitrary calldata is not.
++Event signatures/layouts are local interface interpretation, not authenticated
++historical build provenance.
++
++The archive version is `dtf-finite-receipt-evidence-v1`, status
++`NON-ISSUABLE-RECEIPT-OBSERVATIONS`; operational loaders reject it. Gross transfers,
++mints and matching events do not establish net contribution or eligibility.
++This is observed RPC JSON, not a trustless proof, historical storage, execution
++prefix, current control, full W0/Q0, all prior claims or zero prior compensation.
++It does not modify candidates or close all 1240 unresolved records, exhaustive
++native/WETH/refund/recovery/source exposure, configuration, funding, C0 or credit.
++Preserve recovered-input qualification and all source/external/gas/P1 limits.
++
+ ## Offline historical review candidates
+ 
+ ```sh
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+index 0e8a31cf..a747e8e8 100644
+--- a/scripts/recovery/dtf-migration/cli.ts
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -10,8 +10,10 @@ import { rehearse } from "./rehearse.js";
+ import { exportBundle } from "./bundle.js";
+ import { materializeBundle } from "./bundle-materialize.js";
+ import { deriveCandidateFile } from "./candidates.js";
++import { collectReceiptFile } from "./receipt-evidence.js";
+ 
+ export const help = `Bounded Migration operator
++  bun scripts/recovery/dtf-migration/cli.ts collect-receipts --input <complete-historical-tree> --output <new-directory> --rpc-alias robinhood_mainnet_alchemy
+   bun scripts/recovery/dtf-migration/cli.ts derive-candidates --input <complete-historical-tree> --output <new-directory>
+   bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
+   bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
+@@ -96,6 +98,18 @@ export async function main(args: readonly string[]): Promise<void> {
+     throw new PreparationError("INPUT", "preparation commands accept no execution flags");
+   }
+   switch (positionals[0]) {
++    case "collect-receipts": {
++      if (!values.input || !values.output || !values["rpc-alias"]
++        || suppliedOptions.some((name) => !["input", "output", "rpc-alias"].includes(name))) {
++        throw new PreparationError("INPUT", "collect-receipts requires only input, output and existing rpc-alias");
++      }
++      const archive = await collectReceiptFile(values.input, values.output, values["rpc-alias"]);
++      console.log(JSON.stringify({ command: "collect-receipts", authenticated: archive.authenticated,
++        references: archive.references, distinctTransactions: archive.distinctTransactions,
++        completeAssociations: archive.completeAssociations, referenceConflicts: archive.referenceConflicts }));
++      if (!archive.authenticated || archive.completeAssociations !== archive.distinctTransactions) process.exitCode = 1;
++      return;
++    }
+     case "derive-candidates": {
+       if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
+         throw new PreparationError("INPUT", "derive-candidates requires only --input and --output");
+diff --git a/scripts/recovery/dtf-migration/receipt-association.ts b/scripts/recovery/dtf-migration/receipt-association.ts
+new file mode 100644
+index 00000000..adf0801a
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt-association.ts
+@@ -0,0 +1,57 @@
++import { z } from "zod";
++import { hash, hex } from "./schema.js";
++
++export const ANCHOR = { number: "108944663", hash: "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733" } as const;
++export const quantity = z.string().regex(/^0x(?:0|[1-9a-f][0-9a-f]*)$/).refine((v) => BigInt(v) < 2n ** 256n);
++export const rpcAddress = z.string().regex(/^0x[0-9a-fA-F]{40}$/).transform((v) => v.toLowerCase());
++const association = { blockHash: hash, blockNumber: quantity, transactionIndex: quantity };
++export const transaction = z.object({
++  ...association, hash, from: rpcAddress, to: rpcAddress.nullable(), value: quantity,
++  input: hex, nonce: quantity,
++}).passthrough().readonly();
++export const log = z.object({
++  ...association, transactionHash: hash, logIndex: quantity, address: rpcAddress,
++  topics: z.array(hash).readonly(), data: hex, removed: z.literal(false),
++}).passthrough().readonly();
++export const receipt = z.object({
++  ...association, transactionHash: hash, from: rpcAddress, to: rpcAddress.nullable(),
++  status: z.enum(["0x0", "0x1"]), logs: z.array(log).readonly(),
++}).passthrough().readonly();
++export const block = z.object({
++  hash, number: quantity, parentHash: hash, timestamp: quantity,
++  transactions: z.array(hash).readonly(),
++}).passthrough().readonly();
++export type Transaction = z.infer<typeof transaction>;
++export type Receipt = z.infer<typeof receipt>;
++export type Block = z.infer<typeof block>;
++export type Log = z.infer<typeof log>;
++export type Associated = {
++  readonly transaction: Transaction; readonly receipt: Receipt;
++  readonly byHash: Block; readonly byNumber: Block;
++};
++export function associationConflicts(expected: string, observed: Associated): readonly string[] {
++  const { transaction: tx, receipt: r, byHash: b, byNumber: n } = observed;
++  const conflicts: string[] = [];
++  if (tx.hash !== expected || r.transactionHash !== expected) conflicts.push("transaction-hash");
++  if (tx.blockHash !== r.blockHash || b.hash !== tx.blockHash || n.hash !== b.hash) conflicts.push("block-hash");
++  if (tx.blockNumber !== r.blockNumber || tx.blockNumber !== b.number || b.number !== n.number) conflicts.push("block-number");
++  if (BigInt(tx.blockNumber) > BigInt(ANCHOR.number)) conflicts.push("after-anchor");
++  if (tx.transactionIndex !== r.transactionIndex) conflicts.push("transaction-index");
++  if (tx.from !== r.from || tx.to !== r.to) conflicts.push("receipt-endpoints");
++  if (new Set(b.transactions).size !== b.transactions.length || new Set(n.transactions).size !== n.transactions.length
++    || b.transactions.length !== n.transactions.length
++    || b.transactions.some((h, i) => h !== n.transactions[i])
++    || b.transactions.filter((h) => h === expected).length !== 1
++    || b.transactions[Number(BigInt(tx.transactionIndex))] !== expected) conflicts.push("block-membership");
++  if (b.parentHash !== n.parentHash || b.timestamp !== n.timestamp) conflicts.push("canonical-header");
++  const indices = new Set<string>();
++  let preceding = -1n;
++  for (const l of r.logs) {
++    if (l.transactionHash !== expected || l.blockHash !== tx.blockHash || l.blockNumber !== tx.blockNumber
++      || l.transactionIndex !== tx.transactionIndex) conflicts.push(`log-association:${l.logIndex}`);
++    if (indices.has(l.logIndex) || BigInt(l.logIndex) <= preceding) conflicts.push(`log-order:${l.logIndex}`);
++    indices.add(l.logIndex); preceding = BigInt(l.logIndex);
++  }
++  if (r.status !== "0x1") conflicts.push("transaction-reverted");
++  return conflicts;
++}
+diff --git a/scripts/recovery/dtf-migration/receipt-evidence.ts b/scripts/recovery/dtf-migration/receipt-evidence.ts
+new file mode 100644
+index 00000000..05cbdb06
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt-evidence.ts
+@@ -0,0 +1,124 @@
++import { mkdir, readFile, writeFile } from "node:fs/promises";
++import { dirname, join, resolve } from "node:path";
++import { fileURLToPath } from "node:url";
++import { z } from "zod";
++import { loadCandidateInput } from "./candidate-input.js";
++import { canonical, fingerprint } from "./provenance.js";
++import { PreparationError } from "./schema.js";
++import { ANCHOR, associationConflicts, block, quantity, receipt, transaction } from "./receipt-association.js";
++import type { Associated, Transaction, Receipt } from "./receipt-association.js";
++import { archiveVersion, receiptReferences, receiptRequests } from "./receipt-input.js";
++import { ReceiptRpc } from "./receipt-rpc.js";
++import { reconcileReference } from "./receipt-reconciliation.js";
++
++// Only this exact configured alias and its one credential can enter the live command.
++async function configuredEndpoint(alias: string): Promise<URL> {
++  if (alias !== "robinhood_mainnet_alchemy") throw new PreparationError("INPUT", "receipt evidence requires the existing archive alias");
++  const config = await readFile(resolve(dirname(fileURLToPath(import.meta.url)), "../../../foundry.toml"), "utf8");
++  const matches = [...config.matchAll(/^robinhood_mainnet_alchemy\s*=\s*"([^"]+)"\s*$/gm)];
++  const template = matches[0]?.[1];
++  if (matches.length !== 1 || template !== "https://robinhood-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}") {
++    throw new PreparationError("DOMAIN", "existing archive alias changed");
++  }
++  const key = process.env["ALCHEMY_KEY"];
++  if (!key) throw new PreparationError("INPUT", "existing archive credential bootstrap unavailable");
++  return new URL(template.replace("${ALCHEMY_KEY}", encodeURIComponent(key)));
++}
++export type CollectionResult = {
++  readonly tx: string; readonly references: readonly string[]; readonly conflicts: readonly string[];
++  readonly requestIds: readonly number[]; readonly observed: Associated | null;
++  readonly transactionObservation: Transaction | null; readonly receiptObservation: Receipt | null;
++};
++
++// Also used with a local wire transport by offline tests; the CLI never accepts a URL.
++export async function collectReceipts(inputRoot: string, output: string, rpc: ReceiptRpc) {
++  const input = await loadCandidateInput(inputRoot);
++  const refs = receiptReferences(input), requests = receiptRequests(refs);
++  const outputDirectory = resolve(output);
++  await mkdir(outputDirectory, { recursive: false });
++  await mkdir(join(outputDirectory, "http"));
++  const save = async (name: string, value: unknown) => {
++    const bytes = `${canonical(value)}\n`;
++    await writeFile(join(outputDirectory, name), bytes, { flag: "wx" });
++    return { path: name, bytes: Buffer.byteLength(bytes), sha256: fingerprint(bytes) };
++  };
++  const inputs = await save("inputs.json", {
++    declarations: input.bindings, sources: input.sources,
++    identities: [...input.bytes].map(([path, bytes]) => ({ path, bytes: bytes.byteLength, sha256: fingerprint(bytes) })),
++    qualification: "hash-authenticated recovered historical bodies, not located original captures",
++  });
++  await save("references.json", { refs, requests });
++  const chain = await rpc.read("eth_chainId", [], quantity);
++  const anchor = await rpc.read("eth_getBlockByNumber", [`0x${BigInt(ANCHOR.number).toString(16)}`, false], block);
++  const authenticated = chain.kind === "success" && BigInt(chain.value) === 4663n && anchor.kind === "success"
++    && anchor.value.hash === ANCHOR.hash && BigInt(anchor.value.number).toString() === ANCHOR.number;
++  const results: CollectionResult[] = [];
++  const blocksByHash = new Map<string, ReturnType<typeof rpc.read<z.infer<typeof block>>>>();
++  const blocksByNumber = new Map<string, ReturnType<typeof rpc.read<z.infer<typeof block>>>>();
++  for (const request of requests) {
++    if (!authenticated) {
++      results.push({ ...request, conflicts: ["chain-or-anchor-authentication-failed"], requestIds: [], observed: null,
++        transactionObservation: null, receiptObservation: null });
++      continue;
++    }
++    const tx = await rpc.read("eth_getTransactionByHash", [request.tx], transaction);
++    const mined = await rpc.read("eth_getTransactionReceipt", [request.tx], receipt);
++    const ids = [tx.id, mined.id];
++    const failures: string[] = [];
++    if (tx.kind === "failure") failures.push(`transaction:${tx.reason}`);
++    if (mined.kind === "failure") failures.push(`receipt:${mined.reason}`);
++    // Fetch the exact blocks named by either successful response, including conflicts.
++    for (const item of [tx, mined]) {
++      if (item.kind === "success") {
++        const h = item.value.blockHash, n = item.value.blockNumber;
++        if (!blocksByHash.has(h)) blocksByHash.set(h, rpc.read("eth_getBlockByHash", [h, false], block));
++        const byHash = await blocksByHash.get(h);
++        if (byHash) ids.push(byHash.id);
++        if (!blocksByNumber.has(n)) blocksByNumber.set(n, rpc.read("eth_getBlockByNumber", [n, false], block));
++        const byNumber = await blocksByNumber.get(n);
++        if (byNumber) ids.push(byNumber.id);
++      }
++    }
++    let observed: Associated | null = null;
++    if (tx.kind === "success" && mined.kind === "success") {
++      const byHash = await blocksByHash.get(tx.value.blockHash);
++      const byNumber = await blocksByNumber.get(tx.value.blockNumber);
++      if (byHash?.kind === "success" && byNumber?.kind === "success") {
++        observed = { transaction: tx.value, receipt: mined.value, byHash: byHash.value, byNumber: byNumber.value };
++        failures.push(...associationConflicts(request.tx, observed));
++      } else failures.push(`blocks:${byHash?.kind === "failure" ? byHash.reason : "missing"}:${byNumber?.kind === "failure" ? byNumber.reason : "missing"}`);
++    }
++    const result = { ...request, conflicts: failures, requestIds: [...new Set(ids)], observed,
++      transactionObservation: tx.kind === "success" ? tx.value : null,
++      receiptObservation: mined.kind === "success" ? mined.value : null };
++    results.push(result);
++    await save(`${request.tx}.json`, result);
++  }
++  const reconciliation = refs.map((ref) => {
++    const result = results.find((r) => r.tx === ref.tx);
++    if (!result?.observed) return { locator: ref.row.locator, tx: ref.tx, kind: ref.kind,
++      historicalFields: ref.row.fields, conflicts: result?.conflicts ?? ["missing-transaction"], observation: null };
++    const reconciled = reconcileReference(ref, result.observed, result.references.length);
++    return { ...reconciled, conflicts: [...new Set([...result.conflicts, ...reconciled.conflicts])] };
++  });
++  const reconciliationIdentity = await save("reconciliation.json", reconciliation);
++  const http = await save("http-manifest.json", [...rpc.captures].sort((a, b) => a.id - b.id));
++  const index = { version: archiveVersion.value, status: "NON-ISSUABLE-RECEIPT-OBSERVATIONS",
++    provider: "robinhood_mainnet_alchemy", chainId: "4663", anchor: ANCHOR, authenticated,
++    inputs, http, reconciliation: reconciliationIdentity, results,
++    references: refs.length, distinctTransactions: requests.length,
++    completeAssociations: results.filter((r) => r.observed && r.conflicts.length === 0).length,
++    referenceConflicts: reconciliation.filter((r) => r.conflicts.length > 0).length,
++    qualifications: ["observed-RPC-JSON-not-raw-signed-transaction-or-trustless-proof",
++      "not-historical-storage-execution-prefix-current-control-or-build-pedigree",
++      "not-exhaustive-history-refunds-native-WETH-recoveries-or-source-exposure",
++      "old-candidates-unchanged-not-all-1240-issues-closed", "no-eligibility-configuration-C0-or-operational-approval"] };
++  await save("archive.json", index);
++  return index;
++}
++export async function collectReceiptFile(input: string, output: string, alias: string) {
++  // Authenticate before resolving credentials; offline input errors never access RPC.
++  receiptReferences(await loadCandidateInput(input));
++  const endpoint = await configuredEndpoint(alias);
++  return collectReceipts(input, output, new ReceiptRpc(endpoint, join(resolve(output), "http")));
++}
+diff --git a/scripts/recovery/dtf-migration/receipt-input.ts b/scripts/recovery/dtf-migration/receipt-input.ts
+new file mode 100644
+index 00000000..0d155bb8
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt-input.ts
+@@ -0,0 +1,55 @@
++import { z } from "zod";
++import { field, integer, table, unique, candidateError } from "./candidate-input.js";
++import type { CandidateInput, TableRow } from "./candidate-input.js";
++import { deriveNfts, legacy } from "./candidate-nfts.js";
++import type { NftObservation } from "./candidate-nfts.js";
++import { ANCHOR, rpcAddress } from "./receipt-association.js";
++import { hash } from "./schema.js";
++
++export const claimSource = "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00";
++export const sy = "0xb55604cf4dcdabb362078e106d20f98512391edf";
++export const earlier = "0xaf0e1967c8f755c747615c5427108bc549ca1122";
++export type ReceiptReference =
++  | { readonly kind: "nft"; readonly row: TableRow; readonly tx: string; readonly nft: NftObservation;
++      readonly expectedTransfers: readonly TableRow[] }
++  | { readonly kind: "claim"; readonly row: TableRow; readonly tx: string; readonly recipient: string;
++      readonly principal: string; readonly output: string; readonly expectedBlock: string;
++      readonly expectedTransfers: readonly TableRow[] };
++
++export function receiptReferences(input: CandidateInput): readonly ReceiptReference[] {
++  if (input.sources.chainId !== 4663 || String(input.sources.evidenceCutoff.block) !== ANCHOR.number
++    || input.sources.evidenceCutoff.hash.toLowerCase() !== ANCHOR.hash) candidateError("receipt input cutoff differs");
++  for (const [id, path] of [["S008", "evidence/weighted-bonds.csv"], ["S009", "evidence/earlier-cp-bonds.csv"]] as const) {
++    if (input.sources.sources.find((s) => s.id === id)?.path !== path) candidateError(`receipt source path differs: ${id}`);
++  }
++  const transfers = table(input, "evidence/transfers.csv");
++  const purchases = [...table(input, "evidence/weighted-bonds.csv"), ...table(input, "evidence/earlier-cp-bonds.csv")];
++  const nfts = deriveNfts(input);
++  const refs: ReceiptReference[] = nfts.map((nft) => {
++    const row = purchases.find((r) => r.locator === nft.purchaseLocator);
++    if (!row) return candidateError("purchase locator missing");
++    hash.parse(nft.purchaseTx); rpcAddress.parse(nft.recipientObservation);
++    return { kind: "nft", row, nft, tx: nft.purchaseTx,
++      expectedTransfers: transfers.filter((r) => field(r, "tx").toLowerCase() === nft.purchaseTx) };
++  });
++  const conversions = table(input, "conversions.csv");
++  unique(conversions, "conversion_id");
++  for (const row of conversions.filter((r) => field(r, "kind") === "legacy_weight_to_sy")) {
++    const tx = hash.parse(field(row, "tx")), recipient = rpcAddress.parse(field(row, "recipient"));
++    if (rpcAddress.parse(field(row, "output_asset")) !== sy || field(row, "output_decimals") !== "9") {
++      candidateError(`claim output unit differs: ${row.locator}`);
++    }
++    refs.push({ kind: "claim", row, tx, recipient, principal: integer(field(row, "principal_raw")),
++      output: integer(field(row, "output_raw")), expectedBlock: integer(field(row, "block")),
++      expectedTransfers: transfers.filter((r) => field(r, "tx").toLowerCase() === tx
++        && field(r, "asset").toLowerCase() === sy && field(r, "to").toLowerCase() === recipient) });
++  }
++  return refs.sort((a, b) => a.row.locator.localeCompare(b.row.locator));
++}
++export function receiptRequests(refs: readonly ReceiptReference[]) {
++  return [...new Set(refs.map((r) => r.tx))].sort().map((tx) => ({
++    tx, references: refs.filter((r) => r.tx === tx).map((r) => r.row.locator),
++  }));
++}
++export const archiveVersion = z.literal("dtf-finite-receipt-evidence-v1");
++export { legacy };
+diff --git a/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts b/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts
+new file mode 100644
+index 00000000..3ba48a4b
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts
+@@ -0,0 +1,81 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { mkdtemp, rm, realpath } from "node:fs/promises";
++import { join } from "node:path";
++import { tmpdir } from "node:os";
++import { id } from "ethers";
++import { loadCandidateInput } from "./candidate-input.js";
++import { receiptReferences, legacy } from "./receipt-input.js";
++import { reconcileReference } from "./receipt-reconciliation.js";
++import { inputFixture, purchaseTx, purchaseReceipt, purchaseBlock, wallet } from "./receipt.fixture.js";
++import { preparationInput } from "./schema.js";
++import { preparedEnvelope } from "./bundle.js";
++import { executionManifest } from "./execution-schema.js";
++
++const observation = { transaction: purchaseTx, receipt: purchaseReceipt, byHash: purchaseBlock, byNumber: purchaseBlock };
++async function nftReference() {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-reconcile-"));
++  try {
++    const input = await loadCandidateInput(await inputFixture(parent));
++    const ref = receiptReferences(input).find((r) => r.kind === "nft");
++    assert.ok(ref && ref.kind === "nft");
++    return ref;
++  } finally { await rm(parent, { recursive: true }); }
++}
++test("source purchase basis is independently required in addition to the mint", async () => {
++  const ref = await nftReference();
++  const changed = { ...observation, receipt: { ...purchaseReceipt, logs: purchaseReceipt.logs.filter((l) =>
++    l.topics[0] !== id("BondPurchased(uint256,address,uint256,uint256,uint256)")) } };
++  const result = reconcileReference(ref, changed, 1);
++  assert.ok(result.conflicts.includes("source-purchase-event-or-basis"));
++  assert.equal("assets" in result && result.assets[0]?.attributableDirect, null);
++});
++test("routed input stays separate and cannot be attributed as a direct contribution", async () => {
++  const ref = await nftReference();
++  const direct = purchaseReceipt.logs.find((l) => l.address === legacy.dtf); assert.ok(direct);
++  const routed = { ...direct, logIndex: "0x4", data: `0x${(999n).toString(16).padStart(64, "0")}`,
++    topics: [id("Transfer(address,address,uint256)"), `0x${"2".repeat(40).padStart(64, "0")}`,
++      `0x${legacy.weighted.slice(2).padStart(64, "0")}`] };
++  const result = reconcileReference(ref, { ...observation, receipt: { ...purchaseReceipt, logs: [...purchaseReceipt.logs, routed] } }, 1);
++  assert.ok("assets" in result);
++  assert.equal(result.assets[0]?.observedDirect, "12");
++  assert.equal(result.assets[0]?.observedRouted, "999");
++  assert.equal(result.assets[0]?.attributableDirect, "12");
++});
++test("a shared transaction never assigns its entire direct inputs to each original", async () => {
++  const result = reconcileReference(await nftReference(), observation, 2);
++  assert.ok(result.conflicts.includes("shared-or-multiaction-purchase"));
++  assert.ok("assets" in result);
++  assert.deepEqual(result.assets.map((a) => a.attributableDirect), [null, null]);
++});
++test("canonical association conflicts prohibit otherwise matching input attribution", async () => {
++  const result = reconcileReference(await nftReference(), { ...observation,
++    byNumber: { ...purchaseBlock, hash: `0x${"9".repeat(64)}` } }, 1);
++  assert.ok(result.conflicts.includes("block-hash"));
++  assert.ok("assets" in result);
++  assert.deepEqual(result.assets.map((a) => a.attributableDirect), [null, null]);
++});
++test("wrong mint recipient is a conflict even with matching direct payment", async () => {
++  const ref = await nftReference(), mint = purchaseReceipt.logs[0]; assert.ok(mint);
++  const changed = { ...mint, topics: [...mint.topics.slice(0, 2), `0x${"2".repeat(40).padStart(64, "0")}`, ...mint.topics.slice(3)] };
++  const result = reconcileReference(ref, { ...observation,
++    receipt: { ...purchaseReceipt, logs: [changed, ...purchaseReceipt.logs.slice(1)] } }, 1);
++  assert.ok(result.conflicts.includes("mint-recipient-or-id"));
++});
++test("indirect calls retain calldata and never receive direct claim decoding", async () => {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-indirect-"));
++  try {
++    const ref = receiptReferences(await loadCandidateInput(await inputFixture(parent))).find((r) => r.kind === "claim");
++    assert.ok(ref);
++    const result = reconcileReference(ref, { ...observation, transaction: { ...purchaseTx, from: wallet,
++      input: `0x12345678${"0".repeat(64)}` } }, 1);
++    assert.ok("decodedDirectWeight" in result);
++    assert.equal(result.decodedDirectWeight, null);
++    assert.ok(result.conflicts.includes("indirect-or-unexpected-claim-call"));
++    assert.equal(result.transactionContext.calldata, `0x12345678${"0".repeat(64)}`);
++  } finally { await rm(parent, { recursive: true }); }
++});
++test("receipt archive format cannot enter preparation, validation or execution loaders", () => {
++  const archive = { version: "dtf-finite-receipt-evidence-v1", status: "NON-ISSUABLE-RECEIPT-OBSERVATIONS" };
++  for (const schema of [preparationInput, preparedEnvelope, executionManifest]) assert.equal(schema.safeParse(archive).success, false);
++});
+diff --git a/scripts/recovery/dtf-migration/receipt-reconciliation.ts b/scripts/recovery/dtf-migration/receipt-reconciliation.ts
+new file mode 100644
+index 00000000..defd60ad
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt-reconciliation.ts
+@@ -0,0 +1,127 @@
++import { id } from "ethers";
++import { field } from "./candidate-input.js";
++import type { TableRow } from "./candidate-input.js";
++import { claimSource, earlier, legacy, sy } from "./receipt-input.js";
++import type { ReceiptReference } from "./receipt-input.js";
++import type { Associated, Log } from "./receipt-association.js";
++import { associationConflicts } from "./receipt-association.js";
++
++const transferTopic = id("Transfer(address,address,uint256)");
++const bondTopic = id("BondPurchased(uint256,address,uint256,uint256,uint256)");
++const lockTopic = id("NewLock(uint256,address,uint256,uint256,uint256)");
++const claimTopic = id("ClaimWithdrawn(address,uint256,uint256)");
++const withdrawSelector = id("withdrawClaim(uint256)").slice(0, 10);
++const addressWord = /^0x0{24}[0-9a-f]{40}$/;
++function words(data: string): readonly string[] {
++  return /^0x(?:[0-9a-f]{64})*$/.test(data) ? data.slice(2).match(/.{64}/g) ?? [] : [];
++}
++function indexedAddress(topic: string | undefined): string | null {
++  return topic && addressWord.test(topic) ? `0x${topic.slice(-40)}` : null;
++}
++type Transfer = {
++  readonly address: string; readonly from: string; readonly to: string;
++  readonly logIndex: string; readonly amount: string | null; readonly tokenId: string | null;
++};
++function transfers(logs: readonly Log[]): readonly Transfer[] {
++  return logs.flatMap<Transfer>((l) => {
++    if (l.topics[0] !== transferTopic) return [];
++    const from = indexedAddress(l.topics[1]), to = indexedAddress(l.topics[2]);
++    const data = words(l.data);
++    if (from === null || to === null) return [];
++    if (l.topics.length === 3 && data.length === 1 && data[0]) return [{
++      address: l.address, from, to, logIndex: BigInt(l.logIndex).toString(),
++      amount: BigInt(`0x${data[0]}`).toString(), tokenId: null,
++    }];
++    const token = l.topics[3];
++    if (l.topics.length === 4 && l.data === "0x" && token) return [{
++      address: l.address, from, to, logIndex: BigInt(l.logIndex).toString(),
++      amount: null, tokenId: BigInt(token).toString(),
++    }];
++    return [];
++  });
++}
++function savedTransferConflicts(rows: readonly TableRow[], observed: Associated, decoded: readonly Transfer[]): readonly string[] {
++  return rows.flatMap((r) => {
++    const match = decoded.filter((t) => t.address === field(r, "asset").toLowerCase()
++      && t.logIndex === field(r, "log_index"));
++    const t = match[0];
++    if (match.length !== 1 || !t || t.from !== field(r, "from").toLowerCase()
++      || t.to !== field(r, "to").toLowerCase()
++      || (t.amount ?? "") !== field(r, "amount_raw") || (t.tokenId ?? "") !== field(r, "token_id")
++      || BigInt(observed.transaction.blockNumber).toString() !== field(r, "block")
++      || BigInt(observed.transaction.transactionIndex).toString() !== field(r, "transaction_index")) {
++      return [`saved-transfer-conflict:${r.locator}`];
++    }
++    return [];
++  });
++}
++
++export function reconcileReference(ref: ReceiptReference, observed: Associated, sharedReferences: number) {
++  const { transaction: tx, receipt: receipt_ } = observed;
++  const decoded = transfers(receipt_.logs);
++  const conflicts = [...associationConflicts(ref.tx, observed),
++    ...savedTransferConflicts(ref.expectedTransfers, observed, decoded)];
++  const transactionContext = { from: tx.from, to: tx.to, value: BigInt(tx.value).toString(), calldata: tx.input,
++    block: BigInt(tx.blockNumber).toString(), transactionIndex: BigInt(tx.transactionIndex).toString() };
++  const base = { locator: ref.row.locator, kind: ref.kind, tx: ref.tx, historicalFields: ref.row.fields,
++    transactionContext, savedTransferLocators: ref.expectedTransfers.map((r) => r.locator) };
++  switch (ref.kind) {
++    case "nft": {
++      const n = ref.nft, target = n.collection === legacy.weightedNft ? legacy.weighted : earlier;
++      const mints = decoded.filter((t) => t.address === n.collection && t.from === legacy.zero);
++      const mint = mints.filter((t) => t.tokenId === n.tokenId && t.to === n.recipientObservation);
++      if (mint.length !== 1) conflicts.push("mint-recipient-or-id");
++      const expectedTopic = n.collection === legacy.weightedNft ? bondTopic : lockTopic;
++      const events = receipt_.logs.filter((l) => l.address === n.collection && l.topics[0] === expectedTopic);
++      const sourceEvents = events.map((l) => ({ logIndex: BigInt(l.logIndex).toString(),
++        tokenId: l.topics[1] ? BigInt(l.topics[1]).toString() : null, recipient: indexedAddress(l.topics[2]),
++        values: words(l.data).map((w) => BigInt(`0x${w}`).toString()), topics: l.topics }));
++      const matches = sourceEvents.filter((e) => e.tokenId === n.tokenId && e.recipient === n.recipientObservation
++        && e.topics.length === 3 && e.values.length === 3 && e.values[0] === n.basis.value);
++      if (matches.length !== 1) conflicts.push("source-purchase-event-or-basis");
++      const expectedBlock = ref.row.fields["purchase_block"];
++      if (expectedBlock !== undefined && transactionContext.block !== expectedBlock) conflicts.push("purchase-block");
++      const assets = [legacy.dtf, legacy.weth].map((asset) => {
++        const inbound = decoded.filter((t) => t.address === asset && t.to === target && t.amount !== null);
++        const direct = inbound.filter((t) => t.from === n.recipientObservation);
++        const routed = inbound.filter((t) => t.from !== n.recipientObservation);
++        const sum = (items: readonly Transfer[]) => items.reduce((v, t) => v + BigInt(t.amount ?? "0"), 0n).toString();
++        const observedDirect = sum(direct), observedRouted = sum(routed);
++        const expected = n.directInputs.find((i) => i.asset === asset)?.observedRaw;
++        if (expected !== null && expected !== undefined && observedDirect !== expected) conflicts.push(`direct-input:${asset}`);
++        if (n.collection === legacy.earlierNft && asset === legacy.dtf && n.routedDtfRaw !== null
++          && observedRouted !== n.routedDtfRaw) conflicts.push("routed-dtf");
++        return { asset, observedDirect, observedRouted, direct, routed };
++      });
++      const ambiguous = sharedReferences !== 1 || mints.length !== 1 || events.length !== 1;
++      if (ambiguous) conflicts.push("shared-or-multiaction-purchase");
++      if (tx.to !== target || tx.from !== n.recipientObservation) conflicts.push("indirect-purchase-or-different-caller");
++      return { ...base, conflicts, mints, sourceEvents,
++        assets: assets.map((a) => ({ ...a, attributableDirect: conflicts.length ? null : a.observedDirect })),
++        qualifications: ["gross-transfers-not-net-contribution", "native-refunds-and-routing-not-proved",
++          "mint-and-event-not-eligibility", "historical-owner-not-current-control",
++          "event-layout-from-local-interface-not-authenticated-deployment-build"] };
++    }
++    case "claim": {
++      const sourceLogs = receipt_.logs.filter((l) => l.address === claimSource);
++      const syLogs = receipt_.logs.filter((l) => l.address === sy);
++      const events = sourceLogs.filter((l) => l.topics[0] === claimTopic);
++      const claims = events.map((l) => ({ logIndex: BigInt(l.logIndex).toString(), user: indexedAddress(l.topics[1]),
++        values: words(l.data).map((w) => BigInt(`0x${w}`).toString()), topics: l.topics }));
++      if (claims.filter((c) => c.user === ref.recipient && c.values[0] === ref.principal && c.values[1] === ref.output
++        && c.topics.length === 2 && c.values.length === 2).length !== 1) conflicts.push("source-claim-event");
++      const outputs = decoded.filter((t) => t.address === sy && t.to === ref.recipient && t.amount === ref.output);
++      if (outputs.length !== 1 || ref.expectedTransfers.length !== 1) conflicts.push("exact-known-output");
++      if (transactionContext.block !== ref.expectedBlock) conflicts.push("claim-block");
++      const direct = tx.to === claimSource && tx.input.slice(0, 10) === withdrawSelector && tx.input.length === 74
++        && tx.value === "0x0";
++      const decodedDirectWeight = direct ? BigInt(`0x${tx.input.slice(10)}`).toString() : null;
++      if (!direct || tx.from !== ref.recipient) conflicts.push("indirect-or-unexpected-claim-call");
++      if (direct && decodedDirectWeight !== ref.principal) conflicts.push("direct-claim-weight");
++      if (claims.length !== 1 || sharedReferences !== 1) conflicts.push("multiaction-claim");
++      return { ...base, conflicts, direct, decodedDirectWeight, sourceLogs, syLogs, claims, outputs,
++        qualifications: ["known-output-only-not-full-W0-or-Q0", "all-prior-claims-unknown",
++          "prior-compensation-unknown-not-zero", "no-credit-created", "source-event-layout-not-build-pedigree"] };
++    }
++  }
++}
+diff --git a/scripts/recovery/dtf-migration/receipt-rpc.ts b/scripts/recovery/dtf-migration/receipt-rpc.ts
+new file mode 100644
+index 00000000..7ab4e13f
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt-rpc.ts
+@@ -0,0 +1,101 @@
++import { request as httpRequest } from "node:http";
++import { request as httpsRequest } from "node:https";
++import { writeFile } from "node:fs/promises";
++import { join } from "node:path";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++
++export type ReadMethod = "eth_chainId" | "eth_getTransactionByHash" | "eth_getTransactionReceipt"
++  | "eth_getBlockByHash" | "eth_getBlockByNumber";
++export type RpcResult<T> =
++  | { readonly kind: "success"; readonly id: number; readonly value: T }
++  | { readonly kind: "failure"; readonly id: number; readonly reason: string };
++type Capture = {
++  readonly id: number; readonly method: ReadMethod; readonly params: readonly unknown[];
++  readonly request: { readonly path: string; readonly bytes: number; readonly sha256: string };
++  readonly response: { readonly path: string; readonly bytes: number; readonly sha256: string;
++    readonly raw: boolean; readonly receivedBytes: number } | null;
++  readonly http: { readonly status: number; readonly contentType: string | null; readonly contentEncoding: string | null } | null;
++  readonly transportError?: { readonly name: string; readonly message: string };
++  readonly outcome: string;
++};
++const envelope = z.object({ jsonrpc: z.literal("2.0"), id: z.number().int().safe() }).passthrough();
++// Direct HTTP has no provider middleware, retries, redirects, discovery or hidden methods.
++export class ReceiptRpc {
++  private sequence = 0;
++  readonly captures: Capture[] = [];
++  private readonly secrets: readonly string[];
++  constructor(private readonly endpoint: URL, private readonly directory: string) {
++    this.secrets = [endpoint.href, endpoint.username, endpoint.password,
++      ...endpoint.pathname.split("/").filter((s) => s.length >= 8).flatMap((s) => [s, decodeURIComponent(s)]),
++      ...endpoint.searchParams.values()].filter(Boolean);
++  }
++  private redact(text: string): string {
++    let safe = text;
++    for (const secret of this.secrets) safe = safe.replaceAll(secret, "<redacted>");
++    return safe.replace(/https?:\/\/[^\s"'<>\\]+/gi, "<redacted-url>");
++  }
++  async read<T>(method: ReadMethod, params: readonly unknown[], schema: z.ZodType<T>): Promise<RpcResult<T>> {
++    const id = ++this.sequence;
++    const requestBytes = Buffer.from(canonical({ jsonrpc: "2.0", id, method, params }));
++    const requestPath = `${String(id).padStart(4, "0")}.request.json`;
++    await writeFile(join(this.directory, requestPath), requestBytes, { flag: "wx" });
++    const requestIdentity = { path: requestPath, bytes: requestBytes.length, sha256: fingerprint(requestBytes) };
++    const fail = (reason: string): RpcResult<T> => ({ kind: "failure", id, reason });
++    let observed: { readonly bytes: Buffer; readonly status: number; readonly contentType: string | null;
++      readonly contentEncoding: string | null };
++    try {
++      observed = await new Promise((resolve, reject) => {
++        const send = this.endpoint.protocol === "https:" ? httpsRequest : httpRequest;
++        const req = send(this.endpoint, { method: "POST", agent: false, signal: AbortSignal.timeout(20000),
++          headers: { "content-type": "application/json", "accept-encoding": "identity", "content-length": requestBytes.length } }, (res) => {
++          const chunks: Buffer[] = [];
++          res.on("data", (chunk: Buffer) => chunks.push(chunk));
++          res.once("error", reject);
++          res.once("end", () => resolve({ bytes: Buffer.concat(chunks), status: res.statusCode ?? 0,
++            contentType: typeof res.headers["content-type"] === "string" ? res.headers["content-type"] : null,
++            contentEncoding: typeof res.headers["content-encoding"] === "string" ? res.headers["content-encoding"] : null }));
++        });
++        req.once("error", reject); req.end(requestBytes);
++      });
++    } catch (error) {
++      if (!(error instanceof Error)) throw error;
++      // Transport messages may contain endpoint credentials. Never emit them.
++      this.captures.push({ id, method, params, request: requestIdentity, response: null, http: null,
++        transportError: { name: this.redact(error.name), message: this.redact(error.message) }, outcome: "transport-failure" });
++      return fail("transport-failure");
++    }
++    const decoded = observed.bytes.toString("utf8");
++    const safe = this.redact(decoded);
++    const raw = safe === decoded;
++    const saved = raw ? observed.bytes : Buffer.from(safe);
++    const responsePath = `${String(id).padStart(4, "0")}.${raw ? "response.raw" : "response.redacted"}`;
++    await writeFile(join(this.directory, responsePath), saved, { flag: "wx" });
++    let result: RpcResult<T>;
++    if (observed.status !== 200) result = fail(`http-status:${observed.status}`);
++    else if (!raw) result = fail("credential-bearing-response-redacted");
++    else {
++      try {
++        const json: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(observed.bytes));
++        const parsed = envelope.safeParse(json);
++        if (!parsed.success || parsed.data.id !== id) result = fail("response-envelope-or-id");
++        else if ("error" in parsed.data) result = fail("rpc-error");
++        else if (!("result" in parsed.data)) result = fail("missing-result");
++        else if (parsed.data.result === null) result = fail("null-result");
++        else {
++          const value = schema.safeParse(parsed.data.result);
++          result = value.success ? { kind: "success", id, value: value.data } : fail("result-schema");
++        }
++      } catch (error) {
++        if (!(error instanceof SyntaxError || error instanceof TypeError)) throw error;
++        result = fail("invalid-json-or-utf8");
++      }
++    }
++    this.captures.push({ id, method, params, request: requestIdentity,
++      response: { path: responsePath, bytes: saved.length, sha256: fingerprint(saved), raw, receivedBytes: observed.bytes.length },
++      http: { status: observed.status, contentType: observed.contentType === null ? null : this.redact(observed.contentType),
++        contentEncoding: observed.contentEncoding === null ? null : this.redact(observed.contentEncoding) },
++      outcome: result.kind === "success" ? "success" : result.reason });
++    return result;
++  }
++}
+diff --git a/scripts/recovery/dtf-migration/receipt.fixture.ts b/scripts/recovery/dtf-migration/receipt.fixture.ts
+new file mode 100644
+index 00000000..2032aba6
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt.fixture.ts
+@@ -0,0 +1,116 @@
++import { createServer } from "node:http";
++import { once } from "node:events";
++import { mkdtemp, mkdir, writeFile, rm, realpath } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { id } from "ethers";
++import { z } from "zod";
++import { canonical, fingerprint } from "./provenance.js";
++import { ANCHOR, block, receipt, transaction } from "./receipt-association.js";
++import { claimSource, legacy, sy } from "./receipt-input.js";
++import { ReceiptRpc } from "./receipt-rpc.js";
++import { collectReceipts } from "./receipt-evidence.js";
++
++export const wallet = `0x${"1".repeat(40)}`;
++export const txHash = `0x${"a".repeat(64)}`;
++export const claimHash = `0x${"b".repeat(64)}`;
++export const blockHash = `0x${"c".repeat(64)}`;
++export const claimBlockHash = `0x${"d".repeat(64)}`;
++const parentHash = `0x${"e".repeat(64)}`;
++const word = (v: string) => BigInt(v).toString(16).padStart(64, "0");
++const addressTopic = (v: string) => `0x${v.slice(2).padStart(64, "0")}`;
++const transferTopic = id("Transfer(address,address,uint256)");
++export const purchaseTx = transaction.parse({ hash: txHash, blockHash, blockNumber: "0xa", transactionIndex: "0x0",
++  from: wallet, to: legacy.weighted, value: "0x0", input: "0x12345678", nonce: "0x1" });
++export const purchaseBlock = block.parse({ hash: blockHash, number: "0xa", parentHash, timestamp: "0x20", transactions: [txHash] });
++const commonLog = { blockHash, blockNumber: "0xa", transactionIndex: "0x0", transactionHash: txHash, removed: false };
++export const purchaseReceipt = receipt.parse({ ...commonLog, from: wallet, to: legacy.weighted, status: "0x1", logs: [
++  { ...commonLog, address: legacy.weightedNft, logIndex: "0x1", data: "0x",
++    topics: [transferTopic, addressTopic(legacy.zero), addressTopic(wallet), `0x${word("3")}`] },
++  { ...commonLog, address: legacy.dtf, logIndex: "0x2", data: `0x${word("12")}`,
++    topics: [transferTopic, addressTopic(wallet), addressTopic(legacy.weighted)] },
++  { ...commonLog, address: legacy.weightedNft, logIndex: "0x3", data: `0x${word("7")}${word("10")}${word("90")}`,
++    topics: [id("BondPurchased(uint256,address,uint256,uint256,uint256)"), `0x${word("3")}`, addressTopic(wallet)] },
++] });
++const claimCommon = { blockHash: claimBlockHash, blockNumber: "0xb", transactionIndex: "0x0", transactionHash: claimHash, removed: false };
++export const claimTx = { ...purchaseTx, ...claimCommon, hash: claimHash, to: claimSource,
++  input: `${id("withdrawClaim(uint256)").slice(0, 10)}${word("5")}` };
++export const claimReceipt = { ...purchaseReceipt, ...claimCommon, to: claimSource, logs: [
++  { ...claimCommon, address: sy, logIndex: "0x1", data: `0x${word("9")}`,
++    topics: [transferTopic, addressTopic(`0x${"2".repeat(40)}`), addressTopic(wallet)] },
++  { ...claimCommon, address: claimSource, logIndex: "0x2", data: `0x${word("5")}${word("9")}`,
++    topics: [id("ClaimWithdrawn(address,uint256,uint256)"), addressTopic(wallet)] },
++] };
++const csv = (header: readonly string[], rows: readonly (readonly string[])[]) =>
++  [header, ...rows].map((r) => r.map((v) => `"${v}"`).join(",")).join("\n") + "\n";
++export async function inputFixture(parent: string) {
++  const root = join(parent, "input"); await mkdir(root); await mkdir(join(root, "evidence"));
++  const sibling = join(parent, "2026-09-16-dtf-pre-exploit"); await mkdir(sibling);
++  const tables = new Map([
++    ["evidence/weighted-bonds.csv", csv(["token_id", "purchase_tx", "purchase_recipient", "current_owner", "purchase_block", "pre_attack", "original_principal_detf_raw"],
++      [["3", txHash, wallet, wallet, "10", "true", "7"]])],
++    ["evidence/earlier-cp-bonds.csv", csv(["token_id", "owner", "original_lp_shares_raw", "direct_dtf_paid_raw", "direct_weth_paid_raw", "routed_dtf_received_by_detf_raw", "purchase_tx"], [])],
++    ["evidence/transfers.csv", csv(["event_id", "block", "transaction_index", "log_index", "tx", "asset", "from", "to", "amount_raw", "token_id"], [
++      [`${legacy.weightedNft}:${txHash}:1`, "10", "0", "1", txHash, legacy.weightedNft, legacy.zero, wallet, "", "3"],
++      [`${legacy.dtf}:${txHash}:2`, "10", "0", "2", txHash, legacy.dtf, wallet, legacy.weighted, "12", ""],
++      [`${sy}:${claimHash}:1`, "11", "0", "1", claimHash, sy, `0x${"2".repeat(40)}`, wallet, "9", ""],
++    ])],
++    ["../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv", csv(["tx", "category", "bond_token_id", "dtf_wei", "payer", "bond_recipient"], [[txHash, "bond", "3", "12", wallet, wallet]])],
++    ["conversions.csv", csv(["conversion_id", "kind", "recipient", "principal_raw", "output_raw", "output_asset", "output_decimals", "block", "tx"], [
++      ["claim", "legacy_weight_to_sy", wallet, "5", "9", sy, "9", "11", claimHash],
++    ])],
++  ]);
++  const binding = (text: string) => ({ bytes: Buffer.byteLength(text), sha256: fingerprint(text) });
++  const sources = { chainId: 4663, incident: { lastFullBlock: 19, attackBlock: 20, attackTransactionIndex: 1, attackTransaction: txHash },
++    evidenceCutoff: { block: Number(ANCHOR.number), hash: ANCHOR.hash, utc: "historical" }, sourceNotes: [],
++    sources: [...tables].filter(([p]) => p.startsWith("evidence")).map(([path, text]) => ({
++      id: path.includes("weighted-bonds") ? "S008" : path.includes("earlier") ? "S009" : "S011", path, description: "fixture", ...binding(text),
++    })) };
++  tables.set("sources.json", canonical(sources));
++  for (const [path, text] of tables) await writeFile(join(root, path), text);
++  await writeFile(join(root, "manifest.json"), canonical({ files: Object.fromEntries([...tables].map(([p, t]) => [p, binding(t)])) }));
++  return root;
++}
++const wireRequest = z.object({ id: z.number(), method: z.string(), params: z.array(z.unknown()) });
++export type WireRequest = z.infer<typeof wireRequest>;
++export function fixtureResponse(q: WireRequest): unknown {
++  let result: unknown;
++  switch (q.method) {
++    case "eth_chainId": result = "0x1237"; break;
++    case "eth_getTransactionByHash": result = q.params[0] === txHash ? purchaseTx : claimTx; break;
++    case "eth_getTransactionReceipt": result = q.params[0] === txHash ? purchaseReceipt : claimReceipt; break;
++    case "eth_getBlockByNumber":
++    case "eth_getBlockByHash":
++      result = q.params[0] === `0x${BigInt(ANCHOR.number).toString(16)}`
++        ? { ...purchaseBlock, number: `0x${BigInt(ANCHOR.number).toString(16)}`, hash: ANCHOR.hash }
++        : q.params[0] === "0xb" || q.params[0] === claimBlockHash
++          ? { ...purchaseBlock, hash: claimBlockHash, number: "0xb", transactions: [claimHash] } : purchaseBlock;
++      break;
++    default: throw new TypeError(`unexpected test method ${q.method}`);
++  }
++  return { jsonrpc: "2.0", id: q.id, result };
++}
++export async function wireFixture(respond: (q: WireRequest) => unknown) {
++  const server = createServer(async (req, res) => {
++    let body = ""; for await (const chunk of req) body += String(chunk);
++    const q = wireRequest.parse(JSON.parse(body));
++    res.setHeader("content-type", "application/json"); res.end(JSON.stringify(respond(q)));
++  });
++  const ready = once(server, "listening"); server.listen(0, "127.0.0.1"); await ready;
++  const address = server.address();
++  if (!address || typeof address === "string") throw new TypeError("fixture address");
++  return { url: new URL(`http://127.0.0.1:${address.port}`), async close() {
++    const closed = once(server, "close"); server.close(); await closed;
++  } };
++}
++export async function collectionFixture(respond: (q: WireRequest) => unknown = fixtureResponse) {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-receipts-"));
++  const root = await inputFixture(parent);
++  const server = await wireFixture(respond);
++  const output = join(parent, "archive");
++  try {
++    const rpc = new ReceiptRpc(server.url, join(output, "http"));
++    const archive = await collectReceipts(root, output, rpc);
++    return { archive, captures: rpc.captures };
++  } finally { await server.close(); await rm(parent, { recursive: true }); }
++}
+diff --git a/scripts/recovery/dtf-migration/receipt.test.ts b/scripts/recovery/dtf-migration/receipt.test.ts
+new file mode 100644
+index 00000000..1a7aac03
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/receipt.test.ts
+@@ -0,0 +1,120 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { mkdtemp, mkdir, readFile, rm, realpath } from "node:fs/promises";
++import { join } from "node:path";
++import { tmpdir } from "node:os";
++import { associationConflicts, quantity } from "./receipt-association.js";
++import type { Associated } from "./receipt-association.js";
++import { purchaseTx, purchaseReceipt, purchaseBlock, txHash, claimHash, fixtureResponse,
++  collectionFixture, wireFixture, inputFixture } from "./receipt.fixture.js";
++import { ReceiptRpc } from "./receipt-rpc.js";
++import { loadCandidateInput } from "./candidate-input.js";
++import { receiptReferences, receiptRequests } from "./receipt-input.js";
++import { collectReceipts } from "./receipt-evidence.js";
++import { main } from "./cli.js";
++
++test("complete wire collection authenticates and associates each known reference", async () => {
++  const { archive } = await collectionFixture();
++  assert.equal(archive.authenticated, true);
++  assert.equal(archive.references, 2);
++  assert.equal(archive.completeAssociations, 2);
++  assert.equal(archive.referenceConflicts, 0);
++});
++for (const [label, response] of [
++  ["wrong-chain", "0x1"], ["malformed-chain", "0x01237"],
++] as const) test(`collection stops before named requests on ${label}`, async () => {
++  const { archive, captures } = await collectionFixture((q) => q.method === "eth_chainId"
++    ? { jsonrpc: "2.0", id: q.id, result: response } : fixtureResponse(q));
++  assert.equal(archive.authenticated, false);
++  assert.deepEqual(captures.map((c) => c.method), ["eth_chainId", "eth_getBlockByNumber"]);
++  assert.equal(archive.results.filter((r) => r.conflicts.includes("chain-or-anchor-authentication-failed")).length, 2);
++});
++test("wrong canonical anchor blocks every named collection", async () => {
++  const { archive } = await collectionFixture((q) => q.method === "eth_getBlockByNumber"
++    ? { jsonrpc: "2.0", id: q.id, result: purchaseBlock } : fixtureResponse(q));
++  assert.equal(archive.authenticated, false);
++  assert.equal(archive.completeAssociations, 0);
++});
++const failures: readonly { readonly name: string; readonly response: (id: number) => unknown; readonly reason: string }[] = [
++  { name: "null", response: (id) => ({ jsonrpc: "2.0", id, result: null }), reason: "null-result" },
++  { name: "missing", response: (id) => ({ jsonrpc: "2.0", id }), reason: "missing-result" },
++  { name: "rpc error", response: (id) => ({ jsonrpc: "2.0", id, error: { code: -32000, message: "archive denied" } }), reason: "rpc-error" },
++  { name: "wrong id", response: (id) => ({ jsonrpc: "2.0", id: id + 100, result: purchaseTx }), reason: "response-envelope-or-id" },
++  { name: "wrong version", response: (id) => ({ jsonrpc: "1.0", id, result: purchaseTx }), reason: "response-envelope-or-id" },
++  { name: "malformed quantity", response: (id) => ({ jsonrpc: "2.0", id, result: { ...purchaseTx, value: "0x00" } }), reason: "result-schema" },
++];
++for (const f of failures) test(`partial ${f.name} failure stays explicit while unaffected transaction completes`, async () => {
++  const { archive, captures } = await collectionFixture((q) =>
++    q.method === "eth_getTransactionByHash" && q.params[0] === txHash ? f.response(q.id) : fixtureResponse(q));
++  assert.equal(archive.completeAssociations, 1);
++  assert.ok(archive.results.find((r) => r.tx === txHash)?.conflicts.includes(`transaction:${f.reason}`));
++  assert.deepEqual(archive.results.find((r) => r.tx === claimHash)?.conflicts, []);
++  assert.equal(captures.filter((c) => c.method === "eth_getTransactionByHash" && c.params[0] === txHash).length, 1);
++});
++const associated = { transaction: purchaseTx, receipt: purchaseReceipt, byHash: purchaseBlock, byNumber: purchaseBlock };
++const mutations = [
++  ["transaction-hash", { ...associated, transaction: { ...purchaseTx, hash: claimHash } }],
++  ["block-hash", { ...associated, receipt: { ...purchaseReceipt, blockHash: claimHash } }],
++  ["block-number", { ...associated, receipt: { ...purchaseReceipt, blockNumber: "0xc" } }],
++  ["transaction-index", { ...associated, receipt: { ...purchaseReceipt, transactionIndex: "0x1" } }],
++  ["receipt-endpoints", { ...associated, receipt: { ...purchaseReceipt, from: `0x${"9".repeat(40)}` } }],
++  ["block-membership", { ...associated, byNumber: { ...purchaseBlock, transactions: [claimHash] } }],
++  ["canonical-header", { ...associated, byNumber: { ...purchaseBlock, timestamp: "0x21" } }],
++  ["after-anchor", { ...associated, transaction: { ...purchaseTx, blockNumber: "0xfffffff" } }],
++  ["transaction-reverted", { ...associated, receipt: { ...purchaseReceipt, status: "0x0" } }],
++] as const;
++for (const [expected, observation] of mutations) test(`contradictory association identifies ${expected}`, () => {
++  assert.ok(associationConflicts(txHash, observation).includes(expected));
++});
++test("every log identity and strict ordering are verified", () => {
++  const first = purchaseReceipt.logs[0]; assert.ok(first);
++  for (const change of [{ transactionHash: claimHash }, { blockHash: claimHash }, { blockNumber: "0xc" }, { transactionIndex: "0x1" }]) {
++    const changed: Associated = { ...associated, receipt: { ...purchaseReceipt, logs: [{ ...first, ...change }] } };
++    assert.ok(associationConflicts(txHash, changed).includes("log-association:0x1"));
++  }
++  assert.ok(associationConflicts(txHash, { ...associated,
++    receipt: { ...purchaseReceipt, logs: [first, first] } }).includes("log-order:0x1"));
++});
++test("distinct references to one transaction deduplicate requests without losing rows", async () => {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-reference-"));
++  try {
++    const refs = receiptReferences(await loadCandidateInput(await inputFixture(parent)));
++    const first = refs[0]; assert.ok(first);
++    const duplicate = { ...first, row: { ...first.row, locator: "distinct-original#row=9" } };
++    const requests = receiptRequests([...refs, duplicate]);
++    assert.equal(requests.length, 2);
++    assert.ok(requests.find((r) => r.tx === first.tx)?.references.includes("distinct-original#row=9"));
++    assert.equal(requests.find((r) => r.tx === first.tx)?.references.length, 2);
++  } finally { await rm(parent, { recursive: true }); }
++});
++test("credential-bearing wire errors retain sanitized bytes and never claim raw capture", async () => {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-redaction-"));
++  const secret = "private-provider-token";
++  const server = await wireFixture((q) => ({ jsonrpc: "2.0", id: q.id, error: { code: -1,
++    message: `refused https://provider.invalid/v2/${secret} token=${secret}` } }));
++  try {
++    await mkdir(join(parent, "http"));
++    const endpoint = new URL(`${secret}`, server.url);
++    const rpc = new ReceiptRpc(endpoint, join(parent, "http"));
++    const response = await rpc.read("eth_chainId", [], quantity);
++    assert.deepEqual(response, { kind: "failure", id: 1, reason: "credential-bearing-response-redacted" });
++    const capture = rpc.captures[0]; assert.ok(capture?.response);
++    assert.equal(capture.response.raw, false);
++    const bytes = await readFile(join(parent, "http", capture.response.path));
++    assert.equal(bytes.includes(secret), false);
++    assert.equal(bytes.includes("refused"), true);
++  } finally { await server.close(); await rm(parent, { recursive: true }); }
++});
++test("fresh exclusive publication refuses an existing directory before network requests", async () => {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-exclusive-"));
++  try {
++    const root = await inputFixture(parent);
++    await assert.rejects(collectReceipts(root, parent, new ReceiptRpc(new URL("http://127.0.0.1:1"), parent)), { code: "EEXIST" });
++  } finally { await rm(parent, { recursive: true }); }
++});
++test("CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs", async () => {
++  for (const extra of [["--broadcast"], ["--execute-local"], ["--rpc-url", "http://127.0.0.1"], ["--input", "other"]]) {
++    await assert.rejects(main(["collect-receipts", "--input", "raw", "--output", "new",
++      "--rpc-alias", "robinhood_mainnet_alchemy", ...extra]));
++  }
++});

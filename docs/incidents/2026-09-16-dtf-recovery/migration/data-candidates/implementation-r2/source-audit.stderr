@@ -1,0 +1,1 @@
+error: cannot resolve "typescript" from the caller project (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates). Install it in the project being checked (e.g. `bun add -d typescript`) and re-run.

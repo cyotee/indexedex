@@ -1,0 +1,337 @@
+{
+  "type": "DoneClaim",
+  "task": 10,
+  "status": "INCOMPLETE/BOUNDED-STOP",
+  "disposition": "incomplete",
+  "complete": false,
+  "success": false,
+  "task10Complete": false,
+  "task10LifecycleAccepted": false,
+  "independentLifecycleAccepted": false,
+  "reason": "User-mandated stop after original 240-minute bound. No acceptance work, new QA, repair or rehearsal is authorized after this closeout.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "clock": {
+    "openedAt": "2026-11-15T14:55:25.715Z",
+    "bound": "2026-11-15T18:55:25.715Z",
+    "clockReset": false,
+    "claimRecordedAt": "2026-11-15T19:08:01.515Z",
+    "afterBound": true
+  },
+  "actualOutcomes": {
+    "producerMetScenarioGroups": 1,
+    "unmetScenarioGroups": 7,
+    "independentlyAcceptedFullLifecycle": false,
+    "scenarios": [
+      {
+        "id": "mixed-pricing",
+        "status": "UNMET",
+        "partialEvidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/configure-a-before-resume.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/independent-owner-b/set-pricing/9cb83a43f7d864409ba38e26d39e871196672d002eca8764491977d42b2ef7f0.receipt.json"
+        ],
+        "facts": {
+          "configureA": "0x8614d4e76a949cd7414587de30b88f9605b108f8b35fad31643ec3e00c8494d7",
+          "configureAStatus": "0x1",
+          "ownerBSetter": "0x6a0fe35c9f274e05d7043e4c7e734d742ea46cb94f93462ac9563cd1c66f1fcb",
+          "ownerBStatus": "0x1"
+        },
+        "missing": [
+          "A recovery after B",
+          "mixed immutable-A/current-B completion",
+          "post-purchase setter/activation proof"
+        ]
+      },
+      {
+        "id": "same-block",
+        "status": "UNMET",
+        "missing": [
+          "same-block A/B execution",
+          "transaction-prefix recovery",
+          "tampered index/log/credit/event runtime rejection"
+        ]
+      },
+      {
+        "id": "unset-pricing-owner",
+        "status": "UNMET",
+        "partialEvidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-empty-census-blocker.json"
+        ],
+        "missing": [
+          "successful real paid owner bond",
+          "activation with unset pricing",
+          "retained unset getter after activation"
+        ]
+      },
+      {
+        "id": "donation-identities",
+        "status": "PRODUCER-EVIDENCE-MET",
+        "evidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/donation-scenario-audit.json"
+        ],
+        "independentLifecycleAcceptance": false
+      },
+      {
+        "id": "nft-three-original-wallet",
+        "status": "UNMET",
+        "missing": [
+          "actual two funded contribution bonds",
+          "exact originals/floor/aggregate transfer proof",
+          "90-day cliff-minus/exact/plus-one principal claims"
+        ]
+      },
+      {
+        "id": "synthetic-receiver",
+        "status": "UNMET",
+        "missing": [
+          "real second-receiver rejection rollback",
+          "subsequent marked/funded two-bond success"
+        ]
+      },
+      {
+        "id": "negative-cases",
+        "status": "UNMET",
+        "partialEvidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-07/rehearsal-1794759018867/claimed-intake-rejections.json",
+          "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207"
+        ],
+        "missing": [
+          "stale signed A after B",
+          "complete final wrong-domain/artifact/history/chain/proxy corpus"
+        ]
+      },
+      {
+        "id": "source-recovery-portability",
+        "status": "UNMET",
+        "partialEvidence": [
+          "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770"
+        ],
+        "missing": [
+          "all post-activation source admissions",
+          "all recovery witnesses",
+          "complete portable lifecycle followthrough"
+        ]
+      }
+    ],
+    "additionalFinishedNegatives": [
+      {
+        "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/nft-three-reject-missingEth.json",
+        "commandReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/020-prepare.log.command.json",
+        "rejectionReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/020-rejection.json",
+        "error": "INPUT",
+        "nonceBefore": "0x895",
+        "nonceAfter": "0x895",
+        "producerCheckedNoSend": true
+      },
+      {
+        "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/nft-three-reject-absent.json",
+        "commandReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/017-prepare.log.command.json",
+        "rejectionReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/017-rejection.json",
+        "error": "INPUT",
+        "nonceBefore": "0x895",
+        "nonceAfter": "0x895",
+        "producerCheckedNoSend": true
+      },
+      {
+        "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/nft-three-reject-missingDtf.json",
+        "commandReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/021-prepare.log.command.json",
+        "rejectionReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/021-rejection.json",
+        "error": "INPUT",
+        "nonceBefore": "0x895",
+        "nonceAfter": "0x895",
+        "producerCheckedNoSend": true
+      },
+      {
+        "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/nft-three-reject-false.json",
+        "commandReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/018-prepare.log.command.json",
+        "rejectionReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/018-rejection.json",
+        "error": "INPUT",
+        "nonceBefore": "0x895",
+        "nonceAfter": "0x895",
+        "producerCheckedNoSend": true
+      },
+      {
+        "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/wrong-issuance-history-input.json",
+        "commandReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/039-prepare.log.command.json",
+        "rejectionReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/039-rejection.json",
+        "error": "PROVENANCE",
+        "nonceBefore": "0x8b6",
+        "nonceAfter": "0x8b6",
+        "producerCheckedNoSend": true
+      },
+      {
+        "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/nft-three-reject-combined.json",
+        "commandReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/019-prepare.log.command.json",
+        "rejectionReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/019-rejection.json",
+        "error": "INPUT",
+        "nonceBefore": "0x895",
+        "nonceAfter": "0x895",
+        "producerCheckedNoSend": true
+      },
+      {
+        "input": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/unsupported-book-c-input.json",
+        "commandReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/040-prepare.log.command.json",
+        "rejectionReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/040-rejection.json",
+        "error": "DOMAIN",
+        "nonceBefore": "0x8b6",
+        "nonceAfter": "0x8b6",
+        "producerCheckedNoSend": true
+      }
+    ],
+    "additionalMetSubcriteria": [
+      {
+        "name": "actual configure-A mined interruption",
+        "evidence": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/configure-a-before-resume.json",
+        "transactionHash": "0x8614d4e76a949cd7414587de30b88f9605b108f8b35fad31643ec3e00c8494d7",
+        "status": "0x1"
+      },
+      {
+        "name": "independent owner-B setter after isolated owner-root fix",
+        "evidence": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/independent-owner-b/set-pricing/9cb83a43f7d864409ba38e26d39e871196672d002eca8764491977d42b2ef7f0.receipt.json",
+        "transactionHash": "0x6a0fe35c9f274e05d7043e4c7e734d742ea46cb94f93462ac9563cd1c66f1fcb",
+        "status": "0x1"
+      },
+      {
+        "name": "synthetic-local exact 10000 DTF setup funding without consuming NFT-three principal",
+        "evidence": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/setup-funding-transfer.json",
+        "scope": "Prerequisite only; never lifecycle acceptance"
+      }
+    ]
+  },
+  "lastAttempt": {
+    "number": 52,
+    "stopped": true,
+    "monitor": "mon_TPWAF4P2SEBXEKAQ",
+    "actualSession": "bash_37",
+    "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770",
+    "stdout": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/stdout.log",
+    "stderr": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/stderr.log",
+    "command": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/command.json",
+    "lastCliOutput": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/045-set-pricing.log",
+    "normalResultPath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/result.json",
+    "normalResultExists": false,
+    "normalExitCode": null,
+    "terminationReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json",
+    "normalCompletionNotClaimed": true
+  },
+  "ownerRootFix": {
+    "path": "scripts/recovery/dtf-migration/rehearse.ts:465",
+    "cause": "B administration incorrectly shared A's active operator root and correctly hit LOCK.",
+    "change": "Only B setter checkpoint moved from join(runtime, \"owner-b-set\") to join(evidence, \"independent-owner-b\", \"set-pricing\"). A resolve-prior-intents and recovery policies remain unchanged.",
+    "typesReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/50-owner-root-types/result.json",
+    "realPartialSuccess": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770/independent-owner-b/set-pricing/9cb83a43f7d864409ba38e26d39e871196672d002eca8764491977d42b2ef7f0.receipt.json",
+    "details": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/owner-root-fix-and-retained-evidence.json",
+    "attempt49Applicable": {
+      "interruption": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/configure-a-before-resume.json",
+      "journal": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/journal-interrupted-a",
+      "scope": "Exact signed configure-A intent, successful canonical mined receipt and interruption only. Does not prove B success or A recovery after B in attempt 49."
+    }
+  },
+  "sourceChanges": {
+    "inventory": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-source-inventory.json",
+    "unverifiedOwnedRehearsalPaths": [
+      "scripts/recovery/dtf-migration/rehearse.ts",
+      "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+      "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol"
+    ],
+    "independentlyVerifiedSharedRepairPaths": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "sha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "scope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "sha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "scope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution.ts",
+        "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+        "scope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+      }
+    ],
+    "mixedOwnershipCaution": "rehearsal-data.ts includes the independently confirmed generated pricing-ABI source binding together with unverified task-10 fixture changes; do not blindly revert.",
+    "isolatedInRequestedWorktree": true,
+    "sourceEditedDuringCloseout": false,
+    "merged": false,
+    "landed": false,
+    "committed": false
+  },
+  "retainedChecks": {
+    "independentUnitCliGate": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-repairs-verdict.json",
+    "operatorTests": {
+      "passed": 336,
+      "failed": 0,
+      "timeoutMs": 15000,
+      "scope": "Independent operator/unit-CLI gate only; no real lifecycle claim"
+    },
+    "strictOperatorTypes": "passed in admitted gate",
+    "latestOwnedHelperTypes": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/50-owner-root-types/result.json",
+    "noNewQaAfterStop": true
+  },
+  "evidencePreservation": {
+    "allEarlierAttemptsRetained": true,
+    "oldSignedManifestDomainIntentReceiptBytesNotRewritten": true,
+    "untouchedOriginalsScope": "No original authority/source files or prior failed-run manifest/journal/receipt records were edited by bounded closeout. Only new closeout records were written; owned runtime was copied byte-for-byte before removal.",
+    "checkpointInventory": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-checkpoint-inventory.json",
+    "checkpointFiles": 107,
+    "checkpointBytes": 677799,
+    "retainedCheckpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-runtime-01/checkpoints",
+    "replayWarning": "Preserved raw historical references are not rewritten or claimed to be a new execution-ready relocated domain.",
+    "newAuthoritiesInput": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-input.json",
+    "newAuthoritiesBundle": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/authorities-bundle/bundle.json",
+    "allParentRepairEvidenceRetained": true
+  },
+  "resources": {
+    "commandSessionStopped": "bash_37",
+    "deadlineSessionCanceled": "bash_38",
+    "port": 18575,
+    "listenerPresentAfterTeardown": false,
+    "listenerProbeExit": 1,
+    "ownedProcessesAfterTeardown": [],
+    "pendingOwnedRuntimeProcesses": [],
+    "pendingOwnedMonitors": [],
+    "ownedCheckpointRemoved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/.omo-runtime/dtf-migration-portable/checkpoints",
+    "intendedRetentions": [
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770",
+      "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-runtime-01"
+    ],
+    "unknownPriorResourcesUntouched": true,
+    "receipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json"
+  },
+  "restrictions": {
+    "publicTransactions": false,
+    "financialAllocationOnPublicChain": false,
+    "externalMessages": false,
+    "commits": false,
+    "prs": false,
+    "delegationByTask10Executor": false,
+    "witnessPinRestored": false,
+    "planBoxesChanged": false,
+    "otherSharedRepairsReverted": false
+  },
+  "closeoutEvidence": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-outcomes.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-source-inventory.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/checkpoint-bound-observation.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/donation-scenario-audit.json"
+  ],
+  "limits": [
+    "All eight requested real lifecycle groups were not completed.",
+    "Same-block transaction-prefix proof, full NFT-three wallet/receiver/cliff paths, successful unset-pricing owner activation, complete stale/domain negatives and all recovery/admission followthrough remain unproved.",
+    "A types/unit gate is not lifecycle acceptance.",
+    "Task-10 rehearsal edits remain unverified as a cohesive lifecycle and must not be merged or landed.",
+    "Attempt 52 was forcibly stopped; no normal result or successful finalization is invented.",
+    "No implementation resumption is authorized. Parent owns final bounded review and closing task 10 and dependents."
+  ],
+  "writtenLast": true
+}

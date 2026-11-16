@@ -1,0 +1,52 @@
+
+scripts/recovery/dtf-migration/receipt.test.ts:
+(pass) complete wire collection authenticates and associates each known reference [28.03ms]
+(pass) collection stops before named requests on wrong-chain [7.80ms]
+(pass) collection stops before named requests on malformed-chain [6.18ms]
+(pass) wrong canonical anchor blocks every named collection [6.52ms]
+(pass) partial null failure stays explicit while unaffected transaction completes [11.72ms]
+(pass) partial missing failure stays explicit while unaffected transaction completes [11.94ms]
+(pass) partial rpc error failure stays explicit while unaffected transaction completes [10.66ms]
+(pass) partial wrong id failure stays explicit while unaffected transaction completes [10.39ms]
+(pass) partial wrong version failure stays explicit while unaffected transaction completes [10.34ms]
+(pass) partial malformed quantity failure stays explicit while unaffected transaction completes [10.26ms]
+(pass) contradictory association identifies transaction-hash [0.05ms]
+(pass) contradictory association identifies block-hash [0.02ms]
+(pass) contradictory association identifies block-number
+(pass) contradictory association identifies transaction-index
+(pass) contradictory association identifies receipt-endpoints
+(pass) contradictory association identifies block-membership
+(pass) contradictory association identifies canonical-header
+(pass) contradictory association identifies after-anchor
+(pass) contradictory association identifies transaction-reverted
+(pass) every log identity and strict ordering are verified [0.06ms]
+(pass) distinct references to one transaction deduplicate requests without losing rows [3.21ms]
+(pass) credential-bearing wire errors retain sanitized bytes and never claim raw capture [1.96ms]
+(pass) fresh exclusive publication refuses an existing directory before network requests [3.89ms]
+(pass) CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs [0.65ms]
+(pass) explicit conversion selection collects complete tables without purchasing references [11.41ms]
+(pass) conversion selection retains every row unavailable on anchor failure [6.77ms]
+(pass) selection rejects unknown values and cannot leak into execution commands [0.21ms]
+
+scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:
+(pass) source purchase basis is independently required in addition to the mint [3.93ms]
+(pass) routed input stays separate and cannot be attributed as a direct contribution [4.51ms]
+(pass) a shared transaction never assigns its entire direct inputs to each original [3.98ms]
+(pass) canonical association conflicts prohibit otherwise matching input attribution [4.62ms]
+(pass) wrong mint recipient is a conflict even with matching direct payment [3.80ms]
+(pass) indirect calls retain calldata and never receive direct claim decoding [4.42ms]
+(pass) receipt archive format cannot enter preparation, validation or execution loaders [0.38ms]
+(pass) conversion reconciliation preserves exact native output and blank historical principal [3.63ms]
+(pass) conversion ambiguity retains individual matches and never assigns aggregate output [4.03ms]
+(pass) unknown output remains null and missing rather than matching a zero transfer [3.74ms]
+(pass) recovery matching requires the exact declared asset [4.59ms]
+(pass) recovery matching requires the exact declared recipient [4.24ms]
+(pass) recovery matching requires the exact declared amount [3.50ms]
+(pass) recovery matching requires the exact declared index [3.61ms]
+(pass) recovery matching requires the exact declared block [3.42ms]
+(pass) conversion canonical contradiction remains a conflict with a matching output [3.58ms]
+(pass) selection parses native integers and rejects declared blocks beyond the anchor [4.68ms]
+
+ 44 pass
+ 0 fail
+Ran 44 tests across 2 files. [306.00ms]

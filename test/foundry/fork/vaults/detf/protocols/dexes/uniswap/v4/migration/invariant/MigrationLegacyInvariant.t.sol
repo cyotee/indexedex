@@ -22,6 +22,8 @@ import {IMigrationWeightedNft} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
 
 /// @notice Pinned real native9 SY and both whole-NFT models with staged weighted recovery.
 /// @dev Ordinary-SY contract callback only, not claimed-origin EOA preparation.
@@ -29,6 +31,31 @@ import {MigrationLegacyRecoveryLib as Legacy} from
 /// use the separate MigrationSourceUnitsInvariant target, not this native9 ledger.
 contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
     MigrationLegacyRecoveryHandler public handler;
+    uint256 public nftPricingWitnesses;
+
+    /// @dev Catches pricing-coupled NFT originals, silent repricing on set, and minting on explicit reload.
+    function _reloadNftAcrossBook(address collection_, uint256 id_, uint256 choice_) internal returns (uint256) {
+        Migration.NftEntitlement memory before_ = migration.nftEntitlement(collection_, id_);
+        bytes memory state_ = abi.encode(receipt.stakingState());
+        uint256 supply_ = IERC20(detf).totalSupply();
+        address holder_ = IERC721(collection_).ownerOf(id_);
+        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        next_.swapFeeWad = choice_ == 0 ? 1e16 : 2e16;
+        vm.prank(migrationOwner);
+        pricingId = allocation.setMigrationWeightedPricing(next_);
+        assertEq(abi.encode(migration.nftEntitlement(collection_, id_)), abi.encode(before_),
+            "setting B must leave stored A originals and credit intact");
+        uint256 credit_ = _configureNft(collection_, id_);
+        Migration.NftEntitlement memory after_ = migration.nftEntitlement(collection_, id_);
+        assertEq(after_.originalId, before_.originalId, "economic identity survives A/B reload");
+        assertEq(abi.encode(after_.original), abi.encode(before_.original));
+        assertNotEq(after_.configurationId, before_.configurationId, "new configuration retains book provenance");
+        assertEq(IERC20(detf).totalSupply(), supply_, "set and reload never issue");
+        assertEq(abi.encode(receipt.stakingState()), state_);
+        assertEq(IERC721(collection_).ownerOf(id_), holder_, "set and reload never take custody");
+        ++nftPricingWitnesses;
+        return credit_;
+    }
 
     function _freshBoundedParent() internal {
         Package.PkgArgs memory args_ = _migrationArgs(migrationOwner);
@@ -51,9 +78,9 @@ contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
             address collection_ = i_ == 0 ? WEIGHTED : EARLIER;
             uint256 id_ = i_ == 0 ? 4 : 3;
             Migration.NftEntitlementInput memory input_ = _original(collection_, id_);
-            uint256 credit_ = migration.previewOriginalCredit(input_.originalEth, input_.originalDtf);
             _configureNft(collection_, id_);
             _returnToOriginal(collection_, id_);
+            uint256 credit_ = _reloadNftAcrossBook(collection_, id_, i_);
             uint256 remaining_ = input_.originalUnits;
             if (i_ == 0) remaining_ -= IMigrationWeightedNft(collection_).positionOf(id_).claimedPrincipal;
             originals_[i_] = MigrationLegacyHandler.OriginalNft(
@@ -66,7 +93,7 @@ contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
         Migration.WeightedSyEntitlementInput[] memory a_ = new Migration.WeightedSyEntitlementInput[](1);
         a_[0] = Migration.WeightedSyEntitlementInput(handler.ORIGIN(), address(handler), Legacy.WEIGHTED_SY,
             handler.Q0(), 0.01 ether, 0, keccak256("synthetic ordinary SY original; actual donor transfer"), true);
-        vm.prank(migrationOwner); allocation.configureWeightedSyEntitlements(a_);
+        vm.prank(migrationOwner); allocation.configureWeightedSyEntitlements(a_, pricingId);
         vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
         handler.surrender(1);
         _activate();
@@ -121,6 +148,13 @@ contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
 
     function afterInvariant() public {
         handler.assertAll();
+        assertTrue(migration.migrationActivated(), "real activation required");
+        assertGt(migration.migrationOwnerFirstBondTokenId(), 0, "real paid owner purchase required");
+        assertGt(handler.callbacks(), 0, "successful funded surrender callback required");
+        assertGt(handler.rollbackWitnesses(), 0, "late funding rollback required");
+        assertGt(handler.recoveries(), 0, "real harvest stages required");
+        assertEq(nftPricingWitnesses, 2, "both whole-NFT source identities survive repricing");
+        emit log_named_uint("successful NFT original repricing and reload witnesses", nftPricingWitnesses);
         emit log_named_uint("successful legacy actions", handler.successes());
         emit log_named_uint("exact legacy rejections", handler.rejections());
         emit log_named_uint("real funded bond callbacks", handler.callbacks());
@@ -130,6 +164,52 @@ contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
         emit log_named_uint("surrendered principal paid", handler.principalPaid());
         emit log_named_uint("surrendered position claim actions", handler.claimActions());
         emit log_named_uint("surrendered bond transfers", handler.bondTransfers());
+    }
+
+    /// @notice Catches independently rounded partial credits losing or overpaying the terminal residue.
+    /// @dev Synthetic three-unit ordinary-SY original; actual source transfer, registry proxy and funded bonds.
+    function test_threeUnitsPay333Then334Then334OnActualProxy() public {
+        // Same arguments reuse the CREATE3 registry instance already activated by the prelude.
+        // A distinct owner is part of the production package salt and creates an independent proxy.
+        migrationOwner = makeAddr("three-unit residue owner");
+        _freshBoundedParent();
+        uint256 low_;
+        uint256 high_ = 1 ether;
+        while (low_ < high_) {
+            uint256 mid_ = low_ + (high_ - low_) / 2;
+            if (migration.previewOriginalCredit(mid_, 0) < 1001) low_ = mid_ + 1;
+            else high_ = mid_;
+        }
+        assertEq(migration.previewOriginalCredit(low_, 0), 1001, "exact configured native credit");
+        bytes32 original_ = keccak256("synthetic three-unit residue witness");
+        Migration.WeightedSyEntitlementInput[] memory a_ = new Migration.WeightedSyEntitlementInput[](1);
+        a_[0] = Migration.WeightedSyEntitlementInput(original_, address(this), Legacy.WEIGHTED_SY,
+            3, low_, 0, keccak256("actual source units; synthetic economic original"), true);
+        uint256 supply_ = IERC20(detf).totalSupply();
+        uint256 backing_ = IERC20(detf).balanceOf(address(receipt));
+        vm.prank(migrationOwner);
+        allocation.configureWeightedSyEntitlements(a_, pricingId);
+        assertEq(IERC20(detf).totalSupply(), supply_, "loading never issues");
+        assertEq(IERC20(detf).balanceOf(address(receipt)), backing_);
+        address donor_ = address(bytes20(hex"11c17f25e958e4637dd26ca362adeae12e24ed5b"));
+        vm.prank(donor_);
+        assertTrue(IERC20(Legacy.WEIGHTED_SY).transfer(address(this), 3));
+        IERC20(Legacy.WEIGHTED_SY).approve(detf, 3);
+        _activate();
+        for (uint256 i_; i_ < 3; ++i_) {
+            uint256 expected_ = i_ == 0 ? 333 : 334;
+            (uint256 id_, uint256 paid_) = migration.surrenderMigrationWeightedSy(
+                original_, 1, expected_, block.timestamp);
+            assertEq(paid_, expected_);
+            assertEq(bonds.positionOf(id_).principal, expected_);
+            assertEq(bonds.positionOf(id_).startTimestamp, block.timestamp);
+            assertEq(bonds.positionOf(id_).vestingDuration, 90 days);
+        }
+        assertEq(IERC20(detf).totalSupply() - supply_, 1001);
+        assertEq(IERC20(detf).balanceOf(address(receipt)) - backing_, 1001);
+        assertEq(migration.weightedSySurrender(original_).remainingUnits, 0);
+        assertEq(migration.weightedSySurrender(original_).remainingCredit, 0);
+        assertEq(migration.weightedSySurrender(original_).deliveredCredit, 1001);
     }
 
     function test_terminalCreditAndCompleteRecoveryWitness() public {

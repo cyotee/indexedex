@@ -1,0 +1,147 @@
+{
+  "type": "DoneClaim",
+  "status": "blocked-on-out-of-scope-fixture-adaptation",
+  "completion": false,
+  "scope": "Prepared-range A1 classifier repair only",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "DoneClaim": "A1 is reproduced and the shared classifier repair passes focused and manual proof. The required full operator gate is not green; no complete delivery or readiness is claimed.",
+  "implemented": {
+    "sharedClassifier": "compensationEventTopics in execution-domain.ts is consumed by empty and prepared range checks.",
+    "transactionLocalChecks": "Byte-identical, including configure, pricing and independently confirmed issuance-event selection.",
+    "historicalAndCurrentChecks": "Byte-identical domain/intent authentication, receipt identity, membership, current-row and issuance-history checks; full deployment-to-latest boundary retained.",
+    "sourceInventory": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "before": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+        "after": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "changed": true,
+        "pureLines": 234
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "before": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+        "after": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+        "changed": false,
+        "pureLines": 242
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "before": "c86ed48392ad0c6909df77eb867b83b64d52dc9979f573dde30a29de847c1e47",
+        "after": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "changed": true,
+        "pureLines": 426
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "before": "31cfec3cfb1c1e032f4a5f6159600d17300f75a7b24d07b91e9ac0bea5b9d785",
+        "after": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+        "changed": true,
+        "pureLines": 350
+      }
+    ]
+  },
+  "results": {
+    "beforeFix": {
+      "passed": 10,
+      "failed": 2,
+      "exit": 1
+    },
+    "focused": {
+      "passed": 41,
+      "failed": 0,
+      "exit": 0
+    },
+    "manualPrepared": {
+      "scenarios": 30,
+      "exit": 0,
+      "originalFilesPreserved": 41,
+      "cleanupContexts": 30
+    },
+    "manualPreservation": {
+      "exit": 0,
+      "emptyAccepted": 3,
+      "emptyOmissionsRejected": 22,
+      "historicalBVerified": true,
+      "resumes": 2,
+      "omittedXRejected": true,
+      "omittedYRejected": true,
+      "currentEmptyRejected": true,
+      "signedBytesPreserved": true
+    },
+    "combined": {
+      "tests": {
+        "passed": 333,
+        "failed": 3,
+        "exit": 1
+      },
+      "operatorTypes": {
+        "exit": 0,
+        "argvExactlyMatchesPreservedRun": true
+      },
+      "helperTypes": {
+        "exit": 0,
+        "argvExactlyMatchesPreservedRun": true
+      },
+      "runs": 1
+    },
+    "mutations": {
+      "membershipFailures": 20,
+      "cutoffFailures": 10,
+      "canonicalReceiptFailures": 4,
+      "restored": true
+    }
+  },
+  "blocker": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+    "lines": "234-236",
+    "cause": "The portable fixture keys responses by the old suffix-derived topic list. The new explicit query receives an empty fixture response.",
+    "proof": "Attempt 15 reproduces the exact relocated omission with unchanged product code: stale transport accepts; supplying the existing three configuration rows under the new query rejects.",
+    "neededAuthorization": "Update this fixture to use compensationEventTopics(migration, \"configuration\"), then rerun affected failed checks. No authorization or out-of-scope edit has occurred."
+  },
+  "otherFailures": {
+    "portableTimeout": "Full run timed out at 15000 ms; isolated unchanged-timeout diagnostic passed in 9979.77 ms.",
+    "followingValidation": "ENOENT on owned bundle path followed timeout, consistent with cleanup fallout; no independent source defect established.",
+    "combinedGateStillFailed": true
+  },
+  "evidence": {
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/report.md",
+    "ledger": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/results.json",
+    "semanticPreservation": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/source-preservation.json",
+    "manualPrepared": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/manual-prepared-IR6pIP/result.json",
+    "manualPreservation": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/manual-preservation-485KMt",
+    "combinedSource": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/combined-checks.sh",
+    "fullTests": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-09-full-tests",
+    "operatorTypes": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-10-operator-types",
+    "helperTypes": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types",
+    "timeoutDiagnostic": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-14-portable-timeout-diagnosis",
+    "fixtureDiagnostic": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-15-portable-fixture-diagnosis"
+  },
+  "limits": [
+    "Synthetic transport with saved actual initialization topics/data and separately labeled synthetic metadata/configuration/getter state.",
+    "No fresh chain state, paid owner-bond execution, actual activation, task-10 lifecycle or readiness claim.",
+    "Original archived manifests, receipts and signed domains unchanged; prior evidence preserved.",
+    "Existing oversized state module/test not broadly refactored under the precise preservation scope."
+  ],
+  "cleanup": {
+    "pendingProcesses": 0,
+    "manualContextsClosed": 30,
+    "timeoutRootChecks": [
+      {
+        "path": "/private/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-zd1oJQ",
+        "exists": false
+      }
+    ]
+  },
+  "constraints": {
+    "delegation": false,
+    "publicRpc": false,
+    "anvil": false,
+    "forge": false,
+    "installs": false,
+    "commits": false,
+    "editsOutsideAuthorizedScope": false,
+    "readinessMarker": false,
+    "planClosure": false
+  },
+  "writtenLast": true
+}

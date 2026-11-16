@@ -1,0 +1,168 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "exact_scope": "Combined frozen issuance/empty/prepared census production repair verdicts plus authorized mixed-fixture response-key adaptation, current unit tests/types and production CLI on synthetic transport; excludes real rehearsal and task-10 lifecycle",
+  "confidence": "high",
+  "reusedProductionVerdicts": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-repair-verdict.json",
+      "sha256": "122035701ff9bc85c1230f3acc9b4e83baa88ad6f399f0220585a057973fba12",
+      "verdict": "confirmed",
+      "failure_class": "none",
+      "scope": "Issuance required child-event emitter/topic selection and exact proof validation in execution-state.ts and execution-state.test.ts only; excludes census sibling, shared QA and fresh task-10 lifecycle"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/empty-census-repair-verdict.json",
+      "sha256": "964f1ccf406f0ad1ff2e91b413b6f1091735e8679c74e0759e694f5b3ed90dab",
+      "verdict": "confirmed",
+      "failure_class": "none-in-empty-census-repair",
+      "scope": "verifyEmptyCensus compensation-event classification in execution-domain.ts and execution-domain.test.ts; separately requested adjacent verifyConfiguration assessment is advisory only"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-census-repair-verdict.json",
+      "sha256": "602c101fa60359e05d331af1ba77cfb042973530cc36bc938fb6b50b74710f31",
+      "verdict": "confirmed",
+      "failure_class": "none",
+      "scope": "Frozen A1 production prepared-range repair: shared compensationEventTopics in execution-domain.ts and use in execution-state.ts, associated frozen tests; retained failure classification only for the shared gate"
+    }
+  ],
+  "evidence": {
+    "claim": {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/prepared-fixture-done.json",
+      "sha256": "01a7814895ecf34e90396f19a2fc66cfc168f043a73a94428fade71db0392406"
+    },
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/independent/report.md",
+    "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/independent/verification.json",
+    "fixture": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/mixed-fixture.ts",
+      "beforeSha256": "aa68ed246ee0e135860c1cf79b9712468cb05327dabc8496f9cf2adbbf9d37c4",
+      "afterSha256": "ef79cad27c4b6fd351f583c6c75d96560fb6b9d99ba3c887058ff1e1ef558bf8",
+      "exactAuthorizedTwoEdits": true,
+      "responseRowsUnchanged": true,
+      "productAndAssertionsUnchanged": true
+    },
+    "frozenProductionBindings": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "independentlyConfirmedSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "freshRunSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+        "matches": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "independentlyConfirmedSha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+        "freshRunSha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+        "matches": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "independentlyConfirmedSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "freshRunSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+        "matches": true
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "independentlyConfirmedSha256": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+        "freshRunSha256": "03de70d8db978806862ec393d9d1ccf0202dfe6c8dcf9002194bb84d8d1dc240",
+        "matches": true
+      }
+    ],
+    "fullTests": {
+      "exit": 0,
+      "passed": 336,
+      "failed": 0,
+      "files": 21,
+      "timeoutMs": 15000,
+      "durationSeconds": 105.22,
+      "formerlyFailedCasesAllPass": true,
+      "exactPriorArgv": true,
+      "raw": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log"
+    },
+    "focused": {
+      "exit": 0,
+      "passed": 3,
+      "failed": 0,
+      "filtered": 45
+    },
+    "operatorTypes": {
+      "exit": 0,
+      "selectedFiles": 87,
+      "emptyDiagnostics": true,
+      "exactPriorArgv": true
+    },
+    "helperTypes": {
+      "retainedReceipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-census/attempt-11-helper-types",
+      "exit": 0,
+      "emptyDiagnostics": true,
+      "exactArgv": true,
+      "reachableLocalFiles": 29,
+      "fixtureOutsideGraph": true,
+      "historicalHashMatches": 28,
+      "historicalInventoryGap": "task-11/recovery.ts; current before/after captured, no retroactive historical identity claim",
+      "parentOrchestrationStatementIsNotNewUserDecision": true,
+      "rerun": false
+    },
+    "manualCli": {
+      "exit": 0,
+      "completeRelocatedValidateAndVerify": "accepted",
+      "omittedConfiguration": "expected thrown ExecutionError: configured original omitted from complete deployment census",
+      "negativeProcessExitClaimed": false,
+      "responseRows": 3,
+      "responseSha256": "09a1d6f304ed67f58acca3c84ddf7ab0e927b4c9c054aafbcaf1329d0badafd1",
+      "originalRawInputsUnchanged": 27,
+      "nonceRequests": 0,
+      "sends": 0,
+      "transport": "synthetic loopback; production CLI main invoked in-process"
+    },
+    "portable": {
+      "freshLocationDomains": 2,
+      "rawInputsPerDomain": 27,
+      "historicalContextsPerDomain": 4,
+      "originalSignedDomainsRetained": true
+    },
+    "allCapturedSourceAndEvidenceIntegrityChecksMatched": true,
+    "protectedRecordsUnchanged": 35,
+    "producerMonitorCompletedExitZero": true,
+    "overallExit": 0
+  },
+  "closedSharedFindings": [
+    {
+      "id": "H1",
+      "previousFailureClass": "harness-fixture-response-key-mismatch",
+      "disposition": "cleared-for-combined-unit-cli-scope",
+      "evidence": "Exact authorized import/topic-key adaptation; same three rows and assertions; focused/full omission test passes and production CLI omission throws the expected error."
+    },
+    {
+      "id": "H2",
+      "previousFailureClass": "runner-timeout",
+      "disposition": "cleared-for-current-combined-run",
+      "evidence": "One fresh full run passes all 336 tests at unchanged 15000 ms; formerly timed-out relocation passes in 10887.80 ms. No general absence-of-flakes claim."
+    },
+    {
+      "id": "H3",
+      "previousFailureClass": "harness-lifecycle-cleanup-fallout",
+      "previousCausalConfidence": "probable",
+      "disposition": "cleared-for-current-combined-run",
+      "evidence": "The following relocated validation passes in the fresh full run, 6141.39 ms, with no ENOENT. The old deletion interleaving remains unproved; no historical diagnosis is strengthened retroactively."
+    }
+  ],
+  "fixes": [],
+  "newIssues": [],
+  "unitCliGateAccepted": true,
+  "scopeComplete": true,
+  "realRehearsalAccepted": false,
+  "realAnvilAccepted": false,
+  "task10LifecycleAccepted": false,
+  "task10Complete": false,
+  "readinessMarkerWritten": false,
+  "limits": [
+    "One full run passed at unchanged timeout; no general flake-free guarantee.",
+    "Historical helper inventory covers 28/29 reachable local inputs; current recovery.ts hash does not retroactively prove its old bytes.",
+    "CLI main is invoked in-process on synthetic transport; omission is an expected thrown error, not a separate failing process.",
+    "All production reviews are reused; no new production or real economic lifecycle audit."
+  ],
+  "sourceEditedByReviewer": false,
+  "testsOrReplaysRunByReviewer": false,
+  "writtenLast": true
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "phase20-owned-cleanup-v1",
+  "observedCommandSession": "bash_20",
+  "observedExit": 0,
+  "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+  "branch": "work/dtf-migration-phase-20-se-lp-source",
+  "trackedDiff": [],
+  "stagedDiff": [],
+  "status": [
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/"
+  ],
+  "ownedPids": [
+    {
+      "pid": 33577,
+      "psResult": "absent",
+      "reason": "read-only monitor deadline"
+    },
+    {
+      "pid": 37578,
+      "psResult": "absent",
+      "reason": "explicit kill_bash bash_17; completion exit0"
+    }
+  ],
+  "port": {
+    "host": "127.0.0.1",
+    "port": 18570,
+    "lsofListeners": []
+  },
+  "checkpoints": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/.omo-runtime/dtf-migration-se-lp-sources/checkpoints",
+    "created": false,
+    "final": "absent"
+  },
+  "impersonations": [
+    {
+      "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "purpose": "own ERC20 token funding transfer only",
+      "stopRecorded": false
+    }
+  ],
+  "sourceAllowanceFinal": "0",
+  "receiptSubscriptions": "all closed in finally; no persistent provider constructed",
+  "retained": "owned helper source, compiler/cache artifacts and evidence only",
+  "pendingOwnedOperations": 0
+}

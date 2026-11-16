@@ -1,0 +1,98 @@
+Warning: This is a nightly build of Foundry. It is recommended to use the latest stable version. To mute this warning set `FOUNDRY_DISABLE_NIGHTLY_WARNING` in your environment. 
+
+warning[missing-zero-check]: address parameter is used in a state write or value transfer without a zero-address check
+   ╭▸ src/DelegatedSourceProbe.sol:25:17
+   │
+25 │     constructor(address full_, address split_) {
+   │                 ━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/missing-zero-check
+
+warning[missing-zero-check]: address parameter is used in a state write or value transfer without a zero-address check
+   ╭▸ src/DelegatedSourceProbe.sol:25:32
+   │
+25 │     constructor(address full_, address split_) {
+   │                                ━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/missing-zero-check
+
+warning[reentrancy-events]: event emitted after an external call; reentrancy can reorder or fabricate logs that off-chain consumers rely on
+   ╭▸ src/DelegatedSourceProbe.sol:38:9
+   │
+38 │         emit Received(msg.sender, amount_);
+   │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/reentrancy-events
+
+warning[incorrect-strict-equality]: dangerous strict equality check on an externally-influenced value
+   ╭▸ src/DelegatedSourceProbe.sol:35:13
+   │
+35 │         if (beforeWallet_ - SY.balanceOf(msg.sender) != amount_
+   │             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/incorrect-strict-equality
+
+warning[incorrect-strict-equality]: dangerous strict equality check on an externally-influenced value
+   ╭▸ src/DelegatedSourceProbe.sol:36:16
+   │
+36 │             || SY.balanceOf(address(this)) - beforeCustody_ != amount_) revert CustodyMismatch();
+   │                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/incorrect-strict-equality
+
+warning[missing-zero-check]: address parameter is used in a state write or value transfer without a zero-address check
+   ╭▸ src/DelegatedSourceProbe.sol:58:17
+   │
+58 │     constructor(address full_, address split_, address relayer_, SourceCustody custody_) {
+   │                 ━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/missing-zero-check
+
+warning[missing-zero-check]: address parameter is used in a state write or value transfer without a zero-address check
+   ╭▸ src/DelegatedSourceProbe.sol:58:32
+   │
+58 │     constructor(address full_, address split_, address relayer_, SourceCustody custody_) {
+   │                                ━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/missing-zero-check
+
+warning[missing-zero-check]: address parameter is used in a state write or value transfer without a zero-address check
+   ╭▸ src/DelegatedSourceProbe.sol:58:48
+   │
+58 │     constructor(address full_, address split_, address relayer_, SourceCustody custody_) {
+   │                                                ━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/missing-zero-check
+
+warning[reentrancy-events]: event emitted after an external call; reentrancy can reorder or fabricate logs that off-chain consumers rely on
+   ╭▸ src/DelegatedSourceProbe.sol:84:9
+   │
+84 │         emit Attempt(ok_, result_);
+   │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/reentrancy-events
+
+warning[unused-return]: return value of an external call is not used
+   ╭▸ src/DelegatedSourceProbe.sol:89:9
+   │
+89 │         SOURCE.withdrawClaim(first_);
+   │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/unused-return
+
+warning[unused-return]: return value of an external call is not used
+   ╭▸ src/DelegatedSourceProbe.sol:90:9
+   │
+90 │         SOURCE.withdrawClaim(second_);
+   │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/unused-return
+
+warning[unused-return]: return value of an external call is not used
+   ╭▸ src/DelegatedSourceProbe.sol:94:9
+   │
+94 │         SOURCE.withdrawClaim(weight_);
+   │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/unused-return
+

@@ -1,0 +1,71 @@
+{
+  "producerManifest": "dd81dd32c42d05153f9e186c6671f7b080ea179e4ee33f01ccff746bbdb0e057",
+  "producerReport": "deb62a122bb8949b03107ef04208f35f5c36dd1849e9ce79245d56091d369250",
+  "producerSeal": [
+    {
+      "path": "report.md",
+      "expected": "deb62a122bb8949b03107ef04208f35f5c36dd1849e9ce79245d56091d369250",
+      "actual": "deb62a122bb8949b03107ef04208f35f5c36dd1849e9ce79245d56091d369250",
+      "match": true
+    },
+    {
+      "path": "bindings.json",
+      "expected": "dd81dd32c42d05153f9e186c6671f7b080ea179e4ee33f01ccff746bbdb0e057",
+      "actual": "dd81dd32c42d05153f9e186c6671f7b080ea179e4ee33f01ccff746bbdb0e057",
+      "match": true
+    },
+    {
+      "path": "cleanup.json",
+      "expected": "61902867ab7c6450a71604f27f21539b7cd534407dc0364abb9c4fbb1b870674",
+      "actual": "61902867ab7c6450a71604f27f21539b7cd534407dc0364abb9c4fbb1b870674",
+      "match": true
+    },
+    {
+      "path": "execution-index.json",
+      "expected": "2e5037ab42fd20f9c59b4ae9940fe173b57638cbdebfaf9f3663a3146072965c",
+      "actual": "2e5037ab42fd20f9c59b4ae9940fe173b57638cbdebfaf9f3663a3146072965c",
+      "match": true
+    },
+    {
+      "path": "source-artifact-parity.json",
+      "expected": "b1f01448c15fb0e0fec01fc9c6b9c55ca83ef8a506c737a254a38848f87931ef",
+      "actual": "b1f01448c15fb0e0fec01fc9c6b9c55ca83ef8a506c737a254a38848f87931ef",
+      "match": true
+    },
+    {
+      "path": "commands.json",
+      "expected": "585441f90030a0b88401ef56746b4cfdcbaf7d75e5a8f6df71c0f8e176b4b436",
+      "actual": "585441f90030a0b88401ef56746b4cfdcbaf7d75e5a8f6df71c0f8e176b4b436",
+      "match": true
+    }
+  ],
+  "sourceSnapshotCount": 39,
+  "sourceSnapshotMismatches": [],
+  "boundInputCount": 1096,
+  "boundInputMismatches": [],
+  "compiledMetadataInputs": 636,
+  "compiledMetadataMismatches": [],
+  "base": "2c2b3370ded30cae1662329025d4fb58f7197330",
+  "authority": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-stage2-surrender-correction.md",
+      "sha256": "eaeb2a971f16dd28eeff74125c08565a643a96e3ee383c8952c60b6e5a69fd25",
+      "bytes": 7127
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid-brief.md",
+      "sha256": "28a20cf28b2b47da3d4581f872c3d871043fa2e4f215f9025d1a62aad91f4f0a",
+      "bytes": 7906
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "c9eff8e498d1483b0166346099a15ab0930740a9febcfd727774cf2b4506ef2a",
+      "bytes": 76210
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "sha256": "d4b12a742c74c08e862bf02a9315cfd706e3d117e4878bd99092b071c3c48ba3",
+      "bytes": 105766
+    }
+  ]
+}

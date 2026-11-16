@@ -1,0 +1,763 @@
+{
+  "version": "independent-totals-and-issues-v1",
+  "method": "All raw rows already independently matched by Python CSV before these calculations; no root observations used",
+  "checks": [
+    {
+      "key": "weighted_position_rows",
+      "computed": 382,
+      "reported": 382,
+      "emitted": 382,
+      "pass": true
+    },
+    {
+      "key": "earlier_position_rows",
+      "computed": 29,
+      "reported": 29,
+      "emitted": 29,
+      "pass": true
+    },
+    {
+      "key": "account_rows",
+      "computed": 435,
+      "reported": 435,
+      "emitted": 435,
+      "pass": true
+    },
+    {
+      "key": "weighted_snapshot_accounts",
+      "computed": 331,
+      "reported": 331,
+      "emitted": 331,
+      "pass": true
+    },
+    {
+      "key": "weighted_nominal_detf_exposure_raw",
+      "computed": "2237832428068",
+      "reported": "2237832428068",
+      "emitted": "2237832428068",
+      "pass": true
+    },
+    {
+      "key": "nft_pre_gons_reconstructed",
+      "computed": "208200941171774511655236409911455698947144975844",
+      "reported": "208200941171774511655236409911455698947144975844",
+      "emitted": "208200941171774511655236409911455698947144975844",
+      "pass": true
+    },
+    {
+      "key": "recovery_observations",
+      "computed": 69,
+      "reported": 69,
+      "emitted": 69,
+      "pass": true
+    },
+    {
+      "key": "recovery_raw_dtf_sum",
+      "computed": "59027441289824656686224552",
+      "reported": "59027441289824656686224552",
+      "emitted": "59027441289824656686224552",
+      "pass": true
+    },
+    {
+      "key": "conversions",
+      "computed": 250,
+      "reported": 250,
+      "emitted": 250,
+      "pass": true
+    },
+    {
+      "key": "transfer_evidence_rows",
+      "computed": 12191,
+      "reported": 12191,
+      "emitted": 12191,
+      "pass": true
+    },
+    {
+      "key": "issuable_accounts",
+      "computed": 0,
+      "reported": 0,
+      "emitted": 0,
+      "pass": true
+    },
+    {
+      "key": "weighted_confirmed_held_exclusion_lower_bound_raw",
+      "computed": "1674947599807",
+      "reported": "1674947599807",
+      "emitted": "1674947599807",
+      "pass": true
+    },
+    {
+      "key": "weighted_unresolved_snapshot_remainder_raw",
+      "computed": "562884828261",
+      "reported": "562884828261",
+      "emitted": "562884828261",
+      "pass": true
+    },
+    {
+      "key": "current_holding_inventory_rows",
+      "computed": 403,
+      "reported": 403,
+      "emitted": 403,
+      "pass": true
+    },
+    {
+      "key": "held_exclusion_rows",
+      "computed": 411,
+      "reported": 411,
+      "emitted": 411,
+      "pass": true
+    },
+    {
+      "key": "post_incident_bond_claim_proof_rows",
+      "computed": 7,
+      "reported": 7,
+      "emitted": 7,
+      "pass": true
+    },
+    {
+      "key": "staking_index_events_through_cutoff",
+      "computed": 1077,
+      "reported": 1077,
+      "emitted": 1077,
+      "pass": true
+    }
+  ],
+  "receiptBalanceNative18": "57880198310224980583",
+  "unresolvedClasses": [
+    {
+      "code": "aggregate-source-reference",
+      "count": 34,
+      "detail": "S011:0xfbd71c5b3aaa43dbf676e38046074a9884dcc8d3 is aggregate/event-replay evidence, not a unique acquisition or economic origin."
+    },
+    {
+      "code": "conversion-origin-unresolved",
+      "count": 250,
+      "detail": "Representation change is not another contribution or external recovery; raw weight, receipt, SY and underlying rights require overlap/previous-delivery reconciliation."
+    },
+    {
+      "code": "earlier-receipt-discrepancy",
+      "count": 1,
+      "detail": "Reported positive balances 57880198310224980583 versus supply 57898677945502333609; gap not allocated."
+    },
+    {
+      "code": "historical-policy-not-authority",
+      "count": 1,
+      "detail": "Raw fields and exceptions retain obsolete loss/held/bearer policy as history only. Current plan/PRD govern; no old formula or zero upfront field becomes an award or prior credit."
+    },
+    {
+      "code": "incomplete-WETH-native-recovery",
+      "count": 1,
+      "detail": "S011 has inbound WETH only through 69999999 and selected DTF flows; native/refunds/net contributions and broader recovery remain unproved."
+    },
+    {
+      "code": "independent-basis-unresolved",
+      "count": 435,
+      "detail": "Recipient grouping only. Original Q0/E0/D0, prior delivery and disjoint origin are unknown; nominal remainder and old loss fields are not compensation."
+    },
+    {
+      "code": "missing-earlier-raw-receipts",
+      "count": 1,
+      "detail": "S009 is a normalized observation, not original receipt archival; direct inputs and routed DTF remain separate."
+    },
+    {
+      "code": "missing-original-inputs-wallet-review",
+      "count": 1,
+      "detail": "Historical observations do not establish original eligibility, configured original wallet or current control under MIG-R42."
+    },
+    {
+      "code": "original-contribution-unknown",
+      "count": 411,
+      "detail": "Snapshot quantity and retained lower bound are historical observations, not original Q0 or a net contribution. Review surviving rights/aliases and prior delivery without requiring intermediate-holder ancestry."
+    },
+    {
+      "code": "partial-claims-prior-delivery",
+      "count": 1,
+      "detail": "Reconcile all surviving raw rights, claimed descendants, excluded rewards and previous delivery. Never infer zero prior credit or assign full credit per partial slice."
+    },
+    {
+      "code": "raw-claim-event-archive-missing",
+      "count": 18,
+      "detail": "Normalized raw-weight consumption is historical evidence; original claim receipt/decoded event archival and remaining/prior-delivered partition are not supplied."
+    },
+    {
+      "code": "recovery-attribution-unresolved",
+      "count": 69,
+      "detail": "Output is observed once; transaction input totals are context, not assigned to each output or deducted from compensation."
+    },
+    {
+      "code": "representation-overlap-aliases",
+      "count": 1,
+      "detail": "Independent compensation, NFTs, receipts, SY, raw weights, backing and LP representations can overlap; no unique economic origin is assigned here."
+    },
+    {
+      "code": "review-acquisition-funded-snapshot-open",
+      "count": 1,
+      "detail": "Acquire missing data only under separate authorization; review original units/components, disjointness and prior delivery, then fund/capture/quote before separate loader preparation. No intermediate-holder ancestry prerequisite."
+    },
+    {
+      "code": "stale-current-state",
+      "count": 1,
+      "detail": "Weighted observations end at 108944663. Earlier receipt reads are latest November 8, 2026 and unpinned. Neither is current control or the funded snapshot."
+    },
+    {
+      "code": "unknown-recovery-count",
+      "count": 13,
+      "detail": "Blank recorded recovery count remains unknown; an empty linked subset does not prove zero recoveries."
+    },
+    {
+      "code": "unobserved-accepted-categories",
+      "count": 1,
+      "detail": "No direct-user row does not prove no E-S, C, W-SW, W-SD or physical LP exposure. Infrastructure cannot be assigned as a second personal claim."
+    }
+  ],
+  "quantityUnitCensus": [
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv|bond_principal_raw|weighted-native9",
+      "count": 819
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv|dtf_wei|DTF-native18",
+      "count": 819
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv|dtf_wei_bond|DTF-native18",
+      "count": 244
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv|dtf_wei_donated|DTF-native18",
+      "count": 244
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv|dtf_wei_liquid|DTF-native18",
+      "count": 244
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv|dtf_wei_redeemed|DTF-native18",
+      "count": 244
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv|dtf_wei_sold|DTF-native18",
+      "count": 244
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv|dtf_wei_staked_on_purchase|DTF-native18",
+      "count": 244
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv|balance_raw|sDETF-native9",
+      "count": 200
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv|gons|gons",
+      "count": 200
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/stakers.csv|stake_wei|raw-weight-native18",
+      "count": 92
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/stakers.csv|wallet_dtf_wei|DTF-native18",
+      "count": 92
+    },
+    {
+      "key": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv|balance_raw|SY-native9",
+      "count": 18
+    },
+    {
+      "key": "account-ledger.csv|E_eth|historical-column:E_eth",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|H_eth|historical-column:H_eth",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|R_eth|historical-column:R_eth",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|V_eth|historical-column:V_eth",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|confirmed_held_exclusion_detf_raw|historical-DETF-equivalent-native9-not-award",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|historical_direct_dtf_input_raw|DTF-native18",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|historical_direct_weth_input_raw|WETH-native18",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|new_detf_bond_allocation_raw|historical-column:new_detf_bond_allocation_raw",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|nominal_detf_exposure_raw|historical-DETF-equivalent-native9-not-award",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|post_incident_observed_dtf_output_raw|DTF-native18",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|snapshot_remainder_after_confirmed_held_exclusion_raw|historical-DETF-equivalent-native9-not-award",
+      "count": 435
+    },
+    {
+      "key": "account-ledger.csv|upfront_credit_for_current_holdings_raw|historical-column:upfront_credit_for_current_holdings_raw",
+      "count": 435
+    },
+    {
+      "key": "conversions.csv|output_raw|0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:native9",
+      "count": 145
+    },
+    {
+      "key": "conversions.csv|principal_raw|weighted-native9",
+      "count": 232
+    },
+    {
+      "key": "conversions.csv|rewards_raw|weighted-native9",
+      "count": 250
+    },
+    {
+      "key": "conversions.csv|output_raw|0xb55604cf4dcdabb362078e106d20f98512391edf:native9",
+      "count": 18
+    },
+    {
+      "key": "conversions.csv|principal_raw|raw-weight-native18",
+      "count": 18
+    },
+    {
+      "key": "conversions.csv|output_raw|0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:native9",
+      "count": 87
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00:native18",
+      "count": 74
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00:native18",
+      "count": 74
+    },
+    {
+      "key": "custody-inventory.csv|principal_harvested_dtf_raw|historical-column:principal_harvested_dtf_raw",
+      "count": 403
+    },
+    {
+      "key": "custody-inventory.csv|rewards_harvested_dtf_raw|historical-column:rewards_harvested_dtf_raw",
+      "count": 403
+    },
+    {
+      "key": "custody-inventory.csv|upfront_bond_credit_for_this_holding_raw|historical-column:upfront_bond_credit_for_this_holding_raw",
+      "count": 403
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:native9",
+      "count": 194
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:native9",
+      "count": 194
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:native9",
+      "count": 52
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:native9",
+      "count": 52
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0xb55604cf4dcdabb362078e106d20f98512391edf:native9",
+      "count": 13
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0xb55604cf4dcdabb362078e106d20f98512391edf:native9",
+      "count": 13
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:native0",
+      "count": 41
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:native0",
+      "count": 41
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0x4ac89ad061a531fa62ddceed53520c2750113b01:native18",
+      "count": 7
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0x4ac89ad061a531fa62ddceed53520c2750113b01:native18",
+      "count": 7
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0xaf0e1967c8f755c747615c5427108bc549ca1122:native18",
+      "count": 6
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0xaf0e1967c8f755c747615c5427108bc549ca1122:native18",
+      "count": 6
+    },
+    {
+      "key": "custody-inventory.csv|custody_quantity_raw|0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:native0",
+      "count": 16
+    },
+    {
+      "key": "custody-inventory.csv|observed_quantity_raw|0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:native0",
+      "count": 16
+    },
+    {
+      "key": "evidence/all-index-events.csv|gons_per_unit|gons-per-native9",
+      "count": 1077
+    },
+    {
+      "key": "evidence/bond-accounting.csv|amount_raw|weighted-sDETF:native9",
+      "count": 57
+    },
+    {
+      "key": "evidence/bond-accounting.csv|gons_delta|gons",
+      "count": 57
+    },
+    {
+      "key": "evidence/bond-accounting.csv|gons_per_unit|gons-per-native9",
+      "count": 57
+    },
+    {
+      "key": "evidence/earlier-cp-bonds.csv|direct_dtf_paid_raw|DTF-native18",
+      "count": 16
+    },
+    {
+      "key": "evidence/earlier-cp-bonds.csv|direct_weth_paid_raw|WETH-native18",
+      "count": 16
+    },
+    {
+      "key": "evidence/earlier-cp-bonds.csv|original_lp_shares_raw|LP-accounting-shares-not-physical-LP",
+      "count": 16
+    },
+    {
+      "key": "evidence/earlier-cp-bonds.csv|routed_dtf_received_by_detf_raw|DTF-native18",
+      "count": 16
+    },
+    {
+      "key": "evidence/earlier-cp-wallets.csv|bond_direct_dtf_paid_raw|DTF-native18",
+      "count": 13
+    },
+    {
+      "key": "evidence/earlier-cp-wallets.csv|bond_direct_weth_paid_raw|WETH-native18",
+      "count": 13
+    },
+    {
+      "key": "evidence/earlier-cp-wallets.csv|liquid_detf_raw|historical-column:liquid_detf_raw",
+      "count": 13
+    },
+    {
+      "key": "evidence/earlier-cp-wallets.csv|staking_receipt_raw|historical-column:staking_receipt_raw",
+      "count": 13
+    },
+    {
+      "key": "evidence/index-events.csv|gons_per_unit|gons-per-native9",
+      "count": 847
+    },
+    {
+      "key": "evidence/post-incident-bond-claims.csv|gons_debited|gons",
+      "count": 7
+    },
+    {
+      "key": "evidence/post-incident-bond-claims.csv|gons_per_unit|gons-per-native9",
+      "count": 7
+    },
+    {
+      "key": "evidence/post-incident-bond-claims.csv|principal_claimed_raw|weighted-native9",
+      "count": 7
+    },
+    {
+      "key": "evidence/post-incident-bond-claims.csv|rewards_claimed_raw|weighted-native9",
+      "count": 7
+    },
+    {
+      "key": "evidence/post-incident-bond-claims.csv|sdetf_transferred_raw|weighted-native9",
+      "count": 7
+    },
+    {
+      "key": "evidence/transfers.csv|amount_raw|0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:nativesource-defined",
+      "count": 49
+    },
+    {
+      "key": "evidence/transfers.csv|amount_raw|0x0bd7d308f8e1639fab988df18a8011f41eacad73:nativesource-defined",
+      "count": 27
+    },
+    {
+      "key": "evidence/transfers.csv|amount_raw|0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:nativesource-defined",
+      "count": 5260
+    },
+    {
+      "key": "evidence/transfers.csv|amount_raw|0xee5576fa1bcaa380e591d01245f406f3f384eb01:nativesource-defined",
+      "count": 2522
+    },
+    {
+      "key": "evidence/transfers.csv|amount_raw|0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:nativesource-defined",
+      "count": 3536
+    },
+    {
+      "key": "evidence/transfers.csv|amount_raw|0xb55604cf4dcdabb362078e106d20f98512391edf:nativesource-defined",
+      "count": 797
+    },
+    {
+      "key": "evidence/weighted-bonds.csv|claimed_principal_detf_raw|weighted-native9",
+      "count": 43
+    },
+    {
+      "key": "evidence/weighted-bonds.csv|original_principal_detf_raw|weighted-native9",
+      "count": 43
+    },
+    {
+      "key": "evidence/weighted-bonds.csv|remaining_principal_detf_raw|weighted-native9",
+      "count": 43
+    },
+    {
+      "key": "evidence/weighted-bonds.csv|rewards_claimed_sdetf_raw|weighted-native9",
+      "count": 43
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|current_bond_unclaimed_principal_raw|weighted-native9",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|current_legacy_stake_dtf_raw|raw-weight-native18",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|current_liquid_detf_raw|historical-column:current_liquid_detf_raw",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|current_sdetf_raw|weighted-native9",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|current_sy_raw|SY-native9",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|post_dtf_in_raw|DTF-native18",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|post_dtf_returned_raw|DTF-native18",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_bond_original_principal_raw|weighted-native9",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_bond_unclaimed_principal_raw|weighted-native9",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_dtf_donated_raw|DTF-native18",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_dtf_redeemed_raw|DTF-native18",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_dtf_sold_raw|DTF-native18",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_legacy_stake_dtf_raw|raw-weight-native18",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_liquid_detf_raw|historical-column:pre_liquid_detf_raw",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_sdetf_raw|weighted-native9",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_sy_raw|SY-native9",
+      "count": 422
+    },
+    {
+      "key": "evidence/weighted-candidates.csv|pre_weth_in_raw|WETH-native18",
+      "count": 422
+    },
+    {
+      "key": "held-exclusions.csv|current_observed_quantity_raw|DETF_raw_9",
+      "count": 34
+    },
+    {
+      "key": "held-exclusions.csv|held_exclusion_detf_raw|historical-DETF-equivalent-native9-not-award",
+      "count": 411
+    },
+    {
+      "key": "held-exclusions.csv|outgoing_source_units_raw|DETF_raw_9",
+      "count": 34
+    },
+    {
+      "key": "held-exclusions.csv|retained_source_units_lower_bound_raw|DETF_raw_9",
+      "count": 34
+    },
+    {
+      "key": "held-exclusions.csv|snapshot_exposure_detf_raw|historical-DETF-equivalent-native9-not-award",
+      "count": 411
+    },
+    {
+      "key": "held-exclusions.csv|unresolved_snapshot_remainder_detf_raw|historical-DETF-equivalent-native9-not-award",
+      "count": 411
+    },
+    {
+      "key": "held-exclusions.csv|upfront_credit_for_held_units_raw|historical-column:upfront_credit_for_held_units_raw",
+      "count": 411
+    },
+    {
+      "key": "held-exclusions.csv|current_observed_quantity_raw|sDETF_raw_9",
+      "count": 198
+    },
+    {
+      "key": "held-exclusions.csv|outgoing_source_units_raw|gons",
+      "count": 239
+    },
+    {
+      "key": "held-exclusions.csv|retained_source_units_lower_bound_raw|gons",
+      "count": 239
+    },
+    {
+      "key": "held-exclusions.csv|current_observed_quantity_raw|SY_raw_9",
+      "count": 17
+    },
+    {
+      "key": "held-exclusions.csv|outgoing_source_units_raw|SY_raw_9",
+      "count": 17
+    },
+    {
+      "key": "held-exclusions.csv|retained_source_units_lower_bound_raw|SY_raw_9",
+      "count": 17
+    },
+    {
+      "key": "held-exclusions.csv|current_observed_quantity_raw|legacy_weight_DTF_raw_18",
+      "count": 92
+    },
+    {
+      "key": "held-exclusions.csv|outgoing_source_units_raw|legacy_weight_DTF_raw_18",
+      "count": 92
+    },
+    {
+      "key": "held-exclusions.csv|retained_source_units_lower_bound_raw|legacy_weight_DTF_raw_18",
+      "count": 92
+    },
+    {
+      "key": "held-exclusions.csv|current_observed_quantity_raw|NFT_count",
+      "count": 57
+    },
+    {
+      "key": "held-exclusions.csv|current_observed_quantity_raw|old_DETF_raw_18",
+      "count": 6
+    },
+    {
+      "key": "held-exclusions.csv|outgoing_source_units_raw|manual_cost_basis",
+      "count": 29
+    },
+    {
+      "key": "held-exclusions.csv|retained_source_units_lower_bound_raw|manual_cost_basis",
+      "count": 29
+    },
+    {
+      "key": "held-exclusions.csv|current_observed_quantity_raw|old_receipt_raw_18",
+      "count": 7
+    },
+    {
+      "key": "observed-recoveries.csv|R_eth|historical-column:R_eth",
+      "count": 69
+    },
+    {
+      "key": "observed-recoveries.csv|observed_amount_raw|0xee5576fa1bcaa380e591d01245f406f3f384eb01:native18",
+      "count": 69
+    },
+    {
+      "key": "observed-recoveries.csv|transaction_detf_burn_raw|historical-column:transaction_detf_burn_raw",
+      "count": 69
+    },
+    {
+      "key": "observed-recoveries.csv|transaction_detf_input_raw|historical-column:transaction_detf_input_raw",
+      "count": 69
+    },
+    {
+      "key": "positions.csv|detf_equivalent_raw|historical-DETF-equivalent-native9-not-award",
+      "count": 411
+    },
+    {
+      "key": "positions.csv|direct_dtf_paid_raw|DTF-native18",
+      "count": 411
+    },
+    {
+      "key": "positions.csv|direct_weth_paid_raw|WETH-native18",
+      "count": 411
+    },
+    {
+      "key": "positions.csv|intermediate_sy_raw|SY-native9",
+      "count": 411
+    },
+    {
+      "key": "positions.csv|original_lp_shares_raw|LP-accounting-shares-not-physical-LP",
+      "count": 411
+    },
+    {
+      "key": "positions.csv|quantity_raw|0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:native9",
+      "count": 34
+    },
+    {
+      "key": "positions.csv|staking_gons|gons",
+      "count": 411
+    },
+    {
+      "key": "positions.csv|quantity_raw|0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:native9",
+      "count": 198
+    },
+    {
+      "key": "positions.csv|quantity_raw|0xb55604cf4dcdabb362078e106d20f98512391edf:native9",
+      "count": 17
+    },
+    {
+      "key": "positions.csv|quantity_raw|0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00:native18",
+      "count": 92
+    },
+    {
+      "key": "positions.csv|quantity_raw|0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:native0",
+      "count": 41
+    },
+    {
+      "key": "positions.csv|quantity_raw|0xaf0e1967c8f755c747615c5427108bc549ca1122:native18",
+      "count": 6
+    },
+    {
+      "key": "positions.csv|quantity_raw|0x4ac89ad061a531fa62ddceed53520c2750113b01:native18",
+      "count": 7
+    },
+    {
+      "key": "positions.csv|quantity_raw|0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391:native0",
+      "count": 16
+    },
+    {
+      "key": "rounding.csv|unallocated_raw|sDETF_raw_9",
+      "count": 3
+    },
+    {
+      "key": "rounding.csv|unallocated_raw|SY_raw_9",
+      "count": 1
+    },
+    {
+      "key": "rounding.csv|unallocated_raw|DETF_raw_9",
+      "count": 1
+    }
+  ]
+}

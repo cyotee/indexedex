@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"vaultFeeOracleQuery","inputs":[],"outputs":[{"name":"","type":"address","internalType":"contract IVaultFeeOracleQuery"}],"stateMutability":"view"}],"id":694}

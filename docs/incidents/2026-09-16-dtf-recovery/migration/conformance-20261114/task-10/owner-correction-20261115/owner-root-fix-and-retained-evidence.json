@@ -1,0 +1,34 @@
+{
+  "type": "RehearsalOwnerRootFix",
+  "path": "scripts/recovery/dtf-migration/rehearse.ts:465",
+  "before": "join(runtime, \"owner-b-set\")",
+  "after": "join(evidence, \"independent-owner-b\", \"set-pricing\")",
+  "cause": "B is an independent owner action while configure-A is still active. Sharing operatorRoot correctly caused LOCK; the fixture now uses a separate owner root without clearing A or weakening resolve-prior-intents.",
+  "checks": {
+    "strictTypes": "attempts/50-owner-root-types/result.json",
+    "materialization": "attempts/51-owner-root-source-sync/result.json"
+  },
+  "retainedAttempt49": {
+    "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207",
+    "interruption": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/configure-a-before-resume.json",
+    "journal": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-09/rehearsal-1794767163207/journal-interrupted-a",
+    "intentId": "e516ee0b340ae8bbcbd98fd4ac19d3efb9fc29b66e8000fc522bc859631e239b",
+    "transactionHash": "0x8614d4e76a949cd7414587de30b88f9605b108f8b35fad31643ec3e00c8494d7",
+    "status": "0x1",
+    "proves": [
+      "real configureIndependentAllocations signed intent",
+      "canonical successful receipt",
+      "mined interruption before completion"
+    ],
+    "doesNotProve": [
+      "B setter success",
+      "A recovery after B",
+      "same-block A/B replacement",
+      "complete task-10 lifecycle"
+    ]
+  },
+  "currentAttempt": 52,
+  "currentMonitor": "mon_TPWAF4P2SEBXEKAQ",
+  "originalBound": "2026-11-15T18:55:25.715Z",
+  "priorEvidenceRewritten": false
+}

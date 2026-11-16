@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "scope": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3",
+  "qualification": "Only task-3-owned evidence and its four allowed substantive deliverables; not a repeat recovery census or final whole-project delivery audit.",
+  "files": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/adversarial-results.json",
+      "bytes": 5043,
+      "sha256": "7dcf07ad77580bb5c8b4f5ba152ec037f52f39bb1b09b9d13b97c20ad1362771"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/artifact-validation.json",
+      "bytes": 27342,
+      "sha256": "3f26f4aebe7f8ece5957bbd33b7b26c937998ece3c15977bde218380e29292d1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-MigrationLegacySources.t.sol.txt",
+      "bytes": 13761,
+      "sha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-recovery-route-disposition.md",
+      "bytes": 7211,
+      "sha256": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-source-manifest.json",
+      "bytes": 7894,
+      "sha256": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-source-route-matrix.md",
+      "bytes": 4043,
+      "sha256": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup-receipt.json",
+      "bytes": 3495,
+      "sha256": "2662e23f8adb6d680c32af5b206b1d2fd3b52a32a09c0b8a3372c7771affa815"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup.log",
+      "bytes": 368,
+      "sha256": "38dff24c8f24d46f90a4a0d5a95db3651b0007983008cfe60ae86bffaac369be"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/commands.json",
+      "bytes": 66130,
+      "sha256": "0c2f94fe4205ab6cf4643c9c321c174f113742e863721ed9742764808021b0fe"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/initial-blocked-claim.json",
+      "bytes": 6688,
+      "sha256": "6f2380d5ba28ea6fe7175fb1ee2ef371a44f3ea9d19f0807303596bdfab9c380"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inputs-and-results.json",
+      "bytes": 7305,
+      "sha256": "1cf06a404e443b71688ff594d447ee0565f004ed02eea5e737b9f62c131ae0c5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory.log",
+      "bytes": 54,
+      "sha256": "d00f960526c1713a4a683601e8cf8c3b31b84b0597ca28cfdf3315d98910afd1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/differences.txt",
+      "bytes": 564,
+      "sha256": "45d6fc24ad6b3d3ff57eb8f4959229015330a712ce0e52c01473dfe9c827313f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json",
+      "bytes": 1259,
+      "sha256": "1f26f2d67af8fc27c22ccec773ebc51a56db78b10fff6ca1095c177e83a0e4a5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative.log",
+      "bytes": 299,
+      "sha256": "dd95c70bfd593a9f05d1ab864cf8e8868dfc77bf7a97701a04abf53a61e87e92"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative/delivery.json",
+      "bytes": 1241,
+      "sha256": "2aa9780a32d33a5b283f0c8ab7a2f56dcbd5373df2d86e7699a02631591644e1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative/inventory.json",
+      "bytes": 1723,
+      "sha256": "8088ccea007321135dfe85d01c2c768cda6bf12b58b47f64e1a4fe2b9b47876d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive.log",
+      "bytes": 39,
+      "sha256": "c436863130dca58e21a8a7204cd7cfb0fa2ac3a323130bc06c273960a9775485"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive/delivery.json",
+      "bytes": 994,
+      "sha256": "417cb3d828148d85e01e9fdd14e62235c1724831d9bb99bda9c7bc1ebcba015f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive/inventory.json",
+      "bytes": 1723,
+      "sha256": "90f7a7095d6476b8bbc810da3ebc1487a950eb5493af91a0b8b4389b1ca2887e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/manual-qa.json",
+      "bytes": 19572,
+      "sha256": "a8a41c5f9e4373355767bce4ef0749726f56c042938063b2849d98a2f9bea07e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/recovery-authority.json",
+      "bytes": 12594,
+      "sha256": "e85aca1b371a33efcbe65a76e51676f2942bb0a940ecbdb4f9645a10bfc3e43b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/report.md",
+      "bytes": 8058,
+      "sha256": "f99c2fd4bcb65b921448910245a9bbdff709f5eb99b99d82073bb8cb76367108"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-hash-checks.json",
+      "bytes": 602292,
+      "sha256": "f3b1ed3e39dc335886ae3584323402e0578b0d2aeadcb377a2093a35d8b4e19d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-versions-login.log",
+      "bytes": 995,
+      "sha256": "0830efe32dfdfeefe649787270ed9e2a55d50558afbcbf443ba6f5e964af6922"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-versions.log",
+      "bytes": 864,
+      "sha256": "5ef2d6788dce020bfd481323f496daa24501c1428f4953371754b442ba29dcf0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-custody-live.log",
+      "bytes": 1491,
+      "sha256": "d2deba4d0745898edddb0b5688a0a310c003bc6ae550e883f43b55656e2772cc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-final.log",
+      "bytes": 395696,
+      "sha256": "a2e3ca832345af74a5b86624ba5b102de07c1222065919a89cf50819c676a2b8"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-isolated.log",
+      "bytes": 395692,
+      "sha256": "945fe4da9971f747ad712cf72be6dbb4bb3bc5c27883d08b982ec679abdea57e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-missing-runtime.log",
+      "bytes": 135918,
+      "sha256": "0079d69b43ab53bbac5de57f9a37a6c35596464e312a2ba21dabe94cfa076bc4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-negative.log",
+      "bytes": 1990,
+      "sha256": "492dad36113261a5409624ac3168e7074244953119d52e0bdda626e0870d67e4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+      "bytes": 211316,
+      "sha256": "82233f20f3eb4ba21ee927a4f421b75615e57f9ee0f426ad4a6a1cb93b5a465a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-preservation.json",
+      "bytes": 15977,
+      "sha256": "381b66fef6b66017dcab03212002005ef97913e1bb4a7b843b5057cdb6a8e5c2"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-complete.log",
+      "bytes": 5036,
+      "sha256": "56d2fb2a6d595277578471f07ac7fc75d013f90b17919473fb1d8cde9518e80f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-final.log",
+      "bytes": 2335,
+      "sha256": "cf29c6b7f9b4606e2caf7f01c4c2471a9b813327332d93896f0ac8927fd0d394"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-live.log",
+      "bytes": 2335,
+      "sha256": "cf29c6b7f9b4606e2caf7f01c4c2471a9b813327332d93896f0ac8927fd0d394"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-mints.log",
+      "bytes": 415,
+      "sha256": "06fd9d4eec088396ae2a59a68e0e786bbd06df0920cf6f549f58b54be07ecb01"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+      "bytes": 395748,
+      "sha256": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-suites-login.log",
+      "bytes": 395749,
+      "sha256": "50b8cf3eb09b8547d6ecb8adaa23e71953b20cb868916518f23b886247cbffc5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-suites.log",
+      "bytes": 398707,
+      "sha256": "8ddddc1f49e4e8d269069f44a110a973058ba96036a84e824b4b16bc58ded591"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/specification-reference-followup.json",
+      "bytes": 4585,
+      "sha256": "0272db64b43a9aed19c977a225d2326bb21416b00f2e0b435a0bba518472601e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/task-3-done-before-spec-amendment.json",
+      "bytes": 22916,
+      "sha256": "b40f40c2b5587e68bae30a67c72417e20a6314cf6fede416727fcab5a09f0624"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification/report.md",
+      "bytes": 11765,
+      "sha256": "ec983470977f49bf9a2762c50c6ee2171a9aad0cb6b09c9deea1440b6e338053"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/worktree-final.log",
+      "bytes": 2046,
+      "sha256": "d75c9493816211a3d8e1451bac273911cf07d3bf78833668b80292d74f79a039"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/worktree-state.log",
+      "bytes": 4804,
+      "sha256": "2da50eefd69d8033830c91745ff3e44da50e17fab0fa2557ad3b1b6b412e6bb2"
+    }
+  ],
+  "deliverables": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "bytes": 101287,
+      "sha256": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "bytes": 19779,
+      "sha256": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "bytes": 13907,
+      "sha256": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "bytes": 14150,
+      "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+    }
+  ],
+  "selfExcluded": "conformance-20261114/task-3/artifacts.json",
+  "externalHandoff": ".omo/ulw-execute/dtf-conformance/task-3-done.json",
+  "cleanup": "removed only owned temporary resources",
+  "specificationAuthority": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+    "bytes": 98213,
+    "status": "confirmed amended local specification for wave 1",
+    "confirmation": "User reports task-1 independent confirmation; exact local raw-file SHA-256 matches the supplied fingerprint.",
+    "references": [
+      {
+        "section": "1.10",
+        "lines": [
+          122,
+          134
+        ],
+        "scope": "Manual Weighted pricing and keep-until-reloaded precedence; no change to authenticated source/custody/conservation obligations."
+      },
+      {
+        "section": "1.9",
+        "lines": [
+          112,
+          120
+        ],
+        "scope": "Iterative reward harvesting and conditional permanent custody."
+      },
+      {
+        "section": "2 source identity table",
+        "lines": [
+          181,
+          195
+        ],
+        "scope": "Fixed legacy identities and actual source-unit models; refresh operational pins before configuration."
+      },
+      {
+        "section": "3 E1/E2",
+        "lines": [
+          197,
+          209
+        ],
+        "scope": "Source route closure, configured original-wallet surrender, measured custody and conservation."
+      },
+      {
+        "section": "Implementation task 1",
+        "lines": [
+          462,
+          471
+        ],
+        "scope": "Every source row needs executable evidence or a concrete blocker; preserve historical evidence."
+      }
+    ],
+    "qualification": "This binds specification references only. Historical source archives and completed QA retain their original byte/source bindings and wording; no recovery/source checks are repeated."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-12",
+  "ownedNodePids": [57230, 57324],
+  "pidQuery": {
+    "command": "ps -p 57230,57324 -o pid=,command=",
+    "exit": 1,
+    "output": "",
+    "meaning": "Neither owned process is present"
+  },
+  "listenerQuery": {
+    "command": "lsof -nP -iTCP:18566 -sTCP:LISTEN",
+    "exit": 1,
+    "output": "",
+    "meaning": "No listener on the required port"
+  },
+  "checkpoint": ".omo-runtime/dtf-migration-claim-vault/checkpoints",
+  "checkpointAbsenceTestExit": 0,
+  "diffWhitespaceExit": 0,
+  "stagedDiffOutput": "",
+  "head": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+  "routeCleanup": "route-proof/route-cleanup.json",
+  "cliCleanup": "cli-run/rehearsal-1794449113009/cleanup.json",
+  "allExecutionMonitorsExited": true,
+  "ownedRuntimeRemaining": false,
+  "sourceModifications": "None by verifier",
+  "preservedArchive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+  "scope": "Only verification-e1 evidence and witnesses authored; required ignored local build/cache/broadcast outputs may refresh"
+}

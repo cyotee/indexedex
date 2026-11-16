@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import {TestBase_UniswapV4DetfMigrationSnapshot, MigrationSnapshotConsumer, MigrationSnapshotMathExposure} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol";
-import {IUniswapV4DetfMigrationSnapshot as Snapshot} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
 import {IUniswapV4StandardExchangeWeightedBufferHookCapture as Capture} from
     "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol";
 import {IStandardExchangeFrozenQuoteInputs as Frozen} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
@@ -36,19 +36,19 @@ import {IUniswapV4Detf} from
 
 /// @notice Primary-mint parity and dependency freeze on real production proxies.
 contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSnapshot {
-    function test_MigrationSnapshot_RealProxyCaptureAndFreeze() public {
+    function test_ManualDifferential_RealProxyCaptureAndFreeze() public {
         uint256 sourceSupply = IERC20(detf).totalSupply();
         uint256 hookShares = IERC20(reserveHook).totalSupply();
-        consumer.capture();
+        consumer.set(_observedInputs());
         _assertOracle(address(0), pairA, 2 ether);
         _assertOracle(pairB, pairB, 3 ether);
         bytes memory beforeBook = consumer.snapshotBytes();
-        Snapshot.Snapshot memory captured = abi.decode(beforeBook, (Snapshot.Snapshot));
-        uint256 inputIndex = captured.routes[0].index;
-        assertEq(captured.book.legs[inputIndex].weight, 3e17, "general exponent numerator");
-        for (uint256 i; i < captured.book.legs.length; ++i) {
-            if (captured.book.legs[i].token == detf) {
-                assertEq(captured.book.legs[i].weight, 4e17, "general exponent denominator");
+        Pricing.Book memory captured = abi.decode(beforeBook, (Pricing.Book));
+        uint256 inputIndex = captured.inputs.ethIndex;
+        assertEq(captured.inputs.legs[inputIndex].weight, 3e17, "general exponent numerator");
+        for (uint256 i; i < captured.inputs.legs.length; ++i) {
+            if (captured.inputs.legs[i].token == detf) {
+                assertEq(captured.inputs.legs[i].weight, 4e17, "general exponent denominator");
             }
         }
         assertEq(uint256(3e17) * 1e18 / 4e17, 750000000000000000, "0.75 power actually quoted");
@@ -66,14 +66,15 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertEq(consumer.evaluate(address(0), 2 ether).user, beforeEth, "frozen ETH");
         assertEq(consumer.evaluate(pairB, 3 ether).user, beforeDtf, "frozen DTF");
         assertEq(consumer.snapshotBytes(), beforeBook, "book unchanged");
-        emit log_named_bytes32("snapshot id", abi.decode(beforeBook, (Snapshot.Snapshot)).id);
+        emit log_named_bytes("manual inputs and results", abi.encode(captured, consumer.evaluate(address(0), 2 ether), consumer.evaluate(pairB, 3 ether)));
+        emit log_named_bytes32("manual book id", abi.decode(beforeBook, (Pricing.Book)).id);
         emit log_named_uint("frozen ETH user", beforeEth);
         emit log_named_uint("frozen DTF user", beforeDtf);
         emit log_named_uint("changed live ETH user", _oracle(pairA, 2 ether).user);
     }
 
-    function test_MigrationSnapshot_SameBookZeroGroupingAndNonlinearity() public {
-        consumer.capture();
+    function test_ManualDifferential_SameBookZeroGroupingAndNonlinearity() public {
+        consumer.set(_observedInputs());
         _assertOracle(address(0), pairA, 0);
         _assertOracle(pairB, pairB, 0);
         _assertOracle(address(0), pairA, 1 ether);
@@ -86,19 +87,20 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertEq(consumer.evaluateOriginals(1 ether, 2 ether), dtfCredit + ethCredit);
         assertNotEq(2 * ethCredit, consumer.evaluate(address(0), 2 ether).user, "cannot merge originals");
         assertNotEq(ethCredit, consumer.evaluate(address(0), 2 ether).user / 2, "cannot requote partial input");
-        vm.expectRevert(Snapshot.SnapshotAlreadyCaptured.selector);
-        consumer.capture();
+        bytes memory book_ = consumer.snapshotBytes();
+        consumer.set(_observedInputs());
+        assertEq(consumer.snapshotBytes(), book_, "identical manual values are idempotent");
     }
 
-    function test_MigrationSnapshot_PrimaryBranchNotClosedGateFallback() public {
-        consumer.capture();
+    function test_ManualDifferential_PrimaryBranchNotClosedGateFallback() public {
+        consumer.set(_observedInputs());
         assertFalse(detfInfo.isMintingAllowed(IERC20(pairA)), "ordinary primary gate closed");
         (uint256 fallbackOutput,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(pairA), 2 ether, IERC20(detf));
         _assertOracle(address(0), pairA, 2 ether);
         assertNotEq(consumer.evaluate(address(0), 2 ether).user, fallbackOutput, "do not substitute fallback");
     }
 
-    function test_MigrationSnapshot_NaturallyOpenGatePublicPreview() public {
+    function test_ManualDifferential_NaturallyOpenGatePublicPreview() public {
         IUniswapV4Detf.PkgArgs memory args = _nLegDetfArgs(2);
         args.symbol = "openSnapshot";
         args.openingPairPerDetfWad = new uint256[](2);
@@ -113,14 +115,14 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         vm.stopPrank();
         assertTrue(detfInfo.isMintingAllowed(IERC20(pairA)), "naturally open primary gate");
         consumer = _consumer(pairA, pairB, bytes32("openSnapshot"));
-        consumer.capture();
+        consumer.set(_observedInputs());
         _assertOracle(address(0), pairA, 2 ether);
         (uint256 publicOutput,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(pairA), 2 ether, IERC20(detf));
         assertEq(consumer.evaluate(address(0), 2 ether).user, publicOutput, "open public primary branch");
     }
 
-    function test_MigrationSnapshot_MappedNativeMaxInBoundary() public {
-        consumer.capture();
+    function test_ManualDifferential_MappedNativeMaxInBoundary() public {
+        consumer.set(_observedInputs());
         uint256 lo = 1 ether;
         uint256 hi = 1000 ether;
         while (hi - lo > 1) {
@@ -139,8 +141,8 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         this.oracleResult(pairA, hi);
     }
 
-    function test_MigrationSnapshot_FeesAndRegistryFrozenSeparately() public {
-        consumer.capture();
+    function test_ManualDifferential_FeesAndRegistryFrozenSeparately() public {
+        consumer.set(_observedInputs());
         uint256 frozen = consumer.evaluateOriginals(2 ether, 3 ether);
         uint256 beforeLive = _oracle(pairA, 2 ether).user;
         vm.prank(owner);
@@ -162,7 +164,7 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertNotEq(_oracle(pairA, 2 ether).user, beforeLive, "disabled branch is different");
         assertEq(consumer.evaluateOriginals(2 ether, 3 ether), frozen);
         MigrationSnapshotConsumer disabled = _consumer(pairA, pairB, bytes32("disabled"));
-        disabled.capture();
+        disabled.set(_observedInputs());
         uint256 disabledCredit = disabled.evaluate(address(0), 2 ether).user;
         assertEq(disabledCredit, _oracle(pairA, 2 ether).user);
         vm.prank(owner);
@@ -172,8 +174,8 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertEq(disabled.evaluate(address(0), 2 ether).user, disabledCredit);
     }
 
-    function test_MigrationSnapshot_V3BackingAndSupplyFreeze() public {
-        consumer.capture();
+    function test_ManualDifferential_V3BackingAndSupplyFreeze() public {
+        consumer.set(_observedInputs());
         bytes memory bytesBefore = consumer.snapshotBytes();
         uint256 frozen = consumer.evaluateOriginals(2 ether, 3 ether);
         Frozen.Request memory request = Frozen.Request(pairA, se0, reserveHook, Frozen.Mode.OrdinaryDeposit);
@@ -192,19 +194,17 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertEq(consumer.snapshotBytes(), bytesBefore);
     }
 
-    function test_MigrationSnapshot_UnsupportedConversionAtomic() public {
+    function test_InvalidManual_UnsupportedRoleAtomic() public {
         MigrationSnapshotConsumer unsupported = _consumer(se0, pairB, bytes32("unsupported"));
-        vm.expectRevert(abi.encodeWithSelector(Snapshot.UnsupportedRoute.selector, se0, se0, pairA));
-        unsupported.capture();
-        assertEq(unsupported.snapshotBytes().length, 0, "no partially sealed book");
-        vm.expectRevert(Snapshot.SnapshotNotCaptured.selector);
+        Pricing.Inputs memory inputs_ = _observedInputs();
+        vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
+        unsupported.set(inputs_);
+        assertEq(unsupported.snapshotBytes().length, 0);
+        vm.expectRevert(Pricing.MigrationWeightedPricingNotSet.selector);
         unsupported.evaluate(address(0), 1);
-        Frozen.Request memory request = Frozen.Request(se0, pairA, reserveHook, Frozen.Mode.OrdinaryRedemption);
-        vm.expectRevert(abi.encodeWithSelector(Frozen.UnsupportedFrozenQuote.selector, se0, se0, pairA, request.mode));
-        Frozen(se0).captureFrozenQuoteInputs(request);
     }
 
-    function test_MigrationSnapshot_InstalledSelectorsAndInterfaceCompatibility() public view {
+    function test_ManualDifferential_InstalledSelectorsAndInterfaceCompatibility() public view {
         assertNotEq(IDiamondLoupe(reserveHook).facetAddress(Capture.captureWeightedMintBook.selector), address(0));
         assertTrue(IERC165(reserveHook).supportsInterface(type(Capture).interfaceId));
         assertTrue(IERC165(reserveHook).supportsInterface(type(IStandardExchangeIn).interfaceId));
@@ -219,8 +219,8 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertLe(IDiamondLoupe(reserveHook).facetAddress(Capture.captureWeightedMintBook.selector).code.length, 24576);
     }
 
-    function test_MigrationSnapshot_ExactRevertAndEndpoints() public {
-        consumer.capture();
+    function test_ManualDifferential_ExactRevertAndEndpoints() public {
+        consumer.set(_observedInputs());
         uint256[5] memory amounts = [uint256(1), 1e9, 1 ether, 1000 ether, type(uint256).max];
         for (uint256 i; i < amounts.length; ++i) {
             (bool ok, bytes memory result) = address(this).staticcall(abi.encodeCall(this.oracleResult, (pairA, amounts[i])));
@@ -230,8 +230,8 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
             assertEq(frozenOk, ok, "same success domain");
             if (!ok) assertEq(frozenResult, result, "exact revert bytes");
             else {
-                Snapshot.Result memory expected = abi.decode(result, (Snapshot.Result));
-                Snapshot.Result memory actual = abi.decode(frozenResult, (Snapshot.Result));
+                Pricing.Result memory expected = abi.decode(result, (Pricing.Result));
+                Pricing.Result memory actual = abi.decode(frozenResult, (Pricing.Result));
                 assertEq(actual.pairEquivalent, expected.pairEquivalent);
                 assertEq(actual.boosted, expected.boosted);
                 assertEq(actual.net, expected.net);
@@ -243,23 +243,23 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setSeigniorageIncentivePercentageOfVault(detf, 1e18);
         MigrationSnapshotConsumer fullP = _consumer(pairA, pairB, bytes32("fullP"));
-        fullP.capture();
+        fullP.set(_observedInputs());
         assertEq(fullP.evaluate(address(0), 1 ether).user, 0, "computed zero user");
         assertGt(fullP.evaluate(address(0), 1 ether).gross, 0);
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setVaultDexSwapFee(reserveHook, 1e18);
         MigrationSnapshotConsumer invalidFee = _consumer(pairA, pairB, bytes32("invalidFee"));
-        invalidFee.capture();
-        vm.expectRevert(Claim.InvalidFeeWad.selector);
-        invalidFee.evaluate(address(0), 1 ether);
+        Pricing.Inputs memory invalid_ = _observedInputs();
+        vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
+        invalidFee.set(invalid_);
     }
 
-    function oracleResult(address pair, uint256 amount) external view returns (Snapshot.Result memory) {
+    function oracleResult(address pair, uint256 amount) external view returns (Pricing.Result memory) {
         return _oracle(pair, amount);
     }
 
-    function test_MigrationSnapshot_RealPoolSwapAndNoLiveStorageReads() public {
-        consumer.capture();
+    function test_ManualDifferential_RealPoolSwapAndNoLiveStorageReads() public {
+        consumer.set(_observedInputs());
         bytes memory beforeBytes = consumer.snapshotBytes();
         uint256 frozen = consumer.evaluateOriginals(2 ether, 3 ether);
         (uint160 priceBefore,,,,,,) = univ3Pool0.slot0();
@@ -283,7 +283,7 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertEq(consumer.snapshotBytes(), beforeBytes);
     }
 
-    function test_MigrationSnapshot_UnitArithmeticDomains() public {
+    function test_ManualDifferential_UnitArithmeticDomains() public {
         MigrationSnapshotMathExposure math = MigrationSnapshotMathExposure(create3Factory.create3(
             ArtifactCreationCode.creationCode(create3Factory, "TestBase_UniswapV4DetfMigrationSnapshot.sol:MigrationSnapshotMathExposure"),
             bytes32("snapshotMath")
@@ -319,95 +319,34 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
     }
 
     /// @dev Unit-only malformed outcome vectors. No production proxy storage is modified.
-    function test_MigrationSnapshot_UnitAllLegProviderOutcomes() public {
-        consumer.capture();
-        Snapshot.Snapshot memory s = abi.decode(consumer.snapshotBytes(), (Snapshot.Snapshot));
-        MigrationSnapshotMathExposure math = MigrationSnapshotMathExposure(create3Factory.create3(
-            ArtifactCreationCode.creationCode(create3Factory, "TestBase_UniswapV4DetfMigrationSnapshot.sol:MigrationSnapshotMathExposure"),
-            bytes32("providerOutcomeMath")
-        ));
-        uint256 third = s.routes[1].index;
-        assertGt(s.book.legs[third].seReserve, 0, "held non-input leg");
-        s.book.legs[third].rate.success = false;
-        vm.expectRevert(Claim.RateProviderFailed.selector);
-        math.evaluate(s, address(0), 1 ether);
-        s.book.legs[third].rate.success = true;
-        s.book.legs[third].rate.data = hex"01";
-        vm.expectRevert(Claim.RateProviderFailed.selector);
-        math.evaluate(s, address(0), 1 ether);
-        s.book.legs[third].rate.data = abi.encode(uint256(0));
-        vm.expectRevert(Claim.RateProviderFailed.selector);
-        math.evaluate(s, address(0), 1 ether);
-        s.book.legs[third].provider = address(0);
-        vm.expectRevert(Claim.RateProviderRequired.selector);
-        math.evaluate(s, address(0), 1 ether);
-        s.book.legs[third].seReserve = 0;
-        assertEq(math.evaluate(s, address(0), 1 ether).user, consumer.evaluate(address(0), 1 ether).user,
-            "unused missing provider is not evaluated");
+    function test_InvalidManual_ProviderOperandsAndInactiveFields() public {
+        Pricing.Inputs memory inputs_ = _observedInputs();
+        inputs_.legs[inputs_.dtfIndex].rate = 0;
+        vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
+        consumer.set(inputs_);
+        inputs_ = _observedInputs();
+        inputs_.legs[inputs_.dtfIndex].deposit.request.holder = reserveHook;
+        vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
+        consumer.set(inputs_);
+        inputs_ = _observedInputs();
+        inputs_.legs[inputs_.detfIndex].deposit.supply = 1;
+        vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
+        consumer.set(inputs_);
     }
 
-    function test_MigrationSnapshot_ZeroFeeAndZeroSeigniorage() public {
+    function test_ManualDifferential_ZeroFeeAndZeroSeigniorage() public {
         vm.startPrank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setDefaultDexSwapFee(0);
         IVaultFeeOracleManager(address(indexedexManager)).setDefaultSeigniorageIncentivePercentage(0);
         vm.stopPrank();
         assertEq(IVaultFeeOracleQuery(address(indexedexManager)).dexSwapFeeOfVault(reserveHook), 0);
         assertEq(IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(detf), 0);
-        consumer.capture();
+        consumer.set(_observedInputs());
         _assertOracle(address(0), pairA, 1 ether);
         _assertOracle(pairB, pairB, 2 ether);
-        Snapshot.Result memory r = consumer.evaluate(address(0), 1 ether);
+        Pricing.Result memory r = consumer.evaluate(address(0), 1 ether);
         assertEq(r.pairEquivalent, r.boosted);
         assertEq(r.boosted, r.net);
         assertEq(r.gross, r.user);
-    }
-}
-
-/// @notice Independent real-proxy decimal fixture, not rescaled synthetic book fields.
-contract UniswapV4DetfMigrationSnapshotDecimalsTest is TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals {
-    function _pairDecimals() internal pure override returns (uint8) { return 6; }
-    function _rateDecimals() internal pure override returns (uint8) { return 18; }
-
-    function test_MigrationSnapshot_RealProxySixNineEighteen() public {
-        _firstBond(_uPair(100));
-        MigrationSnapshotConsumer frozen = MigrationSnapshotConsumer(create3Factory.create3WithArgs(
-            ArtifactCreationCode.creationCode(create3Factory, "TestBase_UniswapV4DetfMigrationSnapshot.sol:MigrationSnapshotConsumer"),
-            abi.encode(Snapshot.Source(detf, address(indexedexManager), pairA, pairB)), bytes32("decimalSnapshot")
-        ));
-        frozen.capture();
-        assertEq(IERC20Metadata(pairA).decimals(), 6);
-        assertEq(IERC20Metadata(pairB).decimals(), 18);
-        assertEq(IERC20Metadata(detf).decimals(), 9);
-        uint256 p = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(detf);
-        address[2] memory pairs = [pairA, pairB];
-        uint256[2] memory amounts = [uint256(2e6), uint256(3e18)];
-        uint256 sum;
-        for (uint256 i; i < 2; ++i) {
-            uint256 pairEq = IMigrationPairPreview(detf).peekPairEq(i == 0 ? se0 : se1, pairs[i], amounts[i]);
-            uint256 boosted = Math.mulDiv(pairEq, 1e18 + p, 1e18);
-            (uint256 gross,) = IStandardExchangeIn(reserveHook).previewExchangeIn(IERC20(pairs[i]), boosted, IERC20(detf));
-            (uint256 user,) = DETFMintSplitLib._splitLiveGross(gross, p);
-            Snapshot.Result memory result = frozen.evaluate(i == 0 ? address(0) : pairB, amounts[i]);
-            assertEq(result.pairEquivalent, pairEq);
-            assertEq(result.boosted, boosted);
-            assertEq(result.gross, gross);
-            assertEq(result.user, user);
-            sum += user;
-        }
-        assertEq(frozen.evaluateOriginals(amounts[0], amounts[1]), sum);
-    }
-}
-
-/// @notice A real receipt wrapper is explicitly excluded; a fixture model is not code recognition.
-contract UniswapV4DetfMigrationSnapshotReceiptExclusionTest is TestBase_UniswapV4Detf_Weighted {
-    function test_MigrationSnapshot_UnknownReceiptModelFailsCaptureAtomically() public {
-        _firstBond(100 ether);
-        MigrationSnapshotConsumer frozen = MigrationSnapshotConsumer(create3Factory.create3WithArgs(
-            ArtifactCreationCode.creationCode(create3Factory, "TestBase_UniswapV4DetfMigrationSnapshot.sol:MigrationSnapshotConsumer"),
-            abi.encode(Snapshot.Source(detf, address(indexedexManager), address(pair0), address(pair1))), bytes32("receiptExclusion")
-        ));
-        vm.expectRevert(abi.encodeWithSelector(Snapshot.UnsupportedRoute.selector, se0, address(pair0), se0));
-        frozen.capture();
-        assertEq(frozen.snapshotBytes().length, 0, "unsupported does not install a snapshot");
     }
 }

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "bash",
+    "-c",
+    "GIT_MASTER=1 git --no-pager diff -- scripts/recovery/dtf-migration/bundle.test.ts scripts/recovery/dtf-migration/rehearsal-portable.ts"
+  ],
+  "exit": 0,
+  "signal": null,
+  "logSha256": "561d87a4baefa43ca72145c59a25dc05adbcee88d733000301ec5270c70b2fbb",
+  "recorderSha256": "cc8f59ad0803b7caf4df3373c0d8ea3d756494501f6d93cc57765c917ab22f48",
+  "sourcesUnchanged": true
+}

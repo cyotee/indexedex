@@ -1,0 +1,30 @@
+[
+  {
+    "chainId": 31337,
+    "address": "0xbb44859B4B58f5e7Ab1f694Cd1A33b528388777f",
+    "name": "MockUniV2 Pair of TTA/TTB",
+    "symbol": "abUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x17924c69632b5A2799aC2712144735FE5d3499B6",
+    "name": "MockUniV2 Pair of TTA/TTC",
+    "symbol": "acUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x8E95914f3391E4B4a5D424E910E04E18537c61F6",
+    "name": "MockUniV2 Pair of TTB/TTC",
+    "symbol": "bcUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0xC292628748EacCEe3eb7567a229DFc47bb803721",
+    "name": "MockUniV2 Pair of WETH/TTC",
+    "symbol": "wethcUniV2Pool",
+    "decimals": 18
+  }
+]

@@ -1,0 +1,698 @@
+{
+  "reviewedAt": "2026-11-15T01:05:19.374Z",
+  "scope": "Byte provenance and source-qualified preservation only; no financial/source re-audit.",
+  "recoveryRows": 72629,
+  "roots": [
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+      "refs": [
+        "approved task 2 R retained root"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "6e27ecaa242c4acca132e3575a160514aad07b11",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/integration-increments-brief.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase02-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/source-excerpts.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/schema-bindings.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/schema-proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/references.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase02-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-egress-correction-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-egress-r3-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/earlier-se-retained-supply-followup-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase20-remaining-se-lp-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase20-remaining-se-lp-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-weighted-weth-se-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/indirect-claim-delegation-observation-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/observations.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/originals.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/observations.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/reconciliation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/direct-attribution.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/references.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/untouched-context.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/receipt-review-index-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/cleanup.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/weighted-indirect-purchase-observations-20261113.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "3ec0912bafebf9c0aa66770a72f04501e5c11865",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-source-coverage-snapshot.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core-correction-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-accrual-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-bond-preparation-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas.workflow.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase11-same-wallet-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase11-same-wallet-sources.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-original-wallet-admission-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-brief-r1-before-e1-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "2c2b3370ded30cae1662329025d4fb58f7197330",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-original-wallet-admission-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-wallet-admission-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-wallet-admission.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-stage2-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-stage2-surrender-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-brief-r1-before-e1-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-eof-correction-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "15fd629375edeb361f6a39262795bdc66723ca3a",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-closure-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase25-full-hermetic-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase25-full-hermetic-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "0856a5c56e5d09b81c669f59b613efef79133e19",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-verification-r2.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authorities/bundle.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authorities-reward-harvest-20261113/bundle.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authority-reward-harvest-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authority-template.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "789fced820ed494d9651c598fb8f75c646d727a7",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-r2.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/references.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/proof.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "head": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+      "refs": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-delegated-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-delegated-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-failure-handoff-20261113.json"
+      ],
+      "qualification": "HEAD is provenance only; raw hashes bind uncommitted source bytes. No clean-tree claim."
+    }
+  ],
+  "conflicts": [
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "path": "source-manifest.json",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/73f1e7319565c676/source-manifest.json",
+      "difference": "semantic",
+      "sourceLines": 2846,
+      "currentLines": 158,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "path": "source-route-matrix.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/73f1e7319565c676/source-route-matrix.md",
+      "difference": "semantic",
+      "sourceLines": 755,
+      "currentLines": 23,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/9b11db4739ba0bf2/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 610,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/d23a44ff98e50588/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 1029,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/3dd14f2141ba1d09/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 648,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/08760aecc485d0f0/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 421,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/556aba706a3e3358/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 535,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1162aa46b13ff151/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 610,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/025fb901c119bc08/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 535,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/28441d0116c5bc1f/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 269,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/218cd5386d22e84e/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 269,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/0cbb7734fc78718d/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 293,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/d5f683cf4dfea633/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 344,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/0af2cef70a88059c/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 383,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/de5b932aefb0a91f/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 468,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/6c0fe74f0ab2b67e/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 714,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1825e77a2f98057e/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 714,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/6c2442714f09f06e/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 815,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1fb0f6fd0c07ce8b/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 815,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/bc5698a56cf2c5bb/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 815,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/8a57a109c32d5342/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 885,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/66e0bd1e3e6ffd56/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 964,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "path": "operator-runbook.md",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/b915f0248c81b8fa/operator-runbook.md",
+      "difference": "semantic",
+      "sourceLines": 1029,
+      "currentLines": 1238,
+      "disposition": "Preserve existing destination; retain divergent historical source losslessly at the source-qualified archive. Historical text does not supersede current source or owner decisions."
+    }
+  ],
+  "symlinks": [
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime/rehearsal-1794528918776/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "path": "portable-operator/implementation/runtime/rehearsal-1794528918776/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "status": "symlink-preserved-without-traversal",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/implementation/runtime/rehearsal-1794528918776/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime-r2/rehearsal-1794529288578/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "path": "portable-operator/implementation/runtime-r2/rehearsal-1794529288578/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "status": "symlink-preserved-without-traversal",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/implementation/runtime-r2/rehearsal-1794529288578/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime-r3/rehearsal-1794529844525/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "path": "portable-operator/implementation/runtime-r3/rehearsal-1794529844525/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "status": "symlink-preserved-without-traversal",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/implementation/runtime-r3/rehearsal-1794529844525/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/runtime/rehearsal-1794531335684/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "path": "portable-operator/verification-r2/runtime/rehearsal-1794531335684/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a",
+      "status": "symlink-preserved-without-traversal",
+      "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/symlinks/8a57a109c32d5342/portable-operator/verification-r2/runtime/rehearsal-1794531335684/negative-bundle-symlink/data/ee8a9166daaf6d60bce4309346f46256c2b6764c4b0d6331ce93161866d70c0a.link-text"
+    }
+  ],
+  "helper": {
+    "originalBodyUnchanged": true,
+    "originalSha256": "8192d15ff2aa039ea4bb306393205ed3e846270c482abcfb0f46c753e7353ac7",
+    "currentSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+    "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/phase30-helper/record-verification.ts",
+    "boundedHelperRawSha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed"
+  },
+  "allDivergentRowsDisposition": "23 semantic historical differences are preserved at source-qualified archives; zero EOF-only historical conflicts. The current runbook is preserved byte for byte. Four absolute historical symlinks are inert link-text records. The sole intentional R-to-D executable difference is the approved recorder extension, with supersessions.json binding both raw versions.",
+  "reviewerOutput": "Existing verification/report.md describes the earlier blocked run and is retained unchanged; this producer report does not rewrite it.",
+  "readiness": {
+    "task2Ready": true,
+    "forgeReady": false,
+    "qualification": "Proceed under the lead clarification; ready.json needs-fix concerns the missing Crane compilation dependency only."
+  }
+}

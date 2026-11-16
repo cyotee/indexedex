@@ -68,6 +68,8 @@ abstract contract MigrationNativeLedger is Test {
     uint256 public zeroClaims;
     uint256 public laterPaidBonds;
     uint256 public laterFundedRewards;
+    uint256 public rewardClaims;
+    uint256 public claimedRewardUnits;
     mapping(bytes4 => uint256) public calls;
     event Action(bytes4 indexed selector, uint256 successes, uint256 rejections);
 
@@ -80,8 +82,8 @@ abstract contract MigrationNativeLedger is Test {
         feeFraction = s_.feeFraction;
         creatorFraction = s_.creatorFraction;
         frozenQuotes = s_.quotes;
-        snapshotHash = keccak256(abi.encode(parent.migrationSnapshot()));
-        snapshotId = parent.migrationSnapshot().id;
+        snapshotHash = keccak256(abi.encode(parent.migrationWeightedPricing()));
+        snapshotId = parent.migrationWeightedPricing().id;
         for (uint256 i_; i_ < 8; ++i_) actors[i_] = address(uint160(0x2400 + i_));
         book.gonsPerUnit = 1e36;
         _recordPosition(3, actors[0], s_.firstCredit, true);
@@ -168,7 +170,10 @@ abstract contract MigrationNativeLedger is Test {
             _topUp();
         }
         if (paid_ == 0) ++zeroClaims;
-        else ++successes;
+        else {
+            ++successes;
+            if (reward_) { ++rewardClaims; claimedRewardUnits += paid_; }
+        }
     }
 
     /// @notice Every live bond, exact backing partition and independent expected index.
@@ -217,7 +222,7 @@ abstract contract MigrationNativeLedger is Test {
     function isolatedBook(address address_) public view returns (bytes32) {
         Migration m_ = Migration(address_);
         return keccak256(abi.encode(m_.owner(), m_.hook(), m_.rebasingClaimToken(), m_.bondNftVault(),
-            m_.migrationSnapshot(), m_.independentAllocation(address(0x2499)),
+            m_.migrationWeightedPricing(), m_.independentAllocation(address(0x2499)),
             m_.independentIssuance(address(0x2499)), IERC20(address_).totalSupply(),
             MigrationReceipt(m_.rebasingClaimToken()).stakingState(), Bonds(m_.bondNftVault()).positionOf(3)));
     }

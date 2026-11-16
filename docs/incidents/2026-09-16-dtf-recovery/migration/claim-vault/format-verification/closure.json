@@ -1,0 +1,247 @@
+{
+  "date": "2026-11-12",
+  "disposition": "needs-fix",
+  "finding": "F1",
+  "checks": [
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--check",
+        "4a53299b490343ed904d70c92ecbc7360fcb7659"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--cached",
+        "--exit-code"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "status",
+        "--short",
+        "--ignore-submodules=all"
+      ],
+      "exitCode": 0,
+      "stdout": " M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol\n M scripts/recovery/dtf-migration/claim-vault.test.ts\n M scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n M scripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol\n M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "stdout": "9c227900b280713305d4a1a1d1cdc3d8d273f23d\n",
+      "stderr": ""
+    }
+  ],
+  "indexSha256": "90fcbe92225a40a47f145bb8f9ef2efffc3d395d9df343dd424f0830b69a3221",
+  "rootReportSha256": "0f1249a50b5a210df8ef77967ad00b8096c89ebbb2e143ac9406adc4797dd8fb",
+  "rootSealSha256": "d0c49aac0d178f589d626a8639ce9790db92abcebc5eb6a287543057a3885934",
+  "rootEvidenceUnchangedSinceAudit": true,
+  "sourceClosure": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "sha256": "f24bba95d01d2d23abbd7ce4f310845428d4dacc143549e9a0bbd07adf79daca"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "sha256": "de3aeb7770dfeb0105c82cc05abf72fa9f9708e2ae944b897ca3a2bcc60ce9e4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "c3a0b7ef8fe7ef3b7e03934420dbeb16c2c1bcfadc709fe427c28cde2537be4e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "sha256": "007efb814785b8a5a28336785a74ff80b135ecc236f023f3e679aac15938f788"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "sha256": "f575db5e7baa8acd986772963124e07d914cc79125598fcd70f47ac7a1632945"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "644976c7dd465d0443014e8220f1d6e03fb4815c18763b1099eb0e5fb7edd13b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "sha256": "553403763bab57d05c4e2cc080adc92d2f07bda468a195159b3cc362ae57e99b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "sha256": "09ee47bdce9c8077ed61ecf6f55f05fe68ec9867917bb467a8933ce717a54faf"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "sha256": "efcd2d657ed9046b492d40ac525c87728426c22323549cab3da29ee42882e803"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "50101967d1ed2e58af8aa16878fc9a200dc17b705efe850f6ee0d154613f4c9f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "500228877c9795d53312295e506ddf6797eca1cee8d04a76f0d09f73f0116bb5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "sha256": "ae8272d6cfff98a48f6703a36b62d0ef833cf10e4e2a3c6d9a2629c5b70c3f35"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "sha256": "28587a9599b5f6452e3ccd9ed06e4a6de5fd0d292262e15f076619928a02eb5a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "sha256": "d5b634cd0857a564960d3c47da506f1ad049c8818091fe9b22f883e35bd94ab0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "sha256": "819dedd9d4d7ffd43d929874f68ae1d0edc5087f548cf8fc4f68944bea842778"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "da0b00ad6eb7fa87231b81a78a4f2c629cfafed447154460fb62f9c8fe8629f6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "ac226d12173801a4a7b2bbceb6605cfb57706fd73d6acac67d725cba84c94ebc"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "0a12beba165e9865178daa28b7b5ee5bf8f57505f94e7950d240cc9a22615b9b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "c925a9a4abf05d94f918584de120687717193c729513b1e77902e646147e2681"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "4e643ff82038e6874566e4984f4da3fc775749bee9e4c1ee1552f244f9443f28"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "9acd4c99c4b024d955e2de5fabf3e4bc7830c298135f31fd781f153f09b82f11"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "e236e871a0ee97fa18b095f15d4e7c5acca5bb3e729aab4ec56849246e355b92"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "94f914f30ae0d7036b14c9e13300eda6822249d244b53a319436b3a2317a6660"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "9636a9d90f1151562277b82c1c0b96395be846c639067ad113251f47c318793f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "58579a42727a66702f6ccb3b00017ff3a8ec2ec91fc579540f0ea8cdc9c64008"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "sha256": "80bc8e357b774890b83e03707eeacafd566ef35c66ff9fc02483fb25e844a93f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "sha256": "71211c2c3ace5f7735a9f85d315e03d9749f52754ac6ada3b60fc2b54053a6f6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "7628e5ce5437bb53cfd1908f5b2f5fcc7e66ab755bdf907b54967e6f650e295a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "5af2ee76ab02c6a6da5b0c56cf434c21436d0ffd44f1bfa5f20673dd6b7bffea"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "b4fde89928479b81a588b56c58d6c6787a668853367f50766ce964e9a9640ab6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "1cbb1505d150ca8c026568d7eb2d89a38eb0f374dfaa16af9617a9dab669f0df"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "eb610000ac822708abb23e7bc046f92a530ca1c9a3ee780c4d46d622724448f0"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "sha256": "7be0cc5440fee63ff9bbdcdd7c3397dde0b545889e83c5e19462b30c4917e425"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "sha256": "33e9f1b77ece6b8804e79816b1df462a3818c9ea1d4f05059047963f8c214dfe"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "sha256": "374dcaaeaf0ce1fc1de10ae53a1bf4865ff2e25389c0265ab7596f4954c4b5f2"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "sha256": "cc2b903a19fdb08e4fe854fab8c772596ca899b9d1b3c20edb22c80b0768ae9f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "sha256": "b36207cc1c27db5b92c4b59e4ae36d3907aa0048e690b263ce306acce3b2678d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "sha256": "b61e7e3f551f1122eb4602cba0161b45d88ccc04f7ddaa6e5a4ce607dde0a8c5"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "sha256": "38898ae898c39125c9340f64edbd978c4b2ed9ad81ef7aa703b5145cfc8cbfd5"
+    }
+  ],
+  "initialCommitEvidenceUnchanged": 13,
+  "evidenceFiles": [
+    {
+      "path": "audit-bindings.json",
+      "sha256": "ea1ced6834ef49df83cf1e72d3c9d82e75fb27eb3a04545d34fb9826c8a9275b"
+    },
+    {
+      "path": "report.md",
+      "sha256": "c18b2c9adbddaa6190bda525c8f2302e6276b35ce44b4f8ba50bbcd7cbd16656"
+    }
+  ],
+  "jsonValidation": "JSON.parse of serialized evidence; unavailable biome LSP not installed",
+  "cleanup": {
+    "checkpointAbsent": true,
+    "parentAbsent": true,
+    "gitStates": {
+      "MERGE_HEAD": true,
+      "CHERRY_PICK_HEAD": true,
+      "REVERT_HEAD": true,
+      "rebase-merge": true,
+      "rebase-apply": true,
+      "index.lock": true
+    },
+    "verifierStartedRuntime": false,
+    "pendingOwnedOperations": 0
+  },
+  "writes": [
+    "format-verification/audit-bindings.json",
+    "format-verification/report.md",
+    "format-verification/closure.json"
+  ],
+  "noSourceEdits": true,
+  "noGitWrites": true
+}

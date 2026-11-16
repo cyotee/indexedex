@@ -1,0 +1,49 @@
+Precommit inventory recipe v1
+Captured before staging or committing the stateful invariant source delivery.
+The walks completed before any file existed under migration/stateful-invariants/commit/.
+Inventory files written afterward are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, artifact restoration, relocation, or runtime rerun is part of this recipe.
+Every Git invocation uses GIT_MASTER=1. Status and diff use --ignore-submodules=all.
+Read-only Git invocations also set GIT_OPTIONAL_LOCKS=0 so they do not refresh the index.
+Index identity is the SHA-256 of the raw index file bytes. It is not git ls-files output and not a decoded string.
+
+Git-mode inventory
+Walk: lstat walk, followlinks false. Symlinked directories are recorded and not descended. Filenames and symlink entries are recorded; ordinary directories are not entries.
+Fields, fixed key order: path, kind, mode, size, sha256, target.
+path: POSIX relative to worktree root, sorted ascending by Unicode code point.
+kind: file, symlink, or other from lstat.
+mode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the raw symlink target string encoded UTF-8 for symlinks; null otherwise.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, json.dumps with separators (',', ':') and ensure_ascii false, one record per line, each line ending in \n, no extra trailing blank line beyond the last record newline.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the JSONL.
+Applies to docs-incidents.jsonl, out.jsonl and cache_forge.jsonl.
+The git-mode field collapses 0o400, 0o444, 0o600 and 0o644 regular files to 100644. It is not a read-only-mode proof.
+
+Permission inventory recipe
+File: docs-incidents-perms.jsonl.
+Walk: same docs/incidents root, followlinks false. Ordinary directories are recorded, including the walk root. Symlinked directories are recorded and not descended.
+Fields, fixed key order: path, kind, perm, size, sha256.
+path: POSIX relative to worktree root, sorted ascending. Directory paths have no trailing slash.
+kind: dir, file, symlink, or other from lstat.
+perm: oct(st_mode & 0o777).
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null for directories and other.
+Serialization: same UTF-8 JSON Lines rules as the git-mode inventory.
+This permission inventory is the preservation encoding for sealed read-only modes. Do not chmod to make a later walk match.
+
+Preservation rows
+File: preservation-rows.jsonl.
+Members: every verification-r2/preservation-final.json checks entry, 148 rows, re-hashed from the path bytes before staging.
+Fields include path, kind, mode, perm, size, sha256, st_mode, sealedSha256, sealedBytes, sealedMode, and the three match flags.
+A missing baseline is not replaced by an aggregate. Held09 candidate files are not opened. The own index, HEAD, and branch ref are raw file bytes.
+
+Other baselines
+indexes.json: SHA-256 of each raw index file under the common git dir and every linked worktree git dir, with size, mode, perm, and foreign. foreign is true for every index other than this worktree. count is 26 and foreignCount is 25. Only this worktree index may change after the commit.
+refs.jsonl: raw bytes, length, mode, and permission of every loose ref file under .git/refs plus packed-refs when present.
+show-ref.txt: exact UTF-8 bytes of GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git show-ref, captured before staging.
+processes.txt: lsof of TCP 18574 and any forge/anvil/solar process lines. No process was killed.
+summary.json: capture totals. It does not claim its own raw digest.
+capture.py: the read-only script that produced these files. It writes only under /tmp during the walk.
+Reproduce a walk by executing the same field rules against the same roots and comparing each JSONL record, not only the aggregate hash.

@@ -1,0 +1,33 @@
+{
+  "version": "dtf-phase27-r2-cleanup-v1",
+  "actions": [
+    {
+      "action": "removed-empty-owned-cwd",
+      "path": "proof01/other-cwd"
+    },
+    {
+      "action": "removed-empty-owned-cwd",
+      "path": "proof02/other-cwd"
+    }
+  ],
+  "expectedRejectedDirectoriesAbsent": [
+    "attempt01-output",
+    "attempt02-output",
+    "attempt03-output",
+    "proof01/rejected-primary",
+    "proof01/rejected-prepare",
+    "proof01/rejected-execution",
+    "proof02/rejected-primary",
+    "proof02/rejected-prepare",
+    "proof02/rejected-execution"
+  ],
+  "retained": "All failed and positive outputs, command streams, raw-input archives and historical evidence are retained; no temporary data deletion hides an attempt.",
+  "backgroundSessionsStarted": 18,
+  "backgroundSessionsCompleted": 18,
+  "ownedBackgroundOperationsPending": 0,
+  "ownedSignerOrChainServicesStarted": 0,
+  "ownedRuntimeDirectoriesRemaining": 0,
+  "testTemporaryDirectories": "Fixture finally/afterEach cleanup completed in passing final invocation.",
+  "sharedServices": "Untouched",
+  "seal": "Not yet written; will be published last."
+}

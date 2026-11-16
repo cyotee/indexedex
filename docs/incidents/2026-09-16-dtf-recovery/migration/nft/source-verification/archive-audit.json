@@ -1,0 +1,1936 @@
+{
+  "schema": "nft-independent-source-gate-v1",
+  "date": "2026-11-11",
+  "verdict": "admitted-for-nft-implementation",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+  "branch": "work/dtf-migration-phase-05",
+  "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "scope": "Offline independent source/ABI/receipt verification; not a new fork execution, implementation acceptance, or full-plan closure.",
+  "pin": {
+    "chainId": 4663,
+    "block": 108944663,
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071"
+  },
+  "producerContracts": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/contract.md",
+      "sha256": "02aad997374190bf8f5428029c8fb80eed102ba63a83752113250118bd313d85"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/contract.md",
+      "sha256": "f090bb5f1bcb9ae74fe2c7a9dbbe1d87f5fced9a6b3d346867d83b92265025b1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json",
+      "sha256": "3cedd67167cb74af689f26647f16bddc7466f5aec52ea853b1484c5e42ea27b4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/source-evidence.json",
+      "sha256": "b95b643ef079ac8f53d8ab2679fdf9693a27ed7a9a2a9605a7e8fd1436a20e9c"
+    }
+  ],
+  "archivedInputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "sha256": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+      "sha256": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+      "sha256": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+      "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.sources.json",
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.exit.json",
+      "sha256": "e3b11df38b89338f99a02ecf0d33a7bfd3d13d789a3b6b9bb5d9d13de88fd241"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "sha256": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+      "sha256": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.exit.json",
+      "sha256": "2880ed08fbe2b836cf880fa34e250d1a604ddd19a00deadc713c796289051708"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+      "sha256": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9"
+    }
+  ],
+  "counts": {
+    "recorded": 441,
+    "passing": 439,
+    "supersededVerifierTypeComparisons": 2,
+    "unresolvedFailures": 0
+  },
+  "checks": [
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.sources.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.exit.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.exit.json",
+      "pass": true
+    },
+    {
+      "name": "input SHA256 /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+      "pass": true
+    },
+    {
+      "name": "weighted-B runtime hash",
+      "pass": true
+    },
+    {
+      "name": "weighted-B execution body",
+      "pass": true
+    },
+    {
+      "name": "shared-G runtime hash",
+      "pass": true
+    },
+    {
+      "name": "shared-G execution body",
+      "pass": true
+    },
+    {
+      "name": "earlier-E runtime hash",
+      "pass": true
+    },
+    {
+      "name": "earlier-E execution body",
+      "pass": true
+    },
+    {
+      "name": "earlier-E archived onchain bytes",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x46f96023",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x46f96023",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x46f96023",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x46f96023",
+      "pass": true
+    },
+    {
+      "name": "W selector 0xae648e90",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0xae648e90",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0xae648e90",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0xae648e90",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "W selector 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "W selector 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "W selector 0xf400c743",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0xf400c743",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0xf400c743",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0xf400c743",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x6c7b69cb",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x6c7b69cb",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x6c7b69cb",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x6c7b69cb",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x084c59ae",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x084c59ae",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x084c59ae",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x084c59ae",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x8a91f8bc",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x8a91f8bc",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x8a91f8bc",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x8a91f8bc",
+      "pass": true
+    },
+    {
+      "name": "W selector 0x5fcbd285",
+      "pass": true
+    },
+    {
+      "name": "W exact ABI 0x5fcbd285",
+      "pass": true
+    },
+    {
+      "name": "W pinned route 0x5fcbd285",
+      "pass": true
+    },
+    {
+      "name": "W raw code 0x5fcbd285",
+      "pass": true
+    },
+    {
+      "name": "E selector 0xeb02c301",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0xeb02c301",
+      "pass": true
+    },
+    {
+      "name": "E route 0xeb02c301",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0xeb02c301",
+      "pass": true
+    },
+    {
+      "name": "E selector 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "E route 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0x6352211e",
+      "pass": true
+    },
+    {
+      "name": "E selector 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "E route 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0x42842e0e",
+      "pass": true
+    },
+    {
+      "name": "E selector 0x0f3767df",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0x0f3767df",
+      "pass": true
+    },
+    {
+      "name": "E route 0x0f3767df",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0x0f3767df",
+      "pass": true
+    },
+    {
+      "name": "E selector 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "E route 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0x23b872dd",
+      "pass": true
+    },
+    {
+      "name": "E selector 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "E route 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0x095ea7b3",
+      "pass": true
+    },
+    {
+      "name": "E selector 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "E route 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0x081812fc",
+      "pass": true
+    },
+    {
+      "name": "E selector 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "E route 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0xa22cb465",
+      "pass": true
+    },
+    {
+      "name": "E selector 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "E exact ABI 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "E route 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "E runtime 0xe985e9c5",
+      "pass": true
+    },
+    {
+      "name": "weighted pin producer",
+      "pass": true
+    },
+    {
+      "name": "weighted pin replay",
+      "pass": true
+    },
+    {
+      "name": "earlier historical pin producer",
+      "pass": false
+    },
+    {
+      "name": "earlier historical pin replay",
+      "pass": false
+    },
+    {
+      "name": "W source hash contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:40-54",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:127-200",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:210-243",
+      "pass": true
+    },
+    {
+      "name": "W source hash lib/crane/contracts/tokens/ERC721/ERC721Repo.sol",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt lib/crane/contracts/tokens/ERC721/ERC721Repo.sol:153-170",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt lib/crane/contracts/tokens/ERC721/ERC721Repo.sol:199-215",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt lib/crane/contracts/tokens/ERC721/ERC721Repo.sol:229-254",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt lib/crane/contracts/tokens/ERC721/ERC721Repo.sol:281-291",
+      "pass": true
+    },
+    {
+      "name": "W source hash contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt contracts/vaults/detf/common/core/DETFFundedStakingMath.sol:28-43",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt contracts/vaults/detf/common/core/DETFFundedStakingMath.sol:96-117",
+      "pass": true
+    },
+    {
+      "name": "W source hash ERC721Facet.sol",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt ERC721Facet.sol:2754-2756",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt ERC721Facet.sol:2813-2815",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt ERC721Facet.sol:2827-2829",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt ERC721Facet.sol:2840-2842",
+      "pass": true
+    },
+    {
+      "name": "W verbatim excerpt ERC721Facet.sol:2854-2856",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:13428-13450",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:13465-13482",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:13525-13527",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:13541-13566",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:14305-14311",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:15566-15601",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:15787-15801",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16135-16158",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16206-16254",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16331-16404",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16413-16425",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16463-16546",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16556-16558",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16643-16669",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16922-16929",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt DETFNFTVaultFacet.sol:16982-17001",
+      "pass": true
+    },
+    {
+      "name": "E verbatim excerpt ERC721Facet.sol:2754-2756",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 0",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 0",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 0",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 0",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 1",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 1",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 1",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 1",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 2",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 2",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 2",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 2",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 3",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 3",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 3",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 3",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 4",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 4",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 4",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 4",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 5",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 5",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 5",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 5",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 6",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 6",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 6",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 6",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 7",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 7",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 7",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 7",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 8",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 8",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 8",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 8",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 9",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 9",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 9",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 9",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 10",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 10",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 10",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 10",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 11",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 11",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 11",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 11",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 12",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 12",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 12",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 12",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 13",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 13",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 13",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 13",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 14",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 14",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 14",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 14",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 15",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 15",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 15",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 15",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 16",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 16",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 16",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 16",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 17",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 17",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 17",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 17",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 18",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 18",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 18",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 18",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 19",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 19",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 19",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 19",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 20",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 20",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 20",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 20",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 21",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 21",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 21",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 21",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 22",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 22",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 22",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 22",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 23",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 23",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 23",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 23",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 24",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 24",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 24",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 24",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 25",
+      "pass": true
+    },
+    {
+      "name": "W absence positionOf 25",
+      "pass": true
+    },
+    {
+      "name": "W absence previewClaim 25",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 26",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 26",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 26",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 26",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 27",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 27",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 27",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 27",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 28",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 28",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 28",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 28",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 29",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 29",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 29",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 29",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 30",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 30",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 30",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 30",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 31",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 31",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 31",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 31",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 32",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 32",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 32",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 32",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 33",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 33",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 33",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 33",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 34",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 34",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 34",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 34",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 35",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 35",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 35",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 35",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 36",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 36",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 36",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 36",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 37",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 37",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 37",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 37",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 38",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 38",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 38",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 38",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 39",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 39",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 39",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 39",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 40",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 40",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 40",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 40",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 41",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 41",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 41",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 41",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 42",
+      "pass": true
+    },
+    {
+      "name": "W absence positionOf 42",
+      "pass": true
+    },
+    {
+      "name": "W absence previewClaim 42",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 43",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 43",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 43",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 43",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 44",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 44",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 44",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 44",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 45",
+      "pass": true
+    },
+    {
+      "name": "W decoded positionOf 45",
+      "pass": true
+    },
+    {
+      "name": "W decoded previewClaim 45",
+      "pass": true
+    },
+    {
+      "name": "W remaining fraction 45",
+      "pass": true
+    },
+    {
+      "name": "W decoded ownerOf 46",
+      "pass": true
+    },
+    {
+      "name": "W absence positionOf 46",
+      "pass": true
+    },
+    {
+      "name": "W absence previewClaim 46",
+      "pass": true
+    },
+    {
+      "name": "earlier historical pin normalized producer",
+      "pass": true,
+      "detail": {
+        "supersedes": "earlier historical pin producer",
+        "reason": "RPC encodes chainId as hex string 0x1237; the original comparison wrongly expected number 4663."
+      }
+    },
+    {
+      "name": "earlier historical pin normalized replay",
+      "pass": true,
+      "detail": {
+        "supersedes": "earlier historical pin replay",
+        "reason": "RPC encodes chainId as hex string 0x1237; the original comparison wrongly expected number 4663."
+      }
+    },
+    {
+      "name": "E NewLock identity and shares producer 3",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 4",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 5",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 6",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 7",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 8",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 9",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 10",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 11",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 12",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 13",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 14",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 15",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 16",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 17",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares producer 18",
+      "pass": true
+    },
+    {
+      "name": "E custody and shares producer",
+      "pass": true
+    },
+    {
+      "name": "E reward preserves principal producer",
+      "pass": true
+    },
+    {
+      "name": "E sale clears entire identity producer",
+      "pass": true
+    },
+    {
+      "name": "E transaction count producer",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure producer 0x61fb08ec01b576756fa25ae3ab9631613f140471c843576a2eac3774a7ff37a1",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure producer 0xbecb8677c003a5a4a58dfbc511237973681cb0250ba6a78fc6928ce1a03ab528",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure producer 0xe4359e06c585390d0c6e33cfb105c2384f58c4f9b44d75e1e0c566a2a97109e9",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure producer 0x22fb95c8bfd0b3f7c58faa20f4672371f4740ffb8a3276cccb3ff2a731880a0d",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 3",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 4",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 5",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 6",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 7",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 8",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 9",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 10",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 11",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 12",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 13",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 14",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 15",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 16",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 17",
+      "pass": true
+    },
+    {
+      "name": "E NewLock identity and shares replay 18",
+      "pass": true
+    },
+    {
+      "name": "E custody and shares replay",
+      "pass": true
+    },
+    {
+      "name": "E reward preserves principal replay",
+      "pass": true
+    },
+    {
+      "name": "E sale clears entire identity replay",
+      "pass": true
+    },
+    {
+      "name": "E transaction count replay",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure replay 0x61fb08ec01b576756fa25ae3ab9631613f140471c843576a2eac3774a7ff37a1",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure replay 0xbecb8677c003a5a4a58dfbc511237973681cb0250ba6a78fc6928ce1a03ab528",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure replay 0xe4359e06c585390d0c6e33cfb105c2384f58c4f9b44d75e1e0c566a2a97109e9",
+      "pass": true
+    },
+    {
+      "name": "E retained disabled failure replay 0x22fb95c8bfd0b3f7c58faa20f4672371f4740ffb8a3276cccb3ff2a731880a0d",
+      "pass": true
+    },
+    {
+      "name": "W approved safe pull actual receipt",
+      "pass": true
+    },
+    {
+      "name": "W reward-only extant",
+      "pass": true
+    },
+    {
+      "name": "W approved operator redirects",
+      "pass": true
+    },
+    {
+      "name": "W failed safe transfer rollback",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 3",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 4",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 5",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 6",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 7",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 8",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 9",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 10",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 11",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 12",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 13",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 14",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 15",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 16",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 17",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 18",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 19",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 20",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 21",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 22",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 23",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 24",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 25",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 26",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 27",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 28",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 29",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 30",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 31",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 32",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 33",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 34",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 35",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 36",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 37",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 38",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 39",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 40",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 41",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 42",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 43",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 44",
+      "pass": true
+    },
+    {
+      "name": "W original purchase 45",
+      "pass": true
+    },
+    {
+      "name": "W successful new-owner claim",
+      "pass": true
+    },
+    {
+      "name": "W complete transaction counts",
+      "pass": true
+    },
+    {
+      "name": "W archived runtime cleanup",
+      "pass": true
+    },
+    {
+      "name": "E archived runtime cleanup",
+      "pass": true
+    }
+  ],
+  "execution": {
+    "newRpcRequests": 0,
+    "newTransactions": 0,
+    "newForgeBuilds": 0,
+    "successfulProbesRepeated": 0,
+    "ownedRuntimeProcesses": 0,
+    "ownedPorts": [],
+    "cleanupRequired": false
+  },
+  "attempts": [
+    {
+      "action": "git status --short",
+      "exit": 128,
+      "error": "error: expected submodule path 'lib/crane' not to be a symbolic link",
+      "resolution": "Read-only status with --ignore-submodules=all exited 0; existing warm-seed symlink preserved."
+    },
+    {
+      "action": "worktree original-plan read",
+      "error": "ENOENT",
+      "resolution": "Read the complete explicitly referenced original plan at /Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md."
+    },
+    {
+      "action": "display helper reference",
+      "error": "show is not defined",
+      "resolution": "Defined a persistent display helper and inspected already completed tool results without rerunning the Git command."
+    },
+    {
+      "action": "earlier chain-ID assertion",
+      "error": "Two local audit assertions compared RPC hex string 0x1237 to number 4663.",
+      "resolution": "Normalized through BigInt; both pass. Original failed records are retained and named by their replacement checks."
+    }
+  ],
+  "preservedExecutions": {
+    "weighted": {
+      "exit": 0,
+      "passed": 34,
+      "failed": 1,
+      "unproven": 2,
+      "minedOccurrences": 28,
+      "succeeded": 22,
+      "reverted": 6
+    },
+    "earlier": {
+      "exit": 2,
+      "passed": 18,
+      "failed": 2,
+      "unproven": 4,
+      "minedOccurrences": 24,
+      "succeeded": 10,
+      "reverted": 14
+    },
+    "note": "Counts include separately mined snapshot scenarios; repeated transaction hashes are not necessarily distinct transaction identities. Neither archived suite is a green full-Migration verdict."
+  }
+}

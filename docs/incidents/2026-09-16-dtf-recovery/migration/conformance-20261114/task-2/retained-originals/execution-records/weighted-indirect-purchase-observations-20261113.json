@@ -1,0 +1,155 @@
+{
+  "version": "weighted-indirect-purchase-observations-v1",
+  "status": "gross-token-payments-reconciled-not-financially-approved",
+  "input": {
+    "path": "phase34-weighted-purchase-source/verification/proof.json",
+    "sha256": "66351a0b9218a5db2cca5f99409c75414772d7ad161973f8e60dfbf57954ce2c"
+  },
+  "method": [
+    "Verify retained capture bytes and hashes, receipt status and by-hash/by-number canonical block witnesses.",
+    "Decode historical handleOps tuple, require canonical full re-encoding and exactly one operation.",
+    "Decode one executeBatch call with canonical ABI prefix; retain all29trailing bytes uninterpreted.",
+    "Decode the nested bond with previously authenticated purchase ABI; require one zero-native-value DTF purchase to the recorded NFT recipient.",
+    "Recompute the UserOperation hash including full callData and match the successful event sender/nonce/hash.",
+    "Match one DTF debit from smart account to weighted DETF, no DTF refund or WETH wallet transfer in the receipt, and one NFT mint between payment and operation completion."
+  ],
+  "abiReferences": {
+    "entryPoint": "https://raw.githubusercontent.com/eth-infinitism/account-abstraction/v0.6.0/contracts/interfaces/IEntryPoint.sol",
+    "operation": "https://raw.githubusercontent.com/eth-infinitism/account-abstraction/v0.6.0/contracts/interfaces/UserOperation.sol",
+    "walletAbiShape": "https://raw.githubusercontent.com/coinbase/smart-wallet/main/src/CoinbaseSmartWallet.sol"
+  },
+  "abiQualification": "Wallet ABI reference supplies the tuple shape, not a claim that this particular deployed wallet was byte-for-byte authenticated as that source. Actual amounts are corroborated by canonical token logs and operation/mint events.",
+  "rows": [
+    {
+      "tokenId": "19",
+      "transactionHash": "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9",
+      "smartAccount": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "operationHash": "0xddcad4b37ce18762a8ee8816388922b8ef64f3a3f3a788f9982fd756df394ac5",
+      "nonce": "14",
+      "operationSuccess": true,
+      "callTarget": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "bondSelector": "0x7a3b1181",
+      "dtfGrossPaidRaw": "100000000000000000000000",
+      "wethTransferGrossPaidRaw": "0",
+      "payment": {
+        "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+        "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+        "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+        "amount": "100000000000000000000000",
+        "logIndex": "0xc"
+      },
+      "mintLogIndex": "0x28",
+      "userOperationLogIndex": "0x33",
+      "walletSuffix": "0x62635f62307233323637390b0080218021802180218021802180218021",
+      "receiptBinding": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9.json",
+        "bytes": 69147,
+        "sha256": "ae88d14d0af7237eb67bafb7cddb3ccb75568ba480ebcd2d099cf798b34b628c"
+      },
+      "gasCostExcluded": "155153018488419",
+      "approvedOriginalEth": null,
+      "approvedOriginalDtf": null,
+      "approvedCredit": null
+    },
+    {
+      "tokenId": "20",
+      "transactionHash": "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71",
+      "smartAccount": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "operationHash": "0xa0d7eef4d0c8d40d760cc8e7fae1c409068236843545c9ea260579716b84de96",
+      "nonce": "16",
+      "operationSuccess": true,
+      "callTarget": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "bondSelector": "0x7a3b1181",
+      "dtfGrossPaidRaw": "200000000000000000000000",
+      "wethTransferGrossPaidRaw": "0",
+      "payment": {
+        "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+        "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+        "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+        "amount": "200000000000000000000000",
+        "logIndex": "0x39"
+      },
+      "mintLogIndex": "0x55",
+      "userOperationLogIndex": "0x60",
+      "walletSuffix": "0x62635f62307233323637390b0080218021802180218021802180218021",
+      "receiptBinding": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71.json",
+        "bytes": 68745,
+        "sha256": "5c20c3fb3f6a97a32f01a01beeb3e986dedfc321be673379201d76d447d20d7e"
+      },
+      "gasCostExcluded": "152282554997349",
+      "approvedOriginalEth": null,
+      "approvedOriginalDtf": null,
+      "approvedCredit": null
+    },
+    {
+      "tokenId": "23",
+      "transactionHash": "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a",
+      "smartAccount": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "operationHash": "0x3331f79bed384c195dd28a0f9ca4608086f3fb525ae174e61222817c4227cc8f",
+      "nonce": "18",
+      "operationSuccess": true,
+      "callTarget": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "bondSelector": "0x7a3b1181",
+      "dtfGrossPaidRaw": "200000000000000000000000",
+      "wethTransferGrossPaidRaw": "0",
+      "payment": {
+        "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+        "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+        "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+        "amount": "200000000000000000000000",
+        "logIndex": "0x2"
+      },
+      "mintLogIndex": "0x1c",
+      "userOperationLogIndex": "0x27",
+      "walletSuffix": "0x62635f62307233323637390b0080218021802180218021802180218021",
+      "receiptBinding": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a.json",
+        "bytes": 68657,
+        "sha256": "0992a036c52f115eba67f48b9743ab405892103c1677b5afb5a08cff4db9d813"
+      },
+      "gasCostExcluded": "158710494383025",
+      "approvedOriginalEth": null,
+      "approvedOriginalDtf": null,
+      "approvedCredit": null
+    },
+    {
+      "tokenId": "42",
+      "transactionHash": "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba",
+      "smartAccount": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "operationHash": "0x10f7447e1043a1f3e17568eb09924f779ef73c25899ca3afd1f547e39935b0ef",
+      "nonce": "24",
+      "operationSuccess": true,
+      "callTarget": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "bondSelector": "0x7a3b1181",
+      "dtfGrossPaidRaw": "400000000000000000000000",
+      "wethTransferGrossPaidRaw": "0",
+      "payment": {
+        "asset": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+        "from": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+        "to": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+        "amount": "400000000000000000000000",
+        "logIndex": "0x2d"
+      },
+      "mintLogIndex": "0x47",
+      "userOperationLogIndex": "0x52",
+      "walletSuffix": "0x62635f62307233323637390b0080218021802180218021802180218021",
+      "receiptBinding": {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba.json",
+        "bytes": 66207,
+        "sha256": "2dfdc93f8bbf5de38761c67ba3e2eb294c352079b52a3fa8d6d950540fb7028b"
+      },
+      "gasCostExcluded": "150060615432000",
+      "approvedOriginalEth": null,
+      "approvedOriginalDtf": null,
+      "approvedCredit": null
+    }
+  ],
+  "limits": [
+    "Gas funding/cost is excluded from bond-contribution observations. Native internal refunds and other account activity are not reconstructed.",
+    "These are gross purchase token payments, not approved E0/D0, eligibility, prior compensation or migration credit.",
+    "NFT42 purchase input remains historical even though later principal retirement is already recorded.",
+    "No decision was made for historical NFT3 reserve payment. No TokenStaking research was performed."
+  ],
+  "newChainRequests": 0
+}

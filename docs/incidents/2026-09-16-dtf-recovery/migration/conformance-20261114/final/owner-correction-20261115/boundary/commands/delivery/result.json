@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "bun",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "delivery",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/current-input.json",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "started": "2026-11-15T19:34:53.208Z",
+  "finished": "2026-11-15T19:35:24.938Z",
+  "exit": 1,
+  "signal": null,
+  "stdoutBytes": 44,
+  "stderrBytes": 81588
+}

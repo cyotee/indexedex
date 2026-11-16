@@ -1,0 +1,150 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 9,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-9-done.json",
+  "claim_binding": {
+    "bytes": 4665,
+    "sha256": "92a73c551edf2c827f6110f3458f8f1b2234b47ba9c6042b7d3758f77bd5c075",
+    "subsequent_complete_read_unchanged": true,
+    "final_size_unchanged": true,
+    "note": "The actual claim is 4665 bytes, rather than the approximate 1.8 MB in the assignment."
+  },
+  "summary": "Standalone records exist and preserve unresolved facts, but confirmation fails: the surrender document hash and size disagree with the trace and claim, and two trace rows bind failure-log observations to the happy log.",
+  "findings": [
+    {
+      "id": "H1",
+      "failure_class": "harness",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/trace.md:46; task-9-done.json deliverables[0]",
+      "description": "The recorded surrender deliverable fingerprint does not describe the delivered file.",
+      "artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/surrender-spec.md",
+      "expected": {
+        "bytes": 62691,
+        "sha256": "140aff00cfa3523d076438cc93044f112e1b5c6bfd3beba503ba506460f2e2d1"
+      },
+      "actual": {
+        "bytes": 62663,
+        "sha256": "9995fd4dfb9db089883241d24a617aa95caf0c7d964fa66dff38a3d6603091b9"
+      },
+      "requested_change": "Observe completion of final document writes, then recompute final raw bytes and consistently refresh the trace and completion receipt.",
+      "cause_evidence": "Producer transcript line 94 rewrites the document without awaiting the write helper and immediately hashes it; line 95 reports the stale fingerprint. A write/read ordering explanation is an inference; the mismatch is directly observed."
+    },
+    {
+      "id": "H2",
+      "failure_class": "harness",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/trace.md:27,35",
+      "description": "Owner-role and paid-first-bond rows cite happy.log but name failures-log lines 50147, 12374 and 40259. The happy log has only 7972 split lines.",
+      "incorrect_artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/happy.log",
+      "correct_artifact": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/repair-attempt-1/failures.log",
+      "correct_sha256": "b58ca87e782c3f1e9c64279587975a58c689dd70de699449113ddfb043aec131",
+      "correct_bytes": 9474596,
+      "requested_change": "Bind both trace rows to the actual failure log with its recomputed hash and size. The package prose already points to that log."
+    }
+  ],
+  "checks": [
+    {
+      "id": 1,
+      "result": "FAIL",
+      "observation": "Both required standalone documents and all six claim deliverables exist. All 32 required trace source rows have matching file hashes and sizes. Of 35 trace fingerprint rows including deliverables, 34 match and the surrender deliverable fails. All 25 distinct explicit document path/fingerprint pairs match. H2 additionally prevents two rows from binding the claimed observations to the cited artifact.",
+      "inventory": "The report records 48 independently hashed document, source, test, verdict, log and evidence files."
+    },
+    {
+      "id": 2,
+      "result": "PASS",
+      "observation": "All fourteen source categories retain authenticated addresses, original/remaining unit equations and exact task 6 assertion-backed custody notes. All 42 positive/rejection/conservation witness names match their cited raw log lines. Operational allocations, holder lists, paid-bond amounts, decoded bootstrap amounts and completed NFT 3 two-bond rehearsal are not invented. Unresolved facts remain explicit."
+    },
+    {
+      "id": 3,
+      "result": "PASS",
+      "observation": "Negative file is a separate regular file under task-9/negative and differs from the confirmed census at byte 0 only. Both files are 5737 bytes. Producer transcript lines 82 and 92 show copy-only mutation.",
+      "negative_path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/negative/proxy-census.one-byte-off.json",
+      "negative_sha256": "019496421514ea3bff4b26dbe12a58bf658939423a037b66747d39fe5788fadb",
+      "confirmed_path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/proxy-census.json",
+      "confirmed_sha256": "5f8816dbce2b2442ba34de5bb6089bfef0cb9afe0b58ae6e045fcd06d21b9a18",
+      "earlier_binding": ".omo/ulw-execute/dtf-conformance/task-4-verdict.json records the same confirmed census digest; that verdict was independently hashed."
+    },
+    {
+      "id": 4,
+      "result": "PASS with local provenance limit",
+      "observation": "Inspected the producer's entire 45-call tool inventory, nested eval code and shell commands. Writes address documents, task-9 evidence, the negative copy and task-9-done.json only. No Solidity, TypeScript or test edit attributable to task 9. Read-only Git status remains dirty with 101 tracked entries; task 7 and earlier work were preserved. Status alone was not treated as authorship proof."
+    },
+    {
+      "id": 5,
+      "result": "PASS",
+      "observation": "Documents explicitly decline gate closure and leave task 10 rehearsal, task 14 reconciliation and final verification open."
+    }
+  ],
+  "adversarial": {
+    "stale_state": {
+      "result": "FAIL detected",
+      "finding": "H1"
+    },
+    "misleading_success_output": {
+      "result": "FAIL detected",
+      "observation": "PASS and complete prose do not overcome H1 or H2. Actual raw role PASS, purchase emit, activation PASS and sixteen writer selectors were inspected."
+    },
+    "dirty_worktree": {
+      "result": "PASS with attribution limit",
+      "observation": "Read-only Git inspection corroborated by producer tool-call provenance; no dirty files reverted."
+    },
+    "untrusted_external_text": {
+      "result": "PASS",
+      "observation": "Claim and archive prose treated as evidence, never as executable instructions."
+    },
+    "hung_or_long_commands": {
+      "result": "not-applicable",
+      "reason": "No long command or Forge run introduced."
+    },
+    "flaky_tests": {
+      "result": "not-applicable",
+      "reason": "No tests run or retried."
+    },
+    "malformed_input": {
+      "result": "not-applicable",
+      "reason": "Negative copy was hashed only; no malformed-input execution introduced."
+    },
+    "cancel_resume": {
+      "result": "not-applicable",
+      "reason": "No cancellation or resume scenario introduced."
+    },
+    "repeated_interruptions": {
+      "result": "not-applicable",
+      "reason": "No interruption scenario introduced."
+    }
+  },
+  "repro": {
+    "method": "Read exact task 9 and complete producer records; recompute raw SHA-256 with Bun.CryptoHasher; compare trace and claim fingerprints; compare structured category facts and actual log lines; byte-compare negative and confirmed census; audit producer tool operations and read-only Git status.",
+    "expected": "All delivered hashes and sizes match and each trace witness belongs to its cited artifact.",
+    "actual": "Surrender hash/size mismatch and two wrong-log trace bindings.",
+    "product_checks_rerun": false,
+    "git_commands_exit_zero": true
+  },
+  "producer_provenance": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1dd4c/sessions/st_01a1dd4c/2026-11-15T03-40-26.486Z_39ef963e-f17b-46ed-a42c-aaaa9eec39ac.jsonl",
+    "sha256": "939f575088e8127fb43d5cc89b902298a4a356a238c114cc5d8d78fbf9f3df96",
+    "bytes": 1669436,
+    "limit": "Local transcript corroboration, not external attestation."
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/verification/report.md",
+  "report_binding": {
+    "sha256": "3e92e708c2442e9dfd63c2c1ac6de7122c69a85d2ed31bed6e875ac745c14a29",
+    "bytes": 16650
+  },
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "limits": [
+    "No product implementation, producer-document edit, claim edit, Forge, RPC, install or commit.",
+    "No operational financial approval or later-task confirmation.",
+    "Unresolved execution facts remain unresolved; this verdict assesses task 9 evidence integrity."
+  ],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-9/verification/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-9-verdict.json"
+  ]
+}

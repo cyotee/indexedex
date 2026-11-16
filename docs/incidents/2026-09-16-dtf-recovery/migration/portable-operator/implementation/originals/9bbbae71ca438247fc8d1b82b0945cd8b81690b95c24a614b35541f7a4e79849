@@ -1,0 +1,11 @@
+{
+  "transactions": [
+    {
+      "rpc": "https://rpc.mainnet.chain.robinhood.com"
+    },
+    {
+      "rpc": "https://rpc.mainnet.chain.robinhood.com"
+    }
+  ],
+  "recovery_generation": "0xb47c284c1a239f3a696ba90281699e50a3034574aa75cc190534cf9e4e3b8838"
+}

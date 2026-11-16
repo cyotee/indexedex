@@ -1,0 +1,69 @@
+{
+  "capturedBeforeStaging": false,
+  "writtenAfterCommit": true,
+  "doesNotClaimOwnRawDigest": true,
+  "exclusions": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/"
+  ],
+  "aggregates": {
+    "docs-incidents.jsonl": "4fa4014aa7e2e4fa6ede8ff823fe966fe2f56fa75c98d9d7c0786ff56bae36fc",
+    "docs-incidents-perms.jsonl": "417de7ea34d887f0e98a98f66f024f0853d25e1786f36e6096702e45d8138c48",
+    "out.jsonl": "8ea9bf1ce27f5337dc3970a2b71cc2034bd20c462aeafbfa58a660224423bab9",
+    "cache_forge.jsonl": "00a05ab2cc2e2f71af454e16cc7c86a2d46272de4914a803fa8361855a4fe826",
+    "host-dependencies.jsonl": "b639126b6a5bda0c8cecf937f5ff5c1412dd1a76f2ef715a173ed9430163b9b2",
+    "show-ref.txt": "8e9930ef9e6aa4575fa8f4bfe46d0e0773ec362cafebb05e29c37d612a5ee8c1",
+    "status-before.txt": "4a03830069944cce01614cc446a9e281247623722df98a71ceaec655b01b807b",
+    "indexes.json": "cf5014b45930206c5d876926957636733281bc19c445eefb40cec3289010d8c4",
+    "source-identity-before.json": "96b4643ac2739fb15f25af734432c96084f7063309ee6dec66991978974ca5af",
+    "tracked-diff.txt": "88e93a11eb2df8f5219d15d29eb3263fe204bd0f3610d9b275859827da16dcdd",
+    "whitespace-before.txt": "28d3b9e880a77975493dc7e359144c0295a4f694cfe0af4f928c22307bc5c320",
+    "whitespace-staged.txt": "711371f4fa25334ae6c0c4b2cbdb25278b32933d796bb214778ca39e33526520",
+    "gate-result.json": "335de6c909ea4e00469aca2e3421ed3a66e549aa1cd2cf0e64f53ab7cc2b3b96",
+    "recipe.txt": "347b5e46cdcc20f0ef347e306c9c862d077fbaff6713ceaea593662d779bebe8"
+  },
+  "counts": {
+    "docsIncidents": 2165,
+    "docsIncidentsPerms": 2272,
+    "out": 7355,
+    "cacheForge": 611,
+    "hostDependencies": 34,
+    "authority": 3,
+    "immutableExternal": 31,
+    "immutableInWorktree": 2,
+    "parentPreserved": 0,
+    "indexes": 25,
+    "foreignIndexes": 24,
+    "ownIndexes": 1,
+    "sourceModified": 25,
+    "sourceAdded": 3
+  },
+  "links": [
+    {
+      "path": "lib/crane",
+      "kind": "symlink",
+      "perm": "0o755",
+      "mode": "0o120755",
+      "size": 42,
+      "inode": 19804785,
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "sha256": "3dcc99d9c280a1a007d6284e027f5543690bc104fd2b33cf4626f14871b963ab"
+    },
+    {
+      "path": "node_modules",
+      "kind": "symlink",
+      "perm": "0o755",
+      "mode": "0o120755",
+      "size": 45,
+      "inode": 19804786,
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "sha256": "c8ce23751ae468dd00158f2465a4c8ced85fb4811e0f46af46d458d9b79bc861"
+    }
+  ],
+  "listener18573Exit": 1,
+  "listener18573Output": "",
+  "checkpointExists": false,
+  "runtimeParentExists": false,
+  "head": "15fd629375edeb361f6a39262795bdc66723ca3a",
+  "parent": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+  "branch": "work/dtf-migration-phase-23-claimed-sy-integration"
+}

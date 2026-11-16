@@ -1,0 +1,12 @@
+{
+  "chainId": 4663,
+  "create3Factory": "0xD7786b10BC8Bc97dc7651CAb7B97086c8b227882",
+  "deployer": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+  "diamondPackageFactory": "0x976949aB55830fA4794bF40C88ea7D7567931003",
+  "owner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+  "ownershipBufferPeriod": 172800,
+  "rewardsDuration": 604800,
+  "stakingToken": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+  "tokenStaking": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00",
+  "tokenStakingPkg": "0xa1A1760e69416192135a00Bc6701001f03cE54f3"
+}

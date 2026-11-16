@@ -1,0 +1,23 @@
+{
+  "task": 8,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "aliases": {
+    "M": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "T": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "K": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "E": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114",
+    "P": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"
+  },
+  "compiler": "Solar through scripts/forge-artifacts.py",
+  "forge": "/Users/cyotee/.foundry/bin/forge",
+  "forgeVersion": "1.9.1-nightly 430523103f3e2f9ba432ffdd2031a9f966153d0d",
+  "artifactPolicy": "Existing warm out/ and cache_forge/ retained; helper refreshes dependency/runtime artifacts before executing tests.",
+  "invariant": {
+    "runs": 16,
+    "depth": 8,
+    "seed": "0x8",
+    "environmentOverride": "FOUNDRY_FUZZ_SEED=0x8"
+  },
+  "preservation": "Initial worktree already contains tasks 1-7 and task 9 changes; no commits, SUT edits, pricing source edits, schema/core edits or claimed-SY witness pin changes are part of task 8."
+}

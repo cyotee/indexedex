@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"UnrecognizedFrozenImplementation","inputs":[{"name":"captureFacet","type":"address","internalType":"address"},{"name":"previewFacet","type":"address","internalType":"address"}]}],"id":1203}

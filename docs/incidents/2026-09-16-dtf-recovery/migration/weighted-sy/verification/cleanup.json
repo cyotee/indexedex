@@ -1,0 +1,29 @@
+{
+  "cli": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/.omo-runtime/dtf-migration-weighted-sy/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 64671,
+    "runtime": "removed"
+  },
+  "externalProbe": {
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy && lsof -nP -iTCP:18564 -sTCP:LISTEN; printf 'PORT_PROBE_EXIT=%s\n' \"$?\"; ps -p 64671 -o pid=,command=; printf 'PID_PROBE_EXIT=%s\n' \"$?\"; test ! -e .omo-runtime/dtf-migration-weighted-sy/checkpoints; printf 'CHECKPOINT_ABSENT_EXIT=%s\n' \"$?\"; rmdir .omo-runtime/dtf-migration-weighted-sy; printf 'EMPTY_PARENT_REMOVAL_EXIT=%s\n' \"$?\"; git diff --check --ignore-submodules=all; printf 'DIFF_CHECK_EXIT=%s\n' \"$?\"; git rev-parse HEAD; git branch --show-current; /Users/cyotee/.foundry/bin/forge --version; bun --version",
+    "output": "PORT_PROBE_EXIT=1\nPID_PROBE_EXIT=1\nCHECKPOINT_ABSENT_EXIT=0\nEMPTY_PARENT_REMOVAL_EXIT=0\nDIFF_CHECK_EXIT=0\n75d513cb8b36e53f14c8aa3a352f21703ad91ba1\nwork/dtf-migration-phase-14-weighted-sy\nforge Version: 1.9.1-nightly\nCommit SHA: 430523103f3e2f9ba432ffdd2031a9f966153d0d\nBuild Timestamp: 2026-11-03T06:12:02.538056000Z (1793686322)\nBuild Profile: dist\n1.4.2"
+  },
+  "ownedRuntimeRemaining": false,
+  "allOwnedExecutionMonitorsCompleted": true,
+  "sourceChangesByVerifier": false,
+  "sourceFilesStillMatch": true,
+  "producerAndAuthorityPreservation": {
+    "checked": 501,
+    "mismatches": []
+  },
+  "allowedWrites": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/",
+  "warmArtifactsAndDependencyLinksPreserved": true,
+  "noPublicOperation": true,
+  "noCommitOrMerge": true,
+  "noProviderRouteChange": true,
+  "noHeldPhase09InspectionImportReplay": true,
+  "diagnostics": "JSON LSP cannot start because Biome is not installed. No installation or configuration change attempted. Evidence JSON was generated with JSON.stringify."
+}
+

@@ -1,0 +1,61 @@
+{
+  "base": "9c227900b280713305d4a1a1d1cdc3d8d273f23d",
+  "originalParent": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+  "kind": "remove-exactly-one-final-LF-per-file",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "removedBytes": 1,
+      "beforeSha256": "68feefdf017cfe787974c064aec7d0d503afcbe6e628ceabf7ede2ac92d9faff",
+      "afterSha256": "007efb814785b8a5a28336785a74ff80b135ecc236f023f3e679aac15938f788"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "removedBytes": 1,
+      "beforeSha256": "334ae5220153279d0efec14358eaea3557c07e816abd681b238f29c61156832e",
+      "afterSha256": "f575db5e7baa8acd986772963124e07d914cc79125598fcd70f47ac7a1632945"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "removedBytes": 1,
+      "beforeSha256": "c69bb69a7d4bba7da3d0fdcbdfecc10726513adac13867a5768b7744af9d03c3",
+      "afterSha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "removedBytes": 1,
+      "beforeSha256": "1d425490f4174715a38fee71911a8620253ea14c0a6813120faae8316c7baa1a",
+      "afterSha256": "80bc8e357b774890b83e03707eeacafd566ef35c66ff9fc02483fb25e844a93f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "removedBytes": 1,
+      "beforeSha256": "fa01045025033561fcc8b20b667e1b564ec3503edf5c074a1aa7a001ed1b0eae",
+      "afterSha256": "71211c2c3ace5f7735a9f85d315e03d9749f52754ac6ada3b60fc2b54053a6f6"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "removedBytes": 1,
+      "beforeSha256": "cb8d4ec86caed7cfae6b0f99aeae7aeef978bedfb524423b800f6a0673000d78",
+      "afterSha256": "7be0cc5440fee63ff9bbdcdd7c3397dde0b545889e83c5e19462b30c4917e425"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "removedBytes": 1,
+      "beforeSha256": "5f6c38945129eaaf66c7f03bd41dc4f91f7d19b7a43f70fc678c20bb53a20cbd",
+      "afterSha256": "33e9f1b77ece6b8804e79816b1df462a3818c9ea1d4f05059047963f8c214dfe"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "removedBytes": 1,
+      "beforeSha256": "59737e67042cf409e75fb23bd484b497ed7db879a805066a67c301d40103dc7f",
+      "afterSha256": "374dcaaeaf0ce1fc1de10ae53a1bf4865ff2e25389c0265ab7596f4954c4b5f2"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "removedBytes": 1,
+      "beforeSha256": "50673dc339dad69e04755637445b4b6611ca37c364624b2d6b56700af5abf3c4",
+      "afterSha256": "cc2b903a19fdb08e4fe854fab8c772596ca899b9d1b3c20edb22c80b0768ae9f"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+../../lib/crane/.claude/agents/docs-skill-scribe.md

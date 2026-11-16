@@ -1,0 +1,3026 @@
+{
+  "type": "Task3ResumeEvidenceInspection",
+  "date": "2026-11-15",
+  "result": "PASS",
+  "method": "Manual source/evidence review with raw file SHA-256 recomputation, actual selector/facet joins, complete ABI input/return inspection, named suite output and source assertion inspection. No prose unit test and no new test execution.",
+  "index_baseline_comparison": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "current": "86687ab4bf579b2ba8635ee5efe4eb935df27bcf7d17a34314018353ded9dc97",
+      "baseline": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc",
+      "different": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "current": "d4efc66c1acabf3d66b98d3e890f1532e919ede6daf558e5091ed8b3ef5208a9",
+      "baseline": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4",
+      "different": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "current": "f33e6ce5eb4dfe88fe2f594b19ba4a6708333579230db1f8d8564d8dbf13ce94",
+      "baseline": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4",
+      "different": true
+    }
+  ],
+  "index_current_hashes": {
+    "source-manifest.json": "86687ab4bf579b2ba8635ee5efe4eb935df27bcf7d17a34314018353ded9dc97",
+    "source-route-matrix.md": "d4efc66c1acabf3d66b98d3e890f1532e919ede6daf558e5091ed8b3ef5208a9",
+    "recovery-route-disposition.md": "f33e6ce5eb4dfe88fe2f594b19ba4a6708333579230db1f8d8564d8dbf13ce94"
+  },
+  "archive_hash_review": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+      "expected": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "actual": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "bytes": 3520079,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "expected": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "actual": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "bytes": 6447942,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+      "expected": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+      "actual": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e",
+      "bytes": 1525716,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+      "expected": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+      "actual": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237",
+      "bytes": 2683989,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+      "expected": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "actual": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "bytes": 4711975,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-alchemy-r2.sources.json",
+      "expected": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "actual": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "bytes": 184216,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json",
+      "expected": "3cedd67167cb74af689f26647f16bddc7466f5aec52ea853b1484c5e42ea27b4",
+      "actual": "3cedd67167cb74af689f26647f16bddc7466f5aec52ea853b1484c5e42ea27b4",
+      "bytes": 48903,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/source-evidence.json",
+      "expected": "b95b643ef079ac8f53d8ab2679fdf9693a27ed7a9a2a9605a7e8fd1436a20e9c",
+      "actual": "b95b643ef079ac8f53d8ab2679fdf9693a27ed7a9a2a9605a7e8fd1436a20e9c",
+      "bytes": 123604,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/run-04/identity.json",
+      "expected": "009bd89749084cfbdd66b5e1589f952f6361831227b49c6790d5645e9e126be7",
+      "actual": "009bd89749084cfbdd66b5e1589f952f6361831227b49c6790d5645e9e126be7",
+      "bytes": 107177,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/run-03/identity.json",
+      "expected": "84fb5f922b81b661c02d16104a938bd640817aec25a9beb4b27d20bcac6d57bc",
+      "actual": "84fb5f922b81b661c02d16104a938bd640817aec25a9beb4b27d20bcac6d57bc",
+      "bytes": 312417,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/source-identities.json",
+      "expected": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "actual": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "bytes": 370968,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/observations.json",
+      "expected": "a864d40a72717eca3ddd1a4601b75a613852b18c935e7cd1b36112f433dc934d",
+      "actual": "a864d40a72717eca3ddd1a4601b75a613852b18c935e7cd1b36112f433dc934d",
+      "bytes": 29900,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/raw/transactions.json",
+      "expected": "8311e6212e77704e2494424fe4c74e3189e98326a944be509225798ed97156c6",
+      "actual": "8311e6212e77704e2494424fe4c74e3189e98326a944be509225798ed97156c6",
+      "bytes": 439946,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/runtime.json",
+      "expected": "15b986be06a244cd0c545cb31077a640c952ccbb64ec17ae215c200383ca5908",
+      "actual": "15b986be06a244cd0c545cb31077a640c952ccbb64ec17ae215c200383ca5908",
+      "bytes": 116636,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/source-evidence.json",
+      "expected": "ef728f8b05033c5d89f72ee937b0c92695ac99a7009f00925092100dc4900da4",
+      "actual": "ef728f8b05033c5d89f72ee937b0c92695ac99a7009f00925092100dc4900da4",
+      "bytes": 226839,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-authentication.json",
+      "expected": "750ffbb12fa39d498367849479f5330ce5a8c4d54ffa911491e77edab13f53f0",
+      "actual": "750ffbb12fa39d498367849479f5330ce5a8c4d54ffa911491e77edab13f53f0",
+      "bytes": 47525,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+      "expected": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+      "actual": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+      "bytes": 1047506,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/runtime-index.json",
+      "expected": "5e8afe496662f416db3763cac0bc2177fb43fe7cbb4a704c1c2cc3bf9126c629",
+      "actual": "5e8afe496662f416db3763cac0bc2177fb43fe7cbb4a704c1c2cc3bf9126c629",
+      "bytes": 355966,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/receipt-audit.json",
+      "expected": "b16b0c71237baf82b17f62d4b6bc818407c634de3b9f4e9ed0eaeceba13b4675",
+      "actual": "b16b0c71237baf82b17f62d4b6bc818407c634de3b9f4e9ed0eaeceba13b4675",
+      "bytes": 90395,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/reviewed-summary.json",
+      "expected": "6b53fe09efb3ac2c58d1d61155f7baf4b4074f31bf3a0fae486f2fd287fd6ba8",
+      "actual": "6b53fe09efb3ac2c58d1d61155f7baf4b4074f31bf3a0fae486f2fd287fd6ba8",
+      "bytes": 80678,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x81fb72511016b42437fe1ac2d5bdb0ba82f14a35.json",
+      "expected": "4d81f7bb447b176e85081631fa2678ccf7849bd5da0c69d0af8533e80542e78f",
+      "actual": "4d81f7bb447b176e85081631fa2678ccf7849bd5da0c69d0af8533e80542e78f",
+      "bytes": 1565542,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0x1b7a7bc9044642c4e42e64f805f6400d75ad2c16.json",
+      "expected": "834f55f3211fcf78b42e04517117d2111599f213bd9c546cfe17b1020f44797e",
+      "actual": "834f55f3211fcf78b42e04517117d2111599f213bd9c546cfe17b1020f44797e",
+      "bytes": 2127138,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/source-0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669.json",
+      "expected": "d0370b49a72a86930b810b6137182d2415397ead53b04d619ec6ae08709f08fe",
+      "actual": "d0370b49a72a86930b810b6137182d2415397ead53b04d619ec6ae08709f08fe",
+      "bytes": 482261,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/results.json",
+      "expected": "2bf04e3612c99c20f0d75bb42e6a88dfe4fd88d37082bb6b3b9a36ef776c3197",
+      "actual": "2bf04e3612c99c20f0d75bb42e6a88dfe4fd88d37082bb6b3b9a36ef776c3197",
+      "bytes": 1198,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+      "expected": "52308ad9e4587a7a86f3e6259373ac2eb7c8b1b19eac01def209340da6d010aa",
+      "actual": "52308ad9e4587a7a86f3e6259373ac2eb7c8b1b19eac01def209340da6d010aa",
+      "bytes": 3749108,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/environment.json",
+      "expected": "c9e6803ddc3eb3b6d30719015e099097df319ace2a2e447cbb0fddc35b19ec8d",
+      "actual": "c9e6803ddc3eb3b6d30719015e099097df319ace2a2e447cbb0fddc35b19ec8d",
+      "bytes": 1135,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-final.log",
+      "expected": "a2e3ca832345af74a5b86624ba5b102de07c1222065919a89cf50819c676a2b8",
+      "actual": "a2e3ca832345af74a5b86624ba5b102de07c1222065919a89cf50819c676a2b8",
+      "bytes": 395696,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-complete.log",
+      "expected": "56d2fb2a6d595277578471f07ac7fc75d013f90b17919473fb1d8cde9518e80f",
+      "actual": "56d2fb2a6d595277578471f07ac7fc75d013f90b17919473fb1d8cde9518e80f",
+      "bytes": 5036,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-custody-live.log",
+      "expected": "d2deba4d0745898edddb0b5688a0a310c003bc6ae550e883f43b55656e2772cc",
+      "actual": "d2deba4d0745898edddb0b5688a0a310c003bc6ae550e883f43b55656e2772cc",
+      "bytes": 1491,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-missing-runtime.log",
+      "expected": "0079d69b43ab53bbac5de57f9a37a6c35596464e312a2ba21dabe94cfa076bc4",
+      "actual": "0079d69b43ab53bbac5de57f9a37a6c35596464e312a2ba21dabe94cfa076bc4",
+      "bytes": 135918,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-mints.log",
+      "expected": "06fd9d4eec088396ae2a59a68e0e786bbd06df0920cf6f549f58b54be07ecb01",
+      "actual": "06fd9d4eec088396ae2a59a68e0e786bbd06df0920cf6f549f58b54be07ecb01",
+      "bytes": 415,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory.log",
+      "expected": "d00f960526c1713a4a683601e8cf8c3b31b84b0597ca28cfdf3315d98910afd1",
+      "actual": "d00f960526c1713a4a683601e8cf8c3b31b84b0597ca28cfdf3315d98910afd1",
+      "bytes": 54,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive.log",
+      "expected": "c436863130dca58e21a8a7204cd7cfb0fa2ac3a323130bc06c273960a9775485",
+      "actual": "c436863130dca58e21a8a7204cd7cfb0fa2ac3a323130bc06c273960a9775485",
+      "bytes": 39,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative.log",
+      "expected": "dd95c70bfd593a9f05d1ab864cf8e8868dfc77bf7a97701a04abf53a61e87e92",
+      "actual": "dd95c70bfd593a9f05d1ab864cf8e8868dfc77bf7a97701a04abf53a61e87e92",
+      "bytes": 299,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-isolated.log",
+      "expected": "945fe4da9971f747ad712cf72be6dbb4bb3bc5c27883d08b982ec679abdea57e",
+      "actual": "945fe4da9971f747ad712cf72be6dbb4bb3bc5c27883d08b982ec679abdea57e",
+      "bytes": 395692,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+      "expected": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063",
+      "actual": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063",
+      "bytes": 395748,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/final-source-20261113.json",
+      "expected": "b994f59fb0a1c074e3373728e1b4af06f30790e6b47032f9198c8136e32e3bbe",
+      "actual": "b994f59fb0a1c074e3373728e1b4af06f30790e6b47032f9198c8136e32e3bbe",
+      "bytes": 1413963,
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+      "expected": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063",
+      "actual": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063",
+      "bytes": 395748,
+      "matches": true
+    }
+  ],
+  "source_bindings": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "bytes": 23860,
+      "sha256": "54d24706f72ebe4374db0fed0b11216a78f47433acdd4c8eaa688ceb2211894b",
+      "actualSha256": "54d24706f72ebe4374db0fed0b11216a78f47433acdd4c8eaa688ceb2211894b",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "bytes": 1262,
+      "sha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2",
+      "actualSha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 24929,
+      "sha256": "d7a016b37e52e73f37e10ba115ee16da0f649ecadea5b72712373ef976da9e94",
+      "actualSha256": "d7a016b37e52e73f37e10ba115ee16da0f649ecadea5b72712373ef976da9e94",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "bytes": 1653,
+      "sha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67",
+      "actualSha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "bytes": 19457,
+      "sha256": "1258b99b11920bf349bbbdbb3d1a25a93937c8515bc2e731e6bc30a35c7b2660",
+      "actualSha256": "1258b99b11920bf349bbbdbb3d1a25a93937c8515bc2e731e6bc30a35c7b2660",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 22464,
+      "sha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b",
+      "actualSha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "bytes": 2676,
+      "sha256": "5db13ac0c4ac08b1c9c1ffee3d122052a107bf52abf84d9179dae2fac57f7a6c",
+      "actualSha256": "5db13ac0c4ac08b1c9c1ffee3d122052a107bf52abf84d9179dae2fac57f7a6c",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "bytes": 6813,
+      "sha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f",
+      "actualSha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "bytes": 2913,
+      "sha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c",
+      "actualSha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "bytes": 2023,
+      "sha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db",
+      "actualSha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "bytes": 27213,
+      "sha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d",
+      "actualSha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "bytes": 5104,
+      "sha256": "03cca5f49fd5d553c713bb306406e267b6579fd5e23577a37e96f2089c704b70",
+      "actualSha256": "03cca5f49fd5d553c713bb306406e267b6579fd5e23577a37e96f2089c704b70",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "bytes": 22933,
+      "sha256": "9525e5376ebb1e39d8c552065f8827adc3eaafea174e808eccbdfbdc1a6d3a4a",
+      "actualSha256": "9525e5376ebb1e39d8c552065f8827adc3eaafea174e808eccbdfbdc1a6d3a4a",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "bytes": 2996,
+      "sha256": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd",
+      "actualSha256": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 40365,
+      "sha256": "658cba46918938f0bd645433b2d25acc01b9ccbeaaa4f0034d671c6a9cfcfcf5",
+      "actualSha256": "658cba46918938f0bd645433b2d25acc01b9ccbeaaa4f0034d671c6a9cfcfcf5",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 4172,
+      "sha256": "408f3fd01e93ee621a0f6fcfde65d4a3b9138d2ab4c046b2d7028fdbde144688",
+      "actualSha256": "408f3fd01e93ee621a0f6fcfde65d4a3b9138d2ab4c046b2d7028fdbde144688",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "bytes": 5069,
+      "sha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347",
+      "actualSha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "bytes": 16192,
+      "sha256": "b405d60ee9e444995cd9299c17c81ef7f7abc7036759adf6ff1660f23c53a6b0",
+      "actualSha256": "b405d60ee9e444995cd9299c17c81ef7f7abc7036759adf6ff1660f23c53a6b0",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "bytes": 12710,
+      "sha256": "c60778f5e33316557449de7c0779059808bfc8e44abfd0e8a67156ed9367b682",
+      "actualSha256": "c60778f5e33316557449de7c0779059808bfc8e44abfd0e8a67156ed9367b682",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "bytes": 14391,
+      "sha256": "daf2b16eaffff4004c61409bf0f6a3f0535e12c9369c5dae09f80b970476d428",
+      "actualSha256": "daf2b16eaffff4004c61409bf0f6a3f0535e12c9369c5dae09f80b970476d428",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "bytes": 14172,
+      "sha256": "8b82ad755af9a0753651657d23f5023691377647c43afc7c44d75ad287c3e3f6",
+      "actualSha256": "8b82ad755af9a0753651657d23f5023691377647c43afc7c44d75ad287c3e3f6",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "bytes": 12678,
+      "sha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22",
+      "actualSha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "bytes": 3602,
+      "sha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800",
+      "actualSha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "bytes": 4336,
+      "sha256": "78b68e8a56e45d704627d974e935d85094be0c171e2138eecb19e474d9fd4223",
+      "actualSha256": "78b68e8a56e45d704627d974e935d85094be0c171e2138eecb19e474d9fd4223",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 28343,
+      "sha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45",
+      "actualSha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+      "bytes": 23157,
+      "sha256": "65beab1eb18a9d7737f0a956f658c1107bb3ff8b8a03be8a9d5942d5382b8ea9",
+      "actualSha256": "65beab1eb18a9d7737f0a956f658c1107bb3ff8b8a03be8a9d5942d5382b8ea9",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+      "bytes": 21807,
+      "sha256": "f5ec75011814b2e75281cba3d37d5ad0fe5ba859e3b8c37ed82bb1835df6000c",
+      "actualSha256": "f5ec75011814b2e75281cba3d37d5ad0fe5ba859e3b8c37ed82bb1835df6000c",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+      "bytes": 39843,
+      "sha256": "4ca0269836825ce074ece493bbee636289d8151958adc771f4c6ebff65438e7c",
+      "actualSha256": "4ca0269836825ce074ece493bbee636289d8151958adc771f4c6ebff65438e7c",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "bytes": 22542,
+      "sha256": "a63202a1c1e4bd77384a722e1a529c55f4b76d739183fdbff1245e9b1d4e9311",
+      "actualSha256": "a63202a1c1e4bd77384a722e1a529c55f4b76d739183fdbff1245e9b1d4e9311",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "bytes": 19455,
+      "sha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433",
+      "actualSha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "bytes": 26839,
+      "sha256": "2ef6b7e1cb8897ab326f264bf5c2cb57e6d07c03c5d5d311f064957033126d3d",
+      "actualSha256": "2ef6b7e1cb8897ab326f264bf5c2cb57e6d07c03c5d5d311f064957033126d3d",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "bytes": 3536,
+      "sha256": "5b8cb4ccc8898fc0092c2f58afdc4bba5f0f75cffcb4433fc43558edc7bd2ea6",
+      "actualSha256": "5b8cb4ccc8898fc0092c2f58afdc4bba5f0f75cffcb4433fc43558edc7bd2ea6",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLpConfiguration.t.sol",
+      "bytes": 14756,
+      "sha256": "1033f8bab7662c21a30563a6407e6c47fce29159d69f6b8fbbf8153d7519023a",
+      "actualSha256": "1033f8bab7662c21a30563a6407e6c47fce29159d69f6b8fbbf8153d7519023a",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "bytes": 17003,
+      "sha256": "fcebd726c8574fa88fd870a06fdb3bdfd801950fdb8d318f75e48027517e2c79",
+      "actualSha256": "fcebd726c8574fa88fd870a06fdb3bdfd801950fdb8d318f75e48027517e2c79",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "bytes": 12219,
+      "sha256": "eb13a7019ec5a35493ff08e0e0581d2ca3a364f3109ee97d9c00a4372fe81e9a",
+      "actualSha256": "eb13a7019ec5a35493ff08e0e0581d2ca3a364f3109ee97d9c00a4372fe81e9a",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "bytes": 8639,
+      "sha256": "e62f7f81ca3dfb3941efa6bb830240e7ce9759a3820122d5f4e405ddd96d4a57",
+      "actualSha256": "e62f7f81ca3dfb3941efa6bb830240e7ce9759a3820122d5f4e405ddd96d4a57",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 2059,
+      "sha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a",
+      "actualSha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a",
+      "matches": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 28400,
+      "sha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e",
+      "actualSha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 3688,
+      "sha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc",
+      "actualSha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "bytes": 6911,
+      "sha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4",
+      "actualSha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+      "bytes": 9749,
+      "sha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14",
+      "actualSha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimedSyConfiguration.t.sol",
+      "bytes": 11329,
+      "sha256": "c065c6742c47809dfc1f63d36212575ef6d44b52892f42dc2d8793cb2869aadb",
+      "actualSha256": "c065c6742c47809dfc1f63d36212575ef6d44b52892f42dc2d8793cb2869aadb",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 34723,
+      "sha256": "41d250612bdc64271bc6e9e296573d366214eda810e439958b4987e1fc9586d9",
+      "actualSha256": "41d250612bdc64271bc6e9e296573d366214eda810e439958b4987e1fc9586d9",
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "bytes": 6762,
+      "sha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed",
+      "actualSha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed",
+      "matches": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "bytes": 20293,
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "actualSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "bytes": 14150,
+      "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d",
+      "actualSha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d",
+      "matches": true
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "bytes": 13521,
+      "sha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1",
+      "actualSha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1",
+      "matches": true
+    },
+    {
+      "path": "scripts/forge-artifacts.py",
+      "bytes": 22572,
+      "sha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8",
+      "actualSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8",
+      "matches": true
+    },
+    {
+      "path": "foundry.toml",
+      "bytes": 3814,
+      "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "actualSha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "matches": true
+    },
+    {
+      "path": "remappings.txt",
+      "bytes": 520,
+      "sha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "actualSha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "matches": true
+    }
+  ],
+  "row_review": [
+    {
+      "category": "weighted-nft",
+      "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/weighted/probe.results.json#/rpc/550",
+      "rawFileSha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/0",
+      "routeCount": 14,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "original principal P0, native9 WD",
+      "remainingUnit": "R=P0-claimedPrincipal; stakingGons and vested/due amounts are not principal",
+      "equation": "For each complete contribution credit Ci: floor(Ci*R/P0). Surrender changes NFT owner only; historical position tuple remains unchanged.",
+      "disabled": "Custody can succeed while later reserve/source conversion is unavailable. Routine rewards-only recovery retains principal, claimedPrincipal and NFT custody.",
+      "witnesses": [
+        {
+          "id": "MigrationLegacySourcesTest::test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+          "line": 5801,
+          "found": true
+        },
+        {
+          "id": "MigrationLegacySourcesTest::test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+          "line": 5802,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "earlier-nft",
+      "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/code",
+      "rawFileSha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/1",
+      "routeCount": 11,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "source originalShares accounting units, neither effective reward weight nor physical LP",
+      "remainingUnit": "getPosition(id).originalShares; future unlock does not zero principal",
+      "equation": "floor(C0*remainingOriginalShares/configuredOriginalShares). Source convertToAssets(originalShares) is a separate LP-value read, never the compensation numerator.",
+      "disabled": "Actual maturity close reverts VaultDisabled(E-S) at the pin; NFT surrender and standalone reward claim can still work. Recovery needs external enablement/income.",
+      "witnesses": [
+        {
+          "id": "MigrationLegacySourcesTest::test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+          "line": 5794,
+          "found": true
+        },
+        {
+          "id": "MigrationLegacySourcesTest::test_missingApprovalRollsBackPretransferAcceptanceForBothSources",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+          "line": 5797,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "weighted-liquid",
+      "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/8/code",
+      "rawFileSha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/2",
+      "routeCount": 6,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original WD native9 Q0, partitioned from rewards and other representations",
+      "remainingUnit": "Q0-consumed native9",
+      "equation": "q=walletDebit=custodyDelta. c=C when q=Q else floor(C*q/Q); C0 is loaded once from the complete original.",
+      "disabled": "Source conversion WD.exchangeIn(WD,q,DTF,min,Migration,false,deadline) is separate from surrender and must satisfy the actual source output/minimum.",
+      "witnesses": [
+        {
+          "id": "MigrationWeightedLiquidTest::test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4903,
+          "found": true
+        },
+        {
+          "id": "MigrationWeightedLiquidTest::test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4901,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "earlier-liquid",
+      "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/code",
+      "rawFileSha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/3",
+      "routeCount": 8,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original ED native18 Q0",
+      "remainingUnit": "Q0-consumed native18",
+      "equation": "q=walletDebit=custodyDelta; c=C if q=Q else floor(C*q/Q). Recover through E-P.exchangeIn(ED,q,DTF,min,Migration,false,deadline), not ED primary burn.",
+      "disabled": "Disabled E-S/registry prevents the working reserve swap until actual external enablement. The old native-burn TransferFromFailed is not permanent inability.",
+      "witnesses": [
+        {
+          "id": "MigrationEarlierLiquidTest::test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3510,
+          "found": true
+        },
+        {
+          "id": "MigrationEarlierLiquidTest::test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3508,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "weighted-receipt",
+      "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/weighted/probe.results.json#/rpc/44",
+      "rawFileSha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/4",
+      "routeCount": 9,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original ownership gons Q0; native9 approval/transfer arguments are not gons",
+      "remainingUnit": "Q=eligible original gons minus consumed gons; unrepresentable residue remains outstanding",
+      "equation": "native transfer n moves q=n*k after synchronization. Both endpoints must move exactly q with unchanged k; c=C if q=Q else floor(C*q/Q). Full-account unstake retires all account gons and needs separate attribution.",
+      "disabled": "Source synchronization/lock failures roll back surrender; unsolicited and newly allocated role gons stay unbooked. Current display growth never reprices compensation.",
+      "witnesses": [
+        {
+          "id": "MigrationWeightedReceiptTest::test_partialAndDivisibleTerminalConsumeExactGonsAndCreateFreshFundedCliffs",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4913,
+          "found": true
+        },
+        {
+          "id": "MigrationWeightedReceiptTest::test_lateBondCallbackRevertsSourceFundingCustodyAndCreditThenRejectsReentry",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4912,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "earlier-receipt",
+      "address": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/code",
+      "rawFileSha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/5",
+      "routeCount": 15,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original internal shares I0, distinct from native18 display and floored external shares",
+      "remainingUnit": "Q=I0-consumedInternalShares; NFT-sale external bucket E plus remainder R stays separate from standalone B",
+      "equation": "Transfer n native18 moves q=floor(n*1e27/rTransfer). Public endpoint floors bound q; singleton inversion proves rTransfer equals rBefore=rAfter. Conservation is E*1e9+R+B with R<1e9; c=C if q=Q else floor(C*q/Q).",
+      "disabled": "Standalone/NFT receipt redemption requires actual protocol-NFT reward income; present shortfall, native-exit failure or zero expansion after time advance is conditional availability.",
+      "witnesses": [
+        {
+          "id": "MigrationEarlierReceiptTest::test_bothEndpointCarriesPreserveUnrelatedInternalFractions",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3521,
+          "found": true
+        },
+        {
+          "id": "MigrationEarlierReceiptTest::test_lateReceiverRollbackReentryAndLaterDonationRemainSeparate",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3523,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "weighted-sy",
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "claimed-sy-source/source/raw/source-identities.json#/identities/2/code",
+      "rawFileSha256": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/6",
+      "routeCount": 9,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original static SY native9 Q0; backing WS gons are infrastructure, not a second original",
+      "remainingUnit": "Q0-consumed static shares",
+      "equation": "q=actual static SY custody delta. c=C if q=Q else floor(C*q/Q). redeem(Migration,q,WS,min,false) burns selected SY and measures returned WS gons; no flat conversion inferred.",
+      "disabled": "Approved custody and later SY redemption/WS unstake/WD conversion have separate failure boundaries; source reward synchronization may fail without altering committed earlier surrender.",
+      "witnesses": [
+        {
+          "id": "MigrationWeightedSyTest::test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4932,
+          "found": true
+        },
+        {
+          "id": "MigrationWeightedSyTest::test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4931,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "claim-vault",
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "claimed-sy-source/source/raw/source-identities.json#/identities/1/code",
+      "rawFileSha256": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/7",
+      "routeCount": 9,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible direct claim-vault native19 shares Q0",
+      "remainingUnit": "Q0-consumed native19 shares",
+      "equation": "redeem(q19,Migration,Migration) returns measured native9 SY. No fixed 1e10 divisor or current-source formula is assumed. Actual controlled deposit 3000 SY yielded 29999999967592 vault shares; source outputs and redemption deltas are receipt-bound. Compensation uses q19/Q19, not SY output.",
+      "disabled": "Early source-admission missing-source/acquisition report is historical. Later direct controlled-wallet receipts and rollback witnesses exist; no exact legacy-source recompilation/equivalence is claimed.",
+      "witnesses": [
+        {
+          "id": "MigrationClaimVaultTest::test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3562,
+          "found": true
+        },
+        {
+          "id": "MigrationClaimVaultTest::test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3561,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "dtf-custody-se",
+      "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/12/code",
+      "rawFileSha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/8",
+      "routeCount": 5,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original native28 W-SD shares Q0",
+      "remainingUnit": "Q0-consumed native28 shares",
+      "equation": "Actual 1e18 DTF deposit yielded 1e28 shares in the retained controlled-wallet witness. redeem(q28,Migration,Migration) returns actual measured native18 DTF. Compensation consumes q28/Q28, never q18 DTF.",
+      "disabled": "Actual source redemption/positive minimum and downstream funding are enforced separately; no invented output or receipt from a disabled source is booked.",
+      "witnesses": [
+        {
+          "id": "MigrationDtfCustodySeTest::test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4940,
+          "found": true
+        },
+        {
+          "id": "MigrationDtfCustodySeTest::test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4939,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "weighted-weth-se",
+      "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/11/code",
+      "rawFileSha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/9",
+      "routeCount": 5,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original native18 SE shares Q0",
+      "remainingUnit": "Q0-consumed native18 SE shares",
+      "equation": "q=walletDebit=custodyDelta. Recovery exchangeIn(source,q,DTF,min,Migration,false,deadline) returns one uint256 native18 DTF, measured before/after; c=C if q=Q else floor(C*q/Q).",
+      "disabled": "isDisabled=true at the source pin. Executable local enablement witness supersedes older blanket no-recovery conclusions; enabling is external source authority, not granted by Migration.",
+      "witnesses": [
+        {
+          "id": "MigrationWeightedWethSeTest::test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3590,
+          "found": true
+        },
+        {
+          "id": "MigrationWeightedWethSeTest::test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3587,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "earlier-se",
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/9/code",
+      "rawFileSha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/10",
+      "routeCount": 5,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original native18 E-S shares Q0",
+      "remainingUnit": "Q0-consumed native18 E-S shares",
+      "equation": "q=walletDebit=custodyDelta; c=C if q=Q else floor(C*q/Q). Fixed E-S.exchangeIn(E-S,q,DTF,min,Migration,false,deadline) measures actual native18 DTF output; a zero output never consumes booked inventory.",
+      "disabled": "isDisabled=true at pin; local actual registry enablement and non-dust source income/acquisition are prerequisites. Dust failure is not permanent inability.",
+      "witnesses": [
+        {
+          "id": "MigrationEarlierSeTest::test_genuineOriginalHolderSurrendersIntoFreshFundedBondsWithDisabledRecovery",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3552,
+          "found": true
+        },
+        {
+          "id": "MigrationEarlierSeTest::test_actualChildFundingFailureRestoresSourceAllowanceAndEveryBudget",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3547,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "weighted-lp",
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/13/code",
+      "rawFileSha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/11",
+      "routeCount": 5,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original physical LP native18 Q0; exclude protocol/fee-minted LP and NFT-accounting shares",
+      "remainingUnit": "Q0-consumed native18 physical LP",
+      "equation": "Selected LP q is held and booked. Conditional authorized exit burns q with supplyAfter=supplyBefore-q+feeMint; actual DTF output is measured and feeMint remains unbooked.",
+      "disabled": "Deployed weighted guard permits actual current fee recipient as an exception. Oracle-owner feeTo change on a local fork proves conditional access; Migration cannot self-grant it.",
+      "witnesses": [
+        {
+          "id": "MigrationWeightedLpTest::test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3576,
+          "found": true
+        },
+        {
+          "id": "MigrationWeightedLpTest::test_bondReceiverRejectionRollsBackActualPullFundingAndInventory",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3573,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "earlier-lp",
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/10/code",
+      "rawFileSha256": "c1769d1b6711f5c8da9be1c2970604294198b4e8e34b207bd97c1e5de57897f1",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/12",
+      "routeCount": 8,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "eligible original physical LP native18 Q0, distinct from E-N originalShares and reward weights",
+      "remainingUnit": "Q0-consumed native18 physical LP held permanently after eligible surrender",
+      "equation": "Custody q=walletDebit=custodyDelta; c=C if q=Q else floor(C*q/Q). Unauthorized withdrawal reverts NotOwner; holdings/supply remain unchanged. No authorized DTF conversion equation exists for Migration under this immutable source surface.",
+      "disabled": "Permanent protocol custody follows owner-only exits and absence of an admitted parent/NFT/collector forwarding path, not temporary disablement, dust or lack of income. W-P feeTo exception does not exist here.",
+      "witnesses": [
+        {
+          "id": "MigrationEarlierLpTest::test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 3539,
+          "found": true
+        },
+        {
+          "id": "MigrationLegacyLpExitTest::test_earlierLpCannotExitThroughFeeRoleTimeOrParentIntake",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+          "line": 5787,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    },
+    {
+      "category": "token-staking-preparation",
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "rawRuntimeRef": "claimed-sy-source/source/raw/source-identities.json#/identities/0/code",
+      "rawFileSha256": "26f5dc65500c7120210bdde6d5910527e0879ed4d2e723e9ffce0a7406ec0e53",
+      "rawFileHashMatched": true,
+      "observationRef": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json#/sources/13",
+      "routeCount": 9,
+      "rawFacetJoinsMatched": true,
+      "originalUnit": "Reviewed original W0 accounting weights and original contributions; surviving eligible prepared W is separate from measured SY Q0",
+      "remainingUnit": "Track consumed raw weights once; measured Q0 is sum of actual eligible SY outputs across unique prepared claims. Prior raw-weight consumption is not undone by a later SY-surrender failure.",
+      "equation": "Source claim selects vault shares floor(qWeight*sourceHeldVaultShares/totalWeight), with the observed whole-supply exception; V.redeem sends measured native9 SY. For prepared remainder W, eligible credit is floor(C0*W/W0), then consumed by actual SY q/Q. Certificates partition nonisolated/relayed effects and exclude other representations.",
+      "disabled": "No direct approved raw-weight pull is admitted. Caller/phase/source output/canonical receipt and full original or prepared remainder evidence are required. The refused historical trace is not retried; no operational financial original is inferred.",
+      "witnesses": [
+        {
+          "id": "MigrationClaimedSyTest::test_partialOriginalSplitPreparationConservesScaledCreditThroughThreeSurrenders",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4926,
+          "found": true
+        },
+        {
+          "id": "MigrationClaimedSyTest::test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+          "line": 4923,
+          "found": true
+        }
+      ],
+      "unresolvedActualGate": null
+    }
+  ],
+  "raw_route_joins": [
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x6352211e",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x46f96023",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0xae648e90",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x081812fc",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0xa22cb465",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0xe985e9c5",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x42842e0e",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0xf400c743",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x6c7b69cb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x084c59ae",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x8a91f8bc",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-nft",
+      "target": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "selector": "0x5fcbd285",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0xeb02c301",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0x0f3767df",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0x42842e0e",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0x6352211e",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0xe985e9c5",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0x081812fc",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0xa22cb465",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "selector": "0x6c7b69cb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets"
+    },
+    {
+      "category": "earlier-nft",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0xb63a9ea9",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "weighted-liquid",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "selector": "0x313ce567",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-liquid",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-liquid",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-liquid",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-liquid",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "selector": "0x89d61912",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-liquid",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0xcaaf4702",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0xd7cb29d0",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0x313ce567",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-liquid",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0x313ce567",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0x8a91f8bc",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0x79a67521",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0xe082f1d4",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-receipt",
+      "target": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "selector": "0x0910d5ea",
+      "rawFacetMatches": true,
+      "rawHashMatches": null,
+      "rawAbiMatches": null,
+      "observation": "conformance-20261114/task-3/source-missing-runtime.log"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0xa9059cbb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0xdd62ed3e",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x313ce567",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0xf5eb42dc",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x3a98ef39",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x540385a3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x8a91f8bc",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0xcf77880f",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0xc6e6f592",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "selector": "0x2fbc6fea",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0xbfe55606",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "earlier-receipt",
+      "target": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "selector": "0xb63a9ea9",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x313ce567",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x76d5de85",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x3ba0b9a9",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x071bc3c9",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0xcbe52ae3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "weighted-sy",
+      "target": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "selector": "0x769f8e5d",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": true,
+      "observation": "evidence/weighted/probe.results.json#/selectors"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x38d52e0f",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x313ce567",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x18160ddd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x01e1d114",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x4cdad506",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0xba087652",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "claim-vault",
+      "target": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "dtf-custody-se",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "dtf-custody-se",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "selector": "0xa9059cbb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "dtf-custody-se",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "dtf-custody-se",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "dtf-custody-se",
+      "target": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "selector": "0xba087652",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-weth-se",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-weth-se",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "selector": "0xa9059cbb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-weth-se",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-weth-se",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-weth-se",
+      "target": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-se",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-se",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "selector": "0xa9059cbb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-se",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-se",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-se",
+      "target": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-lp",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-lp",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "selector": "0xa9059cbb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-lp",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-lp",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "weighted-lp",
+      "target": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0xa9059cbb",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0xd02d3063",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0xff9a34c0",
+      "rawFacetMatches": true,
+      "rawHashMatches": null,
+      "rawAbiMatches": null,
+      "observation": "conformance-20261114/task-3/source-custody-live.log"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0x84eb9bce",
+      "rawFacetMatches": true,
+      "rawHashMatches": null,
+      "rawAbiMatches": null,
+      "observation": "conformance-20261114/task-3/source-custody-live.log"
+    },
+    {
+      "category": "earlier-lp",
+      "target": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "selector": "0x50a7e68e",
+      "rawFacetMatches": true,
+      "rawHashMatches": null,
+      "rawAbiMatches": null,
+      "observation": "conformance-20261114/task-3/source-custody-live.log"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0x70a08231",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0x18160ddd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0xab518e6e",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0xb1c9fe6e",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0xcc447fba",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0xa224dcb7",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0xbcb8e5a5",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0x095ea7b3",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    },
+    {
+      "category": "token-staking-preparation",
+      "target": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "selector": "0x23b872dd",
+      "rawFacetMatches": true,
+      "rawHashMatches": true,
+      "rawAbiMatches": null,
+      "observation": "claimed-sy-source/source/raw/source-identities.json#/identities"
+    }
+  ],
+  "archive_pointers": [
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/rpc/550",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-nft",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/code",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-nft",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "weighted-liquid",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/8/code",
+      "exists": true
+    },
+    {
+      "category": "weighted-liquid",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-liquid",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-liquid",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-liquid",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-liquid",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-liquid",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/code",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-liquid",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/rpc/44",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-receipt",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/code",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0x4ac89ad061a531fa62ddceed53520c2750113b01/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "earlier-receipt",
+      "ref": "evidence/earlier-cp/probe-alchemy-retry.source.json#/proxies/0xaf0e1967c8f755c747615c5427108bc549ca1122/facets",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities/2/code",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "weighted-sy",
+      "ref": "evidence/weighted/probe.results.json#/selectors",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities/1/code",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "claim-vault",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/12/code",
+      "exists": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "dtf-custody-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/11/code",
+      "exists": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-weth-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/9/code",
+      "exists": true
+    },
+    {
+      "category": "earlier-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-se",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/13/code",
+      "exists": true
+    },
+    {
+      "category": "weighted-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "weighted-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities/10/code",
+      "exists": true
+    },
+    {
+      "category": "earlier-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "earlier-lp",
+      "ref": "evidence/other-sources/probe-alchemy-r2.sources.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities/0/code",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    },
+    {
+      "category": "token-staking-preparation",
+      "ref": "claimed-sy-source/source/raw/source-identities.json#/identities",
+      "exists": true
+    }
+  ],
+  "markdown_links": [
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/runtime-hash-checks.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "source-manifest.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-reserved-complete.log",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-reserved-mints.log",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "conformance-20261114/task-3/source-negative.log",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "final-fork-20261113/03.log",
+      "exists": true
+    },
+    {
+      "index": "source-route-matrix.md",
+      "path": "recovery-route-disposition.md",
+      "exists": true
+    },
+    {
+      "index": "recovery-route-disposition.md",
+      "path": "source-manifest.json",
+      "exists": true
+    },
+    {
+      "index": "recovery-route-disposition.md",
+      "path": "conformance-20261114/task-3/source-observations.json",
+      "exists": true
+    },
+    {
+      "index": "recovery-route-disposition.md",
+      "path": "conformance-20261114/task-3/baseline-recovery-route-disposition.md",
+      "exists": true
+    },
+    {
+      "index": "recovery-route-disposition.md",
+      "path": "conformance-20261114/task-3/recovery-authority.json",
+      "exists": true
+    },
+    {
+      "index": "recovery-route-disposition.md",
+      "path": "conformance-20261114/task-3/source-custody-live.log",
+      "exists": true
+    },
+    {
+      "index": "recovery-route-disposition.md",
+      "path": "conformance-20261114/task-3/",
+      "exists": true
+    }
+  ],
+  "authority_excerpt_comparisons": [
+    {
+      "surface": "E-P withdrawal",
+      "start": 7632,
+      "end": 7639,
+      "matches": true
+    },
+    {
+      "surface": "E-P withdrawal",
+      "start": 14724,
+      "end": 14751,
+      "matches": true
+    },
+    {
+      "surface": "parent",
+      "start": 24999,
+      "end": 25014,
+      "matches": true
+    },
+    {
+      "surface": "parent",
+      "start": 25106,
+      "end": 25123,
+      "matches": true
+    },
+    {
+      "surface": "parent",
+      "start": 25862,
+      "end": 25866,
+      "matches": true
+    },
+    {
+      "surface": "nftForwarding",
+      "start": 16206,
+      "end": 16214,
+      "matches": true
+    },
+    {
+      "surface": "nftForwarding",
+      "start": 16463,
+      "end": 16490,
+      "matches": true
+    },
+    {
+      "surface": "nftForwarding",
+      "start": 16693,
+      "end": 16697,
+      "matches": true
+    },
+    {
+      "surface": "collector",
+      "start": 5019,
+      "end": 5045,
+      "matches": true
+    },
+    {
+      "surface": "W-P exception",
+      "start": 14,
+      "end": 33,
+      "matches": true
+    }
+  ],
+  "preliminary_verdict_is_historical": true,
+  "earlier_reserved_ids": {
+    "classification": "reserved non-qualifying source roles",
+    "basis": "Exact deployed DETFNFTVaultFacet initialization and role constants; pinned reservedBondNftsWired=true; per-ID owners/positions; separate ordinary ID 3 acquisition receipt.",
+    "raw_source": "docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+    "raw_source_sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397",
+    "source_ranges": [
+      [
+        1353,
+        1355
+      ],
+      [
+        16262,
+        16321
+      ],
+      [
+        16473,
+        16483
+      ]
+    ],
+    "live_log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-complete.log",
+    "mint_receipts_recovered": false,
+    "failed_request": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-mints.log",
+    "is_actual_gate": false,
+    "reason": "The missing exact mint transaction is supplemental provenance; authenticated deployed initialization and live wired/position reads establish reserved source roles independently. No eligibility inference from tokenId < 3 and no wallet no-exposure conclusion."
+  },
+  "runtime_checks": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-hash-checks.json",
+    "sha256": "f3b1ed3e39dc335886ae3584323402e0578b0d2aeadcb377a2093a35d8b4e19d",
+    "reused": true,
+    "passed": 34,
+    "failed": 0,
+    "note": "Existing actual cast invocations and exits retained; no repeat of completed runtime hashing. Weighted NFT local journal /rpc/550 has identical code to pinned /rpc/2; W-R /rpc/44 is pinned."
+  },
+  "actual_unresolved_gates": [],
+  "limits": [
+    "No approved exhaustive operational exposure or allocation dataset is supplied or inferred.",
+    "Source closure does not certify task 6 implementation, two NFT 3 compensation bonds, manual pricing changes, operator execution, gas bounds or final whole-tree checks.",
+    "The unchanged source-only tests include the predecessor combined weighted NFT 3 flow; it is not evidence of the later required two-bond funding behavior. Do not edit that test merely to make an implementation claim green.",
+    "External source enablement, reward income and the W-P current fee recipient role remain explicit conditional prerequisites. They are not permanent inability.",
+    "No fresh Forge, RPC, helper, trace, install, source change or delegation occurred during this resume."
+  ]
+}
+

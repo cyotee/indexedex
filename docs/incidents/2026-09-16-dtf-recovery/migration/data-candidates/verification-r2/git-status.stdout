@@ -1,0 +1,11 @@
+ M docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+ M scripts/recovery/dtf-migration/cli.ts
+?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/
+?? scripts/recovery/dtf-migration/candidate-input.ts
+?? scripts/recovery/dtf-migration/candidate-inventory.test.ts
+?? scripts/recovery/dtf-migration/candidate-inventory.ts
+?? scripts/recovery/dtf-migration/candidate-nfts.ts
+?? scripts/recovery/dtf-migration/candidate-proofs.ts
+?? scripts/recovery/dtf-migration/candidate-reconciliation.ts
+?? scripts/recovery/dtf-migration/candidates.test.ts
+?? scripts/recovery/dtf-migration/candidates.ts

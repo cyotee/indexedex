@@ -1,0 +1,89 @@
+{
+  "type": "DoneClaim",
+  "task": 1,
+  "title": "Reconcile original requirements with approved manual pricing",
+  "status": "completed",
+  "acceptance_met": true,
+  "verification_status": "executor-checks-passed; independent AdversarialVerify remains required for FullyDone",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "source_content_fingerprint": {
+    "original_p_sha256": "f5816a8810961ad311bd221fe6e3bbb3b599fa9ad43b76d4c403f48de4aa6d5c",
+    "amended_p_sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+    "approved_plan_sha256": "31a0f3daff03b0e51830f5428168656eaeb19f81f40dee6f3e7f619be7230683"
+  },
+  "changed_files": [
+    "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-git-status.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-p.diff",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-tracked-diff.stat",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p.diff",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p-diff.stat",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/git-diff-check.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/source-hashes.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/environment.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/requirements-reconciliation.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-git-status.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-files.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-diff.stat",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/commands.json",
+    ".omo/ulw-execute/dtf-conformance/task-1-done.json"
+  ],
+  "tests": [],
+  "test_disposition": "No prose unit tests, builds, contract tests, RPC, installs, commits or public actions; task 1 explicitly requires document inspection rather than prose tests.",
+  "manual_qa": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/requirements-reconciliation.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p.diff",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/git-diff-check.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/commands.json"
+  ],
+  "verification": {
+    "plan_reread": "Complete 729-line approved plan and complete original P read before editing; task 1 amendment targets reinspected after editing.",
+    "happy_document_qa": "Complete amended P and all 495 diff lines read; exact section 1.10 operative text matched the approved plan.",
+    "failure_document_qa": "Required obsolete-clause grep returned zero matches; broader search left only three explicit precedence/supersession capture references and no removed artifact names.",
+    "preservation": "15 MIG-P rows, five E gates, all 53 MIG-AC rows/IDs and 13 section 8.1 examples preserved; section 8.1 is byte-identical to the original.",
+    "git_diff_check": "GIT_MASTER=1 git diff --check exited 0 with empty output.",
+    "tracked_diff": "Only P appears in the tracked diff.",
+    "json_validation": "qa-summary.json, preservation-check.json, external-status-delta.json, commands.json and this claim parsed successfully; the first three also produced QA_ASSERTIONS_OK.",
+    "dirty_worktree": "Baseline/final status snapshots recorded 128 additions and 88 removals, all under concurrent task-2/task-3 paths. Zero changes occurred outside task-1/task-2/task-3. Concurrent files were not edited or reverted.",
+    "dependencies": "No dependency edit by task 1. node_modules remains a symlink to the primary checkout. lib/crane is not a symlink and is currently populated; bootstrap had reported it empty, so the different current state is recorded without altering it.",
+    "review_findings": "F2 live-composition prerequisite is explicitly superseded; F1/F3-F6 remain open for their owning implementation/evidence tasks."
+  },
+  "adversarial_classes": {
+    "stale_state": "PASS: final P hash and all content checks were computed after the last wording edit.",
+    "dirty_worktree": "PASS: exact baseline/final status deltas and concurrent owners are recorded; outside-task delta is zero and no cleanup removed concurrent work.",
+    "misleading_success_output": "PASS: zero-match grep, empty diff-check output, JSON parse results and absent test commands are reported literally; no runtime behavior is claimed.",
+    "generated_or_cached_artifacts": "PASS: p.diff and source-hashes.txt bind the final P bytes; JSON artifacts were parsed after generation.",
+    "malformed_input": "NOT APPLICABLE: no executable input parser was added. Evidence JSON was still parsed as a boundary check.",
+    "untrusted_external_text": "PASS: the primary-checkout review PRD was used only as referenced review evidence and did not authorize edits.",
+    "cancel_resume": "NOT APPLICABLE: no resumable operator or long-running workflow was invoked.",
+    "long_commands": "NOT APPLICABLE: no compile, network or other long command was started; all shell commands ran in the foreground.",
+    "flaky_tests": "NOT APPLICABLE: no test was added or run.",
+    "mid_operation_interruptions": "PASS: the unavailable apply_patch attempts changed no P bytes, proven by the original hash immediately before the successful exact-replacement edit."
+  },
+  "cleanup": {
+    "owned_temporary_resources_created": [],
+    "background_processes_or_monitors_started": [],
+    "removed_resources": [],
+    "resources_requiring_teardown": [],
+    "evidence_retained_intentionally": true,
+    "dependencies_edited": false,
+    "commits_created": false,
+    "result": "No cleanup was required. Only P and authorized task-1 evidence/completion files were created or amended; concurrent task files were left intact."
+  },
+  "tooling_deviation": "No apply_patch shell executable existed and the deferred harness apply_patch tool was inactive. The prepared 57-hunk patch was validated for unique ordered non-overlapping matches and applied with the active exact-replacement editor; four full-read consistency replacements followed. This is disclosed in requirements-reconciliation.md and commands.json.",
+  "risks": [
+    "Independent AdversarialVerify has not run in this executor; this DoneClaim is not a FullyDone verdict.",
+    "No runtime pricing, contract, operator or deployment behavior is verified by this documentation-only task; future witnesses remain assigned in requirements-reconciliation.md.",
+    "Concurrent task-2/task-3 work and the externally changed populated lib/crane directory remain in the worktree and were deliberately not altered.",
+    "The optional Biome LSP was unavailable; no install was attempted, and Python JSON validation was used instead.",
+    "The requested apply_patch tool was unavailable; the equivalent validated exact-replacement edit mechanism is disclosed for independent review."
+  ]
+}

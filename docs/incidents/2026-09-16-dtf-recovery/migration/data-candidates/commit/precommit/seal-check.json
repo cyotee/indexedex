@@ -1,0 +1,129 @@
+[
+  {
+    "sealPath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/seal.json",
+    "bytes": 1747,
+    "sha256": "5f5561a432309399331c3b2f95f9cabd50c2d65acd22b1de7d90edc7571996b8",
+    "members": [
+      {
+        "key": "manifest",
+        "path": "manifest.json",
+        "expectedBytes": 17767,
+        "actualBytes": 17767,
+        "expectedSha256": "34d3c438937d1dc0f1c42bc861bb3331deeabd36480e40a84458a535819ff892",
+        "actualSha256": "34d3c438937d1dc0f1c42bc861bb3331deeabd36480e40a84458a535819ff892",
+        "match": true
+      },
+      {
+        "key": "report",
+        "path": "report.md",
+        "expectedBytes": 25267,
+        "actualBytes": 25267,
+        "expectedSha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5",
+        "actualSha256": "75f5b24fb6f84e873ea348eb9a774ed9006e3f4aa84f835354f73f67a61dfaa5",
+        "match": true
+      },
+      {
+        "key": "sourceManifest",
+        "path": "source-manifest.json",
+        "expectedBytes": 12911,
+        "actualBytes": 12911,
+        "expectedSha256": "f3f8f2df3a7eb9ec3f67ad6b3b72490eb8a8b3787e4c6ff9baf29d02ef8dc13c",
+        "actualSha256": "f3f8f2df3a7eb9ec3f67ad6b3b72490eb8a8b3787e4c6ff9baf29d02ef8dc13c",
+        "match": true
+      },
+      {
+        "key": "cleanup",
+        "path": "cleanup.json",
+        "expectedBytes": 1432,
+        "actualBytes": 1432,
+        "expectedSha256": "ffece87bacdfed8505903b1be0b3eed999c86814176737d54654916c0bc15b9d",
+        "actualSha256": "ffece87bacdfed8505903b1be0b3eed999c86814176737d54654916c0bc15b9d",
+        "match": true
+      },
+      {
+        "key": "canonicalCandidate",
+        "path": "full-a/candidates.json",
+        "expectedBytes": 16570240,
+        "actualBytes": 16570240,
+        "expectedSha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278",
+        "actualSha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278",
+        "match": true
+      }
+    ]
+  },
+  {
+    "sealPath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/seal.json",
+    "bytes": 828,
+    "sha256": "1d6e06d99d12727803020b27c13492f66820781969108107fb43a7eaf9e39ccc",
+    "members": [
+      {
+        "key": "manifest",
+        "path": "manifest.json",
+        "expectedBytes": 37014,
+        "actualBytes": 37014,
+        "expectedSha256": "2722d54910c9609e28497deb4fee2586f2bed578d9a621189fdb5570cc14b3db",
+        "actualSha256": "2722d54910c9609e28497deb4fee2586f2bed578d9a621189fdb5570cc14b3db",
+        "match": true
+      },
+      {
+        "key": "report",
+        "path": "report.md",
+        "expectedBytes": 19047,
+        "actualBytes": 19047,
+        "expectedSha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa",
+        "actualSha256": "2fb2b8c2531a5682c20789018bbfa95884fb660837f57c5a9646309cebb5a7fa",
+        "match": true
+      },
+      {
+        "key": "canonicalCandidates",
+        "path": "proof02/full-a/candidates.json",
+        "expectedBytes": 16570240,
+        "actualBytes": 16570240,
+        "expectedSha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278",
+        "actualSha256": "76f56c067084e04931a335ceef45ee5725153db9a39fb1619c9eab78f46ed278",
+        "match": true
+      }
+    ]
+  },
+  {
+    "sealPath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification/seal.json",
+    "bytes": 678,
+    "sha256": "d1be625e746c52436524cd82a8ab6f54455a1c42a113ea165b0c59f4e0dd982d",
+    "members": [
+      {
+        "key": "report",
+        "path": "report.md",
+        "expectedBytes": 17476,
+        "actualBytes": 17476,
+        "expectedSha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2",
+        "actualSha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2",
+        "match": true
+      },
+      {
+        "key": "manifest",
+        "path": "manifest.json",
+        "expectedBytes": 2619,
+        "actualBytes": 2619,
+        "expectedSha256": "40441ced6c053e02c92ce130d5d65b04f76844b7d8a6b4720842563f2f7cd54c",
+        "actualSha256": "40441ced6c053e02c92ce130d5d65b04f76844b7d8a6b4720842563f2f7cd54c",
+        "match": true
+      }
+    ]
+  },
+  {
+    "sealPath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation/seal.json",
+    "bytes": 346,
+    "sha256": "fe9d0e574ea654a1e8fc7ce565dd159c82115030b194c7b3198796b06c8a9dea",
+    "members": [
+      {
+        "key": "manifest",
+        "path": "manifest.json",
+        "expectedBytes": 916,
+        "actualBytes": 916,
+        "expectedSha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1",
+        "actualSha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1",
+        "match": true
+      }
+    ]
+  }
+]

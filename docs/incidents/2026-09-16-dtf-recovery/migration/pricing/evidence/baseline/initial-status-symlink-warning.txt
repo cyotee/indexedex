@@ -1,0 +1,15 @@
+UTC=2026-11-10T13:49:57Z
+CWD=/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02
+TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw
+NODE_COMPILE_CACHE=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw/node-compile-cache
+BUN_RUNTIME_TRANSPILER_CACHE_PATH=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.iud2vw/bun-transpiler-cache
+RECORDER_PID=21467
+90ff0307a7a8e084aa073e02eff125e9c7973933
+work/dtf-migration-phase-02
+error: expected submodule path 'lib/crane' not to be a symbolic link
+drwxr-xr-x@    6 cyotee  staff     192 Oct 22 05:15 cache_forge
+lrwxr-xr-x@    1 cyotee  staff      42 Nov 10 05:43 lib/crane -> /Users/cyotee/Projects/indexedex/lib/crane
+lrwxr-xr-x@    1 cyotee  staff      45 Nov 10 05:43 node_modules -> /Users/cyotee/Projects/indexedex/node_modules
+drwxr-xr-x@ 6108 cyotee  staff  195456 Nov  7 12:24 out
+/Users/cyotee/Projects/indexedex/lib/crane
+/Users/cyotee/Projects/indexedex/node_modules

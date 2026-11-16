@@ -1,0 +1,124 @@
+{
+  "task": 13,
+  "date": "2026-11-15",
+  "attempt": 2,
+  "verdict": "needs-fix",
+  "failure_class": "product",
+  "confirmed": false,
+  "task_completed": false,
+  "verification_completed": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/verification/report-r2.md",
+    "bytes": 10253,
+    "sha256": "86874c9b9230bd04a2c13a4968d72acc51309dda7844678733787b4ba5a1301a"
+  },
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-13-done.json",
+    "bytes": 13660,
+    "sha256": "eef2ab8973d415c07fad4aa0f8fea9f317b69b5a5b08918749f5489bd9378cc7",
+    "completed": false,
+    "status": "incomplete",
+    "size_change_observed": false,
+    "complete_reread_identical": true,
+    "modified": false
+  },
+  "failure_signature": "operator claimed-SY witness pin does not match compiled router hash; exit 1",
+  "checks": {
+    "pin": {
+      "unchanged_from_prior_claim": true,
+      "assertions_weakened": false,
+      "test_sha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231",
+      "definition_sha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c",
+      "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "claim_transcription_matches_source": true,
+      "previously_omitted_characters": "f653"
+    },
+    "approved_build": {
+      "matching_reproducible_recipe_established": false,
+      "recipe_executed_in_repair": false,
+      "recipe_executed_by_verifier": false,
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/approved-bytecode-investigation.json",
+      "historical_direct_solar_build_exit": 0,
+      "historical_direct_build_proves_pin_match": false
+    },
+    "operator": {
+      "argv": [
+        "/bin/zsh",
+        "-c",
+        "bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts"
+      ],
+      "exit_code": 1,
+      "signal": null,
+      "passed": 240,
+      "failed": 1,
+      "total": 241,
+      "files": 21,
+      "original_log_sha256": "ea428eaeadc993624ed88ca301bd4beb1a5871ef207ddbdcd0f330c2aba33861",
+      "original_log_unchanged": true,
+      "claim_presents_failure_as_green": false,
+      "new_successful_run_present": false
+    },
+    "provenance": {
+      "all_five_receipt_joins_match": true,
+      "helper_inventory_and_separate_exit_match": true,
+      "helper_stdout_bytes": 0,
+      "native_helper_argv_receipt_present": false,
+      "historical_stdout_invented": false,
+      "strict_historical_raw_log_acceptance_met": false
+    },
+    "task10": {
+      "complete_lifecycle_proof_present": false,
+      "blocker": "authority-bundle-provenance-contract",
+      "global_dtf_scarcity_established": false,
+      "lifecycle_invented": false,
+      "retained_transactions_sent": 0,
+      "public_transactions_in_retained_blocker": false,
+      "fresh_public_chain_verification": false
+    },
+    "preservation": {
+      "original_index_entries": 63,
+      "supplemental_index_entries": 7,
+      "index_mismatches": [],
+      "bound_source_artifact_verifier_entries": 8,
+      "bound_entry_mismatches": [],
+      "prior_claim_sha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd",
+      "prior_verdict_unchanged": true
+    }
+  },
+  "additional_failure_class": "harness",
+  "additional_findings": [
+    "Strict historical raw-log command-bearing evidence remains incomplete; additive provenance accurately quotes separate existing receipts.",
+    "Required task 10 lifecycle and dependent task 12 real portable purchase/donation proofs remain missing."
+  ],
+  "adversarial": {
+    "misleading_success_output": "checked: retained exit 1 and incomplete status preserved",
+    "stale_state": "checked: complete claim reread identical; all 70 indexed evidence bindings match",
+    "dirty_worktree": "checked with limits: 110 existing tracked dirty entries; unchanged source bytes compared with prior manifest; unrelated work preserved",
+    "generated_or_cached_artifacts": "checked with limits: current runtime inequality independently reproduced; artifact unchanged and source matches metadata; no fresh build or universal cache proof",
+    "hung_flaky_cancel_interruptions": "not applicable: no rerun"
+  },
+  "restrictions": {
+    "implementation_performed": false,
+    "delegated": false,
+    "forge_rerun": false,
+    "bun_cli_rerun": false,
+    "recorder_rerun": false,
+    "rpc_performed": false,
+    "installs_performed": false,
+    "commits_created": false,
+    "public_transactions_sent": false,
+    "task10_lifecycle_invented": false,
+    "tests_weakened_or_skipped_by_verifier": false,
+    "product_files_edited": false,
+    "claim_edited": false,
+    "first_verdict_edited": false,
+    "verdict_written_last": true
+  },
+  "limits": [
+    "Documentary re-verification only; no fresh compiler, test, LSP or public-chain pass claimed.",
+    "Negative historical-audit search described by the repair was not independently repeated; no matching recipe is supplied by that investigation."
+  ]
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"canCall","inputs":[{"name":"caller","type":"address","internalType":"address"},{"name":"target","type":"address","internalType":"address"},{"name":"selector","type":"bytes4","internalType":"bytes4"}],"outputs":[{"name":"allowed","type":"bool","internalType":"bool"}],"stateMutability":"view"}],"id":1874}

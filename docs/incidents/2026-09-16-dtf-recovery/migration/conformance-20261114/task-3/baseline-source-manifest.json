@@ -1,0 +1,157 @@
+{
+  "version": "migration-source-coverage-v1",
+  "status": "final-independent-review-pending",
+  "chainId": "4663",
+  "historicalProofPin": {
+    "number": "108944663",
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733"
+  },
+  "qualification": "Implementation source coverage, not live-state discovery, a funded snapshot, or an issuable allocation dataset. Refresh runtime/configuration pins before any operational execution.",
+  "sources": [
+    {
+      "category": "weighted-nft",
+      "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "units": "NFT identity and remaining fixed principal",
+      "surrender": "surrenderMigrationNft",
+      "recovery": "WeightedRewards -> WeightedUnstake -> WeightedConvert -> Donate",
+      "conditions": "Retain principal in routine harvests; NFT3 has two separately quoted/funded contributions.",
+      "runtimeCodeHash": null
+    },
+    {
+      "category": "earlier-nft",
+      "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "units": "NFT identity and original LP accounting shares",
+      "surrender": "surrenderMigrationNft",
+      "recovery": "EarlierClaim -> EarlierConvert -> Donate",
+      "conditions": "Retain principal/NFT; source SE enablement and actual new reward income may be needed. Sale is an explicit separate operation.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "weighted-liquid",
+      "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "units": "native9",
+      "surrender": "surrenderMigrationWeightedLiquid",
+      "recovery": "WeightedConvert -> Donate",
+      "conditions": "Original wallet, configured complete original and actual selected custody.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "earlier-liquid",
+      "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "units": "native18",
+      "surrender": "surrenderMigrationEarlierLiquid",
+      "recovery": "EarlierConvert -> Donate",
+      "conditions": "Fixed public reserve swap, not the broken primary-burn path; legacy SE enablement prerequisite.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "weighted-receipt",
+      "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "units": "eligible original gons; native9 transfer arguments",
+      "surrender": "surrenderMigrationWeightedReceipt",
+      "recovery": "WeightedUnstake -> WeightedConvert -> Donate",
+      "conditions": "Synchronize and preserve unsolicited/sub-native gons.",
+      "runtimeCodeHash": null
+    },
+    {
+      "category": "earlier-receipt",
+      "address": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "units": "internal original shares; native18 transfer/redemption arguments",
+      "surrender": "surrenderMigrationEarlierReceipt",
+      "recovery": "EarlierStandaloneReceiptRedeem -> EarlierConvert -> Donate",
+      "conditions": "NFT-sale E external shares plus R remainder stay separate from standalone B internal shares; reward-funded redemption needs actual source income.",
+      "runtimeCodeHash": null
+    },
+    {
+      "category": "weighted-sy",
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "units": "native9 static SY shares",
+      "surrender": "surrenderMigrationWeightedSy",
+      "recovery": "WeightedSyRedeem -> WeightedUnstake -> WeightedConvert -> Donate",
+      "conditions": "Also supports complete/full-remainder TokenStaking preparation certificates; no duplicate economic originals.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "claim-vault",
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "units": "native19 vault shares",
+      "surrender": "surrenderMigrationClaimVault",
+      "recovery": "ClaimVaultRedeem -> WeightedSyRedeem -> WeightedUnstake -> WeightedConvert -> Donate",
+      "conditions": "Actual own-share redemption and measured SY output.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "dtf-custody-se",
+      "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "units": "native28 shares",
+      "surrender": "surrenderMigrationDtfCustodySe",
+      "recovery": "DtfCustodySeRedeem -> Donate",
+      "conditions": "Actual native18 DTF output.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "weighted-weth-se",
+      "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "units": "native18 shares",
+      "surrender": "surrenderMigrationHeldSeLp",
+      "recovery": "WeightedWethSeConvert -> Donate",
+      "conditions": "Conditional actual legacy enablement; preserve unbooked shares.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "earlier-se",
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "units": "native18 shares",
+      "surrender": "surrenderMigrationHeldSeLp",
+      "recovery": "EarlierSeConvert -> Donate",
+      "conditions": "Conditional actual legacy enablement; insufficient native output rejects without confiscation.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "weighted-lp",
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "units": "native18 physical LP",
+      "surrender": "surrenderMigrationHeldSeLp",
+      "recovery": "WeightedLpRedeem -> Donate",
+      "conditions": "Requires real source liquidity authority; current-fee-recipient authorization demonstrated locally, never self-granted by Migration. Fee-minted LP remains unbooked.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "earlier-lp",
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "units": "native18 physical LP",
+      "surrender": "surrenderMigrationHeldSeLp",
+      "recovery": "permanent custody under authenticated immutable source",
+      "conditions": "Owner-only native exits and no admitted parent/collector intake; fee-role change and one-year advance do not grant authority. See recovery-route-disposition.md.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    },
+    {
+      "category": "token-staking-preparation",
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "units": "raw source weight, not approved-pull ERC20 units",
+      "surrender": "public source claim then configured SY surrender",
+      "recovery": "claimed-SY route above",
+      "conditions": "Direct, delegated, wallet-relayed and generic indirect/nonisolated claim effects are authenticated. Historical unavailable trace remains unqueried; operational financial originals require review.",
+      "runtimeCodeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
+    }
+  ],
+  "evidence": [
+    "recovery-route-disposition.md",
+    "b2-public-exit-probe-20261113/",
+    "b1-source-local-20261113-r4/",
+    "resumed-integration/runtime/rehearsal-1794609007953/",
+    "final-source-20261113.json"
+  ],
+  "provenanceOnly": [
+    {
+      "asset": "DTF",
+      "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+      "role": "historical original, recovery output and ordinary new money; balance alone is not compensation"
+    },
+    {
+      "asset": "WETH",
+      "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "role": "historical contribution/funding evidence; no invented standalone compensation route"
+    }
+  ]
+}

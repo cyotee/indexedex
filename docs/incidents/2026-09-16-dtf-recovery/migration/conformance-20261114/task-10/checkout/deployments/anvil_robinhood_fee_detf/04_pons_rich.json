@@ -1,0 +1,14 @@
+{
+  "chainId": 4663,
+  "factory": "0xA5aAb3F0c6EeadF30Ef1D3Eb997108E976351feB",
+  "isToken0": false,
+  "locker": "0x736D76699C26D0d966744cAe304C000d471f7F35",
+  "pool": "0x178662106779b3d1C831D5732C204bBB6c32d6BA",
+  "poolFee": 10000,
+  "positionId": 426766,
+  "restrictionsEndBlock": 20714450,
+  "rich": "0x7d243b992f32BE821Feb90CfEcb3123a8bC5B8ed",
+  "salt": "0x8e5896675dcf673614d6c5c75fca369db8045d3bcc2fa694d683b00c4866a726",
+  "symbol": "RICH",
+  "weth": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73"
+}

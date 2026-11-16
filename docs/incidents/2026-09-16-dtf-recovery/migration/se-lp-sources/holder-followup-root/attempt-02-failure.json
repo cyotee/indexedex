@@ -1,0 +1,6 @@
+{
+  "attempt": 2,
+  "exitCode": 1,
+  "error": "Output redactor regex lost escaping and failed parsing; no usable query output accepted.",
+  "correction": "Replace regex with syntax-checked line-based URL redaction, no backslash escapes; same bounded read-only request set."
+}

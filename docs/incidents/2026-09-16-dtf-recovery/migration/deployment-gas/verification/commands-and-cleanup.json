@@ -1,0 +1,249 @@
+{
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas",
+  "receiptSummary": {
+    "total": 257,
+    "success": 233,
+    "failed": 24,
+    "bounded": true,
+    "canonical": true
+  },
+  "cleanup": {
+    "ownedNode": {
+      "monitor": "mon_W5R5WKY63MZ1GRP9",
+      "bash": "bash_4",
+      "startCommand": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas' && /bin/zsh -lic 'exec /Users/cyotee/.foundry/bin/anvil --host 127.0.0.1 --port 18561 --chain-id 4663 --fork-url \"https://robinhood-mainnet.g.alchemy.com/v2/$ALCHEMY_KEY\" --fork-block-number 108944663 --gas-limit 100000000 --disable-min-priority-fee --balance 1000000'",
+      "readiness": "Listening on 127.0.0.1:18561",
+      "stopCommand": "kill_bash({bash_id:\"bash_4\"})",
+      "stopResult": "Killed bash_4.",
+      "monitorTermination": "watcher killed (exit code 1)",
+      "interpretation": "Intentional cleanup of persistent node, not a failed verification command"
+    },
+    "impersonations": [
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      },
+      {
+        "address": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+        "started": true,
+        "stopped": true
+      }
+    ],
+    "probe": {
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas' && if lsof -nP -iTCP:18561 -sTCP:LISTEN; then exit 1; else printf 'OWNED_PORT_CLOSED\\n'; fi; test -d out && test -d cache_forge && printf 'WARM_ARTIFACTS_AND_CACHE_PRESERVED\\n'; git diff --check --ignore-submodules=all && git rev-parse HEAD",
+      "exit": 0,
+      "output": "OWNED_PORT_CLOSED\nWARM_ARTIFACTS_AND_CACHE_PRESERVED\n421072a7630a0d3d47a6f36e1062d9eae98c93e2"
+    },
+    "ownedPendingRuntime": false,
+    "sharedPort18560": "Never used or altered",
+    "subscriptions": "No websocket subscription; owned node monitor stopped; no child tasks",
+    "publicOperations": "No public transactions, signer, writes or independent public RPC commands. Owned historical fork used existing archive reads.",
+    "scope": "Only verification evidence authored; all source/test/witness files preserved."
+  },
+  "nodeInfo": {
+    "currentBlockNumber": "0x67e5d17",
+    "currentBlockTimestamp": 1794110901,
+    "currentBlockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "hardFork": "Bpo1",
+    "transactionOrder": "fees",
+    "environment": {
+      "baseFee": "0x10b0e37",
+      "chainId": 4663,
+      "gasLimit": "0x5f5e100",
+      "gasPrice": "0x10b0e37"
+    },
+    "forkConfig": {
+      "forkUrl": "[existing archive alias redacted]",
+      "forkBlockNumber": 108944663,
+      "forkRetryBackoff": 1000
+    },
+    "network": "ethereum",
+    "blobParams": {
+      "targetBlobCount": 10,
+      "maxBlobCount": 15,
+      "updateFraction": "0x7f5a51",
+      "minBlobFee": "0x1",
+      "maxBlobsPerTx": 6,
+      "blobBaseCost": 8192
+    }
+  },
+  "rpcSource": "async(method,params=[])=>{const r=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:AbortSignal.timeout(120000)});const b=await r.json();if(b.error)throw new Error(JSON.stringify({method,error:b.error}));return b.result;}",
+  "submitSource": "async(item,label,expectedStatus='0x1',trace=false)=>{const t=item.transaction??item;const envelope={from:t.from,to:t.to,data:t.input??t.data,value:t.value??'0x0',gas:bound,gasPrice:'0x77359400'};const timestamp=item.receipt?.blockTimestamp; if(timestamp!==undefined)await rpc('evm_setNextBlockTimestamp',[Number(timestamp)]);let simulation;try{simulation={ok:true,result:await rpc('eth_call',[envelope,'pending'])};}catch(error){simulation={ok:false,error:String(error)};} const hash=await rpc('eth_sendTransaction',[envelope]);await rpc('evm_mine'); const receipt=await rpc('eth_getTransactionReceipt',[hash]);const transaction=await rpc('eth_getTransactionByHash',[hash]);const block=await rpc('eth_getBlockByNumber',[receipt.blockNumber,false]); const result={label,simulation,transaction,receipt,canonical:block.hash===receipt.blockHash};ownedTransactions.push(result); if(trace)result.trace=await rpc('debug_traceTransaction',[hash,{tracer:'callTracer'}]);if(!result.canonical||receipt.status!==expectedStatus||transaction.gas!==bound)throw new Error('Receipt gate '+JSON.stringify({label,hash,status:receipt.status,gas:transaction.gas}));return result;}",
+  "replaySource": "async()=>{for(const [i,item] of infra.transactions.entries()){const holder=item.transaction.from.toLowerCase()!==dev;if(holder){if(item.index>=5)throw new Error('Unexpected sender');await rpc('anvil_setBalance',[item.transaction.from,'0x3635c9adc5dea00000']);await rpc('anvil_impersonateAccount',[item.transaction.from]);impersonations.push({address:item.transaction.from,started:true,stopped:false});}try{await submit(item,'infrastructure-'+item.index);}finally{if(holder){await rpc('anvil_stopImpersonatingAccount',[item.transaction.from]);impersonations[impersonations.length-1].stopped=true;}}if((i+1)%25===0)print('BOUNDED_REPLAY',i+1);}print('INFRASTRUCTURE_COMPLETE',ownedTransactions.length);}",
+  "inspectConstructionSource": "async(c)=>{const p=(await call(syPkg,syAbi,'preparation',[c.constructionId]))[0];const s={preparation:p.toObject(true),parentCode:await rpc('eth_getCode',[p.parent,'latest']),parentRegistered:(await call(registry,vaultQueryAbi,'isVault',[p.parent]))[0],parentFactory:(await call(factory,factoryAbi,'pkgOfAccount',[p.parent]))[0],bondCode:await rpc('eth_getCode',[p.bond,'latest']),receiptCode:await rpc('eth_getCode',[p.receipt,'latest']),children:[]};ensure(p.completed&&s.parentCode==='0x'&&!s.parentRegistered&&s.parentFactory===ethers.ZeroAddress&&s.bondCode==='0x'&&s.receiptCode==='0x','Partial parent publication');const cuts=(await call(syPkg,syAbi,'facetCuts'))[0];const ids=(await call(syPkg,syAbi,'facetInterfaces'))[0];const erc165=new ethers.Interface(['function supportsInterface(bytes4) view returns(bool)']);for(const [child,args] of [[p.rawSy,c.rawArgs],[p.stakingSy,c.stakingArgs]]){const r={address:child,code:await rpc('eth_getCode',[child,'latest']),registered:(await call(registry,vaultQueryAbi,'isVault',[child]))[0],factoryPackage:(await call(factory,factoryAbi,'pkgOfAccount',[child]))[0],factoryArguments:(await call(factory,factoryAbi,'pkgArgsOfAccount',[child]))[0],facets:(await call(child,loupeAbi,'facets'))[0].map(x=>({facetAddress:x.facetAddress,functionSelectors:Array.from(x.functionSelectors)})),interfaces:[],reads:{},storage:[]};for(const n of ['name','symbol','decimals','totalSupply','yieldToken','getTokensIn','getTokensOut','attributedSyGons','migrationAccountingPhase','assetInfo'])r.reads[n]=(await call(child,syRuntimeAbi,n)).toArray(true);for(const id of ids)r.interfaces.push({id,supported:(await call(child,erc165,'supportsInterface',[id]))[0]});const canonical=ethers.AbiCoder.defaultAbiCoder().encode([syAbi.getFunction('deployVault').inputs[0]],[args]);ensure(same(r.factoryArguments,canonical)&&same(r.factoryPackage,syPkg)&&r.registered,'SY factory/registry argument mismatch');for(const cut of cuts)for(const sel of cut.functionSelectors)ensure(r.facets.some(f=>same(f.facetAddress,cut.facetAddress)&&f.functionSelectors.includes(sel)),'SY facet routing mismatch '+sel);ensure(r.interfaces.every(x=>x.supported)&&r.reads.totalSupply[0]===0n&&r.reads.attributedSyGons[0]===0n&&r.reads.migrationAccountingPhase[0]===0n,'SY initial state mismatch');const slot=BigInt(ethers.keccak256(ethers.toUtf8Bytes('indexedex.detf.standardized.yield')))-1n;for(let i=0n;i<5n;i++)r.storage.push(await rpc('eth_getStorageAt',[child,ethers.toBeHex(slot+i,32),'latest']));ensure(r.storage.slice(2).every(x=>BigInt(x)===0n),'Nonzero SY backing/dust');r.temporaryHook=(await call(child,loupeAbi,'facetAddress',[ethers.id('postDeploy()').slice(0,10)]))[0];ensure(r.temporaryHook===ethers.ZeroAddress,'SY hook retained');await call(syPkg,syAbi,'validateChild',[child,args]);s.children.push(r);}return s;}",
+  "replayOrder": [
+    "infrastructure-replay.json.transactions in array order",
+    "first-current.json.packageReceipts in array order",
+    "first-current.json.transactions in array order",
+    "second-current.json.hookReceipts in array order",
+    "second-current.json.transactions in array order"
+  ],
+  "supplementalTransactions": [
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-transfer",
+      "hash": "0x692fb105108e977892447c90511f4ca188e6f012f4ce57b41d873cdf936578d3"
+    },
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-deposit",
+      "hash": "0xe206476d57627d50def34aab8d19232bb20e79232b64f5ca39c5f5f7dd05c945"
+    },
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-redeem",
+      "hash": "0x68b1ba6b438f975c122bbefe7a9b96bedf85a0a8a9e024aacda90163e41288ea"
+    },
+    {
+      "label": "preparent-1-0x72F003517D9BAc1CfcBDD3203eBc8B1d647a6ae0-claimRewards",
+      "hash": "0x7ba88f1b1ae6f0dabac36bc7180e62a14c261d95d123201ad365f592d4838e16"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-transfer",
+      "hash": "0xe2b8ac4ab7ec09ff762ee1917d0e22dde67ec0090d5e8f75569ddd75b9186d47"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-deposit",
+      "hash": "0x908d3993550360ccd44d6eb4938ebe38d832ef6f72711e25c2d088d4343abadd"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-redeem",
+      "hash": "0x09cfb925856c5e85fb1bdf57d0befb484b34ab747048ababf815f5c66c133a26"
+    },
+    {
+      "label": "preparent-1-0x4eE804436ac1C9cE679BF4ac1E90d272cd7e589c-claimRewards",
+      "hash": "0x032087f4ffd52702b964178cbd675e140daf1f34d6e16e02410716167b7a6dc5"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-transfer",
+      "hash": "0xb3da925483af6fedbfda365a5da56b4925e874e6f25d971fc2995829c1600519"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-deposit",
+      "hash": "0xcbfd563863e42f7a7218ecc1a8ff8fee74c8d0daf29de4ab55678c4e1a77b212"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-redeem",
+      "hash": "0x61d1ef167efa5c40c3ae6ee76ec2f1831dfea9b63b35e0e9f4cdfd00899f7d16"
+    },
+    {
+      "label": "preparent-2-0xc0226794811d36bD84d30b413F8071ADaA78071a-claimRewards",
+      "hash": "0xfc2883f4e2a6ccbd1c2f475e8893d0b337763f553a6e29501f80041b3feec5d5"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-transfer",
+      "hash": "0x883c80046bc128ea6bafdc076b5d0cf9b31773b5aca6b1ed1bc86e2f34b4cec5"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-deposit",
+      "hash": "0x704806a87a7bafae6b0fa791ec817cc1d90bedf1b966c397be21d767baace06b"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-redeem",
+      "hash": "0xbf750d81aa0b8d80c3296b23b34bfb4e1734032a02214e78ffddcbc33bf2ae06"
+    },
+    {
+      "label": "preparent-2-0x7C308ABEe01Fd73a87dbFc0AB75203b597FF33F8-claimRewards",
+      "hash": "0x9ae975f0e4fba4198b86cb3a5d639ba5efeab08c266ecb860b44d9edacf452ae"
+    },
+    {
+      "label": "parent-package-direct-init",
+      "hash": "0xb8a11ca268a776c0fbe16622cb4e5ee460cd8b8e32806948219de80074a83c4d"
+    },
+    {
+      "label": "sy-package-direct-init",
+      "hash": "0x3ddf37d2bc3d0de0c4c65cc957320d6b154a59d659b5dfb11a4d6ae7b8827072"
+    },
+    {
+      "label": "prepared-child-direct-init",
+      "hash": "0xb35cb335be0ea351075bfea8d484d37e26596ebffaf4414db24c477207f1d65d"
+    },
+    {
+      "label": "prepared-child-temporary-hook",
+      "hash": "0xe76af81b5ef5da190e3603dec1cb2f28050219c7c2391b070fb4fcc3688d9deb"
+    },
+    {
+      "label": "unprepared-cross-owner-registry",
+      "hash": "0x81628d50eb197e596a7c7fa214754dbc4125ce3d410c666a48893bf1897062c4"
+    },
+    {
+      "label": "identical-preparation-retry",
+      "hash": "0xa36125ccddf3f163900b88e8eb9eb6fc5eb6ff6f9e6d3b4cbdae8835b8c7a290"
+    },
+    {
+      "label": "bounded-finalization-retry",
+      "hash": "0xaea7b35078421c5c30dab3d065b05d4bf0672bf6f90c0b1dd57a9dd499e04e50"
+    }
+  ],
+  "harnessIssues": [
+    "Initial git status rejected the prescribed Crane symlink; read-only --ignore-submodules=all succeeded.",
+    "Artifact path was already absolute; removed erroneous worktree prefix before loading.",
+    "Ethers recursive object conversion represents nested selector arrays as objects; used explicit Array.from for selector checks before finalization."
+  ],
+  "diagnostics": "JSON LSP unavailable: biome is not installed. No dependency/configuration change made. JSON is serialized directly from parsed actual RPC data.",
+  "newCompilation": false,
+  "newSuiteExecution": false,
+  "retainedProducerExitCodes": [
+    {
+      "log": "build-01.log",
+      "exit": 0
+    },
+    {
+      "log": "core-02.log",
+      "exit": 0
+    },
+    {
+      "log": "gas-spec-03.log",
+      "exit": 1
+    },
+    {
+      "log": "witness-build-04.log",
+      "exit": 0
+    },
+    {
+      "log": "packages-simulation-05.log",
+      "exit": 1
+    },
+    {
+      "log": "witness-compile-06.log",
+      "exit": 1
+    },
+    {
+      "log": "witness-compile-07.log",
+      "exit": 0
+    },
+    {
+      "log": "packages-simulation-08.log",
+      "exit": 0
+    },
+    {
+      "log": "first-simulation-09.log",
+      "exit": 0
+    },
+    {
+      "log": "second-simulation-10.log",
+      "exit": 0
+    },
+    {
+      "log": "spec-current-11.log",
+      "exit": 1
+    },
+    {
+      "log": "fork-current-12.log",
+      "exit": 0
+    }
+  ]
+}

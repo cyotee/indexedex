@@ -1,0 +1,16 @@
+{
+  "originalPath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00007.json",
+  "originalSha256": "e84583cfbb9ba077128e6d2cdc79d01c5e9d99a74a40a45ee46fd53e620011ed",
+  "originalFailure": {
+    "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"debug_traceTransaction\",\"params\":[\"0x6ece614ad85798eef4244cc58262b3edafce211f135a66f68e0354bbf57a12bb\",{\"tracer\":\"callTracer\"}]}",
+    "response": "{\"jsonrpc\":\"2.0\",\"id\":7,\"error\":{\"code\":-32600,\"message\":\"debug_traceTransaction is not available on the Free tier - upgrade to Pay As You Go, or Enterprise for access.\"}}",
+    "httpStatus": 400,
+    "raw": true
+  },
+  "resumedHistoricalRequests": 0,
+  "resumedHistoricalTraceAttempts": 0,
+  "transaction": "0x6ece614ad85798eef4244cc58262b3edafce211f135a66f68e0354bbf57a12bb",
+  "block": "71862410",
+  "blockTransactions": 9,
+  "disposition": "unproven and unadmitted; new local fixture is not historical execution"
+}

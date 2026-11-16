@@ -71,7 +71,7 @@ contract MigrationAdministrationTest is TestBase_UniswapV4DetfMigration {
         uint256 a_ = migration.previewOriginalCredit(1 ether, 0);
         uint256 b_ = migration.previewOriginalCredit(2 ether, 1 ether);
         vm.prank(migrationOwner);
-        allocation.configureIndependentAllocations(input_);
+        allocation.configureIndependentAllocations(input_, pricingId);
         Migration.IndependentAllocation memory stored_ = migration.independentAllocation(address(this));
         assertEq(stored_.entitlements.length, 2);
         assertEq(stored_.entitlements[0].original.originalEth, 1 ether);
@@ -93,7 +93,7 @@ contract MigrationAdministrationTest is TestBase_UniswapV4DetfMigration {
         input_[0].entitlements[0] = Migration.OriginalEntitlement(bytes32("original"), 1 ether, 1 ether, bytes32(0));
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, bytes32("original")));
-        allocation.configureIndependentAllocations(input_);
+        allocation.configureIndependentAllocations(input_, pricingId);
         assertEq(migration.independentAllocation(address(0xBEEF)).totalCredit, 0);
     }
 

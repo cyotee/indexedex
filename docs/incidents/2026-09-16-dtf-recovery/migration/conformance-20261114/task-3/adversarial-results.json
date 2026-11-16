@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "classes": {
+    "stale_state": {
+      "applicable": true,
+      "result": "pass",
+      "evidence": [
+        "Exact L2 header hash/stateRoot before and after narrow source reads; Orbit L1 BLOCKNUMBER is separately qualified.",
+        "34 actual runtime hashes recomputed from raw code; proxy code is not used as a facet identifier.",
+        "Current source roots are fingerprinted; passing old logs are source-qualified rather than relabelled as new execution."
+      ]
+    },
+    "dirty_worktree": {
+      "applicable": true,
+      "result": "pass",
+      "evidence": [
+        "Actual status is dirty/untracked; task-1 PRD changes and delivered task-2 work were not overwritten.",
+        "All three source-index originals, the preliminary blocked claim and original source test are preserved.",
+        "26 selected raw archives have identical before/after bytes; no broad unrelated-byte preservation claim is made."
+      ]
+    },
+    "misleading_success_output": {
+      "applicable": true,
+      "result": "pass",
+      "evidence": [
+        "The case-green wrapper with empty exit marker and process exit 255 is rejected as acceptance.",
+        "Accepted final process exit is 0 with 13/13 current cases; wrong-hash helper process exit is 1 and completed=false, as expected.",
+        "Raw-byte helper integrity and separate EVM keccak identity are stated as different checks."
+      ]
+    },
+    "external_source_identity": {
+      "applicable": true,
+      "result": "pass",
+      "evidence": [
+        "Fourteen source-generation rows; exact target/selector/facet/hash/ABI schemas and absent TokenStaking pull selectors.",
+        "Reserved roles come from authenticated deployed initialization, live wired/ownership/position reads and independent ordinary-acquisition receipts.",
+        "Actual E-P owner/withdrawal/parent/NFT/collector routes are bound; actual W-P-only current-fee-recipient exception remains distinct."
+      ]
+    },
+    "hung_or_long_commands": {
+      "applicable": true,
+      "result": "pass",
+      "evidence": [
+        "Warm out/cache_forge seeded before first compile.",
+        "Compile jobs serialized; every long job used a persistent asynchronous monitor with completion/exit evidence.",
+        "No sleeps, polling, silence-based cancellation or competing compiler job."
+      ]
+    },
+    "generated_artifacts": {
+      "applicable": true,
+      "result": "pass",
+      "evidence": [
+        "Positive inventory/delivery passes; wrong descriptor hash fails raw-file integrity without archive modification.",
+        "Exact JSON schemas, source bindings and ABI-reference closure are checked as artifact QA; no invented historical stdout or datasets."
+      ]
+    },
+    "symlink_boundaries": {
+      "applicable": true,
+      "result": "pass within scoped source reads",
+      "evidence": [
+        "All 26 selected archive paths and ancestors were lstat-checked as regular non-symlink evidence paths.",
+        "No outward evidence symlink was followed. Existing toolchain dependency links are not treated as recovered evidence or mutated."
+      ]
+    },
+    "malformed_input": {
+      "applicable": false,
+      "reason": "Task 3 adds no input parser or parsing contract. The deliberately wrong runtime hash is valid structured input and is covered as integrity tampering; task-2 malformed-input verification is not rerun as task 3."
+    },
+    "prompt_injection": {
+      "applicable": false,
+      "reason": "Archived Solidity/ABI/runtime text is data used for source binding, not an instruction channel. No external instruction evaluator, agent retrieval feature or fetched-page automation was changed."
+    },
+    "cancel_resume": {
+      "applicable": false,
+      "reason": "The resumed node rechecks confirmed gates and preserves the preliminary claim, but does not resume a signed journal or perform an interruptible public transaction workflow."
+    },
+    "flaky_tests": {
+      "applicable": false,
+      "reason": "No timing-sensitive or random test was introduced. Existing tests use the fixed source pin and explicit fork time; the only test edit adds unchanged-state assertions in an existing case."
+    },
+    "repeated_interruptions": {
+      "applicable": false,
+      "reason": "No running command was interrupted or killed and no mid-operation checkpoint was replayed."
+    }
+  },
+  "cleanupOwnedRoots": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture"
+  ],
+  "limits": [
+    "Initial HOME-derived cache isolation is not claimed; corrected final QA uses an explicit owned HOME. No shared cache cleanup was attempted.",
+    "Exact reserved mint transaction receipt remains unavailable; no no-exposure or financial-original conclusion is inferred from its absence."
+  ]
+}

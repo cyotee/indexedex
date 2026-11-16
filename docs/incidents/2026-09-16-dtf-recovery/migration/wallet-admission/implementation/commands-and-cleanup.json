@@ -1,0 +1,786 @@
+{
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission",
+  "executionWrapper": "/bin/zsh -lic with export PATH=\"/Users/cyotee/.foundry/bin:$PATH\" and set -o pipefail; existing login archive credential, never printed",
+  "versions": {
+    "forge": "1.9.1-nightly 430523103f3e2f9ba432ffdd2031a9f966153d0d",
+    "anvil": "1.9.1-nightly 430523103f3e2f9ba432ffdd2031a9f966153d0d",
+    "solar": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+    "bun": "1.4.2",
+    "typescript": "5.9.2"
+  },
+  "checks": [
+    {
+      "name": "fail-before",
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission && export PATH=\"/Users/cyotee/.foundry/bin:$PATH\" && set -o pipefail && FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol -- --match-test test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement -vvv 2>&1 | tee docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/fail-before-authenticated.log; result=$?; printf 'FAIL_BEFORE_EXIT=%s\n' \"$result\"; exit \"$result\"",
+      "exit": 1,
+      "passed": 0,
+      "failed": 1,
+      "reason": "next call did not revert as expected",
+      "log": "fail-before-authenticated.log"
+    },
+    {
+      "name": "final specs",
+      "command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv",
+      "exit": 0,
+      "passed": 97,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 16,
+      "log": "spec-final.log",
+      "expandedCommands": [
+        "forge build --use solar contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory.sol contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/test/stubs/MintableERC20Decimals.sol contracts/test/stubs/SimpleMintableERC20.sol contracts/utils/StandardExchangeFrozenQuoteLib.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol contracts/vaults/detf/common/sy/DETFSYDFPkg.sol contracts/vaults/detf/common/sy/DETFSYFacet.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeInFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeMarkerFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol lib/crane/contracts/protocols/launchpads/ponsFamily/v2/hooks/PonsV2MemeHook.sol lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol lib/crane/contracts/protocols/utils/permit2/BetterPermit2.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/tokens/ERC721/ERC721Facet.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol",
+        "forge test --use solar -vv --skip 'contracts/**' --skip 'test/foundry/spec/constants/**' --skip 'test/foundry/spec/fee/**' --skip 'test/foundry/spec/hooks/**' --skip 'test/foundry/spec/manager/**' --skip 'test/foundry/spec/oracles/**' --skip 'test/foundry/spec/pairtoken-baseline/**' --skip 'test/foundry/spec/permit2/**' --skip 'test/foundry/spec/protocol/**' --skip 'test/foundry/spec/protocols/**' --skip 'test/foundry/spec/registries/**' --skip 'test/foundry/spec/routers/**' --skip 'test/foundry/spec/saf/**' --skip 'test/foundry/spec/scripts/**' --skip 'test/foundry/spec/test/**' --skip 'test/foundry/spec/utils/**' --skip test/foundry/spec/vaults/StandardExchangeOut_Refund.t.sol --skip 'test/foundry/spec/vaults/basic/**' --skip test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol --skip 'test/foundry/spec/vaults/detf/common/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/**' --skip test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/**' --skip 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/**' --skip 'test/foundry/spec/vaults/standard-exchange/**' --skip 'test/foundry/spec/vaults/standard/**'"
+      ]
+    },
+    {
+      "name": "final forks",
+      "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vvv",
+      "exit": 0,
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 9,
+      "log": "fork-final.log",
+      "expandedCommands": [
+        "forge build --use solar contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory.sol contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/test/stubs/SimpleMintableERC20.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol contracts/vaults/detf/common/sy/DETFSYDFPkg.sol contracts/vaults/detf/common/sy/DETFSYFacet.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueERC4626Facet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeInFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeMarkerFacet.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol lib/crane/contracts/protocols/launchpads/ponsFamily/v2/hooks/PonsV2MemeHook.sol lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol lib/crane/contracts/protocols/utils/permit2/BetterPermit2.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/tokens/ERC721/ERC721Facet.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+        "forge test --use solar -vvv --skip 'contracts/**' --skip 'test/foundry/fork/archive/**' --skip 'test/foundry/fork/base_main/**' --skip 'test/foundry/fork/eth_main/**' --skip 'test/foundry/fork/ethereum_main/**' --skip 'test/foundry/fork/protocols/**' --skip 'test/foundry/fork/robinhood_4663/**' --skip 'test/foundry/fork/robinhood_main/**' --skip 'test/foundry/fork/scripts/**' --skip test/foundry/fork/vaults/BalancerV3_ExactOut_Fork.t.sol --skip test/foundry/fork/vaults/BalancerV3_ExactOut_Regression.t.sol"
+      ]
+    },
+    {
+      "name": "typed stage build",
+      "command": "forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "exit": 0,
+      "log": "script-build-final.log"
+    },
+    {
+      "name": "operator script tests",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts",
+      "exit": 0,
+      "passed": 54,
+      "failed": 0,
+      "files": 2,
+      "log": "script-tests-final.log"
+    },
+    {
+      "name": "operator strict types",
+      "command": "node_modules/.bin/tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --esModuleInterop --strict --noUncheckedIndexedAccess --skipLibCheck scripts/recovery/dtf-migration/*.ts",
+      "exit": 0,
+      "log": "script-types-final.log"
+    },
+    {
+      "name": "fixed CLI rehearsal",
+      "command": "bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18562 --checkpoint .omo-runtime/dtf-migration-wallet-admission/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission",
+      "exit": 0,
+      "log": "cli-rehearsal-final.log",
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134"
+    },
+    {
+      "name": "diff whitespace",
+      "command": "GIT_MASTER=1 git diff --check",
+      "exit": 0
+    }
+  ],
+  "rehearsalChildCommands": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/001-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/deploy"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/002-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/deploy",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/003-fund.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "fund",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/004-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/005-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/006-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4",
+        "--reverse"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/007-capture.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "capture",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/capture",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/008-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/prepared"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/009-validate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "validate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/prepared/manifest.json"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/010-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/reordered-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/prepared-reordered"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/011-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/configure",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/012-independent-issue.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "independent-issue",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/013-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/014-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/015-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/verify"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/016-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/reject-chainId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/017-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/reject-proxy.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/018-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/reject-package.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/019-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/reject-snapshotId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/020-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/reject-payload.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/021-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/replacement-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/replacement"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/022-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/replacement",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/023-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-01-WeightedClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-01-WeightedClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/024-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-01-WeightedClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-01-WeightedClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/025-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-02-WeightedPrincipal-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-02-WeightedPrincipal"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/026-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-02-WeightedPrincipal-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-02-WeightedPrincipal",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/027-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-03-WeightedRewards-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-03-WeightedRewards"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/028-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-03-WeightedRewards-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-03-WeightedRewards",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/029-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-04-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-04-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/030-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-04-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-04-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/031-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-05-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-05-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/032-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-05-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-05-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/033-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-06-WeightedConvert-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-06-WeightedConvert"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/034-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-06-WeightedConvert-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-06-WeightedConvert",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/035-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-07-Donate-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-07-Donate"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/036-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-07-Donate-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-07-Donate",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/037-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-08-EarlierClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-08-EarlierClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/038-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-08-EarlierClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-08-EarlierClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/039-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-09-EarlierSale-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-09-EarlierSale"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/040-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/harvest-09-EarlierSale-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/harvest-09-EarlierSale",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/041-activate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "activate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/activate",
+        "--execute-local",
+        "--instance-id",
+        "0x184e2af74442bd9e523437d52aaed638713e7b684e2a48646723c6375a8763f4"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/042-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/.omo-runtime/dtf-migration-wallet-admission/checkpoints/verify-after"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/rehearsal-1794395193134/environment-stage.log.command.json",
+      "command": [
+        "/Users/cyotee/.foundry/bin/forge",
+        "script",
+        "--use",
+        "solar",
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
+        "--sig",
+        "prepareEnvironment()",
+        "--rpc-url",
+        "http://127.0.0.1:18562/",
+        "--sender",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--unlocked",
+        "--broadcast",
+        "--slow",
+        "--legacy",
+        "--gas-price",
+        "2000000000",
+        "--gas-limit",
+        "1000000000",
+        "--gas-estimate-multiplier",
+        "200"
+      ],
+      "code": 0,
+      "signal": null
+    }
+  ],
+  "cleanup": {
+    "nodePid": 71170,
+    "nodeExited": true,
+    "port18562Listeners": 0,
+    "checkpointRemoved": true,
+    "ownedEmptyParentRemoved": true,
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission && rmdir .omo-runtime/dtf-migration-wallet-admission && if lsof -nP -iTCP:18562 -sTCP:LISTEN; then exit 1; fi; if ps -p 71170 -o pid=; then exit 1; fi; test ! -e .omo-runtime/dtf-migration-wallet-admission/checkpoints && printf 'OWNED_NODE_PORT_CHECKPOINT_PARENT_CLEAN\\n'",
+    "result": "OWNED_NODE_PORT_CHECKPOINT_PARENT_CLEAN",
+    "exit": 0
+  }
+}

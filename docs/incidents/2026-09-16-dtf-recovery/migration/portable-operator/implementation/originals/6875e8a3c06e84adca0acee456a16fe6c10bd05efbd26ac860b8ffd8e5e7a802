@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"attack","inputs":[{"name":"router","type":"address","internalType":"address"},{"name":"pool","type":"address","internalType":"address"},{"name":"amounts","type":"uint256[]","internalType":"uint256[]"},{"name":"minBpt","type":"uint256","internalType":"uint256"}],"outputs":[],"stateMutability":"nonpayable"}],"id":3644}

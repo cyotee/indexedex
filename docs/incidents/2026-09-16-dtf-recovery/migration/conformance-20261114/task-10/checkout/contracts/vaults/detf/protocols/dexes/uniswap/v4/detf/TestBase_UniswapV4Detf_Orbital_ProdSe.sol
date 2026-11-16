@@ -1,0 +1,294 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
+
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeExactOutputQuantityQuote} from "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol";
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
+    IUniswapV4StandardExchangeOrbitalBufferHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
+import {
+    UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as OrbitalFactory
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
+import {
+    IUniswapV4Detf
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
+import {
+    UniswapV4DetfProductionSeDeployLib as SeLib
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
+
+/**
+ * @title TestBase_UniswapV4Detf_Orbital_ProdSe
+ * @notice Shared orbital n=3 production-SE helpers. Does not bind Dual. ERC-4626 is not these SEs.
+ * @dev Children deploy two distinct SEs then `_finishOrbitalDetf`. firstBond pulls 100 ether of
+ *      each non-DETF `tokens()` entry (lead via `bond(mintToken)`, other legs via full-book pull).
+ */
+abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Detf {
+    using BetterEfficientHashLib for bytes;
+
+    address internal pairAddr0;
+    address internal pairAddr1;
+    address internal se0;
+    address internal se1;
+    address internal mintToken;
+    IUniswapV4StandardExchangeOrbitalBufferHookPackage internal orbitalHookPkg;
+
+    function _craneCtx() internal view returns (SeLib.CraneCtx memory ctx) {
+        ctx.create3Factory = create3Factory;
+        ctx.indexedexManager = indexedexManager;
+        ctx.diamondPackageFactory = diamondPackageFactory;
+        ctx.permit2 = permit2;
+        ctx.erc20Facet = erc20Facet;
+        ctx.erc5267Facet = erc5267Facet;
+        ctx.erc2612Facet = erc2612Facet;
+        ctx.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        ctx.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+        ctx.owner = owner;
+    }
+
+    function _deployOrbitalHookPkg() internal {
+        IFacet hooksFacet = OrbitalFactory.deployHooksFacet(create3Factory);
+        IFacet depositFacet = OrbitalFactory.deployDepositFacet(create3Factory);
+        IFacet withdrawFacet = OrbitalFactory.deployWithdrawFacet(create3Factory);
+        IFacet seFacet = OrbitalFactory.deploySeFacet(create3Factory);
+        orbitalHookPkg = OrbitalFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+                depositQueryFacet: OrbitalFactory.deployDepositQueryFacet(create3Factory),
+                depositZapFacet: OrbitalFactory.deployDepositZapFacet(create3Factory),
+                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                depositFacet: depositFacet,
+                withdrawFacet: withdrawFacet,
+                seFacet: seFacet,
+                hooksFacet: hooksFacet,
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                multiStepOwnableFacet: multiStepOwnableFacet
+            }));
+    }
+
+    /// @dev D60: provider for the leg's SE (address(0) on a raw leg); hoisted out of the argument literal
+    ///      to keep the stack shallow.
+    function _orbitalRp(address t, address predicted_, address p0, address p1, address s0, address s1)
+        internal returns (address)
+    {
+        return RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOfPair(t, predicted_, p0, p1, s0, s1), t);
+    }
+
+    function _seOfPair(address token_, address predicted_, address p0, address p1, address s0, address s1)
+        internal
+        pure
+        returns (address)
+    {
+        if (token_ == predicted_) return address(0);
+        if (token_ == p0) return s0;
+        if (token_ == p1) return s1;
+        revert("unmapped orbital pair");
+    }
+
+    function _sort3(address a, address b, address c) internal pure returns (address, address, address) {
+        if (a > b) (a, b) = (b, a);
+        if (b > c) (b, c) = (c, b);
+        if (a > b) (a, b) = (b, a);
+        return (a, b, c);
+    }
+
+    function _deployOrbitalHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal returns (address detf_) {
+        return _deployOrbitalHookThenDetf(args, pairAddr0, pairAddr1, se0, se1);
+    }
+
+    function _deployOrbitalHookThenDetf(
+        IUniswapV4Detf.PkgArgs memory args,
+        address p0,
+        address p1,
+        address s0,
+        address s1
+    ) internal returns (address detf_) {
+        address predicted_ = _predictDetf(args);
+        if (address(pairToken) == address(0)) {
+            pairToken = new SimpleMintableERC20("Etch", "ETCH");
+        }
+        (address t0, address t1, address t2) = _sort3(predicted_, p0, p1);
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory hArgs =
+            IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs({
+                poolManager: address(pm),
+                feeOracle: address(indexedexManager),
+                token0: t0,
+                token1: t1,
+                token2: t2,
+                decimals0: HookPkgArgsDecimalsLib.tokenDec(t0, predicted_),
+                decimals1: HookPkgArgsDecimalsLib.tokenDec(t1, predicted_),
+                decimals2: HookPkgArgsDecimalsLib.tokenDec(t2, predicted_),
+                se0: _seOfPair(t0, predicted_, p0, p1, s0, s1),
+                se1: _seOfPair(t1, predicted_, p0, p1, s0, s1),
+                se2: _seOfPair(t2, predicted_, p0, p1, s0, s1),
+                rp0: _orbitalRp(t0, predicted_, p0, p1, s0, s1),
+                rp1: _orbitalRp(t1, predicted_, p0, p1, s0, s1),
+                rp2: _orbitalRp(t2, predicted_, p0, p1, s0, s1),
+                tickSpacing: 0,
+                sqrtPriceX96: 0,
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
+                owner: predicted_
+            });
+        uint256 mineNonce = OrbitalFactory.findMineNonce(hookFactory, orbitalHookPkg, hArgs);
+        reserveHook = OrbitalFactory.deployHook(orbitalHookPkg, hArgs, mineNonce);
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(reserveHook);
+        init.deployPair(t0, t1);
+        init.deployPair(t1, t2);
+        init.deployPair(t0, t2);
+        require(init.finalizeInitialization(), "finalize");
+        args.hook = reserveHook;
+        vm.startPrank(owner);
+        detf_ = detfPkg.deployVault(args);
+        vm.stopPrank();
+        require(detf_ == predicted_, "detf != predicted");
+        vm.label(detf_, args.symbol);
+        vm.label(reserveHook, "orbitalReserveHook");
+    }
+
+    function _finishOrbitalDetf(address p0, address p1, address s0, address s1) internal {
+        require(s0 != s1 && s0 != address(0) && s1 != address(0), "two distinct SEs");
+        require(p0 != p1 && p0 != address(0) && p1 != address(0), "two pairs");
+        pairAddr0 = p0;
+        pairAddr1 = p1;
+        se0 = s0;
+        se1 = s1;
+        se = s0;
+        _deployHookFactory();
+        _deployOrbitalHookPkg();
+        _deployBondNftVaultPkg();
+        _deployRebasingClaimTokenPkg();
+        _deployDetfPkg();
+        _setDefaultBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
+        detf = _deployOrbitalHookThenDetf(_nLegDetfArgs(2), p0, p1, s0, s1);
+        detfInfo = IUniswapV4Detf(detf);
+        detfExchangeIn = IStandardExchangeIn(detf);
+        _setBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
+        mintToken = _readMintToken();
+        if (mintToken != address(0)) pairToken = SimpleMintableERC20(mintToken);
+        uint256[] memory creation_ = detfInfo.creationPairPerDetfWad();
+        require(creation_.length == 2, "creationPairPerDetfWad n-1");
+        require(creation_[0] == 1e18 && creation_[1] == 1e18, "creation 1e18");
+    }
+
+    function _readMintToken() internal view returns (address t) {
+        address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
+        for (uint256 i; i < toks.length; ++i) {
+            if (toks[i] != detf) return toks[i];
+        }
+        revert("no mintToken");
+    }
+
+    function _approveUserPairs(address user) internal {
+        vm.startPrank(user);
+        IERC20(pairAddr0).approve(detf, type(uint256).max);
+        IERC20(pairAddr1).approve(detf, type(uint256).max);
+        IERC20(se0).approve(detf, type(uint256).max);
+        IERC20(se1).approve(detf, type(uint256).max);
+        vm.stopPrank();
+    }
+
+    function _firstBond(uint256 pairAmount_) internal virtual override returns (uint256 tokenId, uint256 shares) {
+        vm.startPrank(detfUser);
+        (tokenId, shares) = detfInfo.bond(
+            IERC20(mintToken), pairAmount_, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+    }
+
+    function _assertSeAllowancesZero() internal view {
+        address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
+        for (uint256 i; i < toks.length; ++i) {
+            address se_ = IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(toks[i]);
+            if (se_ != address(0)) {
+                assertEq(IERC20(se_).allowance(reserveHook, se_), 0, "SE allowance(hook, se)==0");
+            }
+        }
+    }
+
+    function _assertR19() internal view {
+        // Assert the post-transaction state; never repair it with a hidden second sweep.
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
+    }
+
+    function _logR19JoinFailure(address hook_, address token_, uint256 bal_) internal {
+        emit log_named_address("R19 leftover token", token_);
+        emit log_named_uint("R19 leftover bal", bal_);
+        try IUniswapV4SeBufferHook(hook_).previewJoinSingleAssetExactIn(token_, bal_) returns (uint256 p) {
+            emit log_named_uint("R19 previewJoin", p);
+        } catch (bytes memory err) {
+            if (err.length >= 4) emit log_named_bytes32("R19 join revert", bytes32(err));
+        }
+        address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(token_);
+        if (se_ != address(0)) {try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w, uint256) {
+                emit log_named_uint("R19 sePreview wrap", w);
+            } catch (bytes memory err2) {
+                if (err2.length >= 4) emit log_named_bytes32("R19 wrap revert", bytes32(err2));
+            }
+        }
+    }
+
+    function _assertNoJoinableDust() internal view virtual override {
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
+    }
+
+    /// @dev Above-dust custody requires SE no-issuance or exact alignment rejection in the attempted hook mode.
+    function _assertPairResidualBooked(address pair_, address se_) internal view {
+        uint256 retained_ = IERC20(pair_).balanceOf(detf);
+        if (retained_ <= 10) return;
+        assertTrue(se_ != address(0) && se_ != pair_, "retained pair must have a buffering SE");
+        bool subShare_;
+        if (IERC165(se_).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId)) {
+            (bytes memory state_,) = IStandardExchangeTransitionQuote(se_).quoteState(pair_, address(0));
+            try IStandardExchangeExactOutputQuantityQuote(se_).quoteInputForExactShares(state_, 1)
+                returns (uint256 minimum_) {
+                subShare_ = retained_ < minimum_;
+            } catch {
+                // Interface support does not promise an inverse in this context.
+                // Failure supplies no proof; check the full-input forward route.
+            }
+        }
+        if (!subShare_) {(uint256 shares_,) = IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_));
+            assertEq(shares_, 0, "above-dust retention requires a successful Standard Exchange preview of zero");
+        }
+        assertEq(IBasicVault(detf).reserveOfToken(pair_), retained_, "retained pair fully booked");
+    }
+
+    /// @dev Mirror residual mode selection: alignment stops unbalanced; only zero LP proceeds to single-asset.
+    function _assertResidualHookAlignment(address pair_, uint256 retained_) internal view {
+        IUniswapV4SeBufferHook hook_ = IUniswapV4SeBufferHook(detfInfo.hook());
+        address[] memory tokens_ = new address[](1);
+        uint256[] memory amounts_ = new uint256[](1);
+        tokens_[0] = pair_;
+        amounts_[0] = retained_;
+        try hook_.previewJoinUnbalanced(tokens_, amounts_) returns (uint256 lp_) {
+            assertEq(lp_, 0, "positive unbalanced quote cannot prove retained alignment failure");
+        } catch (bytes memory reason_) {
+            assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
+                "unbalanced retention requires exact alignment rejection");
+            return;
+        }
+        assertEq(hook_.previewJoinSingleAssetExactIn(pair_, retained_), 0,
+            "single-asset retention is a zero quote");
+    }
+}

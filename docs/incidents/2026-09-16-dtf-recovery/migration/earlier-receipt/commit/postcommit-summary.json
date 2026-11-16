@@ -1,0 +1,49 @@
+{
+  "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+  "parent": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+  "tree": "5a7725f9569d35556669f9f485b06c629644234d",
+  "soleParent": true,
+  "pathFailures": 0,
+  "preservation": {
+    "docs": {
+      "baseline": 2126,
+      "missing": 0,
+      "changed": 0,
+      "newUnderExclusion": 15
+    },
+    "perms": {
+      "baseline": 2283,
+      "missing": 0,
+      "fileChanges": 0,
+      "directorySize": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt",
+        "old": 192,
+        "new": 224
+      },
+      "newExcluded": 17
+    },
+    "out": {
+      "baseline": 7340,
+      "missing": 0,
+      "changed": 0,
+      "new": 0
+    },
+    "cacheForge": {
+      "baseline": 603,
+      "missing": 0,
+      "changed": 0,
+      "new": 0
+    },
+    "refsMoved": [
+      "refs/heads/work/dtf-migration-phase-18-earlier-receipt"
+    ],
+    "foreignIndexesUnchanged": 19,
+    "hostDependenciesUnchanged": 28,
+    "sealsUnchanged": true
+  },
+  "writtenAfterRewalk": [
+    "receipt.md",
+    "source-manifest.json",
+    "postcommit-summary.json"
+  ]
+}

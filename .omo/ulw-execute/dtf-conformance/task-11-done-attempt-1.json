@@ -1,0 +1,188 @@
+{
+  "type": "DoneClaim",
+  "task": 11,
+  "title": "Measure admitted batches and signed gas envelopes",
+  "status": "complete",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "independentVerification": "Self-executed without delegation. This DoneClaim is not the plan's final independent verification or a task 10 lifecycle verdict.",
+  "diagnostics": "Solidity suites and strict TypeScript checks passed. JSON Biome LSP is unavailable; no installation was attempted. Completion JSON syntax is checked with the existing Bun parser.",
+  "summary": "Measured current production registry deployments, complete-record loading and issuance axes, and authenticated legacy custody recovery on an owned pinned local fork. Recorded 299 signed 32m transactions, four construction receipts for two distinct owners/parents, and 51 admitted operation samples. A real 64-recipient issuance exceeds the target ceiling and rejects before signing or sending. Existing one-recipient operator operations showed no signing/resume mismatch, so production signing policy was not changed.",
+  "aliases": {
+    "M": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "T": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "K": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "D": "docs/incidents/2026-09-16-dtf-recovery/migration",
+    "E": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114",
+    "FS": "scripts/foundry/recovery/dtf-migration"
+  },
+  "policy": {
+    "chainId": "4663",
+    "blockNumber": "108944663",
+    "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "getMaxTxGasLimit": "32000000",
+    "recordedHeaderGasLimit": "0x4000000000000",
+    "applicableMinimum": "32000000",
+    "binding": "E/task-11/signed-envelopes/source-manifest.json",
+    "rawHistoricalProof": "D/nft-recovery/implementation/chain-gas-limits.log",
+    "qualification": "Historical target policy, not a current live fee quote. The permissive local 100m block setting is not admission evidence or ArbOS fee emulation."
+  },
+  "admittedShapes": {
+    "loading": "64 selected recipients with one complete original each",
+    "independentIssuance": "32 selected recipients with one complete original each",
+    "recipientOriginalArray": "One recipient with up to 64 complete originals, for loading and issuance",
+    "recovery": "One or eight WeightedClaim stages; one other typed step, witnessed by WeightedUnstake",
+    "qualification": "Separate tested axes, not their Cartesian product or a promise for arbitrary calldata. Never split or merge an economic original to fit gas."
+  },
+  "currentConstructionGasUsed": [
+    { "method": "prepareSyChildren", "parent": "0x2ccdcba076936467420fa5a9f52c0603a2681364", "gasUsed": "19746754" },
+    { "method": "deployVault", "parent": "0x2ccdcba076936467420fa5a9f52c0603a2681364", "gasUsed": "29860062" },
+    { "method": "prepareSyChildren", "parent": "0x11c0b94370d6934edaac28ecabe5626341b3412d", "gasUsed": "19595874" },
+    { "method": "deployVault", "parent": "0x11c0b94370d6934edaac28ecabe5626341b3412d", "gasUsed": "29298754" }
+  ],
+  "happyQA": [
+    {
+      "command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOperationGas.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol -- -vv",
+      "exitCode": 0,
+      "cases": 14,
+      "log": "E/task-11/attempt-forge-2/raw.log",
+      "compiler": "Solar through the artifact helper"
+    },
+    {
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/signed-envelopes",
+      "exitCode": 0,
+      "signedTransactions": 299,
+      "admittedOperationSamples": 51,
+      "log": "E/task-11/attempt-signed-final/raw.log"
+    },
+    {
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts",
+      "exitCode": 0,
+      "cases": 11,
+      "log": "E/task-11/attempt-execution-1/raw.log"
+    },
+    {
+      "command": "python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol -- -vv",
+      "environment": "FOUNDRY_PROFILE=fork",
+      "exitCode": 0,
+      "cases": 1,
+      "log": "E/task-11/attempt-recovery-fork-1/raw.log",
+      "assertion": "Selected work does not scale with 24 unrelated surrenders."
+    },
+    {
+      "kind": "Strict TypeScript diagnostics",
+      "exitCode": 0,
+      "log": "E/task-11/attempt-types-final/raw.log",
+      "qualification": "Includes the retained helper, recovery experiment, recorder, probes, auditor, and execution tests. Exact argv is in the log."
+    },
+    {
+      "kind": "Evidence audit",
+      "exitCode": 0,
+      "log": "E/task-11/attempt-audit-1/raw.log",
+      "assertions": "All measured sample estimates/gasUsed occur in raw stdout; signed bytes hash correctly and use 32m; four constructions/two parents; required shape coverage; negative invariants; protected baseline source hashes."
+    },
+    {
+      "kind": "Task-owned git diff --check",
+      "exitCode": 0,
+      "log": "E/task-11/attempt-diff-check/raw.log"
+    }
+  ],
+  "failureQA": {
+    "result": "PASS",
+    "evidence": "E/task-11/gas-negatives.json",
+    "boundary": {
+      "method": "issueIndependentAllocations",
+      "selected": 64,
+      "simulationGas": "32000000",
+      "rejected": true,
+      "nonceBefore": "0x87e",
+      "nonceAfter": "0x87e",
+      "signingCalls": 0,
+      "sendingCalls": 0
+    },
+    "savedIntent": {
+      "signedGas": "32000001",
+      "rejectedBy": "production validateIntent",
+      "nonceBefore": "0x889",
+      "nonceAfter": "0x889",
+      "signingDuringValidation": 0,
+      "sends": 0
+    },
+    "underfunded": {
+      "signedGas": "1000000",
+      "receiptStatus": "0x0",
+      "transactionHash": "0x05c7ecca9273a352ce920a57eea5805ca620ccac6a30c89f2cb8161c4ec387de",
+      "allSelectedConfigurationsRolledBack": true,
+      "beforeHash": "251b5acb73ab38ce907a18c3051d096d8f546d3742b4d0993d6788a376ff952f",
+      "afterHash": "251b5acb73ab38ce907a18c3051d096d8f546d3742b4d0993d6788a376ff952f",
+      "qualification": "A mined failed transaction consumes its nonce and local gas fee; contract writes and logs roll back."
+    }
+  },
+  "adversarial": {
+    "result": "PASS",
+    "log": "E/task-11/attempt-probes-1/raw.log",
+    "details": "E/task-11/adversarial/results.json",
+    "misleading_success_output": "Printed success with actual exit 7 was rejected.",
+    "stale_state": "Changed authenticated reference bytes were rejected.",
+    "dirty_worktree": "Observed and preserved; 214 of 217 baseline source files remain identical. Only the three allowed existing files changed after baseline.",
+    "generated_or_cached_artifacts": "A changed cached ABI was rejected by raw-byte authentication. Fresh Solar artifact rebuilding and source fingerprints are separately recorded.",
+    "hung_commands": "A deliberately hung synthetic child was terminated by its deadline; SIGTERM was observed. No Forge process was killed for silence.",
+    "flaky": "Not applicable; no retry-to-green policy was introduced.",
+    "cancel": "Applicable only to the deliberate synthetic hung-child probe.",
+    "interruptions": "Not introduced in economic operations.",
+    "untrusted_text": "Not applicable; commands were not derived from untrusted text."
+  },
+  "recoveryQualification": "The four WeightedClaim measurements use independent local snapshot branches. Each signed receipt was checked canonical at capture, then its branch was reverted to preserve the selected source state. These historical experiment receipts are not simultaneously surviving final-chain receipts. One selected claim used 492544 gas at both populations; eight used 1783679 at both populations. The one-step WeightedUnstake used 383019 gas. Fixture holder transactions are recorded separately and are not target-envelope evidence.",
+  "preserved": {
+    "tasks1Through10": true,
+    "rehearsalProof": "Unchanged against the initial source fingerprint.",
+    "claimedSyWitnessPin": "Unchanged against the initial source fingerprint.",
+    "task12PortableFiles": "Unchanged against the initial source fingerprint.",
+    "historicalReceipts": "Retained as original-source evidence; current receipts are new measurements.",
+    "commits": false,
+    "delegation": false,
+    "publicTransactions": false,
+    "dependencyInstallationCompleted": false,
+    "dependencyWarning": "Forge's pre-existing missing-submodule auto-install probe attempted and failed against the existing nonempty lib/crane directory. No dependency installation completed; no install command was issued by this executor."
+  },
+  "attempts": {
+    "retained": "E/task-11/commands.json and numbered attempt directories",
+    "signed1": "Incorrect artifact directory; corrected to the actual interface source artifact path.",
+    "signed2": "Cold multi-recipient fork estimation exceeded the ordinary 15-second RPC budget; scoped the owned measurement client to 120 seconds, without transaction retries.",
+    "signed3": "Historical purchases included burned NFTs with zero live holders. Selected the authenticated live pinned-fork population and recorded exclusions, without changing source policy.",
+    "qualification": "Failed stdout and cleanup records remain preserved; none is claimed as the accepting measurement."
+  },
+  "deliverables": [
+    "E/task-11/batch-limits.md",
+    "E/task-11/commands.json",
+    "E/task-11/source-audit.json",
+    "E/task-11/gas-negatives.json",
+    "E/task-11/signed-envelopes/transactions.json",
+    "E/task-11/signed-envelopes/constrained-receipts.json",
+    "E/task-11/signed-envelopes/operation-gas.json",
+    "E/task-11/signed-envelopes/cleanup.json",
+    "E/task-11/signed-envelopes/source-manifest.json",
+    "E/task-11/signed-envelopes/recovery-source-manifest.json",
+    "E/task-11/signed-envelopes/recovery-gas.json",
+    "E/task-11/adversarial/results.json",
+    "D/resumed-integration/verify-bounded-deployments.ts",
+    "FS/MigrationDeploymentGasResumedQA.s.sol",
+    "T/MigrationOperationGas.t.sol",
+    "scripts/recovery/dtf-migration/execution.test.ts",
+    "E/task-11/run.ts",
+    "E/task-11/recovery.ts",
+    "E/task-11/probes.ts",
+    "E/task-11/audit.ts"
+  ],
+  "cleanup": {
+    "node": "exited",
+    "port": 18561,
+    "evidence": "E/task-11/signed-envelopes/cleanup.json"
+  },
+  "remainingOutsideTask11": [
+    "Task 10 remains blocked by the missing authority-bundle donor covering 10000 DTF.",
+    "No missing task 10 lifecycle, mixed-book, or NFT 3 two-bond rehearsal is fabricated or certified by these gas experiments.",
+    "Task 12 and the final plan verification wave remain separate work."
+  ]
+}

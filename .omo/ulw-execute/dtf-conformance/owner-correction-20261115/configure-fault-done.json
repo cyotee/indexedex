@@ -1,0 +1,125 @@
+{
+  "type": "DoneClaim",
+  "task": "task-10-configure-interruption-operator-repair",
+  "status": "complete-with-recorded-verification-limitations",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "rootCause": "The existing post-mining fault predicate selected four economic methods and excluded the entire finite configure stage. The real CLI therefore persisted a successful configure completion despite --fault-after-mined. Attempt 02 reproduced that behavior before the production edit.",
+  "repair": "Extend the existing fault predicate to record.stage === configure, require successful receipt status, and retain SIGKILL between canonical mining observation and completion persistence. Existing synthetic-local gating, signing, domains, writer locks, receipt authentication and reconciliation-before-nonce ordering remain authoritative.",
+  "filesModified": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "bytes": 19008
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+      "bytes": 20619
+    }
+  ],
+  "evidenceRoot": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault",
+  "evidencePrograms": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/transport.fixture.ts",
+      "sha256": "8e01a4513b0e46b5a57dcbe406f1b51073a1c36d765c19c0a64c9944d5b33994"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-fault.ts",
+      "sha256": "3bca8de7bdacd6e90f650dc15f42ef07229936dca694ae8b670d343f4b873c0c"
+    }
+  ],
+  "evidence": {
+    "report": "repair-report.md",
+    "baseline": {
+      "log": "attempt-01-baseline.log",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts",
+      "pass": 22,
+      "exit": 0
+    },
+    "regressionBeforeFix": {
+      "log": "attempt-02-regression-red.log",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts -t 'mined independent configure'",
+      "exit": 1,
+      "observed": "Expected SIGKILL; actual production CLI returned state complete and persisted the authenticated configure completion."
+    },
+    "requiredAutomated": {
+      "log": "attempt-05-owned-suite.log",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts",
+      "pass": 38,
+      "fail": 0,
+      "exit": 0
+    },
+    "requiredManual": {
+      "log": "attempt-09-manual.log",
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-fault.ts",
+      "directory": "manual-attempt-ncqQ9Y",
+      "exit": 0,
+      "channel": "Real production CLI, signer, subscription, receipt authentication and journal driven by the established fixture through synthetic loopback transport; not Anvil chain proof.",
+      "childArgv": "Exact arrays, process codes, signals and output are recorded in each *-commands.json or *-cli-commands.json in the manual directory.",
+      "observations": [
+        {
+          "method": "configureIndependentAllocations",
+          "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+          "nonce": "7",
+          "sendsIncludingTwoResumes": 1,
+          "nonceRequestsIncludingTwoResumes": 2,
+          "completionFiles": 1
+        },
+        {
+          "method": "configureNftContributionEntitlements",
+          "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+          "nonce": "7",
+          "sendsIncludingTwoResumes": 1,
+          "nonceRequestsIncludingTwoResumes": 2,
+          "completionFiles": 1
+        }
+      ],
+      "staleState": "Changed latest book, current quote and latest configuration ID do not resend or rewrite the mined original. Receipt-block state is independently authenticated.",
+      "counterMeaning": "The fixture's signed count counts accepted signed transaction objects, not separately instrumented wallet signing calls."
+    },
+    "negativeCoverage": [
+      "Missing canonical receipt with an existing transaction rejects without resend.",
+      "Wrong receipt transaction hash, malformed receipt and wrong canonical nonce reject.",
+      "Reverted first-run receipt rejects rather than claiming successful interruption.",
+      "Wrong receipt-block state and malformed persisted intent reject without completion.",
+      "Unsupported simulation mode and operational-purpose fault injection reject without nonce allocation or send.",
+      "Repeated resume with fault flag still set remains idempotent.",
+      "Existing lock, immutable domain, source authentication and foreign intent tests remain passing."
+    ],
+    "testJunk": { "log": "attempt-07-test-junk.log", "exit": 0, "findings": 0 },
+    "whitespace": { "log": "attempt-11-whitespace.log", "exit": 0 },
+    "preservedFailures": [
+      "attempt-03-configure-matrix.log",
+      "attempt-06-manual.log",
+      "manual-attempt-ucxw15/failure.json",
+      "attempt-10-no-excuse.log"
+    ]
+  },
+  "cleanup": {
+    "children": "All execution/manual CLI children exited or were intentionally SIGKILLed and awaited.",
+    "servers": "Owned loopback adapters and fixture servers stopped.",
+    "temporaryRoots": "Successful fixture roots removed; three attributable failed-attempt roots removed with fs.rm, paths and attribution retained in repair-report.md.",
+    "readOnlyGitPager": "Owned bash_2 stopped; cleanup exit 1 is recorded and is not a test result.",
+    "anvil": "Not started; the already stopped rehearsal node remains untouched.",
+    "otherWorkers": "No sibling files or resources changed by this repair."
+  },
+  "limitations": [
+    "Task 10 still requires resumed real Anvil/proxy interruption and same-block replacement evidence.",
+    "Full operator suite and strict shared types are deferred to serialized parent integration after both writers finish, as requested.",
+    "Later Native LSP freshness requests timed out; no final clean shared typecheck is claimed.",
+    "The no-excuse audit exited 2 because installed caller TypeScript lacks its required unstable API. No package was installed.",
+    "The seven existing configure fixture categories were exercised; additional source-loader variants and broader reorg, power-loss and system-failure campaigns remain task-10 ultraqa work.",
+    "The shared worktree was dirty at entry and remains dirty. The initial source fingerprints are preserved; only the authorized owned code and evidence paths were written."
+  ],
+  "architecturalReview": "All eleven programming review questions and size exceptions are recorded in repair-report.md. No new production helper, recovery framework, assertion cast, any, suppression, fallback or logger was added.",
+  "task10Complete": false,
+  "planCheckboxesChanged": false,
+  "parentReadinessMarkerWritten": false,
+  "delegation": false,
+  "commits": false,
+  "installs": false,
+  "publicRpcOrTransactions": false,
+  "forge": false,
+  "pinChanges": false
+}

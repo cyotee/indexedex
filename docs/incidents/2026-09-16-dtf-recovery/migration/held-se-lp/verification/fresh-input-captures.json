@@ -1,0 +1,37 @@
+{
+  "qualification": "Exact current ABI bytes used in the fresh completed run, captured after the run with all prepared-input hashes still equal; no compiler refresh since run.",
+  "records": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "bytes": 103627,
+      "sha256": "9d5db7a8a1feababc1c418dbe1c9e6b1ee06b6cd009f292023fb65515bb4f2a6",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/0.base64",
+      "terminalNewline": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "bytes": 304055,
+      "sha256": "2390044653174e85ad007efd22b68821f7b1e831b7cfd20b63896dc65a04677f",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/1.base64",
+      "terminalNewline": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "bytes": 98419,
+      "sha256": "0c5586a948c974a672d5260a5c24b478c660cdfaf04de720fd43147fcfa690ce",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/2.base64",
+      "terminalNewline": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "bytes": 56070,
+      "sha256": "45a156bdeb2e86d02170e91d40d7635b570f20afce9c146032aacb060cddfe09",
+      "mode": 420,
+      "captured": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/verification/fresh-captured-inputs/3.base64",
+      "terminalNewline": false
+    }
+  ]
+}

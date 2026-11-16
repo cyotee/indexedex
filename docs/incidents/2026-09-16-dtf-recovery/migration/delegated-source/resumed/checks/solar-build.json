@@ -1,0 +1,15 @@
+{
+  "command": "/Users/cyotee/.foundry/bin/forge",
+  "args": [
+    "build",
+    "--use",
+    "solar",
+    "--root",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/resumed/probe"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/resumed/probe",
+  "started": "2026-11-13T18:48:42.957Z",
+  "finished": "2026-11-13T18:48:42.982Z",
+  "exitCode": 1,
+  "signal": null
+}

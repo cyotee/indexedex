@@ -58,6 +58,9 @@ import {IUniswapV4DetfMigrationSY} from "./sy/IUniswapV4DetfMigrationSY.sol";
 import {UniswapV4DetfMigration_Component_FactoryService as Components} from "./UniswapV4DetfMigration_Component_FactoryService.sol";
 import {UniswapV4DetfMigration_Pkg_FactoryService as Packages} from "./UniswapV4DetfMigration_Pkg_FactoryService.sol";
 
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "./interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+import {MigrationWeightedPricingFixture} from "./TestBase_UniswapV4DetfMigrationSnapshot.sol";
+
 /// @notice Gold registry fixture with real WETH, V3 pools/SEs, weighted hook, and genuine issuance.
 /// @dev Only mintable contribution/rate currencies and the external liquidity seeder are fixtures.
 /// No subject is replaced, subclassed, etched, storage-injected, or impersonated.
@@ -72,6 +75,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
     address internal migrationOwner;
     address internal payer;
     bool internal localBroadcast;
+    bytes32 internal pricingId;
 
     function onERC721Received(address, address, uint256, bytes calldata) external pure virtual returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
@@ -246,7 +250,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
             IRebasingClaimTokenDFPkg.PkgInit(erc5267Facet, erc2612Facet, receipt_, diamondPackageFactory));
         RewardPackage reward_ = Packages.deployRewardToken(create3Factory, RewardPackage.PkgInit(rt_, diamondPackageFactory));
         IFacet[5] memory products_ = Components.deployParentFacets(create3Factory);
-        IFacet permanent_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationFacet");
+        IFacet permanent_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationWeightedHookFacet");
         IFacet admin_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationAllocationFacet");
         IFacet recovery_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationRecoveryFacet");
         IFacet claimAllocation_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationClaimVaultAllocationFacet");
@@ -327,6 +331,11 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
     }
 
     function _fundAndCapture() internal {
+        _fundReserve();
+        _setObservedPricing();
+    }
+
+    function _fundReserve() internal {
         IERC20[] memory tokens_ = new IERC20[](2);
         tokens_[0] = IERC20(pairA); tokens_[1] = IERC20(pairB);
         uint256[] memory amounts_ = new uint256[](2);
@@ -337,7 +346,17 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         legs_[1] = Migration.GenesisLeg(IERC20(pairB), 100 ether, 1);
         _migrationStart();
         allocation.bootstrapMigrationReserve(legs_, 0, 1, block.timestamp + 1 hours);
-        allocation.captureMigrationSnapshot();
+        _migrationStop();
+    }
+
+    function _manualInputs() internal view returns (Pricing.Inputs memory) {
+        return MigrationWeightedPricingFixture.observed(detf, address(indexedexManager), pairA, pairB);
+    }
+
+    function _setObservedPricing() internal {
+        Pricing.Inputs memory inputs_ = _manualInputs();
+        _migrationStart();
+        pricingId = allocation.setMigrationWeightedPricing(inputs_);
         _migrationStop();
     }
 
@@ -348,7 +367,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         inputs_[0].entitlements = new Migration.OriginalEntitlement[](1);
         inputs_[0].entitlements[0] = Migration.OriginalEntitlement(id_, original_, original_, bytes32("fixture"));
         _migrationStart();
-        allocation.configureIndependentAllocations(inputs_);
+        allocation.configureIndependentAllocations(inputs_, pricingId);
         _migrationStop();
         return migration.independentAllocation(recipient_).totalCredit;
     }

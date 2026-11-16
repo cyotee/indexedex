@@ -1,0 +1,72 @@
+[
+  {
+    "chainId": 31337,
+    "address": "0xAa75c2263443cfbFA38Ff5CFD9609E2Bce42091e",
+    "name": "BV3ConstProd of (Pachira Vault of (TTA / TTB) via TTA/TTB / Test Token A)",
+    "symbol": "uniAbVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0xdAB974A85099182177De296BcA1E9F59B88D3A5E",
+    "name": "BV3ConstProd of (Pachira Vault of (TTA / TTB) via TTA/TTB / Test Token B)",
+    "symbol": "uniAbVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x1843D3003E2DEEC78f970F87932ba6Db6818C249",
+    "name": "BV3ConstProd of (Test Token A / Pachira Vault of (TTA / TTC) via TTA/TTC)",
+    "symbol": "uniAcVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x1C374f02E94dA2d07093082f00b1C83997Eea128",
+    "name": "BV3ConstProd of (Test Token C / Pachira Vault of (TTA / TTC) via TTA/TTC)",
+    "symbol": "uniAcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x904927Ad74bbD41Df120981F7ab942F2e87a5a61",
+    "name": "BV3ConstProd of (Test Token B / Pachira Vault of (TTB / TTC) via TTB/TTC)",
+    "symbol": "uniBcVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x99AdfE7CE5C3244D66E86926c67755184aa6b606",
+    "name": "BV3ConstProd of (Test Token C / Pachira Vault of (TTB / TTC) via TTB/TTC)",
+    "symbol": "uniBcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x09EBC80E8f90e10DB9fb36a3799494146B8E2B39",
+    "name": "BV3ConstProd of (Pachira Vault of (WETH / TTC) via WETH/TTC / Wrapped Ether)",
+    "symbol": "uniWethcVault_weth_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x4B7210aAdD8360328FE117e37Eb849Dea86ac0C5",
+    "name": "BV3ConstProd of (Pachira Vault of (WETH / TTC) via WETH/TTC / Test Token C)",
+    "symbol": "uniWethcVault_ttc_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x93A27f9aF33a0410128C74647BE51Ee7d06C7845",
+    "name": "BV3ConstProd of (Pachira Vault (WETH / TTC) via vAMM-WETH/TTC / Wrapped Ether)",
+    "symbol": "aeroWethcVault_weth_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x052407A7D4955229955bA2D06546a3f04DbA6bb5",
+    "name": "BV3ConstProd of (Pachira Vault (WETH / TTC) via vAMM-WETH/TTC / Test Token C)",
+    "symbol": "aeroWethcVault_ttc_BalancerPool",
+    "decimals": 18
+  }
+]

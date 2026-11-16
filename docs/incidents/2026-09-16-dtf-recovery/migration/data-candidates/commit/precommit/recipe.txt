@@ -1,0 +1,44 @@
+Precommit inventory recipe v1
+Captured before staging or committing the phase27 offline historical review candidate source delivery.
+The walks completed before any file existed under migration/data-candidates/commit/.
+Inventory files were written only under /tmp/phase27-data-candidates-precommit during the walk.
+They are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, artifact restoration, relocation, test, derivation, oracle, or runtime rerun is part of this recipe.
+Every Git invocation uses GIT_MASTER=1 and --no-pager. GIT_PAGER=cat and PAGER=cat are set.
+Read-only Git invocations also set GIT_OPTIONAL_LOCKS=0 so they do not refresh the index.
+Status and diff use --ignore-submodules=all.
+Index identity is the SHA-256 of the raw index file bytes. It is not git ls-files output and not a decoded string.
+No path under /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas was opened. Any phase09 foreign index was hashed only at .git/worktrees/dtf-migration-phase-09-deployment-gas/index.
+
+Content inventory
+Files: docs-incidents.jsonl, out.jsonl, cache_forge.jsonl, original-recovery.jsonl, original-pre-exploit.jsonl, recovered-input.jsonl.
+Walk: lstat, followlinks false. Symlinked directories are recorded and not descended. Ordinary directories are not content entries.
+Fields, fixed key order: path, kind, gitMode, perm, st_mode, size, sha256, target.
+path: worktree trees are POSIX paths relative to the worktree. Original recovery and pre-exploit paths are relative to /Users/cyotee/Projects/indexedex/docs/incidents. Recovered-input paths are relative to /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration. Sorted by UTF-8 byte order.
+kind: file, symlink, or other.
+gitMode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other. This collapses exact regular-file modes and is not the permission proof.
+perm: oct(st_mode & 0o777), written as 0o644 style text.
+st_mode: full lstat mode integer.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null otherwise. Symlink targets are not opened.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, JSON.stringify key order as listed, one record per line, each line ending in \n, no extra trailing blank line.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the rows.
+
+Permission inventory
+Files: docs-incidents-perms.jsonl, out-perms.jsonl, cache_forge-perms.jsonl, original-recovery-perms.jsonl, original-pre-exploit-perms.jsonl, recovered-input-perms.jsonl.
+Same roots. Ordinary directories are included, including the walk root. Directory paths have no trailing slash.
+Fields, fixed key order: path, kind, perm, st_mode, size, sha256, target.
+Directory sha256 is null. File and symlink sha256 use the same rules as the content inventory.
+
+Other baselines
+indexes.json: raw SHA-256, size, mode, and permission of .git/index and every .git/worktrees/*/index. foreign is true except this worktree.
+refs.jsonl: raw bytes, length, mode, and permission of every file under .git/refs, plus .git/HEAD, .git/packed-refs when present, and every worktree HEAD under .git/worktrees. Reflogs are not in this set.
+show-ref.txt: exact UTF-8 bytes of GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git --no-pager show-ref, captured before staging.
+host-deps.json: top-level and lib/ symlinks only. Targets were not opened.
+authorities.json: four named regular authority files, opened because they are regular files, not symlink targets.
+cache-absent.json: worktree cache/ does not exist. Foundry cache_path is cache_forge. Absence is recorded; no cache tree was invented.
+source-bindings.json: filesystem modes of the ten accepted paths. Tested source manifests omit modes; predictedGitMode is the filesystem executable-bit collapse, not historical tested mode evidence.
+frozen-source-modes.json: filesystem modes of all 62 tested source/runbook identities.
+seal-check.json: seal member hashes recomputed before staging.
+capture.mjs: the read-only script that produced the inventories. It writes only under /tmp/phase27-data-candidates-precommit.

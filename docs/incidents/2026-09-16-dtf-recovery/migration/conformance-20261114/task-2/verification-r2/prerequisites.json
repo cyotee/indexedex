@@ -1,0 +1,477 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "stdout": "work/dtf-conformance-20261115-wave-1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=normal"
+      ],
+      "exit": 0,
+      "stdout": " M docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md\n?? .omo/drafts/dtf-migration-conformance-remediation-20261114.md\n?? .omo/drafts/hyperplan-dtf-conformance-insights-20261114.md\n?? .omo/drafts/hyperplan-weighted-migration-insights-20261114.md\n?? .omo/plans/dtf-migration-conformance-remediation-20261114.md\n?? .omo/ulw-execute/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-all-operator-tests-20261113.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-checks-20261113-types.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-checks-20261113-unit.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-final-checks-20261113-types.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-final-checks-20261113-unit.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r1/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r2/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r3/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r4/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/core/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas-resumed/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/evidence/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-gate-review-20261113.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-hermetic-r2-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-operator-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-reward-operator-20261113.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-source-20261113.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-verification-recovered/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/full-hermetic/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/integration-increments/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/operator/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/remaining-sy-rehearsal/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/verification.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "diff",
+        "--stat"
+      ],
+      "exit": 0,
+      "stdout": " .../MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md | 202 +++++++++++----------\n 1 file changed, 110 insertions(+), 92 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "dependencyEntries": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/node_modules",
+      "symlink": true,
+      "directory": false,
+      "link": "/Users/cyotee/Projects/indexedex/node_modules"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/lib/crane",
+      "symlink": false,
+      "directory": true,
+      "link": null
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/node_modules/typescript/bin/tsc",
+      "symlink": false,
+      "directory": false,
+      "link": null
+    }
+  ],
+  "task2Ready": true,
+  "forgeReady": "not certified; no Forge execution",
+  "rootOwnershipReferences": [
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "approved": true
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/integration-increments-brief.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase02-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/source-excerpts.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/schema-bindings.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/schema-proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/references.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase02-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/NOTEPAD.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-egress-correction-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-egress-r3-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/earlier-se-retained-supply-followup-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase20-remaining-se-lp-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase20-remaining-se-lp-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-weighted-weth-se-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/indirect-claim-delegation-observation-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/observations.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/originals.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/observations.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/reconciliation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/source-manifest.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/direct-attribution.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/references.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/untouched-context.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/report.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/receipt-review-index-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/cleanup.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/weighted-indirect-purchase-observations-20261113.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-source-coverage-snapshot.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase18-earlier-receipt.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core-correction-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-accrual-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-bond-preparation-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas.workflow.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase11-same-wallet-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase11-same-wallet-sources.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-original-wallet-admission-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-brief-r1-before-e1-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-original-wallet-admission-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-wallet-admission-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-wallet-admission.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-stage2-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-stage2-surrender-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-brief-r1-before-e1-correction.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-eof-correction-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-implementation-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-portability-inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-closure-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase25-full-hermetic-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase25-full-hermetic-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-verification-r2.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authorities/bundle.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authorities-reward-harvest-20261113/bundle.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authority-reward-harvest-20261113.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/remaining-sy-rehearsal-20261113/authority-template.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-commit-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-delivery.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-r2.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/recovery.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/inputs.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/proof.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/references.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/preservation.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/proof.json"
+      ]
+    },
+    {
+      "root": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "matching": [
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-delegated-source-brief.md",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-delegated-source.workflow.json",
+        "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-failure-handoff-20261113.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,387 @@
+{
+  "version": "dtf-phase27-independent-producer-audit-v1",
+  "status": "confirmed-blocked-handoff-only",
+  "files": [
+    {
+      "path": "binding-audit.json",
+      "expected": {
+        "bytes": 13354,
+        "sha256": "47828b37707de3e9f55c3d3d9d421d58d205d445d8299a769924d806974bd3e1"
+      },
+      "actual": {
+        "bytes": 13354,
+        "sha256": "47828b37707de3e9f55c3d3d9d421d58d205d445d8299a769924d806974bd3e1"
+      },
+      "match": true
+    },
+    {
+      "path": "source-manifest.json",
+      "expected": {
+        "bytes": 3179,
+        "sha256": "ef45e54769c7eb4bdf409e2263cb1926a236023e9f7503ed817bcfe9ecbeace6"
+      },
+      "actual": {
+        "bytes": 3179,
+        "sha256": "ef45e54769c7eb4bdf409e2263cb1926a236023e9f7503ed817bcfe9ecbeace6"
+      },
+      "match": true
+    },
+    {
+      "path": "report.md",
+      "expected": {
+        "bytes": 5795,
+        "sha256": "61da0dfcfc164c81bc1ab45baec3b7df3e3b2c6f8ff2a85155e46d67f833fb59"
+      },
+      "actual": {
+        "bytes": 5795,
+        "sha256": "61da0dfcfc164c81bc1ab45baec3b7df3e3b2c6f8ff2a85155e46d67f833fb59"
+      },
+      "match": true
+    },
+    {
+      "path": "manifest.json",
+      "expected": {
+        "bytes": 916,
+        "sha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1"
+      },
+      "actual": {
+        "bytes": 916,
+        "sha256": "68ee43125e6ae034cf93a44773ddbacf4d3599e5557a2d2cd798fe217ad1eea1"
+      },
+      "match": true
+    }
+  ],
+  "sourceIdentities": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-brief.md",
+      "expected": {
+        "bytes": 8437,
+        "sha256": "9c69ab0f288e7fe806d6be7c4909a5455b26b42cda536c7d3d6fe3976bc88b54"
+      },
+      "actual": {
+        "bytes": 8437,
+        "sha256": "9c69ab0f288e7fe806d6be7c4909a5455b26b42cda536c7d3d6fe3976bc88b54"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/requirements-coverage-0856a5c5.md",
+      "expected": {
+        "bytes": 57366,
+        "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4"
+      },
+      "actual": {
+        "bytes": 57366,
+        "sha256": "48b477839833df8d2af54f373c42ffd918f5efb536189308094fcd26a17877b4"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/sources.json",
+      "expected": {
+        "bytes": 5502,
+        "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+      },
+      "actual": {
+        "bytes": 5502,
+        "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/manifest.json",
+      "expected": {
+        "bytes": 3209,
+        "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+      },
+      "actual": {
+        "bytes": 3209,
+        "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "expected": {
+        "bytes": 108022,
+        "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+      },
+      "actual": {
+        "bytes": 108022,
+        "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "expected": {
+        "bytes": 79305,
+        "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+      },
+      "actual": {
+        "bytes": 79305,
+        "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+      "expected": {
+        "bytes": 41316,
+        "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+      },
+      "actual": {
+        "bytes": 41316,
+        "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/cli.ts",
+      "expected": {
+        "bytes": 11340,
+        "sha256": "88ac81ad4c455bab81bf47929d82574a3e5aeaf196413578a248ac3dd5f94705"
+      },
+      "actual": {
+        "bytes": 11340,
+        "sha256": "88ac81ad4c455bab81bf47929d82574a3e5aeaf196413578a248ac3dd5f94705"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/schema.ts",
+      "expected": {
+        "bytes": 9484,
+        "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63"
+      },
+      "actual": {
+        "bytes": 9484,
+        "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/preparation.ts",
+      "expected": {
+        "bytes": 10087,
+        "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1"
+      },
+      "actual": {
+        "bytes": 10087,
+        "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/provenance.ts",
+      "expected": {
+        "bytes": 6200,
+        "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf"
+      },
+      "actual": {
+        "bytes": 6200,
+        "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf"
+      },
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/preparation.test.ts",
+      "expected": {
+        "bytes": 14484,
+        "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814"
+      },
+      "actual": {
+        "bytes": 14484,
+        "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814"
+      },
+      "match": true
+    }
+  ],
+  "rawBindingComparisons": [
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/snapshot.json",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "source": "sources.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "account-ledger.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "positions.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "observed-recoveries.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "conversions.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "exceptions.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "rounding.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "reconciliation.json",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "sources.json",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "LOSS_AND_RECOVERY_LEDGER.md",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "held-exclusions.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "custody-inventory.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "source": "manifest.json",
+      "producerAgrees": true
+    },
+    {
+      "path": "CUSTODY_AND_HARVEST.md",
+      "source": "manifest.json",
+      "producerAgrees": true
+    }
+  ],
+  "sealClaims": {
+    "implementationComplete": false,
+    "writtenLast": "producer assertion; byte closure independently checked, chronology not independently witnessed",
+    "pendingOperations": "producer reports zero; verifier started no producer operation"
+  }
+}

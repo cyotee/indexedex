@@ -1,0 +1,383 @@
+{
+  "schema": "dtf-operator-independent-commit-audit-v1",
+  "date": "2026-11-11",
+  "reviewer": "Independent audit session; not the committing session",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+  "commit": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+  "parent": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "tree": "733f7d641f215178b4ae9d77a0a6f7c2089f8401",
+  "message": "Add verified bounded Migration operator and resume tooling\n\nCo-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>",
+  "requiredTrailerCount": 1,
+  "acceptedPathCount": 26,
+  "pathSetEqual": true,
+  "paths": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "mode": "100644",
+      "blob": "029e927840f6839966bd84667751d222e640a45f",
+      "bytes": 15480,
+      "sha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+      "currentSha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+      "acceptedSha256": "bf2523b0012b0d77fd9b50e612bf98c059d7864669d2ffdbd26f7df6e0f924ce",
+      "provenance": "verification/evidence.json#/preservedInputs/20"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "mode": "100644",
+      "blob": "3fb4fa98b2140192ddd4fc08a8f4292bd9ed926b",
+      "bytes": 18115,
+      "sha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "currentSha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "acceptedSha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "provenance": "verification/evidence.json#/finalSources/22"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "mode": "100644",
+      "blob": "dbc45f00db1ee86f55f3475489a25162b47e6ffa",
+      "bytes": 7418,
+      "sha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "currentSha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "acceptedSha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "provenance": "verification/evidence.json#/finalSources/23"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "mode": "100644",
+      "blob": "bfaa8ea69e708ae06d4ed167a794f803eb3bc70f",
+      "bytes": 3706,
+      "sha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "currentSha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "acceptedSha256": "95e6b65436c287341c785fad6172cef4ecf6a62e516083e6564a627348370b6c",
+      "provenance": "verification/evidence.json#/finalSources/24"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "mode": "100644",
+      "blob": "29227c55e4e2f272433a44dd349aeb6bd403cb5d",
+      "bytes": 7497,
+      "sha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "currentSha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "acceptedSha256": "09670f4bd3f18d0d89b040fcd985dde97a9c22d19ac0c050de93c1822571a90a",
+      "provenance": "verification/evidence.json#/finalSources/8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "mode": "100644",
+      "blob": "937b59e520efc283e9f39a6587d09dd25f57f3c6",
+      "bytes": 6109,
+      "sha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "currentSha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "acceptedSha256": "145575f60a606554558a5c7fb1ea32b4813ed8a18224515a581fc7a5364aebfb",
+      "provenance": "verification/evidence.json#/finalSources/4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "mode": "100644",
+      "blob": "5665652f2ff51578dd0a0dc305f335947d7affff",
+      "bytes": 4601,
+      "sha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "currentSha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "acceptedSha256": "1b34279b3aa82303e57f2b40211c6e0bedcda34b75c54434fe8c237aca933931",
+      "provenance": "verification/evidence.json#/finalSources/7"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "mode": "100644",
+      "blob": "7fb6f90438e08fb10f9d8d77ceb03172ac0027a1",
+      "bytes": 8426,
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "currentSha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "acceptedSha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "provenance": "verification/evidence.json#/finalSources/11"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "mode": "100644",
+      "blob": "86f27679c96c3046c49c00733ed58f636fa36e68",
+      "bytes": 4758,
+      "sha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "currentSha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "acceptedSha256": "efb67eaa8db9c616efa83255b5ce099b24b203823d1c3ae42a041aab548e3bea",
+      "provenance": "verification/evidence.json#/finalSources/10"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "mode": "100644",
+      "blob": "9950b3879562a3e54ca676b91ea8e07473b32b0b",
+      "bytes": 12385,
+      "sha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "currentSha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "acceptedSha256": "4c6589b57970e3e1e0e6e2dcd4fc708ba84850023ae043d8dea2f6f91b75893d",
+      "provenance": "verification/evidence.json#/finalSources/20"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "mode": "100644",
+      "blob": "3621773e11a1c080aa6b261f48e05fc795dd8767",
+      "bytes": 4509,
+      "sha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "currentSha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "acceptedSha256": "d9106e3f725ea441724977ff9786d1e6c55d801f605b4d5217cbc8e72f626686",
+      "provenance": "verification/evidence.json#/finalSources/12"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "mode": "100644",
+      "blob": "2ce759db3840046ccd9a7d2a66bd7d86dee9b058",
+      "bytes": 11179,
+      "sha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "currentSha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "acceptedSha256": "c3c2c132dcd6b6b4f9c4dfeaa44214799d81a1769cb38309e08dd543e19c14f3",
+      "provenance": "verification/evidence.json#/finalSources/16"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "mode": "100644",
+      "blob": "3e5fb35d883a17cbb9b22ae5da7a567b2b728dde",
+      "bytes": 4792,
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "currentSha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "acceptedSha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "provenance": "verification/evidence.json#/finalSources/17"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "mode": "100644",
+      "blob": "8e44261705b20c964c2a6aeb021d8f448e3e7f8f",
+      "bytes": 7199,
+      "sha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "currentSha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "acceptedSha256": "08523ec23dd8c7ac7b5e7b2e166f685f9aebe6de669f2f0aade6c33e4d614b47",
+      "provenance": "verification/evidence.json#/finalSources/6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "mode": "100644",
+      "blob": "1464966e876d8536a67a04c517094b329d22dbb7",
+      "bytes": 7872,
+      "sha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "currentSha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "acceptedSha256": "11705676de0e6c64e3f9bf0f95b3fa80f8c6b922787009a50fde8d3c7506f94c",
+      "provenance": "verification/evidence.json#/finalSources/9"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "mode": "100644",
+      "blob": "eacded58a83aa7eba9e53780db21115f86efa764",
+      "bytes": 11077,
+      "sha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "currentSha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "acceptedSha256": "b80bf5fd8b547c814a57b1f8996fdf1920be4cbca3f2d2fcd49e9df74c401dd4",
+      "provenance": "verification/evidence.json#/finalSources/14"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "mode": "100644",
+      "blob": "1ba3a1ae0425a5e2a954ba0d323dd2f1f9e6368c",
+      "bytes": 5727,
+      "sha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "currentSha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "acceptedSha256": "8f17bc092f01524bf3cbf12499514427e64eff5c8ddec34647fa4f2a16d2a3f2",
+      "provenance": "verification/evidence.json#/finalSources/1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "mode": "100644",
+      "blob": "0bf608119a0ac12c3c2a5dab85332ea963eb44fc",
+      "bytes": 3945,
+      "sha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "currentSha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "acceptedSha256": "fa793fe2a96ffa7e2acef103871bdd81bd6b72d43aa495a41267b7c39f3619c9",
+      "provenance": "verification/evidence.json#/finalSources/2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "mode": "100644",
+      "blob": "72c9462e54d5e878eb8a5b45468f3eaf7512f398",
+      "bytes": 6780,
+      "sha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "currentSha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "acceptedSha256": "8ef113a74e703034df59a58d1b91abd46f536c1a8f7d89d31ebdd58486e46c00",
+      "provenance": "verification/evidence.json#/finalSources/3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "mode": "100644",
+      "blob": "ccfb8d3f9f64ae0d55aeb48ed016230850ce13eb",
+      "bytes": 4243,
+      "sha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "currentSha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "acceptedSha256": "5041c86cc96fa798d79789861a7aa2047d423dafb2cef8d659a0d7e637e1c307",
+      "provenance": "verification/evidence.json#/finalSources/19"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "mode": "100644",
+      "blob": "7d60598bfb3b33df6daaedc7a6d607eb3f71a8db",
+      "bytes": 10806,
+      "sha256": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "currentSha256": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "acceptedSha256": "088f9491edbd444403768720660114984fc0f1f76ea0e3bac47478bfeff8d28a",
+      "provenance": "verification/evidence.json#/finalSources/18"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "mode": "100644",
+      "blob": "380d2f6fb37b7eb7ba68d5e889a3ffd1d2977721",
+      "bytes": 2857,
+      "sha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "currentSha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "acceptedSha256": "b6dc6c3ee031a46a93b42e7d7846cdb912e4269cce1027d161fba47c82cf3edb",
+      "provenance": "verification/evidence.json#/finalSources/13"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "mode": "100644",
+      "blob": "7eed588aaa7c371260b5386bab55961ea11d250d",
+      "bytes": 5109,
+      "sha256": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "currentSha256": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "acceptedSha256": "694718e87c2f673fd1b305fd35baaa1d62ec6d0e7a1e22f3221baaaf45568c00",
+      "provenance": "verification/evidence.json#/finalSources/21"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "mode": "100644",
+      "blob": "a63a7df43dfd5068950332bd2ad739cfa3aaccb1",
+      "bytes": 5615,
+      "sha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "currentSha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "acceptedSha256": "89b4f57bf495f96a60beb769d097c02b2e89e2081c6883a5f0d964f3e3d66383",
+      "provenance": "verification/evidence.json#/finalSources/5"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "mode": "100644",
+      "blob": "6ca97734699365a00d1f0bc65c3a083794750335",
+      "bytes": 16643,
+      "sha256": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "currentSha256": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "acceptedSha256": "024710bea0c179180051edd6d91e3ddf0b8a59609803bbc92a61abe2f3fa5e5b",
+      "provenance": "verification/evidence.json#/finalSources/15"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "mode": "100644",
+      "blob": "ca7525de9f401bcefad06f276aec5d4eb265ca4f",
+      "bytes": 4678,
+      "sha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "currentSha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "acceptedSha256": "5a33f50af43fe03092e132bf9cd856894a45689b45f217af8e99e023ed5f2262",
+      "provenance": "verification/evidence.json#/finalSources/0"
+    }
+  ],
+  "errors": [],
+  "preservation": {
+    "baselineHashes": {
+      "index": "14b1c6e410f5b9fc72ca26410eccc5ab711e6f9f7a92f915428d0afacbd9b113",
+      "refs": "2970336f915261b7e4b56eba2896cf4fb8b894a1c5991a4b6a7861ef237b3cba",
+      "inventory": "6bfe81f9e585989af28b24efbcabd4c11ee7536356dbae00479c4e0dc251f714"
+    },
+    "indexEqual": true,
+    "noncandidateRecords": 12980,
+    "refsEqual": true,
+    "refCount": 48,
+    "staged": "",
+    "tracked": "",
+    "whitespace": "",
+    "branch": "work/dtf-migration-phase-08-operator\n",
+    "count": "1\n",
+    "inventoryEntries": 22187,
+    "inventorySha256": "6bfe81f9e585989af28b24efbcabd4c11ee7536356dbae00479c4e0dc251f714",
+    "inventoryExactByteEquality": true,
+    "contentHashedRegularFiles": 14195,
+    "statOnlyRegularFiles": 7838,
+    "literalSymlinks": 154,
+    "separatelyRehashedAcceptedBindings": 577,
+    "bindingErrors": [],
+    "integerSerialization": "lstat bigint mtimeNs rendered as exact decimal integers; no float rounding",
+    "excluded": [
+      ".git administrative entry",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/operator/commit/**"
+    ]
+  },
+  "inputIdentities": [
+    {
+      "path": "verification/evidence.json",
+      "sha256": "75b9a09b5fb923b56fc452baeb55c2921396c203b97fa24588ad1e9724181987"
+    },
+    {
+      "path": "verification/baseline.json",
+      "sha256": "9132a6742871afe7929a20151c89c2807b1f547229facba0b0a6049b36b61b7a"
+    },
+    {
+      "path": "verification/report.md",
+      "sha256": "58e7410575dfa183545bf86db881a9d60cb179572202f9e8aa86f726e69acb2a"
+    },
+    {
+      "path": "rehearsal/source-evidence-bindings.json",
+      "sha256": "8d464118b35785d2acdb9ffafe458ee781a57c27c6831c18afb7d99ca42e53cd"
+    },
+    {
+      "path": "commit/source-manifest.json",
+      "sha256": "f891833c42230149c1a2e93c94b9425dc65cb4670ba15ff9da0d0f68707316b8"
+    },
+    {
+      "path": "commit/preservation-baseline.json",
+      "sha256": "73df7e2ba07d6901f85f8107b282263ea85b6aa5cc6408ed2856a2c00c9541a2"
+    },
+    {
+      "path": "commit/receipt.md",
+      "sha256": "c6e02f1d88b61456d16527e9ad8b9f9776521b124f41a201f347036ab4b3a05f"
+    },
+    {
+      "path": "commit/staged.patch",
+      "sha256": "575c659bfb5f26c30bbbb669afd4879380d3eebe31105984314ac9c2654b3e2b"
+    }
+  ],
+  "sourceScan": {
+    "unexpectedEndpointLiterals": [],
+    "embeddedPublicAnvilKeyLocations": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "line": 9,
+        "publicAnvilDevKey": true
+      }
+    ]
+  },
+  "cleanup": {
+    "runtimeStarted": false,
+    "port18560": "no listener",
+    "priorPid67831": "absent",
+    "ownedCheckpointParent": "absent",
+    "pendingOwnedRuntime": false
+  },
+  "limits": {
+    "runtimeSuitesRerun": false,
+    "newRuntimeCoverage": false,
+    "parentDeploymentGas": 42985843,
+    "historicalMaxTransactionGas": 32000000,
+    "allCategoryGates": "open",
+    "fullTask9": "open",
+    "publicRelease": "open"
+  },
+  "commands": [
+    "GIT_MASTER=1 git -C <worktree> rev-parse HEAD",
+    "GIT_MASTER=1 git -C <worktree> cat-file commit <commit>",
+    "GIT_MASTER=1 git -C <worktree> diff-tree --no-commit-id --name-only -r -z <commit>",
+    "GIT_MASTER=1 git -C <worktree> ls-tree <commit> -- <each accepted path>",
+    "GIT_MASTER=1 git -C <worktree> cat-file blob <each actual blob>",
+    "GIT_MASTER=1 git -C <worktree> ls-files --stage",
+    "GIT_MASTER=1 git -C <worktree> for-each-ref --format=%(refname) %(objectname)",
+    "GIT_MASTER=1 git -C <worktree> diff --cached --name-only --ignore-submodules=all",
+    "GIT_MASTER=1 git -C <worktree> diff --name-only --ignore-submodules=all",
+    "GIT_MASTER=1 git -C <worktree> diff-tree --no-commit-id --check <commit>",
+    "lsof -nP -iTCP:18560 -sTCP:LISTEN",
+    "ps -p 67831 -o pid=,command="
+  ],
+  "producerSelfCheckSnapshot": {
+    "path": "producer-verification-before.md",
+    "sha256": "1d9945ee23bd054d1ee126689d36abab2ff00f9065adb7ce41c34550e74c951d"
+  }
+}

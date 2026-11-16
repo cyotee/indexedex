@@ -1,0 +1,77 @@
+{
+  "name": "Migration DETF #3",
+  "description": "Funded Migration DETF principal unlocks in full 90 days after creation. No principal vests before the cliff. Rewards accrue from creation. Before activation only principal-only claims are available after the cliff; reward and combined claims are closed. Claims pay sDETF.",
+  "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSI+PHRleHQgeD0iMjQiIHk9IjM0IiBmb250LXNpemU9IjE1Ij5NaWdyYXRpb24gREVURiAoREVURik8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjYwIiBmb250LXNpemU9IjE0Ij5NaWdyYXRpb24gY2xpZmYgYm9uZCAjMzwvdGV4dD48dGV4dCB4PSIyNCIgeT0iOTQiIGZvbnQtc2l6ZT0iMTQiPjEwMC4wJSBwcmluY2lwYWwgdW5sb2NrZWQ8L3RleHQ+PHJlY3QgeD0iMjQiIHk9IjEwOCIgd2lkdGg9IjQ3MiIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iIzMwNDI1MyIvPjxyZWN0IHg9IjI0IiB5PSIxMDgiIHdpZHRoPSI0NzIiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiM4ZGUwYzUiLz48dGV4dCB4PSIyNCIgeT0iMTQ1IiBmb250LXNpemU9IjExIj5TdGFydCAxNzk0MzQ3NjUwIC8gTWF0dXJpdHkgMTgwMjEyMzY1MDwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMTY3IiBmb250LXNpemU9IjEyIj5QcmluY2lwYWwgdW5sb2NrZWQ8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjIwNCIgZm9udC1zaXplPSIxMiI+TWlncmF0aW9uIERFVEYgcHJpbmNpcGFsPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTciPjEuMjAxNTg1MjMyPC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMjA0IiBmb250LXNpemU9IjEyIj5SZW1haW5pbmcgREVURiBwcmluY2lwYWw8L3RleHQ+PHRleHQgeD0iMjc4IiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTciPjAuMDAwMDAwMDAwPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIyNzEiIGZvbnQtc2l6ZT0iMTIiPkNsYWltYWJsZSBwcmluY2lwYWwgc0RFVEY8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjI5NyIgZm9udC1zaXplPSIxNyI+MC4wMDAwMDAwMDA8L3RleHQ+PHRleHQgeD0iMjc4IiB5PSIyNzEiIGZvbnQtc2l6ZT0iMTIiPkNsYWltYWJsZSByZXdhcmRzIHNERVRGPC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMjk3IiBmb250LXNpemU9IjE3Ij4wLjAwMDAwMDAwMDwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMzQ0IiBmb250LXNpemU9IjEyIj5Ub3RhbCBjbGFpbWFibGUgc0RFVEY8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjM3MCIgZm9udC1zaXplPSIxNyI+MC4wMDAwMDAwMDA8L3RleHQ+PHRleHQgeD0iMjc4IiB5PSIzNDQiIGZvbnQtc2l6ZT0iMTIiPkFjY3J1ZWQgcmV3YXJkcyBzREVURjwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjM3MCIgZm9udC1zaXplPSIxNyI+MS4wNjU4NTc3NzY8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjM4OSIgZm9udC1zaXplPSIxMiI+UmV3YXJkIGNsYWltcyBsb2NrZWQgdW50aWwgYWN0aXZhdGlvbjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iNDEzIiBmb250LXNpemU9IjEyIj5QcmluY2lwYWwtb25seSBjbGFpbXMgcGF5IHNERVRGLjwvdGV4dD48L2c+PC9zdmc+",
+  "attributes": [
+    {
+      "trait_type": "DETF name",
+      "value": "Migration DETF"
+    },
+    {
+      "trait_type": "DETF symbol",
+      "value": "DETF"
+    },
+    {
+      "trait_type": "Role",
+      "value": "Migration cliff bond"
+    },
+    {
+      "trait_type": "Purchased DETF",
+      "value": "1.201585232"
+    },
+    {
+      "trait_type": "Remaining DETF principal",
+      "value": "0.000000000"
+    },
+    {
+      "trait_type": "Claimed DETF principal",
+      "value": "1.201585232"
+    },
+    {
+      "trait_type": "Claimable principal sDETF",
+      "value": "0.000000000"
+    },
+    {
+      "trait_type": "Claimable rewards sDETF",
+      "value": "0.000000000"
+    },
+    {
+      "trait_type": "Total claimable sDETF",
+      "value": "0.000000000"
+    },
+    {
+      "trait_type": "Accrued rewards sDETF",
+      "value": "1.065857776"
+    },
+    {
+      "trait_type": "Reward delivery",
+      "value": "Locked until activation"
+    },
+    {
+      "trait_type": "Cliff start",
+      "display_type": "date",
+      "value": 1794347650
+    },
+    {
+      "trait_type": "Principal unlock time",
+      "display_type": "date",
+      "value": 1802123650
+    },
+    {
+      "trait_type": "Cliff duration seconds",
+      "value": 7776000
+    },
+    {
+      "trait_type": "Principal unlocked bps",
+      "value": 10000
+    },
+    {
+      "trait_type": "Principal status",
+      "value": "Unlocked"
+    },
+    {
+      "trait_type": "Seconds remaining",
+      "value": "0"
+    }
+  ]
+}

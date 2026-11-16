@@ -1,0 +1,2476 @@
+{
+  "version": "stage2-runtime-index-v1",
+  "run": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218",
+  "sourceDomain": {
+    "chainId": "4663",
+    "block": "108944663",
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071"
+  },
+  "proxy": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+  "snapshotId": "0x0c714d0a1aae0748c6a999943342deeb825e2dd27a647f544dee481f6d3576cb",
+  "activation": {
+    "transactionHash": "0x0ee958d7e91516160a7365b73ea0dd9225abde29fb469ec917353a0d374a63d5",
+    "blockNumber": "108944935",
+    "gasUsed": "181100",
+    "selectorsRemoved": [
+      {
+        "selector": "0xec55c474",
+        "facet": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+      },
+      {
+        "selector": "0x161d9afc",
+        "facet": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+      },
+      {
+        "selector": "0xccff9894",
+        "facet": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+      },
+      {
+        "selector": "0x787642e8",
+        "facet": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+      },
+      {
+        "selector": "0xe9dc9e6d",
+        "facet": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+      },
+      {
+        "selector": "0x12076202",
+        "facet": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+      },
+      {
+        "selector": "0x256c417b",
+        "facet": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+      }
+    ],
+    "state": {
+      "migrationActivated:[]": "[\"true\"]"
+    }
+  },
+  "ordering": {
+    "configurationAndIndependentIssuanceBeforeActivation": true,
+    "allPositiveSurrendersAfterActivation": true,
+    "lastConfigurationBlock": "108944917",
+    "firstSurrenderBlock": "108944945"
+  },
+  "counts": {
+    "operator": 39,
+    "fixture": 120,
+    "fixtureFailures": 43,
+    "positiveSurrenders": 7
+  },
+  "operations": [
+    {
+      "path": "journal-deploy/73fdb3eed8e8f391e2a0585442032d3a3c9a1b394308009c7904d8a81270bf8d.receipt.json",
+      "method": "deployVault",
+      "nonce": "2115",
+      "transactionHash": "0x32d91d2442cbf6221ecf24c367ade104d5f53c60a116d8ef41d903261fd6cbd1",
+      "blockNumber": "108944889",
+      "gasUsed": "43217538",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "ThresholdsConfigured",
+          "values": [
+            "1050000000000000000",
+            "950000000000000000"
+          ]
+        },
+        {
+          "name": "ReserveBondNftWired",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "0",
+            "1"
+          ]
+        },
+        {
+          "name": "ReserveClaimWired",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+          ]
+        },
+        {
+          "name": "MigrationSyRewardTokenWired",
+          "values": [
+            "0xe44e17379970147fa85E3491ec2860F06F454F27",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-fund/5944d3328975f789930d331ec94bf7959a08d6fc586ce8b83053aa6f28b2a2fd.receipt.json",
+      "method": "approve",
+      "nonce": "2116",
+      "transactionHash": "0x3cbd3c87fd42b9da61ddee3d03040d34d193ede4f5c1bd075cbfc5d4dae18ac7",
+      "blockNumber": "108944890",
+      "gasUsed": "45798",
+      "status": "0x1",
+      "events": []
+    },
+    {
+      "path": "journal-fund/d10738f63dc314e5f74b13a5f254ec1101bc3c0e3f1249898bff4fa65b89eeb7.receipt.json",
+      "method": "approve",
+      "nonce": "2117",
+      "transactionHash": "0x84b631cc1ff1b5a37cc7694b145722f0c6025431fa1efa4f17c8c7a1c338d880",
+      "blockNumber": "108944891",
+      "gasUsed": "45961",
+      "status": "0x1",
+      "events": []
+    },
+    {
+      "path": "journal-fund/31850abbb9759291f85a640e1d0640acb079a9adefead7d5b4419d667f7bce20.receipt.json",
+      "method": "donateMigrationCapital",
+      "nonce": "2118",
+      "transactionHash": "0x761c01bf0f2eba319cc61fd2995ba083f4cee9e60c8cbf0da1403308e6f3ed18",
+      "blockNumber": "108944892",
+      "gasUsed": "326713",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "900000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "100000000000000000000"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-fund/bd0778d802bf6c7c3450222e0f6dbf5ff61a9114ad7f4b9e6f7082362598230c.receipt.json",
+      "method": "bootstrapMigrationReserve",
+      "nonce": "2119",
+      "transactionHash": "0xc78648f9cc59366bb7cf4c38ecf164af7ede53f6de35667762e5df9faf7efa1b",
+      "blockNumber": "108944893",
+      "gasUsed": "2371782",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "231662479035539984912"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440",
+            "231662479035539984912"
+          ]
+        },
+        {
+          "name": "MigrationReserveBootstrapped",
+          "values": [
+            "1000000000000",
+            "402821897672817483805",
+            "1794111146"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-capture/a5730eeda706cbd9c199b28874b375f2b3247fe7efea2cd9b430c9bc59c3d8af.receipt.json",
+      "method": "captureMigrationSnapshot",
+      "nonce": "2120",
+      "transactionHash": "0xb0385f1898da58a5b3b29ba6af2e0cbe9983f599a23a9f27a16f70f7f428c15c",
+      "blockNumber": "108944894",
+      "gasUsed": "3873874",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationSnapshotCaptured",
+          "values": [
+            "0x0c714d0a1aae0748c6a999943342deeb825e2dd27a647f544dee481f6d3576cb",
+            "26367890"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/a38325dcfdf3f806c18f382329c53ff52ef0fd0c47e0ce382f18630f5228863e.receipt.json",
+      "method": "configureWeightedLiquidEntitlements",
+      "nonce": "2121",
+      "transactionHash": "0x1d19df09ae202f34405d3bbc3f3fdcde38170ee1239b9ef6661a294e1fe601af",
+      "blockNumber": "108944895",
+      "gasUsed": "790499",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "WeightedLiquidEntitlementConfigured",
+          "values": [
+            "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+            "0xfdf7860a0b7bb49bd88fc5b25992df5c059e07be585a5acde77fbb04aac1b2be",
+            "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+            "21225531",
+            "4624334"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2122",
+      "transactionHash": "0x6d348d4c13464720436850213ef3ed22a8d74a1cfcfb874d040e1fe3019ecae7",
+      "blockNumber": "108944896",
+      "gasUsed": "812072",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0x571aeed2af7024be79a9d06370b302683cdd884ba0b1552c0a6a0dca83cdcb07",
+            "0xC379FeB4182211aBe71a34858265e4Bf5FF35e06",
+            "0xf1eaa1b9117107c978b5eded5436d378088309665ca184aa7880fe6585099303",
+            "22233172691"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2123",
+      "transactionHash": "0x6a9b63aa6038d6220c7b78505edb15b8f29a1b7492f6b3e048c82218d9df390e",
+      "blockNumber": "108944897",
+      "gasUsed": "812084",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "6",
+            "0x401725af62c0b601c81444c10d93b073e8dbc9f077f42fe39cd33db7b44a4216",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x3130b970548df12b0e61424fbaf90eb8c655d84350996f42ac5a84b34f84459c",
+            "36992599"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2124",
+      "transactionHash": "0x3e8f63776aaad9326ddd38874d33f102cdfd57081d00bffe693bf27779ad5160",
+      "blockNumber": "108944898",
+      "gasUsed": "812072",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "0xf383354d85ad9209e2eb37a7da0c29d2048a8b313291331a866e936e61e9a57f",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x831bc000c17d2c301a47df5b59f80f0e7e90f949c456c3bda50a59487864e9ac",
+            "13872781"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2125",
+      "transactionHash": "0xa25b8d331bea9f85424aee457b341ed2a7508533af822a14d972e7a2ad397832",
+      "blockNumber": "108944899",
+      "gasUsed": "812154",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "9",
+            "0xc64c6c11346ba758159679b762b6ae4a56d7a39c89db5ec161a141ac2a545d16",
+            "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+            "0x217b22ba6a57eb2fae8e857e17442ba49b5f0818310eb4f97baa2f6ed77d28f4",
+            "46243"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2126",
+      "transactionHash": "0x1cd8601d8ac553b7b968d95daab5e1448f3a78c15dd9b9698484b6fafd498e5d",
+      "blockNumber": "108944900",
+      "gasUsed": "812166",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0xf77a83228a227820818da49739bfb2e82c481fabe4c58623eec3c35556fed686",
+            "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+            "0x7b14788315c2f1db994eb798829972c55871a921234ad2833c395d30a0312b25",
+            "923391925"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2127",
+      "transactionHash": "0x1bc3fdc3617b69868c0a40fd828089eb8a359a3546e82ce0f57f3aec8a83cd94",
+      "blockNumber": "108944901",
+      "gasUsed": "720921",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0xC4c81D5C1851702d27d602aA8ff830A7689F17cc",
+            "0x183d6101c0df225537d0082c0e727f004c1ad1b8ef24a1843db27955047d0aa3",
+            "0xf3f31c898a0a83f2b4143601fdff35934fe1bbd2cadec0aa476b172565f91743",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2128",
+      "transactionHash": "0x2c31a6ed4af3d7c3c411db7727f8a27d1bab9dd247b3903570fbbe872e6fa396",
+      "blockNumber": "108944902",
+      "gasUsed": "720921",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xaae09aa8eca8c94f3c516dca1441f0bd2e0b01dfd9f642c43192d0c4127fc2c1",
+            "0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/28aa0022c5d54b23a4d7dff927ecfb6c51fd796da4120548c2d6813b386e79af.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2129",
+      "transactionHash": "0x7efa4d96277df9a9132dd8b1ba53b564ee32cca402fc6c6d1f28a6728039871a",
+      "blockNumber": "108944903",
+      "gasUsed": "720921",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x19512f1fe5e4baab33c55f03cff8594500d4b884a75440e13b14de475fcf2a41",
+            "0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-configure/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2130",
+      "transactionHash": "0x0dfb27b9e1ba30edff563477a687bfcdc92a42a3cb9e69d347255b1985b3c4d6",
+      "blockNumber": "108944904",
+      "gasUsed": "720909",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0xa2e870ddbeb14f44785f9e631ad471e435358a258295a1c6c45015d5720fefd5",
+            "0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-issue/7883e382bbb2a60810be65ffd92d6409472fb8af98ffb8c05e2400b472974949.receipt.json",
+      "method": "issueIndependentAllocations",
+      "nonce": "2131",
+      "transactionHash": "0x1acca87dd57bf1a207aa856e531391ae299475fe0ee9c33554a1a56c325469e2",
+      "blockNumber": "108944905",
+      "gasUsed": "834716",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0xa2e870ddbeb14f44785f9e631ad471e435358a258295a1c6c45015d5720fefd5",
+            "3",
+            "461",
+            "1794111158"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-issue/2dc6a24c08c69bff7b1fe34afbc6c073a021f24d62effab25cf284bf91380464.receipt.json",
+      "method": "issueIndependentAllocations",
+      "nonce": "2132",
+      "transactionHash": "0xda6f579fc2cf301ac2793289bcdaec84d60347259264a75ce9dac55c0e303b5f",
+      "blockNumber": "108944906",
+      "gasUsed": "712203",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xaae09aa8eca8c94f3c516dca1441f0bd2e0b01dfd9f642c43192d0c4127fc2c1",
+            "4",
+            "461",
+            "1794111159"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-issue/6656f6d00ce9192f91aa90399def1c8224fa7b3d1e80b35d3240b81ad4fc45be.receipt.json",
+      "method": "issueIndependentAllocations",
+      "nonce": "2133",
+      "transactionHash": "0xe9111575c9db99fe9193cd2a0cc7c783f75a5623e3a5dca52a92b4e15c6e2c01",
+      "blockNumber": "108944907",
+      "gasUsed": "712191",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x19512f1fe5e4baab33c55f03cff8594500d4b884a75440e13b14de475fcf2a41",
+            "5",
+            "461",
+            "1794111160"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/6375ff3fa122e57c6fa74d5dad3a80a885c5d7a0208354dc38e7617b700166e2.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2134",
+      "transactionHash": "0x660cfdf17a7857c050c9f52cd6f01ccb0755376ff45172b80f3b031dedf9c21c",
+      "blockNumber": "108944908",
+      "gasUsed": "543006",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0xa2e870ddbeb14f44785f9e631ad471e435358a258295a1c6c45015d5720fefd5",
+            "0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/88336c96e80814e5977e3ab64d4f391ec116835aeed5059ba0d96258abd440c6.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2135",
+      "transactionHash": "0x79f1c879f62623b356e51af5b19687993ae01da59df849547e1eb3900b48b7b6",
+      "blockNumber": "108944909",
+      "gasUsed": "554230",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x6d2f652bfc857cbe50f5181560aa14a556a1c91727cf552a93dea7b8bdb339f3",
+            "0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426",
+            "924"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/0cf5aa4b26badced1ad1da56f6c1a97a590224011e5702ea0d8006ff9389f42b.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2136",
+      "transactionHash": "0x35c8135cdfa73b5a12fd5e40aacce98f60f40edd0dfff8c951c09ba220b0238c",
+      "blockNumber": "108944910",
+      "gasUsed": "543018",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xaae09aa8eca8c94f3c516dca1441f0bd2e0b01dfd9f642c43192d0c4127fc2c1",
+            "0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/51f48527b25b7a6ed50996eab147613a65b71ad64768403bdf29f6268cf3ff78.receipt.json",
+      "method": "configureIndependentAllocations",
+      "nonce": "2137",
+      "transactionHash": "0x0cff882830a2d65980517a2959d67ad2e081fe2127f62274dd3975494c71fd3e",
+      "blockNumber": "108944911",
+      "gasUsed": "542991",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0xC4c81D5C1851702d27d602aA8ff830A7689F17cc",
+            "0x183d6101c0df225537d0082c0e727f004c1ad1b8ef24a1843db27955047d0aa3",
+            "0xf3f31c898a0a83f2b4143601fdff35934fe1bbd2cadec0aa476b172565f91743",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/defed6d045a2e3ef87931de6ab697277d2d4b391519bb46f53bcd4c2880d635c.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2138",
+      "transactionHash": "0x7373db494a901bc80f65b849878816cfc00fc1edbe8f04f9e76282a526e5fc59",
+      "blockNumber": "108944912",
+      "gasUsed": "593266",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0xf77a83228a227820818da49739bfb2e82c481fabe4c58623eec3c35556fed686",
+            "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+            "0x7b14788315c2f1db994eb798829972c55871a921234ad2833c395d30a0312b25",
+            "923391925"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/d786321fbf1b466f28724c7654af7f9f599e24ef2d71f06b7d404d7688299ec2.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2139",
+      "transactionHash": "0x95fc67f84ae325a743b4d4ac9cf154d64e9cf003cc95e1cba7a19c7e9243feee",
+      "blockNumber": "108944913",
+      "gasUsed": "593254",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "9",
+            "0xc64c6c11346ba758159679b762b6ae4a56d7a39c89db5ec161a141ac2a545d16",
+            "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+            "0x217b22ba6a57eb2fae8e857e17442ba49b5f0818310eb4f97baa2f6ed77d28f4",
+            "46243"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/314ac1817c55af4fe18604e80952c9d7252acfbc1f0928632df67bb3c636f64f.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2140",
+      "transactionHash": "0x53f9c1dfcfd25a3dc4b58fed425110e6f736be17158aa3ef1cc66794e2aff3a8",
+      "blockNumber": "108944914",
+      "gasUsed": "593172",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "0xf383354d85ad9209e2eb37a7da0c29d2048a8b313291331a866e936e61e9a57f",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x831bc000c17d2c301a47df5b59f80f0e7e90f949c456c3bda50a59487864e9ac",
+            "13872781"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/abc9397348f1a6982719ecbf0b643748839319e47cad6f67e38f5f098123f8aa.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2141",
+      "transactionHash": "0x44a213e5b2c88500302e2f0d52bf3242bd01d43d3649b25ba4c7e9642580be26",
+      "blockNumber": "108944915",
+      "gasUsed": "593184",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "6",
+            "0x401725af62c0b601c81444c10d93b073e8dbc9f077f42fe39cd33db7b44a4216",
+            "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+            "0x3130b970548df12b0e61424fbaf90eb8c655d84350996f42ac5a84b34f84459c",
+            "36992599"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/265e61d6256f1e7c514390361e603e9f60ae59354915c5227ca786ec6b955dcc.receipt.json",
+      "method": "configureNftEntitlements",
+      "nonce": "2142",
+      "transactionHash": "0x9c1fc8a224d4c040f3653c3c36b97da58d92eba93e9ff8a10148fbf487be3b01",
+      "blockNumber": "108944916",
+      "gasUsed": "593172",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0x571aeed2af7024be79a9d06370b302683cdd884ba0b1552c0a6a0dca83cdcb07",
+            "0xC379FeB4182211aBe71a34858265e4Bf5FF35e06",
+            "0xf1eaa1b9117107c978b5eded5436d378088309665ca184aa7880fe6585099303",
+            "22233172691"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-replacement/dd7c3a52c1accd5d017aad7d522116c980ca81dcad8bd4f1004f6cec63ee947e.receipt.json",
+      "method": "configureWeightedLiquidEntitlements",
+      "nonce": "2143",
+      "transactionHash": "0x0222113cc5dec105fefe0a32be50652a2f6b6d056fa6313198fd5dfb1d967c04",
+      "blockNumber": "108944917",
+      "gasUsed": "568499",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "WeightedLiquidEntitlementConfigured",
+          "values": [
+            "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+            "0xdc40bbd24733cac29917e48fc97a92af0c43470ca0b023b53e42eaff23d655d4",
+            "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+            "21225530",
+            "2774608"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-activate/f3df4647e89b79d6414e39cdd72382eaed6df307c25f27586ad7ee448c982136.receipt.json",
+      "method": "activateMigration",
+      "nonce": "2144",
+      "transactionHash": "0x0ee958d7e91516160a7365b73ea0dd9225abde29fb469ec917353a0d374a63d5",
+      "blockNumber": "108944935",
+      "gasUsed": "181100",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationActivated",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-01-WeightedClaim/d46d7b6ee59a9c12528dacf4f27dba3ecdc6eb36cd7c38ac0f0cdddcc121034b.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2154",
+      "transactionHash": "0x4d21f8706be2b71c21401015c457b8c4877de3b385deeea7a6b11d9dd04f4c15",
+      "blockNumber": "108944993",
+      "gasUsed": "489619",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "86298798",
+            "17638842"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-02-WeightedPrincipal/38b4210631775e9fe2efe6e3cd46eb641a1c61eb775df9079839f65746e3ddf2.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2155",
+      "transactionHash": "0xeec85ba23edf4d300ede3d2700e8f386a5b674306f04953bcba03ec8c2afd3f5",
+      "blockNumber": "108944994",
+      "gasUsed": "418929",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "16977",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-03-WeightedRewards/0dc89126448a06cf36364e4bdca97254e7dfc0409493e3f8a464c88578073837.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2156",
+      "transactionHash": "0x5d130f6958d272d07f99a81917f752862deaa1c8efc9b7a8040b8a14d1a6829a",
+      "blockNumber": "108944995",
+      "gasUsed": "398855",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0",
+            "3622"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-04-WeightedUnstake/2477c1e264fe6dfe4136492d8e2dd96f09231b4130269b8afc153f07547b2d8b.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2157",
+      "transactionHash": "0xe6c06352443da31df4eaec637626abe0bd7d53e5a751e8ee90b18d2493bc5eb3",
+      "blockNumber": "108944997",
+      "gasUsed": "1572357",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryRevalued",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "103958239",
+            "103970130",
+            "91013551914076171953075578277667630170836831",
+            "875381719530621280832290081242891839"
+          ]
+        },
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "103958239",
+            "103958239"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-05-WeightedUnstake/32d488a77be2e49f5de405c427fbcc683722c540623c9bb37b39ca4ea61ad0d2.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2158",
+      "transactionHash": "0x4a51b99f6dd5708cbf836f3197d3ae27a76204c46e71300253ae20fc05dc5657",
+      "blockNumber": "108944998",
+      "gasUsed": "331270",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "11891",
+            "11891"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-06-WeightedConvert/5e8e2f15cce70901deea9694936168931cd47ed6d7d22578fb7cfa37d958ae4d.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2159",
+      "transactionHash": "0x96be5a2c7d5acdb8fec2ed70b74445e01765ed6153a02f6edcb1dffc6a8bb2e7",
+      "blockNumber": "108944999",
+      "gasUsed": "1347225",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "103970130",
+            "557318466380693374802"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-07-Donate/ef938551798b90e5931db7c9e91b9a2c06540dccb98ee59d496a79a4ceed1c39.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2160",
+      "transactionHash": "0xe2bc5147ede4d79c3188da9c82b6a1842e3cc7a983444bb365a9944feaf6a9f5",
+      "blockNumber": "108945000",
+      "gasUsed": "22524825",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryDonated",
+          "values": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000",
+            "118761572202656765"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-08-EarlierClaim/74eff43287d81169fabe0a48fa260b1cdead33874245785fcde311a0f24d7253.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2161",
+      "transactionHash": "0x14a2ac2f065600dd05093e89f3dbf48cc26110154c3b774fed8de9d0f120a68f",
+      "blockNumber": "108945001",
+      "gasUsed": "324901",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0",
+            "124873542679524901"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "journal-harvest-09-EarlierSale/09975afa0e2892f0da1f58954a9a3598d0ff0d75b93b795fe63655243c293a0d.receipt.json",
+      "method": "recoverMigrationNfts",
+      "nonce": "2162",
+      "transactionHash": "0x7531068e3c7510786458ddb9544bff7de38b22757cd9afa5c63f84992798540f",
+      "blockNumber": "108945003",
+      "gasUsed": "991434",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoverySold",
+          "values": [
+            "3",
+            "562524912595035608166",
+            "485044501927175493321",
+            "0"
+          ]
+        }
+      ]
+    }
+  ],
+  "positiveSurrenders": [
+    {
+      "transactionHash": "0xd78d5b5d6aec019531934e439caeca456a49da52491c0585c53b8d028455d290",
+      "blockNumber": "108944945",
+      "event": "MigrationWeightedLiquidSurrendered",
+      "values": [
+        "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+        "0xdc40bbd24733cac29917e48fc97a92af0c43470ca0b023b53e42eaff23d655d4",
+        "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+        "7075176",
+        "924869",
+        "6"
+      ]
+    },
+    {
+      "transactionHash": "0x3f62955437c1b3ca5084af2444f41d17cac055f0fc163735a19246cf3550f73e",
+      "blockNumber": "108944964",
+      "event": "MigrationNftSurrendered",
+      "values": [
+        "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "4",
+        "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+        "0xf383354d85ad9209e2eb37a7da0c29d2048a8b313291331a866e936e61e9a57f",
+        "281387179",
+        "13872781",
+        "7"
+      ]
+    },
+    {
+      "transactionHash": "0x2981a419b5588c2117e13faf2e3f5c88dfeb0ea402a6a31f45636bfbc80ac9cd",
+      "blockNumber": "108944979",
+      "event": "MigrationNftSurrendered",
+      "values": [
+        "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "26",
+        "0xC379FeB4182211aBe71a34858265e4Bf5FF35e06",
+        "0x571aeed2af7024be79a9d06370b302683cdd884ba0b1552c0a6a0dca83cdcb07",
+        "56299",
+        "22233172691",
+        "8"
+      ]
+    },
+    {
+      "transactionHash": "0x3ab45bec5fc62277a458c181f438f494fb4d2c7b82d6770abcab87e63bdb2bc4",
+      "blockNumber": "108944991",
+      "event": "MigrationNftSurrendered",
+      "values": [
+        "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "3",
+        "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "0xf77a83228a227820818da49739bfb2e82c481fabe4c58623eec3c35556fed686",
+        "562524912595035608166",
+        "923391925",
+        "9"
+      ]
+    },
+    {
+      "transactionHash": "0x5e48a008f721250cc33e6c9f57405a87dde634da14c315871245384f1556cd4b",
+      "blockNumber": "108945018",
+      "event": "MigrationNftSurrendered",
+      "values": [
+        "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+        "6",
+        "0xeC8c4Eb216CBfc5B7f49b83CFbE6e34212863AE8",
+        "0x401725af62c0b601c81444c10d93b073e8dbc9f077f42fe39cd33db7b44a4216",
+        "740825635",
+        "36992599",
+        "10"
+      ]
+    },
+    {
+      "transactionHash": "0x7076d1b71a9abfdb73733104f4f705ff9d3b5e47394e9c7a276ce4b9b7d544ff",
+      "blockNumber": "108945030",
+      "event": "MigrationNftSurrendered",
+      "values": [
+        "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+        "9",
+        "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+        "0xc64c6c11346ba758159679b762b6ae4a56d7a39c89db5ec161a141ac2a545d16",
+        "26355776123062198039",
+        "46243",
+        "11"
+      ]
+    },
+    {
+      "transactionHash": "0xd93dd8e24d8a1c7f3f0c13ca315a57d58e9cda3e51ea127131d8054b3bc8bd6e",
+      "blockNumber": "108945039",
+      "event": "MigrationWeightedLiquidSurrendered",
+      "values": [
+        "0x588817a58da99260f4c8b2d4784075c43c6bcfd00760e4fb913002679169f581",
+        "0xdc40bbd24733cac29917e48fc97a92af0c43470ca0b023b53e42eaff23d655d4",
+        "0x082Cb14f04d9C485473dedC00d604D7e9Abca303",
+        "14150354",
+        "1849739",
+        "12"
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "transactionHash": "0x31ea1a256fd03b1a6d46b580c49674ca21c653f257d41dd25bd9da3dfae6caf5",
+      "blockNumber": "108944664",
+      "status": "0x1",
+      "gasUsed": "1478648"
+    },
+    {
+      "transactionHash": "0x03378163369c4e72863f05634954806735141a53e9b9ce11cde219988c75b12f",
+      "blockNumber": "108944665",
+      "status": "0x1",
+      "gasUsed": "207354"
+    },
+    {
+      "transactionHash": "0xeb13ca22d8a968332463d2e720637489921e0547fbbedf48599ca3140b849d8b",
+      "blockNumber": "108944666",
+      "status": "0x1",
+      "gasUsed": "52060"
+    },
+    {
+      "transactionHash": "0x627a9bf3b0e41befc0f931ac9bf628af291a4e787d7b35f5322e6466f4605549",
+      "blockNumber": "108944667",
+      "status": "0x1",
+      "gasUsed": "1203827"
+    },
+    {
+      "transactionHash": "0xec2debbd374f66d887cfc803cb6d15297c04dd64a2aca2ad4c96aff727ee4fb9",
+      "blockNumber": "108944668",
+      "status": "0x1",
+      "gasUsed": "51388"
+    },
+    {
+      "transactionHash": "0x359a18f5cf1aa4b7022df5c4304550c33f3215a951142e968ab45d0db03889e0",
+      "blockNumber": "108944918",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x770b478ea6882f195b874ac57d192928a691f04d2b2a672d7cd77606639d71d8",
+      "blockNumber": "108944919",
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "transactionHash": "0x8373e6980494a82b126a039f709a3ae5e2697fe476303ac0986f35acf15e36cb",
+      "blockNumber": "108944920",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0xf1d6dfce2d74eb747d1d1a555706e4b77858db22973f05baa805a04c9aed5292",
+      "blockNumber": "108944921",
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "transactionHash": "0x88b120be36a587d6ab55abf9aa683801e50d337c3ff37108d5f5558286b4fd6e",
+      "blockNumber": "108944922",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0xd874c886333376d1f4cf9828fd61772b586e8d451159e2f0c101f91e131ef1c9",
+      "blockNumber": "108944923",
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "transactionHash": "0xf83e98e3b0aa508f2800175ce6af4a9dea0c0504622563bc4efddb46a4d08bd5",
+      "blockNumber": "108944924",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0xee6dd1eb040fdca08c931ecd012ec9e570005fad9fc1ef207856ac9831d70614",
+      "blockNumber": "108944925",
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "transactionHash": "0x28539f7f97a52639040732ee417c902184e6baab5cce68073853b5ba443ade5e",
+      "blockNumber": "108944926",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x4b1aca0fbf4183f8d1bcb66bf199cb0e25ee3dfb49a13730400e451e323d7e8d",
+      "blockNumber": "108944927",
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "transactionHash": "0xbbf89382b2cb7316ba841ac84931c7a2002a567098028f46a56658d045a2f3b8",
+      "blockNumber": "108944928",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0xf5a79649cf4a0ee77bc35e10ca7f1842f19e29b7b5c29067464a13ee9084e35e",
+      "blockNumber": "108944929",
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "transactionHash": "0xc6d51620e832d3b7914df2a6b01999f53cfeeeb99772f037779843e71c3ac6e1",
+      "blockNumber": "108944930",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0xa1934af861d030d354c232cfa6f716267cc9b7ab061f0888e4ef2fa3fed17eb8",
+      "blockNumber": "108944931",
+      "status": "0x0",
+      "gasUsed": "29504"
+    },
+    {
+      "transactionHash": "0xf4e2987f7458d25550415be945b6ce6612410732dd8fcb6a6ba4ff8a7e6a97dd",
+      "blockNumber": "108944932",
+      "status": "0x1",
+      "gasUsed": "52048"
+    },
+    {
+      "transactionHash": "0x6ddefc70f86d004b211b72844aa15fa5c4b55dc9875b8e6bcc03b3ebc9931a04",
+      "blockNumber": "108944933",
+      "status": "0x0",
+      "gasUsed": "29907"
+    },
+    {
+      "transactionHash": "0x12ed468e597ca07df1365afd99e291110a35128cf3257d88a146d807addec504",
+      "blockNumber": "108944934",
+      "status": "0x0",
+      "gasUsed": "29907"
+    },
+    {
+      "transactionHash": "0x1cedf7e837269b33a520c98ac1dde464f47b7ee989c981d29972987e2f316d37",
+      "blockNumber": "108944936",
+      "status": "0x0",
+      "gasUsed": "109704"
+    },
+    {
+      "transactionHash": "0xc1f1c46ceb73c71812d4d386d875c9a9bc04f87f150ef77cf12937e4d3c64e8b",
+      "blockNumber": "108944937",
+      "status": "0x1",
+      "gasUsed": "57700"
+    },
+    {
+      "transactionHash": "0x854e587805fa81460d7e09cca63f914e733d28fb91d4539d6b77e932d6909963",
+      "blockNumber": "108944938",
+      "status": "0x1",
+      "gasUsed": "52012"
+    },
+    {
+      "transactionHash": "0x1afacabd29aee9f6bcd15493cf7166095e542cebf13afbf3099ffa29d649387f",
+      "blockNumber": "108944939",
+      "status": "0x0",
+      "gasUsed": "118662"
+    },
+    {
+      "transactionHash": "0xdfba7e49e2aeb96d696483bcdd3d7e516b8ed35d53cc1e0af79ab7ec34b54a70",
+      "blockNumber": "108944940",
+      "status": "0x1",
+      "gasUsed": "35800"
+    },
+    {
+      "transactionHash": "0xaa6d736dc90ee007c40b7f176892c59eb0080ca2c08a458eeb2cdb7a02cd1a8e",
+      "blockNumber": "108944941",
+      "status": "0x1",
+      "gasUsed": "57700"
+    },
+    {
+      "transactionHash": "0x531df689f8d269d39e7187be7a1042791d0900d2dd6db49f1e9dcc38aeee2976",
+      "blockNumber": "108944942",
+      "status": "0x1",
+      "gasUsed": "51364"
+    },
+    {
+      "transactionHash": "0xe30f8c366316f58e53d3d47457f1223187cc22620cdc9ca9b3807feb03e9317f",
+      "blockNumber": "108944943",
+      "status": "0x1",
+      "gasUsed": "175292"
+    },
+    {
+      "transactionHash": "0x2882736a64a700e74c5af72aeca8db4fe93287e37c0180cfb46fd7bb658d2af4",
+      "blockNumber": "108944944",
+      "status": "0x1",
+      "gasUsed": "34936"
+    },
+    {
+      "transactionHash": "0xd78d5b5d6aec019531934e439caeca456a49da52491c0585c53b8d028455d290",
+      "blockNumber": "108944945",
+      "status": "0x1",
+      "gasUsed": "696744"
+    },
+    {
+      "transactionHash": "0x0fad89dda53168f9e2e2af2ee37c0330b7c10d589f53e2617f40d7c3a7da43c3",
+      "blockNumber": "108944946",
+      "status": "0x0",
+      "gasUsed": "27840"
+    },
+    {
+      "transactionHash": "0x0ee1853ba0a1dd3ace44d9b293aaec67e4ac2c28d446a204dc9e1a8354ba0943",
+      "blockNumber": "108944947",
+      "status": "0x0",
+      "gasUsed": "27870"
+    },
+    {
+      "transactionHash": "0x059a48f4e52d026a68b416fda1d39e30f8e5056565277dc090268935717aaac3",
+      "blockNumber": "108944948",
+      "status": "0x1",
+      "gasUsed": "1364313"
+    },
+    {
+      "transactionHash": "0x33818a597328042b6241dbaaf6b35ce49d4c5d291b2df81d41b1b7d0162e021d",
+      "blockNumber": "108944949",
+      "status": "0x1",
+      "gasUsed": "22639161"
+    },
+    {
+      "transactionHash": "0xf72b43a182387bf68b4c7f5c8fbe75479aa3ef53631cf895c448fc922d16ceb5",
+      "blockNumber": "108944950",
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "transactionHash": "0xa93e076afa695beff028827f8af1a80816262119c34e5c8e5c3bc5ad71fa71fe",
+      "blockNumber": "108944951",
+      "status": "0x0",
+      "gasUsed": "111782"
+    },
+    {
+      "transactionHash": "0x05b23683ea921104eb82ee445638ef781f9269cd64ba4acc3088cd9bc83ad4d7",
+      "blockNumber": "108944952",
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "transactionHash": "0x9feae853223ea3c667ac1ae2667ff3e03348aa737c0b47e7d5851bb235092447",
+      "blockNumber": "108944953",
+      "status": "0x0",
+      "gasUsed": "111804"
+    },
+    {
+      "transactionHash": "0xc107996c6f3385e51cc778515651aa6995be56657c55dbb98da69c604c631f29",
+      "blockNumber": "108944954",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0x9188457a7a2068f083c9171e16fa4438222e11a9b7d7e562ecd4dd77771904ec",
+      "blockNumber": "108944955",
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "transactionHash": "0xb070dcae922302bc5cd50bec086fcb9bb018d8514a6997ef68e26d09c2df9c03",
+      "blockNumber": "108944956",
+      "status": "0x1",
+      "gasUsed": "143297"
+    },
+    {
+      "transactionHash": "0x21e46a304736b3bbf0039d30ccdc1f3684e3b24063123e4703aba67ca6bb3053",
+      "blockNumber": "108944957",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x94e7317bfcf4bc57a90c7ac309448933cdd8447655fd89b27465702639a6f2c8",
+      "blockNumber": "108944958",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0x7a0bf594fbbe343cc5867f39c2fc49441e6cc8c3b16396814da85f13b2d69c29",
+      "blockNumber": "108944959",
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "transactionHash": "0x2c5065e23a47235e9d897cb4c5f1c34e6d28c29f7d590b65e3c18e8c8dca43be",
+      "blockNumber": "108944960",
+      "status": "0x0",
+      "gasUsed": "163915"
+    },
+    {
+      "transactionHash": "0xce71968cba067d049417090f7770c0e32a49511ab2dd1da3de21b2769973186a",
+      "blockNumber": "108944961",
+      "status": "0x1",
+      "gasUsed": "121397"
+    },
+    {
+      "transactionHash": "0xad289ddb11a1e9deac87a3c005f4406e38bfacd1445bb248e25149b525438cc0",
+      "blockNumber": "108944962",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "transactionHash": "0x653305cd34c54b46ffe94ef0020752434d3fdd74ccd287957e9637a38c58bfad",
+      "blockNumber": "108944963",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x3f62955437c1b3ca5084af2444f41d17cac055f0fc163735a19246cf3550f73e",
+      "blockNumber": "108944964",
+      "status": "0x1",
+      "gasUsed": "1009950"
+    },
+    {
+      "transactionHash": "0xd836a71ad576e2bdb32936a7a66fe2ca9d4d6697d32570dcea1e962ecf4874a6",
+      "blockNumber": "108944965",
+      "status": "0x0",
+      "gasUsed": "109465"
+    },
+    {
+      "transactionHash": "0x3477b6dffdc6642d7e223f7329821455dbb1b078de07ca06cbc001d1ff55d38a",
+      "blockNumber": "108944966",
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "transactionHash": "0x96738d9c4a61d515ce273091742bc818e786e931d688d10bc1fb8813b906cf70",
+      "blockNumber": "108944967",
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "transactionHash": "0xd7b0a3f9cee38a2dc9fb227e08840fd905defd72def48ddc6f8c81244bea7c02",
+      "blockNumber": "108944968",
+      "status": "0x1",
+      "gasUsed": "138497"
+    },
+    {
+      "transactionHash": "0x64602a4841126812cff09ac7935cb6d24e0585a5f2b1e3e729866ad325eba23b",
+      "blockNumber": "108944969",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0xc8c3505b3fa395014441938e930d07625e94912e433f1e4bb7b759a4f7b55f43",
+      "blockNumber": "108944970",
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "transactionHash": "0x96681f92789cbccde600b15097818850d1a9bdd3b39f2dce04df91a98bcbd67e",
+      "blockNumber": "108944971",
+      "status": "0x1",
+      "gasUsed": "140497"
+    },
+    {
+      "transactionHash": "0xd54e954052b009508db1139d4fb2e980b354246140817df75f1f4d2819176295",
+      "blockNumber": "108944972",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0xfbed40a9aca6c71b1e7d05ea98bd27197560c7260335d6f204758f3cf9d1e129",
+      "blockNumber": "108944973",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0x788efcfab3d81d43ef382e086b9a34bf884d65fd4a579015ccbb2f47da67ff6a",
+      "blockNumber": "108944974",
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "transactionHash": "0x358e1c90dd62bc1ec70b057ec485c5c7e3926ebe4b1723e51c60467fd80a2ef4",
+      "blockNumber": "108944975",
+      "status": "0x0",
+      "gasUsed": "163915"
+    },
+    {
+      "transactionHash": "0x1291abaecf8a706b78019b26bd0e3d47d09bc505d402f3edd20b308e37a706b8",
+      "blockNumber": "108944976",
+      "status": "0x1",
+      "gasUsed": "138497"
+    },
+    {
+      "transactionHash": "0xa50c269a9b16bd94fcb8448da04d4909c6530805e0b3d8c07b6a7620662888b4",
+      "blockNumber": "108944977",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "transactionHash": "0xb3b73d6dcf528fe7ecc5e7744879cd56a3daacc4bf26145b9785a05e931249fa",
+      "blockNumber": "108944978",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x2981a419b5588c2117e13faf2e3f5c88dfeb0ea402a6a31f45636bfbc80ac9cd",
+      "blockNumber": "108944979",
+      "status": "0x1",
+      "gasUsed": "991429"
+    },
+    {
+      "transactionHash": "0x3600e1b87c96c4572c0cb3b2b671f807d8b84469f661654cec22e93e623aee4c",
+      "blockNumber": "108944980",
+      "status": "0x0",
+      "gasUsed": "109465"
+    },
+    {
+      "transactionHash": "0x3ead149c8b5762c0ca9e3ba12c0dc5cced8cacb47f2137433a224119d28d4c57",
+      "blockNumber": "108944981",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0xae8618c6c7e5bfe48fa67f17ee923d16a663b0d656271618034825be416d5e42",
+      "blockNumber": "108944982",
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "transactionHash": "0x30ab632f69f1c9a0d380f8622db11677288c369961dc2e839ea0ffc83693b378",
+      "blockNumber": "108944983",
+      "status": "0x1",
+      "gasUsed": "68150"
+    },
+    {
+      "transactionHash": "0x90ffb5d7de9afc68ea3d76349df00604402b3fdbd63ea954c0c799041acb9b67",
+      "blockNumber": "108944984",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x999e36d9edde9a49b485eb2ace770d73ed99aba868f73ed75d9be8260e165504",
+      "blockNumber": "108944985",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0x8b8219169fb02a6adab956b63c7f856b802d90e1dde2a570ed341ab58bfb3e38",
+      "blockNumber": "108944986",
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "transactionHash": "0x4fd7b0eefacf96b17ca12a7b7637ee13c90f30a577107868ad51e3e176c9a5f1",
+      "blockNumber": "108944987",
+      "status": "0x0",
+      "gasUsed": "164366"
+    },
+    {
+      "transactionHash": "0xdc6c68a1150a150df52d0648ecefcc50e5bec84500a2e844c1469e092b7f0226",
+      "blockNumber": "108944988",
+      "status": "0x1",
+      "gasUsed": "46250"
+    },
+    {
+      "transactionHash": "0x46bda080ff617747dae8bfcc5a14d3dad3ec54104ae3a40f16db89eacc505ca5",
+      "blockNumber": "108944989",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "transactionHash": "0x475c4446d3e02d1f7412b3c0ea2626ac918f2bf44d6ecf8914843b8f26f46947",
+      "blockNumber": "108944990",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x3ab45bec5fc62277a458c181f438f494fb4d2c7b82d6770abcab87e63bdb2bc4",
+      "blockNumber": "108944991",
+      "status": "0x1",
+      "gasUsed": "947730"
+    },
+    {
+      "transactionHash": "0x1240b3d821549c0a1f4c105b0ed33572dc695faf00d89f4134aec0c506285b3f",
+      "blockNumber": "108944992",
+      "status": "0x0",
+      "gasUsed": "109487"
+    },
+    {
+      "transactionHash": "0x0cfd95731d69937e9fb6c77f3b04568c46d8eb62024d422192480158135c3717",
+      "blockNumber": "108945004",
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "transactionHash": "0x32aca71a7762f26d5da863ba99c7c995fce336dc9bac08c73add2a22b4cb5068",
+      "blockNumber": "108945005",
+      "status": "0x0",
+      "gasUsed": "111782"
+    },
+    {
+      "transactionHash": "0x26197b209f91f1ca5254cd2d5310370a4e6268f9cf1811df2eebb4d4eaf66acc",
+      "blockNumber": "108945006",
+      "status": "0x1",
+      "gasUsed": "34337"
+    },
+    {
+      "transactionHash": "0x68bc2229f0511179e65b188a598d91b5cceca9e1f531870e8773e3a38dc4efc5",
+      "blockNumber": "108945007",
+      "status": "0x0",
+      "gasUsed": "111804"
+    },
+    {
+      "transactionHash": "0x641bfd18a329937ceac183e456257c6030ed02f5fbe04226b8ad176c094db379",
+      "blockNumber": "108945008",
+      "status": "0x1",
+      "gasUsed": "32272"
+    },
+    {
+      "transactionHash": "0xc41d5bbcfb2ee07f1266ebe2c6ef9761338c3fa614ef8b3cc26d659c1bf3efb2",
+      "blockNumber": "108945009",
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "transactionHash": "0xdc8821d2184f9196e94a4d5943a1994c4abd0599b4956ce1b3122607e60c69da",
+      "blockNumber": "108945010",
+      "status": "0x1",
+      "gasUsed": "1393846"
+    },
+    {
+      "transactionHash": "0xd1bf2c678ecf72625bf605e8db7e1d30efb0bfbf64a3f75e0705721edce0c020",
+      "blockNumber": "108945011",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0xd91fcd75c1072df9a4bfeeddb588acf76c227ee40057e81c7e04ababb27435dd",
+      "blockNumber": "108945012",
+      "status": "0x1",
+      "gasUsed": "32272"
+    },
+    {
+      "transactionHash": "0x8e540fa3240d3927897c60e817cb51d34949088ebc993085e77b01f3a6471d34",
+      "blockNumber": "108945013",
+      "status": "0x0",
+      "gasUsed": "163914"
+    },
+    {
+      "transactionHash": "0x500c148cb9005c9bb0ff0146d70f3cb572c56683fdd348a535c9215a324cf3eb",
+      "blockNumber": "108945014",
+      "status": "0x0",
+      "gasUsed": "163915"
+    },
+    {
+      "transactionHash": "0xd783b0f6e29bbb2d0d7bc9bab517f5d7eff75d6311d6dbd55805935e935ead5d",
+      "blockNumber": "108945015",
+      "status": "0x1",
+      "gasUsed": "121397"
+    },
+    {
+      "transactionHash": "0x4c65ba164c93c0210ec5360b14c67347a36f539730c0b78f2b3f26a4957f04ee",
+      "blockNumber": "108945016",
+      "status": "0x1",
+      "gasUsed": "867200"
+    },
+    {
+      "transactionHash": "0xde90656fed66b752785e2a9b48fd5cfac3e3a093715c1e6dbe76c9b87d200cb3",
+      "blockNumber": "108945017",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x5e48a008f721250cc33e6c9f57405a87dde634da14c315871245384f1556cd4b",
+      "blockNumber": "108945018",
+      "status": "0x1",
+      "gasUsed": "977740"
+    },
+    {
+      "transactionHash": "0x8b18836caa19ee96fa4b13827bf4fa6eb3208b4369f8d1e27953af60799c731e",
+      "blockNumber": "108945019",
+      "status": "0x0",
+      "gasUsed": "109465"
+    },
+    {
+      "transactionHash": "0x9538d2162b58a1590790b8a26dd105ac76fc08e674cd20fa85004207f155499d",
+      "blockNumber": "108945020",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0x491ef73c917d5377b46ebe7da255acf7a1b44a7c5dca72c73123f909a6e40fea",
+      "blockNumber": "108945021",
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "transactionHash": "0x53d0f6a7370c7e090e1af0a0739132e4a3d00fe5033ed0a226d2e9d860d4cc4a",
+      "blockNumber": "108945022",
+      "status": "0x1",
+      "gasUsed": "63350"
+    },
+    {
+      "transactionHash": "0x5710a14df645f85faaadc2f31cbfbded3690ad59765329bf770af7e88ea7c77a",
+      "blockNumber": "108945023",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x3a7b26908b99fbe340376361ac7288e2f99dd2206cd57e7bd42c16739ca11330",
+      "blockNumber": "108945024",
+      "status": "0x1",
+      "gasUsed": "52172"
+    },
+    {
+      "transactionHash": "0x1128c006503c9b329b94eb9ffdfe102a49c6feb435e262164f7746858a3d8487",
+      "blockNumber": "108945025",
+      "status": "0x0",
+      "gasUsed": "164365"
+    },
+    {
+      "transactionHash": "0x0385be0e81bac6160d0dc53257a935472d22f98b4a17ee20957773ba79abe159",
+      "blockNumber": "108945026",
+      "status": "0x0",
+      "gasUsed": "164366"
+    },
+    {
+      "transactionHash": "0xfc4650ffef31a5d3106fcba67c0113ab11cd36cf57173f1cd1f4f37bc5e7375b",
+      "blockNumber": "108945027",
+      "status": "0x1",
+      "gasUsed": "63350"
+    },
+    {
+      "transactionHash": "0xd1480ba1f8fe4e8fbdbfb48df78c766b813351c1d2869034e6f9e88dce1c8730",
+      "blockNumber": "108945028",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "transactionHash": "0x2077296a767cc90fef647779a332cee56a4a0379aa645e6e3d82eaf8693f8f59",
+      "blockNumber": "108945029",
+      "status": "0x1",
+      "gasUsed": "54237"
+    },
+    {
+      "transactionHash": "0x7076d1b71a9abfdb73733104f4f705ff9d3b5e47394e9c7a276ce4b9b7d544ff",
+      "blockNumber": "108945030",
+      "status": "0x1",
+      "gasUsed": "947711"
+    },
+    {
+      "transactionHash": "0x80bf069c1c183d7378e1206762adeb3b1a6b7cb97112dcdd7d959c6c1d4a2bf0",
+      "blockNumber": "108945031",
+      "status": "0x0",
+      "gasUsed": "109487"
+    },
+    {
+      "transactionHash": "0x19c53f62fe9dc5ffd07405da898c76c58d6c8877fac52a681d6b9993beeb1e96",
+      "blockNumber": "108945032",
+      "status": "0x0",
+      "gasUsed": "109704"
+    },
+    {
+      "transactionHash": "0x8ce2a55aef42aa4206679b11753dc2b812d63244aaca6441008d84ce6ce54161",
+      "blockNumber": "108945033",
+      "status": "0x1",
+      "gasUsed": "57700"
+    },
+    {
+      "transactionHash": "0xb431c8417074021f998910ea1cc7d2721c08dabe2bdef44cbcc8eb49960f8ae6",
+      "blockNumber": "108945034",
+      "status": "0x1",
+      "gasUsed": "32112"
+    },
+    {
+      "transactionHash": "0xca0a727e9f2f38ba520f22801476eda933afd63f8c69ab4ebb415bb6608f92cd",
+      "blockNumber": "108945035",
+      "status": "0x0",
+      "gasUsed": "118662"
+    },
+    {
+      "transactionHash": "0x1d423d2892807ff612e695d62ddf174f0e262d9645bc7f456f16b25eeb1e4079",
+      "blockNumber": "108945036",
+      "status": "0x1",
+      "gasUsed": "35800"
+    },
+    {
+      "transactionHash": "0x19488f662f3a064717768ede94be320d24d3c6e5eb813d26ecbdaa1d9019c46c",
+      "blockNumber": "108945037",
+      "status": "0x1",
+      "gasUsed": "155392"
+    },
+    {
+      "transactionHash": "0x4cf1c7977dded1a7bd7cfc9305d73b153632069773d56c420a7d5aa699b8013a",
+      "blockNumber": "108945038",
+      "status": "0x1",
+      "gasUsed": "52036"
+    },
+    {
+      "transactionHash": "0xd93dd8e24d8a1c7f3f0c13ca315a57d58e9cda3e51ea127131d8054b3bc8bd6e",
+      "blockNumber": "108945039",
+      "status": "0x1",
+      "gasUsed": "649696"
+    },
+    {
+      "transactionHash": "0x7a25c238dca5fa19a9d0bb2d5f569132d88b3b93b55ba126312a18d4e0f09c7e",
+      "blockNumber": "108945040",
+      "status": "0x0",
+      "gasUsed": "27840"
+    },
+    {
+      "transactionHash": "0x55a066c3b3283b076ead9aa5d538ff04b047b53fdb4e548add402835f7ed775f",
+      "blockNumber": "108945041",
+      "status": "0x0",
+      "gasUsed": "27870"
+    },
+    {
+      "transactionHash": "0xa9f760a936f03be5016f86f005f82c5f7ca53e32b60d4400f841bd09e79ea6eb",
+      "blockNumber": "108945042",
+      "status": "0x1",
+      "gasUsed": "1347213"
+    },
+    {
+      "transactionHash": "0xd11a095580721e9176c0f68c003fe813f8873a181c7a2e93b3d0a3083acb2778",
+      "blockNumber": "108945043",
+      "status": "0x1",
+      "gasUsed": "25697441"
+    },
+    {
+      "transactionHash": "0x2c2f8b0c4b9bb7d82e530b7ea2f568f3014a30bc1a79e930ac727a408a7185ad",
+      "blockNumber": "108945044",
+      "status": "0x0",
+      "gasUsed": "114248"
+    }
+  ],
+  "commands": [
+    {
+      "path": "001-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/deploy"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "002-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/deploy",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "003-fund.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "fund",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "004-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "005-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "006-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736",
+        "--reverse"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "007-capture.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "capture",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/capture",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "008-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/prepared"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "009-validate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "validate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/prepared/manifest.json"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "010-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/reordered-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/prepared-reordered"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "011-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/configure",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "012-independent-issue.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "independent-issue",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "path": "013-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "014-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "015-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/verify"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "016-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/reject-chainId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "017-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/reject-proxy.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "018-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/reject-package.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "019-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/reject-snapshotId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "020-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/reject-payload.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "path": "021-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/replacement-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/replacement"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "022-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/replacement",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "023-activate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "activate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/activate",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "024-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-01-WeightedClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-01-WeightedClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "025-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-01-WeightedClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-01-WeightedClaim",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "026-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-02-WeightedPrincipal-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-02-WeightedPrincipal"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "027-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-02-WeightedPrincipal-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-02-WeightedPrincipal",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "028-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-03-WeightedRewards-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-03-WeightedRewards"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "029-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-03-WeightedRewards-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-03-WeightedRewards",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "030-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-04-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-04-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "031-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-04-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-04-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "032-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-05-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-05-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "033-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-05-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-05-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "034-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-06-WeightedConvert-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-06-WeightedConvert"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "035-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-06-WeightedConvert-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-06-WeightedConvert",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "036-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-07-Donate-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-07-Donate"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "037-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-07-Donate-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-07-Donate",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "038-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-08-EarlierClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-08-EarlierClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "039-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-08-EarlierClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-08-EarlierClaim",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "040-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-09-EarlierSale-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-09-EarlierSale"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "041-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/harvest-09-EarlierSale-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/harvest-09-EarlierSale",
+        "--execute-local",
+        "--instance-id",
+        "0xfd5a59c556c8994edfb3c52738900d26539140452b025c8105f3535ba9ac3736"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "042-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-correction/rehearsal-1794427310218/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints/verify-after"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "path": "environment-stage.log.command.json",
+      "command": [
+        "/Users/cyotee/.foundry/bin/forge",
+        "script",
+        "--use",
+        "solar",
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
+        "--sig",
+        "prepareEnvironment()",
+        "--rpc-url",
+        "http://127.0.0.1:18563/",
+        "--sender",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--unlocked",
+        "--broadcast",
+        "--slow",
+        "--legacy",
+        "--gas-price",
+        "2000000000",
+        "--gas-limit",
+        "1000000000",
+        "--gas-estimate-multiplier",
+        "200"
+      ],
+      "code": 0,
+      "signal": null
+    }
+  ],
+  "resumes": {
+    "donation": {
+      "hash": "0x761c01bf0f2eba319cc61fd2995ba083f4cee9e60c8cbf0da1403308e6f3ed18",
+      "sameCanonicalReceipt": true,
+      "completionAbsentAfterMining": true
+    },
+    "issuance": {
+      "hash": "0x1acca87dd57bf1a207aa856e531391ae299475fe0ee9c33554a1a56c325469e2",
+      "sameCanonicalReceipt": true,
+      "completionAbsentAfterMining": true
+    },
+    "reordered": {
+      "actual": [
+        {
+          "bondTokenId": "3",
+          "credit": "461",
+          "nonce": "2131",
+          "recipient": "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+          "transactionHash": "0x1acca87dd57bf1a207aa856e531391ae299475fe0ee9c33554a1a56c325469e2"
+        },
+        {
+          "bondTokenId": "4",
+          "credit": "461",
+          "nonce": "2132",
+          "recipient": "0x9586a4833970847aef259ad5bfb7aa8901ddf746",
+          "transactionHash": "0xda6f579fc2cf301ac2793289bcdaec84d60347259264a75ce9dac55c0e303b5f"
+        },
+        {
+          "bondTokenId": "5",
+          "credit": "461",
+          "nonce": "2133",
+          "recipient": "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d",
+          "transactionHash": "0xe9111575c9db99fe9193cd2a0cc7c783f75a5623e3a5dca52a92b4e15c6e2c01"
+        }
+      ],
+      "expectedAfterInterruption": [
+        "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+        "0x9586a4833970847aef259ad5bfb7aa8901ddf746",
+        "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d"
+      ],
+      "originalOrder": [
+        "0x0e9971c0005d91336c1441b8f03c1c4fe5fb4584",
+        "0x8c3229ec621644789d7f61faa82c6d0e5f97d43d",
+        "0x9586a4833970847aef259ad5bfb7aa8901ddf746"
+      ]
+    }
+  }
+}

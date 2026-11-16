@@ -1,0 +1,10 @@
+Tue Nov 10 15:27:12 UTC 2026
+cwd=/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02
+TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-verify.stvrBy
+NODE_COMPILE_CACHE=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-verify.stvrBy/node-cache
+BUN_RUNTIME_TRANSPILER_CACHE_PATH=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-verify.stvrBy/bun-cache
+recorder_pid=84326
+PATH=/Users/cyotee/.foundry/bin:/Users/cyotee/.foundry/bin:/Users/cyotee/.omo/agent/bin:/Users/cyotee/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/usr/local/MacGPG2/bin:/opt/homebrew/bin:/Users/cyotee/.local/bin:/Users/cyotee/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/sbin:/Users/cyotee/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand:/Applications/Visual Studio Code.app/Contents/Resources/app/bin/copilot-shim:/Users/cyotee/.omo/agent/bundled-bun/73037c5e5dfb0244
+FOUNDRY_BLOCK_GAS_LIMIT=unset
+FOUNDRY_BROADCAST=unset
+cast send --rpc-url http://127.0.0.1:18546 --unlocked --from 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 0x29103624cFf0c4FF93f41065b08aa5bA199bDFbE exchangeIn\(address\,uint256\,address\,uint256\,address\,bool\,uint256\) 0x9283F3Ff485698b26333120D2F24c0dDBfd5BF08 1000000000000000000000 0x4A1C06922c0596884c73337e363225C73b51B766 0 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 false 1794328076 --gas-limit 100000000 --json 

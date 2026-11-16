@@ -1,0 +1,124 @@
+
+scripts/recovery/dtf-migration/receipt.test.ts:
+(pass) complete wire collection authenticates and associates each known reference [26.60ms]
+(pass) collection stops before named requests on wrong-chain [7.11ms]
+(pass) collection stops before named requests on malformed-chain [6.78ms]
+(pass) wrong canonical anchor blocks every named collection [6.46ms]
+(pass) partial null failure stays explicit while unaffected transaction completes [11.60ms]
+(pass) partial missing failure stays explicit while unaffected transaction completes [11.47ms]
+(pass) partial rpc error failure stays explicit while unaffected transaction completes [11.55ms]
+44 |   { name: "malformed quantity", response: (id) => ({ jsonrpc: "2.0", id, result: { ...purchaseTx, value: "0x00" } }), reason: "result-schema" },
+45 | ];
+46 | for (const f of failures) test(`partial ${f.name} failure stays explicit while unaffected transaction completes`, async () => {
+47 |   const { archive, captures } = await collectionFixture((q) =>
+48 |     q.method === "eth_getTransactionByHash" && q.params[0] === txHash ? f.response(q.id) : fixtureResponse(q));
+49 |   assert.equal(archive.completeAssociations, 1);
+              ^
+AssertionError: Expected values to be strictly equal:
+
+2 !== 1
+
+ generatedMessage: true,
+     actual: 2,
+   expected: 1,
+   operator: "strictEqual",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/scripts/recovery/dtf-migration/receipt.test.ts:49:10
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at processTicksAndRejections (native:7:39)
+(fail) partial wrong id failure stays explicit while unaffected transaction completes [12.66ms]
+(pass) partial wrong version failure stays explicit while unaffected transaction completes [11.11ms]
+(pass) partial malformed quantity failure stays explicit while unaffected transaction completes [10.65ms]
+(pass) contradictory association identifies transaction-hash [0.03ms]
+62 |   ["canonical-header", { ...associated, byNumber: { ...purchaseBlock, timestamp: "0x21" } }],
+63 |   ["after-anchor", { ...associated, transaction: { ...purchaseTx, blockNumber: "0xfffffff" } }],
+64 |   ["transaction-reverted", { ...associated, receipt: { ...purchaseReceipt, status: "0x0" } }],
+65 | ] as const;
+66 | for (const [expected, observation] of mutations) test(`contradictory association identifies ${expected}`, () => {
+67 |   assert.ok(associationConflicts(txHash, observation).includes(expected));
+              ^
+AssertionError: false == true
+ generatedMessage: true,
+     actual: false,
+   expected: true,
+   operator: "==",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/scripts/recovery/dtf-migration/receipt.test.ts:67:10
+      at run (node:async_hooks:144:29)
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:45)
+      at node:test:1591:20
+(fail) contradictory association identifies block-hash [0.19ms]
+(pass) contradictory association identifies block-number [0.02ms]
+(pass) contradictory association identifies transaction-index
+(pass) contradictory association identifies receipt-endpoints
+(pass) contradictory association identifies block-membership
+(pass) contradictory association identifies canonical-header
+(pass) contradictory association identifies after-anchor
+(pass) contradictory association identifies transaction-reverted [0.04ms]
+(pass) every log identity and strict ordering are verified [0.03ms]
+(pass) distinct references to one transaction deduplicate requests without losing rows [3.42ms]
+(pass) credential-bearing wire errors retain sanitized bytes and never claim raw capture [2.20ms]
+(pass) fresh exclusive publication refuses an existing directory before network requests [3.69ms]
+(pass) CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs [0.16ms]
+
+scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:
+25 | test("source purchase basis is independently required in addition to the mint", async () => {
+26 |   const ref = await nftReference();
+27 |   const changed = { ...observation, receipt: { ...purchaseReceipt, logs: purchaseReceipt.logs.filter((l) =>
+28 |     l.topics[0] !== id("BondPurchased(uint256,address,uint256,uint256,uint256)")) } };
+29 |   const result = reconcileReference(ref, changed, 1);
+30 |   assert.ok(result.conflicts.includes("source-purchase-event-or-basis"));
+              ^
+AssertionError: false == true
+ generatedMessage: true,
+     actual: false,
+   expected: true,
+   operator: "==",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:30:10
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at processTicksAndRejections (native:7:39)
+(fail) source purchase basis is independently required in addition to the mint [3.40ms]
+(pass) routed input stays separate and cannot be attributed as a direct contribution [2.91ms]
+42 |   assert.equal(result.assets[0]?.observedRouted, "999");
+43 |   assert.equal(result.assets[0]?.attributableDirect, "12");
+44 | });
+45 | test("a shared transaction never assigns its entire direct inputs to each original", async () => {
+46 |   const result = reconcileReference(await nftReference(), observation, 2);
+47 |   assert.ok(result.conflicts.includes("shared-or-multiaction-purchase"));
+              ^
+AssertionError: false == true
+ generatedMessage: true,
+     actual: false,
+   expected: true,
+   operator: "==",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:47:10
+      at node:test:1445:26
+      at executeTestNode (node:test:1448:63)
+      at processTicksAndRejections (native:7:39)
+(fail) a shared transaction never assigns its entire direct inputs to each original [3.13ms]
+(pass) wrong mint recipient is a conflict even with matching direct payment [2.94ms]
+(pass) indirect calls retain calldata and never receive direct claim decoding [3.15ms]
+(pass) receipt archive format cannot enter preparation, validation or execution loaders [0.21ms]
+
+4 tests failed:
+(fail) partial wrong id failure stays explicit while unaffected transaction completes [12.66ms]
+(fail) contradictory association identifies block-hash [0.19ms]
+(fail) source purchase basis is independently required in addition to the mint [3.40ms]
+(fail) a shared transaction never assigns its entire direct inputs to each original [3.13ms]
+
+ 26 pass
+ 4 fail
+Ran 30 tests across 2 files. [205.00ms]

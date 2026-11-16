@@ -1,0 +1,956 @@
+{
+  "suites": [
+    {
+      "kind": "specs",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalDecimalsTest",
+          "test": "test_F1_sixDecimalMinimumEqualityAccepts"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalDecimalsTest",
+          "test": "test_F1_sixDecimalMinimumRejectsOneNativeUnitShort"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalTest",
+          "test": "test_F1_alternateAnchorEqualityAccepts"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalTest",
+          "test": "test_F1_alternateAnchorRejectsUnderfundedFirstLeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalTest",
+          "test": "test_F1_equalityAcceptsCanonicalMinimum"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalTest",
+          "test": "test_F1_historicalUnderfundingRejectsAtomically"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalTest",
+          "test": "test_F1_oneNativeUnitBelowMinimumRejectsAtomically"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalTest",
+          "test": "test_F1_oneUnitExcessRemainsValidDonation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+          "contract": "MigrationGenesisCapitalTest",
+          "test": "test_F1_shareAnchorUsesPreconversionPairEquivalent"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+          "contract": "MigrationHostileContributionTest",
+          "test": "test_shortExternalReceiptRevertsAllDonationAccounting"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+          "contract": "MigrationHostileContributionTest",
+          "test": "test_tokenCallbackCannotBorrowLockedParentChildSynchronization"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+          "contract": "MigrationWeightedLiquidConfigurationTest",
+          "test": "test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+          "contract": "MigrationWeightedLiquidConfigurationTest",
+          "test": "test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+          "contract": "MigrationWeightedLiquidConfigurationTest",
+          "test": "test_missingOriginalInputsAndWrongAuthorityRejectAtomically"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+          "contract": "MigrationWeightedLiquidConfigurationTest",
+          "test": "test_sameCanonicalOriginCannotBeNftOrIndependentInEitherDirection"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+          "contract": "MigrationWeightedLiquidConfigurationTest",
+          "test": "test_unconsumedReplacementFreezesQuoteAndMintsNothing"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+          "contract": "MigrationRecoveryTest",
+          "test": "test_balancesAndDonationBudgetsDoNotAuthorizeRecoverySpending"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+          "contract": "MigrationRecoveryTest",
+          "test": "test_fullAccountGonDebitRejectsUnbookedFractionButAllowsSmallerExit"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+          "contract": "MigrationRecoveryTest",
+          "test": "test_invalidStageFieldsRejectWithoutCallingLegacy"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+          "contract": "MigrationRecoveryTest",
+          "test": "test_recoveryDeclarationAndProxySurviveActivation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+          "contract": "MigrationWeightedSyConfigurationTest",
+          "test": "test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+          "contract": "MigrationWeightedSyConfigurationTest",
+          "test": "test_canonicalCollisionWithWdAndEarlierNftSurvivesWalletCorrection"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+          "contract": "MigrationWeightedSyConfigurationTest",
+          "test": "test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+          "contract": "MigrationWeightedSyConfigurationTest",
+          "test": "test_missingOriginalInputsAndWrongAuthorityRejectAtomically"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+          "contract": "MigrationWeightedSyConfigurationTest",
+          "test": "test_sameCanonicalOriginCannotBeNftOrIndependentInEitherDirection"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+          "contract": "MigrationWeightedSyConfigurationTest",
+          "test": "test_unconsumedReplacementFreezesQuoteAndMintsNothing"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol",
+          "contract": "MigrationOwnerBondCallbacksTest",
+          "test": "test_contractOwnerPaymentCallbacksCannotPublishOrBypassAndShortReceiptRollsBack"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+          "contract": "MigrationSurfaceTest",
+          "test": "test_adminDeclarationMatchesInterfaceAndCannotBeRestored"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+          "contract": "MigrationSurfaceTest",
+          "test": "test_allPackageCutsReachRealProxyAndFitEip170"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+          "contract": "MigrationSurfaceTest",
+          "test": "test_realTokenUriNumericCliffBoundaries"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+          "contract": "MigrationSurfaceTest",
+          "test": "test_wrongCustodyCallerCannotUseStaleIndexOrCreateBacking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+          "contract": "MigrationRecoveryCallbackTest",
+          "test": "test_currentOwnerTokenCallbackCannotEnterRecoveryDuringDonation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+          "contract": "MigrationAdministrationTest",
+          "test": "test_badSecondIssuanceRollsBackWholeBatch"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+          "contract": "MigrationAdministrationTest",
+          "test": "test_callbackOwnerCannotActivateOrReenterAnotherChild"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+          "contract": "MigrationAdministrationTest",
+          "test": "test_duplicateOriginalCannotMoveToAnotherRecipientAfterIssue"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+          "contract": "MigrationAdministrationTest",
+          "test": "test_eachOriginalQuotedSeparatelyAndStoredWithComponents"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+          "contract": "MigrationAdministrationTest",
+          "test": "test_newParticipantGetsNoEarlierExpansion"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+          "contract": "MigrationAdministrationTest",
+          "test": "test_pendingOwnerCannotAdministerButMayAcceptImmediately"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+          "contract": "MigrationAdministrationTest",
+          "test": "test_zeroOwnerAndNoncanonicalArgumentsReject"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_ExactRevertAndEndpoints"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_FeesAndRegistryFrozenSeparately"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_InstalledSelectorsAndInterfaceCompatibility"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_MappedNativeMaxInBoundary"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_NaturallyOpenGatePublicPreview"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_PrimaryBranchNotClosedGateFallback"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_RealPoolSwapAndNoLiveStorageReads"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_RealProxyCaptureAndFreeze"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_SameBookZeroGroupingAndNonlinearity"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_UnitAllLegProviderOutcomes"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_UnitArithmeticDomains"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_UnsupportedConversionAtomic"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_V3BackingAndSupplyFreeze"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotTest",
+          "test": "test_MigrationSnapshot_ZeroFeeAndZeroSeigniorage"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_fixedSourceAndCurrentOwnerBoundaries"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_fullReplacementIsIdempotentAndDoesNotMint"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_knownOriginalCollisionRejectsIndependentAfterNftConfiguration"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_knownOriginalCollisionRejectsNftBeforeAndAfterIndependentIssuance"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_retainedDeclarationIncludesEveryProductSelector"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_sameNumericIdentityHasDistinctSourceAndDomain"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_unknownComponentsAndReservedUnitsRejectWholeBatch"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_unsolicitedAndReplayedReceiverCallsRejectBeforeAndAfterActivation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+          "contract": "MigrationNftConfigurationTest",
+          "test": "test_zeroWalletRejectsBothSourcesAndWalletCorrectionPreservesEconomicOrigin"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+          "contract": "MigrationPermitAndRetirementTest",
+          "test": "test_activeFullWalletExitRetiresOnlyOwnFraction"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+          "contract": "MigrationPermitAndRetirementTest",
+          "test": "test_oneNativeRewardTokenRetainsAllUnpayableGonsForOwner"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+          "contract": "MigrationPermitAndRetirementTest",
+          "test": "test_receiptPermitAuthorizesPrincipalButNotRetainedRights"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol",
+          "contract": "MigrationPermitAndRetirementTest",
+          "test": "test_syPermitAndMaxAllowanceUseCanonicalNativeUnits"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+          "contract": "MigrationOwnerFirstBondTest",
+          "test": "test_delayedPaidPurchaseHasNoUnfundedRetroactiveExpansion"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+          "contract": "MigrationOwnerFirstBondTest",
+          "test": "test_exceptionDoesNotOpenOtherAcquisitionOrSecondPurchase"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+          "contract": "MigrationOwnerFirstBondTest",
+          "test": "test_failedPaymentAndChildMintLeaveNoPurchaseOrEconomicEffects"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+          "contract": "MigrationOwnerFirstBondTest",
+          "test": "test_immediatePaidPurchaseUsesCanonicalWeightsRewardsAndOrdinaryTerms"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+          "contract": "MigrationOwnerFirstBondTest",
+          "test": "test_pendingFormerAndNonownerCannotBuyButCurrentOwnerCan"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotReceiptExclusionTest",
+          "test": "test_MigrationSnapshot_UnknownReceiptModelFailsCaptureAtomically"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_allowanceCallbackFailureRollsBackEverything"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_allowanceDeadlineFailureRollsBack"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_allowanceDonationPaysOnlyReserve"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_allowanceDownstreamMinimumRestoresApprovalAndReserve"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_allowanceExpiryWithValidRouteRollsBack"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_allowanceWrongCallerCannotSpendDonorApproval"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_canonicalRuntimeAndDomainIdentity"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureCallbackFailureRestoresNonce"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureDonationPaysOnlyReserve"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureDownstreamMinimumRestoresNonceAndReserve"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureExpiredWithValidOuterDeadlineRollsBack"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureReplayPreservesCommittedFirstDonation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureWrongCallerRollsBackBothAccounts"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureWrongDomainRollsBackNonce"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+          "contract": "MigrationPermit2Test",
+          "test": "test_V1_signatureWrongSpenderRollsBackNonce"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_allConfiguredSyOutputsPayActualPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_bothWrappersAcquireEveryConfiguredInputAfterActivation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_failedUnderlyingRedeemRestoresWholeTransaction"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_ordinaryActiveBondIsUnmarkedAndLinear"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_parentReceiptPacketPreservesOldParentInventory"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_rawSyBothBurnModesAndEveryOutput"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_receiptExactOutputRetainsGrowthAndPaysPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_receiptGrowthCannotLeaveThroughTransfer"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_rolesReceiveNoClosedReceiptThenActualActivatedRelease"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_syBearerInternalBurnDoesNotRedirectOldRewards"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_syDelayedSelfRewardsRemainProtocolOwned"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_syDepositingIntoEarnedPositionPreservesOldRewards"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_syFailedMinimumRollsBackGonsSharesAndAllowance"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol",
+          "contract": "MigrationEgressTest",
+          "test": "test_syOldHolderRetainsRewardsAfterFullDeparture"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_activationRemovesEntireAdministrationAndKeepsQueries"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_cliffBoundaryMaturePrincipalWorksWhileRewardsClosed"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_configurationDoesNotMintAndReplacementPreservesIssue"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_delayedFirstIssueHasFreshClockAndNoRetroactiveRewards"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_deployBindsRealChildrenAndNoPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_ordinaryAcquisitionAndBondClosedBeforeBranchSelection"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_ordinaryDepositOpensWithFundedIndependentParticipation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_ownerSaltCreatesIsolatedHooks"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_partialCapitalCannotAuthorizeNonOwnerGenesis"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+          "contract": "MigrationCoreTest",
+          "test": "test_snapshotCannotRecaptureOrChangeAfterDonation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+          "contract": "MigrationRetainedAccountingTest",
+          "test": "test_creatorTransferDoesNotRetargetEarlierAllocations"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+          "contract": "MigrationRetainedAccountingTest",
+          "test": "test_standingWeightsRemainParticipantsAfterAllPrincipalExits"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol",
+          "contract": "MigrationRetainedAccountingTest",
+          "test": "test_subRewardTokenRemainderPaysNativeUnitsWhenIndexBelowQuantum"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+          "contract": "UniswapV4DetfMigrationSnapshotDecimalsTest",
+          "test": "test_MigrationSnapshot_RealProxySixNineEighteen"
+        }
+      ]
+    },
+    {
+      "kind": "forks",
+      "tests": [
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "contract": "MigrationOriginalWalletTest",
+          "test": "test_earlierStageOneRejectsThenOriginalWalletAdmission"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "contract": "MigrationOriginalWalletTest",
+          "test": "test_missingConfigurationRejectsActualApprovedOwnersBeforeAndAfterActivation"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "contract": "MigrationOriginalWalletTest",
+          "test": "test_stageTwoCorrectionCannotReopenEitherConsumedOriginOrIndependentCredit"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+          "contract": "MigrationOriginalWalletTest",
+          "test": "test_weightedStageOneRejectsThenOriginalWalletAdmission"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol",
+          "contract": "MigrationRecoveryAccrualTest",
+          "test": "test_revaluationAndLaterClaimRemainSeparateWithoutDoubleCounting"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol",
+          "contract": "MigrationRecoveryAccrualTest",
+          "test": "test_revaluedPartialAndFinalExitsPreserveMixedUnbookedGons"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol",
+          "contract": "MigrationRecoveryAccrualTest",
+          "test": "test_terminalBurnedNftGrowthConvertsAfterOriginalClaimSpent"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+          "contract": "MigrationRecoveryGasTest",
+          "test": "test_selectedWorkIndependentOfTwentyFourUnrelatedSurrenders"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "contract": "MigrationWeightedLiquidTest",
+          "test": "test_absentWrongWalletApprovalBalanceAndLimitsLeaveEverythingUnspent"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "contract": "MigrationWeightedLiquidTest",
+          "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "contract": "MigrationWeightedLiquidTest",
+          "test": "test_directInventoryStagedConversionDonationAndUnbookedFloors"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "contract": "MigrationWeightedLiquidTest",
+          "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "contract": "MigrationWeightedLiquidTest",
+          "test": "test_stageOneRejectsBeforeAllowanceCustodyConsumptionOrFunding"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "contract": "MigrationWeightedLiquidTest",
+          "test": "test_transfersDoNotMoveCreditAndReturnNeedsNoHistory"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+          "contract": "MigrationWeightedLiquidTest",
+          "test": "test_zeroCreditDustRejectsWithoutConfiscation"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_burnedNonexistentReservedAndZeroCreditRejectWithoutCustody"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_earlierRewardsAndHolderTransferPreserveOriginalSharesAndDisabledHarvest"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_missingApprovalRollsBackPretransferAcceptanceForBothSources"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_rewardOnlyWeightedAndBurnedEarlierEarnNoCredit"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_sameIdInTwoCollectionsIncludesStillLockedEarlierPrincipal"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_transferredWeightedHolderMustReturnToPurchaserBeforeSurrender"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+          "contract": "MigrationLegacySourcesTest",
+          "test": "test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol",
+          "contract": "MigrationRecoveryAccrualRollbackTest",
+          "test": "test_laterSelectedFailureRevertsAccrualAndDonationButPreservesCommittedClaim"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "contract": "MigrationRecoveryDonationTest",
+          "test": "test_actualRecoveredDtfDonationProtectsUnrelatedInventoryAndBacking"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "contract": "MigrationRecoveryDonationTest",
+          "test": "test_donationExternalCallbackCannotEnterAnyParentMoneyStage"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "contract": "MigrationRecoveryDonationTest",
+          "test": "test_failedDonationLeavesCompletedConversionsAndSmallerRetry"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "contract": "MigrationRecoveryDonationTest",
+          "test": "test_finalDonationFailureRollsBackEntireSelectedRecoveryTransaction"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "contract": "MigrationRecoveryDonationTest",
+          "test": "test_recoveryProtectsActualStakingSyPacketsAndSelfLegInventory"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+          "contract": "MigrationRecoveryDonationTest",
+          "test": "test_registryDisableBlocksDonationButNotSelectedClaimHolding"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "contract": "MigrationWeightedSyTest",
+          "test": "test_absentWrongWalletApprovalBalanceAndLimitsLeaveEverythingUnspent"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "contract": "MigrationWeightedSyTest",
+          "test": "test_bondReceiverRejectionRollsBackActualPullFundingAndInventory"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "contract": "MigrationWeightedSyTest",
+          "test": "test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "contract": "MigrationWeightedSyTest",
+          "test": "test_stageOneRejectsBeforeAllowanceCustodyConsumptionOrFunding"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "contract": "MigrationWeightedSyTest",
+          "test": "test_transfersDoNotMoveCreditAndReturnNeedsNoHistory"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+          "contract": "MigrationWeightedSyTest",
+          "test": "test_zeroCreditDustRejectsWithoutConfiscation"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "contract": "MigrationRecoveryWeightedTest",
+          "test": "test_completedClaimSurvivesLaterConversionFailureAndRetry"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "contract": "MigrationRecoveryWeightedTest",
+          "test": "test_currentOwnerBeforeAfterAcceptanceInStageTwo"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "contract": "MigrationRecoveryWeightedTest",
+          "test": "test_existingReceiptAndIndexMovementAreNotFreshClaimInventory"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "contract": "MigrationRecoveryWeightedTest",
+          "test": "test_failedMiddleBatchRollsBackClaimAndSmallerRetrySucceeds"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "contract": "MigrationRecoveryWeightedTest",
+          "test": "test_partialPrincipalZeroRepeatNewVestingAndRewardOnlyFinalBurn"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "contract": "MigrationRecoveryWeightedTest",
+          "test": "test_unsolicitedNftNeverBecomesRecoveryCustody"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol",
+          "contract": "MigrationRecoveryWeightedTest",
+          "test": "test_weightedFullClaimUnstakeAndRealConversionPreserveNewBacking"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+          "contract": "MigrationRecoveryEarlierTest",
+          "test": "test_earlierClaimAndSaleRemainAvailableAfterActivation"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+          "contract": "MigrationRecoveryEarlierTest",
+          "test": "test_externalWrongOwnerCloseRemainsDisabledAndCannotEraseCommittedClaim"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+          "contract": "MigrationRecoveryEarlierTest",
+          "test": "test_lockedEarlierClaimRepeatsAndRecoversGenuineNewAccrual"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+          "contract": "MigrationRecoveryEarlierTest",
+          "test": "test_matureSaleMeasuresExternalSharesAndNeverRecountsPriorHoldings"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol",
+          "contract": "MigrationRecoveryEarlierTest",
+          "test": "test_middleLockedSaleRollsBackEarlierClaimAndPermitsSmallerRetry"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+          "contract": "MigrationRecoveryWeightedSyTest",
+          "test": "test_actualWyToWsToWdToDtfAndFixedDonationProtectBacking"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+          "contract": "MigrationRecoveryWeightedSyTest",
+          "test": "test_minimumAuthorityAndLateConversionFailureRollBackSelectedBurn"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+          "contract": "MigrationRecoveryWeightedSyTest",
+          "test": "test_selectedRedemptionReconcilesGrowthDustMixedNftAndUnsolicitedGons"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "contract": "MigrationNftLifecycleTest",
+          "test": "test_bothRoutesRemainUsableAfterActivationWithFreshLateClocks"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "contract": "MigrationNftLifecycleTest",
+          "test": "test_contractReceiverFailureRollsBackCustodySupplyFundingAndConsumption"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "contract": "MigrationNftLifecycleTest",
+          "test": "test_earlierContractHolderCallbackCannotReenterReplayOrActivate"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "contract": "MigrationNftLifecycleTest",
+          "test": "test_earlierContractReceiverFailureRollsBackCustodySupplyFundingAndConsumption"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "contract": "MigrationNftLifecycleTest",
+          "test": "test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "contract": "MigrationNftLifecycleTest",
+          "test": "test_removedLoadersCannotResizeReopenOrCreateDescendantCredit"
+        },
+        {
+          "source": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+          "contract": "MigrationNftLifecycleTest",
+          "test": "test_separateRealInstancesHaveSeparateDomainsButCannotTakeHeldIdentityTwice"
+        }
+      ]
+    }
+  ],
+  "operatorTests": [
+    "normalizes native integer strings without floating point",
+    "rejects unknown or non-native amount ",
+    "rejects unknown or non-native amount -1",
+    "rejects unknown or non-native amount 1.5",
+    "rejects unknown or non-native amount 1e18",
+    "rejects unknown or non-native amount 0",
+    "rejects unknown or non-native amount null",
+    "rejects unknown or non-native amount 115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "emits full separate replacements and independently quoted native credits",
+    "normalization is stable under reordered records and source bindings",
+    "full replacements change identities instead of generating credit deltas",
+    "rejects wrong chain domain before accepting payloads",
+    "rejects wrong block domain before accepting payloads",
+    "rejects wrong snapshot domain before accepting payloads",
+    "rejects wrong proxy domain before accepting payloads",
+    "rejects wrong package domain before accepting payloads",
+    "rejects source tampering rather than trusting quoted originals",
+    "rejects originals that do not match their raw proof",
+    "rejects missing or zero NFT original wallets at preparation boundary",
+    "rejects a wallet differing from the full recorded NFT original",
+    "wallet correction changes full configuration but not economic origin",
+    "NFT payload and configuration identity agree with final Solidity and typed stage ABIs",
+    "rejects unknown contributions and arbitrary credit fields at the schema boundary",
+    "rejects overlapping originals and missing origin partitions",
+    "blocks earlier-liquid without forging executable config",
+    "blocks weighted-receipt without forging executable config",
+    "blocks earlier-receipt without forging executable config",
+    "blocks token-staking without forging executable config",
+    "blocks claim-vault without forging executable config",
+    "blocks underlying-se without forging executable config",
+    "blocks fungible-lp without forging executable config",
+    "blocks earlier-liquidation without forging executable config",
+    "rejects a nonconserving origin partition",
+    "rejects combined quotes that differ from independent frozen component quotes",
+    "revalidates persisted manifest payloads and refuses overwrite",
+    "actual CLI prepares and validates through read-only transport",
+    "rejects missing RPC and synthetic nonlocal endpoints",
+    "rejects ambiguous or executing preparation arguments prepare --input a --input b --output c",
+    "rejects ambiguous or executing preparation arguments validate --manifest x --broadcast",
+    "rejects ambiguous or executing preparation arguments validate --manifest x --execute-local",
+    "rejects ambiguous or executing preparation arguments prepare --input a",
+    "rejects invalid recovery fields and unproved multi-conversion batches",
+    "preserves all category dispositions but emits no manifest for blocked exposure",
+    "journal refuses live concurrent writers and changed domains",
+    "durable signed intent survives reopening without acquiring another nonce",
+    "journal rejects a foreign intent rather than accepting its receipt",
+    "partial unpublished records cannot become completed operations",
+    "funding rejects arbitrary calldata and unknown native values",
+    "paid owner purchase requires explicit positive payment and ordinary duration",
+    "CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--execute-local\",\"--broadcast\"]",
+    "CLI rejects ambiguous authority before file or network access: [\"resume\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--instance-id\",\"old\"]",
+    "CLI rejects ambiguous authority before file or network access: [\"activate\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--broadcast\"]",
+    "CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--target\",\"0x1111111111111111111111111111111111111111\"]",
+    "W-L requires known original wallet, quantity, components and origin, not current holdings",
+    "W-L fixed source, original units and economic partition are required by the real payload builder",
+    "W-L complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0",
+    "W-Y requires known original wallet, quantity, components and origin, not current holdings",
+    "W-Y fixed source, original units and economic partition are required by the real payload builder",
+    "W-Y complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0"
+  ],
+  "scope": "All current Migration specs/forks plus four bounded operator test files, not full category acceptance"
+}

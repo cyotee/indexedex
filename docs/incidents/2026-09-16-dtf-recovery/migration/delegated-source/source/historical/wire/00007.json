@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"debug_traceTransaction\",\"params\":[\"0x6ece614ad85798eef4244cc58262b3edafce211f135a66f68e0354bbf57a12bb\",{\"tracer\":\"callTracer\"}]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":7,\"error\":{\"code\":-32600,\"message\":\"debug_traceTransaction is not available on the Free tier - upgrade to Pay As You Go, or Enterprise for access.\"}}",
+  "httpStatus": 400,
+  "raw": true
+}

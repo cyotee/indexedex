@@ -1,0 +1,56 @@
+{
+  "executable": "/opt/homebrew/bin/node",
+  "argv": [
+    "--check",
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/proof.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification",
+  "startedAt": "2026-11-13T10:34:44.616Z",
+  "stoppedAt": "2026-11-13T10:34:44.682Z",
+  "pid": 50549,
+  "exitCode": 0,
+  "signal": null,
+  "childCloseObserved": true,
+  "sources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/intake.mjs",
+      "bytes": 10000,
+      "sha256": "5104d56f31c020279e3d9faf390b6da2a30a1b5e93e645b6ea5a3fc1c76ed425"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/observe.mjs",
+      "bytes": 9560,
+      "sha256": "23f5e6ab9802d38f8e00dff66b0083101d2a7e7872e67bb2d79f51396c1e4f20"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/record.mjs",
+      "bytes": 2441,
+      "sha256": "f2b4f578111639f80c7fbf134ae38932ef3e99a252a991af1528a8487c94be41"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/proof.mjs",
+      "bytes": 12833,
+      "sha256": "2379788143b8ac6b7c0f96aa858e23d352a333cbe7fbef20897978629f5980a3"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/finalize.mjs",
+      "bytes": 3835,
+      "sha256": "85276906d78b3cdfdeab31b709bffb8edfe6edd3907dc8b532e4a9d2219e6a11"
+    }
+  ],
+  "streams": {
+    "stdout": {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/validate-final-04.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": true
+    },
+    "stderr": {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/validate-final-04.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": true
+    }
+  },
+  "bun": "1.4.2"
+}

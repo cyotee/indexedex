@@ -32,7 +32,7 @@ contract MigrationOwnerFirstBondTest is TestBase_UniswapV4DetfMigration {
     }
 
     function _assertFirstPurchase() private {
-        bytes memory snapshot_ = abi.encode(migration.migrationSnapshot());
+        bytes memory snapshot_ = abi.encode(migration.migrationWeightedPricing());
         uint256 credit_ = _configure(address(this), 0.5 ether, bytes32("unchanged credit"));
         bytes memory config_ = abi.encode(migration.independentAllocation(address(this)));
         (, uint256 principal_, uint256 rewards_, uint256 selfLeg_) = migration.previewBond(IERC20(pairA), 1 ether, 90 days);
@@ -56,7 +56,7 @@ contract MigrationOwnerFirstBondTest is TestBase_UniswapV4DetfMigration {
         assertFalse(bonds.isMigrationPosition(id_));
         assertEq(IERC721(address(bonds)).ownerOf(id_), migrationOwner);
         _assertEconomics(principal_, rewards_);
-        assertEq(abi.encode(migration.migrationSnapshot()), snapshot_);
+        assertEq(abi.encode(migration.migrationWeightedPricing()), snapshot_);
         assertEq(abi.encode(migration.independentAllocation(address(this))), config_);
         assertEq(migration.previewOriginalCredit(0.5 ether, 0.5 ether), credit_);
         assertFalse(migration.independentIssuance(address(this)).issued);
@@ -187,7 +187,7 @@ contract MigrationOwnerFirstBondTest is TestBase_UniswapV4DetfMigration {
             IERC20(pairA).allowance(migrationOwner, detf), IERC20(detf).totalSupply(),
             IERC20(migration.hook()).balanceOf(address(bonds)), receipt.stakingState(),
             IERC20(detf).balanceOf(address(receipt)), IERC721(address(bonds)).ownerOf(3),
-            migration.migrationDonationInventory(IERC20(pairA)), migration.migrationSnapshot().id
+            migration.migrationDonationInventory(IERC20(pairA)), migration.migrationWeightedPricing().id
         ));
     }
 }

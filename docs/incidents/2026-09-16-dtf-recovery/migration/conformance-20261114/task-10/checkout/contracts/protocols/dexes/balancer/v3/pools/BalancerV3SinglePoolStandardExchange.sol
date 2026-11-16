@@ -1,0 +1,344 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
+import {IRouterCommon} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouterCommon.sol";
+
+import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+
+import {IVault} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVault.sol";
+import {IBasePool} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IBasePool.sol";
+import {PoolData, Rounding, TokenType} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {BasePoolMath} from "@crane/contracts/external/balancer/v3/vault/contracts/BasePoolMath.sol";
+import {PoolDataLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolDataLib.sol";
+import {PoolConfigLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolConfigLib.sol";
+import {ScalingHelpers} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/helpers/ScalingHelpers.sol";
+import {BalancerV3PoolLiquidationLib as Liquidation} from "./BalancerV3PoolLiquidationLib.sol";
+
+contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLockModifiers {
+    using BetterSafeERC20 for IERC20;
+
+    /// @notice Permit2 cannot approve an amount above `uint160`.
+    /// @custom:signature Permit2AmountOverflow(uint256)
+    /// @custom:selector 0x74c07329
+    error Permit2AmountOverflow(uint256 amount);
+    error LiquidationAmountMismatch(uint256 expected, uint256 actual);
+
+    IRouter public immutable router;
+    address public immutable pool;
+    IERC20 public immutable bptToken;
+
+    IERC20[] internal _poolTokens;
+    mapping(address => uint256) internal _tokenIndexPlusOne;
+    /// @dev Booked reserve `R` per token. Unbooked surplus `U = balanceOf − R` (L-CLAIM-3).
+    mapping(address => uint256) internal _tokenReserve;
+
+    constructor(IRouter router_, address pool_, IERC20 bptToken_, IERC20[] memory poolTokens_) {
+        router = router_;
+        pool = pool_;
+        bptToken = bptToken_;
+
+        for (uint256 index = 0; index < poolTokens_.length; index++) {
+            IERC20 token = poolTokens_[index];
+            _poolTokens.push(token);
+            _tokenIndexPlusOne[address(token)] = index + 1;
+        }
+    }
+
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        external
+        view
+        returns (uint256 amountOut, uint256 amountRefunded)
+    {
+        if (amountIn == 0) {
+            return (0, 0);
+        }
+
+        if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
+            uint256[] memory amountsIn = _amountsIn(tokenIn, amountIn);
+            amountOut = _queryAddLiquidityUnbalanced(amountsIn);
+            return (amountOut, 0);
+        }
+
+        if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
+            amountOut = _queryRemoveLiquiditySingleTokenExactIn(amountIn, tokenOut);
+            return (amountOut, 0);
+        }
+
+        revert InvalidRoute(address(tokenIn), address(tokenOut));
+    }
+
+function exchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
+        _checkDeadline(deadline);
+
+        address payoutRecipient = recipient == address(0) ? msg.sender : recipient;
+
+        if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
+            uint256 actualAmountIn = _receiveExactIn(tokenIn, amountIn, pretransferred);
+            _approvePermit2ToRouter(tokenIn, actualAmountIn);
+            amountOut = router.addLiquidityUnbalanced(pool, _amountsIn(tokenIn, actualAmountIn), minAmountOut, false, "");
+            _approvePermit2ToRouter(tokenIn, 0);
+            bptToken.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(bptToken);
+            return (amountOut, 0);
+        }
+
+        if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
+            uint256 actualBptIn = _receiveExactIn(tokenIn, amountIn, pretransferred);
+            _approvePermit2ToRouter(tokenIn, actualBptIn);
+            (, amountOut) = _executeRemove(tokenOut, actualBptIn, false);
+            if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
+            _approvePermit2ToRouter(tokenIn, 0);
+            tokenOut.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(tokenOut);
+            return (amountOut, 0);
+        }
+
+        revert InvalidRoute(address(tokenIn), address(tokenOut));
+    }
+
+    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        if (amountOut == 0) {
+            return 0;
+        }
+
+        if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
+            amountIn = _queryAddLiquiditySingleTokenExactOut(tokenIn, amountOut);
+            return amountIn;
+        }
+
+        if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
+            amountIn = _queryRemoveLiquiditySingleTokenExactOut(tokenOut, amountOut);
+            return amountIn;
+        }
+
+        revert InvalidRoute(address(tokenIn), address(tokenOut));
+    }
+
+    function exchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _checkDeadline(deadline);
+
+        address payoutRecipient = recipient == address(0) ? msg.sender : recipient;
+        uint256 quotedUsed;
+        if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
+            quotedUsed = _queryAddLiquiditySingleTokenExactOut(tokenIn, amountOut);
+        } else if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
+            quotedUsed = _queryRemoveLiquiditySingleTokenExactOut(tokenOut, amountOut);
+        } else {
+            revert InvalidRoute(address(tokenIn), address(tokenOut));
+        }
+        if (quotedUsed > maxAmountIn) {
+            revert MaxAmountExceeded(maxAmountIn, quotedUsed);
+        }
+        uint256 credit;
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            credit = LocalCreditLib.budget(_unbookedSurplus(tokenIn), maxAmountIn);
+            if (quotedUsed > credit) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(quotedUsed, credit);
+            }
+        } else {
+            _receiveExactIn(tokenIn, quotedUsed, false);
+        }
+
+        if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
+            uint256 spendable = pretransferred ? credit : quotedUsed;
+            _approvePermit2ToRouter(tokenIn, spendable);
+            amountIn = router.addLiquiditySingleTokenExactOut(pool, tokenIn, spendable, amountOut, false, "");
+            if (amountIn > maxAmountIn) {
+                revert MaxAmountExceeded(maxAmountIn, amountIn);
+            }
+            _approvePermit2ToRouter(tokenIn, 0);
+            if (pretransferred) _refundUnused(tokenIn, credit, amountIn, msg.sender);
+            bptToken.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(bptToken);
+            return amountIn;
+        }
+
+        if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
+            uint256 spendable = pretransferred ? credit : quotedUsed;
+            _approvePermit2ToRouter(tokenIn, spendable);
+            (amountIn,) = _executeRemove(tokenOut, amountOut, true);
+            if (amountIn > spendable) revert MaxAmountExceeded(spendable, amountIn);
+            if (amountIn > maxAmountIn) {
+                revert MaxAmountExceeded(maxAmountIn, amountIn);
+            }
+            _approvePermit2ToRouter(tokenIn, 0);
+            if (pretransferred) _refundUnused(tokenIn, credit, amountIn, msg.sender);
+            tokenOut.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(tokenOut);
+            return amountIn;
+        }
+
+        revert InvalidRoute(address(tokenIn), address(tokenOut));
+    }
+
+    function _supportsPoolToken(IERC20 token_) internal view returns (bool) {
+        return _tokenIndexPlusOne[address(token_)] != 0;
+    }
+
+    function _amountsIn(IERC20 tokenIn_, uint256 amountIn_) internal view returns (uint256[] memory amountsIn_) {
+        uint256 tokenIndexPlusOne = _tokenIndexPlusOne[address(tokenIn_)];
+        if (tokenIndexPlusOne == 0) {
+            revert InvalidRoute(address(tokenIn_), address(bptToken));
+        }
+
+        amountsIn_ = new uint256[](_poolTokens.length);
+        amountsIn_[tokenIndexPlusOne - 1] = amountIn_;
+    }
+
+    function _checkDeadline(uint256 deadline_) internal view {
+        if (deadline_ < block.timestamp) {
+            revert DeadlineExceeded(deadline_, block.timestamp);
+        }
+    }
+
+    function _unbookedSurplus(IERC20 token_) internal view returns (uint256) {
+        return LocalCreditLib.available(token_.balanceOf(address(this)), _tokenReserve[address(token_)]);
+    }
+
+    function _syncReserve(IERC20 token_) internal {
+        _tokenReserve[address(token_)] = token_.balanceOf(address(this));
+    }
+
+    /// @dev Exact-in: pull delta must equal `amountIn_`. Pretransfer credits requested unbooked only.
+    function _receiveExactIn(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) internal returns (uint256) {
+        if (pretransferred_) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 U = _unbookedSurplus(tokenIn_);
+            if (amountIn_ > U) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, U);
+            }
+            return amountIn_;
+        }
+        uint256 before_ = tokenIn_.balanceOf(address(this));
+        tokenIn_.safeTransferFrom(msg.sender, address(this), amountIn_);
+        uint256 observed_ = tokenIn_.balanceOf(address(this)) - before_;
+        if (observed_ != amountIn_) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, observed_);
+        }
+        return amountIn_;
+    }
+
+    /// @dev E6: refund `min(deposited − used, unused U)` only. Never pays booked `R`.
+    function _refundUnused(IERC20 tokenIn_, uint256 depositedAmount_, uint256 usedAmount_, address refundRecipient_)
+        internal
+    {
+        if (depositedAmount_ <= usedAmount_) {
+            return;
+        }
+        uint256 claimedUnused_ = depositedAmount_ - usedAmount_;
+        uint256 unusedU_ = _unbookedSurplus(tokenIn_);
+        uint256 refund_ = claimedUnused_ < unusedU_ ? claimedUnused_ : unusedU_;
+        if (refund_ > 0) {
+            tokenIn_.safeTransfer(refundRecipient_, refund_);
+        }
+    }
+
+    /// @dev Finite route-budget approval. `amount_ == 0` clears router, Permit2, and Permit2 spender allowances.
+    function _approvePermit2ToRouter(IERC20 token_, uint256 amount_) internal {
+        address permit2_ = address(IRouterCommon(address(router)).getPermit2());
+        if (amount_ == 0) {
+            token_.forceApprove(address(router), 0);
+            token_.forceApprove(permit2_, 0);
+            IAllowanceTransfer(permit2_).approve(address(token_), address(router), 0, 0);
+            return;
+        }
+        if (amount_ > type(uint160).max) revert Permit2AmountOverflow(amount_);
+        uint160 bounded_ = uint160(amount_);
+        token_.forceApprove(address(router), amount_);
+        token_.forceApprove(permit2_, amount_);
+        IAllowanceTransfer(permit2_).approve(address(token_), address(router), bounded_, type(uint48).max);
+    }
+
+    /// @dev Balancer simulation entrypoints are non-static. Onchain previews use the same
+    /// pool math, live balances, yield-fee adjustment and directional rounding as the Vault.
+    function _quotePoolData(bool adding_) internal view returns (PoolData memory d_) {
+        IVault vault_ = IVault(address(IRouterCommon(address(router)).getVault()));
+        d_ = vault_.getPoolData(pool);
+        if (!adding_) return d_;
+        (,,uint256[] memory raw_,uint256[] memory lastLive_) = vault_.getPoolTokenInfo(pool);
+        uint256 fee_ = PoolConfigLib.getAggregateYieldFeePercentage(d_.poolConfigBits);
+        bool yield_ = fee_ != 0 && !PoolConfigLib.isPoolInRecoveryMode(d_.poolConfigBits);
+        for (uint256 i_; i_ < raw_.length; ++i_) {
+            PoolDataLib.updateRawAndLiveBalance(d_, i_, raw_[i_], Rounding.ROUND_UP);
+            if (yield_ && d_.tokenInfo[i_].paysYieldFees && d_.tokenInfo[i_].tokenType == TokenType.WITH_RATE) {
+                uint256 due_ = PoolDataLib._computeYieldFeesDue(d_, lastLive_[i_], i_, fee_);
+                if (due_ != 0) PoolDataLib.updateRawAndLiveBalance(d_, i_, raw_[i_] - due_, Rounding.ROUND_UP);
+            }
+        }
+    }
+    function _queryAddLiquidityUnbalanced(uint256[] memory amounts_) internal view returns (uint256 out_) {
+        PoolData memory d_ = _quotePoolData(true);
+        for (uint256 i_; i_ < amounts_.length; ++i_) amounts_[i_] = ScalingHelpers.toScaled18ApplyRateRoundDown(amounts_[i_], d_.decimalScalingFactors[i_], d_.tokenRates[i_]);
+        (out_,) = BasePoolMath.computeAddLiquidityUnbalanced(d_.balancesLiveScaled18, amounts_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
+    }
+    function _queryAddLiquiditySingleTokenExactOut(IERC20 token_, uint256 amount_) internal view returns (uint256 in_) {
+        PoolData memory d_ = _quotePoolData(true); uint256 index_ = _tokenIndexPlusOne[address(token_)] - 1;
+        (in_,) = BasePoolMath.computeAddLiquiditySingleTokenExactOut(d_.balancesLiveScaled18, index_, amount_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
+        return ScalingHelpers.toRawUndoRateRoundUp(in_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
+    }
+    function _queryRemoveLiquiditySingleTokenExactIn(uint256 amount_, IERC20 token_) internal view returns (uint256 out_) {
+        (,, out_,) = Liquidation.liquidate(_liquidationState(token_), amount_, false);
+    }
+    function _queryRemoveLiquiditySingleTokenExactOut(IERC20 token_, uint256 amount_) internal view returns (uint256 in_) {
+        (, in_,,) = Liquidation.liquidate(_liquidationState(token_), amount_, true);
+    }
+
+    function _liquidationState(IERC20 token_) private view returns (Liquidation.PoolQuoteState memory) {
+        return Liquidation.snapshot(
+            IVault(address(IRouterCommon(address(router)).getVault())), pool, _tokenIndexPlusOne[address(token_)] - 1
+        );
+    }
+
+    function _executeRemove(IERC20 token_, uint256 amount_, bool exactOut_)
+        private returns (uint256 paid_, uint256 received_)
+    {
+        (,,, Liquidation.Step[] memory steps_) = Liquidation.liquidate(_liquidationState(token_), amount_, exactOut_);
+        for (uint256 i_; i_ < steps_.length; ++i_) {
+            Liquidation.Step memory step_ = steps_[i_];
+            if (step_.exactOut) {
+                uint256 used_ = router.removeLiquiditySingleTokenExactOut(pool, step_.bpt, token_, step_.assets, false, "");
+                if (used_ != step_.bpt) revert LiquidationAmountMismatch(step_.bpt, used_);
+            } else {
+                uint256 got_ = router.removeLiquiditySingleTokenExactIn(
+                    pool, step_.bpt, token_, step_.assets == 0 ? 1 : step_.assets, false, ""
+                );
+                if (got_ != step_.assets) revert LiquidationAmountMismatch(step_.assets, got_);
+            }
+            paid_ += step_.bpt;
+            received_ += step_.assets;
+        }
+    }
+}

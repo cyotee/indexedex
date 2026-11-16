@@ -1,0 +1,4 @@
+Monitor mon_DAPSE3T5EMKJYRBF / bash_3
+INTEGRATION_WARM_SEED_READY
+watcher completed (exit code 0)
+

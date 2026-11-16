@@ -1,0 +1,1014 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-11",
+  "scope": "Accepted bounded two-generation NFT surrender only; all non-NFT and full-release gates remain open.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+  "branch": "work/dtf-migration-phase-05",
+  "expectedParent": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "candidateCount": 18,
+  "evidenceExcludedFromCommit": true,
+  "provenance": {
+    "implementationReport": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/report.md",
+    "independentReport": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md",
+    "independentEvidence": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json",
+      "sha256": "f4d63fc4a35eb17e1a2246322638ed7ad8c1ca207cef43987285e55133acc6fd"
+    },
+    "trackedDelta": {
+      "command": "GIT_MASTER=1 git diff --no-color --ignore-submodules=all",
+      "rawSha256": "72f77e4bf77e5505e6a8aa2e27f2c9db8a074e811dd1aabee166c282102114a2",
+      "acceptedSha256": "63237a9a5f2aeb462d762509abb556bfe2f1fd8e790f1003a174c82f526c2cc1",
+      "acceptedSerialization": "UTF-8 diff with trailing whitespace trimmed; raw output differs only by final newline",
+      "covers": "12 tracked files only; does not hash untracked new source/test files"
+    },
+    "testBindingQualification": "Independent metadataSourceBindings contains production dependencies, not tests or the TestBase. For those files the accepted identity is current compiled metadata keccak256, independently recomputed from source bytes, joined by compilation target and test method names to exact successful saved logs. TestBase and fork base are dependencies of those targets. Saved logs attest execution; they are not independent historical cryptographic hashes of untracked tests. No missing test SHA-256 is invented. Existing Core, Surface and HostileContribution use audited producer spec-02 execution, not an independent rerun. Current test artifacts are inspected now; no historical test-artifact file hash was recorded in independent evidence.",
+    "productionArtifactQualification": "Current four artifact JSON SHA-256 values equal verifier finalFileSha256. Earlier JSON envelope/source-map/source-ID drift is documented, not executable drift; verifier trace artifact hashes equal these final files.",
+    "executedTests": [
+      {
+        "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+        "artifactSha256": "f6cc33c8aaa47bd984fa73125e5fd11259f3947b984f068dfe5408e5fa0ca0c7",
+        "metadataSha256": "577ef7784f54d461c43172b7ab057013da234ba70d5bb777fe632b695029e71c",
+        "target": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+        "contract": "MigrationLegacySourcesTest",
+        "executedLog": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log",
+        "logSha256": "c34d17d7fc436a3aad72f15231845df6e956bc54b28e41be73be9d3a0eb85406",
+        "tests": [
+          "test_burnedNonexistentReservedAndZeroCreditRejectWithoutCustody()",
+          "test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum()",
+          "test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp()",
+          "test_earlierRewardsAndHolderTransferPreserveOriginalSharesAndDisabledHarvest()",
+          "test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions()",
+          "test_missingApprovalRollsBackPretransferAcceptanceForBothSources()",
+          "test_rewardOnlyWeightedAndBurnedEarlierEarnNoCredit()",
+          "test_sameIdInTwoCollectionsIncludesStillLockedEarlierPrincipal()",
+          "test_transferredWeightedHolderNotPurchaserOrApprovedOperatorReceivesBond()",
+          "test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote()"
+        ]
+      },
+      {
+        "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+        "artifactSha256": "344101b1d3693fe9a610549e9660aac5c57d27cf2477ce1d41e7458d66733729",
+        "metadataSha256": "558d09fbbd0444d6134fc40148a2f6c406978ab7954fedd3bed10a429ef0f724",
+        "target": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+        "contract": "MigrationNftLifecycleTest",
+        "executedLog": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log",
+        "logSha256": "c34d17d7fc436a3aad72f15231845df6e956bc54b28e41be73be9d3a0eb85406",
+        "tests": [
+          "test_bothRoutesRemainUsableAfterActivationWithFreshLateClocks()",
+          "test_contractReceiverFailureRollsBackCustodySupplyFundingAndConsumption()",
+          "test_earlierContractHolderCallbackCannotReenterReplayOrActivate()",
+          "test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender()",
+          "test_replacementAfterConsumptionCannotResizeReopenOrCreateDescendantCredit()",
+          "test_separateRealInstancesHaveSeparateDomainsButCannotTakeHeldIdentityTwice()"
+        ]
+      },
+      {
+        "artifact": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+        "artifactSha256": "e9dae129d6228a918868702ee7a2e0766dbf0d898d65ee37f1f8123c487f8b8c",
+        "metadataSha256": "842545b73e0c410f02962c6531361983acd720feeb15ca045111e4a89c89c693",
+        "target": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+        "contract": "MigrationNftConfigurationTest",
+        "executedLog": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/configuration-independent.log",
+        "logSha256": "0b9ef1503a06a0730bc921abb988304658b1866533ac77ed99e8501dfca1b2b1",
+        "tests": [
+          "test_fixedSourceAndCurrentOwnerBoundaries()",
+          "test_fullReplacementIsIdempotentAndDoesNotMint()",
+          "test_knownOriginalCollisionRejectsIndependentAfterNftConfiguration()",
+          "test_knownOriginalCollisionRejectsNftBeforeAndAfterIndependentIssuance()",
+          "test_retainedDeclarationIncludesEveryProductSelector()",
+          "test_sameNumericIdentityHasDistinctSourceAndDomain()",
+          "test_unknownComponentsAndReservedUnitsRejectWholeBatch()",
+          "test_unsolicitedAndReplayedReceiverCallsRejectBeforeAndAfterActivation()"
+        ]
+      },
+      {
+        "artifact": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+        "artifactSha256": "e5e19d8ee628d9a1e92659cb29206e652471bc2ba59f1cdf6bbe1019f9e2a1f9",
+        "metadataSha256": "bacb87cfbb08fb5ae7111bc69ad6c22a78414edb2f61b762f6cfb9ab560355b5",
+        "target": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+        "contract": "MigrationCoreTest",
+        "executedLog": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log",
+        "logSha256": "bf2e040d6eb6280c443bf1fd57419f1b109f305dd5ce3adf91d8dd4b3c6f81b5",
+        "tests": [
+          "test_activationRemovesEntireAdministrationAndKeepsQueries()",
+          "test_cliffBoundaryMaturePrincipalWorksWhileRewardsClosed()",
+          "test_configurationDoesNotMintAndReplacementPreservesIssue()",
+          "test_delayedFirstIssueHasFreshClockAndNoRetroactiveRewards()",
+          "test_deployBindsRealChildrenAndNoPrincipal()",
+          "test_ordinaryAcquisitionAndBondClosedBeforeBranchSelection()",
+          "test_ownerSaltCreatesIsolatedHooks()",
+          "test_partialCapitalCannotAuthorizeNonOwnerGenesis()",
+          "test_snapshotCannotRecaptureOrChangeAfterDonation()"
+        ]
+      },
+      {
+        "artifact": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+        "artifactSha256": "41eb53a0819627912509c00c1e219dbfab8400ff7c2381fe0ebefc558c380e17",
+        "metadataSha256": "3995d1401e01b783559a42ae36f4e1a19373fdb2569a1d2abf0a7dfee9f20e79",
+        "target": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+        "contract": "MigrationHostileContributionTest",
+        "executedLog": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log",
+        "logSha256": "bf2e040d6eb6280c443bf1fd57419f1b109f305dd5ce3adf91d8dd4b3c6f81b5",
+        "tests": [
+          "test_shortExternalReceiptRevertsAllDonationAccounting()",
+          "test_tokenCallbackCannotBorrowLockedParentChildSynchronization()"
+        ]
+      },
+      {
+        "artifact": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+        "artifactSha256": "c0904c9df0ef3eaccb45426d27c9a7b788f68195c65cdb416d2126ad79a8f3de",
+        "metadataSha256": "4bb6a31481a7cadc3f848b3a309523a185c1bb46dbdfd36182c85d82e31f04de",
+        "target": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+        "contract": "MigrationSurfaceTest",
+        "executedLog": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log",
+        "logSha256": "bf2e040d6eb6280c443bf1fd57419f1b109f305dd5ce3adf91d8dd4b3c6f81b5",
+        "tests": [
+          "test_adminDeclarationMatchesInterfaceAndCannotBeRestored()",
+          "test_allPackageCutsReachRealProxyAndFitEip170()",
+          "test_realTokenUriNumericCliffBoundaries()",
+          "test_wrongCustodyCallerCannotUseStaleIndexOrCreateBacking()"
+        ]
+      }
+    ],
+    "savedLogs": [
+      {
+        "name": "build-01",
+        "sha256": "b9d82f8acaf45290f823e8d7c0d87426271ab66a06beed9e5cf689a9e2d953f8",
+        "passes": 0
+      },
+      {
+        "name": "spec-01",
+        "sha256": "23553277df0efd22befce5d54030434f66ba658218ec48ed094157a4ed6f70f6",
+        "passes": 90,
+        "summary": "Ran 14 test suites in 1.07s (8.70s CPU time): 90 tests passed, 1 failed, 0 skipped (91 total tests)"
+      },
+      {
+        "name": "spec-02",
+        "sha256": "bf2e040d6eb6280c443bf1fd57419f1b109f305dd5ce3adf91d8dd4b3c6f81b5",
+        "passes": 91,
+        "summary": "Ran 14 test suites in 1.09s (10.02s CPU time): 91 tests passed, 0 failed, 0 skipped (91 total tests)"
+      },
+      {
+        "name": "fork-01",
+        "sha256": "459f5195f9d41e612965804f79d4ecbcffe0d5f6f26f0d59c9e2ba027951d3fa",
+        "passes": 0
+      },
+      {
+        "name": "fork-02",
+        "sha256": "5be824fc1f39157944d141f1ba44d3e15ef86f6bb9510f325f283e9a56efa92b",
+        "passes": 0,
+        "summary": "Ran 2 test suites in 893.68ms (892.61ms CPU time): 0 tests passed, 2 failed, 0 skipped (2 total tests)"
+      },
+      {
+        "name": "fork-03",
+        "sha256": "8d98b230f00e41ca6869629bb16f8dc81b4b9b925ce2b0f4d52abb81cc7c74c1",
+        "passes": 13,
+        "summary": "Ran 2 test suites in 66.68s (66.19s CPU time): 13 tests passed, 1 failed, 0 skipped (14 total tests)"
+      },
+      {
+        "name": "fork-04",
+        "sha256": "1e7b106890411cbe6221b0b6d6b45d9a81b8981391b8c306b2c3381e45102350",
+        "passes": 15,
+        "summary": "Ran 2 test suites in 3.25s (2.28s CPU time): 15 tests passed, 0 failed, 0 skipped (15 total tests)"
+      },
+      {
+        "name": "fork-05",
+        "sha256": "76f46ebc99c4335e8b82577019f3a75b377a2f49cc6b23a9044861ea0f07041b",
+        "passes": 16,
+        "summary": "Ran 2 test suites in 3.36s (2.21s CPU time): 16 tests passed, 0 failed, 0 skipped (16 total tests)"
+      },
+      {
+        "name": "regression-01",
+        "sha256": "b894a0e9e80c36c2566f6e2301f0adbc91e28d42cbe1088c791f1e37ee74e032",
+        "passes": 9932,
+        "summary": "Ran 589 test suites in 116.29s (1657.81s CPU time): 9932 tests passed, 0 failed, 0 skipped (9932 total tests)"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "currentSha256": "3fc1997e34be0d40e6fb638fc6cc759d9333546df97ebebc97583522666dab4e",
+      "currentKeccak256": "0x8faa795e6eb998a8de7f355cc5e2a3b6f1f85b9137ea63b168d4bd5532b1548d",
+      "currentGitBlob": "af34dbdab9bbfc3c040818fd3c45c5ddb59e3bac",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0x8faa795e6eb998a8de7f355cc5e2a3b6f1f85b9137ea63b168d4bd5532b1548d",
+        "locator": [
+          "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json#/metadata/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+          "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json#/metadata/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+          "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json#/metadata/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+          "out/MigrationCore.t.sol/MigrationCoreTest.json#/metadata/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+          "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json#/metadata/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+          "out/MigrationSurface.t.sol/MigrationSurfaceTest.json#/metadata/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/configuration-independent.log"
+        },
+        {
+          "artifact": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        },
+        {
+          "artifact": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        },
+        {
+          "artifact": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "mode": "100644",
+      "currentSha256": "903c1911a54398ef3a16a2f5007526530163aa68c502730f9cfd6581e388acdf",
+      "currentKeccak256": "0xad4e0b5f8b0d3f1e2c2a1c19975f8e7e1944db8f6724e87a93c47b80dbb38763",
+      "currentGitBlob": "e953ad8e364ffcf91979b046ec0fa65fd0928b21",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "903c1911a54398ef3a16a2f5007526530163aa68c502730f9cfd6581e388acdf",
+        "keccak256": "0xad4e0b5f8b0d3f1e2c2a1c19975f8e7e1944db8f6724e87a93c47b80dbb38763",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol"
+      },
+      "executedBindings": [],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "mode": "100644",
+      "currentSha256": "a6835808e586eed607b91aa6ec545189026a3a0d7a1ad1609af38e2ffcde6532",
+      "currentKeccak256": "0x9dcbe3b95b65c6772259f0fb9b0d81b0e5534bcb9a2d1a252826080205d9926e",
+      "currentGitBlob": "c45f5e9f99bccaea7a9f1372848af412af2f4784",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "a6835808e586eed607b91aa6ec545189026a3a0d7a1ad1609af38e2ffcde6532",
+        "keccak256": "0x9dcbe3b95b65c6772259f0fb9b0d81b0e5534bcb9a2d1a252826080205d9926e",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol"
+      },
+      "executedBindings": [],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "mode": "100644",
+      "currentSha256": "7f5365fcf5f4d91b3b08963a7239300ef6962a64eb95a9055b97f5ae6c8073d7",
+      "currentKeccak256": "0x9e2acc8651df618a88dbb8804d862046f4be5758b60d75893d48c7b980bea094",
+      "currentGitBlob": "28b1796d39fa812ac039a4664c272175cd7d069c",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "7f5365fcf5f4d91b3b08963a7239300ef6962a64eb95a9055b97f5ae6c8073d7",
+        "keccak256": "0x9e2acc8651df618a88dbb8804d862046f4be5758b60d75893d48c7b980bea094",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol"
+      },
+      "executedBindings": [],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "mode": "100644",
+      "currentSha256": "a18a4e44c739873a694c0caa27abbc1e0e1515f22d6391a81f0d2ab689bbe40e",
+      "currentKeccak256": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+      "currentGitBlob": "1674f1c98a5486b9ec94354552364dca773d735c",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "a18a4e44c739873a694c0caa27abbc1e0e1515f22d6391a81f0d2ab689bbe40e",
+        "keccak256": "0x20f2625772bc4aeaeb8a51010ca5e40a010f582ebea76c966f0c934cc1364dd4",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol"
+      },
+      "executedBindings": [],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "mode": "100644",
+      "currentSha256": "93b12ed360332a3b78649407002a43f207fc8dfdeaadf9f1e0c6608584f4c8e3",
+      "currentKeccak256": "0xb31f2e00d9843fd58095ddd500ab9b25d8b40bbe42e4d464ea1ad97dfb1c6a06",
+      "currentGitBlob": "5d08568f17fe789d67b3bb42ea810c80d07ce74b",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "93b12ed360332a3b78649407002a43f207fc8dfdeaadf9f1e0c6608584f4c8e3",
+        "keccak256": "0xb31f2e00d9843fd58095ddd500ab9b25d8b40bbe42e4d464ea1ad97dfb1c6a06",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol"
+      },
+      "executedBindings": [],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "mode": "100644",
+      "currentSha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53",
+      "currentKeccak256": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+      "currentGitBlob": "f98e487ab7a8afda0fcce7c23e61cf8b6980dd11",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53",
+        "keccak256": "0xcfe9be389312d2ccc2c0a567d3e42e3b4a2af0158a6d13d69074c7d822dbfc9b",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol"
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/configuration-independent.log"
+        },
+        {
+          "artifact": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        },
+        {
+          "artifact": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        },
+        {
+          "artifact": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "mode": "100644",
+      "currentSha256": "bc6162ee4c60cd23a44337f1c9dc57cfbd37258d7ae591c47db1da49878e325d",
+      "currentKeccak256": "0x8be86a422c692bf38818484f6a9fd499af739f41ba4ff562f03f8173f38f4607",
+      "currentGitBlob": "6edcb45c6cc06533bc81f134d4a65d2c3ba5c7e0",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "bc6162ee4c60cd23a44337f1c9dc57cfbd37258d7ae591c47db1da49878e325d",
+        "keccak256": "0x8be86a422c692bf38818484f6a9fd499af739f41ba4ff562f03f8173f38f4607",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol"
+      },
+      "executedBindings": [],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "mode": "100644",
+      "currentSha256": "dc0fd10bd5b3d345cfecbc5d9282884c1c2d3b0d983eeef846a8aff33cf79c2d",
+      "currentKeccak256": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+      "currentGitBlob": "5b18890f8918458e91ab188f3f685cdfb06fa792",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "dc0fd10bd5b3d345cfecbc5d9282884c1c2d3b0d983eeef846a8aff33cf79c2d",
+        "keccak256": "0xc608c7ab0275d2e997459452062deb1589e1be46b83ff54f3ba41f6fa9f9fa8c",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol"
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/configuration-independent.log"
+        },
+        {
+          "artifact": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        },
+        {
+          "artifact": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        },
+        {
+          "artifact": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": true
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol",
+      "mode": "100644",
+      "currentSha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395",
+      "currentKeccak256": "0xa31029e1e95d644002ae81617154dac3c101a7d2af6ebb10faf7179c53d75f6e",
+      "currentGitBlob": "21d3ea5a38730b25c232ee2de46e0a60724013b3",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395",
+        "keccak256": "0xa31029e1e95d644002ae81617154dac3c101a7d2af6ebb10faf7179c53d75f6e",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol"
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": false
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "mode": "100644",
+      "currentSha256": "aa927b281d84741b7e71f47bcfea0fe1ca8c0dc5d12b18e6bcf3787d1ec994c3",
+      "currentKeccak256": "0x3333cb9218571276b0b364b6e0818c6aa0d59b031cad57b3d37954a79bb26c22",
+      "currentGitBlob": "0cbc1b15e5dadce4d83287e2ca8d8591204a5bca",
+      "acceptedSourceHash": {
+        "algorithm": "sha256",
+        "value": "aa927b281d84741b7e71f47bcfea0fe1ca8c0dc5d12b18e6bcf3787d1ec994c3",
+        "keccak256": "0x3333cb9218571276b0b364b6e0818c6aa0d59b031cad57b3d37954a79bb26c22",
+        "locator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json#/metadataSourceBindings/sources/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol"
+      },
+      "executedBindings": [],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1-3",
+      "trackedAtParent": false
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "mode": "100644",
+      "currentSha256": "098bc174b787a504757e455d242de9b4df279f21d56a554172556e2fdb0d966c",
+      "currentKeccak256": "0x194f628a92c9c221676370bc86e4991f7381c06ab77897a20cc9a9b99a8101a4",
+      "currentGitBlob": "4c075d289693e4a59bcd3f6a818dfa9c66571222",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0x194f628a92c9c221676370bc86e4991f7381c06ab77897a20cc9a9b99a8101a4",
+        "locator": [
+          "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json#/metadata/sources/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": false
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "mode": "100644",
+      "currentSha256": "cab0fddc254598c5b8307a73d98fdd316aae7428ada96ef912920de49e0d6660",
+      "currentKeccak256": "0x361362eb8de6fcbdea9c84ba3414008e060e510a87636507dcb6516397d2dec2",
+      "currentGitBlob": "8a076100a9cd17d5c10e589771868e101a97ab50",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0x361362eb8de6fcbdea9c84ba3414008e060e510a87636507dcb6516397d2dec2",
+        "locator": [
+          "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json#/metadata/sources/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+          "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json#/metadata/sources/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationLegacySources.t.sol/MigrationLegacySourcesTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        },
+        {
+          "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": false
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "mode": "100644",
+      "currentSha256": "d86e60fe414ec3bbbd5e6716369b5ec786c2f88dffc52cd435251f7577f977fa",
+      "currentKeccak256": "0xca072bd04d987640a26a87a798815775862f0b49b0fc29049aa552803c2aacff",
+      "currentGitBlob": "804646499b2b6681b28bacbcdf9fed980cecc6e9",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0xca072bd04d987640a26a87a798815775862f0b49b0fc29049aa552803c2aacff",
+        "locator": [
+          "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json#/metadata/sources/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationNftLifecycle.t.sol/MigrationNftLifecycleTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": false
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "mode": "100644",
+      "currentSha256": "804bacac1d4323f83e8087aea2f6e0c75dda7389aafd2ad5a53d6d29eaaa9eec",
+      "currentKeccak256": "0xba3a5b2d9434d36bb36efb00dd37fe467a4029968fcff7ec1b0893c5093869a1",
+      "currentGitBlob": "8fb34aa2fe1b837b86c20d97d6d69b5b26c0672b",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0xba3a5b2d9434d36bb36efb00dd37fe467a4029968fcff7ec1b0893c5093869a1",
+        "locator": [
+          "out/MigrationCore.t.sol/MigrationCoreTest.json#/metadata/sources/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationCore.t.sol/MigrationCoreTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "mode": "100644",
+      "currentSha256": "b35e791ba05df2d7b9988e9e346ea6b8c76c83dd1307ecb05894fca326c2215e",
+      "currentKeccak256": "0x19a0b5fa2a919971ed8d2236371279ae75f280af62240b08b646ddddde661607",
+      "currentGitBlob": "04742b97934fe4ac620ca80231f911d9e935fc01",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0x19a0b5fa2a919971ed8d2236371279ae75f280af62240b08b646ddddde661607",
+        "locator": [
+          "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json#/metadata/sources/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationHostileContribution.t.sol/MigrationHostileContributionTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "mode": "100644",
+      "currentSha256": "b0443d9613a28e015ff893c09a857e4372e0c19249d3b7c9d0b9866065e256d4",
+      "currentKeccak256": "0xf48c4a3c92a95a62ac818b1b9abaed06456f0f478bbfadf72816f3db43c17138",
+      "currentGitBlob": "d73705dcba4febaae5b95d2258a2d23015c04338",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0xf48c4a3c92a95a62ac818b1b9abaed06456f0f478bbfadf72816f3db43c17138",
+        "locator": [
+          "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json#/metadata/sources/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/configuration-independent.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": false
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "mode": "100644",
+      "currentSha256": "75aa15aea842b5a8e3ea2d356d653b35efed96652be91294e49949abb53c6a9b",
+      "currentKeccak256": "0x2609b3f7f144108fbe3dcd827d2c4ace3d14317fd1fe771b2b89ce06ebc1b59e",
+      "currentGitBlob": "3e0d5f52744583850d3c780c05ff9145c0f5935b",
+      "acceptedSourceHash": {
+        "algorithm": "keccak256",
+        "value": "0x2609b3f7f144108fbe3dcd827d2c4ace3d14317fd1fe771b2b89ce06ebc1b59e",
+        "locator": [
+          "out/MigrationSurface.t.sol/MigrationSurfaceTest.json#/metadata/sources/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol"
+        ],
+        "qualification": "Current compiled metadata identity linked to actual executed scope, not a previously recorded independent test hash."
+      },
+      "executedBindings": [
+        {
+          "artifact": "out/MigrationSurface.t.sol/MigrationSurfaceTest.json",
+          "log": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log"
+        }
+      ],
+      "reviewLocator": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md sections 1,3,5",
+      "trackedAtParent": true
+    }
+  ],
+  "baseline": {
+    "status": " M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol\n M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol\n M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol\n M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol\n?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol\n?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/contract.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/source-evidence.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/archive-audit.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/NftStageOneWitness.s.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/contract.md\n?? test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol\n?? test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol\n?? test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol\n?? test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol\n",
+    "refs": [
+      {
+        "ref": "refs/heads/main",
+        "oid": "90ff0307a7a8e084aa073e02eff125e9c7973933"
+      },
+      {
+        "ref": "refs/heads/work/dtf-migration",
+        "oid": "6e27ecaa242c4acca132e3575a160514aad07b11"
+      },
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-01",
+        "oid": "90ff0307a7a8e084aa073e02eff125e9c7973933"
+      },
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-02",
+        "oid": "215c2bba6aa75e3e79bf68b7980b730927a85817"
+      },
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-03",
+        "oid": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd"
+      },
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-04",
+        "oid": "5021e8d4a62bcbddc555f580ef98f8666d993aab"
+      },
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-05",
+        "oid": "5021e8d4a62bcbddc555f580ef98f8666d993aab"
+      },
+      {
+        "ref": "refs/remotes/origin/HEAD",
+        "oid": "90ff0307a7a8e084aa073e02eff125e9c7973933"
+      },
+      {
+        "ref": "refs/remotes/origin/codex/robinhood-release-review",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0",
+        "oid": "0c3558b2ec9571873a787eef4becbdddafc6ce7b"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6",
+        "oid": "a1a2b239593a90a062a8d477395f6b7fc3a473f7"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9",
+        "oid": "3a4001f8a017be2b8b3e988b3fb1fcff454b6a01"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6",
+        "oid": "41bbe4eec3ce9279b205058063b3b69f6be2b149"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8",
+        "oid": "8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21",
+        "oid": "3a8205815ac3f4307de10ab27e813a56847d779c"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21",
+        "oid": "92eeb98dad898aa12b83191e029a9e74112c295b"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7",
+        "oid": "27de3dc71df885634fda1b1fea448e3b499898c3"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13",
+        "oid": "f0d69de54820d1b844f304dc0c7bcf990f0b57a1"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea",
+        "oid": "74ef9f247f0b1a661fb338738e8300bd0c7f05eb"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731",
+        "oid": "bdd8e74ea3902897ca98d8312e5c195d9dbd5a33"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb",
+        "oid": "92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18",
+        "oid": "f4f3a424d8b286c5b0940694835e958f91d24c74"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8",
+        "oid": "1319a76e08a306e77926a20feb6b95250e64b348"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2",
+        "oid": "549159d0b0c86fc0818f9e628315ddfef984ae4c"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9",
+        "oid": "fb6f85b84a9f85dbb6dcb368b75111ecb6257a6c"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2",
+        "oid": "05de656fd06346486bec9e9c7c17ce58508f5aac"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24",
+        "oid": "924b83b300fb1e3938cc48e3ecd474a855775a3e"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1",
+        "oid": "ad6c641aa4dcb582185a136fda6f342ffd8fb103"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18",
+        "oid": "ffb2652457d73cb8ced157853b9fd7b1ca883065"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8",
+        "oid": "4db81ae56cec60663566fd79f82c08bcf15859d7"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8",
+        "oid": "eae337a55ff219b56208c6eff11bf9cdb45d6a34"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7",
+        "oid": "98c7f0ac0cbf5c08666680a411a4b4a836fb0b73"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5",
+        "oid": "27d0cbfada90a5f6b546ed712e04dc0c5d8e4154"
+      },
+      {
+        "ref": "refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26",
+        "oid": "f149ade544a68566d09a3ab3b7f6000873be6de8"
+      },
+      {
+        "ref": "refs/remotes/origin/docs/agent-inventory-navigation",
+        "oid": "950e6b32ea8efff73226a0adf6a7e0b75828127a"
+      },
+      {
+        "ref": "refs/remotes/origin/feat/uniswap-v4-upper-lower-wings",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/remotes/origin/feature/crane-ethereum-staking-ports",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/remotes/origin/fix/legacy-v4-erc5115-interface",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/remotes/origin/fix/uniswap-se-v2-delivery",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/remotes/origin/frontend/multi-app-monorepo",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/remotes/origin/gh-pages",
+        "oid": "6724a5e5c762394797c3508ae1db7d6c0dbdac78"
+      },
+      {
+        "ref": "refs/remotes/origin/main",
+        "oid": "90ff0307a7a8e084aa073e02eff125e9c7973933"
+      },
+      {
+        "ref": "refs/remotes/origin/refactor/frontend-shared-deployment-root",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/remotes/origin/upgrade/nextjs-16",
+        "oid": "70aa8e28336e35c6df92d07e2ccdb352d4fd20c3"
+      },
+      {
+        "ref": "refs/stash",
+        "oid": "7321b70c984423699475cfb45907b6dd70bb8ef4"
+      }
+    ],
+    "upstream": "not configured; no remote operation authorized",
+    "indexSerialization": "raw stdout of git ls-files --stage -z; UTF-8 with exact NUL terminators. Outside-scope filtering retains original order and one NUL per record.",
+    "indexSha256": "2f991d84d21e7647d73a329bda0a0b479e08e5f3dd849c4a474e505cd49b9a41",
+    "outsideCandidateIndexSha256": "529d459ee9188ad60856d352d4f193dfe00dd60971a9fe30ea23a4a4be2ce56e",
+    "stagedDiff": "empty",
+    "crane": {
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "index": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0\tlib/crane"
+    },
+    "preservedEvidence": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/contract.md",
+        "mode": "100644",
+        "sha256": "f090bb5f1bcb9ae74fe2c7a9dbbe1d87f5fced9a6b3d346867d83b92265025b1"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/earlier/source-evidence.json",
+        "mode": "100644",
+        "sha256": "b95b643ef079ac8f53d8ab2679fdf9693a27ed7a9a2a9605a7e8fd1436a20e9c"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/build-01.log",
+        "mode": "100644",
+        "sha256": "b9d82f8acaf45290f823e8d7c0d87426271ab66a06beed9e5cf689a9e2d953f8"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/fork-01.log",
+        "mode": "100644",
+        "sha256": "459f5195f9d41e612965804f79d4ecbcffe0d5f6f26f0d59c9e2ba027951d3fa"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/fork-02.log",
+        "mode": "100644",
+        "sha256": "5be824fc1f39157944d141f1ba44d3e15ef86f6bb9510f325f283e9a56efa92b"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/fork-03.log",
+        "mode": "100644",
+        "sha256": "8d98b230f00e41ca6869629bb16f8dc81b4b9b925ce2b0f4d52abb81cc7c74c1"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/fork-04.log",
+        "mode": "100644",
+        "sha256": "1e7b106890411cbe6221b0b6d6b45d9a81b8981391b8c306b2c3381e45102350"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/fork-05.log",
+        "mode": "100644",
+        "sha256": "76f46ebc99c4335e8b82577019f3a75b377a2f49cc6b23a9044861ea0f07041b"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/regression-01.log",
+        "mode": "100644",
+        "sha256": "b894a0e9e80c36c2566f6e2301f0adbc91e28d42cbe1088c791f1e37ee74e032"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/report.md",
+        "mode": "100644",
+        "sha256": "47dcd59207ec2ff2238a7f485d94d12314cba000a8d83c71366ad9b7701ba187"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-01.log",
+        "mode": "100644",
+        "sha256": "23553277df0efd22befce5d54030434f66ba658218ec48ed094157a4ed6f70f6"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/implementation/spec-02.log",
+        "mode": "100644",
+        "sha256": "bf2e040d6eb6280c443bf1fd57419f1b109f305dd5ce3adf91d8dd4b3c6f81b5"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/archive-audit.json",
+        "mode": "100644",
+        "sha256": "47347fba70823a11b6f83438a19163c7573518324e5bfe4e00eca1a4be49d3d3"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/source-verification/report.md",
+        "mode": "100644",
+        "sha256": "a500c793f876a416fef9d6f38b4116db17db532743541f7ab207943ff86e5de2"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/configuration-independent.log",
+        "mode": "100644",
+        "sha256": "0b9ef1503a06a0730bc921abb988304658b1866533ac77ed99e8501dfca1b2b1"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/evidence.json",
+        "mode": "100644",
+        "sha256": "f4d63fc4a35eb17e1a2246322638ed7ad8c1ca207cef43987285e55133acc6fd"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/fork-independent.log",
+        "mode": "100644",
+        "sha256": "c34d17d7fc436a3aad72f15231845df6e956bc54b28e41be73be9d3a0eb85406"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/NftStageOneWitness.s.sol",
+        "mode": "100644",
+        "sha256": "c10bee6dc2861bfd11d44311e99328d69530f5bbb1004f95ac6199c316a3b5e6"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/report.md",
+        "mode": "100644",
+        "sha256": "1f401c497df3df5cd9b8a3237e467baa0d53425a5341c818bec96c04da8c001e"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/stage1-independent-r2.log",
+        "mode": "100644",
+        "sha256": "45b9a9baca4e55677c364e0bcdb097a755dbaf4720bfe3ac0dc80933c91ef009"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/verification/stage1-independent.log",
+        "mode": "100644",
+        "sha256": "5450dfba0e989ac680cda478372545dbface7b183fd413c80016da951ff92680"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/archive-audit.json",
+        "mode": "100644",
+        "sha256": "3cedd67167cb74af689f26647f16bddc7466f5aec52ea853b1484c5e42ea27b4"
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/nft/weighted/contract.md",
+        "mode": "100644",
+        "sha256": "02aad997374190bf8f5428029c8fb80eed102ba63a83752113250118bd313d85"
+      }
+    ],
+    "protectedInputs": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.results.json",
+        "sha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+        "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.historical-receipts.json",
+        "sha256": "222f5f07a7b313dfbe2caa823b46b631d9bc046703afdc3721f5d395269f3b2e"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/deployed-source-extracts.json",
+        "sha256": "0f3042b0d5067a9cec5ca6aab509ce7205b812b51ae7ae971f99d8a100eda129"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-state-summary.json",
+        "sha256": "e3d9528d0dc44f7f7376ffeae8342d10abecd3614709ccf8af213979b8e156c8"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/source-comparison.json",
+        "sha256": "71aabfb40ae925b126537923e0feaf4312f9d03546ddfce0dfced217ce22b510"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.results.json",
+        "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.sources.json",
+        "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/weighted-replay.exit.json",
+        "sha256": "e3b11df38b89338f99a02ecf0d33a7bfd3d13d789a3b6b9bb5d9d13de88fd241"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+        "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+        "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/report.md",
+        "sha256": "a3af19500a9d1e11081d79f88cd0f4761ebff1ef657c49fa82bc65f46e0783c8"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.source.json",
+        "sha256": "5cc1acf89ead089c66c156c20f6ea7e8c03647e1474d3b495e977e29ce21a397"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe-alchemy-retry.json",
+        "sha256": "fccea711dfcc9e59d8941648b7ddd9096582aae6f3d6790abbaf2a7f426ee237"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.json",
+        "sha256": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/cp-replay.exit.json",
+        "sha256": "2880ed08fbe2b836cf880fa34e250d1a604ddd19a00deadc713c796289051708"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/report.md",
+        "sha256": "58582a7f3cca411267560297caf547367dc40661e1bf017b3886539a671070a9"
+      }
+    ]
+  },
+  "limits": [
+    "E1 complete category/caller/recovery closure",
+    "E2 authenticated ancestry and operational economic disjointness",
+    "E3/E4 actual recovery quote domain and funding inputs",
+    "E5 complete product payout matrix",
+    "Task8 bounded staged harvest/conversion/donation",
+    "Task9 operator inputs and interrupted/resumable rehearsal",
+    "Task10 complete invariants, gas and release validation",
+    "Final F1-F4 remain open"
+  ]
+}

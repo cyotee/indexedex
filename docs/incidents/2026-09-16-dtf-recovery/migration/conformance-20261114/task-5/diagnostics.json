@@ -1,0 +1,47 @@
+[
+  {
+    "file": "schema.ts",
+    "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/schema.ts",
+    "severity": "error",
+    "mode": "file",
+    "diagnostics": [],
+    "totalDiagnostics": 0,
+    "truncated": false
+  },
+  {
+    "file": "payloads.ts",
+    "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/payloads.ts",
+    "severity": "error",
+    "mode": "file",
+    "diagnostics": [],
+    "totalDiagnostics": 0,
+    "truncated": false
+  },
+  {
+    "file": "nft-contributions.test.ts",
+    "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/nft-contributions.test.ts",
+    "severity": "error",
+    "mode": "file",
+    "diagnostics": [],
+    "totalDiagnostics": 0,
+    "truncated": false
+  },
+  {
+    "file": "preparation.test.ts",
+    "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/preparation.test.ts",
+    "severity": "error",
+    "mode": "file",
+    "diagnostics": [],
+    "totalDiagnostics": 0,
+    "truncated": false
+  },
+  {
+    "file": "preparation.fixture.ts",
+    "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/preparation.fixture.ts",
+    "severity": "error",
+    "mode": "file",
+    "diagnostics": [],
+    "totalDiagnostics": 0,
+    "truncated": false
+  }
+]

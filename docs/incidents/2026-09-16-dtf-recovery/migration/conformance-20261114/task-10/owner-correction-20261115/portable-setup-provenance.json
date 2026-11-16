@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "checkout": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01",
+  "copySelection": [
+    "contracts",
+    "scripts",
+    "test",
+    "foundry.toml",
+    "foundry.lock",
+    "remappings.txt",
+    "package.json",
+    "bun.lock",
+    "CLAUDE.md",
+    "AGENTS.md",
+    ".github",
+    ".claude"
+  ],
+  "linkedDependencies": [
+    "lib",
+    "node_modules"
+  ],
+  "artifacts": "APFS-cloned warm out and cache_forge; no cache deletion",
+  "versions": {
+    "ethers": {
+      "version": "6.17.0",
+      "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f",
+      "path": "/Users/cyotee/Projects/indexedex/node_modules/ethers/package.json"
+    },
+    "zod": {
+      "version": "3.25.74",
+      "sha256": "f2d8e294bb39f78a945cd602ee5635781f66081f032d991f61548f7e550ae74d",
+      "path": "/Users/cyotee/Projects/indexedex/node_modules/zod/package.json"
+    },
+    "typescript": {
+      "version": "5.9.2",
+      "sha256": "5a0bb7f286c4b3f1413a42c05f902311b161f70e5f52d9da10490443bfd595a3",
+      "path": "/Users/cyotee/Projects/indexedex/node_modules/typescript/package.json"
+    }
+  },
+  "attempts": {
+    "18": "helper omitted non-Solidity-referenced concrete fixture roots",
+    "26": "Forge filesystem boundary rejected external evidence output; fixed by staging inside owned checkpoint",
+    "09": "missing concrete TS-loaded receiver artifact"
+  },
+  "compiler": "/Users/cyotee/.foundry/versions/foundry-rs/foundry/nightly-430523103f3e2f9ba432ffdd2031a9f966153d0d",
+  "publicTransactions": false
+}

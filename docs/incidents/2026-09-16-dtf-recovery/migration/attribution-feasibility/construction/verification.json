@@ -1,0 +1,167 @@
+{
+  "recordedAt": "2026-11-11T01:53:43.303Z",
+  "disposition": "unproven",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2",
+  "branch": "work/dtf-migration-phase-06-e2",
+  "head": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+  "ownedFiles": [
+    {
+      "filename": "report.md",
+      "bytes": 38056,
+      "sha256": "207d0673b6332e67c6e8404e97b939208f772f1e032812418103cd40244a7fba"
+    },
+    {
+      "filename": "evidence.json",
+      "bytes": 7621,
+      "sha256": "b365d0f9f0a15cf7bc5ac24fb537d85639f185f9db549079bd79d23444f9504c"
+    },
+    {
+      "filename": "invocations.md",
+      "bytes": 11096,
+      "sha256": "08defb9ec53b9e5cbfc476a215f247a746b16b8f70f6834c9b6f913ad7473763"
+    }
+  ],
+  "preservation": [
+    {
+      "file": "anchors/commands.md",
+      "sha256": "48094c1e24512b1b49bf3a28c73c20731f25bb337fc9cb74da69992954713301",
+      "unchanged": true
+    },
+    {
+      "file": "anchors/primary-sources.json",
+      "sha256": "48a9a8676e262f189f96199feabb9e044c03e05790e4b37f21979f2d033508a3",
+      "unchanged": true
+    },
+    {
+      "file": "anchors/contract.md",
+      "sha256": "0da4818b6f35ae947d17949c259271d80f9d8df9e12773122049d9bee4b61356",
+      "unchanged": true
+    },
+    {
+      "file": "anchors/calculations.json",
+      "sha256": "1ce1c106afe83e66ebcf19ec5095f937c9d26b45a463b4599bc70044473ec1b4",
+      "unchanged": true
+    },
+    {
+      "file": "anchors/rpc.json",
+      "sha256": "de29563f9ecf6ef080269ed85569afd8f62310ea5cd0672d217063713d6ca855",
+      "unchanged": true
+    },
+    {
+      "file": "anchors/verification.json",
+      "sha256": "498474ce218dbc71acf343d0caf45ff287a6be6bfcf0971e0dd68dab5abb934f",
+      "unchanged": true
+    },
+    {
+      "file": "freshness/runtime-evidence.json",
+      "sha256": "49f4a9837d4e36842be7fed26c00b2bd37faeea41961c81b6573825ca7a6caab",
+      "unchanged": true
+    },
+    {
+      "file": "freshness/contract.md",
+      "sha256": "6aa5a871b6c92d8c67f5e06e34be815d30b20b06cade74d8cee83e70bb070fa6",
+      "unchanged": true
+    },
+    {
+      "file": "freshness/invocations.md",
+      "sha256": "42f0f2905b441f129299774aa3d1e0d8d6242ad9102572ac798876d066bc5d3d",
+      "unchanged": true
+    },
+    {
+      "file": "freshness/verification.json",
+      "sha256": "07e3610ed779e82b7ec3982325c19e19de4a9c7af4b52cf18bf8d018d97e3bbb",
+      "unchanged": true
+    },
+    {
+      "file": "freshness/protocol-sources.json",
+      "sha256": "da96d043fdd8462301ae263f79367ad48102211179e8ccb3faef6843b115bf99",
+      "unchanged": true
+    },
+    {
+      "file": "freshness/witness.mjs",
+      "sha256": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa",
+      "unchanged": true
+    }
+  ],
+  "scopeCheck": {
+    "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2' && printf 'HEAD\n' && GIT_MASTER=1 git rev-parse HEAD && printf 'BRANCH\n' && GIT_MASTER=1 git branch --show-current && printf 'TRACKED_DIFF\n' && GIT_MASTER=1 git diff --name-only --ignore-submodules=all && printf 'STAGED_DIFF\n' && GIT_MASTER=1 git diff --cached --name-only --ignore-submodules=all && printf 'UNTRACKED\n' && GIT_MASTER=1 git ls-files --others --exclude-standard && printf 'LINKS\n' && ls -ld lib/crane node_modules; printf 'PORT_18553\n'; lsof -nP -iTCP:18553 -sTCP:LISTEN; printf 'PORT_QUERY_EXIT=%s\n' \"$?\"; test ! -e out && printf 'OUT_ABSENT\n'; test ! -e cache_forge && printf 'CACHE_FORGE_ABSENT\n'",
+    "rawOutput": "HEAD\n5021e8d4a62bcbddc555f580ef98f8666d993aab\nBRANCH\nwork/dtf-migration-phase-06-e2\nTRACKED_DIFF\nSTAGED_DIFF\nUNTRACKED\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/calculations.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/commands.md\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/contract.md\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/primary-sources.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/rpc.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/verification.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/construction/evidence.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/construction/invocations.md\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/construction/report.md\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/contract.md\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/invocations.md\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/protocol-sources.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/runtime-evidence.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/verification.json\ndocs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/witness.mjs\nLINKS\nlrwxr-xr-x@ 1 cyotee  staff  42 Nov 10 17:22 lib/crane -> /Users/cyotee/Projects/indexedex/lib/crane\nlrwxr-xr-x@ 1 cyotee  staff  45 Nov 10 17:22 node_modules -> /Users/cyotee/Projects/indexedex/node_modules\nPORT_18553\nPORT_QUERY_EXIT=1\nOUT_ABSENT\nCACHE_FORGE_ABSENT",
+    "trackedDiff": "empty",
+    "stagedDiff": "empty",
+    "untracked": "Inherited anchors/freshness plus three construction deliverables at check time; this receipt is the fourth construction file.",
+    "submoduleTraversal": "Disabled for status/diff because root-authorized lib/crane symlink is not a materialized Git submodule.",
+    "linkedDependencyContents": "Not comprehensively hashed; no writes performed by this lane."
+  },
+  "validation": {
+    "evidenceJsonParsed": true,
+    "recordedChecks": 24,
+    "allRecordedChecksPassed": true,
+    "recordMatchesActualResult": true,
+    "reproductionSyntax": "Parsed with AsyncFunction; not re-executed",
+    "localLinkChecks": [
+      {
+        "link": "../anchors/contract.md",
+        "exists": true
+      },
+      {
+        "link": "../freshness/contract.md",
+        "exists": true
+      },
+      {
+        "link": "../anchors/rpc.json",
+        "exists": true
+      },
+      {
+        "link": "../anchors/primary-sources.json",
+        "exists": true
+      },
+      {
+        "link": "../freshness/runtime-evidence.json",
+        "exists": true
+      },
+      {
+        "link": "../freshness/witness.mjs",
+        "exists": true
+      },
+      {
+        "link": "evidence.json",
+        "exists": true
+      },
+      {
+        "link": "invocations.md",
+        "exists": true
+      }
+    ],
+    "selfReference": "Report link to verification.json is fulfilled by this receipt; not included in the prior file-existence checks.",
+    "manualReportReadback": true,
+    "semanticCoverage": [
+      "Domain and immutable configuration",
+      "Authenticated baseline, unknown units and independent-compensation disjointness",
+      "Execution state, origin partitions, residuals and consumed identity",
+      "Complete ordered history with omission protection and source-specific semantics",
+      "Native canonical anchors, reorg/finality assumptions, and explicit missing live custody-prefix connection",
+      "Bounded continuation, historical availability and no-expiry long-offline operation"
+    ],
+    "staticDiagnostics": "Biome unavailable; not installed, no clean LSP result claimed"
+  },
+  "cleanup": {
+    "allocatedPorts": [],
+    "assignedUnusedPort": 18553,
+    "allocatedTemporaryRoots": [],
+    "spawnedLocalNodes": [],
+    "ownedLongRunningProcesses": [],
+    "portQuery": "lsof -nP -iTCP:18553 -sTCP:LISTEN",
+    "portQueryExit": 1,
+    "listenersObserved": [],
+    "deletionPerformed": false,
+    "outAbsent": true,
+    "cacheForgeAbsent": true
+  },
+  "limits": [
+    "No complete E2 verifier, production ABI, atomic funded-bond run or large-history continuation was delivered.",
+    "The disposition is a demonstrated missing capability, not a universal impossibility or owner policy selection.",
+    "No original-plan gate or category is closed by this evidence.",
+    "No runtime fork probe was repeated; all executable boundary inputs are inherited raw observations."
+  ],
+  "writeScope": "Only construction/report.md, evidence.json, invocations.md and this verification.json; no self-hash."
+}

@@ -1,0 +1,21 @@
+{
+  "ownedRun": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/stage2-correction/rehearsal-1794428263929",
+  "cliExit": 0,
+  "nodePid": 31934,
+  "nodeExited": true,
+  "lsofExit": 1,
+  "noPort18563Listener": true,
+  "psExit": 1,
+  "checkpointAbsent": true,
+  "checkpointAbsentTestExit": 0,
+  "emptyOwnedRuntimeParentRemoved": true,
+  "impersonations": "Scenario finally blocks stopped impersonations; owned node exited.",
+  "pendingRuntime": false,
+  "producerRpcMonitor": "mon_EQBBZ5JJ5EJTR0FK stopped",
+  "sourceChangedByVerifier": false,
+  "fixes": 0,
+  "commits": 0,
+  "publicTransactions": 0,
+  "warmArtifacts": "retained locally; no main copy",
+  "producerSealUnchanged": true
+}

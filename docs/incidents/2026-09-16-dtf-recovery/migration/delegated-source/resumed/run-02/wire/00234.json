@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":234,\"method\":\"eth_getTransactionByHash\",\"params\":[\"0x955a7492035505e8b32a84e12cf73fb8d06b45783c4cddb9bb7f794e570d70b4\"]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":234,\"result\":{\"type\":\"0x2\",\"chainId\":\"0x1237\",\"nonce\":\"0x2\",\"gas\":\"0x4c4b40\",\"maxFeePerGas\":\"0x77359400\",\"maxPriorityFeePerGas\":\"0x5f5e100\",\"to\":\"0xb55604cf4dcdabb362078e106d20f98512391edf\",\"value\":\"0x0\",\"accessList\":[],\"input\":\"0xa9059cbb000000000000000000000000b6958d92ff436fa5d7ea550a22283fe9eaf458e90000000000000000000000000000000000000000000000000000000000000065\",\"r\":\"0x7ed17b9317b482b7460c63c34ae8e31e217f43e08f8730c381a548773fd10bee\",\"s\":\"0x64087a0e39ac436ea914bc9cb77f7f1e746d5f5702b8acb9bc75b16ac16e5707\",\"yParity\":\"0x0\",\"v\":\"0x0\",\"hash\":\"0x955a7492035505e8b32a84e12cf73fb8d06b45783c4cddb9bb7f794e570d70b4\",\"blockHash\":\"0x020727426c148e957e499f1654d231e7f5acebf3d44ae05bf130b9e46d4ff1cf\",\"blockNumber\":\"0x67e5d27\",\"transactionIndex\":\"0x0\",\"from\":\"0xf40fcb5937ab8abd4685e0ad10a5e971ce23ae3d\",\"gasPrice\":\"0x619e9ee\",\"blockTimestamp\":\"0x6aeff5e2\"}}",
+  "httpStatus": 200,
+  "raw": true
+}

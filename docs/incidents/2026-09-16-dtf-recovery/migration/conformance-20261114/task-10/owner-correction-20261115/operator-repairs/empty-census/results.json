@@ -1,0 +1,213 @@
+{
+  "task": "Task 10 empty compensation census repair",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "files": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "0fdf11cbaa19577c61f70cf31f0115f524ba9cdcb6ff00ade3e18e52ef454af5",
+      "bytes": 15361,
+      "pureLines": 229
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "378cd2a690cf5fea6ae0b9da8a617ddede4b85df368ac93de5d5df78c2209b5a",
+      "bytes": 15178,
+      "pureLines": 242
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/census-context.ts",
+      "sha256": "b1fbd22de7ad8d99a67fbbfe8afce99e26d8d0a70f69522b1b615778f5a7d429",
+      "bytes": 6624,
+      "pureLines": 103
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "sha256": "f3d9f2b2f7ea0dcac3f9d782ee0f46056c99a4a17fc1e543c71d9115803a5896",
+      "bytes": 5375,
+      "pureLines": 83
+    }
+  ],
+  "attempts": [
+    {
+      "name": "attempt-01-baseline",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": [
+        " 10 pass",
+        " 0 fail",
+        "Ran 10 tests across 1 file. [1323.00ms]"
+      ]
+    },
+    {
+      "name": "attempt-02-reproduction",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 1,
+      "sourceStable": true,
+      "summary": [
+        " 32 pass",
+        " 1 fail",
+        "Ran 33 tests across 1 file. [1.88s]"
+      ]
+    },
+    {
+      "name": "attempt-03-focused-green",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": [
+        " 33 pass",
+        " 0 fail",
+        "Ran 33 tests across 1 file. [2.02s]"
+      ]
+    },
+    {
+      "name": "attempt-04-mutant-singleton",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 1,
+      "sourceStable": true,
+      "summary": [
+        "AssertionError: Missing expected rejection.",
+        " 11 pass",
+        " 22 fail",
+        "Ran 33 tests across 1 file. [2.00s]"
+      ]
+    },
+    {
+      "name": "attempt-05-mutant-cutoff",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 1,
+      "sourceStable": true,
+      "summary": [
+        "AssertionError: Missing expected rejection.",
+        " 22 pass",
+        " 11 fail",
+        "Ran 33 tests across 1 file. [2.00s]"
+      ]
+    },
+    {
+      "name": "attempt-06-manual",
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": [
+        "{\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-Tm55Rd\",\"outcomes\":28,\"status\":\"PASS\"}"
+      ]
+    },
+    {
+      "name": "attempt-07-mutant-deployment",
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 1,
+      "sourceStable": true,
+      "summary": [
+        "AssertionError: stale deployment header must reject"
+      ]
+    },
+    {
+      "name": "attempt-08-final-focused",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": [
+        " 33 pass",
+        " 0 fail",
+        "Ran 33 tests across 1 file. [1.95s]"
+      ]
+    },
+    {
+      "name": "attempt-09-historical-census",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": [
+        " 81 pass",
+        " 0 fail",
+        "Ran 81 tests across 3 files. [22.80s]"
+      ]
+    },
+    {
+      "name": "attempt-10-final-manual",
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-empty-census.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": [
+        "{\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA\",\"outcomes\":28,\"status\":\"PASS\"}"
+      ]
+    },
+    {
+      "name": "attempt-11-diff-check",
+      "command": "GIT_MASTER=1 git status --short -- scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-domain.test.ts && GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit": 0,
+      "sourceStable": true,
+      "summary": []
+    }
+  ],
+  "mutationsRestored": true,
+  "originalFacts": {
+    "manifest": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/unset-owner-execution.json",
+    "receipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/deployment-receipt.json",
+    "canonicalChain": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/journal-deploy/17918fb30b629655bba3525c0d075970ad103105dd38d80270271398bdf9d238.canonical-chain.json",
+    "domainHash": "be76538efae814c63f22d9c99fd6878734da1e3b76d135df3b3c7fdf02428289",
+    "bindings": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/source-bindings.json",
+    "preservedFiles": 41
+  },
+  "manual": {
+    "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/result.json",
+    "requests": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/rpc-requests.json",
+    "cleanup": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/manual-qStpyA/cleanup.json",
+    "transport": "synthetic isolated loopback; exact archived deployment transaction/header/receipt; census range is the saved deployment logs plus separately injected synthetic omission events",
+    "outcomes": 28,
+    "contractCalls": 0,
+    "nonceRequests": 0,
+    "sends": 0
+  },
+  "cleanup": [
+    {
+      "run": "manual-vrnEgQ",
+      "cleanup": {
+        "fixtureDirectoryRemoved": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-WFR2Et",
+        "fixtureEnvironmentRemoved": "DTF_TEST_RPC_52757",
+        "originalRpcAliasRestoredAfterProviderConstruction": true,
+        "serverClosed": true
+      }
+    },
+    {
+      "run": "manual-qStpyA",
+      "cleanup": {
+        "fixtureDirectoryRemoved": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-bCTJSH",
+        "fixtureEnvironmentRemoved": "DTF_TEST_RPC_52934",
+        "originalRpcAliasRestoredAfterProviderConstruction": true,
+        "serverClosed": true
+      }
+    },
+    {
+      "run": "manual-Tm55Rd",
+      "cleanup": {
+        "fixtureDirectoryRemoved": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-wwfZwg",
+        "fixtureEnvironmentRemoved": "DTF_TEST_RPC_52735",
+        "originalRpcAliasRestoredAfterProviderConstruction": true,
+        "serverClosed": true
+      }
+    }
+  ],
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/empty-census/report.md",
+  "diagnostics": "Native LSP freshness timeouts; shared operator/typecheck deferred by request.",
+  "adjacentObservation": "At inspection, sibling-owned execution-state.ts verifyConfiguration also used suffix selection. Not reproduced against saved initialization or changed in this lane.",
+  "limits": [
+    "No live current-chain census; Anvil was stopped.",
+    "No owner-bond execution, activation, lifecycle completion, readiness marker or shared gate.",
+    "No Forge, public RPC, installs, commits, plan checkbox edits or sibling-owned writes."
+  ],
+  "captureNote": "Attempt 11 output.log contains diff-check output only; status stdout is preserved from the completed monitor PTY in terminal-transcript.txt."
+}

@@ -1,0 +1,103 @@
+{
+  "version": "phase34-stopped-producer-seal-v1",
+  "status": "complete-bounded-direct-source-observations-with-explicit-financial-unknowns",
+  "publishedAt": "2026-11-13T12:13:24.390Z",
+  "ownedDirectory": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+  "directRows": 39,
+  "weightedContext": 43,
+  "indirectUnchanged": 4,
+  "earlierUnchanged": 16,
+  "sourceContentsAuthenticated": 99,
+  "historicalCompleteRuntimeComparisons": 39,
+  "positiveGrossCallerTokenComponents": 40,
+  "affirmativeOtherTokenGrossZeros": 38,
+  "approvedOriginalCostRows": 0,
+  "firstFullBookExtraDtf18": "362893857600000000000",
+  "firstFullBookExtraOriginalCostDtf18": null,
+  "sourceRuntimeKeccak256": "0x2676830f3b489088787c4ecc21803326a7909fbaaf9fd72994ec62b111bf62f8",
+  "decodedEntity": {
+    "bytes": 1636793,
+    "sha256": "adb0729a4d782cef809684171914caa90e8dcc4357446dfef18741f3d7256e27"
+  },
+  "checks": {
+    "assertions": 41822,
+    "bindingChecks": 7379,
+    "uniqueFinalPreservationChecks": 6446,
+    "changedInputs": 0,
+    "proofExit": 0,
+    "reproductionExit": 0,
+    "syntaxExits": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "pendingOwnedOperations": 0,
+  "newNetworkRequests": 0,
+  "stopped": true,
+  "recordedChildPidsAbsent": true,
+  "bindings": [
+    {
+      "path": "manifest.json",
+      "bytes": 3857,
+      "sha256": "a4120722caafd9da8b8d4a0e79b48b0fe8096bb6293111f71681c0720a31404f"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 6361,
+      "sha256": "b461893fce125db90763dc8ffbcf8510e71e87c4ec0ffd24bce593c9fd9dcfda"
+    },
+    {
+      "path": "direct-attribution.json",
+      "bytes": 3367353,
+      "sha256": "a0597d82f35bb145f5739858458c26edeb4348ff3d77684ddbdb85a2e51979da"
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 2832035,
+      "sha256": "74918d6c208c51f27cb257b0454a5c2027d5ece633ed734c22a35b1e6dd56d21"
+    },
+    {
+      "path": "proof-01.command.json",
+      "bytes": 1271,
+      "sha256": "2f5d72b87a45f8c2146fc6ca2767f4d0ffbd65a69f9ae1458c32294a577fd371"
+    },
+    {
+      "path": "proof.json",
+      "bytes": 6336233,
+      "sha256": "e5a0aafdc3a509e40708c5d4ae6ff565ad40178c059b43972b1bd7705426ea98"
+    },
+    {
+      "path": "references.json",
+      "bytes": 22998,
+      "sha256": "7292bda4e917a33a3a80d6394ca3ed9e6b9e79ce6b56a3fa204af1a0f7a9297a"
+    },
+    {
+      "path": "report.md",
+      "bytes": 28195,
+      "sha256": "85b2bacdf993760f6ba5b4719cdab76de8cf40d0dbf85316c02a5b8b45671b26"
+    },
+    {
+      "path": "source-index.json",
+      "bytes": 44552,
+      "sha256": "7ada21d735bcf0ed5c5059a9dfd73d0a59566eaa52a0df04d8c316ec4c5ce261"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 1399,
+      "sha256": "5517521192bc8c11d87f5841fe6adcc5bd12194f6dae5fa192b4f77349ed3d4a"
+    },
+    {
+      "path": "verify-01.command.json",
+      "bytes": 816,
+      "sha256": "c7c981629a3d2f120b9a10564aa9c0d75722aca0b1e298e6f9d750190dff3847"
+    }
+  ],
+  "manifestFiles": 25,
+  "independentVerdict": "not claimed; verification/ belongs to the downstream verifier",
+  "retainedFailure": "Initial phase32 243 raw responses/outcomes unavailable; not repaired or reconstructed.",
+  "limits": "Gross purchase-time caller-paid ERC20 observations and bounded source roles only; no approved E0/D0/C0, NFT original-cost allocation, eligibility, native/net refund closure, universal transitive historical execution proof, G2/phase29 closure or operational/full-plan approval.",
+  "finalPublication": true,
+  "noProducerWriteFollows": true
+}

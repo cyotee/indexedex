@@ -1,0 +1,178 @@
+{
+  "recordedAt": "2026-11-15T09:09:11.035Z",
+  "purpose": "Additive command provenance requested for task 13 repair attempt 1; original logs and sidecars remain unchanged.",
+  "newCommandsExecuted": false,
+  "records": [
+    {
+      "label": "production-build",
+      "rawLog": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log",
+        "bytes": 4343519,
+        "sha256": "69a0397fb59237bef3756c1d3ccadae93eaafc1a09b05fe36d5a2754a9e99145"
+      },
+      "existingCommandReceipt": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log.command.json",
+        "sha256": "12d99ca2cfc48318bf443209dc6ef9aebec4b5203d8743613d8dd71c3c7162ee",
+        "verbatimUtf8": "{\"command\":[\"forge\",\"build\",\"--use\",\"solar\"],\"code\":0,\"signal\":null}"
+      },
+      "quotedArgv": [
+        "forge",
+        "build",
+        "--use",
+        "solar"
+      ],
+      "quotedExitCode": 0,
+      "quotedSignal": null,
+      "recorder": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2-recorder.log",
+        "sha256": "46995088a8e64ad9763946fb8c825721d12502f02557f7c7895eeaefed9ab4bd",
+        "exitLineQuote": "CHECK_END hermetic 3 0"
+      },
+      "qualification": "Supplemental quotation and raw-byte binding of pre-existing records. This is not new process stdout and does not insert an argv header or exit receipt into the historical numbered log. For /bin/zsh -c, the captured argv is the shell invocation; expanded child argv was not recorded."
+    },
+    {
+      "label": "full-hermetic",
+      "rawLog": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/04.log",
+        "bytes": 9233554,
+        "sha256": "9ee62a42b7fcf2fb1a64bf7d04753238c6710f378f4b077faadb07e5efca5e79"
+      },
+      "existingCommandReceipt": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/04.log.command.json",
+        "sha256": "f0399ad01bea3e6e3b3d2773f5de894fbef045b2bea6093be41bc62f85e16dbe",
+        "verbatimUtf8": "{\"command\":[\"forge\",\"test\",\"--use\",\"solar\",\"-vv\",\"--no-match-path\",\"**/fork/**\",\"--no-match-contract\",\"Fork\"],\"code\":0,\"signal\":null}"
+      },
+      "quotedArgv": [
+        "forge",
+        "test",
+        "--use",
+        "solar",
+        "-vv",
+        "--no-match-path",
+        "**/fork/**",
+        "--no-match-contract",
+        "Fork"
+      ],
+      "quotedExitCode": 0,
+      "quotedSignal": null,
+      "recorder": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2-recorder.log",
+        "sha256": "46995088a8e64ad9763946fb8c825721d12502f02557f7c7895eeaefed9ab4bd",
+        "exitLineQuote": "CHECK_END hermetic 4 0"
+      },
+      "qualification": "Supplemental quotation and raw-byte binding of pre-existing records. This is not new process stdout and does not insert an argv header or exit receipt into the historical numbered log. For /bin/zsh -c, the captured argv is the shell invocation; expanded child argv was not recorded."
+    },
+    {
+      "label": "all-k-fork-helper",
+      "rawLog": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/03.log",
+        "bytes": 4439211,
+        "sha256": "e0862260e4e33003e9e6cb430ca93e4c95475e222b171144f54fac18a23d995d"
+      },
+      "existingCommandReceipt": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork/03.log.command.json",
+        "sha256": "e5159f3d19c72b6505121dcfd20f750bde06fdab8770efa9319d5f10e00a7a69",
+        "verbatimUtf8": "{\"command\":[\"python3\",\"scripts/forge-artifacts.py\",\"test\",\"contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol\",\"--test-root\",\"test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration\",\"--\",\"-j\",\"1\",\"--compute-units-per-second\",\"10\",\"--rpc-timeout\",\"120\",\"-vv\"],\"code\":0,\"signal\":null}"
+      },
+      "quotedArgv": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+        "--test-root",
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration",
+        "--",
+        "-j",
+        "1",
+        "--compute-units-per-second",
+        "10",
+        "--rpc-timeout",
+        "120",
+        "-vv"
+      ],
+      "quotedExitCode": 0,
+      "quotedSignal": null,
+      "recorder": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/fork-recorder.log",
+        "sha256": "886ddefd5c98cc5081a869091d575a1137582c9f332343d8979300f95a522c54",
+        "exitLineQuote": "CHECK_END fork 3 0"
+      },
+      "qualification": "Supplemental quotation and raw-byte binding of pre-existing records. This is not new process stdout and does not insert an argv header or exit receipt into the historical numbered log. For /bin/zsh -c, the captured argv is the shell invocation; expanded child argv was not recorded."
+    },
+    {
+      "label": "operator-types",
+      "rawLog": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/03.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "existingCommandReceipt": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/03.log.command.json",
+        "sha256": "d16f250d269a56f309b7d0758deaf336473f5a732f9fe45ff8f31c09552a7279",
+        "verbatimUtf8": "{\"command\":[\"/bin/zsh\",\"-c\",\"bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts\"],\"code\":0,\"signal\":null}"
+      },
+      "quotedArgv": [
+        "/bin/zsh",
+        "-c",
+        "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts"
+      ],
+      "quotedExitCode": 0,
+      "quotedSignal": null,
+      "recorder": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2-recorder.log",
+        "sha256": "d0e494ad5532f6291807bc0d9b4ee2e90df58d2f767eadc8eb3c97e94806c340",
+        "exitLineQuote": "CHECK_END operator 3 0"
+      },
+      "qualification": "Supplemental quotation and raw-byte binding of pre-existing records. This is not new process stdout and does not insert an argv header or exit receipt into the historical numbered log. For /bin/zsh -c, the captured argv is the shell invocation; expanded child argv was not recorded."
+    },
+    {
+      "label": "full-operator-tests",
+      "rawLog": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log",
+        "bytes": 29520,
+        "sha256": "ea428eaeadc993624ed88ca301bd4beb1a5871ef207ddbdcd0f330c2aba33861"
+      },
+      "existingCommandReceipt": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2/04.log.command.json",
+        "sha256": "cff8afef6cd2c6093633985801ba3b0d311d3d945ac1420a132e73a4cdfabf64",
+        "verbatimUtf8": "{\"command\":[\"/bin/zsh\",\"-c\",\"bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts\"],\"code\":1,\"signal\":null}"
+      },
+      "quotedArgv": [
+        "/bin/zsh",
+        "-c",
+        "bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts"
+      ],
+      "quotedExitCode": 1,
+      "quotedSignal": null,
+      "recorder": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/operator-r2-recorder.log",
+        "sha256": "d0e494ad5532f6291807bc0d9b4ee2e90df58d2f767eadc8eb3c97e94806c340",
+        "exitLineQuote": "CHECK_END operator 4 1"
+      },
+      "qualification": "Supplemental quotation and raw-byte binding of pre-existing records. This is not new process stdout and does not insert an argv header or exit receipt into the historical numbered log. For /bin/zsh -c, the captured argv is the shell invocation; expanded child argv was not recorded."
+    }
+  ],
+  "helperTypecheck": {
+    "reportedCommandQuote": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+    "commandSource": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/invocation-inventory.json",
+      "jsonPointer": "/commands/operator/2",
+      "sha256": "073063c4f7412437d6637d0fa75f9bf9d5724bf5386f27274bb5be1de7eec20b"
+    },
+    "exitReceipt": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/helper-typecheck.exit.log",
+      "sha256": "e9b869b5661f135e17994ae53a746bccc17a42489674765dfa3b514b0eabefed",
+      "verbatimUtf8": "HELPER_TYPECHECK_EXIT=0\n"
+    },
+    "reportedExitCode": 0,
+    "rawStdout": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/helper-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capturedNativeArgv": null,
+    "qualification": "The retained inventory supplies the reported command string and the retained exit marker supplies code 0. No contemporaneous native argv receipt or argv header exists in the empty raw stdout log. This supplement quotes and binds those separate records; it does not manufacture missing historical stdout or claim stronger provenance."
+  },
+  "strictHistoricalRawLogArgvAndExitRequirementMet": false,
+  "supplementalCommandBindingDelivered": true
+}

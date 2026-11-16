@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"graduate","inputs":[{"name":"token","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"}],"id":2374}

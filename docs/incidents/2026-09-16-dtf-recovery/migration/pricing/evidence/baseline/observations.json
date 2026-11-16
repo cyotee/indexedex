@@ -1,0 +1,58 @@
+{
+  "scope": "Unchanged existing fixtures; observations are not frozen primary mint-branch acceptance vectors",
+  "amount_encoding": "Decimal integer strings in native units except the explicitly labeled weighted math output",
+  "weighted_erc4626": {
+    "test": "test_T8_2_firstBond_thenMintPair0",
+    "trace": "weighted.log",
+    "first_bond_input_18_decimals": "80000000000000000000",
+    "input_token": "0x7D5D2cC2030eDfF8034042b7E32E3234120AcfaF",
+    "detf_token": "0x796979802EAa59e6105374b236D9C7290B915942",
+    "hook": "0xD99258F58522FF79aF1F0558a4F412F440056aa8",
+    "exchange_input_18_decimals": "8000000000000000000",
+    "public_detf_preview": null,
+    "public_detf_preview_note": "This test does not call the public DETF preview",
+    "hook_internal_swap_preview_output_9_decimals": "5268940424",
+    "execution_output_9_decimals": "5268940424",
+    "execution_second_return": "0",
+    "weighted_math_output_wad": "5268940424990216880",
+    "branch": "reserve swap fallback",
+    "trace_lines": {
+      "public_execution_call": 1708,
+      "owner_swap_call": 1798,
+      "weighted_math_call": 1902,
+      "weighted_math_return": 1903,
+      "internal_preview_return": 1904,
+      "public_execution_return": 2038
+    }
+  },
+  "weighted_production_univ3": {
+    "test": "test_H_WE_GV3_mint",
+    "trace": "nested.log",
+    "first_bond_input_18_decimals": "100000000000000000000",
+    "input_token": "0xa8E1548deC42BAF2C0508959eaaC6521ED12C0F0",
+    "detf_token": "0x796979802EAa59e6105374b236D9C7290B915942",
+    "hook": "0x3D588B21f1cfbF61DAA925E5CdD34582948e6AA8",
+    "exchange_input_18_decimals": "10000000000000000000",
+    "public_preview_output_9_decimals": "5617384097",
+    "public_preview_second_return": "0",
+    "execution_output_9_decimals": "5617384097",
+    "execution_second_return": "0",
+    "swap_fee_wad": "50000000000000000",
+    "nested_se_deposit_preview_input": "9500000000000000000",
+    "weighted_math_input_after_nested_mapping": "7027072017498277717",
+    "weighted_math_output_wad": "5617384097261037700",
+    "branch": "reserve swap fallback",
+    "trace_lines": {
+      "test_start": 47230,
+      "public_preview_call": 48902,
+      "fee_read": 49201,
+      "nested_se_deposit_preview": 49213,
+      "weighted_math_call": 49322,
+      "weighted_math_return": 49323,
+      "public_preview_return": 49328,
+      "public_execution_call": 49332,
+      "owner_swap_call": 49506,
+      "public_execution_return": 50050
+    }
+  }
+}

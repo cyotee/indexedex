@@ -1,0 +1,1051 @@
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+index 50e18738..4a3852d3 100644
+--- a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -1,5 +1,106 @@
+ # Bounded Migration operator runbook
+ 
++## Complete-original TokenStaking claims prepared into SY
++
++This intake admits only a reviewed original whose entire eligible native18
++weight W0 was consumed by direct signed EOA `withdrawClaim` operations before
++its Stage1 loading. The source is fixed to chain4663 TokenStaking
++`0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00`, Wrapped phase2, claim vault
++`0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0`, and native9 SY
++`0xb55604cf4dcdabb362078e106d20f98512391edf`. Vault shares are native19.
++This is prior holder preparation, not an approved Migration pull of raw weight.
++
++Add `claimedOrigin` to the existing `weightedSy` row. Its typed schema is
++`claimedSyCertificate` in the existing operator schema. Keep the canonical
++wallet-independent `originalId`, original wallet and complete known E0/D0.
++The reviewed record explicitly supplies positive `eligibleWeight`, known
++`priorDeliveredCredit: "0"`, principal-only eligibility, reward exclusions,
++reconciled aliases, no competing representation, and unrelated weight/SY
++floors. Unknown or nonzero prior delivery, incomplete original components,
++partial preparation and aggregate zero SY are rejected. No allocation here
++approves operational historical records.
++
++Each member contains original raw signed bytes, transaction/block identities,
++positive native18 `consumedWeight`, exact native9 `receivedSy`, and measured
++native19 `redeemedVaultShares`. The admitted execution form is a direct
++code-less EOA transaction in an isolated canonical block. Contract wallets,
++delegation, special execution and multi-transaction preparation blocks are
++not admitted by this validator. A different form needs source admission,
++not a guessed trace interpretation.
++
++Preparation checks exact `sum(consumedWeight) == W0` and positive
++`Q0 = sum(receivedSy)`, including every actually committed zero-output slice.
++Set `originalUnits = Q0`. Never use total wallet balance, an old weight/SY
++ratio, a scaled nonlinear input, or a separate full quote for each split.
++The existing frozen evaluator quotes complete E0/D0 once; partial and terminal
++SY surrender use the existing remaining-Q/C arithmetic unchanged.
++
++The row's `proof` points at the entire reviewed
++`{ original, claimedOrigin }` object, not its `original` child. A stripped
++certificate therefore cannot validate against that same evidence as ordinary
++SY. `claimedSyEvidenceId(domain, original, certificate)` computes the required
++nonzero commitment, excluding only the commitment's own field. It binds chain,
++Migration proxy, frozen snapshot, complete original inputs, review and every
++member. The ordinary-independent SY proof form remains unchanged.
++Classification is also reconciled across all referenced reviewed JSON
++documents. Selecting a nested or separately copied original tuple does not
++erase a claimed-origin marker elsewhere in those reviewed records.
++The certificate also binds the actual `snapshotCapture` transaction, RPC
++block number and block hash. Its successful canonical receipt must contain
++the parent's matching `MigrationSnapshotCaptured` event. The event's EVM
++`block.number` is not substituted for the RPC height: those differ on the
++admitted Robinhood fork.
++
++The actual RPC, not an uploaded receipt, authenticates canonical block/receipt/
++transaction identity, signed caller and calldata, return and claim event,
++same-wallet vault redemption, source phase/asset/decimals and admitted proxy/
++facet runtimes. Historical source weight/supply/vault/SY deltas must match
++the exact member quantities. Unique transactions cannot appear twice within
++or across originals. Historical and current aggregate wallet budgets protect
++measured descendants and unrelated SY; current consumed units come only from
++the real Migration record. Current control at surrender remains mandatory.
++Previously configured SY origins must remain in the complete manifest census,
++including on subsequent preparation, execution and resume.
++
++Reviewed owner inputs establish historical eligibility, original contributions,
++known-zero prior delivery and semantic origin disjointness. Chain observations
++establish execution and quantities, not those historical facts. An opaque alias
++still requires owner reconciliation. The unchanged onchain loader trusts owner
++loading and the evidence commitment; it does not independently authenticate
++offchain certificates. Its canonical origin guards exclude other backed,
++receipt, liquid, SY, vault-share, LP, NFT and independent representations.
++Configuration and resume reconstruct and reauthenticate the prepared manifest
++before any signing, so changed evidence, domain or payload cannot be adopted.
++
++The new cumulative rehearsal is:
++
++```sh
++/bin/zsh -lc 'bun scripts/recovery/dtf-migration/cli.ts rehearse \
++  --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18573 \
++  --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints \
++  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime'
++```
++
++All earlier loopback gates/routes and three genuine mined-before-checkpoint
++resumes remain. The new full/split originals use controlled direct signatures,
++actual donor reassignments, real gas transfers and positive excluded weight/SY
++floors. Donor impersonation and synthetic historical partitions are labeled
++separately. Lossless raw input captures distinguish original bytes from JSON
++serialization or later reconstruction. No gas/code/storage/token injection,
++source governance or public operation is needed.
++
++Stage1 still rejects surrender. The paid owner-first bond precedes permanent
++loader removal and Stage2 opening. Each successful same-wallet SY surrender
++creates an exactly funded fresh90-day bond. A later child-funding failure
++restores that later SY/Migration transaction, not the earlier source claim:
++consumed raw weight stays consumed and the prepared SY stays with its wallet.
++Unchanged ordinary-SY contract-receiver/reentry tests are shared-path coverage,
++not claimed-origin callback witnesses. EOA-only admission is not broadened.
++
++Direct raw pull, partial/prior-delivered mappings, operational awards, full raw
++category closure, other unadmitted sources, blocked conversions, public action,
++host portability and target deployment gas remain outside this bounded intake.
++
+ ## Three fixed native18 SE/LP custody and credit paths
+ 
+ `heldSeLp` contains complete `original` and raw `proof` objects. Originals
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+index 64cb9670..cf4dbb2d 100644
+--- a/scripts/recovery/dtf-migration/cli.ts
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -47,6 +47,11 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
+     --fork-block 108944663 --port 18571
+     --checkpoint .omo-runtime/dtf-migration-held-se-lp/checkpoints
+     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/runtime
++  Complete-original claimed SY (direct signed EOA preparation; not raw-weight pull):
++  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
++    --fork-block 108944663 --port 18573
++    --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints
++    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime
+ `;
+ 
+ export async function main(args: readonly string[]): Promise<void> {
+diff --git a/scripts/recovery/dtf-migration/payloads.ts b/scripts/recovery/dtf-migration/payloads.ts
+index a454a7d8..19d4982b 100644
+--- a/scripts/recovery/dtf-migration/payloads.ts
++++ b/scripts/recovery/dtf-migration/payloads.ts
+@@ -1,6 +1,7 @@
+ import { AbiCoder, keccak256 } from "ethers";
+ import { categories, heldSeLpSources, PreparationError } from "./schema.js";
+ import type { Domain, NftOriginal, Original, PreparationInput, WeightedLiquidOriginal } from "./schema.js";
++import { validateClaimedSyInputs } from "./claimed-sy.js";
+ 
+ const coder = AbiCoder.defaultAbiCoder();
+ const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
+@@ -71,6 +72,7 @@ export function dispositions(input: PreparationInput) {
+ }
+ 
+ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
++  validateClaimedSyInputs(input);
+   const origins = new Map(input.exposures.map((e) => [e.originId, e]));
+   if (origins.size !== input.exposures.length) throw new PreparationError("PROVENANCE", "duplicate origin");
+   const used = new Set<string>();
+diff --git a/scripts/recovery/dtf-migration/preparation.fixture.ts b/scripts/recovery/dtf-migration/preparation.fixture.ts
+index 9168c29b..15ebadb3 100644
+--- a/scripts/recovery/dtf-migration/preparation.fixture.ts
++++ b/scripts/recovery/dtf-migration/preparation.fixture.ts
+@@ -59,7 +59,7 @@ export async function fixture() {
+       let result: unknown;
+       switch (rpc.method) {
+         case "eth_chainId": result = changes.chain; break;
+-        case "eth_getBlockByNumber": result = { number: "0x64", hash: h(100), parentHash: h(99) }; break;
++        case "eth_getBlockByNumber": result = { number: "0x64", hash: h(100), parentHash: h(99), transactions: [] }; break;
+         case "eth_getCode": result = changes.code; break;
+         case "eth_call": {
+           const call = z.object({ data: z.string() }).parse(rpc.params[0]);
+diff --git a/scripts/recovery/dtf-migration/provenance.ts b/scripts/recovery/dtf-migration/provenance.ts
+index 8877c6c0..aac39702 100644
+--- a/scripts/recovery/dtf-migration/provenance.ts
++++ b/scripts/recovery/dtf-migration/provenance.ts
+@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
+ import { readFile } from "node:fs/promises";
+ import { dirname, resolve } from "node:path";
+ import { z } from "zod";
+-import { PreparationError, preparationInput } from "./schema.js";
++import { identity, PreparationError, preparationInput } from "./schema.js";
+ import type { PreparationInput, Proof } from "./schema.js";
+ 
+ export function canonical(value: unknown): string {
+@@ -51,10 +51,12 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
+   if (!input.sources.some((s) => s.path === input.domain.snapshotArtifact)) {
+     throw new PreparationError("PROVENANCE", "snapshot ABI artifact must be fingerprinted");
+   }
++  const reviewed = new Map<string, unknown>();
+   const check = (proof: Proof, value: unknown): void => {
+     const raw = sources.get(proof.sourceId);
+     if (!raw) throw new PreparationError("PROVENANCE", `missing source ${proof.sourceId}`);
+-    const recorded = pointerValue(JSON.parse(new TextDecoder().decode(raw)), proof.pointer);
++    if (!reviewed.has(proof.sourceId)) reviewed.set(proof.sourceId, JSON.parse(new TextDecoder().decode(raw)));
++    const recorded = pointerValue(reviewed.get(proof.sourceId), proof.pointer);
+     if (canonical(recorded) !== canonical(value)) {
+       throw new PreparationError("PROVENANCE", `proof does not match full original: ${proof.sourceId}${proof.pointer}`);
+     }
+@@ -62,7 +64,14 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
+   for (const row of input.independent) for (const item of row.entitlements) check(item.proof, item.original);
+   for (const row of input.nfts) check(row.proof, row.original);
+   for (const row of input.weightedLiquid) check(row.proof, row.original);
+-  for (const row of input.weightedSy) check(row.proof, row.original);
++  // Claimed-origin evidence points at the complete reviewed record. Removing its
++  // certificate cannot make that same proof validate as ordinary independent SY.
++  for (const row of input.weightedSy) {
++    if (row.claimedOrigin && input.sources.find((s) => s.id === row.proof.sourceId)?.provenance.kind !== "file") {
++      throw new PreparationError("PROVENANCE", "claimed original eligibility requires reviewed owner input, not chain-observation authority");
++    }
++    check(row.proof, row.claimedOrigin ? { original: row.original, claimedOrigin: row.claimedOrigin } : row.original);
++  }
+   for (const row of input.dtfCustodySe) check(row.proof, row.original);
+   for (const row of input.claimVault) check(row.proof, row.original);
+   for (const row of input.weightedReceipt) check(row.proof, row.original);
+@@ -85,4 +94,25 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
+       throw new PreparationError("PROVENANCE", `origin partition differs: ${row.originId}`);
+     }
+   }
++  // Classification belongs to the reviewed document, not a caller-selected
++  // pointer. A nested/duplicate original tuple cannot erase its claimed origin.
++  const claimed = new Set<string>();
++  const pending: unknown[] = [...reviewed.values()];
++  while (pending.length > 0) {
++    const value = pending.pop();
++    if (Array.isArray(value)) pending.push(...value);
++    else if (value !== null && typeof value === "object") {
++      const record = z.record(z.unknown()).parse(value);
++      if (Object.hasOwn(record, "claimedOrigin")) {
++        const original = z.object({ originalId: identity }).passthrough().parse(record["original"]);
++        claimed.add(original.originalId);
++      }
++      pending.push(...Object.values(record));
++    }
++  }
++  for (const row of input.weightedSy) {
++    if (claimed.has(row.original.originalId) && !row.claimedOrigin) {
++      throw new PreparationError("PROVENANCE", "reviewed claimed origin requires its complete certificate; ordinary SY fallback forbidden");
++    }
++  }
+ }
+diff --git a/scripts/recovery/dtf-migration/quotes.ts b/scripts/recovery/dtf-migration/quotes.ts
+index 405af894..822f4e3d 100644
+--- a/scripts/recovery/dtf-migration/quotes.ts
++++ b/scripts/recovery/dtf-migration/quotes.ts
+@@ -4,6 +4,7 @@ import { z } from "zod";
+ import { address, hash, hex, PreparationError, uint } from "./schema.js";
+ import type { PreparationInput } from "./schema.js";
+ import type { ConfigurationPayload } from "./payloads.js";
++import { authenticateClaimedSy } from "./claimed-sy.js";
+ 
+ const preview = new Interface(["function previewOriginalCredit(uint256,uint256) view returns (uint256)"]);
+ const quantity = z.string().regex(/^0x[0-9a-fA-F]+$/);
+@@ -83,6 +84,7 @@ export async function quoteOriginals(input: PreparationInput, payloads: Configur
+       || BigInt(snapshot.getValue("version")) !== 1n) {
+       throw new PreparationError("DOMAIN", "snapshot identity/source mismatch");
+     }
++    await authenticateClaimedSy(input, provider);
+     const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts, ...payloads.weightedLiquid, ...payloads.weightedSy, ...payloads.dtfCustodySe, ...payloads.claimVault, ...payloads.weightedReceipt, ...payloads.earlierReceipt, ...payloads.earlierLiquid, ...payloads.heldSeLp];
+     const pairs = new Map(originals.map((r) => [`${r.originalEth}:${r.originalDtf}`, r]));
+     const quotes: Quote[] = [];
+diff --git a/scripts/recovery/dtf-migration/rehearsal-admission.ts b/scripts/recovery/dtf-migration/rehearsal-admission.ts
+index ae7e5c14..e19c2f60 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-admission.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-admission.ts
+@@ -31,7 +31,7 @@ export async function exerciseAdmission(context: {
+   const receipt = address.parse((await chain.call(manifest.proxy, migration, "rebasingClaimToken"))[0]);
+   const observations: unknown[] = [];
+   const wallet = async (who: string, action: () => Promise<void>) => {
+-    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
++    await chain.fundGas(who);
+     await chain.send("anvil_impersonateAccount", [who]);
+     try { await action(); }
+     finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }
+diff --git a/scripts/recovery/dtf-migration/rehearsal-chain.ts b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+index 1cf182d0..0a6d1b1c 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-chain.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+@@ -2,7 +2,7 @@ import { FetchRequest, Interface, JsonRpcProvider, Network } from "ethers";
+ import { z } from "zod";
+ import { address, hash, hex } from "./schema.js";
+ import { ExecutionError, quantity, receipt } from "./execution-schema.js";
+-import { subscribeReceipt } from "./execution-rpc.js";
++import { DEV, subscribeReceipt } from "./execution-rpc.js";
+ import type { Receipt } from "./execution-schema.js";
+ 
+ export const LEGACY = {
+@@ -37,6 +37,9 @@ export class RehearsalChain {
+     this.provider = new JsonRpcProvider(request, new Network("owned-anvil", 4663), { batchMaxCount: 1, staticNetwork: true, cacheTimeout: -1 });
+   }
+   async send(method: string, params: readonly unknown[]): Promise<unknown> { return this.provider.send(method, [...params]); }
++  async fundGas(recipient: string) {
++    return this.transact(recipient, { from: DEV, data: "0x", value: "0xde0b6b3a7640000" });
++  }
+   async call(target: string, abi: Interface, method: string, args: readonly unknown[] = []) {
+     return abi.decodeFunctionResult(method, hex.parse(await this.send("eth_call", [{ to: target, data: abi.encodeFunctionData(method, args) }, "latest"])));
+   }
+@@ -65,7 +68,7 @@ export class RehearsalChain {
+   }
+   async withHolder(tokenId: string, action: (holder: string) => Promise<void>) {
+     const holder = address.parse((await this.call(LEGACY.weighted, legacyAbi, "ownerOf", [tokenId]))[0]);
+-    await this.send("anvil_setBalance", [holder, "0x3635c9adc5dea00000"]);
++    await this.fundGas(holder);
+     await this.send("anvil_impersonateAccount", [holder]);
+     try { await action(holder); }
+     finally { await this.send("anvil_stopImpersonatingAccount", [holder]); }
+diff --git a/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts b/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+index e7638718..01210bcc 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+@@ -24,7 +24,7 @@ export const claimVaultAbi = new Interface([
+ 
+ /** A fresh, signed controlled-wallet acquisition, not a transfer of infrastructure-held shares. */
+ export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: string) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "claim-vault acquisition is restricted to the pinned owned local node");
+   }
+   const wallet = HDNodeWallet.fromPhrase("test test test test test test test test test test test junk",
+@@ -60,7 +60,7 @@ export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: s
+     throw new ExecutionError("STATE", "controlled acquisition must begin with no SY or source shares");
+   }
+   const holder = "0x11c17f25e958e4637dd26ca362adeae12e24ed5b";
+-  await chain.send("anvil_setBalance", [holder, "0xde0b6b3a7640000"]);
++  await chain.fundGas(holder);
+   await chain.send("anvil_impersonateAccount", [holder]);
+   let funding;
+   try {
+diff --git a/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts b/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
+index 70c955c5..d997345b 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
+@@ -53,7 +53,7 @@ export async function exerciseClaimVault(context: {
+     throw new ExecutionError("STATE", "claim-vault configured wallet or lifecycle differs");
+   }
+   const impersonate = async (who: string, action: () => Promise<void>) => {
+-    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
++    await chain.fundGas(who);
+     await chain.send("anvil_impersonateAccount", [who]);
+     try { await action(); }
+     finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }
+diff --git a/scripts/recovery/dtf-migration/rehearsal-data.ts b/scripts/recovery/dtf-migration/rehearsal-data.ts
+index 501f226f..0ed9cf36 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-data.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-data.ts
+@@ -5,7 +5,8 @@ import type { ParamType } from "ethers";
+ import { z } from "zod";
+ import { canonical, fingerprint } from "./provenance.js";
+ import { address, hash, hex, preparationInput } from "./schema.js";
+-import type { PreparationInput } from "./schema.js";
++import type { ClaimedSyCertificate, PreparationInput } from "./schema.js";
++import { claimedSyEvidenceId } from "./claimed-sy.js";
+ import { executionManifest, ExecutionError, packageArguments } from "./execution-schema.js";
+ import type { ExecutionManifest } from "./execution-schema.js";
+ import type { RehearsalChain } from "./rehearsal-chain.js";
+@@ -29,6 +30,17 @@ export async function sourceFile(id: string, path: string) {
+     provenance: { kind: "file" as const, authority: "synthetic-local rehearsal; not approved historical allocation" } };
+ }
+ export async function save(path: string, data: unknown) { await writeFile(path, `${canonical(data)}\n`, { flag: "wx" }); }
++export async function captureOriginalInputBytes(input: PreparationInput, path: string) {
++  const records = [];
++  for (const source of input.sources) {
++    const raw = await readFile(source.path);
++    if (fingerprint(raw) !== source.sha256 || String(raw.length) !== source.bytes) {
++      throw new ExecutionError("DOMAIN", "original source changed before lossless capture");
++    }
++    records.push({ ...source, rawBase64: raw.toString("base64"), terminalNewline: raw.at(-1) === 10 });
++  }
++  await save(path, { encoding: "lossless original bytes, not normalized JSON or reconstructed ABI", records });
++}
+ export async function interfaceFile(path: string) {
+   const artifact = z.object({ abi: z.array(z.unknown()) }).parse(JSON.parse(await readFile(path, "utf8")));
+   return new Interface(JSON.stringify(artifact.abi));
+@@ -82,6 +94,9 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath:
+     sourceFile("held-se-lp-owner-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding-verification/report.md"),
+     sourceFile("held-se-lp-acquisition", join(dirname(environmentPath), "held-se-lp-acquisition.json")),
+     sourceFile("earlier-receipt-acquisition", join(dirname(environmentPath), "earlier-receipt-acquisition.json")),
++    sourceFile("claimed-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md"),
++    sourceFile("claimed-sy-source-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/contract.md"),
++    sourceFile("claimed-sy-source-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/verification/report.md"),
+   ]);
+   const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
+   const parameter = pkg.getFunction("deployVault")?.inputs[0];
+@@ -129,7 +144,8 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
+     readonly weightedReceipt: { readonly originalWallet: string; readonly gons: string };
+     readonly earlierReceipt: { readonly originalWallet: string; readonly internalShares: string };
+     readonly earlierLiquid: { readonly originalWallet: string; readonly units: string };
+-    readonly heldSeLp: readonly { readonly source: string; readonly originalWallet: string; readonly units: string }[] }) {
++    readonly heldSeLp: readonly { readonly source: string; readonly originalWallet: string; readonly units: string }[];
++    readonly claimedSy?: readonly { readonly q0: string; readonly certificate: Omit<ClaimedSyCertificate, "snapshotCapture"> }[] }) {
+   const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
+   const snapshot: unknown = (await chain.call(manifest.proxy, migration, "migrationSnapshot"))[0];
+   if (!(snapshot instanceof Result)) throw new ExecutionError("STATE", "snapshot tuple");
+@@ -175,6 +191,26 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
+     originalDtf: "0", evidenceId: `0x${fingerprint("synthetic WY Q0 and components; not an approved allocation")}`,
+     contributionsKnown: true as const,
+   }];
++  const captureBlock = z.object({ hash, number: z.string(), transactions: z.array(hash) }).passthrough().parse(
++    await chain.send("eth_getBlockByNumber", [block.number, false]));
++  const captureTransaction = captureBlock.transactions[0];
++  if ((acquisition.claimedSy?.length ?? 0) > 0 && (captureBlock.transactions.length !== 1 || !captureTransaction)) {
++    throw new ExecutionError("DOMAIN", "fixture requires actual isolated snapshot capture receipt");
++  }
++  const claimedSy = (acquisition.claimedSy ?? []).map(({ q0, certificate: sourceCertificate }) => {
++    if (!captureTransaction) throw new ExecutionError("DOMAIN", "missing snapshot capture transaction");
++    const certificate = { ...sourceCertificate, snapshotCapture: { transactionHash: captureTransaction,
++      blockNumber: domain.blockNumber, blockHash: domain.blockHash } };
++    const review = certificate.review;
++    const original = {
++      originalId: review.originalId, originalWallet: review.originalWallet, source: certificate.sy,
++      originalUnits: q0, originalEth: review.originalEth, originalDtf: review.originalDtf,
++      evidenceId: `0x${fingerprint("unsealed certificate placeholder")}`, contributionsKnown: true as const,
++    };
++    return { original: { ...original, evidenceId: claimedSyEvidenceId(domain, original, certificate) },
++      claimedOrigin: certificate };
++  });
++  weightedSy.push(...claimedSy.map((row) => row.original));
+   const dtfCustodySe = [{
+     originalId: `0x${fingerprint("synthetic W-SD original allocation")}`,
+     originalWallet: acquisition.custodySe.originalWallet, source: dtfCustodySeSource, originalUnits: acquisition.custodySe.shares,
+@@ -230,7 +266,7 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
+   const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
+     descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
+   const evidencePath = join(directory, "synthetic-originals.json");
+-  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, heldSeLp, exposures });
++  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, claimedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, heldSeLp, exposures });
+   const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
+   const input = preparationInput.parse({
+     version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
+@@ -240,7 +276,9 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
+       entitlements: [{ original: originals[i], proof: proof(`/originals/${i}`) }] })),
+     nfts: nfts.map((original, i) => ({ original, proof: proof(`/nfts/${i}`) })),
+     weightedLiquid: weightedLiquid.map((original, i) => ({ original, proof: proof(`/weightedLiquid/${i}`) })),
+-    weightedSy: weightedSy.map((original, i) => ({ original, proof: proof(`/weightedSy/${i}`) })),
++    weightedSy: weightedSy.map((original, i) => i === 0
++      ? { original, proof: proof(`/weightedSy/${i}`) }
++      : { ...claimedSy[i - 1], proof: proof(`/claimedSy/${i - 1}`) }),
+     dtfCustodySe: dtfCustodySe.map((original, i) => ({ original, proof: proof(`/dtfCustodySe/${i}`) })),
+     claimVault: claimVault.map((original, i) => ({ original, proof: proof(`/claimVault/${i}`) })),
+     weightedReceipt: weightedReceipt.map((original, i) => ({ original, proof: proof(`/weightedReceipt/${i}`) })),
+@@ -267,7 +305,7 @@ export async function replacementFixture(input: PreparationInput, directory: str
+       originalUnits: (BigInt(row.original.originalUnits) - 1n).toString(),
+     },
+   }));
+-  const weightedSy = input.weightedSy.map((row) => ({
++  const weightedSy = input.weightedSy.map((row) => row.claimedOrigin ? row : ({
+     ...row, original: { ...row.original, originalEth: "6000000000000000", originalUnits: "8087" },
+   }));
+   const dtfCustodySe = input.dtfCustodySe.map((row) => ({
+@@ -301,6 +339,7 @@ export async function replacementFixture(input: PreparationInput, directory: str
+     nfts: input.nfts.map((row) => row.original),
+     weightedLiquid: weightedLiquid.map((row) => row.original),
+     weightedSy: weightedSy.map((row) => row.original),
++    claimedSy: weightedSy.filter((row) => row.claimedOrigin).map(({ original, claimedOrigin }) => ({ original, claimedOrigin })),
+     dtfCustodySe: dtfCustodySe.map((row) => row.original),
+     claimVault: claimVault.map((row) => row.original),
+     weightedReceipt: weightedReceipt.map((row) => row.original),
+diff --git a/scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts b/scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts
+index 6a8ae4eb..241ee76f 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts
+@@ -53,7 +53,7 @@ export async function exerciseDtfCustodySe(context: {
+     throw new ExecutionError("STATE", "W-SD configured wallet or lifecycle differs");
+   }
+   const impersonate = async (who: string, action: () => Promise<void>) => {
+-    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
++    await chain.fundGas(who);
+     await chain.send("anvil_impersonateAccount", [who]);
+     try { await action(); }
+     finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }
+diff --git a/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts b/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
+index 63649934..dd680336 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
+@@ -25,7 +25,7 @@ export const custodySeAbi = new Interface([
+ 
+ /** A fresh, signed controlled-wallet acquisition, not a transfer of infrastructure-held shares. */
+ export async function acquireDtfCustodyShares(chain: RehearsalChain, evidence: string) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "W-SD acquisition is restricted to the pinned owned local node");
+   }
+   const wallet = HDNodeWallet.fromPhrase("test test test test test test test test test test test junk",
+diff --git a/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts b/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
+index f259432b..c82acf4d 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
+@@ -27,7 +27,7 @@ const tuple = (value: unknown): Result => {
+   return value;
+ };
+ async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 191, status = 1n) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "ED signer requires the fixed owned loopback rehearsal");
+   }
+   const signer = wallet(index);
+diff --git a/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts b/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
+index c1ceb101..008f4aed 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
+@@ -25,7 +25,7 @@ const bondAbi = new Interface([
+   "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+ ]);
+ async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 181, status = 1n) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "ER signer requires an owned fixed loopback rehearsal");
+   }
+   const signer = wallet(index);
+diff --git a/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts b/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
+index a6913728..70629d75 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
+@@ -24,7 +24,7 @@ const wallet = (index: number) => HDNodeWallet.fromPhrase(
+ 
+ /** Disposable-fork donor simulation only. Migration and the operator gain no collector authority. */
+ export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || chain.endpoint.port !== "18571") {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18571", "18573"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "held SE/LP acquisition requires the fixed owned loopback18571");
+   }
+   const originalWallet = wallet(201).address.toLowerCase();
+diff --git a/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts b/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
+index 7ff74538..7755d3eb 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
+@@ -27,7 +27,7 @@ const tuple = (value: unknown): Result => {
+   return value;
+ };
+ async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 201, status = 1n) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || chain.endpoint.port !== "18571") {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18571", "18573"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "held SE/LP signer requires the fixed owned loopback rehearsal");
+   }
+   const signer = wallet(index);
+diff --git a/scripts/recovery/dtf-migration/rehearsal-owner-bond.ts b/scripts/recovery/dtf-migration/rehearsal-owner-bond.ts
+index 9e42fb24..0dc29296 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-owner-bond.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-owner-bond.ts
+@@ -104,7 +104,7 @@ export async function exerciseOrdinaryDeposit(chain: RehearsalChain, manifest: E
+   ]);
+   const amount = "1000000000000000000";
+   await chain.transact(input, { from: DEV, data: token.encodeFunctionData("transfer", [buyer, amount]) });
+-  await chain.send("anvil_setBalance", [buyer, "0x3635c9adc5dea00000"]);
++  await chain.fundGas(buyer);
+   await chain.send("anvil_impersonateAccount", [buyer]);
+   try {
+     await chain.transact(input, { from: buyer, data: token.encodeFunctionData("approve", [manifest.proxy, amount]) });
+diff --git a/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts b/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts
+index 008d5295..523e5c0b 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts
+@@ -76,7 +76,7 @@ export async function exerciseWeightedLiquid(context: {
+     });
+   }
+   const impersonate = async (who: string, action: () => Promise<void>) => {
+-    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
++    await chain.fundGas(who);
+     await chain.send("anvil_impersonateAccount", [who]);
+     try { await action(); }
+     finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }
+diff --git a/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts b/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
+index 6602cd13..e1a13adf 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
+@@ -20,7 +20,7 @@ export const wsWallet = (index = 117) => HDNodeWallet.fromPhrase(
+ export async function signWs(chain: RehearsalChain, evidence: string, request: {
+   readonly to: string; readonly data: string; readonly index?: number; readonly status?: bigint;
+ }) {
+-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
++  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
+     throw new ExecutionError("DOMAIN", "WS signed fixture requires the fixed owned18567 node");
+   }
+   const wallet = wsWallet(request.index);
+@@ -72,7 +72,7 @@ export async function acquireWeightedReceipt(chain: RehearsalChain, evidence: st
+   const gonsBefore = z.bigint().parse((await chain.call(LEGACY.receipt, legacyAbi, "gonsOf", [originalWallet]))[0]);
+   if (gonsBefore !== 0n) throw new ExecutionError("STATE", "WS acquisition wallet already owns receipt gons");
+   const donor = "0x082cb14f04d9c485473dedc00d604d7e9abca303";
+-  await chain.send("anvil_setBalance", [donor, "0xde0b6b3a7640000"]);
++  await chain.fundGas(donor);
+   await chain.send("anvil_impersonateAccount", [donor]);
+   try {
+     await chain.transact(LEGACY.detf, { from: donor,
+diff --git a/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts b/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+index 8c0b6a64..f043e702 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+@@ -76,7 +76,7 @@ export async function exerciseWeightedSy(context: {
+     });
+   }
+   const impersonate = async (who: string, action: () => Promise<void>) => {
+-    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
++    await chain.fundGas(who);
+     await chain.send("anvil_impersonateAccount", [who]);
+     try { await action(); }
+     finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }
+diff --git a/scripts/recovery/dtf-migration/rehearse.ts b/scripts/recovery/dtf-migration/rehearse.ts
+index 841449cd..23ec406d 100644
+--- a/scripts/recovery/dtf-migration/rehearse.ts
++++ b/scripts/recovery/dtf-migration/rehearse.ts
+@@ -6,7 +6,7 @@ import { z } from "zod";
+ import { Interface, keccak256 } from "ethers";
+ import { child, FOUNDRY, launchAnvil } from "./rehearsal-process.js";
+ import { RehearsalChain, LEGACY, legacyAbi } from "./rehearsal-chain.js";
+-import { bootstrapManifest, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
++import { bootstrapManifest, captureOriginalInputBytes, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
+ import { DEV } from "./execution-rpc.js";
+ import { ExecutionError, rpcLog } from "./execution-schema.js";
+ import { address, hash, hex } from "./schema.js";
+@@ -23,6 +23,8 @@ import { acquireEarlierReceipt, exerciseEarlierReceipt } from "./rehearsal-earli
+ import { acquireDtfCustodyShares } from "./rehearsal-dtf-custody-source.js";
+ import { exerciseDtfCustodySe } from "./rehearsal-dtf-custody-se.js";
+ import { exerciseWeightedSy } from "./rehearsal-weighted-sy.js";
++import { acquireClaimedSy } from "./rehearsal-claimed-sy-source.js";
++import { checkClaimedSyIntake, exerciseClaimedSy } from "./rehearsal-claimed-sy.js";
+ import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
+ import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
+ import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt, captureLinkedLibraries } from "./rehearsal-proof.js";
+@@ -47,8 +49,9 @@ export async function rehearse(options: {
+   readonly checkpoint: string; readonly evidence: string;
+ }) {
+   if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663"
+-    || !["18567", "18568", "18569", "18571"].includes(options.port)
+-    || options.checkpoint !== (options.port === "18571" ? ".omo-runtime/dtf-migration-held-se-lp/checkpoints"
++    || !["18567", "18568", "18569", "18571", "18573"].includes(options.port)
++    || options.checkpoint !== (options.port === "18573" ? ".omo-runtime/dtf-migration-claimed-sy/checkpoints"
++      : options.port === "18571" ? ".omo-runtime/dtf-migration-held-se-lp/checkpoints"
+       : options.port === "18569" ? ".omo-runtime/dtf-migration-earlier-liquid/checkpoints" : options.port === "18568"
+       ? ".omo-runtime/dtf-migration-earlier-receipt/checkpoints" : ".omo-runtime/dtf-migration-weighted-receipt/checkpoints")) {
+     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
+@@ -97,7 +100,7 @@ export async function rehearse(options: {
+       await chain.send("eth_getBlockByNumber", ["0x67e5d17", false]));
+     if (pin.hash !== PIN_HASH) throw new ExecutionError("DOMAIN", "historical header does not match");
+     await save(join(evidence, "historical-header.json"), pin);
+-    await chain.send("anvil_setBalance", [DEV, "0xd3c21bcecceda1000000"]);
++    const claimedAcquisition = options.port === "18573" ? await acquireClaimedSy(chain, evidence) : [];
+     await chain.withHolder("3", async (holder) => {
+       await chain.transact(LEGACY.weighted, { from: holder, data: legacyAbi.encodeFunctionData("claimBond", ["3", holder]) });
+       const held = String((await chain.call(LEGACY.receipt, legacyAbi, "balanceOf", [holder]))[0]);
+@@ -128,8 +131,8 @@ export async function rehearse(options: {
+     const receiptAcquisition = await acquireWeightedReceipt(chain, evidence);
+     const earlierAcquisition = await acquireEarlierReceipt(chain, evidence);
+     const earlierLiquidAcquisition = await acquireEarlierLiquid(chain, evidence);
+-    const heldSeLpAcquisition = options.port === "18571" ? await acquireHeldSeLp(chain, evidence) : [];
+-    if (options.port !== "18571") await save(join(evidence, "held-se-lp-acquisition.json"), {
++    const heldSeLpAcquisition = ["18571", "18573"].includes(options.port) ? await acquireHeldSeLp(chain, evidence) : [];
++    if (!["18571", "18573"].includes(options.port)) await save(join(evidence, "held-se-lp-acquisition.json"), {
+       rows: [], disposition: "not selected on the retained earlier rehearsal ports",
+     });
+     const manifest = await bootstrapManifest(chain, environmentPath);
+@@ -196,11 +199,14 @@ export async function rehearse(options: {
+       custodySe: custodyAcquisition, claimVault: claimAcquisition, weightedReceipt: receiptAcquisition,
+       earlierReceipt: earlierAcquisition, earlierLiquid: earlierLiquidAcquisition,
+       heldSeLp: heldSeLpAcquisition,
++      claimedSy: claimedAcquisition,
+     });
+     const prepared = join(evidence, "prepared");
++    await captureOriginalInputBytes(input, join(evidence, "original-input-bytes.json"));
+     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
+     await cli(["validate", "--manifest", join(prepared, "manifest.json")]);
+     await checkPreparation({ input, evidence, cli });
++    if (options.port === "18573") await checkClaimedSyIntake(chain, input, evidence);
+     let post = { ...manifest, snapshotId: input.domain.snapshotId, preparedManifest: join(prepared, "manifest.json") };
+     let postPath = join(evidence, "post-capture.json");
+     await save(postPath, post);
+@@ -237,6 +243,7 @@ export async function rehearse(options: {
+     const issuedBeforeReplacement = (await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString();
+     const replacementSupply = String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]);
+     input = await replacementFixture(input, evidence);
++    await captureOriginalInputBytes(input, join(evidence, "replacement-original-input-bytes.json"));
+     const replacement = join(evidence, "replacement");
+     await cli(["prepare", "--input", join(evidence, "replacement-input.json"), "--output", replacement]);
+     post = { ...post, preparedManifest: join(replacement, "manifest.json") };
+@@ -252,6 +259,7 @@ export async function rehearse(options: {
+     await exerciseAdmission({ chain, manifest: post, input, evidence, activated: false });
+     await exerciseWeightedLiquid({ chain, manifest: post, input, evidence, phase: "stage1" });
+     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "stage1" });
++    await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "stage1" });
+     await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "stage1" });
+     await exerciseClaimVault({ chain, manifest: post, input, evidence, phase: "stage1" });
+     await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
+@@ -269,6 +277,12 @@ export async function rehearse(options: {
+     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+     await chain.send("evm_mine", []);
+     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "final" });
++    if (options.port === "18573") {
++      await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "partial" });
++      await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
++      await chain.send("evm_mine", []);
++      await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "terminal" });
++    }
+     await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "partial" });
+     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+     await chain.send("evm_mine", []);
+diff --git a/scripts/recovery/dtf-migration/schema.ts b/scripts/recovery/dtf-migration/schema.ts
+index 88c6a741..c374e264 100644
+--- a/scripts/recovery/dtf-migration/schema.ts
++++ b/scripts/recovery/dtf-migration/schema.ts
+@@ -53,7 +53,48 @@ export const weightedLiquidOriginal = z.object({
+ }).strict().readonly();
+ export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
+ export const weightedSyOriginal = weightedLiquidOriginal;
+-export const weightedSy = z.object({ original: weightedSyOriginal, proof }).strict().readonly();
++// Historical eligibility and exclusions are reviewed owner inputs, not chain facts.
++// A member is one direct signed EOA claim in an otherwise isolated canonical block.
++export const claimedSyCertificate = z.object({
++  kind: z.literal("complete-original-token-staking"),
++  chainId: z.literal("4663"),
++  source: z.literal("0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00"),
++  vault: z.literal("0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0"),
++  sy: z.literal("0xb55604cf4dcdabb362078e106d20f98512391edf"),
++  snapshotCapture: z.object({
++    transactionHash: identity, blockNumber: positive, blockHash: identity,
++  }).strict().readonly(),
++  review: z.object({
++    authority: z.string().min(1),
++    originalId: identity,
++    originalWallet: address,
++    originalEth: uint,
++    originalDtf: uint,
++    eligibleWeight: positive,
++    priorDeliveredCredit: z.literal("0"),
++    contributionsKnown: z.literal(true),
++    eligiblePrincipalOnly: z.literal(true),
++    rewardsExcluded: z.literal(true),
++    aliasesReconciled: z.literal(true),
++    competingRepresentationsExcluded: z.literal(true),
++    unrelatedWeightFloor: uint,
++    unrelatedSyFloor: uint,
++  }).strict().readonly(),
++  members: z.array(z.object({
++    transactionHash: identity,
++    rawSignedTransaction: hex,
++    blockNumber: positive,
++    blockHash: identity,
++    consumedWeight: positive,
++    receivedSy: uint,
++    redeemedVaultShares: uint,
++  }).strict().readonly()).min(1).readonly(),
++}).strict().readonly();
++export const weightedSy = z.object({
++  original: weightedSyOriginal,
++  proof,
++  claimedOrigin: claimedSyCertificate.optional(),
++}).strict().readonly();
+ // Q0 is documented eligible original ownership gons, not native9 WS or a live balance.
+ export const weightedReceiptOriginal = weightedLiquidOriginal;
+ export const weightedReceipt = z.object({ original: weightedReceiptOriginal, proof }).strict().readonly();
+@@ -152,6 +193,7 @@ export type Original = z.infer<typeof original>;
+ export type NftOriginal = z.infer<typeof nftOriginal>;
+ export type WeightedLiquidOriginal = z.infer<typeof weightedLiquidOriginal>;
+ export type WeightedSyOriginal = z.infer<typeof weightedSyOriginal>;
++export type ClaimedSyCertificate = z.infer<typeof claimedSyCertificate>;
+ export type WeightedReceiptOriginal = z.infer<typeof weightedReceiptOriginal>;
+ export type EarlierReceiptOriginal = z.infer<typeof earlierReceiptOriginal>;
+ export type ClaimVaultOriginal = z.infer<typeof claimVaultOriginal>;
+diff --git a/scripts/recovery/dtf-migration/weighted-sy.test.ts b/scripts/recovery/dtf-migration/weighted-sy.test.ts
+index 006db747..5f61ccca 100644
+--- a/scripts/recovery/dtf-migration/weighted-sy.test.ts
++++ b/scripts/recovery/dtf-migration/weighted-sy.test.ts
+@@ -6,6 +6,127 @@ import { preparationInput } from "./schema.js";
+ import { buildPayloads, configurationId, weightedSySource } from "./payloads.js";
+ import { prepareDomain } from "./preparation.js";
+ import { interfaceFile } from "./rehearsal-data.js";
++import { readFile, writeFile } from "node:fs/promises";
++import { claimedSyCertificate } from "./schema.js";
++import type { ClaimedSyCertificate } from "./schema.js";
++import { claimedSyEvidenceId } from "./claimed-sy.js";
++import { canonical, fingerprint, validateProvenance } from "./provenance.js";
++
++function completeCertificate(original: { readonly originalId: string; readonly originalWallet: string;
++  readonly originalEth: string; readonly originalDtf: string }) {
++  return claimedSyCertificate.parse({
++    kind: "complete-original-token-staking", chainId: "4663",
++    source: "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
++    vault: "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0", sy: weightedSySource,
++    snapshotCapture: { transactionHash: h(2300), blockNumber: "90", blockHash: h(90) },
++    review: { ...original, authority: "synthetic explicit review, not a historical allocation",
++      eligibleWeight: "10013", priorDeliveredCredit: "0", contributionsKnown: true,
++      eligiblePrincipalOnly: true, rewardsExcluded: true, aliasesReconciled: true,
++      competingRepresentationsExcluded: true, unrelatedWeightFloor: "7", unrelatedSyFloor: "5" },
++    members: [
++      { transactionHash: h(2301), rawSignedTransaction: "0x", blockNumber: "98", blockHash: h(98),
++        consumedWeight: "3337", receivedSy: "1", redeemedVaultShares: "10" },
++      { transactionHash: h(2302), rawSignedTransaction: "0x", blockNumber: "99", blockHash: h(99),
++        consumedWeight: "6676", receivedSy: "2", redeemedVaultShares: "20" },
++    ],
++  });
++}
++
++test("claimed SY uses every complete original component and exact measured split sums", async () => {
++  const f = await fixture();
++  try {
++    const row = f.input.weightedSy[0];
++    assert.ok(row);
++    const { originalId, originalWallet, originalEth, originalDtf } = row.original;
++    const certificate = completeCertificate({ originalId, originalWallet, originalEth, originalDtf });
++    const inputFor = (c: ClaimedSyCertificate) => ({ ...f.input, weightedSy: [{
++      ...row, claimedOrigin: c,
++      original: { ...row.original, evidenceId: claimedSyEvidenceId(f.input.domain, row.original, c) },
++    }] });
++    const actual = buildPayloads(inputFor(certificate)).weightedSy[0];
++    assert.equal(actual?.originalUnits, "3");
++    assert.equal(actual?.originalEth, "100");
++    assert.equal(actual?.originalDtf, "22");
++    assert.throws(() => buildPayloads(inputFor({ ...certificate, members: certificate.members.slice(0, 1) })), /coverage/);
++    assert.throws(() => buildPayloads(inputFor({ ...certificate,
++      members: [...certificate.members, certificate.members[0]].filter((m) => m !== undefined) })), /coverage/);
++    assert.throws(() => buildPayloads(inputFor({ ...certificate,
++      members: certificate.members.map((m) => ({ ...m, receivedSy: "0" })) })), /SY sum/);
++    const first = certificate.members[0];
++    assert.ok(first);
++    // A committed zero-output slice stays in coverage; only aggregate zero rejects.
++    const zeroSlice = { ...certificate, members: [
++      { ...first, consumedWeight: "1", receivedSy: "0" },
++      { ...first, transactionHash: h(2303), consumedWeight: "10012", receivedSy: "3" },
++    ] };
++    assert.equal(buildPayloads(inputFor(zeroSlice)).weightedSy[0]?.originalUnits, "3");
++    const duplicate = { ...certificate, members: certificate.members.map((m) => ({ ...m, transactionHash: first.transactionHash })) };
++    assert.throws(() => buildPayloads(inputFor(duplicate)), /duplicate member/);
++    const secondOriginal = { ...row.original, originalId: h(999) };
++    const secondCertificate = { ...certificate, review: { ...certificate.review, originalId: h(999) } };
++    assert.throws(() => buildPayloads({ ...inputFor(certificate), weightedSy: [
++      ...inputFor(certificate).weightedSy, { ...row, claimedOrigin: secondCertificate,
++        original: { ...secondOriginal, evidenceId: claimedSyEvidenceId(f.input.domain, secondOriginal, secondCertificate) } },
++    ] }), /duplicate member/);
++    const changed = inputFor(certificate);
++    assert.throws(() => buildPayloads({ ...changed, domain: { ...changed.domain, proxy: a(99) } }), /commitment/);
++    assert.throws(() => buildPayloads({ ...changed, weightedSy: changed.weightedSy.map((r) => ({
++      ...r, original: { ...r.original, originalDtf: "23" },
++    })) }), /complete original differ/);
++  } finally { await f.close(); }
++});
++
++test("claimed SY rejects unknown delivery and missing original review rather than inferring zero", async () => {
++  const f = await fixture();
++  try {
++    const row = f.input.weightedSy[0];
++    assert.ok(row);
++    const { originalId, originalWallet, originalEth, originalDtf } = row.original;
++    const certificate = completeCertificate({ originalId, originalWallet, originalEth, originalDtf });
++    for (const change of [{ priorDeliveredCredit: "1" }, { priorDeliveredCredit: "unknown" },
++      { contributionsKnown: false }, { rewardsExcluded: false }, { aliasesReconciled: false },
++      { competingRepresentationsExcluded: false }, { eligiblePrincipalOnly: false }]) {
++      assert.equal(claimedSyCertificate.safeParse({ ...certificate, review: { ...certificate.review, ...change } }).success, false);
++    }
++    for (const field of ["originalEth", "originalDtf", "originalWallet", "eligibleWeight", "priorDeliveredCredit"] as const) {
++      const { [field]: _omitted, ...review } = certificate.review;
++      assert.equal(claimedSyCertificate.safeParse({ ...certificate, review }).success, false);
++    }
++    assert.equal(claimedSyCertificate.safeParse({ ...certificate, chainId: "1" }).success, false);
++    assert.equal(claimedSyCertificate.safeParse({ ...certificate, vault: a(99) }).success, false);
++  } finally { await f.close(); }
++});
++
++test("missing claimed-origin certificate cannot use its reviewed evidence as ordinary SY", async () => {
++  const f = await fixture();
++  try {
++    const row = f.input.weightedSy[0];
++    assert.ok(row);
++    const { originalId, originalWallet, originalEth, originalDtf } = row.original;
++    const claimedOrigin = completeCertificate({ originalId, originalWallet, originalEth, originalDtf });
++    const original = { ...row.original, evidenceId: claimedSyEvidenceId(f.input.domain, row.original, claimedOrigin) };
++    const raw = canonical({ ...JSON.parse(await readFile(f.evidencePath, "utf8")), claimed: { original, claimedOrigin } });
++    await writeFile(f.evidencePath, raw);
++    const input = preparationInput.parse({ ...f.input,
++      sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(raw), bytes: String(Buffer.byteLength(raw)) } : s),
++      weightedSy: [{ original, claimedOrigin, proof: { sourceId: "proof", pointer: "/claimed" } }],
++    });
++    await validateProvenance(input);
++    const claimed = input.weightedSy[0];
++    assert.ok(claimed);
++    const { claimedOrigin: _removed, ...ordinaryFallback } = claimed;
++    await assert.rejects(validateProvenance({ ...input, weightedSy: [ordinaryFallback] }), /proof does not match/);
++    await assert.rejects(validateProvenance({ ...input, weightedSy: [{
++      ...ordinaryFallback, proof: { ...ordinaryFallback.proof, pointer: "/claimed/original" },
++    }] }), /ordinary SY fallback forbidden/);
++    await assert.rejects(validateProvenance({ ...input, weightedSy: [{
++      ...ordinaryFallback, proof: { ...ordinaryFallback.proof, pointer: "/originals/4" },
++      original: row.original,
++    }] }), /ordinary SY fallback forbidden/);
++    await assert.rejects(prepareDomain(input), /RPC\/ABI acquisition failed/);
++    assert.ok(f.methods.includes("eth_getTransactionReceipt"));
++  } finally { await f.close(); }
++});
+ 
+ test("W-Y requires known original wallet, quantity, components and origin, not current holdings", async () => {
+   const f = await fixture();
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol
+index 96aa8c84..d9bb2c13 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol
+@@ -7,6 +7,7 @@ import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
+ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
+ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+ import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
++import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+ import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
+ import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
+@@ -41,6 +42,162 @@ contract WeightedSyReceiver is IERC721Receiver {
+     }
+ }
+ 
++interface IClaimedSyWeightSource {
++    function reassign(address recipient, uint256 amount) external;
++    function withdrawClaim(uint256 amount) external returns (uint256);
++    function balanceOf(address wallet) external view returns (uint256);
++    function totalSupply() external view returns (uint256);
++    function phase() external view returns (uint8);
++    function claimVault() external view returns (address);
++}
++
++/// @notice Synthetic historical allocations; real source claims and registered Migration.
++/// Foundry caller simulation here is distinct from the CLI's retained EOA signatures.
++/// Ordinary-SY rejecting receiver/reentry above is shared-path coverage, not a
++/// claimed-origin callback witness; claimed preparation admits direct EOAs only.
++contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
++    IClaimedSyWeightSource constant SOURCE =
++        IClaimedSyWeightSource(address(bytes20(hex"e4c9ff4cfd17ae73ecb3825ebdf7db113c146d00")));
++    address constant DONOR = address(bytes20(hex"016900aa17a08a52f1cc10a9474b3bbfaeb380a3"));
++    uint256 constant W0 = 10013000000000000000017;
++    uint256 constant UNRELATED = 7 ether;
++    uint256 constant SEED = 3 ether;
++    bytes32 constant CLAIMED_ORIGIN = keccak256("synthetic complete claimed-SY original");
++
++    function _prepare(bool split_) private returns (address wallet_, uint256 q0_, uint256 floor_) {
++        wallet_ = vm.addr(split_ ? 23002 : 23001);
++        assertEq(wallet_.code.length, 0);
++        assertEq(DONOR.code.length, 0);
++        assertEq(SOURCE.phase(), 2);
++        assertEq(SOURCE.claimVault(), address(bytes20(hex"af5c0cd3fdedd10bee00eff77fa0429bacdb41f0")));
++        assertEq(SOURCE.balanceOf(wallet_), 0);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), 0);
++        uint256 donor_ = SOURCE.balanceOf(DONOR);
++        uint256 supply_ = SOURCE.totalSupply();
++        vm.prank(DONOR);
++        SOURCE.reassign(wallet_, W0 + UNRELATED + SEED);
++        assertEq(SOURCE.balanceOf(DONOR), donor_ - W0 - UNRELATED - SEED);
++        assertEq(SOURCE.totalSupply(), supply_);
++        vm.startPrank(wallet_);
++        floor_ = SOURCE.withdrawClaim(SEED);
++        assertGt(floor_, 0);
++        if (split_) {
++            uint256 first_ = 3337000000000000000005;
++            uint256 part_ = SOURCE.withdrawClaim(first_);
++            assertGt(part_, 0);
++            assertEq(SOURCE.balanceOf(wallet_), W0 - first_ + UNRELATED);
++            q0_ = part_ + SOURCE.withdrawClaim(W0 - first_);
++        } else {
++            q0_ = SOURCE.withdrawClaim(W0);
++        }
++        vm.stopPrank();
++        assertGt(q0_, 0);
++        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
++        assertEq(SOURCE.totalSupply(), supply_ - W0 - SEED);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), floor_ + q0_);
++    }
++
++    function _load(address wallet_, uint256 q0_) private returns (uint256 credit_) {
++        Migration.WeightedSyEntitlementInput[] memory inputs_ = new Migration.WeightedSyEntitlementInput[](1);
++        // Complete E0/D0 are deliberately not scaled by a source weight/SY fraction.
++        inputs_[0] = Migration.WeightedSyEntitlementInput(CLAIMED_ORIGIN, wallet_, Legacy.WEIGHTED_SY,
++            q0_, 0.01 ether, 1 ether, keccak256("synthetic reviewed complete preparation evidence"), true);
++        uint256 supply_ = IERC20(detf).totalSupply();
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(inputs_);
++        credit_ = migration.previewOriginalCredit(0.01 ether, 1 ether);
++        assertEq(migration.weightedSyEntitlement(CLAIMED_ORIGIN).credit, credit_);
++        assertEq(migration.weightedSySurrender(CLAIMED_ORIGIN).remainingUnits, q0_);
++        assertEq(IERC20(detf).totalSupply(), supply_);
++        vm.prank(wallet_);
++        IERC20(Legacy.WEIGHTED_SY).approve(detf, q0_);
++        vm.prank(wallet_);
++        vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
++        migration.surrenderMigrationWeightedSy(CLAIMED_ORIGIN, q0_, 1, block.timestamp);
++        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
++        _activate();
++        assertGt(migration.migrationOwnerFirstBondTokenId(), 0);
++        assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedSyEntitlements.selector), address(0));
++    }
++
++    function _surrender(address wallet_, uint256 q_, uint256 expected_) private returns (uint256 id_) {
++        uint256 supply_ = IERC20(detf).totalSupply();
++        uint256 backing_ = IERC20(detf).balanceOf(address(receipt));
++        uint256 held_ = IERC20(Legacy.WEIGHTED_SY).balanceOf(detf);
++        vm.prank(wallet_);
++        uint256 credit_;
++        (id_, credit_) = migration.surrenderMigrationWeightedSy(CLAIMED_ORIGIN, q_, expected_, block.timestamp);
++        assertEq(credit_, expected_);
++        assertEq(IERC721(address(bonds)).ownerOf(id_), wallet_);
++        assertEq(bonds.positionOf(id_).principal, expected_);
++        assertEq(bonds.positionOf(id_).claimedPrincipal, 0);
++        assertEq(bonds.positionOf(id_).startTimestamp, block.timestamp);
++        assertEq(bonds.positionOf(id_).vestingDuration, 90 days);
++        assertEq(bonds.positionOf(id_).stakingGons, expected_ * receipt.stakingState().gonsPerUnit);
++        assertEq(IERC20(detf).totalSupply(), supply_ + expected_);
++        assertEq(IERC20(detf).balanceOf(address(receipt)), backing_ + expected_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), held_ + q_);
++        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
++    }
++
++    function _completeOriginal(bool split_) private {
++        (address wallet_, uint256 q0_, uint256 floor_) = _prepare(split_);
++        uint256 c0_ = _load(wallet_, q0_);
++        uint256 q_ = q0_ / 3;
++        uint256 first_ = _surrender(wallet_, q_, c0_ * q_ / q0_);
++        Migration.WeightedSySurrender memory state_ = migration.weightedSySurrender(CLAIMED_ORIGIN);
++        assertEq(state_.remainingUnits, q0_ - q_);
++        assertEq(state_.remainingCredit + state_.deliveredCredit, c0_);
++        uint256 firstStart_ = bonds.positionOf(first_).startTimestamp;
++        vm.warp(block.timestamp + 1 days);
++        migration.synchronizeRewards();
++        uint256 second_ = _surrender(wallet_, state_.remainingUnits, state_.remainingCredit);
++        assertNotEq(first_, second_);
++        assertEq(bonds.positionOf(first_).startTimestamp, firstStart_);
++        assertEq(bonds.positionOf(second_).startTimestamp, firstStart_ + 1 days);
++        state_ = migration.weightedSySurrender(CLAIMED_ORIGIN);
++        assertEq(state_.remainingUnits, 0);
++        assertEq(state_.remainingCredit, 0);
++        assertEq(state_.deliveredCredit, c0_);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), q0_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), floor_);
++        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
++    }
++
++    function test_completeSingleClaimPreservesWholeOriginalCreditAndUnrelatedFloors() public {
++        _completeOriginal(false);
++    }
++
++    function test_completeSplitClaimsAggregateMeasuredOutputsIntoOneOriginal() public {
++        _completeOriginal(true);
++    }
++
++    function test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight() public {
++        (address wallet_, uint256 q0_, uint256 floor_) = _prepare(false);
++        uint256 c0_ = _load(wallet_, q0_);
++        bytes32 before_ = _protected(migration.migrationOwnerFirstBondTokenId());
++        bytes memory state_ = abi.encode(migration.weightedSySurrender(CLAIMED_ORIGIN));
++        uint256 sourceSupply_ = SOURCE.totalSupply();
++        vm.expectCall(address(receipt), abi.encodeCall(IStandardExchangeIn.exchangeIn, (
++            IERC20(detf), c0_, IERC20(address(receipt)), c0_, address(bonds), false, block.timestamp
++        )), uint64(2));
++        vm.prank(wallet_);
++        (bool ok_,) = detf.call{gas: 750000}(abi.encodeCall(
++            Migration.surrenderMigrationWeightedSy, (CLAIMED_ORIGIN, q0_, 1, block.timestamp)
++        ));
++        assertFalse(ok_);
++        assertEq(_protected(migration.migrationOwnerFirstBondTokenId()), before_);
++        assertEq(abi.encode(migration.weightedSySurrender(CLAIMED_ORIGIN)), state_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), q0_ + floor_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 0);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).allowance(wallet_, detf), q0_);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);
++        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
++        assertEq(SOURCE.totalSupply(), sourceSupply_);
++        _surrender(wallet_, q0_, c0_);
++    }
++}
++
+ /// @notice W-Y original quantities/components are synthetic, never derived from the holder's balance.
+ contract MigrationWeightedSyTest is MigrationRecoveryDonationForkBase {
+     address constant HOLDER = address(bytes20(hex"11c17f25e958e4637dd26ca362adeae12e24ed5b"));

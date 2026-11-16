@@ -1,0 +1,180 @@
+{
+  "schema": "phase26-portable-operator-preservation-compare-v1",
+  "comparedBeforeCommitSupportExisted": true,
+  "commitDirExistedDuringFullRehash": false,
+  "contentPassRehashedFileBytes": true,
+  "modeComparison": "perm and st_mode compared, not gitMode alone. modeCollapsedWouldHide is empty.",
+  "content": {
+    "docs-incidents": {
+      "rows": 18134,
+      "missing": 0,
+      "changed": 0
+    },
+    "out": {
+      "rows": 7376,
+      "missing": 0,
+      "changed": 0
+    },
+    "cache_forge": {
+      "rows": 6502,
+      "missing": 0,
+      "changed": 0
+    }
+  },
+  "directoriesBeforeSupport": {
+    "docs-incidents": {
+      "rows": 271,
+      "missing": 0,
+      "changed": 0
+    },
+    "out": {
+      "rows": 6480,
+      "missing": 0,
+      "changed": 0
+    },
+    "cache_forge": {
+      "rows": 5866,
+      "missing": 0,
+      "changed": 0
+    }
+  },
+  "additiveBeforeSupport": {
+    "docs-incidents": {
+      "count": 0,
+      "samples": []
+    },
+    "out": {
+      "count": 0,
+      "samples": []
+    },
+    "cache_forge": {
+      "count": 0,
+      "samples": []
+    }
+  },
+  "indexes": {
+    "total": 28,
+    "foreignUnchanged": 27,
+    "foreignChanged": [],
+    "own": {
+      "path": ".git/worktrees/dtf-migration-phase-26-portable-operator/index",
+      "before": {
+        "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-26-portable-operator/index",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 2076067,
+        "sha256": "ec3e978204abc33ed9bf0d127c15567447d174ec901eb3d1efc836c31872fadc"
+      },
+      "after": {
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 2076635,
+        "sha256": "14fdc2ddcb7521f5a10f4789fc8d7caca905ea9a78ecbbd5655938b46d076053"
+      }
+    }
+  },
+  "refs": {
+    "rows": 52,
+    "missing": [],
+    "changed": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex/.git/refs/heads/work/dtf-migration-phase-26-portable-operator",
+        "beforeSha256": "9f631241fe1d82ef6d8e279442be85e640fd477ee94da3690c0ef01ba31e76c4",
+        "afterSha256": "6074490d00a3f530e8e310d74b23232e632f0f4d581b5191e3ec790b661fc401",
+        "beforeSize": 41,
+        "afterSize": 41,
+        "beforeMode": 33188,
+        "afterMode": 33188,
+        "perm": "0o644"
+      }
+    ]
+  },
+  "showRef": {
+    "beforeBytes": 6386,
+    "beforeSha256": "b2f616e678112a9d184dacc323f9422e4b2e6d0ca596ba89613b9e5c502e8a5a",
+    "afterBytes": 6386,
+    "afterSha256": "fa6329f8f5ce4060bcaf865788a547632997599008574c4e2e5004b7e0093331",
+    "linesBefore": 66,
+    "removed": [
+      "137fa0c8749165087c7d1d0156788f58a1dbf1b8 refs/heads/work/dtf-migration-phase-26-portable-operator"
+    ],
+    "added": [
+      "0856a5c56e5d09b81c669f59b613efef79133e19 refs/heads/work/dtf-migration-phase-26-portable-operator"
+    ]
+  },
+  "hostDepsUnchanged": true,
+  "craneGitlinkUnchanged": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89",
+  "held09WorktreeOpened": false,
+  "postSupportDirectoryBookkeeping": {
+    "docs-incidents": {
+      "missing": [],
+      "changed": [
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator",
+          "fields": [
+            "size",
+            "nlink",
+            "childCount",
+            "childrenSha256"
+          ],
+          "before": {
+            "size": 160,
+            "nlink": 5,
+            "childCount": 3,
+            "childrenSha256": "c6d953efa82909fc8c1f85763ab42362fb5810d3d1484806c6893c28b5c905a0"
+          },
+          "after": {
+            "size": 192,
+            "nlink": 6,
+            "childCount": 4,
+            "childrenSha256": "2d7b720f4d081179a4e9f5176aa8de88a417d7b93bacc2c4644339ac2e5bc6e0"
+          }
+        }
+      ]
+    },
+    "out": {
+      "missing": [],
+      "changed": []
+    },
+    "cache_forge": {
+      "missing": [],
+      "changed": []
+    }
+  },
+  "postSupportAdditivePaths": {
+    "docs-incidents": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/cache_forge-dirs.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/cache_forge-perms.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/cache_forge.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/capture.py",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/compare.py",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/docs-incidents-dirs.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/docs-incidents-perms.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/docs-incidents.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/git-bindings.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/host-deps.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/indexes.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/out-dirs.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/out-perms.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/out.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/processes.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/recipe.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/refs.jsonl",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/show-ref.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/source-identity-before.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/status-before.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/summary.json",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/tracked-diff.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/precommit/whitespace-before.txt",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/source-manifest.json"
+    ],
+    "out": [],
+    "cache_forge": []
+  },
+  "unexpectedAdditive": [],
+  "selfDigest": "This compare file does not claim its own raw SHA-256. postSupportAdditivePaths was captured before this file and receipt.md existed.",
+  "additiveRoot": "docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit",
+  "postSupportAdditiveTiming": "Captured after precommit inventories, recipe, capture.py, compare.py, and source-manifest.json existed, and before preservation-compare.json and receipt.md. The commit directory is the additive root. preservation-compare.json and receipt.md are later additive files and are not in postSupportAdditivePaths."
+}

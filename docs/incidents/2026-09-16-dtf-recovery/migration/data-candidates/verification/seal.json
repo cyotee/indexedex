@@ -1,0 +1,22 @@
+{
+  "version": "dtf-phase27-independent-verification-seal-v1",
+  "verdict": "needs-fix",
+  "report": {
+    "path": "report.md",
+    "bytes": 17476,
+    "sha256": "549b98e6d49bf4f2178064041844de308dd94224f8a6a6a3c9726341fd8d3ee2"
+  },
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 2619,
+    "sha256": "40441ced6c053e02c92ce130d5d65b04f76844b7d8a6b4720842563f2f7cd54c"
+  },
+  "producerHandoff": "confirmed-genuinely-blocked-before-implementation",
+  "implementationComplete": false,
+  "candidatesApproved": false,
+  "operationalAuthorization": false,
+  "completeInputAuthentication": false,
+  "cleanupComplete": true,
+  "pendingOperations": 0,
+  "writtenLast": true
+}

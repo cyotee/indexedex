@@ -1,0 +1,164 @@
+{
+  "capturedAfterSupportAndManifestBeforeReceipt": true,
+  "evidence": {
+    "content": {
+      "before": 5842,
+      "after": 5871,
+      "changed": [],
+      "missing": [],
+      "added": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/source-manifest.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/check-attr.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/commit-invocation.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence-dirs.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence-perms.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/frozen-source-modes.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/indexes.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input-dirs.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input-perms.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/links.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/name-status.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/numstat.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/preservation-compare-before-support.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/recipe.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/ref-bookkeeping.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/refs.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/scope-files.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/seal-check.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/show-ref.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/source-bindings.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/source-diff-relation.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/staged-before.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/status-before.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/summary.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/support-scripts.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/tracked-diff.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/whitespace.json"
+      ]
+    },
+    "perms": {
+      "before": 5849,
+      "after": 5880,
+      "changed": [
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+          "before": {
+            "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+            "kind": "dir",
+            "perm": "0o755",
+            "st_mode": 16877,
+            "size": 128,
+            "sha256": null,
+            "target": null
+          },
+          "after": {
+            "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+            "kind": "dir",
+            "perm": "0o755",
+            "st_mode": 16877,
+            "size": 160,
+            "sha256": null,
+            "target": null
+          }
+        }
+      ],
+      "missing": [],
+      "added": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/source-manifest.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/check-attr.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/commit-invocation.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence-dirs.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence-perms.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/evidence.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/frozen-source-modes.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/indexes.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input-dirs.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input-perms.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/input.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/links.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/name-status.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/numstat.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/preservation-compare-before-support.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/recipe.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/ref-bookkeeping.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/refs.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/scope-files.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/seal-check.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/show-ref.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/source-bindings.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/source-diff-relation.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/staged-before.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/status-before.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/summary.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/support-scripts.json",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/tracked-diff.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support/whitespace.json"
+      ]
+    },
+    "dirs": {
+      "before": 7,
+      "after": 9,
+      "changed": [
+        {
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+          "before": {
+            "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+            "kind": "dir",
+            "perm": "0o755",
+            "st_mode": 16877,
+            "size": 128,
+            "nlink": 4,
+            "childCount": 2,
+            "childrenSha256": "6427893862c3486e1889c0f3958e78f4e1423eaf68bdb0c670238d58b2430259",
+            "sha256": null,
+            "target": null
+          },
+          "after": {
+            "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts",
+            "kind": "dir",
+            "perm": "0o755",
+            "st_mode": 16877,
+            "size": 160,
+            "nlink": 5,
+            "childCount": 3,
+            "childrenSha256": "c7fc894590f20266a5c6109144443da05e87deae03aa23b777e5132c15e9af1d",
+            "sha256": null,
+            "target": null
+          }
+        }
+      ],
+      "missing": [],
+      "added": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/support"
+      ]
+    }
+  },
+  "input": {
+    "content": {
+      "before": 30,
+      "after": 30,
+      "changed": [],
+      "missing": [],
+      "added": []
+    },
+    "perms": {
+      "before": 35,
+      "after": 35,
+      "changed": [],
+      "missing": [],
+      "added": []
+    },
+    "dirs": {
+      "before": 5,
+      "after": 5,
+      "changed": [],
+      "missing": [],
+      "added": []
+    }
+  }
+}

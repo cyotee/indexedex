@@ -1,0 +1,123 @@
+{
+  "type": "BoundedStopSourceInventory",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "task10OwnedRehearsalChanges": [
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "0095635f033fde52cb4d3349333d7d61ee2c0916a09f3de0319e8c9897e18265",
+      "bytes": 51113,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "bytes": 31166,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Generated pricing-ABI binding independently confirmed; broader task-10 fixture changes are not independently lifecycle verified.",
+      "mixedOwnership": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "29451c33fca5ace782a657ab942efbc6e235b94f7838ebd2881df72463e620f7",
+      "bytes": 16710,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "sha256": "15ff421c881fba204e0b8178e6992155493a97f3d89999282caae64810325962",
+      "bytes": 14462,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "sha256": "9ebf5c44cf38381da213f3c3ee6b633b9cbac93e3c111f59b8fd3fd147bea286",
+      "bytes": 14625,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+      "sha256": "0d8afc388603c7a5929540a4823a67bf4fdae4c6e78c943d33d9f889820f585b",
+      "bytes": 17437,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "sha256": "0c6c5f27baabeb61898aef7f2b74bdf3ee444f577ca6beff19af9bdf003ae628",
+      "bytes": 11342,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "031179dad9816047f5972006f3720eed9517840b24674fb6ca45ef0afb562c67",
+      "bytes": 13370,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "sha256": "d5c78110ab49ca60919579358ff52adeea351d0a7dd5796382afd36fa8e71950",
+      "bytes": 7916,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Strict types and partial producer runtime observations only; independent lifecycle acceptance absent.",
+      "mixedOwnership": false
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "sha256": "1118fe12dc84e21a6ba788a4b1ee6620bf865c93a6c4be0f76b5917cc314206c",
+      "bytes": 7610,
+      "disposition": "Retained only in requested worktree; unverified task-10 end-to-end rehearsal work; do not merge or blindly revert.",
+      "verifiedScope": "Solar artifact build and genuine environment deployment producer evidence only.",
+      "mixedOwnership": false
+    }
+  ],
+  "sharedVerifiedRepairs": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "admittedSha256": "940c92bf1fa427073183e43b0a19bcb53969f7d313b79f4c18e94aba548d87ce",
+      "matchesAdmitted": true,
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "admittedSha256": "eacb6709fb1922877539e06663624edeb28c57f2fb807952ceff8168c98dbef1",
+      "matchesAdmitted": true,
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "admittedSha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "matchesAdmitted": true,
+      "ownership": "Parent repair workers; untouched by task-10 executor.",
+      "verifiedScope": "Independently confirmed operator/unit-CLI repair scope only; not full lifecycle acceptance."
+    }
+  ],
+  "evidenceHelper": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/record-command.ts",
+    "scope": "Owned command/evidence recorder, not independently lifecycle accepted."
+  },
+  "scopeNotes": [
+    "No product source was edited or reverted during teardown.",
+    "rehearsal-data.ts combines task-10 fixture edits with an independently confirmed pricing-ABI binding; do not blindly revert it.",
+    "All unverified rehearsal edits stay isolated in this requested worktree. No commit, merge, PR, landing or public transaction was performed.",
+    "Tests/types and operator repair verdicts do not constitute full task-10 real lifecycle acceptance."
+  ],
+  "independentCombinedVerdict": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/.omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-repairs-verdict.json"
+}

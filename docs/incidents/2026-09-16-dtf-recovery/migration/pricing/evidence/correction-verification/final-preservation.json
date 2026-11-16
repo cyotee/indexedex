@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-11-10T16:01:06.909Z",
+  "preservedSourceAndHistoricalFiles": 5351,
+  "preservationFailures": [],
+  "preExistingEvidenceFiles": 210,
+  "evidenceFailures": [],
+  "bindingFailures": [],
+  "sharedLinks": {
+    "crane": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "nodeModules": "/Users/cyotee/Projects/indexedex/node_modules"
+  }
+}

@@ -1,0 +1,1003 @@
+{
+  "version": "phase26-independent-immutable-delivery-closure-v1",
+  "date": "2026-11-13T01:48:32.086Z",
+  "disposition": "confirmed",
+  "scope": "Bounded local immutable source delivery, not runtime replay or broader acceptance.",
+  "report": {
+    "path": "../verification.md",
+    "kind": "file",
+    "perm": "0o644",
+    "st_mode": 33188,
+    "size": 19475,
+    "sha256": "8e06e44711d406993b66095a5f508405fe5ae4f17622861ab648767848f2cbfd",
+    "target": null
+  },
+  "support": [
+    {
+      "path": "reproduced-docs-incidents.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 6157123,
+      "sha256": "8e5cb757310062d9318f7d752b324f12992f2087359ffa542f3d6d47e0741b0b",
+      "target": null
+    },
+    {
+      "path": "reproduced-docs-incidents-perms.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 5875795,
+      "sha256": "fc8ef9da4f58e98fbe048be925d2d20469655e01ccbdcdc07def03e0ac2408be",
+      "target": null
+    },
+    {
+      "path": "reproduced-docs-incidents-dirs.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 85443,
+      "sha256": "5ef403ed1bf60742012c21d6f5b69640b11376cee976eaa3a14f3bf7f81d5e4c",
+      "target": null
+    },
+    {
+      "path": "reproduced-out.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1960530,
+      "sha256": "6673598e3a68c4b3dd7d747ffea0027f9c55f566c259faff4453b299a9db1771",
+      "target": null
+    },
+    {
+      "path": "reproduced-out-perms.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2721030,
+      "sha256": "6c69936bfe945823dca2d1b60a81897870c422a976d4b8a9d638e4c2c9dfb72a",
+      "target": null
+    },
+    {
+      "path": "reproduced-out-dirs.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1425573,
+      "sha256": "6d3cb6c807e097df44c60d87327a2c24d2dcda0544f89c64b54111f2ef5b6e9a",
+      "target": null
+    },
+    {
+      "path": "reproduced-cache_forge.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2297269,
+      "sha256": "167a70ddc88be51f57510a8ed99510b778850e635a26f64009b0c64c73750744",
+      "target": null
+    },
+    {
+      "path": "reproduced-cache_forge-perms.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 3518453,
+      "sha256": "ad05142c9779921a1abba60f51f25985a4caf985568a18a64702422e24237e4c",
+      "target": null
+    },
+    {
+      "path": "reproduced-cache_forge-dirs.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 1819894,
+      "sha256": "446bc614ef6c7e6007e7ecbcc99ba3dbc94ffb9c2a9f429347cfa0da974b0a21",
+      "target": null
+    },
+    {
+      "path": "git-and-source.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 82947,
+      "sha256": "a7f41ce732153d0c2f9cba6ffb73375c0929e8785c3d47cade70b750c9284575",
+      "target": null
+    },
+    {
+      "path": "producer-baseline.jsonl",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 13268127,
+      "sha256": "a05647eb2b2e4865245d416f833611d6633217b14f382268ef9bbd74929e0b91",
+      "target": null
+    },
+    {
+      "path": "preservation.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 63567,
+      "sha256": "eed5273e69850f0ab307d977ee2ca781715b678424c4f5601a478f8349dbef72",
+      "target": null
+    },
+    {
+      "path": "execution-evidence.json",
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 883957,
+      "sha256": "402146a57fe89e9c7317a96cebcb088b7ea1c4a8886f3dcd64ca94e989ab7e43",
+      "target": null
+    }
+  ],
+  "newMembership": [
+    {
+      "path": "verification.md",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support",
+      "mode": 16877,
+      "kind": "dir"
+    },
+    {
+      "path": "verification-support/reproduced-cache_forge-perms.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/execution-evidence.json",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-docs-incidents-dirs.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-docs-incidents-perms.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-docs-incidents.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-out-perms.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-cache_forge.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/producer-baseline.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-out-dirs.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/git-and-source.json",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/preservation.json",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-out.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/reproduced-cache_forge-dirs.jsonl",
+      "mode": 33188,
+      "kind": "file"
+    },
+    {
+      "path": "verification-support/closure.json",
+      "kind": "file",
+      "mode": 33188
+    }
+  ],
+  "originalRowsReproduced": [
+    {
+      "inventory": "../precommit/docs-incidents.jsonl",
+      "rows": 18134,
+      "sha256": "8e5cb757310062d9318f7d752b324f12992f2087359ffa542f3d6d47e0741b0b",
+      "differences": 0
+    },
+    {
+      "inventory": "../precommit/docs-incidents-perms.jsonl",
+      "rows": 18405,
+      "sha256": "fc8ef9da4f58e98fbe048be925d2d20469655e01ccbdcdc07def03e0ac2408be",
+      "differences": 1
+    },
+    {
+      "inventory": "../precommit/docs-incidents-dirs.jsonl",
+      "rows": 271,
+      "sha256": "5ef403ed1bf60742012c21d6f5b69640b11376cee976eaa3a14f3bf7f81d5e4c",
+      "differences": 1
+    },
+    {
+      "inventory": "../precommit/out.jsonl",
+      "rows": 7376,
+      "sha256": "6673598e3a68c4b3dd7d747ffea0027f9c55f566c259faff4453b299a9db1771",
+      "differences": 0
+    },
+    {
+      "inventory": "../precommit/out-perms.jsonl",
+      "rows": 13856,
+      "sha256": "6c69936bfe945823dca2d1b60a81897870c422a976d4b8a9d638e4c2c9dfb72a",
+      "differences": 0
+    },
+    {
+      "inventory": "../precommit/out-dirs.jsonl",
+      "rows": 6480,
+      "sha256": "6d3cb6c807e097df44c60d87327a2c24d2dcda0544f89c64b54111f2ef5b6e9a",
+      "differences": 0
+    },
+    {
+      "inventory": "../precommit/cache_forge.jsonl",
+      "rows": 6502,
+      "sha256": "167a70ddc88be51f57510a8ed99510b778850e635a26f64009b0c64c73750744",
+      "differences": 0
+    },
+    {
+      "inventory": "../precommit/cache_forge-perms.jsonl",
+      "rows": 12368,
+      "sha256": "ad05142c9779921a1abba60f51f25985a4caf985568a18a64702422e24237e4c",
+      "differences": 0
+    },
+    {
+      "inventory": "../precommit/cache_forge-dirs.jsonl",
+      "rows": 5866,
+      "sha256": "446bc614ef6c7e6007e7ecbcc99ba3dbc94ffb9c2a9f429347cfa0da974b0a21",
+      "differences": 0
+    }
+  ],
+  "finalSource": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/bundle-files.ts",
+      "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+      "bytes": 6094,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+      "bytes": 1727,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/bundle.test.ts",
+      "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+      "bytes": 8959,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/bundle.ts",
+      "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+      "bytes": 7823,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+      "bytes": 4679,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d",
+      "bytes": 16228,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "88ac81ad4c455bab81bf47929d82574a3e5aeaf196413578a248ac3dd5f94705",
+      "bytes": 11340,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/core-local-qa-guard.sh",
+      "sha256": "fe484531f12b1d11d467415aa20b30e04855e938e8f00c9068aa0df6f6183af6",
+      "bytes": 1579,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "bytes": 4667,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889",
+      "bytes": 6468,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+      "bytes": 6464,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581",
+      "bytes": 6781,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "bytes": 7950,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c",
+      "bytes": 6023,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution-rpc.ts",
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "bytes": 8426,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution-schema.ts",
+      "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e",
+      "bytes": 5012,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e",
+      "bytes": 31760,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "bytes": 6162,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+      "bytes": 11187,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2",
+      "bytes": 6461,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "bytes": 4792,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c",
+      "bytes": 15613,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+      "bytes": 9883,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+      "bytes": 14484,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1",
+      "bytes": 10087,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/pricing-local-qa.sh",
+      "sha256": "29de90e5b906195447f7fab8ca9f64f5430d6341687ce5142c9314e9aff17f76",
+      "bytes": 919,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+      "bytes": 6200,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33",
+      "bytes": 7095,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+      "bytes": 10884,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "bytes": 4636,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+      "bytes": 6745,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+      "bytes": 20029,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761",
+      "bytes": 9521,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f",
+      "bytes": 16331,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914",
+      "bytes": 25106,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+      "bytes": 19046,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+      "bytes": 6560,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741",
+      "bytes": 12737,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315",
+      "bytes": 13769,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce",
+      "bytes": 9082,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2",
+      "bytes": 11812,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+      "bytes": 8535,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+      "bytes": 4913,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "bytes": 2869,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+      "bytes": 7869,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda",
+      "bytes": 4907,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+      "bytes": 18490,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+      "bytes": 6048,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "bytes": 15737,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+      "bytes": 22048,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b",
+      "bytes": 27586,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63",
+      "bytes": 9484,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "bytes": 4694,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+      "bytes": 6581,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+      "bytes": 12218,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "sha256": "fb4f52eb79f0246f0bffaca9a2e49f74cda2dbae104672f4c0c947edddcd9ffd",
+      "bytes": 18115,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+      "sha256": "835f94e84920865b29b4236be04020cf3bf54a4dbc0834bb2e7c30b0bc20f037",
+      "bytes": 22891,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+      "sha256": "881762d4bba1275ce3bda4dc076d4d9d648892dd77705304ea661eab9692f9a7",
+      "bytes": 7418,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "ffc1e5e69d5a8d18c1c513425ca804aaf22bd6153604bca0c9eb46cf04677a22",
+      "bytes": 10097,
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "sha256": "17de09426527dfa2987b9b21324fa3d803e50feafa527e2eb11127787c5f6f65",
+      "bytes": 54785,
+      "mode": 33188,
+      "matches": true
+    }
+  ],
+  "existingAnchors": [
+    {
+      "path": "commit/receipt.md",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 12976,
+        "sha256": "b8142a8295dcbd5347b603fc0c8d6e838192cb692ba3c778098523c1216744c0",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "commit/source-manifest.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 30351,
+        "sha256": "0b6c15079a43b31db33fdee413cf8666660b2d1be6df4c8433c1d942459b512c",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "commit/preservation-compare.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 7397,
+        "sha256": "020e32b8d50333450e8aac0262a0f638262d51e76f5c575984be420a8aeb2137",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "implementation/report.md",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 14971,
+        "sha256": "bdaf47accd216719f1c57e60a3317fea207017f6a1d88076e5806422d7b03b86",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "implementation/seal.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 4324168,
+        "sha256": "4078009ee51764d30f198fd51b90a7133376f2e75365036efa304d62186de218",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "implementation/source-manifest-stopped.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 24917,
+        "sha256": "6e481524649151fb16b21c5a933494ffdb757da9679f282d7b176d3a7e9a0b6d",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification/report.md",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 4480,
+        "sha256": "92e9c0d8a111d0b15bf77599cc74d54cc49d2c8df1e73890384a571bce326a84",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification/proof.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 1619,
+        "sha256": "594b5248c6b4d4b5351c2386cd924b57f7464196d93563b2cdf86e16c58b5f7a",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification/seal.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 680,
+        "sha256": "c9fe0aa88bb585b2c72ba02b05608ddbec19231a231a05fa9a94e2a3658619c5",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification-r2/report.md",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 18050,
+        "sha256": "6a412318e5c876845290eb28d8fbf21b705a789981174ca08f7ae9d2c85cd17c",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification-r2/proof.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 433158,
+        "sha256": "44a1712d5e1488e7a485ec462e32499682716c6126141d652bd3a6934425a819",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification-r2/seal.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 370760,
+        "sha256": "bb255c9aa67b6fdd0eadade1bd770182e78648f1120f3a5730f736a3e3100db0",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification-r2/canonical-proof.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 345648,
+        "sha256": "97f94c4d980a85d2aad47c799518006eab02a7b5746d6270dcc39f2160bd7d39",
+        "target": null
+      },
+      "matches": true
+    },
+    {
+      "path": "verification-r2/audit.json",
+      "actual": {
+        "kind": "file",
+        "perm": "0o644",
+        "st_mode": 33188,
+        "size": 14085625,
+        "sha256": "b0273fc2fa2721b35d9fbd198b22f0b5d6d2397a8e9e0a899c35e4c30be93370",
+        "target": null
+      },
+      "matches": true
+    }
+  ],
+  "index": {
+    "initial": {
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2076635,
+      "sha256": "14fdc2ddcb7521f5a10f4789fc8d7caca905ea9a78ecbbd5655938b46d076053",
+      "target": null
+    },
+    "final": {
+      "kind": "file",
+      "perm": "0o644",
+      "st_mode": 33188,
+      "size": 2076635,
+      "sha256": "14fdc2ddcb7521f5a10f4789fc8d7caca905ea9a78ecbbd5655938b46d076053",
+      "target": null
+    },
+    "unchanged": true
+  },
+  "git": [
+    {
+      "args": [
+        "rev-list",
+        "--parents",
+        "-n",
+        "1",
+        "HEAD"
+      ],
+      "code": 0,
+      "stdout": "0856a5c56e5d09b81c669f59b613efef79133e19 137fa0c8749165087c7d1d0156788f58a1dbf1b8\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "status",
+        "--porcelain=v1",
+        "--ignore-submodules=all"
+      ],
+      "code": 0,
+      "stdout": "?? docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--cached",
+        "--ignore-submodules=all",
+        "--exit-code"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--ignore-submodules=all",
+        "--exit-code"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "show-ref"
+      ],
+      "code": 0,
+      "stdout": "90ff0307a7a8e084aa073e02eff125e9c7973933 refs/heads/main\n6e27ecaa242c4acca132e3575a160514aad07b11 refs/heads/work/dtf-migration\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/heads/work/dtf-migration-phase-01\n215c2bba6aa75e3e79bf68b7980b730927a85817 refs/heads/work/dtf-migration-phase-02\n6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd refs/heads/work/dtf-migration-phase-03\n5021e8d4a62bcbddc555f580ef98f8666d993aab refs/heads/work/dtf-migration-phase-04\n6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31 refs/heads/work/dtf-migration-phase-05\n5021e8d4a62bcbddc555f580ef98f8666d993aab refs/heads/work/dtf-migration-phase-06-e2\n421072a7630a0d3d47a6f36e1062d9eae98c93e2 refs/heads/work/dtf-migration-phase-07-recovery\n3f577eeca049c1bd70a812d130941c8a38dd4781 refs/heads/work/dtf-migration-phase-08-operator\n421072a7630a0d3d47a6f36e1062d9eae98c93e2 refs/heads/work/dtf-migration-phase-09-deployment-gas\n3f577eeca049c1bd70a812d130941c8a38dd4781 refs/heads/work/dtf-migration-phase-11-same-wallet-sources\n2c2b3370ded30cae1662329025d4fb58f7197330 refs/heads/work/dtf-migration-phase-12-wallet-admission\n75d513cb8b36e53f14c8aa3a352f21703ad91ba1 refs/heads/work/dtf-migration-phase-13-weighted-liquid\n2baab6e58dafcc3fe5f9a94570d99987d58bf42b refs/heads/work/dtf-migration-phase-14-weighted-sy\n4a53299b490343ed904d70c92ecbc7360fcb7659 refs/heads/work/dtf-migration-phase-15-dtf-custody-se\na96f0fd26c1a1fdba35750cff74d866afa3a9796 refs/heads/work/dtf-migration-phase-16-claim-vault\nacdbe319f3a20c3af6bea594c62461b6c7988717 refs/heads/work/dtf-migration-phase-17-weighted-receipt\n1df9076c73b94a4f63172395763fa8cdd48fe060 refs/heads/work/dtf-migration-phase-18-earlier-receipt\n3ec0912bafebf9c0aa66770a72f04501e5c11865 refs/heads/work/dtf-migration-phase-19-earlier-liquid\nacdbe319f3a20c3af6bea594c62461b6c7988717 refs/heads/work/dtf-migration-phase-19-earlier-liquid-source\n1df9076c73b94a4f63172395763fa8cdd48fe060 refs/heads/work/dtf-migration-phase-20-se-lp-source\n4eaa7decab80d24cf37cb3781eff5ffaf9362942 refs/heads/work/dtf-migration-phase-21-held-se-lp\n4eaa7decab80d24cf37cb3781eff5ffaf9362942 refs/heads/work/dtf-migration-phase-22-claimed-sy-source\n15fd629375edeb361f6a39262795bdc66723ca3a refs/heads/work/dtf-migration-phase-23-claimed-sy-integration\n8db3f5ee6310e8a700dad2d6a33e21d0955e63ca refs/heads/work/dtf-migration-phase-24-stateful-invariants\n137fa0c8749165087c7d1d0156788f58a1dbf1b8 refs/heads/work/dtf-migration-phase-25-full-hermetic\n0856a5c56e5d09b81c669f59b613efef79133e19 refs/heads/work/dtf-migration-phase-26-portable-operator\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/remotes/origin/HEAD\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/codex/robinhood-release-review\n0c3558b2ec9571873a787eef4becbdddafc6ce7b refs/remotes/origin/dependabot/npm_and_yarn/axios-1.20.0\na1a2b239593a90a062a8d477395f6b7fc3a473f7 refs/remotes/origin/dependabot/npm_and_yarn/babel/core-7.29.6\n3a4001f8a017be2b8b3e988b3fb1fcff454b6a01 refs/remotes/origin/dependabot/npm_and_yarn/browserslist-4.28.9\n41bbe4eec3ce9279b205058063b3b69f6be2b149 refs/remotes/origin/dependabot/npm_and_yarn/form-data-4.0.6\n8e6fa0c912bf2739a1bf1a4cfde2bb4a2d526570 refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/indexedex/next-16.3.8\n3a8205815ac3f4307de10ab27e813a56847d779c refs/remotes/origin/dependabot/npm_and_yarn/frontend/apps/pachira/next-15.5.21\n92eeb98dad898aa12b83191e029a9e74112c295b refs/remotes/origin/dependabot/npm_and_yarn/frontend/baseline-browser-mapping-2.11.21\n27de3dc71df885634fda1b1fea448e3b499898c3 refs/remotes/origin/dependabot/npm_and_yarn/frontend/hono-4.13.7\nf0d69de54820d1b844f304dc0c7bcf990f0b57a1 refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-05c505ab13\n74ef9f247f0b1a661fb338738e8300bd0c7f05eb refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-4b10dec7ea\nbdd8e74ea3902897ca98d8312e5c195d9dbd5a33 refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-93274ff731\n92296f9c04ebf54cec5c6b013f6fcef3bf20ee0d refs/remotes/origin/dependabot/npm_and_yarn/frontend/multi-fd2f848fdb\nf4f3a424d8b286c5b0940694835e958f91d24c74 refs/remotes/origin/dependabot/npm_and_yarn/frontend/nanoid-3.3.18\n1319a76e08a306e77926a20feb6b95250e64b348 refs/remotes/origin/dependabot/npm_and_yarn/frontend/next-16.3.8\n549159d0b0c86fc0818f9e628315ddfef984ae4c refs/remotes/origin/dependabot/npm_and_yarn/frontend/source-map-js-1.2.2\nfb6f85b84a9f85dbb6dcb368b75111ecb6257a6c refs/remotes/origin/dependabot/npm_and_yarn/immutable-4.3.9\n05de656fd06346486bec9e9c7c17ce58508f5aac refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.3.2\n924b83b300fb1e3938cc48e3ecd474a855775a3e refs/remotes/origin/dependabot/npm_and_yarn/lib/bankr-skills/onchainkit/assets/templates/basic-app/next-15.5.24\nad6c641aa4dcb582185a136fda6f342ffd8fb103 refs/remotes/origin/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.32.1\nffb2652457d73cb8ced157853b9fd7b1ca883065 refs/remotes/origin/dependabot/npm_and_yarn/nanoid-3.3.18\n4db81ae56cec60663566fd79f82c08bcf15859d7 refs/remotes/origin/dependabot/npm_and_yarn/proxy-addr-2.0.8\neae337a55ff219b56208c6eff11bf9cdb45d6a34 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/fast-uri-3.1.8\n98c7f0ac0cbf5c08666680a411a4b4a836fb0b73 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-d0c2d048a7\n27d0cbfada90a5f6b546ed712e04dc0c5d8e4154 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/multi-db35b1c8a5\nf149ade544a68566d09a3ab3b7f6000873be6de8 refs/remotes/origin/dependabot/npm_and_yarn/scripts/node/postcss-8.5.26\n950e6b32ea8efff73226a0adf6a7e0b75828127a refs/remotes/origin/docs/agent-inventory-navigation\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/feat/uniswap-v4-upper-lower-wings\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/feature/crane-ethereum-staking-ports\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/fix/legacy-v4-erc5115-interface\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/fix/uniswap-se-v2-delivery\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/frontend/multi-app-monorepo\n6724a5e5c762394797c3508ae1db7d6c0dbdac78 refs/remotes/origin/gh-pages\n90ff0307a7a8e084aa073e02eff125e9c7973933 refs/remotes/origin/main\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/refactor/frontend-shared-deployment-root\n70aa8e28336e35c6df92d07e2ccdb352d4fd20c3 refs/remotes/origin/upgrade/nextjs-16\n7321b70c984423699475cfb45907b6dd70bb8ef4 refs/stash\n",
+      "stderr": ""
+    }
+  ],
+  "resourceChecks": [
+    {
+      "binary": "lsof",
+      "args": [
+        "-nP",
+        "-iTCP:18575",
+        "-sTCP:LISTEN"
+      ],
+      "code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "ps",
+      "args": [
+        "-p",
+        "10877,22503",
+        "-o",
+        "pid=,comm="
+      ],
+      "code": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "absent": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/.omo-runtime/dtf-migration-portable",
+      "absent": true,
+      "error": "ENOENT"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/.omo-runtime/dtf-migration-portable/checkpoints",
+      "absent": true,
+      "error": "ENOENT"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-26-portable-operator/index.lock",
+      "absent": true,
+      "error": "ENOENT"
+    }
+  ],
+  "sealDirectoryExtras": [
+    {
+      "lane": "implementation",
+      "extraDirectories": []
+    },
+    {
+      "lane": "verification-r2",
+      "extraDirectories": []
+    }
+  ],
+  "biome": "Unavailable; generated JSON/JSONL parsed successfully. No installation or test/build replay.",
+  "preservationQualifications": [
+    "Precommit rows are reproduced individually; raw index bytes are hashed without decoding.",
+    "Own index/ref differ from precommit only by authorized existing source commit; this audit never changes either.",
+    "One original docs directory has additive commit-child bookkeeping changes; no original content/mode/target changed.",
+    "Later audit output adds only verification.md and verification-support beneath existing commit directory.",
+    "Producer baseline records earlier current versions with 30 authorized owned source/build/cache differences, including two pruned build-info originals retained as raw captures.",
+    "One content-deduplicated empty capture is 0600 while its original ABI lock is 0644; bytes match and original mode is unchanged."
+  ],
+  "additiveMembership": "28 commit-lane additive paths existed at audit intake. Audit adds 15 files and one directory beneath existing commit, for 44 additive paths relative to original precommit permission inventory; closure.json is included by declared identity, not a self-digest.",
+  "pendingOwnedOperations": [],
+  "runtimeStarted": false,
+  "gitWrites": false,
+  "sourceEvidenceEdits": false,
+  "selfDigest": "This file does not claim its own raw identity. No prior seal was rewritten."
+}

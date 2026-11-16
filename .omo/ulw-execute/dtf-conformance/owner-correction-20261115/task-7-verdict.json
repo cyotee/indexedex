@@ -1,0 +1,142 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "task": 7,
+  "lane": "combined-task-7-acceptance",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "scope": "Complete reopened task-7 unit/CLI checkpoint: admitted original work, owner-directed pin removal, F2-01 census repair, F2-02 omission repair, shared full operator tests and both strict TypeScript commands",
+  "fully_supported_checkpoint": true,
+  "summary": "The owner-directed pin removal and both reopened F2 findings are resolved with matching final sources. Full 21-file operator selection passed 251 tests with zero failures; both exact required strict TypeScript commands exited 0. Retained CLI and admitted original task-seven evidence support the complete unit/CLI checkpoint.",
+  "findings": [],
+  "concrete_fixes": [],
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/integration-done.json",
+    "sha256": "81cc9bb373a6d39fa770ed2a6550dc31f9e2d48cf2c6f5a8717e67fa535fda4b"
+  },
+  "admitted_lane_verdicts": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/pin-verdict.json",
+      "verdict": "confirmed"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/omissions-verdict.json",
+      "verdict": "confirmed"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/census-verdict.json",
+      "verdict": "confirmed"
+    }
+  ],
+  "checks": {
+    "full_operator": {
+      "exit": 0,
+      "passed": 251,
+      "failed": 0,
+      "files": 21,
+      "source_selection_complete": true,
+      "raw_stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/integration/01-tests.stdout.log",
+      "raw_stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/integration/01-tests.stderr.log"
+    },
+    "operator_strict_types": {
+      "exit": 0,
+      "files": 86,
+      "stdout_empty": true,
+      "stderr_empty": true
+    },
+    "helper_strict_types": {
+      "exit": 0,
+      "files": 2,
+      "stdout_empty": true,
+      "stderr_empty": true
+    },
+    "source_fingerprints": {
+      "count": 104,
+      "mismatches": 0
+    },
+    "manual_imports": {
+      "count": 67,
+      "missing": 0,
+      "mismatches": 0,
+      "independently_parsed": true
+    },
+    "abi_references": {
+      "count": 6,
+      "mismatches": 0
+    },
+    "census_manual": {
+      "child_exits": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "original_A_unchanged": true,
+      "complete_B_accepted": true,
+      "incomplete_B_rejected": true,
+      "new_nonces": 0,
+      "sends": 0,
+      "new_intents": 0,
+      "requotes": 0
+    },
+    "omissions": {
+      "valid_controls": 4,
+      "isolated_fields": 28,
+      "successful_restorations": 28
+    },
+    "pin": {
+      "removed_as_owner_directed": true,
+      "replacement_pin": false,
+      "genuine_checks_retained": true
+    }
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/integration/independent/report.md",
+  "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/integration/independent/verification.json",
+  "process_receipts": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1df7f/sessions/st_01a1df7f/2026-11-15T13-56-27.259Z_d2b1deb1-116a-4980-bb65-794d9db80bb6.jsonl",
+    "lines": [
+      49,
+      60,
+      82,
+      90
+    ],
+    "monitor": "mon_VFTABKR9PRK11ZDC",
+    "overall_exit": 0
+  },
+  "historical_evidence": {
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/verification/report-r2.md",
+    "verdict": ".omo/ulw-execute/dtf-conformance/task-7-verdict-r2.json",
+    "supported_checks": [
+      "B1",
+      "H3",
+      "H4"
+    ],
+    "old_B2": "Superseded by explicit owner pin withdrawal and confirmed pin-removal lane.",
+    "old_source_freshness": "130 of 149 old source entries still match; 19 changed entries are recorded in verification.json. Historical evidence is not a fresh whole-tree Forge claim."
+  },
+  "limitations": [
+    "No product, test, Forge or install command was run by this verifier; settled results were reused.",
+    "Task 10 actual EVM lifecycle and task 13 whole-tree Solidity verification are separate; no operational financial authorization.",
+    "LSP freshness/unavailability persists, despite both strict tsc checks passing; no installation or LSP-clean claim.",
+    "Historical B1 retains cache/dependency-warning and existing helper-suite-failure qualifications. Old 149-source freshness is not current; 19 differences are explicitly recorded.",
+    "Third-party module trees and source-identities JSON lack separate recursive historical provenance in manual receipts.",
+    "Two unknown prior temporary fixture directories remain untouched; cleanup is not a global resource census.",
+    "No performance, outage, cross-platform or flake-rate guarantee from one passing run.",
+    "Existing quote/preparation size debt is outside this verification."
+  ],
+  "task_7_checkpoint_confirmed": true,
+  "whole_plan_confirmed": false,
+  "task_10_receipts_claimed": false,
+  "plan_checkbox_edited": false,
+  "source_edits": false,
+  "tests_rerun": false,
+  "producer_evidence_preserved": true,
+  "verdict_written_last": true
+}

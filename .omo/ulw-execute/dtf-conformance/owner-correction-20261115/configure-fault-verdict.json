@@ -1,0 +1,75 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "scope": "Configure fault-after-mined CLI interruption repair in execution.ts and execution.test.ts only; excludes task 10, shared gate and fresh real lifecycle",
+  "confidence": "high",
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+      "bytes": 19008
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+      "bytes": 20619
+    }
+  ],
+  "evidence": {
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/independent/report.md",
+    "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/independent/verification.json",
+    "focusedPasses": 38,
+    "focusedFailures": 0,
+    "focusedExit": 0,
+    "manualExit": 0,
+    "manualKinds": [
+      {
+        "kind": "independent",
+        "method": "configureIndependentAllocations",
+        "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+        "nonce": "7",
+        "rawSends": 1,
+        "initialNonceQueries": 2,
+        "resumes": 2,
+        "completions": 1,
+        "allNonceQueriesBeforeSend": true,
+        "signedHashMatches": true,
+        "domainHashMatches": true,
+        "completionMatches": true
+      },
+      {
+        "kind": "nft-components",
+        "method": "configureNftContributionEntitlements",
+        "transactionHash": "0x520f748d63c492eebf3b5de88798f5e0b5fcb10af477277e64821156ac063cfd",
+        "nonce": "7",
+        "rawSends": 1,
+        "initialNonceQueries": 2,
+        "resumes": 2,
+        "completions": 1,
+        "allNonceQueriesBeforeSend": true,
+        "signedHashMatches": true,
+        "domainHashMatches": true,
+        "completionMatches": true
+      }
+    ],
+    "sourceHashesMatch": true,
+    "baselineReverseHashesMatch": true,
+    "testsRerun": false
+  },
+  "limitations": [
+    "Production CLI/process evidence uses synthetic loopback fixture facts, not real Anvil/EVM execution.",
+    "Full operator suite and both strict TypeScript commands await separate integration evidence and are not accepted by this verdict.",
+    "File audit exited 2: required TypeScript API unresolved; later LSP freshness timeouts not clean.",
+    "Seven existing configure fixture categories exercised; other variants and broader lifecycle/system failure campaigns not certified.",
+    "No independent rerun or mutation performed; retained baseline regression proves sensitivity to the original missing configure branch.",
+    "Rejected witness-pin lane and old evidence untouched; no readiness or task-10 completion.",
+    "JSON artifact LSP unavailable: biome not installed. JSON produced by JSON.stringify; no install."
+  ],
+  "fixes": [],
+  "task10Complete": false,
+  "parentReadiness": false,
+  "sharedIntegrationGate": false,
+  "freshRealLifecycle": false,
+  "writtenLastForConfigureRepair": true
+}

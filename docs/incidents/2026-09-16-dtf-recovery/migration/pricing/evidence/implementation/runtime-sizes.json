@@ -1,0 +1,47 @@
+[
+  {
+    "name": "UniswapV4StandardExchangeWeightedBufferHookHooksFacet",
+    "bytes": 13095,
+    "eip170": true
+  },
+  {
+    "name": "UniswapV4StandardExchangeWeightedBufferHookDFPkg",
+    "bytes": 15835,
+    "eip170": true
+  },
+  {
+    "name": "UniswapV4StandardExchangeWeightedBufferHookClaimLib",
+    "bytes": 11627,
+    "eip170": true
+  },
+  {
+    "name": "UniswapV3FullSpreadStandardExchangeVaultInQueryFacet",
+    "bytes": 15973,
+    "eip170": true
+  },
+  {
+    "name": "UniswapV3FullSpreadStandardExchangeVaultDFPkg",
+    "bytes": 6386,
+    "eip170": true
+  },
+  {
+    "name": "MigrationSnapshotConsumer",
+    "bytes": 9893,
+    "eip170": true
+  },
+  {
+    "name": "MigrationSnapshotMathExposure",
+    "bytes": 5047,
+    "eip170": true
+  },
+  {
+    "name": "StandardExchangeFrozenV3CaptureIdentity",
+    "bytes": 16109,
+    "eip170": true
+  },
+  {
+    "name": "StandardExchangeFrozenV3PreviewIdentity",
+    "bytes": 11148,
+    "eip170": true
+  }
+]

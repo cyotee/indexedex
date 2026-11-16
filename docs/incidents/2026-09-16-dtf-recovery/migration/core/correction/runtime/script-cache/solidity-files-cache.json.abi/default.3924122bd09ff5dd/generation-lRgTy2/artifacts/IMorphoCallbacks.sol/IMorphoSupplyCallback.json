@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"onMorphoSupply","inputs":[{"name":"assets","type":"uint256","internalType":"uint256"},{"name":"data","type":"bytes","internalType":"bytes"}],"outputs":[],"stateMutability":"nonpayable"}],"id":1960}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"canPerform","inputs":[{"name":"actionId","type":"bytes32","internalType":"bytes32"},{"name":"account","type":"address","internalType":"address"},{"name":"where","type":"address","internalType":"address"}],"outputs":[{"name":"success","type":"bool","internalType":"bool"}],"stateMutability":"view"}],"id":981}

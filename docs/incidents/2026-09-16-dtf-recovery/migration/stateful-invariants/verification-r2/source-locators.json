@@ -1,0 +1,1012 @@
+{
+  "candidate": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "bytes": 16620,
+      "sha256": "7f316c07442c7e97e76d99d927fc09f386c4da0dc74a579cb16516d52641b47d",
+      "lineCount": 316,
+      "definitions": [
+        {
+          "line": 22,
+          "text": "abstract contract MigrationLegacyHandler is Test, IERC721Receiver {"
+        },
+        {
+          "line": 23,
+          "text": "struct OriginalNft {"
+        },
+        {
+          "line": 31,
+          "text": "struct Funded {"
+        },
+        {
+          "line": 78,
+          "text": "constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) {"
+        },
+        {
+          "line": 99,
+          "text": "function surrender(uint256 seed_) public {"
+        },
+        {
+          "line": 119,
+          "text": "function failedIssuance() public {"
+        },
+        {
+          "line": 135,
+          "text": "function transferAndReject() public {"
+        },
+        {
+          "line": 155,
+          "text": "function missingRecord() public {"
+        },
+        {
+          "line": 180,
+          "text": "function rejectNftControl(uint256 which_) public {"
+        },
+        {
+          "line": 207,
+          "text": "function takeNft(uint256 which_) public {"
+        },
+        {
+          "line": 229,
+          "text": "function _funded(uint256 id_, address wallet_, uint256 principal_) internal {"
+        },
+        {
+          "line": 236,
+          "text": "/// @notice Callback mutations are exercised only by the ordinary-SY contract original."
+        },
+        {
+          "line": 237,
+          "text": "function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4) {"
+        },
+        {
+          "line": 250,
+          "text": "function economicState() public view returns (bytes32) {"
+        },
+        {
+          "line": 260,
+          "text": "function assertAll() public view {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "bytes": 9901,
+      "sha256": "529d3f830cddafc5ee7329a82ef4cf595713acb10897f094ee1c8fac3fb3ae8a",
+      "lineCount": 180,
+      "definitions": [
+        {
+          "line": 17,
+          "text": "contract MigrationLegacyRecoveryHandler is MigrationLegacyClaimHandler {"
+        },
+        {
+          "line": 23,
+          "text": "constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) MigrationLegacyClaimHandler(m_, n_, c_) {}"
+        },
+        {
+          "line": 25,
+          "text": "function redeemSy(uint256 seed_) public {"
+        },
+        {
+          "line": 40,
+          "text": "function claimWeighted() public {"
+        },
+        {
+          "line": 70,
+          "text": "function unstake(uint256 seed_) public {"
+        },
+        {
+          "line": 83,
+          "text": "function convert(uint256 seed_) public {"
+        },
+        {
+          "line": 96,
+          "text": "function donate(uint256 seed_) public {"
+        },
+        {
+          "line": 115,
+          "text": "function failedRecoveryBatch() public {"
+        },
+        {
+          "line": 131,
+          "text": "function changeOwner() public {"
+        },
+        {
+          "line": 146,
+          "text": "function _steps(Recovery.Stage stage_, uint256 id_, uint256 q_) private pure returns (Recovery.Step[] memory s_) {"
+        },
+        {
+          "line": 151,
+          "text": "function _run(Recovery.Stage stage_, uint256 id_, uint256 q_) private {"
+        },
+        {
+          "line": 160,
+          "text": "function beneficiaryBalances() public view returns (bytes32) {"
+        },
+        {
+          "line": 172,
+          "text": "function recoveryState() public view returns (bytes32) {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "bytes": 16070,
+      "sha256": "d881cdc399eaeb54bb1aaa8a947666148daf08e508b97b11d99c4c9c0072a2c0",
+      "lineCount": 312,
+      "definitions": [
+        {
+          "line": 22,
+          "text": "contract MigrationNativeHandler is MigrationNativeLedger {"
+        },
+        {
+          "line": 31,
+          "text": "constructor(Seed memory s_) MigrationNativeLedger(s_) {"
+        },
+        {
+          "line": 43,
+          "text": "function _input(uint256 i_) internal view returns (Migration.IndependentAllocationInput memory a_) {"
+        },
+        {
+          "line": 53,
+          "text": "function _configuration(uint256 i_) internal view returns (bytes32) {"
+        },
+        {
+          "line": 57,
+          "text": "function configure(uint256 actor_, uint256 amount_) public {"
+        },
+        {
+          "line": 72,
+          "text": "function issue(uint256 actor_) public {"
+        },
+        {
+          "line": 98,
+          "text": "function failedBatch() public {"
+        },
+        {
+          "line": 120,
+          "text": "function activate() public {"
+        },
+        {
+          "line": 130,
+          "text": "function transferOwner() public {"
+        },
+        {
+          "line": 148,
+          "text": "function transferBond(uint256 index_) public {"
+        },
+        {
+          "line": 163,
+          "text": "function claimPrincipal(uint256 index_) public {"
+        },
+        {
+          "line": 169,
+          "text": "function claimRewards(uint256 index_) public {"
+        },
+        {
+          "line": 183,
+          "text": "function paidBond(uint256 amount_) public {"
+        },
+        {
+          "line": 208,
+          "text": "function advanceTime(uint256 days_) public {"
+        },
+        {
+          "line": 216,
+          "text": "function rejectRoleRewards() public {"
+        },
+        {
+          "line": 238,
+          "text": "function market(uint256 amount_) public {"
+        },
+        {
+          "line": 259,
+          "text": "function providerRateChange(uint256 amount_) public {"
+        },
+        {
+          "line": 275,
+          "text": "function administrationSelectors() public pure returns (bytes4[14] memory) {"
+        },
+        {
+          "line": 285,
+          "text": "function assertAll() public view {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "bytes": 10705,
+      "sha256": "154b095118a09d82492e9414af4b321079be87bbe78ad6fca143225db2ea4340",
+      "lineCount": 230,
+      "definitions": [
+        {
+          "line": 15,
+          "text": "/// @dev No SUT math library is used. BondTypes supplies ABI structs only."
+        },
+        {
+          "line": 16,
+          "text": "abstract contract MigrationNativeLedger is Test {"
+        },
+        {
+          "line": 17,
+          "text": "struct Seed {"
+        },
+        {
+          "line": 37,
+          "text": "struct Position {"
+        },
+        {
+          "line": 74,
+          "text": "constructor(Seed memory s_) {"
+        },
+        {
+          "line": 95,
+          "text": "function _recordPosition(uint256 id_, address holder_, uint256 principal_, bool cliff_) internal {"
+        },
+        {
+          "line": 103,
+          "text": "function _topUp() internal {"
+        },
+        {
+          "line": 111,
+          "text": "function _fundReward(uint256 reward_) internal {"
+        },
+        {
+          "line": 138,
+          "text": "function _positionClaim(uint256 index_, bool reward_) internal {"
+        },
+        {
+          "line": 175,
+          "text": "function assertAccounting() public view {"
+        },
+        {
+          "line": 211,
+          "text": "function positionCount() external view returns (uint256) { return positions.length; }"
+        },
+        {
+          "line": 214,
+          "text": "function positionStart(uint256 index_) external view returns (uint256) { return positions[index_].start; }"
+        },
+        {
+          "line": 217,
+          "text": "function isolatedBook(address address_) public view returns (bytes32) {"
+        },
+        {
+          "line": 225,
+          "text": "function _count(bytes4 selector_) internal {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "bytes": 1525,
+      "sha256": "4a4d82bbcf31cdf10bf9d21f08b29ecc9de708ac674c61e938b4241f1300c7ca",
+      "lineCount": 30,
+      "definitions": [
+        {
+          "line": 8,
+          "text": "/// @notice Raw actual deployed bytes, including populated immutables and linked library addresses."
+        },
+        {
+          "line": 10,
+          "text": "library MigrationStatefulBindings {"
+        },
+        {
+          "line": 11,
+          "text": "function capture(Migration m_, address package_, address registry_) internal view {"
+        },
+        {
+          "line": 25,
+          "text": "function _runtime(address subject_) private view {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "bytes": 6141,
+      "sha256": "6294251a301925c548f88d14d3f662e16a04fa3f440b37188ec709941e59a5c6",
+      "lineCount": 102,
+      "definitions": [
+        {
+          "line": 18,
+          "text": "abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration {"
+        },
+        {
+          "line": 22,
+          "text": "function setUp() public virtual override {"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "bytes": 9395,
+      "sha256": "bbc77d4fb429b95eacc7b224449ff3d63f8d983a96a83a0a5beeb9a39af45dbb",
+      "lineCount": 177,
+      "definitions": [
+        {
+          "line": 27,
+          "text": "/// @dev Ordinary-SY contract callback only, not claimed-origin EOA preparation."
+        },
+        {
+          "line": 30,
+          "text": "contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {"
+        },
+        {
+          "line": 33,
+          "text": "function _freshBoundedParent() internal {"
+        },
+        {
+          "line": 45,
+          "text": "function setUp() public override {"
+        },
+        {
+          "line": 118,
+          "text": "function invariant_originalCreditCustodyFundingAndStagedRecovery() public view {"
+        },
+        {
+          "line": 122,
+          "text": "function afterInvariant() public {"
+        },
+        {
+          "line": 135,
+          "text": "function test_terminalCreditAndCompleteRecoveryWitness() public {"
+        },
+        {
+          "line": 149,
+          "text": "function test_laterSurrenderOwnCliffAndEveryPositionClaim() public {"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "bytes": 4278,
+      "sha256": "6459e9675beef38057c83f9b4d2fd5b1fb691eb91519cf2d7dc84e0b5c3dd513",
+      "lineCount": 105,
+      "definitions": [
+        {
+          "line": 9,
+          "text": "contract MigrationNativeInvariantTest is TestBase_MigrationStateful {"
+        },
+        {
+          "line": 10,
+          "text": "function invariant_nativeLedgerAndPermanentLifecycle() public view {"
+        },
+        {
+          "line": 14,
+          "text": "function afterInvariant() public {"
+        },
+        {
+          "line": 26,
+          "text": "function test_successfulWitnessCliffAndActivationSequence() public {"
+        },
+        {
+          "line": 46,
+          "text": "function test_allPositionsFreshCliffsAndLaterPaidGrowth() public {"
+        },
+        {
+          "line": 80,
+          "text": "contract MigrationNativeActiveInvariantTest is TestBase_MigrationStateful {"
+        },
+        {
+          "line": 81,
+          "text": "function setUp() public override {"
+        },
+        {
+          "line": 93,
+          "text": "function invariant_laterFundingAndAllPositionClaims() public view {"
+        },
+        {
+          "line": 97,
+          "text": "function afterInvariant() public {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol",
+      "bytes": 3219,
+      "sha256": "fe5e61c3dbe69a22d51536325b4257c8052cfcf119462b90a92137711368d0a5",
+      "lineCount": 71,
+      "definitions": [
+        {
+          "line": 9,
+          "text": "abstract contract MigrationLegacyClaimHandler is MigrationLegacyHandler {"
+        },
+        {
+          "line": 14,
+          "text": "constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) MigrationLegacyHandler(m_, n_, c_) {}"
+        },
+        {
+          "line": 16,
+          "text": "function positionCount() external view returns (uint256) { return funded.length; }"
+        },
+        {
+          "line": 17,
+          "text": "function positionStart(uint256 i_) external view returns (uint256) { return funded[i_].start; }"
+        },
+        {
+          "line": 20,
+          "text": "function advanceTime(uint256 seed_) public {"
+        },
+        {
+          "line": 26,
+          "text": "function transferBond(uint256 seed_) public {"
+        },
+        {
+          "line": 42,
+          "text": "function claimPrincipal(uint256 seed_) public { _claim(seed_, false); }"
+        },
+        {
+          "line": 43,
+          "text": "function claimRewards(uint256 seed_) public { _claim(seed_, true); }"
+        },
+        {
+          "line": 45,
+          "text": "function _claim(uint256 seed_, bool rewards_) private {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "bytes": 14047,
+      "sha256": "280a7daf05c328ffcaedfc1cc97d897ae2e2db003d3b955ab79480705f57c4ac",
+      "lineCount": 245,
+      "definitions": [
+        {
+          "line": 18,
+          "text": "abstract contract MigrationSourceUnitsLedger is Test {"
+        },
+        {
+          "line": 19,
+          "text": "struct Row {"
+        },
+        {
+          "line": 33,
+          "text": "struct Position {"
+        },
+        {
+          "line": 76,
+          "text": "constructor(Migration parent_) {"
+        },
+        {
+          "line": 89,
+          "text": "function source(uint256 i_) public pure returns (address) {"
+        },
+        {
+          "line": 96,
+          "text": "function surrenderSelector(uint256 i_) public pure returns (bytes4) {"
+        },
+        {
+          "line": 105,
+          "text": "function querySelector(uint256 i_) public pure returns (bytes4) {"
+        },
+        {
+          "line": 113,
+          "text": "function configSelector(uint256 i_) public pure returns (bytes4) {"
+        },
+        {
+          "line": 122,
+          "text": "function entitlementSelector(uint256 i_) public pure returns (bytes4) {"
+        },
+        {
+          "line": 130,
+          "text": "function invalidRecord(uint256 i_) public pure returns (bytes4) {"
+        },
+        {
+          "line": 139,
+          "text": "function wrongWallet(uint256 i_) public pure returns (bytes4) {"
+        },
+        {
+          "line": 148,
+          "text": "function quantityError(uint256 i_) public pure returns (bytes4) {"
+        },
+        {
+          "line": 159,
+          "text": "function units(uint256 i_, address wallet_) public view returns (uint256) {"
+        },
+        {
+          "line": 168,
+          "text": "function nativeMaximum(uint256 i_) public view returns (uint256) {"
+        },
+        {
+          "line": 175,
+          "text": "function eligibleUnits(uint256 i_, uint256 native_) public view returns (uint256) {"
+        },
+        {
+          "line": 181,
+          "text": "function row(uint256 i_) external view returns (Row memory) { return rows[i_]; }"
+        },
+        {
+          "line": 182,
+          "text": "function positionCount() external view returns (uint256) { return positions.length; }"
+        },
+        {
+          "line": 183,
+          "text": "function positionStart(uint256 i_) external view returns (uint256) { return positions[i_].start; }"
+        },
+        {
+          "line": 185,
+          "text": "function assertAll() public view {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "bytes": 12639,
+      "sha256": "1e7ed789c84e059bab94d0e2d100a17aa229fe9ab816f5dd1b768cd27fbca4f2",
+      "lineCount": 232,
+      "definitions": [
+        {
+          "line": 16,
+          "text": "/// @dev This contract is a synthetic ordinary original wallet, never a claimed-SY source wallet."
+        },
+        {
+          "line": 17,
+          "text": "contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Receiver {"
+        },
+        {
+          "line": 24,
+          "text": "constructor(Migration m_) MigrationSourceUnitsLedger(m_) {}"
+        },
+        {
+          "line": 27,
+          "text": "function initialize(uint256[9] calldata quantities_, uint256[2] calldata credits_) external {"
+        },
+        {
+          "line": 45,
+          "text": "function _input(uint256 i_, uint256 variant_) internal view returns (Migration.WeightedLiquidEntitlementInput memory) {"
+        },
+        {
+          "line": 51,
+          "text": "function _configure(uint256 i_, uint256 variant_) private {"
+        },
+        {
+          "line": 62,
+          "text": "function enrollmentWitness() external {"
+        },
+        {
+          "line": 86,
+          "text": "function surrender(uint256 index_, uint256 seed_) public {"
+        },
+        {
+          "line": 113,
+          "text": "function missingRecord(uint256 index_) public {"
+        },
+        {
+          "line": 121,
+          "text": "function rejectControls(uint256 index_) public {"
+        },
+        {
+          "line": 145,
+          "text": "function rejectExcess(uint256 index_) public {"
+        },
+        {
+          "line": 158,
+          "text": "function failedIssuance(uint256 index_) public {"
+        },
+        {
+          "line": 182,
+          "text": "function removedConfiguration(uint256 index_) public {"
+        },
+        {
+          "line": 194,
+          "text": "function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4) {"
+        },
+        {
+          "line": 204,
+          "text": "function _settleSource(uint256 i_) internal {"
+        },
+        {
+          "line": 207,
+          "text": "function _payload(uint256 i_, bytes32 origin_, uint256 n_, uint256 min_) internal view returns (bytes memory) {"
+        },
+        {
+          "line": 210,
+          "text": "function _invoke(bytes memory payload_) internal returns (bytes memory result_) {"
+        },
+        {
+          "line": 214,
+          "text": "function _reject(bytes memory payload_, bytes memory expected_) internal {"
+        },
+        {
+          "line": 219,
+          "text": "function economicState() public view returns (bytes32) {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "bytes": 14171,
+      "sha256": "7e91e826cb22f1fb754834c98ac240bd6ecf5bf3e040d4feb65298edd3b337c1",
+      "lineCount": 246,
+      "definitions": [
+        {
+          "line": 17,
+          "text": "function previewRedeem(uint256 shares_) external view returns (uint256);"
+        },
+        {
+          "line": 22,
+          "text": "contract MigrationSourceUnitsRecoveryHandler is MigrationSourceUnitsHandler {"
+        },
+        {
+          "line": 26,
+          "text": "constructor(Migration m_) MigrationSourceUnitsHandler(m_) {}"
+        },
+        {
+          "line": 29,
+          "text": "function changeEarlierRate(uint256 seed_) public {"
+        },
+        {
+          "line": 39,
+          "text": "function independentOriginWitness() external {"
+        },
+        {
+          "line": 81,
+          "text": "function takeEarlier(address wallet_, uint256 credit_) external {"
+        },
+        {
+          "line": 95,
+          "text": "function sellEarlier() public {"
+        },
+        {
+          "line": 122,
+          "text": "function redeemRecoveredSy(uint256 seed_) public {"
+        },
+        {
+          "line": 137,
+          "text": "function recover(uint256 selection_, uint256 seed_) public {"
+        },
+        {
+          "line": 169,
+          "text": "function failedRecoveryBatch() public {"
+        },
+        {
+          "line": 184,
+          "text": "function advanceTime(uint256 seed_) public {"
+        },
+        {
+          "line": 190,
+          "text": "function transferBond(uint256 seed_) public {"
+        },
+        {
+          "line": 203,
+          "text": "function claimPrincipal(uint256 seed_) public {"
+        },
+        {
+          "line": 222,
+          "text": "function changeOwner() public {"
+        },
+        {
+          "line": 238,
+          "text": "function _beneficiaries() private view returns (bytes32) {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "bytes": 11856,
+      "sha256": "c8e4d4b5619a63e40bce7575f2fe7020233e68e410660b21b75e25cc13cbb418",
+      "lineCount": 199,
+      "definitions": [
+        {
+          "line": 29,
+          "text": "abstract contract TestBase_MigrationSourceUnits is MigrationRecoveryDonationForkBase {"
+        },
+        {
+          "line": 39,
+          "text": "function setUp() public virtual override {"
+        },
+        {
+          "line": 97,
+          "text": "function _acquireLiquid() private {"
+        },
+        {
+          "line": 106,
+          "text": "function _acquireWeightedReceipt() private returns (uint256) {"
+        },
+        {
+          "line": 120,
+          "text": "function _acquireEarlierReceipt() private returns (uint256) {"
+        },
+        {
+          "line": 130,
+          "text": "function _acquireClaimVault() private returns (uint256 q_) {"
+        },
+        {
+          "line": 145,
+          "text": "function _acquireCustodySe() private returns (uint256 q_) {"
+        },
+        {
+          "line": 161,
+          "text": "function _acquireHeld(uint256 i_) private {"
+        },
+        {
+          "line": 180,
+          "text": "function _target() private {"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "bytes": 3535,
+      "sha256": "4ffa53c77197e2a870eabed052f75dba8d7458abd58ab0e40329bcbf59cc3f30",
+      "lineCount": 65,
+      "definitions": [
+        {
+          "line": 11,
+          "text": "contract MigrationSourceUnitsInvariantTest is TestBase_MigrationSourceUnits {"
+        },
+        {
+          "line": 12,
+          "text": "function invariant_exactOriginalUnitsCustodyAndFreshEscrow() public view { handler.assertAll(); }"
+        },
+        {
+          "line": 14,
+          "text": "function afterInvariant() public {"
+        },
+        {
+          "line": 35,
+          "text": "function test_allUnitsTerminalOrRetainedResidueAndLaterOwnCliffs() public {"
+        }
+      ]
+    }
+  ],
+  "additionalAdmissions": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md",
+      "bytes": 18779,
+      "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md",
+      "bytes": 15387,
+      "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/contract.md",
+      "bytes": 22508,
+      "sha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/report.md",
+      "bytes": 20560,
+      "sha256": "86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/contract.md",
+      "bytes": 18766,
+      "sha256": "330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3",
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source-verification/report.md",
+      "bytes": 26504,
+      "sha256": "c1d452153e3c1483e9ed862ce8a46e55aad2cdfbaef15b94d20f15f24fddcb45",
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding/contract.md",
+      "bytes": 10950,
+      "sha256": "436baf660e440d1c12a66bc6912565f3ef7905183fc87f816959b5c4b8af7184",
+      "mode": 33188,
+      "matches": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding-verification/report.md",
+      "bytes": 20357,
+      "sha256": "a8526fb709fd37c163e04a03885c601f423976c9d3baa7acdcfb413a295e2fb3",
+      "mode": 33188,
+      "matches": true
+    }
+  ],
+  "unitCounterRecords": [
+    {
+      "line": 4459,
+      "address": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "4",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0"
+      }
+    },
+    {
+      "line": 4465,
+      "address": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "values": {
+        "source successful surrenders": "2",
+        "source exact rejected operations": "5",
+        "source late funded receipt rollbacks": "2",
+        "remaining eligible original units": "5625",
+        "remaining frozen credit": "3624098"
+      }
+    },
+    {
+      "line": 4471,
+      "address": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "values": {
+        "source successful surrenders": "2",
+        "source exact rejected operations": "4",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "50635073830046997872009171561012763540",
+        "remaining frozen credit": "3689438"
+      }
+    },
+    {
+      "line": 4477,
+      "address": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "values": {
+        "source successful surrenders": "2",
+        "source exact rejected operations": "4",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "2560861833251447247559438618",
+        "remaining frozen credit": "3624880"
+      }
+    },
+    {
+      "line": 4483,
+      "address": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "5",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "8437499990881",
+        "remaining frozen credit": "1812049"
+      }
+    },
+    {
+      "line": 4489,
+      "address": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "values": {
+        "source successful surrenders": "4",
+        "source exact rejected operations": "4",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "1874999981250000000000000000",
+        "remaining frozen credit": "1208033"
+      }
+    },
+    {
+      "line": 4495,
+      "address": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "values": {
+        "source successful surrenders": "2",
+        "source exact rejected operations": "5",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "5625",
+        "remaining frozen credit": "3624098"
+      }
+    },
+    {
+      "line": 4501,
+      "address": "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+      "values": {
+        "source successful surrenders": "2",
+        "source exact rejected operations": "5",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "5625",
+        "remaining frozen credit": "3624098"
+      }
+    },
+    {
+      "line": 4507,
+      "address": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+      "values": {
+        "source successful surrenders": "2",
+        "source exact rejected operations": "5",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "5625",
+        "remaining frozen credit": "3624098",
+        "canonical competing enrollment rejections": "99"
+      }
+    },
+    {
+      "line": 4713,
+      "address": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0"
+      }
+    },
+    {
+      "line": 4719,
+      "address": "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0"
+      }
+    },
+    {
+      "line": 4725,
+      "address": "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "419661796441813012824673292252566920",
+        "remaining frozen credit": "30578"
+      }
+    },
+    {
+      "line": 4731,
+      "address": "0x4AC89aD061A531FA62ddceED53520C2750113b01",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "392519172024864887958474",
+        "remaining frozen credit": "556"
+      }
+    },
+    {
+      "line": 4737,
+      "address": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0"
+      }
+    },
+    {
+      "line": 4743,
+      "address": "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0"
+      }
+    },
+    {
+      "line": 4749,
+      "address": "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0"
+      }
+    },
+    {
+      "line": 4755,
+      "address": "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0"
+      }
+    },
+    {
+      "line": 4761,
+      "address": "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+      "values": {
+        "source successful surrenders": "3",
+        "source exact rejected operations": "6",
+        "source late funded receipt rollbacks": "1",
+        "remaining eligible original units": "0",
+        "remaining frozen credit": "0",
+        "canonical competing enrollment rejections": "99"
+      }
+    }
+  ]
+}

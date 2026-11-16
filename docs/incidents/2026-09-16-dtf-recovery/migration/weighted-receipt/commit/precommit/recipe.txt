@@ -1,0 +1,40 @@
+Precommit inventory recipe v1
+Captured before staging or committing the weighted-receipt source delivery.
+The walks completed before any file existed under migration/weighted-receipt/commit/.
+Inventory files written afterward are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, or runtime rerun is part of this recipe.
+Every Git invocation uses GIT_MASTER=1. Status and diff use --ignore-submodules=all.
+
+Git-mode inventory
+Walk: os.walk(root, followlinks=False). Symlinked directories are recorded and not descended. Filenames and symlink directory entries are recorded; ordinary directories are not entries.
+Fields, fixed key order: path, kind, mode, size, sha256, target.
+path: POSIX relative to worktree root, sorted ascending by Python str order.
+kind: file, symlink, or other from lstat.
+mode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the raw symlink target string encoded UTF-8 for symlinks; null otherwise.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, json.dumps(separators=(',', ':'), ensure_ascii=False), one record per line, each line ending in \n, no extra trailing blank line beyond the last record newline.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the JSONL.
+Applies to docs-incidents.jsonl, out.jsonl and cache_forge.jsonl.
+The git-mode field collapses 0o400, 0o444, 0o600 and 0o644 regular files to 100644. It is not a read-only-mode proof.
+
+Permission inventory recipe
+File: docs-incidents-perms.jsonl.
+Walk: os.walk(docs/incidents, followlinks=False). Ordinary directories are recorded, including the walk root. Symlinked directories are recorded and not descended.
+Fields, fixed key order: path, kind, perm, size, sha256.
+path: POSIX relative to worktree root, sorted ascending. Directory paths have no trailing slash.
+kind: dir, file, symlink, or other from lstat.
+perm: oct(st_mode & 0o777), including 0o400, 0o444, 0o555, 0o600, 0o644 and 0o755.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null for directories and other.
+Serialization: same UTF-8 JSON Lines rules as the git-mode inventory.
+This permission inventory is the preservation encoding for sealed read-only modes. Do not chmod to make a later walk match.
+
+Other baselines
+show-ref.txt: exact UTF-8 bytes of GIT_MASTER=1 git show-ref, captured before staging.
+status-before.txt: exact porcelain status before staging, with --ignore-submodules=all.
+indexes.json: SHA-256 of each linked worktree index file from git rev-parse --git-path index, with worktree, branch, HEAD, size and mode. foreign is true for every worktree other than this one. Only this worktree index may change after the commit.
+extra.json: lib/crane and node_modules symlink target, inode and mode; phase15 archive size and SHA-256; inventory aggregate hashes; special index flags.
+Reproduce a walk by executing the same field rules against the same roots and comparing each JSONL record, not only the aggregate hash.
+New commit evidence under docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/commit/ is excluded from preservation comparison.

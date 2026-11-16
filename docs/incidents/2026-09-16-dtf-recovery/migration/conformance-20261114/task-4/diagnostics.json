@@ -1,0 +1,22 @@
+[
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+    "result": "No diagnostics found"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+    "result": "No diagnostics found"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+    "result": "No diagnostics found"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+    "result": "No diagnostics found"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedPricing.t.sol",
+    "result": "Timed out waiting for fresh diagnostics for /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedPricing.t.sol within 3000ms."
+  }
+]

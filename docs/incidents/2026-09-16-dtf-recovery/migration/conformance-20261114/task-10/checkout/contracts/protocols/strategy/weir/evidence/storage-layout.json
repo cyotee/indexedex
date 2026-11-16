@@ -1,0 +1,673 @@
+{
+  "compiler": {
+    "storage": [
+      {
+        "astId": 2958,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 3106,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_pendingOwner",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 3799,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_paused",
+        "offset": 20,
+        "slot": "1",
+        "type": "t_bool"
+      },
+      {
+        "astId": 3918,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_status",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 129,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "treasury",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_address"
+      },
+      {
+        "astId": 132,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "perfFeeBps",
+        "offset": 20,
+        "slot": "3",
+        "type": "t_uint16"
+      },
+      {
+        "astId": 138,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_vaults",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_userDefinedValueType(PoolId)7438,t_struct(Vault)87_storage)"
+      },
+      {
+        "astId": 145,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "sharesOf",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_userDefinedValueType(PoolId)7438,t_mapping(t_address,t_uint256))"
+      },
+      {
+        "astId": 149,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "allVaults",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_array(t_userDefinedValueType(PoolId)7438)dyn_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_userDefinedValueType(PoolId)7438)dyn_storage": {
+        "encoding": "dynamic_array",
+        "label": "PoolId[]",
+        "numberOfBytes": "32",
+        "base": "t_userDefinedValueType(PoolId)7438"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IHooks)4867": {
+        "encoding": "inplace",
+        "label": "contract IHooks",
+        "numberOfBytes": "20"
+      },
+      "t_int24": {
+        "encoding": "inplace",
+        "label": "int24",
+        "numberOfBytes": "3"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_userDefinedValueType(PoolId)7438,t_mapping(t_address,t_uint256))": {
+        "encoding": "mapping",
+        "key": "t_userDefinedValueType(PoolId)7438",
+        "label": "mapping(PoolId => mapping(address => uint256))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_uint256)"
+      },
+      "t_mapping(t_userDefinedValueType(PoolId)7438,t_struct(Vault)87_storage)": {
+        "encoding": "mapping",
+        "key": "t_userDefinedValueType(PoolId)7438",
+        "label": "mapping(PoolId => struct WeirVaults.Vault)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Vault)87_storage"
+      },
+      "t_struct(PoolKey)7488_storage": {
+        "encoding": "inplace",
+        "label": "struct PoolKey",
+        "numberOfBytes": "96",
+        "members": [
+          {
+            "astId": 7473,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "currency0",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_userDefinedValueType(Currency)7138"
+          },
+          {
+            "astId": 7477,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "currency1",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_userDefinedValueType(Currency)7138"
+          },
+          {
+            "astId": 7480,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "fee",
+            "offset": 20,
+            "slot": "1",
+            "type": "t_uint24"
+          },
+          {
+            "astId": 7483,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "tickSpacing",
+            "offset": 23,
+            "slot": "1",
+            "type": "t_int24"
+          },
+          {
+            "astId": 7487,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "hooks",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IHooks)4867"
+          }
+        ]
+      },
+      "t_struct(Vault)87_storage": {
+        "encoding": "inplace",
+        "label": "struct WeirVaults.Vault",
+        "numberOfBytes": "256",
+        "members": [
+          {
+            "astId": 70,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "key",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(PoolKey)7488_storage"
+          },
+          {
+            "astId": 72,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "tickLower",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_int24"
+          },
+          {
+            "astId": 74,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "tickUpper",
+            "offset": 3,
+            "slot": "3",
+            "type": "t_int24"
+          },
+          {
+            "astId": 76,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "liquidity",
+            "offset": 6,
+            "slot": "3",
+            "type": "t_uint128"
+          },
+          {
+            "astId": 78,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "totalShares",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 80,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "idle0",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 82,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "idle1",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 84,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "lastCompound",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint64"
+          },
+          {
+            "astId": 86,
+            "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+            "label": "exists",
+            "offset": 8,
+            "slot": "7",
+            "type": "t_bool"
+          }
+        ]
+      },
+      "t_uint128": {
+        "encoding": "inplace",
+        "label": "uint128",
+        "numberOfBytes": "16"
+      },
+      "t_uint16": {
+        "encoding": "inplace",
+        "label": "uint16",
+        "numberOfBytes": "2"
+      },
+      "t_uint24": {
+        "encoding": "inplace",
+        "label": "uint24",
+        "numberOfBytes": "3"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      },
+      "t_userDefinedValueType(Currency)7138": {
+        "encoding": "inplace",
+        "label": "Currency",
+        "numberOfBytes": "20"
+      },
+      "t_userDefinedValueType(PoolId)7438": {
+        "encoding": "inplace",
+        "label": "PoolId",
+        "numberOfBytes": "32"
+      }
+    }
+  },
+  "expected": [
+    {
+      "slot": 0,
+      "offset": 0,
+      "label": "Ownable._owner",
+      "type": "address"
+    },
+    {
+      "slot": 1,
+      "offset": 0,
+      "label": "Ownable2Step._pendingOwner",
+      "type": "address"
+    },
+    {
+      "slot": 1,
+      "offset": 20,
+      "label": "Pausable._paused",
+      "type": "bool"
+    },
+    {
+      "slot": 2,
+      "offset": 0,
+      "label": "ReentrancyGuard._status",
+      "type": "uint256"
+    },
+    {
+      "slot": 3,
+      "offset": 0,
+      "label": "treasury",
+      "type": "address"
+    },
+    {
+      "slot": 3,
+      "offset": 20,
+      "label": "perfFeeBps",
+      "type": "uint16"
+    },
+    {
+      "slot": 4,
+      "offset": 0,
+      "label": "_vaults",
+      "type": "mapping"
+    },
+    {
+      "slot": 5,
+      "offset": 0,
+      "label": "sharesOf",
+      "type": "mapping"
+    },
+    {
+      "slot": 6,
+      "offset": 0,
+      "label": "allVaults",
+      "type": "array"
+    }
+  ],
+  "expectedVaultMembers": [
+    {
+      "label": "key",
+      "slot": 0,
+      "offset": 0
+    },
+    {
+      "label": "tickLower",
+      "slot": 3,
+      "offset": 0
+    },
+    {
+      "label": "tickUpper",
+      "slot": 3,
+      "offset": 3
+    },
+    {
+      "label": "liquidity",
+      "slot": 3,
+      "offset": 6
+    },
+    {
+      "label": "totalShares",
+      "slot": 4,
+      "offset": 0
+    },
+    {
+      "label": "idle0",
+      "slot": 5,
+      "offset": 0
+    },
+    {
+      "label": "idle1",
+      "slot": 6,
+      "offset": 0
+    },
+    {
+      "label": "lastCompound",
+      "slot": 7,
+      "offset": 0
+    },
+    {
+      "label": "exists",
+      "slot": 7,
+      "offset": 8
+    }
+  ],
+  "compared": [
+    {
+      "expected": {
+        "slot": 0,
+        "offset": 0,
+        "label": "Ownable._owner",
+        "type": "address"
+      },
+      "compiler": {
+        "astId": 2958,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      }
+    },
+    {
+      "expected": {
+        "slot": 1,
+        "offset": 0,
+        "label": "Ownable2Step._pendingOwner",
+        "type": "address"
+      },
+      "compiler": {
+        "astId": 3106,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_pendingOwner",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      }
+    },
+    {
+      "expected": {
+        "slot": 1,
+        "offset": 20,
+        "label": "Pausable._paused",
+        "type": "bool"
+      },
+      "compiler": {
+        "astId": 3799,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_paused",
+        "offset": 20,
+        "slot": "1",
+        "type": "t_bool"
+      }
+    },
+    {
+      "expected": {
+        "slot": 2,
+        "offset": 0,
+        "label": "ReentrancyGuard._status",
+        "type": "uint256"
+      },
+      "compiler": {
+        "astId": 3918,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_status",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      }
+    },
+    {
+      "expected": {
+        "slot": 3,
+        "offset": 0,
+        "label": "treasury",
+        "type": "address"
+      },
+      "compiler": {
+        "astId": 129,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "treasury",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_address"
+      }
+    },
+    {
+      "expected": {
+        "slot": 3,
+        "offset": 20,
+        "label": "perfFeeBps",
+        "type": "uint16"
+      },
+      "compiler": {
+        "astId": 132,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "perfFeeBps",
+        "offset": 20,
+        "slot": "3",
+        "type": "t_uint16"
+      }
+    },
+    {
+      "expected": {
+        "slot": 4,
+        "offset": 0,
+        "label": "_vaults",
+        "type": "mapping"
+      },
+      "compiler": {
+        "astId": 138,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "_vaults",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_userDefinedValueType(PoolId)7438,t_struct(Vault)87_storage)"
+      }
+    },
+    {
+      "expected": {
+        "slot": 5,
+        "offset": 0,
+        "label": "sharesOf",
+        "type": "mapping"
+      },
+      "compiler": {
+        "astId": 145,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "sharesOf",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_userDefinedValueType(PoolId)7438,t_mapping(t_address,t_uint256))"
+      }
+    },
+    {
+      "expected": {
+        "slot": 6,
+        "offset": 0,
+        "label": "allVaults",
+        "type": "array"
+      },
+      "compiler": {
+        "astId": 149,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "allVaults",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_array(t_userDefinedValueType(PoolId)7438)dyn_storage"
+      }
+    },
+    {
+      "expected": {
+        "label": "key",
+        "slot": 0,
+        "offset": 0
+      },
+      "compiler": {
+        "astId": 70,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "key",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_struct(PoolKey)7488_storage"
+      }
+    },
+    {
+      "expected": {
+        "label": "tickLower",
+        "slot": 3,
+        "offset": 0
+      },
+      "compiler": {
+        "astId": 72,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "tickLower",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_int24"
+      }
+    },
+    {
+      "expected": {
+        "label": "tickUpper",
+        "slot": 3,
+        "offset": 3
+      },
+      "compiler": {
+        "astId": 74,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "tickUpper",
+        "offset": 3,
+        "slot": "3",
+        "type": "t_int24"
+      }
+    },
+    {
+      "expected": {
+        "label": "liquidity",
+        "slot": 3,
+        "offset": 6
+      },
+      "compiler": {
+        "astId": 76,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "liquidity",
+        "offset": 6,
+        "slot": "3",
+        "type": "t_uint128"
+      }
+    },
+    {
+      "expected": {
+        "label": "totalShares",
+        "slot": 4,
+        "offset": 0
+      },
+      "compiler": {
+        "astId": 78,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "totalShares",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      }
+    },
+    {
+      "expected": {
+        "label": "idle0",
+        "slot": 5,
+        "offset": 0
+      },
+      "compiler": {
+        "astId": 80,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "idle0",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_uint256"
+      }
+    },
+    {
+      "expected": {
+        "label": "idle1",
+        "slot": 6,
+        "offset": 0
+      },
+      "compiler": {
+        "astId": 82,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "idle1",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_uint256"
+      }
+    },
+    {
+      "expected": {
+        "label": "lastCompound",
+        "slot": 7,
+        "offset": 0
+      },
+      "compiler": {
+        "astId": 84,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "lastCompound",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_uint64"
+      }
+    },
+    {
+      "expected": {
+        "label": "exists",
+        "slot": 7,
+        "offset": 8
+      },
+      "compiler": {
+        "astId": 86,
+        "contract": "contracts/protocols/strategy/weir/WeirVaults.sol:WeirVaults",
+        "label": "exists",
+        "offset": 8,
+        "slot": "7",
+        "type": "t_bool"
+      }
+    }
+  ],
+  "immutableManagerIsNotASlot": true
+}

@@ -1,0 +1,530 @@
+{
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol": [
+    {
+      "line": 99,
+      "declaration": "function surrender(uint256 seed_) public {"
+    },
+    {
+      "line": 119,
+      "declaration": "function failedIssuance() public {"
+    },
+    {
+      "line": 135,
+      "declaration": "function transferAndReject() public {"
+    },
+    {
+      "line": 155,
+      "declaration": "function missingRecord() public {"
+    },
+    {
+      "line": 180,
+      "declaration": "function rejectNftControl(uint256 which_) public {"
+    },
+    {
+      "line": 207,
+      "declaration": "function takeNft(uint256 which_) public {"
+    },
+    {
+      "line": 229,
+      "declaration": "function _funded(uint256 id_, address wallet_, uint256 principal_) internal {"
+    },
+    {
+      "line": 237,
+      "declaration": "function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4) {"
+    },
+    {
+      "line": 250,
+      "declaration": "function economicState() public view returns (bytes32) {"
+    },
+    {
+      "line": 260,
+      "declaration": "function assertAll() public view {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol": [
+    {
+      "line": 25,
+      "declaration": "function redeemSy(uint256 seed_) public {"
+    },
+    {
+      "line": 40,
+      "declaration": "function claimWeighted() public {"
+    },
+    {
+      "line": 70,
+      "declaration": "function unstake(uint256 seed_) public {"
+    },
+    {
+      "line": 83,
+      "declaration": "function convert(uint256 seed_) public {"
+    },
+    {
+      "line": 96,
+      "declaration": "function donate(uint256 seed_) public {"
+    },
+    {
+      "line": 115,
+      "declaration": "function failedRecoveryBatch() public {"
+    },
+    {
+      "line": 131,
+      "declaration": "function changeOwner() public {"
+    },
+    {
+      "line": 146,
+      "declaration": "function _steps(Recovery.Stage stage_, uint256 id_, uint256 q_) private pure returns (Recovery.Step[] memory s_) {"
+    },
+    {
+      "line": 151,
+      "declaration": "function _run(Recovery.Stage stage_, uint256 id_, uint256 q_) private {"
+    },
+    {
+      "line": 160,
+      "declaration": "function beneficiaryBalances() public view returns (bytes32) {"
+    },
+    {
+      "line": 172,
+      "declaration": "function recoveryState() public view returns (bytes32) {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol": [
+    {
+      "line": 43,
+      "declaration": "function _input(uint256 i_) internal view returns (Migration.IndependentAllocationInput memory a_) {"
+    },
+    {
+      "line": 53,
+      "declaration": "function _configuration(uint256 i_) internal view returns (bytes32) {"
+    },
+    {
+      "line": 57,
+      "declaration": "function configure(uint256 actor_, uint256 amount_) public {"
+    },
+    {
+      "line": 72,
+      "declaration": "function issue(uint256 actor_) public {"
+    },
+    {
+      "line": 98,
+      "declaration": "function failedBatch() public {"
+    },
+    {
+      "line": 120,
+      "declaration": "function activate() public {"
+    },
+    {
+      "line": 130,
+      "declaration": "function transferOwner() public {"
+    },
+    {
+      "line": 148,
+      "declaration": "function transferBond(uint256 index_) public {"
+    },
+    {
+      "line": 163,
+      "declaration": "function claimPrincipal(uint256 index_) public {"
+    },
+    {
+      "line": 169,
+      "declaration": "function claimRewards(uint256 index_) public {"
+    },
+    {
+      "line": 183,
+      "declaration": "function paidBond(uint256 amount_) public {"
+    },
+    {
+      "line": 208,
+      "declaration": "function advanceTime(uint256 days_) public {"
+    },
+    {
+      "line": 216,
+      "declaration": "function rejectRoleRewards() public {"
+    },
+    {
+      "line": 238,
+      "declaration": "function market(uint256 amount_) public {"
+    },
+    {
+      "line": 259,
+      "declaration": "function providerRateChange(uint256 amount_) public {"
+    },
+    {
+      "line": 275,
+      "declaration": "function administrationSelectors() public pure returns (bytes4[14] memory) {"
+    },
+    {
+      "line": 285,
+      "declaration": "function assertAll() public view {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol": [
+    {
+      "line": 95,
+      "declaration": "function _recordPosition(uint256 id_, address holder_, uint256 principal_, bool cliff_) internal {"
+    },
+    {
+      "line": 103,
+      "declaration": "function _topUp() internal {"
+    },
+    {
+      "line": 111,
+      "declaration": "function _fundReward(uint256 reward_) internal {"
+    },
+    {
+      "line": 138,
+      "declaration": "function _positionClaim(uint256 index_, bool reward_) internal {"
+    },
+    {
+      "line": 175,
+      "declaration": "function assertAccounting() public view {"
+    },
+    {
+      "line": 211,
+      "declaration": "function positionCount() external view returns (uint256) { return positions.length; }"
+    },
+    {
+      "line": 214,
+      "declaration": "function positionStart(uint256 index_) external view returns (uint256) { return positions[index_].start; }"
+    },
+    {
+      "line": 217,
+      "declaration": "function isolatedBook(address address_) public view returns (bytes32) {"
+    },
+    {
+      "line": 225,
+      "declaration": "function _count(bytes4 selector_) internal {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol": [
+    {
+      "line": 11,
+      "declaration": "function capture(Migration m_, address package_, address registry_) internal view {"
+    },
+    {
+      "line": 25,
+      "declaration": "function _runtime(address subject_) private view {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol": [
+    {
+      "line": 22,
+      "declaration": "function setUp() public virtual override {"
+    }
+  ],
+  "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol": [
+    {
+      "line": 33,
+      "declaration": "function _freshBoundedParent() internal {"
+    },
+    {
+      "line": 45,
+      "declaration": "function setUp() public override {"
+    },
+    {
+      "line": 118,
+      "declaration": "function invariant_originalCreditCustodyFundingAndStagedRecovery() public view {"
+    },
+    {
+      "line": 122,
+      "declaration": "function afterInvariant() public {"
+    },
+    {
+      "line": 135,
+      "declaration": "function test_terminalCreditAndCompleteRecoveryWitness() public {"
+    },
+    {
+      "line": 149,
+      "declaration": "function test_laterSurrenderOwnCliffAndEveryPositionClaim() public {"
+    }
+  ],
+  "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol": [
+    {
+      "line": 10,
+      "declaration": "function invariant_nativeLedgerAndPermanentLifecycle() public view {"
+    },
+    {
+      "line": 14,
+      "declaration": "function afterInvariant() public {"
+    },
+    {
+      "line": 26,
+      "declaration": "function test_successfulWitnessCliffAndActivationSequence() public {"
+    },
+    {
+      "line": 46,
+      "declaration": "function test_allPositionsFreshCliffsAndLaterPaidGrowth() public {"
+    },
+    {
+      "line": 81,
+      "declaration": "function setUp() public override {"
+    },
+    {
+      "line": 93,
+      "declaration": "function invariant_laterFundingAndAllPositionClaims() public view {"
+    },
+    {
+      "line": 97,
+      "declaration": "function afterInvariant() public {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol": [
+    {
+      "line": 16,
+      "declaration": "function positionCount() external view returns (uint256) { return funded.length; }"
+    },
+    {
+      "line": 17,
+      "declaration": "function positionStart(uint256 i_) external view returns (uint256) { return funded[i_].start; }"
+    },
+    {
+      "line": 20,
+      "declaration": "function advanceTime(uint256 seed_) public {"
+    },
+    {
+      "line": 26,
+      "declaration": "function transferBond(uint256 seed_) public {"
+    },
+    {
+      "line": 42,
+      "declaration": "function claimPrincipal(uint256 seed_) public { _claim(seed_, false); }"
+    },
+    {
+      "line": 43,
+      "declaration": "function claimRewards(uint256 seed_) public { _claim(seed_, true); }"
+    },
+    {
+      "line": 45,
+      "declaration": "function _claim(uint256 seed_, bool rewards_) private {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol": [
+    {
+      "line": 89,
+      "declaration": "function source(uint256 i_) public pure returns (address) {"
+    },
+    {
+      "line": 96,
+      "declaration": "function surrenderSelector(uint256 i_) public pure returns (bytes4) {"
+    },
+    {
+      "line": 105,
+      "declaration": "function querySelector(uint256 i_) public pure returns (bytes4) {"
+    },
+    {
+      "line": 113,
+      "declaration": "function configSelector(uint256 i_) public pure returns (bytes4) {"
+    },
+    {
+      "line": 122,
+      "declaration": "function entitlementSelector(uint256 i_) public pure returns (bytes4) {"
+    },
+    {
+      "line": 130,
+      "declaration": "function invalidRecord(uint256 i_) public pure returns (bytes4) {"
+    },
+    {
+      "line": 139,
+      "declaration": "function wrongWallet(uint256 i_) public pure returns (bytes4) {"
+    },
+    {
+      "line": 148,
+      "declaration": "function quantityError(uint256 i_) public pure returns (bytes4) {"
+    },
+    {
+      "line": 159,
+      "declaration": "function units(uint256 i_, address wallet_) public view returns (uint256) {"
+    },
+    {
+      "line": 168,
+      "declaration": "function nativeMaximum(uint256 i_) public view returns (uint256) {"
+    },
+    {
+      "line": 175,
+      "declaration": "function eligibleUnits(uint256 i_, uint256 native_) public view returns (uint256) {"
+    },
+    {
+      "line": 181,
+      "declaration": "function row(uint256 i_) external view returns (Row memory) { return rows[i_]; }"
+    },
+    {
+      "line": 182,
+      "declaration": "function positionCount() external view returns (uint256) { return positions.length; }"
+    },
+    {
+      "line": 183,
+      "declaration": "function positionStart(uint256 i_) external view returns (uint256) { return positions[i_].start; }"
+    },
+    {
+      "line": 185,
+      "declaration": "function assertAll() public view {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol": [
+    {
+      "line": 27,
+      "declaration": "function initialize(uint256[9] calldata quantities_, uint256[2] calldata credits_) external {"
+    },
+    {
+      "line": 45,
+      "declaration": "function _input(uint256 i_, uint256 variant_) internal view returns (Migration.WeightedLiquidEntitlementInput memory) {"
+    },
+    {
+      "line": 51,
+      "declaration": "function _configure(uint256 i_, uint256 variant_) private {"
+    },
+    {
+      "line": 62,
+      "declaration": "function enrollmentWitness() external {"
+    },
+    {
+      "line": 86,
+      "declaration": "function surrender(uint256 index_, uint256 seed_) public {"
+    },
+    {
+      "line": 113,
+      "declaration": "function missingRecord(uint256 index_) public {"
+    },
+    {
+      "line": 121,
+      "declaration": "function rejectControls(uint256 index_) public {"
+    },
+    {
+      "line": 145,
+      "declaration": "function rejectExcess(uint256 index_) public {"
+    },
+    {
+      "line": 158,
+      "declaration": "function failedIssuance(uint256 index_) public {"
+    },
+    {
+      "line": 182,
+      "declaration": "function removedConfiguration(uint256 index_) public {"
+    },
+    {
+      "line": 194,
+      "declaration": "function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4) {"
+    },
+    {
+      "line": 204,
+      "declaration": "function _settleSource(uint256 i_) internal {"
+    },
+    {
+      "line": 207,
+      "declaration": "function _payload(uint256 i_, bytes32 origin_, uint256 n_, uint256 min_) internal view returns (bytes memory) {"
+    },
+    {
+      "line": 210,
+      "declaration": "function _invoke(bytes memory payload_) internal returns (bytes memory result_) {"
+    },
+    {
+      "line": 214,
+      "declaration": "function _reject(bytes memory payload_, bytes memory expected_) internal {"
+    },
+    {
+      "line": 219,
+      "declaration": "function economicState() public view returns (bytes32) {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol": [
+    {
+      "line": 17,
+      "declaration": "function previewRedeem(uint256 shares_) external view returns (uint256);"
+    },
+    {
+      "line": 29,
+      "declaration": "function changeEarlierRate(uint256 seed_) public {"
+    },
+    {
+      "line": 39,
+      "declaration": "function independentOriginWitness() external {"
+    },
+    {
+      "line": 81,
+      "declaration": "function takeEarlier(address wallet_, uint256 credit_) external {"
+    },
+    {
+      "line": 95,
+      "declaration": "function sellEarlier() public {"
+    },
+    {
+      "line": 122,
+      "declaration": "function redeemRecoveredSy(uint256 seed_) public {"
+    },
+    {
+      "line": 137,
+      "declaration": "function recover(uint256 selection_, uint256 seed_) public {"
+    },
+    {
+      "line": 169,
+      "declaration": "function failedRecoveryBatch() public {"
+    },
+    {
+      "line": 184,
+      "declaration": "function advanceTime(uint256 seed_) public {"
+    },
+    {
+      "line": 190,
+      "declaration": "function transferBond(uint256 seed_) public {"
+    },
+    {
+      "line": 203,
+      "declaration": "function claimPrincipal(uint256 seed_) public {"
+    },
+    {
+      "line": 222,
+      "declaration": "function changeOwner() public {"
+    },
+    {
+      "line": 238,
+      "declaration": "function _beneficiaries() private view returns (bytes32) {"
+    }
+  ],
+  "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol": [
+    {
+      "line": 39,
+      "declaration": "function setUp() public virtual override {"
+    },
+    {
+      "line": 97,
+      "declaration": "function _acquireLiquid() private {"
+    },
+    {
+      "line": 106,
+      "declaration": "function _acquireWeightedReceipt() private returns (uint256) {"
+    },
+    {
+      "line": 120,
+      "declaration": "function _acquireEarlierReceipt() private returns (uint256) {"
+    },
+    {
+      "line": 130,
+      "declaration": "function _acquireClaimVault() private returns (uint256 q_) {"
+    },
+    {
+      "line": 145,
+      "declaration": "function _acquireCustodySe() private returns (uint256 q_) {"
+    },
+    {
+      "line": 161,
+      "declaration": "function _acquireHeld(uint256 i_) private {"
+    },
+    {
+      "line": 180,
+      "declaration": "function _target() private {"
+    }
+  ],
+  "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol": [
+    {
+      "line": 12,
+      "declaration": "function invariant_exactOriginalUnitsCustodyAndFreshEscrow() public view { handler.assertAll(); }"
+    },
+    {
+      "line": 14,
+      "declaration": "function afterInvariant() public {"
+    },
+    {
+      "line": 35,
+      "declaration": "function test_allUnitsTerminalOrRetainedResidueAndLaterOwnCliffs() public {"
+    }
+  ]
+}

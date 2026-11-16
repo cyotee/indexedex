@@ -1,0 +1,36 @@
+{
+  "sourceScopeAndWhitespace": "status: completed exit_code: 0\nFINAL_OWNED_PORT_CLOSED",
+  "historicalReportChecks": [
+    {
+      "path": "diagnosis/report.md",
+      "unchanged": true,
+      "sha256": "1f685c1b0f74ac5c300c42df1963afb45bfe33544967765153bd37a29ed2a6dd"
+    },
+    {
+      "path": "design-verification/report.md",
+      "unchanged": true,
+      "sha256": "d970d92967d68b3a29705edaeb14d660115ededcae1fa4cb487183c4740faa6b"
+    },
+    {
+      "path": "implementation/report.md",
+      "unchanged": true,
+      "sha256": "56267d57bf367338c6a633a1f296986bb63fd5c5f289f0c960f26ae4e78409b9"
+    },
+    {
+      "path": "bond-design-verification/report.md",
+      "unchanged": true,
+      "sha256": "7b4fd160843df2d29df848e7b055c1686f65ceba695185846c4b0290d227f360"
+    },
+    {
+      "path": "verification/report.md",
+      "unchanged": true,
+      "sha256": "68d3682a4b1f4adc257acfef44589dcb0e0453b7e40931820e1473fbe02a2a1b"
+    }
+  ],
+  "preservedCandidateEvidenceUnchanged": true,
+  "sourceTrailingWhitespace": [],
+  "reportPath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/bond-correction/report.md",
+  "finalSpecs": 109,
+  "pinnedForks": 40,
+  "originalBoundedRegressionUnchanged": true
+}

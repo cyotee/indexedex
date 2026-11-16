@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && set -eo pipefail; { test -d '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'; test ! -L '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'; test -d '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; test ! -L '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; printf 'OWNED_TEMP_ROOTS\n'; du -sh '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; rm -rf -- '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; test ! -e '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp'; test ! -e '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture'; printf 'TASK3_OWNED_CLEANUP_COMPLETE\n'; } 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup.log'",
+  "exitCode": 0,
+  "monitor": "mon_5V351ZN09VTW3G5D",
+  "log": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup.log",
+    "bytes": 368,
+    "sha256": "38dff24c8f24d46f90a4a0d5a95db3651b0007983008cfe60ae86bffaac369be"
+  },
+  "roots": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/tmp",
+      "presentAfterCleanup": false
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-fixture",
+      "presentAfterCleanup": false
+    }
+  ],
+  "result": "removed only owned temporary resources",
+  "retained": [
+    "task-local out/",
+    "task-local cache_forge/",
+    "all task-3 evidence and baselines",
+    "inventory/delivery snapshots and integrity input descriptors"
+  ],
+  "backgroundState": "Every task-started monitor/process delivered completion before final handoff. No child agent, daemon, server, port or wallet session was created.",
+  "sharedCaches": "No shared cache deletion or copy-back. Initial HOME-derived cache isolation is not claimed; accepted final QA used explicit owned HOME.",
+  "primaryAndRetainedSources": "No primary project source or retained phase30 archive edit was performed. No blanket unrelated-file preservation audit is claimed."
+}

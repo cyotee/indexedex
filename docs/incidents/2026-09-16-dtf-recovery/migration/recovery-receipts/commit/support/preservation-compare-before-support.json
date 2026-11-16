@@ -1,0 +1,35 @@
+{
+  "capturedBeforeCommitDirectory": true,
+  "capturedBeforeStaging": true,
+  "evidence": {
+    "content": {
+      "ok": true,
+      "rows": 5842
+    },
+    "perms": {
+      "ok": true,
+      "rows": 5849
+    },
+    "dirs": {
+      "ok": true,
+      "rows": 7
+    }
+  },
+  "input": {
+    "content": {
+      "ok": true,
+      "rows": 30
+    },
+    "perms": {
+      "ok": true,
+      "rows": 35
+    },
+    "dirs": {
+      "ok": true,
+      "rows": 5
+    }
+  },
+  "sealMismatches": 0,
+  "frozenMismatches": 0,
+  "scopeMismatches": 0
+}

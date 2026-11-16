@@ -1,0 +1,1315 @@
+{
+  "rootRevisionChecks": [
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+      "actual": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-integration",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "6e27ecaa242c4acca132e3575a160514aad07b11",
+      "actual": "6e27ecaa242c4acca132e3575a160514aad07b11",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "actual": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+      "actual": "215c2bba6aa75e3e79bf68b7980b730927a85817",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+      "actual": "6d82859ee0b20804a4ced6e7a5ae395a49f5cdfd",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "actual": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+      "actual": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "3ec0912bafebf9c0aa66770a72f04501e5c11865",
+      "actual": "3ec0912bafebf9c0aa66770a72f04501e5c11865",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+      "actual": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "actual": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "actual": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "actual": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "actual": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+      "actual": "6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "actual": "5021e8d4a62bcbddc555f580ef98f8666d993aab",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "actual": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "actual": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "actual": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "actual": "3f577eeca049c1bd70a812d130941c8a38dd4781",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "2c2b3370ded30cae1662329025d4fb58f7197330",
+      "actual": "2c2b3370ded30cae1662329025d4fb58f7197330",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+      "actual": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+      "actual": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+      "actual": "a96f0fd26c1a1fdba35750cff74d866afa3a9796",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+      "actual": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+      "actual": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "15fd629375edeb361f6a39262795bdc66723ca3a",
+      "actual": "15fd629375edeb361f6a39262795bdc66723ca3a",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca",
+      "actual": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+      "actual": "137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "0856a5c56e5d09b81c669f59b613efef79133e19",
+      "actual": "0856a5c56e5d09b81c669f59b613efef79133e19",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "789fced820ed494d9651c598fb8f75c646d727a7",
+      "actual": "789fced820ed494d9651c598fb8f75c646d727a7",
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "-C",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source",
+        "rev-parse",
+        "HEAD"
+      ],
+      "expected": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+      "actual": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+      "exit": 0,
+      "stderr": ""
+    }
+  ],
+  "dispositionChecks": [
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/73f1e7319565c676/source-manifest.json",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/73f1e7319565c676/source-route-matrix.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/9b11db4739ba0bf2/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/d23a44ff98e50588/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/3dd14f2141ba1d09/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/08760aecc485d0f0/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/556aba706a3e3358/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1162aa46b13ff151/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/025fb901c119bc08/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/28441d0116c5bc1f/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/218cd5386d22e84e/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/0cbb7734fc78718d/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/d5f683cf4dfea633/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/0af2cef70a88059c/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/de5b932aefb0a91f/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/6c0fe74f0ab2b67e/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1825e77a2f98057e/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/6c2442714f09f06e/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/1fb0f6fd0c07ce8b/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/bc5698a56cf2c5bb/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/8a57a109c32d5342/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/66e0bd1e3e6ffd56/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    },
+    {
+      "source": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "preserved": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/retained-originals/b915f0248c81b8fa/operator-runbook.md",
+      "currentHashMatches": true,
+      "classification": "semantic",
+      "recorded": "semantic"
+    }
+  ],
+  "discoveredMigrationRoots": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/earlier-se-retained-supply-followup-20261113.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/indirect-claim-delegation-observation-20261113.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/operator-host-input-inventory.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase02-brief.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase03-brief.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase04-core.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase05-nft.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-bond-preparation-correction.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase11-same-wallet-sources.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-wallet-admission.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-weighted-liquid.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase19-earlier-liquid-source.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants.workflow.json"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase25-full-hermetic-commit-brief.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-commit-brief.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-brief.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-delegated-source-brief.md"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+      "evidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-brief.md"
+    }
+  ],
+  "extraCandidates": [],
+  "foreignOwnershipRows": [],
+  "producerRawResults": [
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/eof-inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/eof-delivery"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/eof-delivery.log",
+      "sha256": "72bbefaef4d203b09f7f503055e4644426916c188baaa295734c2752ea97b336",
+      "raw": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/destination/eof.txt: different retained bytes/type; unresolved divergence\nDELIVERY_FAILED entries=3 failures=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/destination"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/fixture-inventory.log",
+      "sha256": "d00f960526c1713a4a683601e8cf8c3b31b84b0597ca28cfdf3315d98910afd1",
+      "raw": "INVENTORY_COMPLETE source=1 destination=1 divergent=0\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/delivery"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/negative-delivery.log",
+      "sha256": "90130fea572868eb214215c54dd2233719c3096aa927943952bea765351b238d",
+      "raw": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/different.bin: different retained bytes/type; unresolved divergence\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/missing.bin: missing task-owned entry\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination/outward-link: unresolved symlink; no traversal or implicit exclusion\nDELIVERY_FAILED entries=1 failures=3\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/eof-inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/destination"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/eof-inventory.log",
+      "sha256": "fe3734caa05c1a0e70f4cda9f50099c3fbdd5a67970c3b24d2219ccd70d5cc04",
+      "raw": "INVENTORY_COMPLETE source=2 destination=3 divergent=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/negative-inventory.log",
+      "sha256": "fc1ef5b5b094f3bd8f94268baf65cf0b9c4bb485fe957dbdae30457a778923ef",
+      "raw": "INVENTORY_COMPLETE source=3 destination=1 divergent=3\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/malformed.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/malformed-output"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/malformed-input.log",
+      "sha256": "6cf21edc5a4a2e3cdad7129606b07cd6ab8404cd7b053424fe61de204f5f8912",
+      "raw": "34 |         return {\n35 |             success: false,\n36 |             get error() {\n37 |                 if (this._error)\n38 |                     return this._error;\n39 |                 const error = new ZodError(ctx.common.issues);\n                                   ^\nZodError: [\n  {\n    \"code\": \"custom\",\n    \"message\": \"absolute path required\",\n    \"path\": [\n      \"sourceRoot\"\n    ]\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"destinationRoot\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"source\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"destination\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"rows\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"object\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"recovery\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"supersessions\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"generatedAuditRecords\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"concurrentScope\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"qualification\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    issues: [\n  [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...]\n],\n  addIssue: [Function],\n addIssues: [Function],\n\n      at error (/Users/cyotee/Projects/indexedex/node_modules/zod/v3/types.js:39:31)\n      at parse (/Users/cyotee/Projects/indexedex/node_modules/zod/v3/types.js:114:15)\n      at delivery (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:205:29)\n\nBun v1.4.2 (macOS arm64)\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/delivery"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/fixture-delivery.log",
+      "sha256": "145cdafac22878a0d9134f4fb524bdfca08b760e56a280f69c7ea92b4916300b",
+      "raw": "DELIVERY_COMPLETE entries=2 failures=0\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/stale-delivery"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/stale-source.log",
+      "sha256": "9e2b912e61947d130e8e12f2f5cb5834b2e851bef3e92bff7c33d93e85f85051",
+      "raw": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture-r2/source/bytes.bin: stale source inventory; source bytes/type changed or missing\nDELIVERY_FAILED entries=2 failures=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/symlink-output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/outward-link",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/destination"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/symlink-root.log",
+      "sha256": "e2ee691e2f67f067492503c67b66a26ac06ab1a422d867cfcdb0caa0a8906965",
+      "raw": "70 | };\n71 | async function noSymlinkAncestors(file: string) {\n72 |   let cursor: string = sep;\n73 |   for (const component of resolve(file).split(sep).filter(Boolean)) {\n74 |     cursor = join(cursor, component);\n75 |     if ((await inspect(cursor))?.isSymbolicLink()) throw new InventoryError(cursor, \"symlink boundary\");\n                                                              ^\nerror: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/outward-link: symlink boundary\n entry: \"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative-r2/source/outward-link\",\n\n      at noSymlinkAncestors (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:75:58)\n      at async tree (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:83:9)\n      at async inventory (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:134:24)\n\nBun v1.4.2 (macOS arm64)\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/delivery"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/delivery.log",
+      "sha256": "ff110a945c40bfd6dd5c4308fe032817b87376e1f022c055ddd2d822901857f8",
+      "raw": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/destination/required.bin: missing task-owned entry\nDELIVERY_FAILED entries=1 failures=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/destination"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/misleading-success/inventory.log",
+      "sha256": "3cdb65a0a2b2f402bae18f98be147a17d65a625ee3987ca18a893da5783b4759",
+      "raw": "INVENTORY_COMPLETE source=1 destination=1 divergent=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/eof-inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/eof-delivery"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/eof-delivery.log",
+      "sha256": "382ae7a457697c7bc7a65a6e3507367b2d63395d9c16e9060eb4b80092f38994",
+      "raw": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/destination/eof.txt: different retained bytes/type; unresolved divergence\nDELIVERY_FAILED entries=3 failures=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/destination"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/fixture-inventory.log",
+      "sha256": "d00f960526c1713a4a683601e8cf8c3b31b84b0597ca28cfdf3315d98910afd1",
+      "raw": "INVENTORY_COMPLETE source=1 destination=1 divergent=0\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/delivery"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/negative-delivery.log",
+      "sha256": "e6742aa8aa315d71947c3798119c09bb097e0b958e92033c5a3fe968cee6b7a8",
+      "raw": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/destination/different.bin: different retained bytes/type; unresolved divergence\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/destination/missing.bin: missing task-owned entry\nDELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/destination/outward-link: unresolved symlink; no traversal or implicit exclusion\nDELIVERY_FAILED entries=1 failures=3\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/eof-inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/destination"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/eof-inventory.log",
+      "sha256": "fe3734caa05c1a0e70f4cda9f50099c3fbdd5a67970c3b24d2219ccd70d5cc04",
+      "raw": "INVENTORY_COMPLETE source=2 destination=3 divergent=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/source",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/destination"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/negative-inventory.log",
+      "sha256": "fc1ef5b5b094f3bd8f94268baf65cf0b9c4bb485fe957dbdae30457a778923ef",
+      "raw": "INVENTORY_COMPLETE source=3 destination=1 divergent=3\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/malformed.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/malformed-output"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/malformed-input.log",
+      "sha256": "82bab770fd58ab049afc7ffc518c28b790054688603ca9ac2d8f478e582017ea",
+      "raw": "34 |         return {\n35 |             success: false,\n36 |             get error() {\n37 |                 if (this._error)\n38 |                     return this._error;\n39 |                 const error = new ZodError(ctx.common.issues);\n                                   ^\nZodError: [\n  {\n    \"code\": \"custom\",\n    \"message\": \"absolute path required\",\n    \"path\": [\n      \"sourceRoot\"\n    ]\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"destinationRoot\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"source\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"destination\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"rows\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"object\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"recovery\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"supersessions\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"generatedAuditRecords\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"concurrentScope\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"qualification\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    issues: [\n  [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...]\n],\n  addIssue: [Function],\n addIssues: [Function],\n\n      at error (/Users/cyotee/Projects/indexedex/node_modules/zod/v3/types.js:39:31)\n      at parse (/Users/cyotee/Projects/indexedex/node_modules/zod/v3/types.js:114:15)\n      at delivery (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:206:29)\n\nBun v1.4.2 (macOS arm64)\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/delivery"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/fixture-delivery.log",
+      "sha256": "145cdafac22878a0d9134f4fb524bdfca08b760e56a280f69c7ea92b4916300b",
+      "raw": "DELIVERY_COMPLETE entries=2 failures=0\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "delivery",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/inventory/inventory.json",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/stale-delivery"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/stale-source.log",
+      "sha256": "b7ab91716215a9a03853a7bc5da8a00b90228a18e8566c18ec7d127c5815b5bc",
+      "raw": "DELIVERY_FAILURE /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-fixture/source/bytes.bin: stale source inventory; source bytes/type changed or missing\nDELIVERY_FAILED entries=2 failures=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/symlink-output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/source/outward-link",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/destination"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/symlink-root.log",
+      "sha256": "c7942a510ea7587407f798be20b5e5accdf9f9b90e8b3b703a26c2b58a5e108c",
+      "raw": "71 | };\n72 | async function noSymlinkAncestors(file: string) {\n73 |   let cursor: string = sep;\n74 |   for (const component of resolve(file).split(sep).filter(Boolean)) {\n75 |     cursor = join(cursor, component);\n76 |     if ((await inspect(cursor))?.isSymbolicLink()) throw new InventoryError(cursor, \"symlink boundary\");\n                                                              ^\nerror: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/source/outward-link: symlink boundary\n entry: \"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/source/outward-link\",\n\n      at noSymlinkAncestors (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:76:58)\n      at async tree (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:84:9)\n      at async inventory (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:135:24)\n\nBun v1.4.2 (macOS arm64)\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/baseline-rejected-inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration"
+      ],
+      "claimedExit": 1,
+      "sidecarExit": 1,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/baseline-inventory.log",
+      "sha256": "93753d42dbcd93fdf2d371bf378a99050f071c01a37538f0b795edbd766754f1",
+      "raw": "4 | import { save } from \"../../../../../scripts/recovery/dtf-migration/rehearsal-data.js\";\n5 | \n6 | const kind = process.argv[2];\n7 | const destination = process.argv[3];\n8 | if (!destination || ![\"hermetic\", \"fork\", \"operator\"].includes(kind ?? \"\")) {\n9 |   throw new Error(\"expected hermetic|fork|operator and a new evidence directory\");\n                ^\nerror: expected hermetic|fork|operator and a new evidence directory\n      at /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts:9:13\n\nBun v1.4.2 (macOS arm64)\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recover.ts"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/recovery.log",
+      "sha256": "9be6af27b44684d8e945995b2e5446d7391a3aed8e9cf31ac45f8990ccaedd27",
+      "raw": "RECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-integration/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-05/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERED_ROOT /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration\nRECOVERY_COMPLETE rows=72629 differences=27\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/fixture-qa.ts"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/fixture-qa.log",
+      "sha256": "b0fddef8af4631186449ab11aabfaad6ed6df7a0d1aeb0c6868355c9eb13af59",
+      "raw": "FIXTURE_QA_COMPLETE checks=7 commands=9\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/fixture-qa.ts",
+        "-r2"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/fixture-qa-r2.log",
+      "sha256": "b0fddef8af4631186449ab11aabfaad6ed6df7a0d1aeb0c6868355c9eb13af59",
+      "raw": "FIXTURE_QA_COMPLETE checks=7 commands=9\n"
+    },
+    {
+      "command": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/baseline-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": ""
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/inventory.log",
+      "sha256": "6f2a603ac6700ad7e3896e76e01b7aa2875792c4a9c92c59e89cd41267174a88",
+      "raw": "INVENTORY_COMPLETE source=13613 destination=72783 divergent=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/inventory-final.log",
+      "sha256": "8dfec44925fd26d1796d725fe92d050f5b7294ae8cf34b1cfc9d0b75b425526e",
+      "raw": "INVENTORY_COMPLETE source=13613 destination=72860 divergent=1\n"
+    },
+    {
+      "command": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/types-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": ""
+    },
+    {
+      "command": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recover.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/fixture-qa.ts"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/types-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "diff",
+        "--stat"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/diff-stat.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": ""
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=normal"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/status-final.log",
+      "sha256": "69fe90c3eedab6d8b52bcf13c846561cca0d061ec27fe9eee9e43d008d7316a5",
+      "raw": "?? .omo/drafts/dtf-migration-conformance-remediation-20261114.md\n?? .omo/drafts/hyperplan-dtf-conformance-insights-20261114.md\n?? .omo/drafts/hyperplan-weighted-migration-insights-20261114.md\n?? .omo/plans/dtf-migration-conformance-remediation-20261114.md\n?? .omo/ulw-execute/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-all-operator-tests-20261113.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-checks-20261113-types.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-checks-20261113-unit.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-final-checks-20261113-types.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-generic-final-checks-20261113-unit.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r1/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r2/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r3/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b1-source-local-20261113-r4/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/b2-public-exit-probe-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/core/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas-resumed/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/evidence/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-gate-review-20261113.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-hermetic-r2-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-operator-20261113/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-reward-operator-20261113.log.command.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-source-20261113.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/final-verification-recovered/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/full-hermetic/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/integration-increments/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/nft/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/operator/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/pricing/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/remaining-sy-rehearsal/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/verification.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/\n?? docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/\n"
+    },
+    {
+      "command": [
+        "env",
+        "GIT_MASTER=1",
+        "git",
+        "diff",
+        "--check"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": ""
+    },
+    {
+      "command": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recover.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/fixture-qa.ts"
+      ],
+      "claimedExit": 0,
+      "sidecarExit": 0,
+      "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification/types-auxiliary-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": ""
+    }
+  ],
+  "sourceBindingQualification": "Historical attempts retain their historical helper hashes. Final types-final.log sidecar has 87 source bindings, all independently matched before QA and rehashed after QA.",
+  "commands": {
+    "audit": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/audit.mjs' > '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/audit.log' 2>&1; code=$?; printf 'AUDIT_EXIT %s\\n' \"$code\"; exit \"$code\"",
+    "realDelivery": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts' delivery '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/delivery/inventory.json' '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/real-delivery'",
+    "stability": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && TMPDIR='/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2' BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 bun '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/verification-r2/stability.mjs'"
+  },
+  "exits": {
+    "audit": 0,
+    "realDelivery": 0,
+    "stability": 0
+  },
+  "realDeliveryRawOutput": "DELIVERY_COMPLETE entries=72904 failures=0\n",
+  "historicalArchiveHash": "a80cdb9cf9042725c6a4d9763956e701ce5b858a1972e075e2b1eae64398a58a",
+  "qaCodeMetrics": [
+    {
+      "file": "audit.mjs",
+      "pureLines": 136
+    },
+    {
+      "file": "stability.mjs",
+      "pureLines": 81
+    }
+  ],
+  "cleanup": {
+    "unlinkExit": 0,
+    "rmdirExit": 0,
+    "removed": "Only verification-r2/fixtures files and directories plus verification-r2/outside-fixture.txt and the owned outward link. apply_patch removed regular files. No producer fixtures or archives modified.",
+    "cache": "BUN_RUNTIME_TRANSPILER_CACHE_PATH=0; no shared cache or dependency mutation."
+  },
+  "diagnostics": {
+    "helpers": "Exact scoped TypeScript command passed with empty stdout/stderr.",
+    "evidenceScripts": "Executed successfully. Fresh LSP diagnostics for stability.mjs timed out; no diagnostic success is claimed.",
+    "install": "Not run."
+  }
+}

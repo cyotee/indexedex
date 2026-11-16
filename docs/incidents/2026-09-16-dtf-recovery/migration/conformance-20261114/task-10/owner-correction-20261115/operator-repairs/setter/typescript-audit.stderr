@@ -1,0 +1,1 @@
+error: cannot resolve "typescript" from the caller project (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1). Install it in the project being checked (e.g. `bun add -d typescript`) and re-run.

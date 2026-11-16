@@ -1,0 +1,2228 @@
+{
+  "run": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/cli-run/rehearsal-1794449113009",
+  "sourceLogs": [
+    {
+      "kind": "deposit",
+      "hash": "0x75a42abb8cf4bef4027d8c9c6d658d0ab8147c70f9e9d116631aad75a2a2dddf",
+      "sender": "0xd96Eb0f2e106eA7c0a939e9C460a17ace65FeCFF",
+      "owner": "0xd96Eb0f2e106eA7c0a939e9C460a17ace65FeCFF",
+      "assets": "3000",
+      "shares": "29999999967592"
+    },
+    {
+      "kind": "redeem",
+      "hash": "0x74f2fcbbe063ee839bb7b184d13d4797224fbfddb31876f1862e51993438d5da",
+      "owner": "0xd96Eb0f2e106eA7c0a939e9C460a17ace65FeCFF",
+      "receiver": "0xd96Eb0f2e106eA7c0a939e9C460a17ace65FeCFF",
+      "assets": "0",
+      "shares": "0"
+    },
+    {
+      "kind": "deposit",
+      "hash": "0x1f2cc5d96b1e88ae09f67464700d1ed75d47ba7b9a126984935309ac3aaff95e",
+      "sender": "0xd96Eb0f2e106eA7c0a939e9C460a17ace65FeCFF",
+      "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "assets": "1000",
+      "shares": "9999999989197"
+    },
+    {
+      "kind": "redeem",
+      "hash": "0xacaf2f5ed71aeb20a0865794bde66c49b49ea44fd6a07e7a4d4cb96c24403975",
+      "owner": "0xd96Eb0f2e106eA7c0a939e9C460a17ace65FeCFF",
+      "receiver": "0xd96Eb0f2e106eA7c0a939e9C460a17ace65FeCFF",
+      "assets": "2999",
+      "shares": "29999999967592"
+    }
+  ],
+  "surrenderArithmetic": {
+    "q0": "29999999967585",
+    "c0": "277328729",
+    "partial": {
+      "bondTokenId": "18",
+      "configurationId": "0x640c598cae940c9f6a0d9b57b4abe9035efd02c5ebd0916732c7dd31e6b61095",
+      "consumedUnits": "9999999989195",
+      "credit": "92442909",
+      "deliveredCredit": "92442909",
+      "duration": "7776000",
+      "gons": "39935000081969955757728240225564616284591342",
+      "kind": "surrender",
+      "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+      "quantity": "9999999989195",
+      "remainingCredit": "184885820",
+      "remainingUnits": "19999999978390",
+      "startTimestamp": "1825849012",
+      "transactionHash": "0x3acdf3bac9f13837af31e753146570ee669f61ab5d75321d678c425af9164721",
+      "wallet": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff"
+    },
+    "final": {
+      "bondTokenId": "19",
+      "configurationId": "0x640c598cae940c9f6a0d9b57b4abe9035efd02c5ebd0916732c7dd31e6b61095",
+      "consumedUnits": "29999999967585",
+      "credit": "184885820",
+      "deliveredCredit": "277328729",
+      "duration": "7776000",
+      "gons": "79784358935368957278151328676364117057057480",
+      "kind": "surrender",
+      "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+      "quantity": "19999999978390",
+      "remainingCredit": "0",
+      "remainingUnits": "0",
+      "startTimestamp": "1825935430",
+      "transactionHash": "0x9468e69e0f5f2e7a075c2cb77763f40339427a441fb415a0177ff82052c93c5b",
+      "wallet": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff"
+    }
+  },
+  "economics": [
+    {
+      "phase": "stage1",
+      "originalCredit": "277328729",
+      "original": {
+        "contributionsKnown": true,
+        "evidenceId": "0xdce3daa09408572706331f5896af72d1bdbb0204d7ab03d26cd0ca0f4484c3f8",
+        "originalDtf": "600000000000000000",
+        "originalEth": "0",
+        "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+        "originalUnits": "29999999967585",
+        "originalWallet": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+        "source": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0"
+      },
+      "observations": [
+        {
+          "caller": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+          "error": "MigrationSurrenderClosed",
+          "kind": "rejection",
+          "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+          "revertData": "0x84e1905b",
+          "status": "0x0",
+          "transactionHash": "0xd0dfb966d0dbc71ae91871918126afe3225b52810b00790582583dec666286c0"
+        },
+        {
+          "caller": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+          "error": "MigrationSurrenderClosed",
+          "kind": "rejection",
+          "originalId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revertData": "0x84e1905b",
+          "status": "0x0",
+          "transactionHash": "0x0ede1078a46b973de7dfa694c0845953d920f1ffef40b555ba581a1c8214e607"
+        }
+      ]
+    },
+    {
+      "phase": "partial",
+      "originalCredit": "277328729",
+      "original": {
+        "contributionsKnown": true,
+        "evidenceId": "0xdce3daa09408572706331f5896af72d1bdbb0204d7ab03d26cd0ca0f4484c3f8",
+        "originalDtf": "600000000000000000",
+        "originalEth": "0",
+        "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+        "originalUnits": "29999999967585",
+        "originalWallet": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+        "source": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0"
+      },
+      "observations": [
+        {
+          "caller": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+          "error": "InvalidClaimVaultEntitlement",
+          "kind": "rejection",
+          "originalId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revertData": "0x1a1630bbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "0x0",
+          "transactionHash": "0x6d9e06a5f06f74db1f0320d9323dfc2b4a54c85f81991106f99fd645c49779b1"
+        },
+        {
+          "caller": "0xc4c81d5c1851702d27d602aa8ff830a7689f17cc",
+          "error": "NotOriginalClaimVaultWallet",
+          "kind": "rejection",
+          "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+          "revertData": "0xd146998b000000000000000000000000c4c81d5c1851702d27d602aa8ff830a7689f17cc000000000000000000000000d96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+          "status": "0x0",
+          "transactionHash": "0xc46e8cf94119edfc3af63c7b725128683aa71987f07485a4033f7669dfe96e4c"
+        },
+        {
+          "bondTokenId": "18",
+          "configurationId": "0x640c598cae940c9f6a0d9b57b4abe9035efd02c5ebd0916732c7dd31e6b61095",
+          "consumedUnits": "9999999989195",
+          "credit": "92442909",
+          "deliveredCredit": "92442909",
+          "duration": "7776000",
+          "gons": "39935000081969955757728240225564616284591342",
+          "kind": "surrender",
+          "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+          "quantity": "9999999989195",
+          "remainingCredit": "184885820",
+          "remainingUnits": "19999999978390",
+          "startTimestamp": "1825849012",
+          "transactionHash": "0x3acdf3bac9f13837af31e753146570ee669f61ab5d75321d678c425af9164721",
+          "wallet": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "184885820",
+          "remainingUnits": "19999999978390",
+          "revertData": "0x23dbef4be11315e200000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0x11c3071ce712240fd2b6b728bf51b91151950f36ad3186b9fe1d83f7f9c9d12f"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "184885820",
+          "remainingUnits": "19999999978390",
+          "revertData": "0x23dbef4be11315e200000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0xe1bc9bbb1081813deb6be4aec34bc0e443d0803ce25c25e556348f445657e334"
+        },
+        {
+          "batchFailure": "0xa244bfec807aa08c744262026e79476903d7032b3e11e2d5b54ef994fca96460",
+          "convertTransaction": "0x15fe3b5792a0d63aa76cb7f14f66f873289564176796005c7b91f96d554a31aa",
+          "donationBudget": "0",
+          "donationTransaction": "0x775aae9e1d2cbe0a92c04e54b741c902e133011022a3b5ac8262696d726fe652",
+          "dtfDonated": "6884417060245978",
+          "dtfReceived": "6884417060245978",
+          "fixedDestination": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "kind": "redemption",
+          "laterFailure": "0xc1b845b2a5f98f93b3864d5bb85fff10a45f665a9d96da9cc4698aa011485b5b",
+          "minimumFailure": "0xd581eec70b23ca37d5d1cc36c6fbee152f93ae4315df040a957fcce64e2ea06c",
+          "receiptUnits": "1284",
+          "redeemTransaction": "0x79099904ea64604699d7d40f7930bed47b72293acf836dbd23a83301cd85d3f6",
+          "selfAllowance": "0",
+          "shares": "9999999989195",
+          "syReceived": "999",
+          "syRedeemTransaction": "0x93142bcf35299bbcd4fbcd1d8e461638952c5b75c80ca9ece37fa1ec2aadb576",
+          "unbookedShares": "7",
+          "unstakeTransaction": "0x3871a21cdaff262677c35829137d5dea42649cbf53ab6465a70a0f53c80a5319"
+        }
+      ]
+    },
+    {
+      "phase": "final",
+      "originalCredit": "277328729",
+      "original": {
+        "contributionsKnown": true,
+        "evidenceId": "0xdce3daa09408572706331f5896af72d1bdbb0204d7ab03d26cd0ca0f4484c3f8",
+        "originalDtf": "600000000000000000",
+        "originalEth": "0",
+        "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+        "originalUnits": "29999999967585",
+        "originalWallet": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+        "source": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0"
+      },
+      "observations": [
+        {
+          "caller": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+          "error": "InvalidClaimVaultEntitlement",
+          "kind": "rejection",
+          "originalId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revertData": "0x1a1630bbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "0x0",
+          "transactionHash": "0x5f82dab41da4292b4158214215345cc9b9aa0fcc6fa986c40bf0c8a3119c6894"
+        },
+        {
+          "caller": "0xc4c81d5c1851702d27d602aa8ff830a7689f17cc",
+          "error": "NotOriginalClaimVaultWallet",
+          "kind": "rejection",
+          "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+          "revertData": "0xd146998b000000000000000000000000c4c81d5c1851702d27d602aa8ff830a7689f17cc000000000000000000000000d96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+          "status": "0x0",
+          "transactionHash": "0x4f46d20d2d4d8ce61b4696de4e8f602f09c4fc04d00774a1bc67f8702ef37e52"
+        },
+        {
+          "bondTokenId": "19",
+          "configurationId": "0x640c598cae940c9f6a0d9b57b4abe9035efd02c5ebd0916732c7dd31e6b61095",
+          "consumedUnits": "29999999967585",
+          "credit": "184885820",
+          "deliveredCredit": "277328729",
+          "duration": "7776000",
+          "gons": "79784358935368957278151328676364117057057480",
+          "kind": "surrender",
+          "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+          "quantity": "19999999978390",
+          "remainingCredit": "0",
+          "remainingUnits": "0",
+          "startTimestamp": "1825935430",
+          "transactionHash": "0x9468e69e0f5f2e7a075c2cb77763f40339427a441fb415a0177ff82052c93c5b",
+          "wallet": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "0",
+          "remainingUnits": "0",
+          "revertData": "0x23dbef4be11315e200000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0x4714b3af0337e2a91f98e38f38294eb53f1e6aad87c0af1b27450f5e38da1571"
+        },
+        {
+          "kind": "removed-loader",
+          "remainingCredit": "0",
+          "remainingUnits": "0",
+          "revertData": "0x23dbef4be11315e200000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0x046e4326d7bac3edd67cd510b8bcaf2068196d82009a8bc9a294a1f170e22a09"
+        },
+        {
+          "batchFailure": "0xc8197895d9e29846e0a5d4dbd5d12c87d63755d5faeb8e3fa6bb48f3a7178a6a",
+          "convertTransaction": "0x96713db7fe696bb536fb78b87d44db8b0a908af632ac2f1c698a9a426f13af6d",
+          "donationBudget": "0",
+          "donationTransaction": "0x6e2ea4903809d4bf7556294cf5d71d5ea963e743382484307168d29c089c01e7",
+          "dtfDonated": "13795799259981483",
+          "dtfReceived": "13795799259981483",
+          "fixedDestination": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "kind": "redemption",
+          "laterFailure": "0xf601ab275591572a7c28b23012e8a2d6b3e685085dda7c9888cf0f35bc73ee76",
+          "minimumFailure": "0x53d716ddcbb952dda3d036ffcdb855a61563c054fe35ae4dd980be753ca94462",
+          "receiptUnits": "2573",
+          "redeemTransaction": "0xe072b7c28e980baf3dd52a6d13b6fa193a1253e67a133361aa25c9a8f6b662e2",
+          "selfAllowance": "0",
+          "shares": "19999999978390",
+          "syReceived": "2000",
+          "syRedeemTransaction": "0x39355c4cedba111b1eb2ec09a56f6884d3106f690e5f43f2d43da1d21e48ccf1",
+          "unbookedShares": "7",
+          "unstakeTransaction": "0x233798eca98ffcfaecf74fca3d6ea2cd743a94be2ac10a74da27aedd659b71b6"
+        },
+        {
+          "caller": "0xd96eb0f2e106ea7c0a939e9c460a17ace65fecff",
+          "error": "InvalidClaimVaultQuantity",
+          "kind": "rejection",
+          "originalId": "0x0cb0f24311a3faf27c25d53fcd6d88b90a1dde3168f8d6e0b8ca272012f7811f",
+          "revertData": "0x725ca22900000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
+          "status": "0x0",
+          "transactionHash": "0xaa65be7530562c6aa042057f1619a1ca9c070a52494f4c8de21fe1a1b4eb32a4"
+        }
+      ]
+    }
+  ],
+  "resumes": [
+    {
+      "events": [
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "900000000000000000000"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "900000000000000000000"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "100000000000000000000"
+          ]
+        }
+      ],
+      "hash": "0x5b17d1e14671ab202b71ae48b6ec5402f36588bcf1f107b37cea602beca44b02",
+      "journal": "journal-fund/1c7563c49a4f8e27c85fd6ee3654b52de99e0ce2787a4849c57fa7d422e708f4.receipt.json",
+      "label": "donation",
+      "method": "donateMigrationCapital",
+      "nonce": 2123,
+      "rawReceiptEqual": true,
+      "receiptFieldsCompared": [
+        "transactionHash",
+        "blockHash",
+        "blockNumber",
+        "from",
+        "to",
+        "status",
+        "transactionIndex",
+        "logs",
+        "blockTimestamp",
+        "contractAddress",
+        "cumulativeGasUsed",
+        "effectiveGasPrice",
+        "gasUsed",
+        "logsBloom",
+        "type"
+      ],
+      "selector": "0x3d9feccd",
+      "signatureVerified": true,
+      "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    },
+    {
+      "events": [
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "461"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "461"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+            "461"
+          ]
+        },
+        {
+          "address": "0xe4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "461"
+          ]
+        },
+        {
+          "address": "0x76d3b85be8cc91df1e66cfd3c81681795555e58c",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "3"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0xf7ceecae15f974a10ccaf0807bb1d161c6a50d7dfca59b874b8992fc1d12f521",
+            "3",
+            "461",
+            "1794111175"
+          ]
+        }
+      ],
+      "hash": "0x0a2f1e4bdd6d7a62ebec64feae5621e40e669f6d338fd86bd665ea92179ee7f6",
+      "journal": "journal-issue/e01eccc24de3341aad50c1feaf69402461fb504c09b943a42c61877134466dc0.receipt.json",
+      "label": "issuance",
+      "method": "issueIndependentAllocations",
+      "nonce": 2139,
+      "rawReceiptEqual": true,
+      "receiptFieldsCompared": [
+        "transactionHash",
+        "blockHash",
+        "blockNumber",
+        "from",
+        "to",
+        "status",
+        "transactionIndex",
+        "logs",
+        "blockTimestamp",
+        "contractAddress",
+        "cumulativeGasUsed",
+        "effectiveGasPrice",
+        "gasUsed",
+        "logsBloom",
+        "type"
+      ],
+      "selector": "0x787642e8",
+      "signatureVerified": true,
+      "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    },
+    {
+      "events": [
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1000000000000000000"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1199698338"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1000000000000000000"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1199698338"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "667617267199369022"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "100654853373769702"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "184417030688487"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "184232613657799489"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "457390220331"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "368336408"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "82231902080971840"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "15651167838170875"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "465583908"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "465583908"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+            "465583908"
+          ]
+        },
+        {
+          "address": "0xe4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "465583908"
+          ]
+        },
+        {
+          "address": "0x76d3b85be8cc91df1e66cfd3c81681795555e58c",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "6"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "84489332"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+            "84489332"
+          ]
+        },
+        {
+          "address": "0xe4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+            "10138719"
+          ]
+        },
+        {
+          "address": "0xe4f9a217b8eef5413fe8d5b2524aa975e26554f1",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1",
+            "23657012"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "457390220331"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "368336408"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "15651167838170875"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "82231902080971840"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "102790844652595"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "102688053807943286"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "352008721374192"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "67410748594326"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1468"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "3"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "67410748594326"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "352008721374192"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1468"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "3"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "172903064127"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "172730161062990"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "15732456831594"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "2989306698101"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "10103676050133"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1923028966147"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "2989306698101"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "15732456831594"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1923028966147"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "10103676050133"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "12667201564"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "12654534363233"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1157962539900"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "207973354416"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1153714960156"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "219586146274"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "207973354416"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1157962539900"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "219586146274"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1153714960156"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "1131705443"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "1130573738200"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "105510492182"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "11447438267"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "103140462981"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "19630686584"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "11447438267"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "105510492182"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "19630686584"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "103140462981"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "68314339"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "68246025377"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "28604750966"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "80"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "27141938879"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "5165915297"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "28604750966"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "80"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "5165915297"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "27141938879"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "1249907173"
+          ]
+        },
+        {
+          "address": "0x0cb961bab4df33c08f9797086ca1d6076efdf0ac",
+          "name": "Transfer",
+          "values": [
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "302175901"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "300231823"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "374163908"
+          ]
+        },
+        {
+          "address": "0x0cb961bab4df33c08f9797086ca1d6076efdf0ac",
+          "name": "Transfer",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "377719876"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "0x0000000000000000000000000000000000000000",
+            "1249907173"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "4519968943"
+          ]
+        },
+        {
+          "address": "0x0cb961bab4df33c08f9797086ca1d6076efdf0ac",
+          "name": "Transfer",
+          "values": [
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "5476153"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "5360276"
+          ]
+        },
+        {
+          "address": "0x0cb961bab4df33c08f9797086ca1d6076efdf0ac",
+          "name": "Transfer",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "64928"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "0x4BE0F7486edEc7dC19792C214bE5875dd5baB783",
+            "64510"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "41108958"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "41067849476"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1140474849"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "218688582"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "1131278287"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "215315783"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "218688582"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1140474849"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "215315783"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "1131278287"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0xc02C5970BC54EB54442C421C7DE43Eec12481C5D",
+            "806058"
+          ]
+        },
+        {
+          "address": "0x4d48367dfa6300587c45fb2c841c18bc1abfaaa8",
+          "name": "Transfer",
+          "values": [
+            "0x0000000000000000000000000000000000000000",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "805251950"
+          ]
+        },
+        {
+          "address": "0x2fc94ee2eb73135933252cbb56edc19fbc9eed5d",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "269575162"
+          ]
+        },
+        {
+          "address": "0x8096e26a26059c5240ab23d69157e121b28d326a",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "51691634"
+          ]
+        },
+        {
+          "address": "0x89dfde35af831de29ca2d1629ded21fc9c729440",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "269451927"
+          ]
+        },
+        {
+          "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+          "name": "Transfer",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xedf7D9f65B9E57D62A3c4278223170DB1308f5F0",
+            "51284687"
+          ]
+        },
+        {
+          "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+          "name": "MigrationOwnerFirstBondPurchased",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "6"
+          ]
+        }
+      ],
+      "hash": "0xf5259aa029db69dc5ad451d7650994eef9fcdc3fa7694516d6572e5278871497",
+      "journal": "journal-owner-bond/584d3a94550a0e2eea6ba5adafc7492217afc62c95ea148b984f2acab36191bc.receipt.json",
+      "label": "owner-bond",
+      "method": "bond",
+      "nonce": 2157,
+      "rawReceiptEqual": true,
+      "receiptFieldsCompared": [
+        "transactionHash",
+        "blockHash",
+        "blockNumber",
+        "from",
+        "to",
+        "status",
+        "transactionIndex",
+        "logs",
+        "blockTimestamp",
+        "contractAddress",
+        "cumulativeGasUsed",
+        "effectiveGasPrice",
+        "gasUsed",
+        "logsBloom",
+        "type"
+      ],
+      "selector": "0x7a3b1181",
+      "signatureVerified": true,
+      "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    }
+  ],
+  "activation": {
+    "expected": [
+      {
+        "name": "activateMigration",
+        "selector": "0xe9dc9e6d"
+      },
+      {
+        "name": "bootstrapMigrationReserve",
+        "selector": "0xec55c474"
+      },
+      {
+        "name": "captureMigrationSnapshot",
+        "selector": "0x161d9afc"
+      },
+      {
+        "name": "configureClaimVaultEntitlements",
+        "selector": "0xe11315e2"
+      },
+      {
+        "name": "configureDtfCustodySeEntitlements",
+        "selector": "0x9ade58a9"
+      },
+      {
+        "name": "configureIndependentAllocations",
+        "selector": "0xccff9894"
+      },
+      {
+        "name": "configureNftEntitlements",
+        "selector": "0x12076202"
+      },
+      {
+        "name": "configureWeightedLiquidEntitlements",
+        "selector": "0x256c417b"
+      },
+      {
+        "name": "configureWeightedSyEntitlements",
+        "selector": "0x74d1295f"
+      },
+      {
+        "name": "issueIndependentAllocations",
+        "selector": "0x787642e8"
+      }
+    ],
+    "hash": "0x0db12d952e4baa125adc0aca8bb4ae045079e9a5d3f41d57880a36bb3a2549d5",
+    "removed": [
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0xec55c474",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0x161d9afc",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0xccff9894",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0x787642e8",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0xe9dc9e6d",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0x12076202",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0x256c417b",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0x74d1295f",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0x9ade58a9",
+          "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2"
+        ]
+      },
+      {
+        "address": "0xedf7d9f65b9e57d62a3c4278223170db1308f5f0",
+        "name": "DiamondFunctionRemoved",
+        "values": [
+          "0xe11315e2",
+          "0x550fbE01f291cDd4672eDA3db21aaeC73d854DaE"
+        ]
+      }
+    ]
+  },
+  "deployment": {
+    "gasUsed": "44099850",
+    "hash": "0x164e3d434eb60cadf95d1e33baeb9b681fe482964e4fb05d29f8a2e8f448d533",
+    "limitation": "Actual current permissive-local receipt only; no gas experiment or target-feasibility acceptance"
+  },
+  "metadataSources": 628,
+  "runtimeCount": 20,
+  "artifacts": [
+    {
+      "actual": [
+        {
+          "address": "0xcd29f772d1c9dbdbafdb0e54504160a5a977c0e8",
+          "codeHash": "0x8cdf4067c5e0cba71bada9e29a9d9bb422f0d692143a38d7f84c23a329a0ddeb",
+          "spans": [
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 13274
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 13478
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 14202
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 14420
+            }
+          ]
+        }
+      ],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "producerRawEqual": true,
+      "runtimeBytes": 24408,
+      "sha256": "d6539f8323ec5fa42af815b2d7425111484ba9530d9e138c2bc62d7e3488b342",
+      "sourceEntries": 364,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol": "UniswapV4DetfMigrationFacet"
+      }
+    },
+    {
+      "actual": [
+        {
+          "address": "0x0a69db3b30b7cb13eaff786832e062d157630bb2",
+          "codeHash": "0xcd31bb79ee7122fa60e7a76fe78e74d3c8acfe5b6f4cea7ca9c0aca0656c680f",
+          "spans": [
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 13022
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 13211
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 13758
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 13973
+            },
+            {
+              "actual": "4fbb8dde4ddafb7db976223f1813b3c51f570e26",
+              "length": 20,
+              "start": 12527
+            },
+            {
+              "actual": "01d6d8a2ad5ac973d3e127d7d6b009825fc5cddd",
+              "length": 20,
+              "start": 12584
+            }
+          ]
+        }
+      ],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "producerRawEqual": true,
+      "runtimeBytes": 24310,
+      "sha256": "a9e60bd3ec2baf2260f3e89484c8bf6182ba29a226a0946c74dbc074c2ecd8cc",
+      "sourceEntries": 374,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol": "UniswapV4DetfMigrationAllocationFacet"
+      }
+    },
+    {
+      "actual": [
+        {
+          "address": "0x550fbe01f291cdd4672eda3db21aaec73d854dae",
+          "codeHash": "0x1baf3f6df765aa47c65c37e54fbe275a6a63cf3485d13b5089cd2c8fe3380fc3",
+          "spans": [
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 4823
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 5021
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 5725
+            },
+            {
+              "actual": "e5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+              "length": 20,
+              "start": 5940
+            }
+          ]
+        }
+      ],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol/UniswapV4DetfMigrationClaimVaultAllocationFacet.json",
+      "producerRawEqual": true,
+      "runtimeBytes": 7002,
+      "sha256": "1648afa18d3cbb3216530b23d0634fed900d898010bf53ef5a2676a3a6a77214",
+      "sourceEntries": 362,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol": "UniswapV4DetfMigrationClaimVaultAllocationFacet"
+      }
+    },
+    {
+      "actual": [
+        {
+          "address": "0x2f0c891b4e9a1c9833dd3f7814d1a76f684797e9",
+          "codeHash": "0xc0ca13b7e9d7eb488cd8a2eab5c0aa631feaac17f18d31181dcdcba2a51cef9d",
+          "spans": []
+        }
+      ],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "producerRawEqual": true,
+      "runtimeBytes": 17077,
+      "sha256": "75c8eff472a3f21ddef463b230f7fe211b414069319f4a5473b460be1c9c5d14",
+      "sourceEntries": 236,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol": "UniswapV4DetfMigrationRecoveryFacet"
+      }
+    },
+    {
+      "actual": [
+        {
+          "address": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+          "codeHash": "0x456e75e9fcc8f5cb73cda1f25b2ce1c8da101bb9e931b77108e83f4989206a2c",
+          "spans": [
+            {
+              "actual": "ecd6e45d2938a6d434a8a051201853706f84619e",
+              "length": 20,
+              "start": 9248
+            },
+            {
+              "actual": "5816d71d52c79844388bcbeadb13f26d52f031ee",
+              "length": 20,
+              "start": 9274
+            },
+            {
+              "actual": "d5641a39250e0a4bc648e490ac5efa8cc0fd8de0",
+              "length": 20,
+              "start": 9300
+            },
+            {
+              "actual": "4022629690473e24fc5cf641694a6feb8a4516af",
+              "length": 20,
+              "start": 9326
+            },
+            {
+              "actual": "ddd1e0cde46b5c90cd1b93b91352a7dc00c24009",
+              "length": 20,
+              "start": 9352
+            },
+            {
+              "actual": "b084b225aa4395b47cc7affd375b8f56fc26083f",
+              "length": 20,
+              "start": 9393
+            },
+            {
+              "actual": "046402db2a88b54da34dec0fdd0f9ae549b43cc0",
+              "length": 20,
+              "start": 9416
+            },
+            {
+              "actual": "77be20724af3f142979fc53af037b5738df07d3a",
+              "length": 20,
+              "start": 9442
+            },
+            {
+              "actual": "c6b7b81dfd59e97337bbca6f5e7d6b3baa772453",
+              "length": 20,
+              "start": 9468
+            },
+            {
+              "actual": "8f06dd279099a5d11ac504dec681c851f1abb223",
+              "length": 20,
+              "start": 9495
+            },
+            {
+              "actual": "aa66038ae217b246f5bf7537104342672e56fed8",
+              "length": 20,
+              "start": 3088
+            },
+            {
+              "actual": "aa66038ae217b246f5bf7537104342672e56fed8",
+              "length": 20,
+              "start": 1138
+            },
+            {
+              "actual": "aa66038ae217b246f5bf7537104342672e56fed8",
+              "length": 20,
+              "start": 2721
+            },
+            {
+              "actual": "75170821c0f42c76871925b807e4b5f1d3d18c23",
+              "length": 20,
+              "start": 3117
+            },
+            {
+              "actual": "758be53e89c90bb594bfd5963458910685bc67ee",
+              "length": 20,
+              "start": 3138
+            },
+            {
+              "actual": "8f50fb05f59191482d6ad32f5811730830359705",
+              "length": 20,
+              "start": 11935
+            },
+            {
+              "actual": "d1d56864ab234ff18cb7279362e50a2b7960bb59",
+              "length": 20,
+              "start": 9167
+            },
+            {
+              "actual": "cd29f772d1c9dbdbafdb0e54504160a5a977c0e8",
+              "length": 20,
+              "start": 9194
+            },
+            {
+              "actual": "0a69db3b30b7cb13eaff786832e062d157630bb2",
+              "length": 20,
+              "start": 9221
+            },
+            {
+              "actual": "2f0c891b4e9a1c9833dd3f7814d1a76f684797e9",
+              "length": 20,
+              "start": 9140
+            },
+            {
+              "actual": "550fbe01f291cdd4672eda3db21aaec73d854dae",
+              "length": 20,
+              "start": 9113
+            },
+            {
+              "actual": "918b025c58621b1e893685acbc110c02a737b34f",
+              "length": 20,
+              "start": 11759
+            },
+            {
+              "actual": "642fa76f2f7a6b97ec0822d67a785379a92df347",
+              "length": 20,
+              "start": 3019
+            }
+          ]
+        }
+      ],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "producerRawEqual": true,
+      "runtimeBytes": 16714,
+      "sha256": "7180327e041719a15d1d66723d84c4859e9cac1c10d8e13fe6e41c74ffcf20b7",
+      "sourceEntries": 216,
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol": "UniswapV4DetfMigrationDFPkg"
+      }
+    },
+    {
+      "actual": [],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/Phase_08_Stage_00_OperatorEnvironment.s.sol/Phase_08_Stage_00_OperatorEnvironment.json",
+      "producerRawEqual": true,
+      "runtimeBytes": 116500,
+      "sha256": "7d31393919f2495808b82827f9d463df6c213839486911a85f844a4b11d1473b",
+      "sourceEntries": 1090,
+      "target": {
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol": "Phase_08_Stage_00_OperatorEnvironment"
+      }
+    },
+    {
+      "actual": [],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json",
+      "producerRawEqual": true,
+      "runtimeBytes": 5753,
+      "sha256": "e865ef9f48b4e16adf6c01be3b17ac1470af49cfee5b246ec36a8c696b33f1e7",
+      "sourceEntries": 136,
+      "target": {
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol": "Phase_08_Stage_01_MigrationExecution"
+      }
+    },
+    {
+      "actual": [],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/MigrationClaimVault.t.sol/MigrationClaimVaultTest.json",
+      "producerRawEqual": false,
+      "runtimeBytes": 131099,
+      "sha256": "653c37018d0a1fa6bd7dc7ff5bf35c0ddda97a640d667c90208980f9ee6a5719",
+      "sourceEntries": 1114,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol": "MigrationClaimVaultTest"
+      }
+    },
+    {
+      "actual": [],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/MigrationRecoveryClaimVault.t.sol/MigrationRecoveryClaimVaultTest.json",
+      "producerRawEqual": false,
+      "runtimeBytes": 132523,
+      "sha256": "58591fc3e1c1d803ef9197e548db8405dbf33e71061dfc555646ccb628f041ed",
+      "sourceEntries": 1114,
+      "target": {
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol": "MigrationRecoveryClaimVaultTest"
+      }
+    },
+    {
+      "actual": [],
+      "compiler": {
+        "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      },
+      "path": "out/MigrationClaimVaultConfiguration.t.sol/MigrationClaimVaultConfigurationTest.json",
+      "producerRawEqual": false,
+      "runtimeBytes": 129356,
+      "sha256": "87d4f27163fa29d2e17526b9f2ed59a78da7d4dac714408cefaaf222655a93c9",
+      "sourceEntries": 1088,
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol": "MigrationClaimVaultConfigurationTest"
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "bytes": "243458",
+      "id": "migration-abi",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "699c365e130c72aa3f1cab47f1375c2cdf661592be16bcb814146fe7f47baa3a"
+    },
+    {
+      "bytes": "91871",
+      "id": "allocation-abi",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "418a054cb1335ff7119a395ef06543247493221ece91f3047bcec4fc297cd2b6"
+    },
+    {
+      "bytes": "54711",
+      "id": "recovery-abi",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "22e93a8f85bf04462b5dfe5b3da433a2953681fe644bf8a49e9aabf215dd3dce"
+    },
+    {
+      "bytes": "98419",
+      "id": "package-abi",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "45f13801fd568efe26fb8dc9c4eeb51f598810b9b2c5efb16e3ad0b8cfec36ab"
+    },
+    {
+      "bytes": "4139",
+      "id": "environment",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/cli-run/rehearsal-1794449113009/environment.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "69fbc14405d324e8bc95c3ef6b64d796b9bc5dfbde447aeb367cf0bafb2bf572"
+    },
+    {
+      "bytes": "7542",
+      "id": "dtf-custody-se-authority",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433"
+    },
+    {
+      "bytes": "1047506",
+      "id": "dtf-custody-source-archive",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7"
+    },
+    {
+      "bytes": "9896",
+      "id": "claim-vault-authority",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1"
+    },
+    {
+      "bytes": "31499",
+      "id": "claim-vault-acquisition",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/cli-run/rehearsal-1794449113009/claim-vault-acquisition.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "09d113fdeb61baf273ed06191091f5c787f81d8b528b691c2668afc5dccc381c"
+    },
+    {
+      "bytes": "48519",
+      "id": "dtf-custody-acquisition",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/cli-run/rehearsal-1794449113009/dtf-custody-se-acquisition.json",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "75e28c41700d1301411893308d3a85d48041728f04aee417ff7030d4187b319c"
+    },
+    {
+      "bytes": "7330",
+      "id": "weighted-sy-authority",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384"
+    },
+    {
+      "bytes": "8528",
+      "id": "owner-first-bond-authority",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92"
+    },
+    {
+      "bytes": "79305",
+      "id": "current-main-plan",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+    },
+    {
+      "bytes": "108022",
+      "id": "current-main-prd",
+      "independentlyMatched": true,
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "provenance": {
+        "authority": "synthetic-local rehearsal; not approved historical allocation",
+        "kind": "file"
+      },
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+    }
+  ],
+  "sourceSnapshots": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "sha256": "f24bba95d01d2d23abbd7ce4f310845428d4dacc143549e9a0bbd07adf79daca"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "sha256": "de3aeb7770dfeb0105c82cc05abf72fa9f9708e2ae944b897ca3a2bcc60ce9e4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "c3a0b7ef8fe7ef3b7e03934420dbeb16c2c1bcfadc709fe427c28cde2537be4e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "sha256": "68feefdf017cfe787974c064aec7d0d503afcbe6e628ceabf7ede2ac92d9faff"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "sha256": "334ae5220153279d0efec14358eaea3557c07e816abd681b238f29c61156832e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "644976c7dd465d0443014e8220f1d6e03fb4815c18763b1099eb0e5fb7edd13b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "sha256": "553403763bab57d05c4e2cc080adc92d2f07bda468a195159b3cc362ae57e99b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "sha256": "09ee47bdce9c8077ed61ecf6f55f05fe68ec9867917bb467a8933ce717a54faf"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "sha256": "efcd2d657ed9046b492d40ac525c87728426c22323549cab3da29ee42882e803"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "50101967d1ed2e58af8aa16878fc9a200dc17b705efe850f6ee0d154613f4c9f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "500228877c9795d53312295e506ddf6797eca1cee8d04a76f0d09f73f0116bb5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "sha256": "ae8272d6cfff98a48f6703a36b62d0ef833cf10e4e2a3c6d9a2629c5b70c3f35"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "sha256": "28587a9599b5f6452e3ccd9ed06e4a6de5fd0d292262e15f076619928a02eb5a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "sha256": "d5b634cd0857a564960d3c47da506f1ad049c8818091fe9b22f883e35bd94ab0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "sha256": "819dedd9d4d7ffd43d929874f68ae1d0edc5087f548cf8fc4f68944bea842778"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "da0b00ad6eb7fa87231b81a78a4f2c629cfafed447154460fb62f9c8fe8629f6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "c69bb69a7d4bba7da3d0fdcbdfecc10726513adac13867a5768b7744af9d03c3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "ac226d12173801a4a7b2bbceb6605cfb57706fd73d6acac67d725cba84c94ebc"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "0a12beba165e9865178daa28b7b5ee5bf8f57505f94e7950d240cc9a22615b9b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "c925a9a4abf05d94f918584de120687717193c729513b1e77902e646147e2681"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "4e643ff82038e6874566e4984f4da3fc775749bee9e4c1ee1552f244f9443f28"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "9acd4c99c4b024d955e2de5fabf3e4bc7830c298135f31fd781f153f09b82f11"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "e236e871a0ee97fa18b095f15d4e7c5acca5bb3e729aab4ec56849246e355b92"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "94f914f30ae0d7036b14c9e13300eda6822249d244b53a319436b3a2317a6660"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "9636a9d90f1151562277b82c1c0b96395be846c639067ad113251f47c318793f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "58579a42727a66702f6ccb3b00017ff3a8ec2ec91fc579540f0ea8cdc9c64008"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "sha256": "1d425490f4174715a38fee71911a8620253ea14c0a6813120faae8316c7baa1a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "sha256": "fa01045025033561fcc8b20b667e1b564ec3503edf5c074a1aa7a001ed1b0eae"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "7628e5ce5437bb53cfd1908f5b2f5fcc7e66ab755bdf907b54967e6f650e295a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "5af2ee76ab02c6a6da5b0c56cf434c21436d0ffd44f1bfa5f20673dd6b7bffea"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "b4fde89928479b81a588b56c58d6c6787a668853367f50766ce964e9a9640ab6"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "1cbb1505d150ca8c026568d7eb2d89a38eb0f374dfaa16af9617a9dab669f0df"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "eb610000ac822708abb23e7bc046f92a530ca1c9a3ee780c4d46d622724448f0"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "sha256": "cb8d4ec86caed7cfae6b0f99aeae7aeef978bedfb524423b800f6a0673000d78"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "sha256": "5f6c38945129eaaf66c7f03bd41dc4f91f7d19b7a43f70fc678c20bb53a20cbd"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "sha256": "59737e67042cf409e75fb23bd484b497ed7db879a805066a67c301d40103dc7f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+      "sha256": "50673dc339dad69e04755637445b4b6611ca37c364624b2d6b56700af5abf3c4"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "sha256": "b36207cc1c27db5b92c4b59e4ae36d3907aa0048e690b263ce306acce3b2678d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "sha256": "b61e7e3f551f1122eb4602cba0161b45d88ccc04f7ddaa6e5a4ce607dde0a8c5"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "sha256": "38898ae898c39125c9340f64edbd978c4b2ed9ad81ef7aa703b5145cfc8cbfd5"
+    }
+  ],
+  "signedCompletions": 47,
+  "fixtureReceipts": 249
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"grantRole","inputs":[{"name":"action","type":"bytes32","internalType":"bytes32"},{"name":"account","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"}],"id":1069}

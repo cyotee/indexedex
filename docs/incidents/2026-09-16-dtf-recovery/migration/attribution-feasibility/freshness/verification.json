@@ -1,0 +1,158 @@
+{
+  "git": [
+    {
+      "args": [
+        "diff",
+        "--exit-code",
+        "--ignore-submodules=all"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--check",
+        "--ignore-submodules=all"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+        "--ignore-submodules=all"
+      ],
+      "exit": 0,
+      "stdout": "?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/calculations.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/commands.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/contract.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/primary-sources.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/rpc.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/anchors/verification.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/contract.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/invocations.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/protocol-sources.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/runtime-evidence.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/witness.mjs\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "5021e8d4a62bcbddc555f580ef98f8666d993aab\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "stdout": "work/dtf-migration-phase-06-e2\n",
+      "stderr": ""
+    }
+  ],
+  "files": [
+    {
+      "filename": "runtime-evidence.json",
+      "bytes": 168084,
+      "sha256": "49f4a9837d4e36842be7fed26c00b2bd37faeea41961c81b6573825ca7a6caab"
+    },
+    {
+      "filename": "contract.md",
+      "bytes": 28592,
+      "sha256": "6aa5a871b6c92d8c67f5e06e34be815d30b20b06cade74d8cee83e70bb070fa6"
+    },
+    {
+      "filename": "invocations.md",
+      "bytes": 6418,
+      "sha256": "42f0f2905b441f129299774aa3d1e0d8d6242ad9102572ac798876d066bc5d3d"
+    },
+    {
+      "filename": "protocol-sources.json",
+      "bytes": 4523,
+      "sha256": "da96d043fdd8462301ae263f79367ad48102211179e8ccb3faef6843b115bf99"
+    },
+    {
+      "filename": "witness.mjs",
+      "bytes": 7692,
+      "sha256": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase06-e2-brief.md",
+      "bytes": 5991,
+      "sha256": "2913d1608ad4c0c2c8caaa6df996fb190334f7d007a589f4f64634e42a6b5f80",
+      "note": "Final read fingerprint; not represented as an earlier whole-tree baseline."
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "bytes": 66303,
+      "sha256": "56106853d29ddff963ff2b8a872bdfa1840ed95ed29806bdc10d728220b60be7",
+      "note": "Final read fingerprint; not represented as an earlier whole-tree baseline."
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-spec.md",
+      "bytes": 24888,
+      "sha256": "9c1455da9b99ba335b0c3fa9611425ed29ef796954a638dc80de21fdac27e487",
+      "note": "Final read fingerprint; not represented as an earlier whole-tree baseline."
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+      "bytes": 21559,
+      "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232",
+      "note": "Final read fingerprint; not represented as an earlier whole-tree baseline."
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/weighted/probe.sources.json",
+      "bytes": 6447942,
+      "sha256": "1ed706355a0238847dba503c6c4b590812f9fb3fbe583fff04d15d32de920f4d",
+      "note": "Final read fingerprint; not represented as an earlier whole-tree baseline."
+    }
+  ],
+  "cleanup": {
+    "runtimeAbsent": true,
+    "listenerCheck": {
+      "command": "lsof -nP -iTCP:18552 -sTCP:LISTEN",
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "monitorExit": 0,
+    "portRefused": true
+  },
+  "evidenceAssertions": [
+    "Persisted JSON parses; 105 raw RPC records retained.",
+    "Nine successful receipts; same-block indexes 0/1/2; branch parent identities agree.",
+    "Entire custody prestate touched-token storage maps equal.",
+    "Custody transaction hash equal; complete custody cumulative gas differs (125872/141072).",
+    "Both transaction and receipt roots differ.",
+    "All six call traces terminate after delegation to pinned ERC20 facet.",
+    "Synthetic proportional awards 500/833; source state restored."
+  ],
+  "syntax": {
+    "command": "env NODE_COMPILE_CACHE='' node --check /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/freshness/witness.mjs",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "lib/crane": "/Users/cyotee/Projects/indexedex/lib/crane",
+  "node_modules": "/Users/cyotee/Projects/indexedex/node_modules",
+  "limitations": [
+    "Biome LSP absent; no install authorized.",
+    "No production/test edits or Forge compilation.",
+    "Tracked diff checked excluding linked submodule; linked dependency trees not byte-hashed.",
+    "Peer anchors files appeared during this parallel lane; they were not edited or removed.",
+    "No full-history proof or atomic Migration/bond integration executed."
+  ],
+  "completed": "2026-11-11",
+  "verdict": "FINITE_OBSERVATION_CONTRACT_EVIDENCED",
+  "witnessExecution": {
+    "kind": "in-process resident Bun eval",
+    "completedNormally": true,
+    "sourceSha256": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa",
+    "pass": true,
+    "restored": true,
+    "publicTransactions": 0,
+    "localSuccessfulReceipts": 9
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/prove.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source",
+  "pid": 69961,
+  "startedAt": "2026-11-13T11:09:51.825Z",
+  "finishedAt": "2026-11-13T11:09:52.209Z",
+  "exit": 0,
+  "signal": null,
+  "sources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/common.mjs",
+      "bytes": 8781,
+      "sha256": "1fc57a223c889441a3e7bb9d1d7add6c5137a1abe63e96f736d3ec3a81647727"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/observe.mjs",
+      "bytes": 3192,
+      "sha256": "43a794291178c9dea4d0a32d58cb39f459cfe14af784a9f32ffaad1996411439"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/prove.mjs",
+      "bytes": 8754,
+      "sha256": "cb47e2f41c6553a62ca43f6d949f129cad910819e5b0b5704df836a02ee20c5d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/reconcile.mjs",
+      "bytes": 9274,
+      "sha256": "9f81defcf5091e7d19e8ef10def216f452a9c6056dbf8c6b8b2899b9d938afc1"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/record.mjs",
+      "bytes": 1628,
+      "sha256": "5cb752bc8259fd3096d44dd3fc3fc5440cf8afb1f5cd188ce3066edf0706bd1a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/rpc.mjs",
+      "bytes": 3861,
+      "sha256": "be301dbfb75ce87b58d78c180e3a16aea2d144237b0529e542113a85eeba25d6"
+    }
+  ],
+  "stdout": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/prove-01.stdout",
+    "bytes": 32835,
+    "sha256": "6f752e27a9a7dc8e1e6b9a2ee6b06abc4e7543e9f95ab7c5a1f1b2ad9fed6b80"
+  },
+  "stderr": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/prove-01.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

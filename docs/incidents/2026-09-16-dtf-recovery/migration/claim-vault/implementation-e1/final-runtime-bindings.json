@@ -1,0 +1,66 @@
+{
+  "completedRun": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639",
+  "fullTask9": "open",
+  "runtime": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/claim-vault-stage1.json",
+      "size": 1194,
+      "sha256": "4723650eb2bcdca43b4c1d314c3a6ce4895085eff515ecd8587cbebb6fb6536d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/claim-vault-partial.json",
+      "size": 138618,
+      "sha256": "94a4dd49eabe59b74852f31ae1df1da977c42c15ce5d7fb4452b0a421eed2db3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/claim-vault-final.json",
+      "size": 139012,
+      "sha256": "c88726481babaa72a7b32e8f2382b7cc410ad7ff1844765fcf2a9b054bc4b1e3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/claim-vault-acquisition.json",
+      "size": 31499,
+      "sha256": "563298ba2f1b5c860e7c8a70d9b3a6cb952eaf29d37aefd6182557c6ef749446"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/owner-bond-observation.json",
+      "size": 1886,
+      "sha256": "8334f5644369a1b7c9a17a06f53dd6100a9042dbbaa0b8204efc12f48f1fa0c7"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/donation-before-resume.json",
+      "size": 8346,
+      "sha256": "4ba0917ad8c64703d2b3f5bd44f41b0ead3afb98076caf9bc93f8bca07084643"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/donation-resumed.json",
+      "size": 1137,
+      "sha256": "735130f88ff84a78580f3c2084a78b9b4acfb608d68919f8a1690f626c2b4c1d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/issuance-before-resume.json",
+      "size": 13188,
+      "sha256": "3cf062c5ab54af310c059528a2937283e1751331b09d118fa982ce000ca2fbc2"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/issuance-resumed.json",
+      "size": 717,
+      "sha256": "251c82e1eed6412d056ad38dcb3038895fe891ec929f6ba5ce6fc1a2923d6c4b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/owner-bond-before-resume.json",
+      "size": 176066,
+      "sha256": "e7a0d381717b5abf9cba1897d05cad8af4c512a17d8bad2be7b07041bf23ae6e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/owner-bond-resumed.json",
+      "size": 1099,
+      "sha256": "3a596f62a31e41e23d08f1dea7e8765640df26bff25c7790f824ea86dcbcfcd1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/cli-run/rehearsal-1794448019639/cleanup.json",
+      "size": 209,
+      "sha256": "4ec20e55be0ae9b90713c4d5c693b0cb099eb86c3923bea0eb0f6656439a919d"
+    }
+  ]
+}

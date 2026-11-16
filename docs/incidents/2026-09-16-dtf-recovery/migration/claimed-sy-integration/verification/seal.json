@@ -1,0 +1,26 @@
+{
+  "schema": "claimed-sy-integration-verification-seal-v1",
+  "date": "2026-11-12",
+  "verdict": "needs-fix",
+  "scope": "Missing stopped producer candidate; admission failure only, no integrated runtime proof.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration",
+  "branch": "work/dtf-migration-phase-23-claimed-sy-integration",
+  "head": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+  "members": [
+    {
+      "path": "report.md",
+      "bytes": 6344,
+      "sha256": "cece39c3cf16befd94d403f3dedd14755be092a9f1e626a271dbbe56befdbdfb"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "seal.json",
+      "reason": "Self-reference excluded."
+    }
+  ],
+  "ownedRuntimeStarted": false,
+  "ownedCheckpointStarted": false,
+  "ownedSubscriptionStarted": false,
+  "ownedImpersonationStarted": false
+}

@@ -1,0 +1,370 @@
+{
+  "command": [
+    "bun",
+    "test",
+    "--timeout",
+    "15000",
+    "./scripts/recovery/dtf-migration/receipt.test.ts",
+    "./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+  "started": "2026-11-13T08:17:13.937Z",
+  "stopped": "2026-11-13T08:17:14.293Z",
+  "code": 0,
+  "signal": null,
+  "stdout": {
+    "bytes": 28,
+    "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+  },
+  "stderr": {
+    "bytes": 3815,
+    "sha256": "8df83321545254ea690e4a237500a0fbb2b662f2cfaeae8c472abdebcd2bf306"
+  },
+  "sourceIdentities": [
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "bytes": 6094,
+      "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "bytes": 1727,
+      "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "bytes": 8959,
+      "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "bytes": 7823,
+      "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "bytes": 6757,
+      "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "bytes": 6421,
+      "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "bytes": 11872,
+      "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "bytes": 7120,
+      "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "bytes": 5443,
+      "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "bytes": 8096,
+      "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "bytes": 9086,
+      "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "bytes": 3399,
+      "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "bytes": 4679,
+      "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "bytes": 16228,
+      "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 13484,
+      "sha256": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "bytes": 4667,
+      "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "bytes": 6468,
+      "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "bytes": 6464,
+      "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "bytes": 6781,
+      "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "bytes": 7950,
+      "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "bytes": 6023,
+      "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "bytes": 8426,
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "bytes": 5012,
+      "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "bytes": 31760,
+      "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "bytes": 6162,
+      "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "bytes": 11187,
+      "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "bytes": 6461,
+      "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "bytes": 4792,
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "bytes": 15613,
+      "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "bytes": 9883,
+      "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "bytes": 14484,
+      "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "bytes": 10087,
+      "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "bytes": 6200,
+      "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "bytes": 7095,
+      "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "bytes": 3491,
+      "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "bytes": 8235,
+      "sha256": "d2b735c258823f84b8239afd5ba2825357da82cf68fb2b80f9cd0319271ddefb"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "bytes": 5724,
+      "sha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "bytes": 9271,
+      "sha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "bytes": 10148,
+      "sha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "bytes": 6178,
+      "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "bytes": 8477,
+      "sha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "bytes": 9645,
+      "sha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "bytes": 10884,
+      "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "bytes": 4636,
+      "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "bytes": 6745,
+      "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "bytes": 20029,
+      "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "bytes": 9521,
+      "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "bytes": 16331,
+      "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "bytes": 25106,
+      "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "bytes": 19046,
+      "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "bytes": 6560,
+      "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "bytes": 12737,
+      "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "bytes": 13769,
+      "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "bytes": 9082,
+      "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "bytes": 11812,
+      "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "bytes": 8535,
+      "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "bytes": 4913,
+      "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "bytes": 2869,
+      "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "bytes": 7869,
+      "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "bytes": 4907,
+      "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "bytes": 18490,
+      "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "bytes": 6048,
+      "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "bytes": 15737,
+      "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "bytes": 22048,
+      "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "bytes": 27586,
+      "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "bytes": 9484,
+      "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "bytes": 4694,
+      "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "bytes": 6581,
+      "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "bytes": 12218,
+      "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb"
+    }
+  ]
+}

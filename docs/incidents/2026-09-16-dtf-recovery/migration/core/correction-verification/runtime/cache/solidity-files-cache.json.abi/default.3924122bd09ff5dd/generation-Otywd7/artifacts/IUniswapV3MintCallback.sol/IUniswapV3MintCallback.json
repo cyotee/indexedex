@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"uniswapV3MintCallback","inputs":[{"name":"amount0Owed","type":"uint256","internalType":"uint256"},{"name":"amount1Owed","type":"uint256","internalType":"uint256"},{"name":"data","type":"bytes","internalType":"bytes"}],"outputs":[],"stateMutability":"nonpayable"}],"id":2252}

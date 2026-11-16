@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IUniswapV4DetfMigration as Migration} from "./interfaces/IUniswapV4DetfMigration.sol";
-import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswapV4DetfMigrationSnapshot.sol";
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "./interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -22,7 +22,7 @@ library UniswapV4DetfMigrationRepo {
         address rewardToken;
         address expectedSynchronizer;
         uint256 bootstrapSelfMinted;
-        bytes frozen;
+        bytes weightedPricing;
         mapping(address => uint256) donationInventory;
         mapping(address => uint256) residualInventory;
         mapping(address => uint256) operationFloor;
@@ -73,10 +73,18 @@ library UniswapV4DetfMigrationRepo {
         return _layoutStruct(DEFAULT_SLOT);
     }
 
-    function _snapshot() internal view returns (Snapshot.Snapshot memory) {
-        bytes memory frozen_ = _layoutStruct().frozen;
-        if (frozen_.length == 0) revert Snapshot.SnapshotNotCaptured();
-        return abi.decode(frozen_, (Snapshot.Snapshot));
+    function _weightedPricing() internal view returns (Pricing.Book memory) {
+        bytes memory encoded_ = _layoutStruct().weightedPricing;
+        if (encoded_.length == 0) revert Pricing.MigrationWeightedPricingNotSet();
+        return abi.decode(encoded_, (Pricing.Book));
+    }
+
+    /// @notice Bind loading to the exact book prepared by the caller, even for an empty batch.
+    function _weightedPricing(bytes32 expectedBookId_) internal view returns (Pricing.Book memory book_) {
+        book_ = _weightedPricing();
+        if (expectedBookId_ != book_.id) {
+            revert Pricing.MigrationWeightedPricingBookMismatch(expectedBookId_, book_.id);
+        }
     }
 
     /// @dev Both parent issuance routes settle participation under the parent lock BEFORE this call.

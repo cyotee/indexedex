@@ -7,7 +7,7 @@ import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/IDETFStandardizedYield.sol";
 import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
-import {IUniswapV4DetfMigrationSnapshot} from "./IUniswapV4DetfMigrationSnapshot.sol";
+import {IUniswapV4DetfMigrationWeightedPricing} from "./IUniswapV4DetfMigrationWeightedPricing.sol";
 
 /// @notice R3 cross-child accounting handshake. The getter's ABI is uint8, not a new lock API.
 interface IUniswapV4DetfMigrationAccounting {
@@ -507,7 +507,6 @@ interface IUniswapV4DetfMigration is
     event MigrationCapitalConsumed(address indexed token, uint256 amount);
     event MigrationCapitalRetained(address indexed token, uint256 amount);
     event MigrationReserveBootstrapped(uint256 selfMinted, uint256 lpOut, uint256 timestamp);
-    event MigrationSnapshotCaptured(bytes32 indexed snapshotId, uint256 blockNumber);
     event IndependentAllocationConfigured(
         address indexed recipient, bytes32 indexed configurationId, bytes32 evidenceId, uint256 totalCredit
     );
@@ -667,11 +666,8 @@ interface IUniswapV4DetfMigration is
     /// @notice Once-wired RT child; receipt must reject RT caller admission while this is zero.
     function migrationSyRewardToken() external view returns (address);
 
-    /// @notice Package-bound source: this parent, its installed fee oracle, WETH and original DTF.
-    function migrationSnapshotSource() external view returns (IUniswapV4DetfMigrationSnapshot.Source memory);
-
-    /// @notice Complete immutable quote book. Reverts SnapshotNotCaptured before capture.
-    function migrationSnapshot() external view returns (IUniswapV4DetfMigrationSnapshot.Snapshot memory);
+    /// @notice Complete manual book. Reverts MigrationWeightedPricingNotSet before initialization.
+    function migrationWeightedPricing() external view returns (IUniswapV4DetfMigrationWeightedPricing.Book memory);
 
     /// @notice Quote one original entitlement's two components on the same unchanged book; mints nothing.
     function previewOriginalCredit(uint256 originalEth_, uint256 originalDtf_) external view returns (uint256);
@@ -701,56 +697,56 @@ interface IUniswapV4DetfMigration is
 }
 
 /// @notice Entire current-core administration surface; current-owner-only and removed at activation.
-/// @dev Only the two admitted NFT sources, weighted liquid, weighted SY and fixed DTF-custody SE; no attribution shortcut or price setter.
+/// @dev Only the two admitted NFT sources, weighted liquid, weighted SY and fixed DTF-custody SE; no attribution shortcut.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
     /// @notice Replace complete originals for exactly W-SW, E-P or W-P; removed at activation.
     function configureHeldSeLpEntitlements(
-        IUniswapV4DetfMigration.HeldSeLpEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.HeldSeLpEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Stage1 complete native18 ED original and known components; no issuance or conversion.
     function configureEarlierLiquidEntitlements(
-        IUniswapV4DetfMigration.EarlierLiquidEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.EarlierLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Stage1 complete original internal-share allocation; computes C0 on the frozen book.
     function configureEarlierReceiptEntitlements(
-        IUniswapV4DetfMigration.EarlierReceiptEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.EarlierReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Stage1 complete original-gon allocation and known original components; loading never issues.
     function configureWeightedReceiptEntitlements(
-        IUniswapV4DetfMigration.WeightedReceiptEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.WeightedReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Stage1 complete original-wallet direct-share configuration; no raw-weight authority or issuance.
     function configureClaimVaultEntitlements(
-        IUniswapV4DetfMigration.ClaimVaultEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.ClaimVaultEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Stage1 full replacement on the frozen book; static WY shares, no issuance or live valuation.
     function configureWeightedSyEntitlements(
-        IUniswapV4DetfMigration.WeightedSyEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.WeightedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Replace one fully prepared eligible remainder; floor(full original quote * eligible/original).
     /// @dev No prior Migration delivery, raw-weight pull, preparation credit or arbitrary credit input.
     /// Shares the ordinary SY original identity and remaining-credit ledger; removed at activation.
     function configureClaimedSyEntitlements(
-        IUniswapV4DetfMigration.ClaimedSyEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.ClaimedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Stage1 full replacement on the frozen book; native 28-decimal DTF-custody SE shares, no issuance or live valuation.
     function configureDtfCustodySeEntitlements(
-        IUniswapV4DetfMigration.DtfCustodySeEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.DtfCustodySeEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Stage 1 full replacement initializes Q/C from original units and the frozen quote without issuance.
     /// @dev Surrender is closed while this selector exists; execution facts are never cleared.
     function configureWeightedLiquidEntitlements(
-        IUniswapV4DetfMigration.WeightedLiquidEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.WeightedLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Replace complete original NFT inputs on the frozen book without minting.
     /// @dev Consumed identities and recovery custody cannot be reset or redirected by replacement.
-    function configureNftEntitlements(IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_) external;
+    function configureNftEntitlements(IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external;
     /// @notice Complete replacement with two originals: ETH first, DTF second, both nonzero.
     /// @dev Each is quoted separately and receives its own bond on the same atomic Stage2 surrender.
     /// The scalar entitlement credit is their sum; configureNftEntitlements retains one-bond semantics.
     function configureNftContributionEntitlements(
-        IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_
+        IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_, bytes32 expectedBookId_
     ) external;
     /// @notice Current owner selects/executes the one-time pooled genesis, not an arbitrary donor.
     /// @dev Exactly one representation per external hook leg; anchorIndex_ indexes legs_.
@@ -761,14 +757,15 @@ interface IUniswapV4DetfMigrationAllocation {
         uint256 minLpOut_, uint256 deadline_
     ) external returns (uint256 selfMinted_, uint256 lpOut_);
 
-    /// @notice Capture once from configured contracts after funding, without caller-provided prices.
-    function captureMigrationSnapshot() external returns (bytes32 snapshotId_);
+    /// @notice Current owner replaces complete manual inputs until activation, even after the paid purchase.
+    function setMigrationWeightedPricing(IUniswapV4DetfMigrationWeightedPricing.Inputs calldata next_)
+        external returns (bytes32 bookId_);
 
     /// @notice Whole-batch atomic full-value replacement, including already issued recipients.
     /// @dev Quote each distinct original separately using the frozen book, then sum. Identical
     /// payloads are idempotent. Configuration neither mints nor changes prior issuance/bonds.
     function configureIndependentAllocations(
-        IUniswapV4DetfMigration.IndependentAllocationInput[] calldata allocations_
+        IUniswapV4DetfMigration.IndependentAllocationInput[] calldata allocations_, bytes32 expectedBookId_
     ) external;
 
     /// @notice Issue each selected current configuration exactly once into a fresh funded cliff NFT.

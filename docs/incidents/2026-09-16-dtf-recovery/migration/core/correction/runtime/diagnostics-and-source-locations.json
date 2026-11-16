@@ -1,0 +1,165 @@
+{
+  "checkedAt": "2026-11-10T23:34:45.909Z",
+  "diagnostics": [
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "filePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol",
+      "result": "No diagnostics found"
+    }
+  ],
+  "sourceLocations": {
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol": [
+      {
+        "line": 39,
+        "text": "function _capitalState() internal view returns (bytes32 state_) {"
+      },
+      {
+        "line": 57,
+        "text": "function _reject(uint256 a_, uint256 b_, uint256 anchor_) internal {"
+      },
+      {
+        "line": 68,
+        "text": "function _accept(uint256 a_, uint256 b_, uint256 anchor_) internal {"
+      },
+      {
+        "line": 107,
+        "text": "function test_F1_historicalUnderfundingRejectsAtomically() public {"
+      },
+      {
+        "line": 112,
+        "text": "function test_F1_oneNativeUnitBelowMinimumRejectsAtomically() public {"
+      },
+      {
+        "line": 117,
+        "text": "function test_F1_alternateAnchorRejectsUnderfundedFirstLeg() public {"
+      },
+      {
+        "line": 122,
+        "text": "function test_F1_equalityAcceptsCanonicalMinimum() public { _accept(100 ether, 100 ether, 0); }"
+      },
+      {
+        "line": 123,
+        "text": "function test_F1_oneUnitExcessRemainsValidDonation() public { _accept(100 ether, 100 ether + 1, 0); }"
+      },
+      {
+        "line": 124,
+        "text": "function test_F1_alternateAnchorEqualityAccepts() public { _accept(100 ether, 100 ether, 1); }"
+      },
+      {
+        "line": 126,
+        "text": "function test_F1_shareAnchorUsesPreconversionPairEquivalent() public {"
+      },
+      {
+        "line": 164,
+        "text": "function _seedMigrationPool(IUniswapV3Pool pool_, bytes32 salt_) internal override {"
+      },
+      {
+        "line": 177,
+        "text": "function test_F1_sixDecimalMinimumRejectsOneNativeUnitShort() public {"
+      },
+      {
+        "line": 183,
+        "text": "function test_F1_sixDecimalMinimumEqualityAccepts() public { _accept(100 ether, 100e6, 0); }"
+      }
+    ],
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol": [
+      {
+        "line": 35,
+        "text": "deployCodeTo(\"lib/crane/contracts/protocols/utils/permit2/BetterPermit2.sol:BetterPermit2\", CANONICAL);"
+      },
+      {
+        "line": 53,
+        "text": "function test_V1_canonicalRuntimeAndDomainIdentity() public {"
+      },
+      {
+        "line": 83,
+        "text": "function _permitState(address account_) internal view returns (bytes32) {"
+      },
+      {
+        "line": 94,
+        "text": "function _positive(bool signature_, uint256 nonce_) internal {"
+      },
+      {
+        "line": 141,
+        "text": "function test_V1_allowanceDonationPaysOnlyReserve() public { _positive(false, 0); }"
+      },
+      {
+        "line": 142,
+        "text": "function test_V1_signatureDonationPaysOnlyReserve() public { _positive(true, 7); }"
+      },
+      {
+        "line": 144,
+        "text": "function test_V1_allowanceDeadlineFailureRollsBack() public {"
+      },
+      {
+        "line": 152,
+        "text": "function test_V1_allowanceExpiryWithValidRouteRollsBack() public {"
+      },
+      {
+        "line": 162,
+        "text": "function test_V1_allowanceWrongCallerCannotSpendDonorApproval() public {"
+      },
+      {
+        "line": 178,
+        "text": "function test_V1_allowanceDownstreamMinimumRestoresApprovalAndReserve() public {"
+      },
+      {
+        "line": 197,
+        "text": "function test_V1_signatureExpiredWithValidOuterDeadlineRollsBack() public {"
+      },
+      {
+        "line": 201,
+        "text": "function test_V1_signatureWrongSpenderRollsBackNonce() public {"
+      },
+      {
+        "line": 205,
+        "text": "function test_V1_signatureWrongDomainRollsBackNonce() public {"
+      },
+      {
+        "line": 212,
+        "text": "function test_V1_signatureWrongCallerRollsBackBothAccounts() public {"
+      },
+      {
+        "line": 220,
+        "text": "function test_V1_signatureReplayPreservesCommittedFirstDonation() public {"
+      },
+      {
+        "line": 225,
+        "text": "function test_V1_signatureDownstreamMinimumRestoresNonceAndReserve() public {"
+      },
+      {
+        "line": 235,
+        "text": "function _callbackRollback(bool signature_) internal {"
+      },
+      {
+        "line": 249,
+        "text": "function test_V1_allowanceCallbackFailureRollsBackEverything() public { _callbackRollback(false); }"
+      },
+      {
+        "line": 250,
+        "text": "function test_V1_signatureCallbackFailureRestoresNonce() public { _callbackRollback(true); }"
+      }
+    ],
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2Callback.sol": [
+      {
+        "line": 15,
+        "text": "function transferFrom(address from_, address to_, uint256 amount_) external override returns (bool) {"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1204 @@
+[
+  {
+    "name": "specs",
+    "passes": [
+      {
+        "line": 5149,
+        "text": "[PASS] test_F1_sixDecimalMinimumEqualityAccepts() (gas: 2915641)"
+      },
+      {
+        "line": 5150,
+        "text": "[PASS] test_F1_sixDecimalMinimumRejectsOneNativeUnitShort() (gas: 4447759)"
+      },
+      {
+        "line": 5154,
+        "text": "[PASS] test_MigrationSnapshot_UnknownReceiptModelFailsCaptureAtomically() (gas: 53614631)"
+      },
+      {
+        "line": 5158,
+        "text": "[PASS] test_balancesAndDonationBudgetsDoNotAuthorizeRecoverySpending() (gas: 6795213)"
+      },
+      {
+        "line": 5159,
+        "text": "[PASS] test_fullAccountGonDebitRejectsUnbookedFractionButAllowsSmallerExit() (gas: 4190)"
+      },
+      {
+        "line": 5160,
+        "text": "[PASS] test_invalidStageFieldsRejectWithoutCallingLegacy() (gas: 191290)"
+      },
+      {
+        "line": 5161,
+        "text": "[PASS] test_recoveryDeclarationAndProxySurviveActivation() (gas: 30004366)"
+      },
+      {
+        "line": 5217,
+        "text": "[PASS] test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection() (gas: 23313418)"
+      },
+      {
+        "line": 5218,
+        "text": "[PASS] test_canonicalCollisionWithWdAndEarlierNftSurvivesWalletCorrection() (gas: 6689948)"
+      },
+      {
+        "line": 5219,
+        "text": "[PASS] test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration() (gas: 1636636)"
+      },
+      {
+        "line": 5220,
+        "text": "[PASS] test_missingOriginalInputsAndWrongAuthorityRejectAtomically() (gas: 3544801)"
+      },
+      {
+        "line": 5221,
+        "text": "[PASS] test_sameCanonicalOriginCannotBeNftOrIndependentInEitherDirection() (gas: 6919337)"
+      },
+      {
+        "line": 5222,
+        "text": "[PASS] test_unconsumedReplacementFreezesQuoteAndMintsNothing() (gas: 2969873)"
+      },
+      {
+        "line": 5226,
+        "text": "[PASS] test_contractOwnerPaymentCallbacksCannotPublishOrBypassAndShortReceiptRollsBack() (gas: 30302750)"
+      },
+      {
+        "line": 5230,
+        "text": "[PASS] test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection() (gas: 23311689)"
+      },
+      {
+        "line": 5231,
+        "text": "[PASS] test_canonicalCollisionWithWdAndEarlierNftSurvivesWalletCorrection() (gas: 6691652)"
+      },
+      {
+        "line": 5232,
+        "text": "[PASS] test_canonicalOriginCannotBeDtfCustodySeInEitherDirection() (gas: 2625387)"
+      },
+      {
+        "line": 5233,
+        "text": "[PASS] test_canonicalOriginCannotBeSyOrBackingAliasInEitherDirection() (gas: 2622157)"
+      },
+      {
+        "line": 5234,
+        "text": "[PASS] test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration() (gas: 1632626)"
+      },
+      {
+        "line": 5235,
+        "text": "[PASS] test_missingOriginalInputsAndWrongAuthorityRejectAtomically() (gas: 3536473)"
+      },
+      {
+        "line": 5236,
+        "text": "[PASS] test_sameCanonicalOriginCannotBeNftOrIndependentInEitherDirection() (gas: 6924279)"
+      },
+      {
+        "line": 5237,
+        "text": "[PASS] test_unconsumedReplacementFreezesQuoteAndMintsNothing() (gas: 2963465)"
+      },
+      {
+        "line": 5241,
+        "text": "[PASS] test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection() (gas: 23313692)"
+      },
+      {
+        "line": 5242,
+        "text": "[PASS] test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration() (gas: 1636332)"
+      },
+      {
+        "line": 5243,
+        "text": "[PASS] test_missingOriginalInputsAndWrongAuthorityRejectAtomically() (gas: 3544333)"
+      },
+      {
+        "line": 5244,
+        "text": "[PASS] test_sameCanonicalOriginCannotBeNftOrIndependentInEitherDirection() (gas: 6914672)"
+      },
+      {
+        "line": 5245,
+        "text": "[PASS] test_unconsumedReplacementFreezesQuoteAndMintsNothing() (gas: 2969541)"
+      },
+      {
+        "line": 5249,
+        "text": "[PASS] test_fixedSourceAndCurrentOwnerBoundaries() (gas: 1027862)"
+      },
+      {
+        "line": 5250,
+        "text": "[PASS] test_fullReplacementIsIdempotentAndDoesNotMint() (gas: 2667620)"
+      },
+      {
+        "line": 5251,
+        "text": "[PASS] test_knownOriginalCollisionRejectsIndependentAfterNftConfiguration() (gas: 1839761)"
+      },
+      {
+        "line": 5252,
+        "text": "[PASS] test_knownOriginalCollisionRejectsNftBeforeAndAfterIndependentIssuance() (gas: 3857502)"
+      },
+      {
+        "line": 5253,
+        "text": "[PASS] test_retainedDeclarationIncludesEveryProductSelector() (gas: 24412219)"
+      },
+      {
+        "line": 5328,
+        "text": "[PASS] test_sameNumericIdentityHasDistinctSourceAndDomain() (gas: 2629555)"
+      },
+      {
+        "line": 5329,
+        "text": "[PASS] test_unknownComponentsAndReservedUnitsRejectWholeBatch() (gas: 2545122)"
+      },
+      {
+        "line": 5330,
+        "text": "[PASS] test_unsolicitedAndReplayedReceiverCallsRejectBeforeAndAfterActivation() (gas: 22417061)"
+      },
+      {
+        "line": 5331,
+        "text": "[PASS] test_zeroWalletRejectsBothSourcesAndWalletCorrectionPreservesEconomicOrigin() (gas: 6227110)"
+      },
+      {
+        "line": 5335,
+        "text": "[PASS] test_currentOwnerTokenCallbackCannotEnterRecoveryDuringDonation() (gas: 50170481)"
+      },
+      {
+        "line": 5339,
+        "text": "[PASS] test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection() (gas: 23314478)"
+      },
+      {
+        "line": 5340,
+        "text": "[PASS] test_canonicalCollisionWithWdAndEarlierNftSurvivesWalletCorrection() (gas: 6695226)"
+      },
+      {
+        "line": 5341,
+        "text": "[PASS] test_canonicalOriginCannotBeSyOrBackingAliasInEitherDirection() (gas: 2622950)"
+      },
+      {
+        "line": 5342,
+        "text": "[PASS] test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration() (gas: 1639002)"
+      },
+      {
+        "line": 5343,
+        "text": "[PASS] test_missingOriginalInputsAndWrongAuthorityRejectAtomically() (gas: 3546262)"
+      },
+      {
+        "line": 5344,
+        "text": "[PASS] test_sameCanonicalOriginCannotBeNftOrIndependentInEitherDirection() (gas: 6924311)"
+      },
+      {
+        "line": 5345,
+        "text": "[PASS] test_unconsumedReplacementFreezesQuoteAndMintsNothing() (gas: 2970035)"
+      },
+      {
+        "line": 5349,
+        "text": "[PASS] test_shortExternalReceiptRevertsAllDonationAccounting() (gas: 264048)"
+      },
+      {
+        "line": 5350,
+        "text": "[PASS] test_tokenCallbackCannotBorrowLockedParentChildSynchronization() (gas: 30166545)"
+      },
+      {
+        "line": 5354,
+        "text": "[PASS] test_badSecondIssuanceRollsBackWholeBatch() (gas: 9292761)"
+      },
+      {
+        "line": 5355,
+        "text": "[PASS] test_callbackOwnerCannotActivateOrReenterAnotherChild() (gas: 31107105)"
+      },
+      {
+        "line": 5356,
+        "text": "[PASS] test_duplicateOriginalCannotMoveToAnotherRecipientAfterIssue() (gas: 9452700)"
+      },
+      {
+        "line": 5357,
+        "text": "[PASS] test_eachOriginalQuotedSeparatelyAndStoredWithComponents() (gas: 8805593)"
+      },
+      {
+        "line": 5358,
+        "text": "[PASS] test_newParticipantGetsNoEarlierExpansion() (gas: 43362663)"
+      },
+      {
+        "line": 5359,
+        "text": "[PASS] test_pendingOwnerCannotAdministerButMayAcceptImmediately() (gas: 29036530)"
+      },
+      {
+        "line": 5360,
+        "text": "[PASS] test_zeroOwnerAndNoncanonicalArgumentsReject() (gas: 199523)"
+      },
+      {
+        "line": 5364,
+        "text": "[PASS] test_activeFullWalletExitRetiresOnlyOwnFraction() (gas: 33766795)"
+      },
+      {
+        "line": 5365,
+        "text": "[PASS] test_oneNativeRewardTokenRetainsAllUnpayableGonsForOwner() (gas: 34110957)"
+      },
+      {
+        "line": 5366,
+        "text": "[PASS] test_receiptPermitAuthorizesPrincipalButNotRetainedRights() (gas: 731117)"
+      },
+      {
+        "line": 5367,
+        "text": "[PASS] test_syPermitAndMaxAllowanceUseCanonicalNativeUnits() (gas: 1402301)"
+      },
+      {
+        "line": 5371,
+        "text": "[PASS] test_MigrationSnapshot_ExactRevertAndEndpoints() (gas: 68741421)"
+      },
+      {
+        "line": 5372,
+        "text": "[PASS] test_MigrationSnapshot_FeesAndRegistryFrozenSeparately() (gas: 63139278)"
+      },
+      {
+        "line": 5373,
+        "text": "[PASS] test_MigrationSnapshot_InstalledSelectorsAndInterfaceCompatibility() (gas: 537242)"
+      },
+      {
+        "line": 5374,
+        "text": "[PASS] test_MigrationSnapshot_MappedNativeMaxInBoundary() (gas: 35615506)"
+      },
+      {
+        "line": 5375,
+        "text": "[PASS] test_MigrationSnapshot_NaturallyOpenGatePublicPreview() (gas: 106361783)"
+      },
+      {
+        "line": 5376,
+        "text": "[PASS] test_MigrationSnapshot_PrimaryBranchNotClosedGateFallback() (gas: 6596399)"
+      },
+      {
+        "line": 5377,
+        "text": "[PASS] test_MigrationSnapshot_RealPoolSwapAndNoLiveStorageReads() (gas: 7764933)"
+      },
+      {
+        "line": 5378,
+        "text": "[PASS] test_MigrationSnapshot_RealProxyCaptureAndFreeze() (gas: 13063556)"
+      },
+      {
+        "line": 5385,
+        "text": "[PASS] test_MigrationSnapshot_SameBookZeroGroupingAndNonlinearity() (gas: 10640249)"
+      },
+      {
+        "line": 5386,
+        "text": "[PASS] test_MigrationSnapshot_UnitAllLegProviderOutcomes() (gas: 47965146)"
+      },
+      {
+        "line": 5387,
+        "text": "[PASS] test_MigrationSnapshot_UnitArithmeticDomains() (gas: 42969307)"
+      },
+      {
+        "line": 5388,
+        "text": "[PASS] test_MigrationSnapshot_UnsupportedConversionAtomic() (gas: 46823719)"
+      },
+      {
+        "line": 5389,
+        "text": "[PASS] test_MigrationSnapshot_V3BackingAndSupplyFreeze() (gas: 8192931)"
+      },
+      {
+        "line": 5390,
+        "text": "[PASS] test_MigrationSnapshot_ZeroFeeAndZeroSeigniorage() (gas: 6925377)"
+      },
+      {
+        "line": 5394,
+        "text": "[PASS] test_activationRemovesEntireAdministrationAndKeepsQueries() (gas: 51025948)"
+      },
+      {
+        "line": 5395,
+        "text": "[PASS] test_cliffBoundaryMaturePrincipalWorksWhileRewardsClosed() (gas: 10743882)"
+      },
+      {
+        "line": 5396,
+        "text": "[PASS] test_configurationDoesNotMintAndReplacementPreservesIssue() (gas: 10487003)"
+      },
+      {
+        "line": 5397,
+        "text": "[PASS] test_delayedFirstIssueHasFreshClockAndNoRetroactiveRewards() (gas: 8443609)"
+      },
+      {
+        "line": 5398,
+        "text": "[PASS] test_deployBindsRealChildrenAndNoPrincipal() (gas: 134785)"
+      },
+      {
+        "line": 5399,
+        "text": "[PASS] test_ordinaryAcquisitionAndBondClosedBeforeBranchSelection() (gas: 6766638)"
+      },
+      {
+        "line": 5400,
+        "text": "[PASS] test_ordinaryDepositOpensWithFundedIndependentParticipation() (gas: 51012188)"
+      },
+      {
+        "line": 5401,
+        "text": "[PASS] test_ownerSaltCreatesIsolatedHooks() (gas: 60519914)"
+      },
+      {
+        "line": 5402,
+        "text": "[PASS] test_partialCapitalCannotAuthorizeNonOwnerGenesis() (gas: 3168080)"
+      },
+      {
+        "line": 5403,
+        "text": "[PASS] test_snapshotCannotRecaptureOrChangeAfterDonation() (gas: 28775658)"
+      },
+      {
+        "line": 5407,
+        "text": "[PASS] test_F1_alternateAnchorEqualityAccepts() (gas: 3151858)"
+      },
+      {
+        "line": 5408,
+        "text": "[PASS] test_F1_alternateAnchorRejectsUnderfundedFirstLeg() (gas: 4092246)"
+      },
+      {
+        "line": 5409,
+        "text": "[PASS] test_F1_equalityAcceptsCanonicalMinimum() (gas: 3152010)"
+      },
+      {
+        "line": 5410,
+        "text": "[PASS] test_F1_historicalUnderfundingRejectsAtomically() (gas: 4448434)"
+      },
+      {
+        "line": 5411,
+        "text": "[PASS] test_F1_oneNativeUnitBelowMinimumRejectsAtomically() (gas: 4448175)"
+      },
+      {
+        "line": 5412,
+        "text": "[PASS] test_F1_oneUnitExcessRemainsValidDonation() (gas: 3152029)"
+      },
+      {
+        "line": 5413,
+        "text": "[PASS] test_F1_shareAnchorUsesPreconversionPairEquivalent() (gas: 3343462)"
+      },
+      {
+        "line": 5417,
+        "text": "[PASS] test_delayedPaidPurchaseHasNoUnfundedRetroactiveExpansion() (gas: 26708579)"
+      },
+      {
+        "line": 5418,
+        "text": "[PASS] test_exceptionDoesNotOpenOtherAcquisitionOrSecondPurchase() (gas: 22617986)"
+      },
+      {
+        "line": 5419,
+        "text": "[PASS] test_failedPaymentAndChildMintLeaveNoPurchaseOrEconomicEffects() (gas: 26643481)"
+      },
+      {
+        "line": 5420,
+        "text": "[PASS] test_immediatePaidPurchaseUsesCanonicalWeightsRewardsAndOrdinaryTerms() (gas: 26662343)"
+      },
+      {
+        "line": 5421,
+        "text": "[PASS] test_pendingFormerAndNonownerCannotBuyButCurrentOwnerCan() (gas: 44750821)"
+      },
+      {
+        "line": 5425,
+        "text": "[PASS] test_MigrationSnapshot_RealProxySixNineEighteen() (gas: 60179909)"
+      },
+      {
+        "line": 5429,
+        "text": "[PASS] test_adminDeclarationMatchesInterfaceAndCannotBeRestored() (gas: 29934502)"
+      },
+      {
+        "line": 5478,
+        "text": "[PASS] test_allPackageCutsReachRealProxyAndFitEip170() (gas: 12725777)"
+      },
+      {
+        "line": 6211,
+        "text": "[PASS] test_realTokenUriNumericCliffBoundaries() (gas: 11859885)"
+      },
+      {
+        "line": 6212,
+        "text": "[PASS] test_wrongCustodyCallerCannotUseStaleIndexOrCreateBacking() (gas: 7196466)"
+      },
+      {
+        "line": 6216,
+        "text": "[PASS] test_V1_allowanceCallbackFailureRollsBackEverything() (gas: 29435731)"
+      },
+      {
+        "line": 6226,
+        "text": "[PASS] test_V1_allowanceDeadlineFailureRollsBack() (gas: 3527897)"
+      },
+      {
+        "line": 6227,
+        "text": "[PASS] test_V1_allowanceDonationPaysOnlyReserve() (gas: 25499024)"
+      },
+      {
+        "line": 6237,
+        "text": "[PASS] test_V1_allowanceDownstreamMinimumRestoresApprovalAndReserve() (gas: 46443480)"
+      },
+      {
+        "line": 6247,
+        "text": "[PASS] test_V1_allowanceExpiryWithValidRouteRollsBack() (gas: 3607907)"
+      },
+      {
+        "line": 6248,
+        "text": "[PASS] test_V1_allowanceWrongCallerCannotSpendDonorApproval() (gas: 7201648)"
+      },
+      {
+        "line": 6249,
+        "text": "[PASS] test_V1_canonicalRuntimeAndDomainIdentity() (gas: 47103)"
+      },
+      {
+        "line": 6259,
+        "text": "[PASS] test_V1_signatureCallbackFailureRestoresNonce() (gas: 29487821)"
+      },
+      {
+        "line": 6269,
+        "text": "[PASS] test_V1_signatureDonationPaysOnlyReserve() (gas: 25525137)"
+      },
+      {
+        "line": 6279,
+        "text": "[PASS] test_V1_signatureDownstreamMinimumRestoresNonceAndReserve() (gas: 46499658)"
+      },
+      {
+        "line": 6289,
+        "text": "[PASS] test_V1_signatureExpiredWithValidOuterDeadlineRollsBack() (gas: 7055864)"
+      },
+      {
+        "line": 6290,
+        "text": "[PASS] test_V1_signatureReplayPreservesCommittedFirstDonation() (gas: 32587928)"
+      },
+      {
+        "line": 6300,
+        "text": "[PASS] test_V1_signatureWrongCallerRollsBackBothAccounts() (gas: 7183143)"
+      },
+      {
+        "line": 6301,
+        "text": "[PASS] test_V1_signatureWrongDomainRollsBackNonce() (gas: 7082963)"
+      },
+      {
+        "line": 6302,
+        "text": "[PASS] test_V1_signatureWrongSpenderRollsBackNonce() (gas: 7084273)"
+      },
+      {
+        "line": 6306,
+        "text": "[PASS] test_allConfiguredSyOutputsPayActualPrincipal() (gas: 12393365)"
+      },
+      {
+        "line": 6307,
+        "text": "[PASS] test_bothWrappersAcquireEveryConfiguredInputAfterActivation() (gas: 172098496)"
+      },
+      {
+        "line": 6308,
+        "text": "[PASS] test_failedUnderlyingRedeemRestoresWholeTransaction() (gas: 48647116)"
+      },
+      {
+        "line": 6309,
+        "text": "[PASS] test_ordinaryActiveBondIsUnmarkedAndLinear() (gas: 29094560)"
+      },
+      {
+        "line": 6310,
+        "text": "[PASS] test_parentReceiptPacketPreservesOldParentInventory() (gas: 47771721)"
+      },
+      {
+        "line": 6311,
+        "text": "[PASS] test_rawSyBothBurnModesAndEveryOutput() (gas: 11259221)"
+      },
+      {
+        "line": 6312,
+        "text": "[PASS] test_receiptExactOutputRetainsGrowthAndPaysPrincipal() (gas: 47204629)"
+      },
+      {
+        "line": 6313,
+        "text": "[PASS] test_receiptGrowthCannotLeaveThroughTransfer() (gas: 47484237)"
+      },
+      {
+        "line": 6314,
+        "text": "[PASS] test_rolesReceiveNoClosedReceiptThenActualActivatedRelease() (gas: 1171553)"
+      },
+      {
+        "line": 6315,
+        "text": "[PASS] test_syBearerInternalBurnDoesNotRedirectOldRewards() (gas: 47959042)"
+      },
+      {
+        "line": 6316,
+        "text": "[PASS] test_syDelayedSelfRewardsRemainProtocolOwned() (gas: 48178119)"
+      },
+      {
+        "line": 6317,
+        "text": "[PASS] test_syDepositingIntoEarnedPositionPreservesOldRewards() (gas: 47731340)"
+      },
+      {
+        "line": 6318,
+        "text": "[PASS] test_syFailedMinimumRollsBackGonsSharesAndAllowance() (gas: 620158)"
+      },
+      {
+        "line": 6319,
+        "text": "[PASS] test_syOldHolderRetainsRewardsAfterFullDeparture() (gas: 102477862)"
+      },
+      {
+        "line": 6323,
+        "text": "[PASS] test_activationPermanentlyRemovesLoaderAndRetainsFrozenRecord() (gas: 23301621)"
+      },
+      {
+        "line": 6324,
+        "text": "[PASS] test_completeReplacementAndReplayPreserveGroupingAndNeverIssue() (gas: 2969391)"
+      },
+      {
+        "line": 6325,
+        "text": "[PASS] test_everyCanonicalOriginExclusionWorksBothDirectionsIncludingWalletCorrections() (gas: 27072039)"
+      },
+      {
+        "line": 6326,
+        "text": "[PASS] test_missingFieldsWrongChainAndCurrentOwnerOnlyRejectAtomically() (gas: 5081462)"
+      },
+      {
+        "line": 6330,
+        "text": "[PASS] test_creatorTransferDoesNotRetargetEarlierAllocations() (gas: 149468025)"
+      },
+      {
+        "line": 6331,
+        "text": "[PASS] test_standingWeightsRemainParticipantsAfterAllPrincipalExits() (gas: 282002168)"
+      },
+      {
+        "line": 6332,
+        "text": "[PASS] test_subRewardTokenRemainderPaysNativeUnitsWhenIndexBelowQuantum() (gas: 89347579)"
+      }
+    ],
+    "summaries": [
+      "Ran 23 test suites in 1.83s (17.51s CPU time): 134 tests passed, 0 failed, 0 skipped (134 total tests)"
+    ]
+  },
+  {
+    "name": "forks",
+    "passes": [
+      {
+        "line": 5069,
+        "text": "[PASS] test_absentWrongWalletApprovalBalanceAndLimitsLeaveEverythingUnspent() (gas: 3217562)"
+      },
+      {
+        "line": 5070,
+        "text": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3640171)"
+      },
+      {
+        "line": 5071,
+        "text": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 7077813)"
+      },
+      {
+        "line": 5072,
+        "text": "[PASS] test_stageOneRejectsBeforeAllowanceCustodyConsumptionOrFunding() (gas: 2735616)"
+      },
+      {
+        "line": 5073,
+        "text": "[PASS] test_transfersDoNotMoveCreditAndReturnNeedsNoHistory() (gas: 3603994)"
+      },
+      {
+        "line": 5074,
+        "text": "[PASS] test_zeroCreditDustRejectsWithoutConfiscation() (gas: 1288864)"
+      },
+      {
+        "line": 5078,
+        "text": "[PASS] test_earlierStageOneRejectsThenOriginalWalletAdmission() (gas: 4279193)"
+      },
+      {
+        "line": 5079,
+        "text": "[PASS] test_missingConfigurationRejectsActualApprovedOwnersBeforeAndAfterActivation() (gas: 1599148)"
+      },
+      {
+        "line": 5080,
+        "text": "[PASS] test_stageTwoCorrectionCannotReopenEitherConsumedOriginOrIndependentCredit() (gas: 6726912)"
+      },
+      {
+        "line": 5081,
+        "text": "[PASS] test_weightedStageOneRejectsThenOriginalWalletAdmission() (gas: 5776834)"
+      },
+      {
+        "line": 5085,
+        "text": "[PASS] test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback() (gas: 3725466)"
+      },
+      {
+        "line": 5086,
+        "text": "[PASS] test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding() (gas: 4241538)"
+      },
+      {
+        "line": 5087,
+        "text": "[PASS] test_badAmountMinimumDeadlineApprovalAndBalanceRollback() (gas: 2974039)"
+      },
+      {
+        "line": 5088,
+        "text": "[PASS] test_stageOneRejectsConfiguredAndMissingBeforeAnyMovement() (gas: 2526075)"
+      },
+      {
+        "line": 5089,
+        "text": "[PASS] test_walletTransferReturnAndRemovedLoaderPreserveRemainingRecord() (gas: 3527421)"
+      },
+      {
+        "line": 5090,
+        "text": "[PASS] test_zeroCreditNativeShareDustCannotBeConfiscated() (gas: 1297120)"
+      },
+      {
+        "line": 5094,
+        "text": "[PASS] test_actualContractAcquisitionAndRejectedBondRollBackPullFundingAndCallback() (gas: 3571720)"
+      },
+      {
+        "line": 5095,
+        "text": "[PASS] test_actualPartialFinalSharesConserveFrozenCreditAndFreshFunding() (gas: 4246260)"
+      },
+      {
+        "line": 5096,
+        "text": "[PASS] test_badAmountMinimumDeadlineApprovalAndBalanceRollback() (gas: 2980003)"
+      },
+      {
+        "line": 5097,
+        "text": "[PASS] test_stageOneRejectsConfiguredAndMissingBeforeAnyMovement() (gas: 2530758)"
+      },
+      {
+        "line": 5098,
+        "text": "[PASS] test_walletTransferReturnAndRemovedLoaderPreserveRemainingRecord() (gas: 3531566)"
+      },
+      {
+        "line": 5099,
+        "text": "[PASS] test_zeroCreditNativeShareDustCannotBeConfiscated() (gas: 1300171)"
+      },
+      {
+        "line": 5103,
+        "text": "[PASS] test_earlierClaimAndSaleRemainAvailableAfterActivation() (gas: 4077979)"
+      },
+      {
+        "line": 5104,
+        "text": "[PASS] test_externalWrongOwnerCloseRemainsDisabledAndCannotEraseCommittedClaim() (gas: 3842947)"
+      },
+      {
+        "line": 5105,
+        "text": "[PASS] test_lockedEarlierClaimRepeatsAndRecoversGenuineNewAccrual() (gas: 3801501)"
+      },
+      {
+        "line": 5106,
+        "text": "[PASS] test_matureSaleMeasuresExternalSharesAndNeverRecountsPriorHoldings() (gas: 4858417)"
+      },
+      {
+        "line": 5107,
+        "text": "[PASS] test_middleLockedSaleRollsBackEarlierClaimAndPermitsSmallerRetry() (gas: 7192556)"
+      },
+      {
+        "line": 5111,
+        "text": "[PASS] test_actualRoleNftTransferMakesCustodyRewardsUnbookedNotSurrender() (gas: 4158170)"
+      },
+      {
+        "line": 5112,
+        "text": "[PASS] test_growthLeavesPositiveNonrepresentableResidualWithoutClearingOrRepricing() (gas: 7230697)"
+      },
+      {
+        "line": 5113,
+        "text": "[PASS] test_lateBondCallbackRevertsSourceFundingCustodyAndCreditThenRejectsReentry() (gas: 8099319)"
+      },
+      {
+        "line": 5114,
+        "text": "[PASS] test_partialAndDivisibleTerminalConsumeExactGonsAndCreateFreshFundedCliffs() (gas: 3569310)"
+      },
+      {
+        "line": 5115,
+        "text": "[PASS] test_realRoleWalletSettlementExcludesNewlyIssuedRoleGons() (gas: 4491783)"
+      },
+      {
+        "line": 5116,
+        "text": "[PASS] test_sourceFailureAfterDueSynchronizationAndMinimumDeadlineRollback() (gas: 8675029)"
+      },
+      {
+        "line": 5117,
+        "text": "[PASS] test_stageOneAbsentWalletTransferAndReturnCannotMoveOrRestoreCredit() (gas: 4678200)"
+      },
+      {
+        "line": 5118,
+        "text": "[PASS] test_zeroCreditRejectsActualApprovedCustodyWithoutConfiscation() (gas: 1985150)"
+      },
+      {
+        "line": 5122,
+        "text": "[PASS] test_selectedWorkIndependentOfTwentyFourUnrelatedSurrenders() (gas: 53753365)"
+      },
+      {
+        "line": 5128,
+        "text": "[PASS] test_minimumSelectedBatchAndLaterFailurePreserveCommittedReceipts() (gas: 4873535)"
+      },
+      {
+        "line": 5129,
+        "text": "[PASS] test_onlyCurrentOwnerSelectsBookedSharesAndNoOtherSource() (gas: 3054072)"
+      },
+      {
+        "line": 5130,
+        "text": "[PASS] test_recoveryPreservesMixedNftLiquidSyAndUnsolicitedInventory() (gas: 10521812)"
+      },
+      {
+        "line": 5131,
+        "text": "[PASS] test_selectedNative19BurnUsesActualOutputAndNeverRepricesCredit() (gas: 25257560)"
+      },
+      {
+        "line": 5135,
+        "text": "[PASS] test_absentWrongWalletApprovalBalanceAndLimitsLeaveEverythingUnspent() (gas: 3065051)"
+      },
+      {
+        "line": 5136,
+        "text": "[PASS] test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() (gas: 3422952)"
+      },
+      {
+        "line": 5137,
+        "text": "[PASS] test_directInventoryStagedConversionDonationAndUnbookedFloors() (gas: 27973782)"
+      },
+      {
+        "line": 5138,
+        "text": "[PASS] test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() (gas: 5624716)"
+      },
+      {
+        "line": 5139,
+        "text": "[PASS] test_stageOneRejectsBeforeAllowanceCustodyConsumptionOrFunding() (gas: 2659371)"
+      },
+      {
+        "line": 5140,
+        "text": "[PASS] test_transfersDoNotMoveCreditAndReturnNeedsNoHistory() (gas: 3313788)"
+      },
+      {
+        "line": 5141,
+        "text": "[PASS] test_zeroCreditDustRejectsWithoutConfiscation() (gas: 1288799)"
+      },
+      {
+        "line": 5145,
+        "text": "[PASS] test_actualWyToWsToWdToDtfAndFixedDonationProtectBacking() (gas: 23654636)"
+      },
+      {
+        "line": 5146,
+        "text": "[PASS] test_minimumAuthorityAndLateConversionFailureRollBackSelectedBurn() (gas: 7134149)"
+      },
+      {
+        "line": 5147,
+        "text": "[PASS] test_selectedRedemptionReconcilesGrowthDustMixedNftAndUnsolicitedGons() (gas: 8219014)"
+      },
+      {
+        "line": 5151,
+        "text": "[PASS] test_completedClaimSurvivesLaterConversionFailureAndRetry() (gas: 7643562)"
+      },
+      {
+        "line": 5152,
+        "text": "[PASS] test_currentOwnerBeforeAfterAcceptanceInStageTwo() (gas: 8081691)"
+      },
+      {
+        "line": 5153,
+        "text": "[PASS] test_existingReceiptAndIndexMovementAreNotFreshClaimInventory() (gas: 6706162)"
+      },
+      {
+        "line": 5154,
+        "text": "[PASS] test_failedMiddleBatchRollsBackClaimAndSmallerRetrySucceeds() (gas: 5295325)"
+      },
+      {
+        "line": 5155,
+        "text": "[PASS] test_partialPrincipalZeroRepeatNewVestingAndRewardOnlyFinalBurn() (gas: 8703855)"
+      },
+      {
+        "line": 5156,
+        "text": "[PASS] test_unsolicitedNftNeverBecomesRecoveryCustody() (gas: 2414232)"
+      },
+      {
+        "line": 5157,
+        "text": "[PASS] test_weightedFullClaimUnstakeAndRealConversionPreserveNewBacking() (gas: 6690081)"
+      },
+      {
+        "line": 5161,
+        "text": "[PASS] test_minimumSelectedBatchAndLaterFailurePreserveCommittedReceipts() (gas: 26771414)"
+      },
+      {
+        "line": 5162,
+        "text": "[PASS] test_onlyCurrentOwnerSelectsBookedSharesAndNoOtherSource() (gas: 2951206)"
+      },
+      {
+        "line": 5163,
+        "text": "[PASS] test_recoveryPreservesMixedNftLiquidSyAndUnsolicitedInventory() (gas: 10384694)"
+      },
+      {
+        "line": 5164,
+        "text": "[PASS] test_selectedNative28BurnUsesActualOutputAndNeverRepricesCredit() (gas: 25144205)"
+      },
+      {
+        "line": 5168,
+        "text": "[PASS] test_laterSelectedFailureRevertsAccrualAndDonationButPreservesCommittedClaim() (gas: 54957904)"
+      },
+      {
+        "line": 5172,
+        "text": "[PASS] test_burnedNonexistentReservedAndZeroCreditRejectWithoutCustody() (gas: 3254271)"
+      },
+      {
+        "line": 5173,
+        "text": "[PASS] test_claimBeforeSurrenderRaceUsesLiveFractionAndRejectsStaleMinimum() (gas: 4189221)"
+      },
+      {
+        "line": 5174,
+        "text": "[PASS] test_earlierAccountingSharesAreNeitherEffectiveWeightNorPhysicalLp() (gas: 2461671)"
+      },
+      {
+        "line": 5175,
+        "text": "[PASS] test_earlierRewardsAndHolderTransferPreserveOriginalSharesAndDisabledHarvest() (gas: 3703282)"
+      },
+      {
+        "line": 5176,
+        "text": "[PASS] test_inconsistentOriginalUnitsRejectBothSourcesWithoutChangingRealPositions() (gas: 2572674)"
+      },
+      {
+        "line": 5177,
+        "text": "[PASS] test_missingApprovalRollsBackPretransferAcceptanceForBothSources() (gas: 7992389)"
+      },
+      {
+        "line": 5178,
+        "text": "[PASS] test_rewardOnlyWeightedAndBurnedEarlierEarnNoCredit() (gas: 4851288)"
+      },
+      {
+        "line": 5179,
+        "text": "[PASS] test_sameIdInTwoCollectionsIncludesStillLockedEarlierPrincipal() (gas: 5862361)"
+      },
+      {
+        "line": 5180,
+        "text": "[PASS] test_transferredWeightedHolderMustReturnToPurchaserBeforeSurrender() (gas: 4269572)"
+      },
+      {
+        "line": 5181,
+        "text": "[PASS] test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote() (gas: 4330903)"
+      },
+      {
+        "line": 5182,
+        "text": "[PASS] test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement() (gas: 1530043)"
+      },
+      {
+        "line": 5186,
+        "text": "[PASS] test_actualRecoveredDtfDonationProtectsUnrelatedInventoryAndBacking() (gas: 50219863)"
+      },
+      {
+        "line": 5187,
+        "text": "[PASS] test_donationExternalCallbackCannotEnterAnyParentMoneyStage() (gas: 28351854)"
+      },
+      {
+        "line": 5188,
+        "text": "[PASS] test_failedDonationLeavesCompletedConversionsAndSmallerRetry() (gas: 51303180)"
+      },
+      {
+        "line": 5189,
+        "text": "[PASS] test_finalDonationFailureRollsBackEntireSelectedRecoveryTransaction() (gas: 53071123)"
+      },
+      {
+        "line": 5190,
+        "text": "[PASS] test_recoveryProtectsActualStakingSyPacketsAndSelfLegInventory() (gas: 32431687)"
+      },
+      {
+        "line": 5191,
+        "text": "[PASS] test_registryDisableBlocksDonationButNotSelectedClaimHolding() (gas: 4937123)"
+      },
+      {
+        "line": 5195,
+        "text": "[PASS] test_lateSelectedFailureRevertsSourceGrowthUnstakeConversionAndBookkeeping() (gas: 8989147)"
+      },
+      {
+        "line": 5196,
+        "text": "[PASS] test_mixedNftWyWsAndUnbookedWholeFractionPreserveAllBudgets() (gas: 112620819)"
+      },
+      {
+        "line": 5197,
+        "text": "[PASS] test_postCustodyGrowthFullAccountRetiresActualBookedFractionAndDonatesOnlyRecovery() (gas: 24806976)"
+      },
+      {
+        "line": 5201,
+        "text": "[PASS] test_revaluationAndLaterClaimRemainSeparateWithoutDoubleCounting() (gas: 8752035)"
+      },
+      {
+        "line": 5202,
+        "text": "[PASS] test_revaluedPartialAndFinalExitsPreserveMixedUnbookedGons() (gas: 7734532)"
+      },
+      {
+        "line": 5203,
+        "text": "[PASS] test_terminalBurnedNftGrowthConvertsAfterOriginalClaimSpent() (gas: 7611433)"
+      },
+      {
+        "line": 5207,
+        "text": "[PASS] test_bothRoutesRemainUsableAfterActivationWithFreshLateClocks() (gas: 14014558)"
+      },
+      {
+        "line": 5208,
+        "text": "[PASS] test_contractReceiverFailureRollsBackCustodySupplyFundingAndConsumption() (gas: 5662469)"
+      },
+      {
+        "line": 5209,
+        "text": "[PASS] test_earlierContractHolderCallbackCannotReenterReplayOrActivate() (gas: 2845738)"
+      },
+      {
+        "line": 5210,
+        "text": "[PASS] test_earlierContractReceiverFailureRollsBackCustodySupplyFundingAndConsumption() (gas: 4193546)"
+      },
+      {
+        "line": 5211,
+        "text": "[PASS] test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender() (gas: 3508324)"
+      },
+      {
+        "line": 5212,
+        "text": "[PASS] test_removedLoadersCannotResizeReopenOrCreateDescendantCredit() (gas: 4547948)"
+      },
+      {
+        "line": 5213,
+        "text": "[PASS] test_separateRealInstancesHaveSeparateDomainsButCannotTakeHeldIdentityTwice() (gas: 328865974)"
+      }
+    ],
+    "summaries": [
+      "Ran 18 test suites in 1.53s (19.38s CPU time): 92 tests passed, 0 failed, 0 skipped (92 total tests)"
+    ]
+  },
+  {
+    "name": "operator",
+    "passes": [
+      {
+        "line": 4,
+        "text": "(pass) normalizes native integer strings without floating point [0.89ms]"
+      },
+      {
+        "line": 5,
+        "text": "(pass) rejects unknown or non-native amount  [0.06ms]"
+      },
+      {
+        "line": 6,
+        "text": "(pass) rejects unknown or non-native amount -1 [0.02ms]"
+      },
+      {
+        "line": 7,
+        "text": "(pass) rejects unknown or non-native amount 1.5"
+      },
+      {
+        "line": 8,
+        "text": "(pass) rejects unknown or non-native amount 1e18"
+      },
+      {
+        "line": 9,
+        "text": "(pass) rejects unknown or non-native amount 0"
+      },
+      {
+        "line": 10,
+        "text": "(pass) rejects unknown or non-native amount null [0.02ms]"
+      },
+      {
+        "line": 11,
+        "text": "(pass) rejects unknown or non-native amount 115792089237316195423570985008687907853269984665640564039457584007913129639936 [0.02ms]"
+      },
+      {
+        "line": 12,
+        "text": "(pass) emits full separate replacements and independently quoted native credits [46.74ms]"
+      },
+      {
+        "line": 13,
+        "text": "(pass) normalization is stable under reordered records and source bindings [4.87ms]"
+      },
+      {
+        "line": 14,
+        "text": "(pass) full replacements change identities instead of generating credit deltas [5.05ms]"
+      },
+      {
+        "line": 15,
+        "text": "(pass) rejects wrong chain domain before accepting payloads [6.72ms]"
+      },
+      {
+        "line": 16,
+        "text": "(pass) rejects wrong block domain before accepting payloads [7.94ms]"
+      },
+      {
+        "line": 17,
+        "text": "(pass) rejects wrong snapshot domain before accepting payloads [17.50ms]"
+      },
+      {
+        "line": 18,
+        "text": "(pass) rejects wrong proxy domain before accepting payloads [7.73ms]"
+      },
+      {
+        "line": 19,
+        "text": "(pass) rejects wrong package domain before accepting payloads [10.81ms]"
+      },
+      {
+        "line": 20,
+        "text": "(pass) rejects source tampering rather than trusting quoted originals [4.69ms]"
+      },
+      {
+        "line": 21,
+        "text": "(pass) rejects originals that do not match their raw proof [3.90ms]"
+      },
+      {
+        "line": 22,
+        "text": "(pass) rejects missing or zero NFT original wallets at preparation boundary [4.47ms]"
+      },
+      {
+        "line": 23,
+        "text": "(pass) rejects a wallet differing from the full recorded NFT original [4.10ms]"
+      },
+      {
+        "line": 24,
+        "text": "(pass) wallet correction changes full configuration but not economic origin [4.51ms]"
+      },
+      {
+        "line": 25,
+        "text": "(pass) NFT payload and configuration identity agree with final Solidity and typed stage ABIs [5.01ms]"
+      },
+      {
+        "line": 26,
+        "text": "(pass) rejects unknown contributions and arbitrary credit fields at the schema boundary [3.58ms]"
+      },
+      {
+        "line": 27,
+        "text": "(pass) rejects overlapping originals and missing origin partitions [3.73ms]"
+      },
+      {
+        "line": 28,
+        "text": "(pass) blocks earlier-liquid without forging executable config [3.45ms]"
+      },
+      {
+        "line": 29,
+        "text": "(pass) blocks weighted-receipt without forging executable config [3.44ms]"
+      },
+      {
+        "line": 30,
+        "text": "(pass) blocks earlier-receipt without forging executable config [3.30ms]"
+      },
+      {
+        "line": 31,
+        "text": "(pass) blocks token-staking without forging executable config [3.06ms]"
+      },
+      {
+        "line": 32,
+        "text": "(pass) blocks underlying-se without forging executable config [2.96ms]"
+      },
+      {
+        "line": 33,
+        "text": "(pass) blocks fungible-lp without forging executable config [3.17ms]"
+      },
+      {
+        "line": 34,
+        "text": "(pass) blocks earlier-liquidation without forging executable config [3.25ms]"
+      },
+      {
+        "line": 35,
+        "text": "(pass) rejects a nonconserving origin partition [3.84ms]"
+      },
+      {
+        "line": 36,
+        "text": "(pass) rejects combined quotes that differ from independent frozen component quotes [24.61ms]"
+      },
+      {
+        "line": 37,
+        "text": "(pass) revalidates persisted manifest payloads and refuses overwrite [104.63ms]"
+      },
+      {
+        "line": 38,
+        "text": "(pass) actual CLI prepares and validates through read-only transport [173.99ms]"
+      },
+      {
+        "line": 39,
+        "text": "(pass) rejects missing RPC and synthetic nonlocal endpoints [5.59ms]"
+      },
+      {
+        "line": 40,
+        "text": "(pass) rejects ambiguous or executing preparation arguments prepare --input a --input b --output c [0.12ms]"
+      },
+      {
+        "line": 41,
+        "text": "(pass) rejects ambiguous or executing preparation arguments validate --manifest x --broadcast [0.03ms]"
+      },
+      {
+        "line": 42,
+        "text": "(pass) rejects ambiguous or executing preparation arguments validate --manifest x --execute-local [0.03ms]"
+      },
+      {
+        "line": 43,
+        "text": "(pass) rejects ambiguous or executing preparation arguments prepare --input a [0.01ms]"
+      },
+      {
+        "line": 44,
+        "text": "(pass) rejects invalid recovery fields and unproved multi-conversion batches [3.79ms]"
+      },
+      {
+        "line": 45,
+        "text": "(pass) preserves all category dispositions but emits no manifest for blocked exposure [4.76ms]"
+      },
+      {
+        "line": 48,
+        "text": "(pass) journal refuses live concurrent writers and changed domains [3.49ms]"
+      },
+      {
+        "line": 49,
+        "text": "(pass) durable signed intent survives reopening without acquiring another nonce [7.88ms]"
+      },
+      {
+        "line": 50,
+        "text": "(pass) journal rejects a foreign intent rather than accepting its receipt [1.46ms]"
+      },
+      {
+        "line": 51,
+        "text": "(pass) partial unpublished records cannot become completed operations [1.28ms]"
+      },
+      {
+        "line": 52,
+        "text": "(pass) funding rejects arbitrary calldata and unknown native values [0.08ms]"
+      },
+      {
+        "line": 53,
+        "text": "(pass) paid owner purchase requires explicit positive payment and ordinary duration [1.70ms]"
+      },
+      {
+        "line": 54,
+        "text": "(pass) CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--execute-local\",\"--broadcast\"] [0.08ms]"
+      },
+      {
+        "line": 55,
+        "text": "(pass) CLI rejects ambiguous authority before file or network access: [\"resume\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--instance-id\",\"old\"] [0.03ms]"
+      },
+      {
+        "line": 56,
+        "text": "(pass) CLI rejects ambiguous authority before file or network access: [\"activate\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--broadcast\"] [0.03ms]"
+      },
+      {
+        "line": 57,
+        "text": "(pass) CLI rejects ambiguous authority before file or network access: [\"fund\",\"--manifest\",\"unused\",\"--checkpoint\",\"unused\",\"--target\",\"0x1111111111111111111111111111111111111111\"] [0.03ms]"
+      },
+      {
+        "line": 60,
+        "text": "(pass) W-L requires known original wallet, quantity, components and origin, not current holdings [4.70ms]"
+      },
+      {
+        "line": 61,
+        "text": "(pass) W-L fixed source, original units and economic partition are required by the real payload builder [4.20ms]"
+      },
+      {
+        "line": 62,
+        "text": "(pass) W-L complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [4.92ms]"
+      },
+      {
+        "line": 65,
+        "text": "(pass) W-Y requires known original wallet, quantity, components and origin, not current holdings [4.67ms]"
+      },
+      {
+        "line": 66,
+        "text": "(pass) W-Y fixed source, original units and economic partition are required by the real payload builder [3.88ms]"
+      },
+      {
+        "line": 67,
+        "text": "(pass) W-Y complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [5.16ms]"
+      },
+      {
+        "line": 70,
+        "text": "(pass) W-SD requires known original wallet, quantity, components and origin, not current holdings [4.73ms]"
+      },
+      {
+        "line": 71,
+        "text": "(pass) W-SD fixed source, original units and economic partition are required by the real payload builder [4.06ms]"
+      },
+      {
+        "line": 72,
+        "text": "(pass) W-SD complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [5.12ms]"
+      },
+      {
+        "line": 75,
+        "text": "(pass) direct claim-vault requires known original wallet, quantity, components and origin, not current holdings [4.64ms]"
+      },
+      {
+        "line": 76,
+        "text": "(pass) direct claim-vault fixed source, original units and economic partition are required by the real payload builder [3.89ms]"
+      },
+      {
+        "line": 77,
+        "text": "(pass) direct claim-vault complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [5.16ms]"
+      },
+      {
+        "line": 80,
+        "text": "(pass) WS preparation requires complete known original gons and wallet, never floating-point or live-derived credit [5.16ms]"
+      },
+      {
+        "line": 81,
+        "text": "(pass) WS builder enforces fixed source and gon partition and rejects origin reuse [4.35ms]"
+      },
+      {
+        "line": 82,
+        "text": "(pass) WS evidence binding and frozen grouped quote survive exact preparation without scaling by gons [29.34ms]"
+      },
+      {
+        "line": 83,
+        "text": "(pass) WS Solidity configuration and stage ABI preserve eligible gons separately from native surrender [6.33ms]"
+      }
+    ],
+    "summaries": [
+      " 68 pass",
+      " 0 fail",
+      "Ran 68 tests across 7 files. [657.00ms]"
+    ]
+  }
+]

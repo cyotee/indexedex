@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-11T21:57:57.106Z",
+  "ownedNodePid": 54333,
+  "probes": [
+    {
+      "name": "owned process absent",
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "port18563 listener absent",
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "git diff check",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "HEAD",
+      "exit": 0,
+      "stdout": "2c2b3370ded30cae1662329025d4fb58f7197330\n",
+      "stderr": ""
+    }
+  ],
+  "checkpointAbsent": true,
+  "runtimeReport": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 54333,
+    "runtime": "removed"
+  },
+  "monitors": [
+    {
+      "id": "mon_3WG1H7X543506VKW",
+      "exit": 0
+    },
+    {
+      "id": "mon_Z9JDZXHHSW9QR42V",
+      "exit": 0
+    },
+    {
+      "id": "mon_VX4CQCSHSY7C2C86",
+      "exit": 0
+    },
+    {
+      "id": "mon_NMCZZJYVGD83PAFT",
+      "exit": 0
+    },
+    {
+      "id": "mon_3J8CTXZSFJ4PVRFT",
+      "exit": 0
+    }
+  ],
+  "candidateSourceChanges": [],
+  "warmArtifacts": "retained locally; no copy to main",
+  "impersonations": "finally paths executed before node.close; owned node exited",
+  "dependenciesAndConfiguration": "unchanged",
+  "publicActions": false,
+  "commits": false,
+  "merges": false,
+  "emptyParentRemoval": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

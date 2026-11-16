@@ -1,0 +1,404 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {Vm} from "forge-std/Vm.sol";
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
+
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+import {StandardExchangeRateProvider_FactoryService} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+import {StandardExchangeRateProviderFacet} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDFPkg} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookHooksFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDepositFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookSeFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {
+    TestBase_UniswapV4StandardExchangeOrbitalBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {
+    IUniswapV4StandardExchangeOrbitalBufferHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {
+    UniswapV4StandardExchangeOrbitalBufferHookCommon as Common
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol";
+
+/**
+ * @title UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi
+ * @notice Stage 02 T2.1–T2.10: shared SE buffer ABI on the Orbital hook. n=3, two SEs.
+ */
+contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, NativeSYExecutionAssertions {
+    function test_nativeSYHeldRedemptionHelperIsNotPublic() public {
+        address facet_ = IDiamondLoupe(hook).facetAddress(IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector);
+        bytes memory data_ = abi.encodeWithSignature(
+            "executeVaultHeldRedemption(address,uint256,address,uint256)", user, 1, address(token0), 0
+        );
+        (bool ok_, bytes memory reason_) = facet_.call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("DelegateCallRequired()"));
+        (ok_, reason_) = hook.call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", bytes4(data_)));
+    }
+
+    function _defaultPkgArgs()
+        internal
+
+        override
+        returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory)
+    {
+        return _argsWithSE(false, true, true);
+    }
+
+    function test_T2_1_tokens_length3_twoSes_disjoint() public view {
+        address[] memory t = orbital.tokens();
+        assertEq(t.length, 3, "T2.1 length");
+        assertEq(t[0], address(token0), "T2.1 token0 detf");
+        assertEq(t[1], address(token1), "T2.1 pair0");
+        assertEq(t[2], address(token2), "T2.1 pair1");
+        assertEq(orbital.standardExchangeOf(address(token0)), address(0), "T2.1 detf no se");
+        assertEq(orbital.standardExchangeOf(address(token1)), se1, "T2.1 se of pair0");
+        assertEq(orbital.standardExchangeOf(address(token2)), se2, "T2.1 se of pair1");
+        assertTrue(se1 != address(token1) && se2 != address(token2), "T2.1 disjoint");
+        assertTrue(se1 != se2, "T2.1 two ses");
+    }
+
+    function test_T2_2_firstJoinMustBeFullBook_requiredAllThree() public view {
+        assertTrue(orbital.firstJoinMustBeFullBook(), "T2.2 flag");
+        address[] memory req = orbital.requiredFirstBondTokens();
+        assertEq(req.length, 3, "T2.2 required length");
+        assertEq(req[0], address(token0));
+        assertEq(req[1], se1);
+        assertEq(req[2], se2);
+    }
+
+    function test_T2_3_joinSingleAssetExactIn_beforeLive_reverts() public {
+        assertFalse(orbital.isLive(), "pre-live");
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSignature("NotLive()"));
+        orbital.joinSingleAssetExactIn(address(token1), 10 ether, user, 0, block.timestamp + 1 hours);
+    }
+
+    function test_T2_4_firstJoinUnbalanced_fullBook_isLive() public {
+        uint256 lp = _joinFullBook(50 ether, 50 ether, 50 ether);
+        assertGt(lp, 0, "T2.4 lp");
+        assertTrue(orbital.isLive(), "T2.4 live");
+        assertEq(IERC20(hook).balanceOf(user), lp, "T2.4 to");
+    }
+
+    function test_T2_firstJoin_mixedPairAndShareInputsRedeemFivePercent() public {
+        uint256 amount = 50 ether;
+        uint256 shares2 = _mintSeSharesToUser(se2, token2, amount);
+        (uint256 shares1,) = IStandardExchangeIn(se1).previewExchangeIn(token1, amount, IERC20(se1));
+        uint256 supply1 = IERC20(se1).totalSupply();
+        uint256 supply2 = IERC20(se2).totalSupply();
+        address[] memory inputs = new address[](3);
+        inputs[0] = address(token0);
+        inputs[1] = address(token1);
+        inputs[2] = se2;
+        uint256[] memory amounts = new uint256[](3);
+        amounts[0] = amount;
+        amounts[1] = amount;
+        amounts[2] = shares2;
+        vm.recordLogs();
+        vm.prank(user);
+        uint256 minted = orbital.joinUnbalanced(inputs, amounts, user, 1, block.timestamp);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        uint256 totalMinted1;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].emitter == se1 && logs[i].topics.length == 3
+                && logs[i].topics[0] == keccak256("Transfer(address,address,uint256)")
+                && logs[i].topics[1] == bytes32(0)) totalMinted1 += abi.decode(logs[i].data, (uint256));
+        }
+        assertGt(minted, 0);
+        assertTrue(orbital.isLive());
+        assertEq(orbital.seBalance(1), shares1 - shares1 * 5 / 100);
+        assertEq(orbital.seBalance(2), shares2 - shares2 * 5 / 100);
+        assertEq(IERC20(se1).totalSupply(), supply1 + totalMinted1 - shares1 / 20, "include SE fee shares without counting them as caller input");
+        assertEq(IERC20(se2).totalSupply(), supply2 - shares2 * 5 / 100);
+        assertGt(orbital.rawReserve(1), 0);
+        assertGt(orbital.rawReserve(2), 0);
+    }
+
+    function test_T2_5_afterLive_singlePairsAndSharesBuyMissingBasket() public {
+        _joinFullBook(80 ether, 80 ether, 80 ether);
+        uint256 shares1 = _mintSeSharesToUser(se1, token1, 20 ether);
+        uint256 shares2 = _mintSeSharesToUser(se2, token2, 20 ether);
+        address[4] memory inputs = [address(token1), address(token2), se1, se2];
+        uint256[4] memory amounts = [uint256(5 ether), uint256(5 ether), shares1, shares2];
+        for (uint256 i; i < inputs.length; ++i) {
+            uint256 beforeLp = IERC20(hook).balanceOf(user);
+            uint256 quote = orbital.previewJoinSingleAssetExactIn(inputs[i], amounts[i]);
+            assertGt(quote, 0);
+            vm.prank(user);
+            uint256 minted = orbital.joinSingleAssetExactIn(inputs[i], amounts[i], user, quote, block.timestamp + 1 hours);
+            assertEq(minted, quote);
+            assertEq(IERC20(hook).balanceOf(user) - beforeLp, minted);
+        }
+    }
+
+    function _strictSingleState() private view returns (bytes memory) {
+        uint256[3] memory local;
+        uint256[3] memory shares;
+        uint256[3] memory balances;
+        uint256[3] memory custody;
+        uint256[3] memory heldShares;
+        uint256[3] memory userShares;
+        uint256[3] memory seSupply;
+        address[3] memory tokens = [address(token0), address(token1), address(token2)];
+        for (uint8 i; i < 3; ++i) {
+            local[i] = orbital.rawReserve(i);
+            shares[i] = orbital.seBalance(i);
+            balances[i] = IERC20(tokens[i]).balanceOf(user);
+            custody[i] = IERC20(tokens[i]).balanceOf(hook);
+            address se = orbital.standardExchange(i);
+            if (se != address(0)) {
+                heldShares[i] = IERC20(se).balanceOf(hook);
+                userShares[i] = IERC20(se).balanceOf(user);
+                seSupply[i] = IERC20(se).totalSupply();
+            }
+        }
+        return abi.encode(local, shares, balances, custody, heldShares, userShares, seSupply,
+            IERC20(hook).totalSupply(), IERC20(hook).balanceOf(user), IERC20(hook).balanceOf(feeRecipient),
+            orbital.radius(), orbital.lSquared());
+    }
+
+    function test_T2_6_joinUnbalanced_pairAndShare_sameLeg_reverts() public {
+        _joinFullBook(40 ether, 40 ether, 40 ether);
+        uint256 seShares = _mintSeSharesToUser(se1, token1, 5 ether);
+        address[] memory ts = new address[](4);
+        ts[0] = address(token0);
+        ts[1] = address(token1);
+        ts[2] = se1;
+        ts[3] = address(token2);
+        uint256[] memory am = new uint256[](4);
+        am[0] = 1 ether;
+        am[1] = 1 ether;
+        am[2] = seShares;
+        am[3] = 1 ether;
+        vm.prank(user);
+        vm.expectRevert(Common.PairAndShareSameLeg.selector);
+        orbital.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
+    }
+
+    function test_T2_7_previewSynthetic_perPath() public {
+        _joinFullBook(100 ether, 100 ether, 100 ether);
+        IDetfReserveQuote.DetfQuoteCtx memory ctx = IDetfReserveQuote.DetfQuoteCtx({
+            detfTotalSupply: 1e18,
+            pendingExpansion: 0,
+            ownedLp: 1e18,
+            creationPairPerDetfWad: 1e18
+        });
+        uint256 s0 = orbital.previewSynthetic(ctx, address(token1));
+        uint256 s1 = orbital.previewSynthetic(ctx, address(token2));
+        assertGt(s0, 0, "T2.7 pair0");
+        assertGt(s1, 0, "T2.7 pair1");
+    }
+
+    function test_T2_8_reserveValuationAndExecutableSingleExit() public {
+        uint256 lp = _joinFullBook(60 ether, 60 ether, 60 ether);
+        uint256 preview = orbital.previewBurnToToken(lp / 20, address(token1));
+        assertGt(preview, 0, "T2.8 preview");
+        uint256[] memory prop = orbital.previewExitProportional(lp / 20);
+        assertEq(prop.length, 3, "T2.8 prop");
+        assertGt(prop[1], 0, "T2.8 pair0 face");
+        assertTrue(preview >= prop[1], "T2.8 burn includes pair0 plus converted residual");
+        uint256 exitQuote = orbital.previewExitSingleAssetExactBptIn(address(token1), lp / 20);
+        assertGt(exitQuote, 0);
+        uint256 before = token1.balanceOf(user);
+        vm.prank(user);
+        assertEq(orbital.exitSingleAssetExactBptIn(address(token1), lp / 20, user, exitQuote, block.timestamp), exitQuote);
+        assertEq(token1.balanceOf(user) - before, exitQuote);
+    }
+
+    function test_T2_9_requiredSurface_onLoupe() public view {
+        IDiamondLoupe loupe = IDiamondLoupe(hook);
+        assertTrue(loupe.facetAddress(IUniswapV4SeBufferHook.joinUnbalanced.selector) != address(0), "joinUnbalanced");
+        assertTrue(
+            loupe.facetAddress(IUniswapV4SeBufferHook.previewSwapExactIn.selector) != address(0),
+            "previewSwapExactIn(addr)"
+        );
+        assertTrue(loupe.facetAddress(IUniswapV4SeBufferHook.tokens.selector) != address(0), "tokens");
+        assertTrue(loupe.facetAddress(IDetfReserveQuote.previewBurnToToken.selector) != address(0), "previewBurnToToken");
+        assertTrue(
+            loupe.facetAddress(IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector) != address(0),
+            "joinSingleAssetExactIn"
+        );
+    }
+
+    function test_T2_10_registryDeploy_noNewPkg() public view {
+        assertTrue(hook != address(0), "hook");
+        assertTrue(address(hookPkg) != address(0), "pkg");
+        assertTrue(_registry().isVault(hook) || IDiamondLoupe(hook).facetAddresses().length > 0, "diamond");
+    }
+
+    function test_T2_unknownToken_join_reverts() public {
+        address[] memory ts = new address[](3);
+        ts[0] = address(token0);
+        ts[1] = address(token1);
+        ts[2] = address(0xB0B);
+        uint256[] memory am = new uint256[](3);
+        am[0] = 1 ether;
+        am[1] = 1 ether;
+        am[2] = 1 ether;
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSelector(Common.InvalidRoute.selector, address(0xB0B), address(0)));
+        orbital.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
+    }
+
+    function test_T2_emptyBook_previewSynthetic_isZero() public view {
+        assertFalse(orbital.isLive(), "empty");
+        IDetfReserveQuote.DetfQuoteCtx memory ctx = IDetfReserveQuote.DetfQuoteCtx({
+            detfTotalSupply: 1e18,
+            pendingExpansion: 0,
+            ownedLp: 1e18,
+            creationPairPerDetfWad: 1e18
+        });
+        assertEq(orbital.previewSynthetic(ctx, address(token1)), 0, "T2 synthetic");
+        assertEq(orbital.previewSwapExactIn(address(token1), address(token0), 1 ether), 0, "T2 swap");
+    }
+
+    function test_nativeSYMetadataAndInstalledFacetSizes() public {
+        _joinFullBook(300 ether, 300 ether, 300 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        assertTrue(IERC165(hook).supportsInterface(type(IStandardizedYield).interfaceId));
+        assertEq(sy.getTokensIn().length, 5);
+        assertEq(sy.getTokensIn(), sy.getTokensOut());
+        assertEq(sy.yieldToken(), address(0));
+        assertEq(sy.decimals(), 18);
+        (IStandardizedYield.AssetType kind, address asset, uint8 decimals) = sy.assetInfo();
+        assertEq(uint8(kind), uint8(IStandardizedYield.AssetType.LIQUIDITY));
+        assertEq(asset, hook); assertEq(decimals, 18);
+        assertEq(sy.getRewardTokens().length, 0);
+        address[] memory facets = IDiamondLoupe(hook).facetAddresses();
+        for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576);
+    }
+
+    function test_nativeSYSingleJoinsAndEveryExitPayTheirPreview() public noSelfCalls(hook) {
+        uint256 seed = _joinFullBook(300 ether, 300 ether, 300 ether);
+        _mintSeSharesToUser(se1, token1, 20 ether);
+        _mintSeSharesToUser(se2, token2, 20 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        address[] memory tokens = sy.getTokensIn();
+        vm.startPrank(user);
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20(tokens[i]).approve(hook, 2 ether);
+            uint256 depositQuote = sy.previewDeposit(tokens[i], 2 ether);
+            assertGt(depositQuote, 0, "declared token funds paid preparation");
+            uint256 beforeLp = sy.balanceOf(user);
+            assertEq(sy.deposit(user, tokens[i], 2 ether, depositQuote), depositQuote);
+            assertEq(sy.balanceOf(user) - beforeLp, depositQuote);
+            address out = tokens[(i + 1) % tokens.length];
+            uint256 shares = seed / 100;
+            uint256 quoted = sy.previewRedeem(out, shares);
+            assertGt(quoted, 0, "share-funded incumbent LP still redeems through every declared route");
+            uint256 before = IERC20(out).balanceOf(user);
+            assertEq(sy.redeem(user, shares, out, quoted, false), quoted, "redemption preview");
+            assertEq(IERC20(out).balanceOf(user) - before, quoted, "actual payout");
+        }
+        vm.stopPrank();
+    }
+
+    function test_nativeSYSequentialExitProjectsDependentRates() public {
+        // Real funded SEs are required before the rate providers can price a first join.
+        _mintSeSharesToUser(se1, token1, 100 ether);
+        _mintSeSharesToUser(se2, token2, 100 ether);
+        // D60: the setUp hook already binds se1 and se2 with StandardExchangeRateProviders (every buffered
+        // leg carries one), so it is used as is. Redeploying with identical arguments would return the same
+        // finalized diamond, whose init selectors are retired.
+        vm.startPrank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se1, 7e16);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se2, 7e16);
+        vm.stopPrank();
+        vm.startPrank(user);
+        token0.approve(hook, type(uint256).max);
+        token1.approve(hook, type(uint256).max);
+        token2.approve(hook, type(uint256).max);
+        IERC20(se1).approve(hook, type(uint256).max);
+        IERC20(se2).approve(hook, type(uint256).max);
+        vm.stopPrank();
+        uint256 rateBefore = IRateProvider(orbital.rateProvider(1)).getRate();
+        uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
+        assertLt(IRateProvider(orbital.rateProvider(1)).getRate(), rateBefore, "funded issuance fee changes dependent rate");
+        IStandardizedYield sy = IStandardizedYield(hook);
+        address[] memory outputs = sy.getTokensOut();
+        for (uint256 i; i < outputs.length; ++i) {
+            uint256 amount = lp / 100;
+            uint256 quoted = sy.previewRedeem(outputs[i], amount);
+            assertGt(quoted, 0, "live dependent-rate exit");
+            uint256 before = IERC20(outputs[i]).balanceOf(user);
+            vm.prank(user);
+            assertEq(sy.redeem(user, amount, outputs[i], quoted, false), quoted, "sequential rate projection");
+            assertEq(IERC20(outputs[i]).balanceOf(user) - before, quoted, "funded exit payout");
+        }
+    }
+
+    function test_nativeSYInternalBalanceLimitsAndPriorInventory() public noSelfCalls(hook) {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
+        token0.mint(hook, 7 ether); token1.mint(hook, 11 ether); token2.mint(hook, 13 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        uint256 amount = lp / 100;
+        uint256 quoted = sy.previewRedeem(address(token0), amount);
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()")); sy.redeem(user, amount, address(token0), quoted + 1, false);
+        assertEq(sy.balanceOf(user), lp, "failed minimum rolls back burn");
+        sy.transfer(hook, 3 * amount);
+        assertEq(abi.decode(atomic.execute(address(sy), abi.encodeCall(IStandardizedYield.redeem, (user, amount, address(token0), quoted, true))), (uint256)), quoted);
+        assertEq(sy.balanceOf(hook), 2 * amount, "only requested internal shares burned");
+        vm.stopPrank();
+        assertEq(token0.balanceOf(hook) - orbital.rawReserve(0), 7 ether);
+        assertEq(token1.balanceOf(hook) - orbital.rawReserve(1), 11 ether);
+        assertEq(token2.balanceOf(hook) - orbital.rawReserve(2), 13 ether);
+    }
+
+    function test_nativeSYFundedYieldRepricesWithoutRebasingAndStillRedeems() public {
+        uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        uint256 rate = sy.exchangeRate();
+        vm.startPrank(user);
+        token1.approve(address(vault1), 40 ether);
+        vault1.simulateYield(40 ether);
+        vm.stopPrank();
+        assertGt(sy.exchangeRate(), rate);
+        assertEq(sy.balanceOf(user), lp);
+        uint256 quoted = sy.previewRedeem(address(token1), lp / 100);
+        uint256 before = token1.balanceOf(user);
+        vm.prank(user); assertEq(sy.redeem(user, lp / 100, address(token1), quoted, false), quoted);
+        assertEq(token1.balanceOf(user) - before, quoted);
+    }
+
+    function _joinFullBook(uint256 detfAmt, uint256 pair0Amt, uint256 pair1Amt)
+        internal
+        returns (uint256 lp)
+    {
+        address[] memory ts = new address[](3);
+        ts[0] = address(token0);
+        ts[1] = address(token1);
+        ts[2] = address(token2);
+        uint256[] memory am = new uint256[](3);
+        am[0] = detfAmt;
+        am[1] = pair0Amt;
+        am[2] = pair1Amt;
+        if (IERC20(hook).totalSupply() == 0) {
+            ts[1] = se1;
+            ts[2] = se2;
+            am[1] = _mintSeSharesToUser(se1, token1, pair0Amt);
+            am[2] = _mintSeSharesToUser(se2, token2, pair1Amt);
+        }
+        vm.prank(user);
+        lp = orbital.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
+    }
+}

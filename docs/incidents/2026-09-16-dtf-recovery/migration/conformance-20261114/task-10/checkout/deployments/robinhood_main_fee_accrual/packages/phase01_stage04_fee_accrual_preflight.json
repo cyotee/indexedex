@@ -1,0 +1,14 @@
+{
+  "chainId": 4663,
+  "claimVault": "0x0000000000000000000000000000000000000000",
+  "configHash": "0xf79463823decf207da881c9d86c5a145d8a04d97c67914e74b45c6667d51cf73",
+  "phase": 0,
+  "principal": "163083427428934015177879773",
+  "receiptVerified": false,
+  "reserveRemaining": "164918773245602919993967737",
+  "rewardRate": 9920634920634920634,
+  "rewardReserveDiagnostic": "1835345816668904816087964",
+  "targetDetf": "0x0000000000000000000000000000000000000000",
+  "tokenStaking": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00",
+  "vaultShares": 0
+}

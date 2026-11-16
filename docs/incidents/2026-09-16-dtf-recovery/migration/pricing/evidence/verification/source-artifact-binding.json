@@ -1,0 +1,844 @@
+{
+  "checkedAt": "2026-11-10T15:22:58.216Z",
+  "hashChecks": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+      "sha256": "b7af401436bf14cd4cde351b5b3af70b27a7cb1a166f06fc23c515e2bff5b618",
+      "bytes": 10182,
+      "actual": "b7af401436bf14cd4cde351b5b3af70b27a7cb1a166f06fc23c515e2bff5b618",
+      "mtime": "2026-11-10T14:47:35.037Z"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+      "sha256": "6c2a26b7c85e9f075ec0b8188efed41d9d40f6fccd9aaf8b91447a5c613a9d00",
+      "bytes": 1933,
+      "actual": "6c2a26b7c85e9f075ec0b8188efed41d9d40f6fccd9aaf8b91447a5c613a9d00",
+      "mtime": "2026-11-10T14:43:20.234Z"
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol",
+      "sha256": "ba05e7db8175d42a9e24b809772bfa03f54db02a1cd9f163e04148b7f84ceafc",
+      "bytes": 927,
+      "actual": "ba05e7db8175d42a9e24b809772bfa03f54db02a1cd9f163e04148b7f84ceafc",
+      "mtime": "2026-11-10T14:41:49.290Z"
+    },
+    {
+      "path": "contracts/utils/StandardExchangeFrozenQuoteLib.sol",
+      "sha256": "210d5df7a3c7fc69937c37473770bc34c24146993b1ee3a9527136fa58547137",
+      "bytes": 3066,
+      "actual": "210d5df7a3c7fc69937c37473770bc34c24146993b1ee3a9527136fa58547137",
+      "mtime": "2026-11-10T14:47:35.037Z"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol",
+      "sha256": "138137b39a8f2df0e0b8d922649a8d49d7caf7eb8945927513aabb77eae0f4f2",
+      "bytes": 1165,
+      "actual": "138137b39a8f2df0e0b8d922649a8d49d7caf7eb8945927513aabb77eae0f4f2",
+      "mtime": "2026-11-10T14:41:49.292Z"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol",
+      "sha256": "1dc6ff685e9159b6114bfc67f3a8f8e100ecdabd48bbbc179d957c1bc7eba7b6",
+      "bytes": 23379,
+      "actual": "1dc6ff685e9159b6114bfc67f3a8f8e100ecdabd48bbbc179d957c1bc7eba7b6",
+      "mtime": "2026-11-10T14:41:49.294Z"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "sha256": "ff8ce788a7d065928512b633aca06ba858aecc5345d17d76d0bd8f909f6a265c",
+      "bytes": 21452,
+      "actual": "ff8ce788a7d065928512b633aca06ba858aecc5345d17d76d0bd8f909f6a265c",
+      "mtime": "2026-11-10T14:41:49.295Z"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "sha256": "a1db24f94e177bedd3f8e8fb438783e0048de393d93513a27ecef99698707267",
+      "bytes": 5618,
+      "actual": "a1db24f94e177bedd3f8e8fb438783e0048de393d93513a27ecef99698707267",
+      "mtime": "2026-11-10T14:41:49.296Z"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+      "sha256": "b6bf0d3c0d119b378d391cd281b9c2af0942011eef84f76337615d42960f7ff3",
+      "bytes": 20682,
+      "actual": "b6bf0d3c0d119b378d391cd281b9c2af0942011eef84f76337615d42960f7ff3",
+      "mtime": "2026-11-10T14:41:49.297Z"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+      "sha256": "0e7504ac790f6934df323567d665c1fe25dd5dc51874309e8c0ca72b817d4483",
+      "bytes": 24934,
+      "actual": "0e7504ac790f6934df323567d665c1fe25dd5dc51874309e8c0ca72b817d4483",
+      "mtime": "2026-11-10T14:43:20.233Z"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol",
+      "sha256": "04aabbc91ebc34af967171e259396ede574c9c518795bb9cf8c34aab72aaaba6",
+      "bytes": 19217,
+      "actual": "04aabbc91ebc34af967171e259396ede574c9c518795bb9cf8c34aab72aaaba6",
+      "mtime": "2026-11-10T14:41:49.298Z"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol",
+      "sha256": "255386a415233a101edb04233cf10ee3f213694baf22b9e19290d826bb1bc1a5",
+      "bytes": 2551,
+      "actual": "255386a415233a101edb04233cf10ee3f213694baf22b9e19290d826bb1bc1a5",
+      "mtime": "2026-11-10T14:41:49.299Z"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol",
+      "sha256": "e518a13530090733f850435f2ca04ef138d9f8716019c48feff11008665bd944",
+      "bytes": 17738,
+      "actual": "e518a13530090733f850435f2ca04ef138d9f8716019c48feff11008665bd944",
+      "mtime": "2026-11-10T14:41:49.300Z"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "sha256": "984241e3393db5d6892ace87bd001ec57c5f53d9c7e179ba03d339c3d722d1b3",
+      "bytes": 7803,
+      "actual": "984241e3393db5d6892ace87bd001ec57c5f53d9c7e179ba03d339c3d722d1b3",
+      "mtime": "2026-11-10T14:56:42.059Z"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol",
+      "sha256": "5b35b910d22182ee81884c702e53a6ef8869e91e2f3c82752b782f5a77198acc",
+      "bytes": 25335,
+      "actual": "5b35b910d22182ee81884c702e53a6ef8869e91e2f3c82752b782f5a77198acc",
+      "mtime": "2026-11-10T15:05:14.488Z"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol",
+      "sha256": "bccccaca4c9941b5865c02be487d5850b87a8ec610f52371389939df80e72a38",
+      "bytes": 2980,
+      "actual": "bccccaca4c9941b5865c02be487d5850b87a8ec610f52371389939df80e72a38",
+      "mtime": "2026-11-10T14:41:49.301Z"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+      "sha256": "003b66c4cdbcc30b8cf81ecdce58c66b824cf3c6f74d691d41560b47ab93d3ac",
+      "bytes": 22673,
+      "actual": "003b66c4cdbcc30b8cf81ecdce58c66b824cf3c6f74d691d41560b47ab93d3ac",
+      "mtime": "2026-11-10T15:02:04.479Z"
+    }
+  ],
+  "artifactBindings": [
+    {
+      "name": "UniswapV4StandardExchangeWeightedBufferHookHooksFacet",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.json",
+      "sha256": "aca18188107df298bd913aa3404d45b1fb83700c56818a9e18e717163d6d605f",
+      "bytes": 13095,
+      "mtime": "2026-11-10T14:48:32.773Z",
+      "linkReferences": {
+        "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol": {
+          "UniswapV4SeBufferHookLegLib": [
+            {
+              "start": 6122,
+              "length": 20
+            },
+            {
+              "start": 7982,
+              "length": 20
+            },
+            {
+              "start": 8244,
+              "length": 20
+            }
+          ]
+        },
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookClaimLib": [
+            {
+              "start": 2894,
+              "length": 20
+            },
+            {
+              "start": 3998,
+              "length": 20
+            },
+            {
+              "start": 4058,
+              "length": 20
+            },
+            {
+              "start": 5691,
+              "length": 20
+            },
+            {
+              "start": 6172,
+              "length": 20
+            },
+            {
+              "start": 9440,
+              "length": 20
+            }
+          ]
+        },
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 10700,
+              "length": 20
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "UniswapV4StandardExchangeWeightedBufferHookDFPkg",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol/UniswapV4StandardExchangeWeightedBufferHookDFPkg.json",
+      "sha256": "af6bbaa7393cdb39241003b807d253af0d187c06d69a45815a205ffbf0b1edb9",
+      "bytes": 15835,
+      "mtime": "2026-11-10T14:48:32.768Z",
+      "linkReferences": {},
+      "immutableReferences": {
+        "8312": [
+          {
+            "start": 578,
+            "length": 20
+          },
+          {
+            "start": 1145,
+            "length": 20
+          },
+          {
+            "start": 9130,
+            "length": 20
+          },
+          {
+            "start": 15581,
+            "length": 20
+          }
+        ],
+        "8313": [
+          {
+            "start": 604,
+            "length": 20
+          },
+          {
+            "start": 3981,
+            "length": 20
+          }
+        ],
+        "8314": [
+          {
+            "start": 630,
+            "length": 20
+          },
+          {
+            "start": 10941,
+            "length": 20
+          }
+        ],
+        "8315": [
+          {
+            "start": 656,
+            "length": 20
+          },
+          {
+            "start": 10967,
+            "length": 20
+          }
+        ],
+        "8316": [
+          {
+            "start": 682,
+            "length": 20
+          },
+          {
+            "start": 11101,
+            "length": 20
+          }
+        ],
+        "8317": [
+          {
+            "start": 708,
+            "length": 20
+          },
+          {
+            "start": 11128,
+            "length": 20
+          }
+        ],
+        "8318": [
+          {
+            "start": 734,
+            "length": 20
+          },
+          {
+            "start": 11155,
+            "length": 20
+          }
+        ],
+        "8319": [
+          {
+            "start": 760,
+            "length": 20
+          },
+          {
+            "start": 10993,
+            "length": 20
+          }
+        ],
+        "8320": [
+          {
+            "start": 786,
+            "length": 20
+          },
+          {
+            "start": 10915,
+            "length": 20
+          }
+        ],
+        "8321": [
+          {
+            "start": 812,
+            "length": 20
+          },
+          {
+            "start": 11020,
+            "length": 20
+          }
+        ],
+        "8322": [
+          {
+            "start": 838,
+            "length": 20
+          },
+          {
+            "start": 11047,
+            "length": 20
+          }
+        ],
+        "8323": [
+          {
+            "start": 864,
+            "length": 20
+          },
+          {
+            "start": 11074,
+            "length": 20
+          }
+        ],
+        "8324": [
+          {
+            "start": 890,
+            "length": 20
+          },
+          {
+            "start": 10837,
+            "length": 20
+          }
+        ],
+        "8325": [
+          {
+            "start": 916,
+            "length": 20
+          },
+          {
+            "start": 10863,
+            "length": 20
+          }
+        ],
+        "8326": [
+          {
+            "start": 942,
+            "length": 20
+          },
+          {
+            "start": 10811,
+            "length": 20
+          }
+        ],
+        "8327": [
+          {
+            "start": 1166,
+            "length": 20
+          },
+          {
+            "start": 1799,
+            "length": 20
+          },
+          {
+            "start": 10889,
+            "length": 20
+          }
+        ]
+      }
+    },
+    {
+      "name": "UniswapV4StandardExchangeWeightedBufferHookClaimLib",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol/UniswapV4StandardExchangeWeightedBufferHookClaimLib.json",
+      "sha256": "a3ddccc6dd49a7dfba1fdce3df534f5e38fd14fbaf1cd6f3b1a08457bad9b0de",
+      "bytes": 11627,
+      "mtime": "2026-11-10T14:48:32.768Z",
+      "linkReferences": {
+        "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol": {
+          "UniswapV4SeBufferHookContextQuoteLib": [
+            {
+              "start": 2253,
+              "length": 20
+            },
+            {
+              "start": 2487,
+              "length": 20
+            },
+            {
+              "start": 4414,
+              "length": 20
+            },
+            {
+              "start": 8392,
+              "length": 20
+            },
+            {
+              "start": 8806,
+              "length": 20
+            },
+            {
+              "start": 8998,
+              "length": 20
+            }
+          ]
+        },
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 3751,
+              "length": 20
+            },
+            {
+              "start": 3950,
+              "length": 20
+            },
+            {
+              "start": 4485,
+              "length": 20
+            },
+            {
+              "start": 5848,
+              "length": 20
+            },
+            {
+              "start": 8434,
+              "length": 20
+            },
+            {
+              "start": 9364,
+              "length": 20
+            },
+            {
+              "start": 10909,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "immutableReferences": {
+        "library_deploy_address": [
+          {
+            "start": 290,
+            "length": 20
+          }
+        ]
+      }
+    },
+    {
+      "name": "UniswapV3FullSpreadStandardExchangeVaultInQueryFacet",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.json",
+      "sha256": "2b8876bdacb9ddbae2ce8be5a8a51471b877e36ff51ab6306145ab3f0d93d591",
+      "bytes": 15973,
+      "mtime": "2026-11-10T14:48:32.778Z",
+      "linkReferences": {}
+    },
+    {
+      "name": "UniswapV3FullSpreadStandardExchangeVaultDFPkg",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol/UniswapV3FullSpreadStandardExchangeVaultDFPkg.json",
+      "sha256": "0b12ca31a579450c5f961a28463927462aa66e9cc176859971a7bc46dd7d49ca",
+      "bytes": 6386,
+      "mtime": "2026-11-10T14:48:32.778Z",
+      "linkReferences": {},
+      "immutableReferences": {
+        "9105": [
+          {
+            "start": 3921,
+            "length": 20
+          },
+          {
+            "start": 4111,
+            "length": 20
+          }
+        ],
+        "9106": [
+          {
+            "start": 4137,
+            "length": 20
+          },
+          {
+            "start": 4808,
+            "length": 20
+          }
+        ],
+        "9107": [
+          {
+            "start": 4163,
+            "length": 20
+          },
+          {
+            "start": 4859,
+            "length": 20
+          }
+        ],
+        "9108": [
+          {
+            "start": 4189,
+            "length": 20
+          },
+          {
+            "start": 4926,
+            "length": 20
+          }
+        ],
+        "9109": [
+          {
+            "start": 4215,
+            "length": 20
+          },
+          {
+            "start": 4993,
+            "length": 20
+          }
+        ],
+        "9110": [
+          {
+            "start": 4241,
+            "length": 20
+          },
+          {
+            "start": 5060,
+            "length": 20
+          }
+        ],
+        "9111": [
+          {
+            "start": 4267,
+            "length": 20
+          },
+          {
+            "start": 5127,
+            "length": 20
+          }
+        ],
+        "9112": [
+          {
+            "start": 4293,
+            "length": 20
+          },
+          {
+            "start": 5194,
+            "length": 20
+          }
+        ],
+        "9113": [
+          {
+            "start": 4320,
+            "length": 20
+          },
+          {
+            "start": 5261,
+            "length": 20
+          }
+        ],
+        "9114": [
+          {
+            "start": 4347,
+            "length": 20
+          },
+          {
+            "start": 5329,
+            "length": 20
+          }
+        ],
+        "9115": [
+          {
+            "start": 4374,
+            "length": 20
+          },
+          {
+            "start": 5397,
+            "length": 20
+          }
+        ],
+        "9116": [
+          {
+            "start": 4401,
+            "length": 20
+          },
+          {
+            "start": 5465,
+            "length": 20
+          }
+        ],
+        "9117": [
+          {
+            "start": 4428,
+            "length": 20
+          },
+          {
+            "start": 5533,
+            "length": 20
+          }
+        ],
+        "9118": [
+          {
+            "start": 4455,
+            "length": 20
+          },
+          {
+            "start": 5601,
+            "length": 20
+          }
+        ],
+        "9119": [
+          {
+            "start": 4482,
+            "length": 20
+          },
+          {
+            "start": 5669,
+            "length": 20
+          }
+        ],
+        "9120": [
+          {
+            "start": 1471,
+            "length": 20
+          }
+        ],
+        "9121": [
+          {
+            "start": 1105,
+            "length": 20
+          },
+          {
+            "start": 2966,
+            "length": 20
+          }
+        ],
+        "9122": [
+          {
+            "start": 6068,
+            "length": 20
+          }
+        ],
+        "9123": [
+          {
+            "start": 1298,
+            "length": 20
+          }
+        ]
+      }
+    },
+    {
+      "name": "MigrationSnapshotConsumer",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+      "sha256": "ee5fa3d5289b2b7a7d6f6e9dbaf189cc7edde8415fc77ba7211ea3aa262b9f71",
+      "bytes": 9893,
+      "mtime": "2026-11-10T14:57:21.444Z",
+      "linkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 5089,
+              "length": 20
+            },
+            {
+              "start": 5289,
+              "length": 20
+            },
+            {
+              "start": 5853,
+              "length": 20
+            },
+            {
+              "start": 6068,
+              "length": 20
+            }
+          ]
+        },
+        "contracts/utils/StandardExchangeFrozenQuoteLib.sol": {
+          "StandardExchangeFrozenV3CaptureIdentity": [
+            {
+              "start": 4609,
+              "length": 20
+            }
+          ],
+          "StandardExchangeFrozenV3PreviewIdentity": [
+            {
+              "start": 4665,
+              "length": 20
+            }
+          ]
+        }
+      },
+      "immutableReferences": {
+        "8476": [
+          {
+            "start": 203,
+            "length": 20
+          },
+          {
+            "start": 9421,
+            "length": 20
+          }
+        ],
+        "8477": [
+          {
+            "start": 232,
+            "length": 20
+          },
+          {
+            "start": 9463,
+            "length": 20
+          }
+        ],
+        "8478": [
+          {
+            "start": 257,
+            "length": 20
+          },
+          {
+            "start": 9442,
+            "length": 20
+          }
+        ],
+        "8479": [
+          {
+            "start": 282,
+            "length": 20
+          },
+          {
+            "start": 9484,
+            "length": 20
+          }
+        ]
+      }
+    },
+    {
+      "name": "MigrationSnapshotMathExposure",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotMathExposure.json",
+      "sha256": "00f494cd101cb192a477bacbbcf89a4d337f986afa71ea494968f38bc87f3a3d",
+      "bytes": 5047,
+      "mtime": "2026-11-10T14:57:21.445Z",
+      "linkReferences": {
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol": {
+          "UniswapV4StandardExchangeWeightedBufferHookMath": [
+            {
+              "start": 2170,
+              "length": 20
+            },
+            {
+              "start": 3466,
+              "length": 20
+            },
+            {
+              "start": 3664,
+              "length": 20
+            },
+            {
+              "start": 4309,
+              "length": 20
+            }
+          ]
+        },
+        "contracts/utils/StandardExchangeFrozenQuoteLib.sol": {
+          "StandardExchangeFrozenV3CaptureIdentity": [
+            {
+              "start": 247,
+              "length": 20
+            }
+          ],
+          "StandardExchangeFrozenV3PreviewIdentity": [
+            {
+              "start": 307,
+              "length": 20
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "StandardExchangeFrozenV3CaptureIdentity",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/StandardExchangeFrozenQuoteLib.sol/StandardExchangeFrozenV3CaptureIdentity.json",
+      "sha256": "b33b4b10bcf1e955903bfbf73bbf0d5557991569c9a3dc135b6bea07788435fd",
+      "bytes": 16109,
+      "mtime": "2026-11-10T14:48:32.775Z",
+      "linkReferences": {}
+    },
+    {
+      "name": "StandardExchangeFrozenV3PreviewIdentity",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/StandardExchangeFrozenQuoteLib.sol/StandardExchangeFrozenV3PreviewIdentity.json",
+      "sha256": "abed40b5ada13ed85d6327ae027a219f2f19131e44639bb165677e0be07f173d",
+      "bytes": 11148,
+      "mtime": "2026-11-10T14:48:32.775Z",
+      "linkReferences": {}
+    }
+  ],
+  "freshness": [
+    {
+      "artifact": "UniswapV4StandardExchangeWeightedBufferHookHooksFacet",
+      "checked": 110,
+      "failures": []
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeWeightedBufferHookDFPkg",
+      "checked": 135,
+      "failures": []
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeWeightedBufferHookClaimLib",
+      "checked": 59,
+      "failures": []
+    },
+    {
+      "artifact": "UniswapV3FullSpreadStandardExchangeVaultInQueryFacet",
+      "checked": 98,
+      "failures": []
+    },
+    {
+      "artifact": "UniswapV3FullSpreadStandardExchangeVaultDFPkg",
+      "checked": 133,
+      "failures": []
+    },
+    {
+      "artifact": "MigrationSnapshotConsumer",
+      "checked": 572,
+      "failures": []
+    },
+    {
+      "artifact": "MigrationSnapshotMathExposure",
+      "checked": 572,
+      "failures": []
+    },
+    {
+      "artifact": "StandardExchangeFrozenV3CaptureIdentity",
+      "checked": 103,
+      "failures": []
+    },
+    {
+      "artifact": "StandardExchangeFrozenV3PreviewIdentity",
+      "checked": 103,
+      "failures": []
+    },
+    {
+      "artifact": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/UniswapV4DetfMigrationSnapshot.t.sol/UniswapV4DetfMigrationSnapshotTest.json",
+      "checked": 577,
+      "failures": []
+    },
+    {
+      "artifact": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/out/MigrationSnapshotLocalQA.s.sol/MigrationSnapshotLocalQA.json",
+      "checked": 573,
+      "failures": []
+    }
+  ],
+  "uniqueDependencies": 599
+}

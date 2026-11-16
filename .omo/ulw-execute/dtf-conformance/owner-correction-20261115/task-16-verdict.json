@@ -1,0 +1,169 @@
+{
+  "type": "AdversarialVerify",
+  "task": 16,
+  "date": "2026-11-15",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "scope": "Offline authenticated synthetic-local funding-evidence transport only, preserving all 22 distinct authority roles and historical JSON FileRef validation",
+  "summary": "Current source and retained executions substantiate task 16. The optional field reuses the strict source contract, is separately mapped and authenticated, does not relax complete() or native containment, and preserves admitted v1 inputs without it. No blocking product or harness finding remains.",
+  "findings": [],
+  "concrete_fixes": [],
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-16-done.json",
+    "sha256": "2a65715371d594ab2d5d97de98f5ca0333a952cf44c0330d4587f2b0e4306575"
+  },
+  "plan": {
+    "path": ".omo/plans/dtf-migration-conformance-remediation-20261114.md",
+    "sha256": "92f29fc33e030e5e238f2dfde9ed928c6f0a944689011ae521d4f514a56e845b",
+    "sections": [
+      "owner correction lines 23-29",
+      "task 16 lines 462-472"
+    ]
+  },
+  "source_hashes": {
+    "scripts/recovery/dtf-migration/bundle.ts": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+    "scripts/recovery/dtf-migration/bundle-files.ts": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+    "scripts/recovery/dtf-migration/bundle-materialize.ts": "01505bf4ca5fbb81d7466ec6cfe7e8b9382a949c8a6cd9a072973dba1ad62282",
+    "scripts/recovery/dtf-migration/bundle.test.ts": "6fdc999ed41fa75b694f0efdb43c3f59a0e46c01d2338d10709ca5ecffb4911e"
+  },
+  "evidence": {
+    "report": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/independent/report.md",
+      "sha256": "1f03191b96a41891951eae5180002124bf83f66a807257914382753c95b0674e",
+      "bytes": 13205
+    },
+    "verification": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/independent/verification.json",
+      "sha256": "a06f7b110bf4af8c0169a8d2d4a98de957bf47c7a7d357e24c8ee9a1711f8bf6",
+      "bytes": 127402
+    },
+    "commands": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/commands.json",
+      "sha256": "119bf36c148cf3afe63c0507e206557e8bda25bf894ff983727c071bbbebb9b7",
+      "bytes": 28267
+    },
+    "inventory": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/evidence-inventory.json",
+      "sha256": "8078e685e81908cbb17683296a8f21e3c7cad969794c7aca243b711159ee7347",
+      "bytes": 137287
+    },
+    "manual_program": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/manual-transport.ts",
+      "sha256": "db0c5bac5c2ee5347e369c9d8d813e04375df28690df291fbf225f1684f30eab",
+      "bytes": 11165
+    },
+    "manual_results": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/manual/transport-results.json",
+      "sha256": "68ea3cf8294b69c83ed53741de417737daa5183d69f6de755d4aee7c018c9504",
+      "bytes": 68697
+    }
+  },
+  "checks": {
+    "pre_fix_reproduction": {
+      "cli_attempt": "04-baseline-export",
+      "regression_attempt": "05-red-regression",
+      "exits": [
+        1,
+        1
+      ],
+      "exact_rejection": "Unrecognized rehearsalFundingEvidence",
+      "baseline_sources_bound": true,
+      "red_test_snapshot_recovered_in_memory": true
+    },
+    "guard_mutation": {
+      "attempt": "07-mutated-purpose-identity",
+      "exit": 1,
+      "expected_rejection_assertions_fail": 2,
+      "mutant_hash_reconstructed": true,
+      "final_source_restored": true
+    },
+    "bundle_suite": {
+      "attempt": "08-bundle-tests",
+      "exit": 0,
+      "passed": 48,
+      "failed": 0
+    },
+    "strict_tsc": {
+      "attempt": "09-operator-types",
+      "exit": 0,
+      "exact_expanded_operator_files": 86,
+      "stdout_empty": true,
+      "stderr_empty": true
+    },
+    "public_cli_export": {
+      "attempt": "10-public-export",
+      "exit": 0,
+      "mode": "offline-integrity-only"
+    },
+    "manual_transport": {
+      "attempt": "13-manual-transport",
+      "exit": 0,
+      "fresh_materializations": 2,
+      "exact_byte_comparisons": 46,
+      "controlled_negatives": 25,
+      "native_copies_unavailable": true,
+      "contained_access_receipts_match": true
+    },
+    "randomized_new_cases": {
+      "attempt": "14-randomized-transport",
+      "exit": 0,
+      "seed": 16115,
+      "passed": 10,
+      "failed": 0
+    },
+    "command_stream_bindings": {
+      "commands": 14,
+      "streams": 28,
+      "mismatches": 0
+    },
+    "current_operator_source_mismatches": 0,
+    "producer_inventory": {
+      "entries": 429,
+      "bytes": 108103934,
+      "mismatches": 0
+    },
+    "authority_preservation": {
+      "distinct_roles": 22,
+      "all_original_bytes_match": true,
+      "all_original_metadata_match": true
+    },
+    "csv_preservation": {
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "bytes": 4535122,
+      "eligibility_or_balance_inferred": false
+    },
+    "dirty_scope": {
+      "independently_checked_initial_entries": 49,
+      "changes_only_three_scoped_already_dirty_sources": true,
+      "initially_clean_materializer_separately_bound": true,
+      "whole_unrelated_dirty_tree_rehashed": false
+    }
+  },
+  "limitations": [
+    "Retained tests, strict tsc and public CLI executions were inspected and source-bound, not rerun for another signature. No detected input/source change requires a full operator or Forge rerun.",
+    "Optional Biome LSP is not installed; the artifact write reported that tooling limitation. Strict tsc passed for the product. No install or fresh whole-tree LSP-clean claim.",
+    "The producer recorder metadata was repaired after attempts 08/09/10; all final operator bytes match, and attempts 12/13/14 bind final helpers. Earlier helper-only tsc exit 2 remains retained and resolved.",
+    "Local command/source sidecars are not independent cryptographic process attestation. Third-party dependency trees were not recursively fingerprinted; the broad unrelated dirty-tree and historical monitor censuses are producer records beyond this verifier scope.",
+    "Interruption evidence models partial filesystem states and repeated retries; it does not establish process-kill crash durability, disk-exhaustion recovery, cross-platform behavior or flake rates.",
+    "The existing bundle.test.ts has 554 pure lines; no structural cleanup was authorized in this verifier task.",
+    "Task 10 owns CSV semantic parsing, pinned candidate/exclusion/balance checks, deterministic selection, actual local-fork funding, replacement of the old NFT-three setup funding path and the remaining lifecycle."
+  ],
+  "task_16_checkpoint_confirmed": true,
+  "task_10_funding_or_lifecycle_confirmed": false,
+  "whole_plan_confirmed": false,
+  "financial_approval": false,
+  "source_edits": false,
+  "tests_rerun": false,
+  "rpc": false,
+  "transactions": false,
+  "installs": false,
+  "commits": false,
+  "delegation": false,
+  "witness_pin_restored": false,
+  "plan_checkbox_edited": false,
+  "producer_evidence_preserved": true,
+  "verdict_written_last": true
+}

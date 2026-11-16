@@ -1,0 +1,63 @@
+{
+  "capturedBeforeReceipt": true,
+  "docsGitMode": {
+    "baseline": 138,
+    "missing": 0,
+    "changed": 0,
+    "new": 13,
+    "newRoot": "docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants/commit/precommit/"
+  },
+  "docsPerms": {
+    "baseline": 147,
+    "missing": 0,
+    "fileChanges": 0,
+    "directorySizeChanges": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/stateful-invariants",
+        "before": 192,
+        "after": 224,
+        "perm": "0o755"
+      }
+    ],
+    "new": 15
+  },
+  "out": {
+    "baseline": 7369,
+    "missing": 0,
+    "changed": 0,
+    "new": 0
+  },
+  "cacheForge": {
+    "baseline": 550,
+    "missing": 0,
+    "changed": 0,
+    "new": 0
+  },
+  "preservationRows": {
+    "baseline": 148,
+    "stillMatch": 146,
+    "movers": 2
+  },
+  "foreignIndexes": {
+    "count": 25,
+    "mismatches": 0
+  },
+  "refs": {
+    "showRefLines": 64,
+    "onlyMovement": "refs/heads/work/dtf-migration-phase-24-stateful-invariants"
+  },
+  "ownIndex": {
+    "beforeSha256": "0aac78e6504612422343709283b720e3628f7e43a04df63575f91130d58000b0",
+    "beforeBytes": 2073604,
+    "afterSha256": "82128293dce6005c647d33617c5c14ebfecfea73588ada9f915bff82cd7166a7",
+    "afterBytes": 2076067,
+    "mode": 33188
+  },
+  "ownRef": {
+    "beforeSha256": "1fc8fc83c08ffea454b82ae5312aa8a5ba769c5cd6ee1ab2520b9f3d423526fc",
+    "afterSha256": "bbad16e5c6ca428ad8c6deeb8792560a9e2bf7c70aeb20c9b87b35f6fa3fb30c",
+    "text": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca"
+  },
+  "tree": "464742d40290a5a11686afe75f5ee061f56a4677",
+  "writeTreeMatches": true
+}

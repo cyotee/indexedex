@@ -1,0 +1,197 @@
+{
+  "type": "DoneClaim",
+  "task": 8,
+  "title": "Deliver substantive adversarial fixtures and invariants",
+  "tier": "HEAVY",
+  "status": "complete",
+  "completedAt": "2026-11-15T06:21:14.835Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "sourceFingerprint": "fff34a8dc3f181b39cd28d4f1a5fd38afab657bbad40ce1bd4b9e71ee273042e",
+  "summary": "Delivered the reusable real-registry adversarial base with two substantive consumers; complete economic/custody/cut rollback observations; A/B-aware native ghost records with positive issuance/activation/reward witnesses; real NFT identity-preserving reloads; all-domain surrender/funding/recovery counters; exact 333/334/334 production-proxy residue; ordinary registry authority isolation.",
+  "sourceFiles": [
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol"
+  ],
+  "evidenceDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8",
+  "deliveryManifest": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/delivery-manifest.json",
+  "tests": [
+    {
+      "command": "python3 scripts/forge-artifacts.py test \"contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant\" -- -vv",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/happy-5.log",
+      "exitCode": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "summary": "Ran 5 test suites in 5.00s (6.04s CPU time): 17 tests passed, 0 failed, 0 skipped (17 total tests)",
+      "sha256": "5227d35f956f201eadc36a41116acbb08fa46524e0d2316ba8aef76bedb79911"
+    },
+    {
+      "command": "python3 scripts/forge-artifacts.py test \"contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol\" -- -vv",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/hostile-rollback.log",
+      "exitCode": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "summary": "Ran 3 test suites in 379.05ms (1.12s CPU time): 13 tests passed, 0 failed, 0 skipped (13 total tests)",
+      "sha256": "de7fb54b41e548efb4ac31e321678cf9a45d90cf2ce1ced7020951f8f4f56864"
+    },
+    {
+      "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test \"contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol\" --test-root \"test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant\" --test-root \"test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol\" -- -j 1 --compute-units-per-second 10 --rpc-timeout 120 -vv",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/fork-4.log",
+      "exitCode": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "summary": "Ran 3 test suites in 6.48s (8.18s CPU time): 17 tests passed, 0 failed, 0 skipped (17 total tests)",
+      "sha256": "b589a8006d944c52a3c048f564535200f67d944b18206a0fdf85ec22094cbb01"
+    },
+    {
+      "command": "python3 scripts/forge-artifacts.py test \"contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol\" --test-root \"test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol\" -- -vv",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/inherited.log",
+      "exitCode": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "summary": "Ran 2 test suites in 426.97ms (836.66ms CPU time): 17 tests passed, 0 failed, 0 skipped (17 total tests)",
+      "sha256": "89b8ce3456ccca38f3852fe344687c1ae223e363c61030c34dda631b95adc4e1"
+    }
+  ],
+  "checks": {
+    "solidityLspErrors": 0,
+    "solidityFilesChecked": 10,
+    "scopedGitDiffCheckExitCode": 0,
+    "seed": "0x8",
+    "invariantRuns": 16,
+    "invariantDepth": 8,
+    "observedRevertedHandlerCalls": 0,
+    "requiredCommandEchoedBeforeRun": true,
+    "solarBuildBeforeTest": true,
+    "protectedSourceOperatorFilesMatched": 144,
+    "priorTask6MigrationBindingsMatched": 59
+  },
+  "actionWitnesses": {
+    "nativeInvariant": {
+      "setPricing": 2,
+      "configuration": 1,
+      "independentIssuance": 1,
+      "activation": 1,
+      "staleBookRejections": 2,
+      "positiveRewardClaims": 1,
+      "paidRewardUnits": 122238,
+      "ownerPurchase": "Genuine fixture purchase and nonzero on-chain prerequisite asserted."
+    },
+    "activeInvariant": {
+      "setPricing": 2,
+      "configuration": 1,
+      "independentIssuance": 2,
+      "activation": 1,
+      "positiveRewardClaims": 2,
+      "paidRewardUnits": 366748,
+      "laterPaidBonds": 3,
+      "laterFundedRewards": 31392
+    },
+    "legacyInvariant": {
+      "nftIdentityReloads": 2,
+      "fundedCallbacks": 2,
+      "lateFundingRollbacks": 1,
+      "successfulRecoveryStages": 5,
+      "wholeRecoveryBatchRollbacks": 1
+    },
+    "sourceUnitsInvariant": {
+      "sourceDomains": 10,
+      "successfulSurrendersPerDomain": 2,
+      "minimumLateFundingRollbacksPerDomain": 1,
+      "competingEnrollmentRejections": 120,
+      "successfulRecoveryStages": 8,
+      "wholeRecoveryBatchRollbacks": 1
+    },
+    "actualThreeUnitResidue": {
+      "configuredCredit": 1001,
+      "paidPrincipals": [
+        333,
+        334,
+        334
+      ],
+      "remainingUnits": 0,
+      "remainingCredit": 0
+    }
+  },
+  "failureQA": {
+    "status": "passed",
+    "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/hostile-rollback.log",
+    "exactErrors": [
+      "TransferDeltaInsufficient(1 ether, 1 ether - 1)",
+      "NotAuthorized(actual contract owner)",
+      "NotAuthorized(actual bond child)",
+      "NotOwner(hostile token)",
+      "UnsupportedWeightedSySource(actual chain, spoofed source)",
+      "ERC721InvalidReceiver(actual second recipient)",
+      "IsLocked()",
+      "MigrationRewardsClosed()",
+      "NoTargetFor(actual removed selector)",
+      "MigrationWeightedPricingBookMismatch(stale book, current book)"
+    ],
+    "unchangedDomains": [
+      "custody",
+      "allowances",
+      "booked donation inventory",
+      "credit",
+      "issuance",
+      "pricing book",
+      "supply",
+      "actual staking backing",
+      "complete staking state and gons",
+      "next child NFT ownership",
+      "all proxy facet cuts"
+    ],
+    "coverage": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/coverage.md"
+  },
+  "adversarialProbes": {
+    "record": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/adversarial-probes.json",
+    "misleading_success_output": "passed: zero issuance/activation/cases and nonzero/missing exit cannot be accepted",
+    "stale_state": "passed: old source bindings and stale-book execution rejected",
+    "dirty_worktree": "passed: existing unrelated work preserved; protected files matched",
+    "generated_or_cached_artifacts": "passed: warm artifacts retained and refreshed through helper; fresh callback API executes on real actor",
+    "hung_commands": "all monitored runs exited; no kill/cancel for silence",
+    "notApplicable": [
+      "flaky execution",
+      "cancellation",
+      "interruptions",
+      "external untrusted instruction text"
+    ]
+  },
+  "assumptions": [
+    "Synthetic economic originals and local input selection are test fixtures, not approved financial awards.",
+    "Fork evidence is pinned to chain 4663 block 108944663.",
+    "Exact-input Migration entries have no max-minus-used refund argument; E6 residual-floor risk is tested directly without inventing a new entrypoint.",
+    "Production mutation testing was excluded by the explicit no-SUT-edit instruction."
+  ],
+  "warningsAndLimits": [
+    "Unsuppressed Forge lint warnings remain in raw logs; there are no compiler/LSP errors or failing selected tests.",
+    "Forge emitted failed automatic submodule initialization attempts against existing Crane; no dependency was installed.",
+    "JSON Biome LSP is unavailable; no installation was performed. Evidence JSON was serialized directly.",
+    "Task 7 claimed-SY witness pin mismatch remains its recorded follow-up. The pin and operator code are untouched.",
+    "This closes task 8 only, not the task 13 full-repository verification gate."
+  ],
+  "preservation": {
+    "delegated": false,
+    "productionSutPatched": false,
+    "pricingSolidityEdited": false,
+    "operatorCoreOrSchemaEdited": false,
+    "task9DocsEdited": false,
+    "claimedSyPinRetuned": false,
+    "commitsCreated": false,
+    "publicTransactions": false,
+    "dependenciesInstalled": false
+  },
+  "remainingTask8Blockers": []
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"postDeploy","inputs":[],"outputs":[{"name":"","type":"bool","internalType":"bool"}],"stateMutability":"nonpayable"}],"id":89}

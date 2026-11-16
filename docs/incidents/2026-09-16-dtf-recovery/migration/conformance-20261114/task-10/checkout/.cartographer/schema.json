@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cartographer Code Graph Snapshot",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "manifest",
+    "nodes",
+    "edges",
+    "findings",
+    "annotations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "cartographer.graph.v2"
+    },
+    "manifest": {
+      "type": "object"
+    },
+    "nodes": {
+      "type": "array"
+    },
+    "edges": {
+      "type": "array"
+    },
+    "findings": {
+      "type": "array"
+    },
+    "annotations": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": false
+}

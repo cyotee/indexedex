@@ -1,0 +1,1402 @@
+{
+  "date": "2026-11-13",
+  "base": "1694e68a4bd66dd67d3b5e3f145f1da23074ff48",
+  "parentRuntimeBytes": 23855,
+  "syRuntimeBytes": 22684,
+  "parentCreationHash": "0x233a744acdf0c98b2344019eb6f19bfa6603ab93c0ee19e81c71a7c93c35ee97",
+  "syCreationHash": "0xd99fb68201fb66a193b41f59442fd002e7445275f633eaf183324c76133d82cf",
+  "parentFunctions": [
+    {
+      "type": "function",
+      "name": "calcSalt",
+      "inputs": [
+        {
+          "name": "pkgArgs",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "salt_",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "pure"
+    },
+    {
+      "type": "function",
+      "name": "deployVault",
+      "inputs": [
+        {
+          "name": "args",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationDFPkg.PkgArgs",
+          "components": [
+            {
+              "name": "baseArgs",
+              "type": "tuple",
+              "internalType": "struct IUniswapV4Detf.PkgArgs",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "hook",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "ownerOnlyLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "creationPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "openingPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "mintThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "burnThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "expansionClosureRatePerYearWad",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creator",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "claimName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "claimSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "mintRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "mintRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "burnRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "burnRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "bondRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "bondRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "donateRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "donateRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "ownershipBufferPeriod",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "weth",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "originalDtf",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "vault",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "preparationDependencies",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationDFPkg.PreparationDependencies",
+          "components": [
+            {
+              "name": "bondPackage",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "receiptPackage",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "feeOracle",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "syPackage",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "prepareSyChildren",
+      "inputs": [
+        {
+          "name": "args_",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationDFPkg.PkgArgs",
+          "components": [
+            {
+              "name": "baseArgs",
+              "type": "tuple",
+              "internalType": "struct IUniswapV4Detf.PkgArgs",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "hook",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "ownerOnlyLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "creationPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "openingPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "mintThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "burnThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "expansionClosureRatePerYearWad",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creator",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "claimName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "claimSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "mintRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "mintRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "burnRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "burnRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "bondRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "bondRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "donateRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "donateRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "ownershipBufferPeriod",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "weth",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "originalDtf",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "rawSy_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "stakingSy_",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "syConstruction",
+      "inputs": [
+        {
+          "name": "args_",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationDFPkg.PkgArgs",
+          "components": [
+            {
+              "name": "baseArgs",
+              "type": "tuple",
+              "internalType": "struct IUniswapV4Detf.PkgArgs",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "hook",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "ownerOnlyLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "creationPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "openingPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "mintThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "burnThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "expansionClosureRatePerYearWad",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creator",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "claimName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "claimSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "mintRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "mintRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "burnRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "burnRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "bondRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "bondRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "donateRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "donateRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "ownershipBufferPeriod",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "weth",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "originalDtf",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationDFPkg.SyConstruction",
+          "components": [
+            {
+              "name": "constructionId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "parent",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "bond",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "receipt",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "bondArgs",
+              "type": "tuple",
+              "internalType": "struct IDETFNFTVaultDFPkg.PkgArgs",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "detf",
+                  "type": "address",
+                  "internalType": "contract IDetf"
+                },
+                {
+                  "name": "lpToken",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                }
+              ]
+            },
+            {
+              "name": "rawArgs",
+              "type": "tuple",
+              "internalType": "struct IDETFSYDFPkg.PkgArgs",
+              "components": [
+                {
+                  "name": "detf",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "staking",
+                  "type": "address",
+                  "internalType": "contract IStakedDETF"
+                },
+                {
+                  "name": "isStaking",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "tokensIn",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                },
+                {
+                  "name": "tokensOut",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            },
+            {
+              "name": "stakingArgs",
+              "type": "tuple",
+              "internalType": "struct IDETFSYDFPkg.PkgArgs",
+              "components": [
+                {
+                  "name": "detf",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "staking",
+                  "type": "address",
+                  "internalType": "contract IStakedDETF"
+                },
+                {
+                  "name": "isStaking",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "tokensIn",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                },
+                {
+                  "name": "tokensOut",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "syPackage",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    }
+  ],
+  "syFunctions": [
+    {
+      "type": "function",
+      "name": "authorizedChild",
+      "inputs": [
+        {
+          "name": "hash_",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "construction",
+      "inputs": [
+        {
+          "name": "parentPackage_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "args_",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationDFPkg.PkgArgs",
+          "components": [
+            {
+              "name": "baseArgs",
+              "type": "tuple",
+              "internalType": "struct IUniswapV4Detf.PkgArgs",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "hook",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "ownerOnlyLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "creationPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "openingPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "mintThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "burnThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "expansionClosureRatePerYearWad",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creator",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "claimName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "claimSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "mintRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "mintRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "burnRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "burnRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "bondRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "bondRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "donateRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "donateRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "ownershipBufferPeriod",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "weth",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "originalDtf",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "c_",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationDFPkg.SyConstruction",
+          "components": [
+            {
+              "name": "constructionId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "parent",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "bond",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "receipt",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "bondArgs",
+              "type": "tuple",
+              "internalType": "struct IDETFNFTVaultDFPkg.PkgArgs",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "detf",
+                  "type": "address",
+                  "internalType": "contract IDetf"
+                },
+                {
+                  "name": "lpToken",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                }
+              ]
+            },
+            {
+              "name": "rawArgs",
+              "type": "tuple",
+              "internalType": "struct IDETFSYDFPkg.PkgArgs",
+              "components": [
+                {
+                  "name": "detf",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "staking",
+                  "type": "address",
+                  "internalType": "contract IStakedDETF"
+                },
+                {
+                  "name": "isStaking",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "tokensIn",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                },
+                {
+                  "name": "tokensOut",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            },
+            {
+              "name": "stakingArgs",
+              "type": "tuple",
+              "internalType": "struct IDETFSYDFPkg.PkgArgs",
+              "components": [
+                {
+                  "name": "detf",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "staking",
+                  "type": "address",
+                  "internalType": "contract IStakedDETF"
+                },
+                {
+                  "name": "isStaking",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "tokensIn",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                },
+                {
+                  "name": "tokensOut",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "diamondFactory",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract IDiamondPackageCallBackFactory"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "preparation",
+      "inputs": [
+        {
+          "name": "id_",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct IUniswapV4DetfMigrationSYDFPkg.Preparation",
+          "components": [
+            {
+              "name": "parentPackage",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "constructionId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "parent",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "bond",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "bondPackage",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "bondArgsHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "receipt",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "rawSy",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "stakingSy",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "rawArgsHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "stakingArgsHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "completed",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "validateBond",
+      "inputs": [
+        {
+          "name": "bond_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "package_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "a_",
+          "type": "tuple",
+          "internalType": "struct IDETFNFTVaultDFPkg.PkgArgs",
+          "components": [
+            {
+              "name": "name",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "symbol",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "detf",
+              "type": "address",
+              "internalType": "contract IDetf"
+            },
+            {
+              "name": "lpToken",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ]
+        },
+        {
+          "name": "reserved_",
+          "type": "bool",
+          "internalType": "bool"
+        },
+        {
+          "name": "creator_",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "validateChild",
+      "inputs": [
+        {
+          "name": "child_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "a_",
+          "type": "tuple",
+          "internalType": "struct IDETFSYDFPkg.PkgArgs",
+          "components": [
+            {
+              "name": "detf",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "staking",
+              "type": "address",
+              "internalType": "contract IStakedDETF"
+            },
+            {
+              "name": "isStaking",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "symbol",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "tokensIn",
+              "type": "address[]",
+              "internalType": "address[]"
+            },
+            {
+              "name": "tokensOut",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "view"
+    }
+  ]
+}

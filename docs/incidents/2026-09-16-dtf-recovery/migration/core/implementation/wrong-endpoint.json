@@ -1,0 +1,8 @@
+{
+  "command": "bash scripts/recovery/dtf-migration/core-local-qa-guard.sh script --use solar scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol:MigrationCoreLocalQA --sig 'deployAndIssue()' --rpc-url http://127.0.0.1:18549 --broadcast --unlocked --sender 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+  "exit": 64,
+  "stdout": "",
+  "stderr": "MIGRATION_QA_ENDPOINT_REJECTED: require the actual CLI endpoint http://127.0.0.1:18548\n",
+  "ownedBlockAfter": "0x0",
+  "ownedSenderNonceAfter": "0x0"
+}

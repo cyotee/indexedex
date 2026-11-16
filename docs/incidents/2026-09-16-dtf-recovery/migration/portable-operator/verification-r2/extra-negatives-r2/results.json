@@ -1,0 +1,49 @@
+[
+  {
+    "kind": "conflicting-reference",
+    "rejection": {
+      "error": "PROVENANCE",
+      "message": "duplicate or ambiguous bundle reference"
+    },
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/extra-negatives-r2/conflicting-reference/bundle.json",
+    "log": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/extra-negatives-r2/conflicting-reference.log",
+    "operation": "offline materialization; no signer or RPC"
+  },
+  {
+    "kind": "unsafe-traversal",
+    "rejection": {
+      "error": "INPUT",
+      "issues": [
+        {
+          "validation": "regex",
+          "code": "invalid_string",
+          "message": "Invalid",
+          "path": [
+            "files",
+            0,
+            "path"
+          ]
+        }
+      ]
+    },
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/extra-negatives-r2/unsafe-traversal/bundle.json",
+    "log": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/extra-negatives-r2/unsafe-traversal.log",
+    "operation": "offline materialization; no signer or RPC"
+  },
+  {
+    "kind": "conflicting-authority",
+    "rejection": {
+      "error": "INPUT",
+      "issues": [
+        {
+          "code": "custom",
+          "message": "all distinct rehearsal authority roles are required",
+          "path": []
+        }
+      ]
+    },
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/extra-negatives-r2/conflicting-authority/bundle.json",
+    "log": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/extra-negatives-r2/conflicting-authority.log",
+    "operation": "offline materialization; no signer or RPC"
+  }
+]

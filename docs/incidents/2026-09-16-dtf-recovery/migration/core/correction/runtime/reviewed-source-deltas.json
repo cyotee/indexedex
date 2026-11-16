@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-11-10T23:24:29.457Z",
+  "reviewedPaths": 54,
+  "deltas": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "c3e7d28ef1532a8056dbf7261e73439bef506830f2d20c01ae2f59fd36b63da6",
+      "current": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "sha256": "8596d6bd54cd2e6eb57df05982385cf200bbdb3520db478597285b181e6e2f79",
+      "current": "a98d41124242cc030f763db1ce95e2e78941e76ce82e04f02f1536eef3bbe789"
+    }
+  ]
+}

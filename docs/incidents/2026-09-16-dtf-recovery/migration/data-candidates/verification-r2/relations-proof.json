@@ -1,0 +1,3977 @@
+{
+  "version": "independent-relations-v1",
+  "positions": [
+    {
+      "position": "weighted:liquid:0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "exposureNative9": "97414609918",
+      "heldNative9": "97414609918",
+      "retainedSourceUnits": "97414609918",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x162a249ce6837601ce9f182fd6e35dcf38ea8097",
+      "exposureNative9": "7520315499",
+      "heldNative9": "7520315499",
+      "retainedSourceUnits": "7520315499",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xfe0b839050f4143651011d154705af26af6edfa5",
+      "exposureNative9": "6758171603",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x902d34a26468b6cbf6fdd3308e31bb6b841deab8",
+      "exposureNative9": "6240312500",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x8631df34bb6ad4c102d2a8756cbb257bb728669b",
+      "exposureNative9": "5909689910",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x664d3bb7bb00157c61f8dd5c318e2925b2fd9615",
+      "exposureNative9": "4553179111",
+      "heldNative9": "4553179111",
+      "retainedSourceUnits": "4553179111",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x1c3c32dfb8cbe1e144d5e79eb41392e535405c40",
+      "exposureNative9": "4376039177",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x3a1e6284cbaebb9fffdfb7c9d62d4698b6a8dfeb",
+      "exposureNative9": "3606158978",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xfbd71c5b3aaa43dbf676e38046074a9884dcc8d3",
+      "exposureNative9": "3215183558",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x52181215886f6bc17801e1e4f49d273ac954d6a8",
+      "exposureNative9": "2499501559",
+      "heldNative9": "2499501559",
+      "retainedSourceUnits": "2499501559",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xed83a9ed5564c8d4a1bd69ed90dd3a2974ca8506",
+      "exposureNative9": "2000000000",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x28db8cb4daf8e5567bea8f317edfd94b1816342d",
+      "exposureNative9": "1992467159",
+      "heldNative9": "1992467159",
+      "retainedSourceUnits": "1992467159",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x89150f255cebf4b087be2f8465eb2871e11b4b07",
+      "exposureNative9": "1135830958",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x41d0389e16213e489653b56cd207b6397f2df33a",
+      "exposureNative9": "1000000000",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x129c0f747950e534803f33769820b50bae0cd4fd",
+      "exposureNative9": "1000000000",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xf147d2f69a653b02732f7c8a061666e1cb48fecc",
+      "exposureNative9": "554116960",
+      "heldNative9": "554116960",
+      "retainedSourceUnits": "554116960",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x9d143aa1b34109417e3a3e7ab5e90bebe11af3f2",
+      "exposureNative9": "449376827",
+      "heldNative9": "449376827",
+      "retainedSourceUnits": "449376827",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xfd4694fc2dcfdf2d1e5cde61b08e85f8a89f4f69",
+      "exposureNative9": "375132884",
+      "heldNative9": "375132884",
+      "retainedSourceUnits": "375132884",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xe3e545271351ae280b27b54c391b3ba926f01504",
+      "exposureNative9": "248995601",
+      "heldNative9": "248995601",
+      "retainedSourceUnits": "248995601",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x7da0e97cb78832463914392b5d414c1befa1fb01",
+      "exposureNative9": "132201133",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x62470c0c8a775edfd73aa0d66ed4b8dde696a856",
+      "exposureNative9": "117141679",
+      "heldNative9": "117141679",
+      "retainedSourceUnits": "117141679",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x78a4f63a722e2970278d2fe7c3c6ce0327cdd000",
+      "exposureNative9": "99623879",
+      "heldNative9": "99623879",
+      "retainedSourceUnits": "99623879",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x779c7795791c41e3ecb91aaa56c77e07714f190e",
+      "exposureNative9": "53339148",
+      "heldNative9": "53339148",
+      "retainedSourceUnits": "53339148",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x2389b5cf0d96ba8ee53b71c153c6d96e3f17c495",
+      "exposureNative9": "19577277",
+      "heldNative9": "19577277",
+      "retainedSourceUnits": "19577277",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xb3c49ee3185f3c710294b36ed13988ca9a62abc2",
+      "exposureNative9": "17381073",
+      "heldNative9": "17381073",
+      "retainedSourceUnits": "17381073",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xc7210591e4d2816f16faa506c0114a29d3909cc6",
+      "exposureNative9": "14239526",
+      "heldNative9": "14239526",
+      "retainedSourceUnits": "14239526",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xbd58bed356cd18535568cadd56fb66c1ae7b981c",
+      "exposureNative9": "5294327",
+      "heldNative9": "5294327",
+      "retainedSourceUnits": "5294327",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x9e67d64e077503c2d6f7e82a40036b4e83faf161",
+      "exposureNative9": "3607762",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xec392a5dcaf42ec2da8ebf21e41c9a8e9358efab",
+      "exposureNative9": "1642091",
+      "heldNative9": "1642091",
+      "retainedSourceUnits": "1642091",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xb4df8032f321a7192ac81aafe7fab0dec25aba3a",
+      "exposureNative9": "1334617",
+      "heldNative9": "1334617",
+      "retainedSourceUnits": "1334617",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "exposureNative9": "1238401",
+      "heldNative9": "1238401",
+      "retainedSourceUnits": "1238401",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "exposureNative9": "51692",
+      "heldNative9": "51692",
+      "retainedSourceUnits": "51692",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0xaad3f4fb91776e36a42b68530de2ed49f6a8883b",
+      "exposureNative9": "3548",
+      "heldNative9": "3548",
+      "retainedSourceUnits": "3548",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:liquid:0x8d8b1f0a704544f4c8adaf55a1063be1bb656cc9",
+      "exposureNative9": "1750",
+      "heldNative9": "1750",
+      "retainedSourceUnits": "1750",
+      "unit": "DETF_raw_9"
+    },
+    {
+      "position": "weighted:staked:0xb4446ff780a02ed4d3322af87056a12dc560ac99",
+      "exposureNative9": "241011773476",
+      "heldNative9": "241011773476",
+      "retainedSourceUnits": "217865544278239894628130104504314850391840665078",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xd1d1cc6b9ba8763b87631e40dee0408305acb83d",
+      "exposureNative9": "132696552385",
+      "heldNative9": "0",
+      "retainedSourceUnits": "205752082345021849331125083195215830",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "exposureNative9": "76992477336",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "exposureNative9": "67510179796",
+      "heldNative9": "67510179796",
+      "retainedSourceUnits": "61026653816244683848660733145023660375582664280",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x6aa65702ed537f778c98b22ec514d77ab088a302",
+      "exposureNative9": "66796241599",
+      "heldNative9": "66796241599",
+      "retainedSourceUnits": "60381280639866038849628507805745726655810162264",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x9f0511b89e7c722079f26ee20e774a6f8b00cc55",
+      "exposureNative9": "60694411531",
+      "heldNative9": "60694411531",
+      "retainedSourceUnits": "54865456621199234564246470217145729972831619036",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xa7269c74294e399d700a58be9f035b652dd67e48",
+      "exposureNative9": "51047834106",
+      "heldNative9": "51047834106",
+      "retainedSourceUnits": "46145314817667250147683892464468800961853911048",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc546bde54cee3c6971c572cc7ff6a26707526758",
+      "exposureNative9": "50216599842",
+      "heldNative9": "50216599842",
+      "retainedSourceUnits": "45393910424343897785637081184217207254042310391",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3bf99eadc3778b29886d1ed9e6c466c8e204b691",
+      "exposureNative9": "42090671418",
+      "heldNative9": "5829656",
+      "retainedSourceUnits": "5269789322250378869027330025324912994881437",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x8193c89d86414a7b6d1b899b01f64735582c5fc8",
+      "exposureNative9": "40637379000",
+      "heldNative9": "40637379000",
+      "retainedSourceUnits": "36734656428801191588988785471021903591994845580",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x4a106dbbadeae2148aa608c3f6916f231d3559ad",
+      "exposureNative9": "36533587457",
+      "heldNative9": "36533587457",
+      "retainedSourceUnits": "33024983804830996535986308823382244694280316147",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x1d3df281573d6f35fb1378059f0805220820b12c",
+      "exposureNative9": "35579443991",
+      "heldNative9": "35579443991",
+      "retainedSourceUnits": "32162474133646167924909342672349441051531175145",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x6eda3ff32b2c932ea6e4349d6a919449120fbced",
+      "exposureNative9": "34251476171",
+      "heldNative9": "34251476171",
+      "retainedSourceUnits": "30962041359232123633889737514517473850127551144",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x61a2d0f7ee86f4eff6132125be35a945161c8da9",
+      "exposureNative9": "32748527511",
+      "heldNative9": "32748527511",
+      "retainedSourceUnits": "29603432511149507081327160274082829402362801190",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xdd9c8ed4c1fd92f60d0d2c19e2ae7216f8f029d5",
+      "exposureNative9": "32327218078",
+      "heldNative9": "32327218078",
+      "retainedSourceUnits": "29222584689557222128150814730201327781381441718",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x752d07d6a173cf03701b700dbf9a4adb777945d1",
+      "exposureNative9": "28357771074",
+      "heldNative9": "28357771074",
+      "retainedSourceUnits": "25634354457189234403153090276845842477877941034",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "exposureNative9": "28114515220",
+      "heldNative9": "28114515220",
+      "retainedSourceUnits": "25414460349033826921159919742069824207395023603",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x39507cb2cd11d03f5c966230a68c0d1cfbffa207",
+      "exposureNative9": "26382679833",
+      "heldNative9": "0",
+      "retainedSourceUnits": "423811439887432334494864045788452072",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3c7b83b653a0209f935776d5cb28d75ce163bc89",
+      "exposureNative9": "25993362018",
+      "heldNative9": "25993362018",
+      "retainedSourceUnits": "23497017934175134433312336029241820721585673131",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x872aa051e4de4e4ffb553eca976fc9624b690758",
+      "exposureNative9": "25919978843",
+      "heldNative9": "25919978843",
+      "retainedSourceUnits": "23430682314390427737678798893181944765069175031",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x7bed388018863d8dca95d05f15331b7195d67974",
+      "exposureNative9": "24130275648",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x72fe708527b3191790295a45f978b6b459da15ef",
+      "exposureNative9": "23328119272",
+      "heldNative9": "23328119272",
+      "retainedSourceUnits": "21087739113296743370791451454025739446843941908",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb6098cea696580a1289bc5a18a00351bddb86d67",
+      "exposureNative9": "23244595436",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x0c3f713890eda64c55db1d32d6a08e4876ad3ac2",
+      "exposureNative9": "22679493614",
+      "heldNative9": "22679493614",
+      "retainedSourceUnits": "20501406006265565619373759552820608752645561864",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x49b879db9f5292ce5a8166eb3bceb0395a59f606",
+      "exposureNative9": "21820731336",
+      "heldNative9": "0",
+      "retainedSourceUnits": "333433504901196482488372159188231512",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x129c0f747950e534803f33769820b50bae0cd4fd",
+      "exposureNative9": "20401204191",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x41465c3470b548f2bbbb6eaef692a834e403ee0c",
+      "exposureNative9": "20322357482",
+      "heldNative9": "20322357482",
+      "retainedSourceUnits": "18370643932043259350584617722709065716624416660",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb2ec26c874828c1aebdb3e2c82a3fb5b51a7ad95",
+      "exposureNative9": "19951889233",
+      "heldNative9": "19951889233",
+      "retainedSourceUnits": "18035754620720185352562158392047684717143311660",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x22a676b52392591bc6c7caf51c14b38f5e0f3716",
+      "exposureNative9": "19265877341",
+      "heldNative9": "19265877341",
+      "retainedSourceUnits": "17415625770097730337627496288588660696424440228",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "exposureNative9": "19015304155",
+      "heldNative9": "19015304155",
+      "retainedSourceUnits": "17189117069752563546981105568085549835423215723",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5912778435a3e0354761c09e4bc860ba8aa7904c",
+      "exposureNative9": "17247586410",
+      "heldNative9": "17247586410",
+      "retainedSourceUnits": "15591166964925126703153535902805632383958698075",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x4ba1548582af451b42714d25b77cabfb6b96be5b",
+      "exposureNative9": "17060508408",
+      "heldNative9": "17060508408",
+      "retainedSourceUnits": "15422055513934006641285859769108049183891938496",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x0442c772f5ea6bab38d44630183166fa1a2b13b4",
+      "exposureNative9": "16485606819",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5af830d068d3b301022c11e2045304b1fd886b42",
+      "exposureNative9": "14756481560",
+      "heldNative9": "14756481560",
+      "retainedSourceUnits": "13339302227367282860974469910760280707312620776",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3a1e6284cbaebb9fffdfb7c9d62d4698b6a8dfeb",
+      "exposureNative9": "14750318439",
+      "heldNative9": "14750318439",
+      "retainedSourceUnits": "13333730998804976724725855243820217692465945129",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "exposureNative9": "14519960204",
+      "heldNative9": "14519960204",
+      "retainedSourceUnits": "13125495851453880476149079901495943679558477361",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x7441c1eb6d16d403d640b72105d1d10462d22814",
+      "exposureNative9": "14363584413",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x44e263d4ea4c51ccf738f1c43db07e27810bb6e8",
+      "exposureNative9": "13087381986",
+      "heldNative9": "13087381986",
+      "retainedSourceUnits": "11830499226158870272466057332838982863275020852",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "exposureNative9": "12771875859",
+      "heldNative9": "12771875859",
+      "retainedSourceUnits": "11545293599180366733940168063850367434113666381",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x28223565a2ed606f08ee321df3f5595986cb24fd",
+      "exposureNative9": "12720270971",
+      "heldNative9": "0",
+      "retainedSourceUnits": "308598633678718297296629725666905500",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xd88bffc34327bebf51d0826c620fdbbe63696979",
+      "exposureNative9": "12199965606",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+      "exposureNative9": "11368243090",
+      "heldNative9": "11368243090",
+      "retainedSourceUnits": "10276462567231095554925426712833961487429921859",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "exposureNative9": "10981811561",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "exposureNative9": "10796935714",
+      "heldNative9": "10796935714",
+      "retainedSourceUnits": "9760022267674306493385494529915855793623160355",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xa0b514c515006ea21ad88a41a4441b80aafa6524",
+      "exposureNative9": "9239268524",
+      "heldNative9": "0",
+      "retainedSourceUnits": "707274868216489435289410919052025376",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc76f6e0cf34777f8532ada4fcb4b46cf3bc12faf",
+      "exposureNative9": "8872673716",
+      "heldNative9": "8872673716",
+      "retainedSourceUnits": "8020562068239111280744964265335292481530152033",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xa2734c9ec435ad739b62494a0e938f20c223eaca",
+      "exposureNative9": "8678140176",
+      "heldNative9": "8678140176",
+      "retainedSourceUnits": "7844711092599186379716663882867792164606842883",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x0791c1ce98274f069bfb1d8b78bbbe8f91281407",
+      "exposureNative9": "8366658758",
+      "heldNative9": "0",
+      "retainedSourceUnits": "338217631744561049541725284429083355",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x2f343d13d6fc2f03661b8956170c521afc58fdf3",
+      "exposureNative9": "7968704902",
+      "heldNative9": "7968704902",
+      "retainedSourceUnits": "7203408388445916459026134128772904470891661864",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb4b000628e8e9e4391df97052792f349ab9f593e",
+      "exposureNative9": "7617667163",
+      "heldNative9": "789637",
+      "retainedSourceUnits": "713802153328572173716735037656743610615175",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x41d0389e16213e489653b56cd207b6397f2df33a",
+      "exposureNative9": "7298283435",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe6914f0f83060c4bff61d3e0d98c7df3586c39f2",
+      "exposureNative9": "7131879400",
+      "heldNative9": "7131879400",
+      "retainedSourceUnits": "6446949727709535136286796119960412711312601722",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc7210591e4d2816f16faa506c0114a29d3909cc6",
+      "exposureNative9": "6643810572",
+      "heldNative9": "6643810572",
+      "retainedSourceUnits": "6005753933363412053984984285865091345803698032",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x718ec1ad70959951082c05b6ea7a10f9c52061d5",
+      "exposureNative9": "6247379659",
+      "heldNative9": "0",
+      "retainedSourceUnits": "207067481541875254957055378738483560",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb027a98ae48fde7b30fd11a225cea19577c98d4a",
+      "exposureNative9": "6238698024",
+      "heldNative9": "6238698024",
+      "retainedSourceUnits": "5639547484258206148504608967182924287870784110",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+      "exposureNative9": "6222839810",
+      "heldNative9": "6222839810",
+      "retainedSourceUnits": "5625212256861982883166013800521848769976319537",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x07cb9c384ebafdc32c44cfce023b22efc3a9d113",
+      "exposureNative9": "6168564220",
+      "heldNative9": "6168564220",
+      "retainedSourceUnits": "5576149172774656608442753197537251934478072848",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x7a44834d4dec3f21a341de51365fdefdd41faa98",
+      "exposureNative9": "6137304960",
+      "heldNative9": "6137304960",
+      "retainedSourceUnits": "5547891982140852607194071534544409636083816405",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x258ad0e3406e25961a7b8eb7c8479654df92df4d",
+      "exposureNative9": "5852480263",
+      "heldNative9": "5852480263",
+      "retainedSourceUnits": "5290421208611844930171662096294853140469813729",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x35a7c8b385eb9e0505b152b3df3232a09cf75e65",
+      "exposureNative9": "5200759926",
+      "heldNative9": "5200759926",
+      "retainedSourceUnits": "4701290628393285082842853049239844646969587558",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xbcdff6521c21f56602c9d36013200576c4c27c0c",
+      "exposureNative9": "4995119645",
+      "heldNative9": "4995119645",
+      "retainedSourceUnits": "4515399578370456774697136174938456094666551208",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3f4105c5fd3e7ef7715875f58831adadb73cac24",
+      "exposureNative9": "4958078967",
+      "heldNative9": "4958078967",
+      "retainedSourceUnits": "4481916203679836735368200629509941606366015456",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x1d49e3041de962f540ef470f9b1ac96dd27af269",
+      "exposureNative9": "4881513627",
+      "heldNative9": "0",
+      "retainedSourceUnits": "442352676041564833545205347215550313",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x1cf82438699503567fa12d41ce80e92ca0a8aef7",
+      "exposureNative9": "4167948159",
+      "heldNative9": "4167948159",
+      "retainedSourceUnits": "3767667783403283881663119751434298057689296060",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xaec71442b6f54ae22136f1ec026803aeb03e1149",
+      "exposureNative9": "4091114991",
+      "heldNative9": "4091114991",
+      "retainedSourceUnits": "3698213500291456218492063553275497144549181744",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf27c349378b89a625429961d02c06a4506d11bec",
+      "exposureNative9": "3990166340",
+      "heldNative9": "0",
+      "retainedSourceUnits": "359177589659423842680457133700087127",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x70ffd3a30ca22e8a5a93d0abd009993908b07455",
+      "exposureNative9": "3847699780",
+      "heldNative9": "3847699780",
+      "retainedSourceUnits": "3478175338688995726446238549880561207796649600",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xffb67b776fa4ae063c4cfe529acbd9face3f0e45",
+      "exposureNative9": "3695725536",
+      "heldNative9": "3695725536",
+      "retainedSourceUnits": "3340796360237480760672053644348480303950001977",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe595ed0eee63fe6ceb3e6b6770b9d826223a3737",
+      "exposureNative9": "3327883078",
+      "heldNative9": "3327883078",
+      "retainedSourceUnits": "3008280664609916781558063760238145415263744435",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5d1d88bd5f7fa853e9b6342af4a73e763aad672f",
+      "exposureNative9": "3121638613",
+      "heldNative9": "696268",
+      "retainedSourceUnits": "629400343130343309170440050784521838533301",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x62f00557bf8763ae338af54ba3fe4068baff5ad9",
+      "exposureNative9": "3003087328",
+      "heldNative9": "0",
+      "retainedSourceUnits": "345177865959621239041973111061867768",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe8a3767e32a4fd7969acb204a16a4ae8238abdc2",
+      "exposureNative9": "3003044800",
+      "heldNative9": "3003044800",
+      "retainedSourceUnits": "2714639125094516860723777603441419777202806870",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf300c626bd67775c79064a72a7f8eeb3a948c641",
+      "exposureNative9": "2966926111",
+      "heldNative9": "2966926111",
+      "retainedSourceUnits": "2681989194130433345178201615578128422890535160",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "exposureNative9": "2937801461",
+      "heldNative9": "2937801461",
+      "retainedSourceUnits": "2655661610381299126475212176124870400122729951",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc367200c7a97a3b9b9021ebd00d85746ba633480",
+      "exposureNative9": "2641724801",
+      "heldNative9": "2641724801",
+      "retainedSourceUnits": "2388019486911339332362483522775129221481698915",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x4e1e3feab1c36b80e19541b3cf77baa7f07db5d0",
+      "exposureNative9": "2551951376",
+      "heldNative9": "2551951376",
+      "retainedSourceUnits": "2306867700335706656711658102190122165611812731",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x2755f9fe42ec40d4469bebf5a8a468cbdb3cafd9",
+      "exposureNative9": "2498861925",
+      "heldNative9": "0",
+      "retainedSourceUnits": "591735574357247230758233267189546912",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x8002f1de88cb70c6a89177fe5c40621b4a62b80c",
+      "exposureNative9": "2477437664",
+      "heldNative9": "2477437664",
+      "retainedSourceUnits": "2239510117678064908169823609718827736651768612",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5fdc8ccf6cd7bf5f4e2b0cc54c63d34eb9a5acb7",
+      "exposureNative9": "2381884132",
+      "heldNative9": "0",
+      "retainedSourceUnits": "259714087083810768833440109743675036",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xbbc72a438c36a3a896f534cc5ebbc68d17efe0b7",
+      "exposureNative9": "2380800347",
+      "heldNative9": "691499",
+      "retainedSourceUnits": "625089524093737381954378068999362809910925",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xed83a9ed5564c8d4a1bd69ed90dd3a2974ca8506",
+      "exposureNative9": "2053257176",
+      "heldNative9": "0",
+      "retainedSourceUnits": "195526035002624009097523050863775",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x950072446c1146ca858743f0cc5c0682e96da9db",
+      "exposureNative9": "1999735498",
+      "heldNative9": "1999735498",
+      "retainedSourceUnits": "1807685394525286360783227679632099893810432096",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x47b5337eacaa1756a47198978418b95a87bcd902",
+      "exposureNative9": "1997199207",
+      "heldNative9": "1997199207",
+      "retainedSourceUnits": "1805392682845707395819338135721094430732629444",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x9f4d80c28dd173c576c3639211bd74912ebd7347",
+      "exposureNative9": "1930532125",
+      "heldNative9": "1930532125",
+      "retainedSourceUnits": "1745128158082387895097803302710542535377433600",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb4374bd294601a2b69dc6c0de1243f047ebe6e29",
+      "exposureNative9": "1805521883",
+      "heldNative9": "0",
+      "retainedSourceUnits": "689262636732879846483432927717887295",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x6fa7ada89b5b54b6b26efabcd1f17f0c8cb3b595",
+      "exposureNative9": "1753250601",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x4e8a64ad2d92365c8753f2788f375b69b630f668",
+      "exposureNative9": "1654028073",
+      "heldNative9": "1654028073",
+      "retainedSourceUnits": "1495178933905155015812273806466021541572163856",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x505bd4496939c8763ad84717305e71eb1ff9d472",
+      "exposureNative9": "1458303219",
+      "heldNative9": "455015",
+      "retainedSourceUnits": "411316721858953903368875241029825781552553",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x48e83245e5f16932a2123ffcc03020831cab348a",
+      "exposureNative9": "1444140644",
+      "heldNative9": "1444140644",
+      "retainedSourceUnits": "1305448621650801858712516179591832284733116789",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xaa7ad8e5820ed58ad3d2a0822386a649da3b2f14",
+      "exposureNative9": "1417794036",
+      "heldNative9": "1417794036",
+      "retainedSourceUnits": "1281632282753818001656625847679309604024210600",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x441a0b30339bee2f2cfa46d047cc158bea15d022",
+      "exposureNative9": "1399843689",
+      "heldNative9": "1399843689",
+      "retainedSourceUnits": "1265405846690536886898236672973489279635622256",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xfcce3f1e59b35fb09cd6ecf63b4fe3109ea6ee1b",
+      "exposureNative9": "1348834922",
+      "heldNative9": "1348834922",
+      "retainedSourceUnits": "1219295847606784105607359714702592531033646888",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xfe0b839050f4143651011d154705af26af6edfa5",
+      "exposureNative9": "1338546520",
+      "heldNative9": "1338546520",
+      "retainedSourceUnits": "1209995520240781845738212567210172992173876731",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x11f2efa0f372d061e8dab9ca47826da356e62675",
+      "exposureNative9": "1272240355",
+      "heldNative9": "1272240355",
+      "retainedSourceUnits": "1150057250227250783124338171411073467410259022",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xcc3f1c8e723fb6afa14b1ad19a017cecacd307f9",
+      "exposureNative9": "1230961007",
+      "heldNative9": "1230961007",
+      "retainedSourceUnits": "1112742277772210653926312365391163249852342624",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x040cac4672e13edd5df58388da3c3527ba47ebfa",
+      "exposureNative9": "1171603024",
+      "heldNative9": "1171603024",
+      "retainedSourceUnits": "1059084902824831203816278823045712705172712256",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x241fec50a7e6b94ccc1146d7d55a9cf3ed8e91b7",
+      "exposureNative9": "1115198867",
+      "heldNative9": "1115198867",
+      "retainedSourceUnits": "1008097674247123455983795719233725895699863484",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb6670f0aa74690a7653c9dd099c31e0cdf637b49",
+      "exposureNative9": "1105357485",
+      "heldNative9": "1105357485",
+      "retainedSourceUnits": "999201436379084045410771927750595738878668067",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc18e75ebbaecbd97ea2c3a608f475a57e3847654",
+      "exposureNative9": "1058225139",
+      "heldNative9": "1058225139",
+      "retainedSourceUnits": "956595574767962263615121220584442517158467304",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3228cc5deabb8df690978e667dab7ee9e9b02ce1",
+      "exposureNative9": "1022370978",
+      "heldNative9": "1022370978",
+      "retainedSourceUnits": "924184766770041505691138405147330463593229678",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xd46fc89efe2c585b6d051177322d56754e830702",
+      "exposureNative9": "998599602",
+      "heldNative9": "998599602",
+      "retainedSourceUnits": "902696340321017792755166617485895355779294519",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc97fa1c6a8878e06c35dac74df05a6fba069146a",
+      "exposureNative9": "955772293",
+      "heldNative9": "955772293",
+      "retainedSourceUnits": "863982069838693430407402674493772097059664061",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x7509d9981dcf8ee5562a90418b3cba14870d5577",
+      "exposureNative9": "922675592",
+      "heldNative9": "922675592",
+      "retainedSourceUnits": "834063901408422369511567753512965758193834892",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x1732951b80c737dbb8f367e83e530623bb612e54",
+      "exposureNative9": "906378341",
+      "heldNative9": "767661",
+      "retainedSourceUnits": "693937346617172750897412799348551690418025",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x0da0877ab57a89e5db9125069fa8cd3702536e37",
+      "exposureNative9": "799895406",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3f92d9a7a4a58077bed9ae2e026818a761aa2239",
+      "exposureNative9": "785950536",
+      "heldNative9": "785950536",
+      "retainedSourceUnits": "710469612893993140900046045629858421192146572",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x2602193f69e88bab7724a065fac92213a5d737c4",
+      "exposureNative9": "765588337",
+      "heldNative9": "765588337",
+      "retainedSourceUnits": "692062953502331297325855805386727999690755670",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xacadd65d259f1071310dc5f00b588f6ee9ebbfdb",
+      "exposureNative9": "756680365",
+      "heldNative9": "756680365",
+      "retainedSourceUnits": "684010483531815280855242720321699604008650152",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xd3fc3f160a9995d01c39e1caf10c8cbd9cbc5a66",
+      "exposureNative9": "728247918",
+      "heldNative9": "728247918",
+      "retainedSourceUnits": "658308624485540324733425011914257072146108304",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "exposureNative9": "720130649",
+      "heldNative9": "0",
+      "retainedSourceUnits": "497953626815686622147740147820017877",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xdce10c58f637ed5fcbd8f991b4dd03084a05c756",
+      "exposureNative9": "716121819",
+      "heldNative9": "716121819",
+      "retainedSourceUnits": "647347089436978022015371704771976430110809817",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x6a75abb6718c818b7ebc0d56d7c7c83a12f7d89e",
+      "exposureNative9": "713623637",
+      "heldNative9": "713623637",
+      "retainedSourceUnits": "645088826409643966387247561592615748421225010",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5bc979dd365f0d68be0d902f0f8d2bdc9fe9548c",
+      "exposureNative9": "709977249",
+      "heldNative9": "0",
+      "retainedSourceUnits": "777084471615908774423233483066745768",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb7d2a326acab381dee1bd51740f2e0f55e18b6ab",
+      "exposureNative9": "705433945",
+      "heldNative9": "705433945",
+      "retainedSourceUnits": "637685654658919032687035818507294262753174384",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5a9ddcb52b4e8aa773cdd78fcd815aa6cef57e11",
+      "exposureNative9": "688114105",
+      "heldNative9": "0",
+      "retainedSourceUnits": "216178895959582665525940562498461302",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x47bf3abb35b7665b72fce5344243fd480f9c121c",
+      "exposureNative9": "660893260",
+      "heldNative9": "660893260",
+      "retainedSourceUnits": "597422556405847619549410950824000582991662908",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xaa03bda0f6454874d54c9ef85fa8375b1e392909",
+      "exposureNative9": "651331794",
+      "heldNative9": "651331794",
+      "retainedSourceUnits": "588779352190379917780638803626663921761020853",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe31700cf8388f3c29899e8c90e49d8234cc42c44",
+      "exposureNative9": "638502775",
+      "heldNative9": "638502775",
+      "retainedSourceUnits": "577182403434690320520483153925560233700734748",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x0212f36c40fbf116be992b7026317ed38affef81",
+      "exposureNative9": "599159761",
+      "heldNative9": "599159761",
+      "retainedSourceUnits": "541617804576776620015936172050389857319866366",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe673f5e474dbf76a1230fea52e8e58f4baca151c",
+      "exposureNative9": "582454769",
+      "heldNative9": "582454769",
+      "retainedSourceUnits": "526517122123270417741606701688383993854673548",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xde81dcf31713099eb86fa205ef5d5f82dd28062e",
+      "exposureNative9": "571514186",
+      "heldNative9": "571514186",
+      "retainedSourceUnits": "516627248153949959270872638981930538574918478",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x118b2b107009ef2e874aca0eca4628dac947d64b",
+      "exposureNative9": "569579506",
+      "heldNative9": "569579506",
+      "retainedSourceUnits": "514878370675038304518979786735446252433746048",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf611318ea51897ae2a98e537e55112c062febf3b",
+      "exposureNative9": "507143926",
+      "heldNative9": "507143926",
+      "retainedSourceUnits": "458438963587182367656252994891382974835944432",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x90e23d451a716bf25987f055e3e57c1384337fde",
+      "exposureNative9": "505273510",
+      "heldNative9": "505273510",
+      "retainedSourceUnits": "456748177956066710618493352024713108984751984",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc19a26a5edd4aa4e17cdf8795ed76fa0e8fc3c79",
+      "exposureNative9": "504056002",
+      "heldNative9": "504056002",
+      "retainedSourceUnits": "455647596273491805947270328986602025622498897",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x7979573a61f13b0946642a03a26f34f3d0d3ce9e",
+      "exposureNative9": "469877674",
+      "heldNative9": "469877674",
+      "retainedSourceUnits": "424751678679875346488139582982582299722422744",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb7fe8fb276baedad7fa45b75bce42403115d6470",
+      "exposureNative9": "465225085",
+      "heldNative9": "465225085",
+      "retainedSourceUnits": "420545913595551433137052353455881427338282323",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x30ca81c0bbb3c7b5faa18ca593830b5d514c355d",
+      "exposureNative9": "440444761",
+      "heldNative9": "440444761",
+      "retainedSourceUnits": "398145436018948592977021422254941669777888150",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe7d92feecbe58d5900fc30027ef91105d7fb85bf",
+      "exposureNative9": "439181478",
+      "heldNative9": "439181478",
+      "retainedSourceUnits": "397003475993475598515866240135198717195081593",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xa7c5266c7d22cf480390fca3b287a803a1782a9d",
+      "exposureNative9": "435274132",
+      "heldNative9": "435274132",
+      "retainedSourceUnits": "393471383172571821456331113457740792880426159",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x811a1ed50b1fe1541bc8f62c387357500739b24f",
+      "exposureNative9": "424903997",
+      "heldNative9": "89956",
+      "retainedSourceUnits": "81316997389226806715500228987116605865752",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "exposureNative9": "375787513",
+      "heldNative9": "375787513",
+      "retainedSourceUnits": "339697724635257403331785263208410829543313626",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xfc0c3bbe6c02f5928e5e9a354296e6cfa2bf05b4",
+      "exposureNative9": "362210403",
+      "heldNative9": "362210403",
+      "retainedSourceUnits": "327424529810255005169281928621881248177546082",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "exposureNative9": "359557898",
+      "heldNative9": "359557898",
+      "retainedSourceUnits": "325026766226678726308330503612894065706593126",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x2ed7cc0236ba832d7dfb190e9bced27de1a034f2",
+      "exposureNative9": "334607288",
+      "heldNative9": "334607288",
+      "retainedSourceUnits": "302472356401119667856849637236826858877222766",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xae91cb00c413a8d6089ba0bc8bf66fba47a912ea",
+      "exposureNative9": "316244799",
+      "heldNative9": "0",
+      "retainedSourceUnits": "812459478440143054801219017533404304",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x40590436c91356a385025a56aa458accbe0fe774",
+      "exposureNative9": "292164551",
+      "heldNative9": "292164551",
+      "retainedSourceUnits": "264105724665053677399050599558624522193899820",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x2e5c0ea2e4fb638cc06bcef9b9e25f4497e7c0a8",
+      "exposureNative9": "288998709",
+      "heldNative9": "288998709",
+      "retainedSourceUnits": "261243922518366715429830924363157584645476474",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xa7d2550cc823721edc6641da8cde8dd7ad369523",
+      "exposureNative9": "261818781",
+      "heldNative9": "261818781",
+      "retainedSourceUnits": "236674294371826077626992468333631293805637540",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x7d70398855ada266c725e7d084f6eb9b53320e89",
+      "exposureNative9": "248334532",
+      "heldNative9": "248334532",
+      "retainedSourceUnits": "224485041918680165636974303838849414666221844",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf8b2ef714862e8a6cd51a7721a2f5282232f1696",
+      "exposureNative9": "246036670",
+      "heldNative9": "246036670",
+      "retainedSourceUnits": "222407861220601259694728212218553848012612768",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf751c16ef98a8619390b7e47a087fef5703fe067",
+      "exposureNative9": "221913362",
+      "heldNative9": "221913362",
+      "retainedSourceUnits": "200601301476625677576673087786273049244985662",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "exposureNative9": "221770464",
+      "heldNative9": "221770464",
+      "retainedSourceUnits": "200472127486012259612883900822563679170986316",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xa9e003f1b60e2db8ce89a162d3110f9a0b9ab3ea",
+      "exposureNative9": "211432388",
+      "heldNative9": "211432388",
+      "retainedSourceUnits": "191126896821266618998934326003590407385335456",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb75e34c02bdeeb29fd9826e8e6b887cddc4cab8e",
+      "exposureNative9": "204993716",
+      "heldNative9": "204993716",
+      "retainedSourceUnits": "185306580538646514666252946027133097723000099",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5699abeb0d9109a1d6f86be0d8d5b396eafcf286",
+      "exposureNative9": "199719919",
+      "heldNative9": "199719919",
+      "retainedSourceUnits": "180539267471213675396778819315953721905116863",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x851a02b46dad61f01c2057a0933b4f186ce75597",
+      "exposureNative9": "197406549",
+      "heldNative9": "197406549",
+      "retainedSourceUnits": "178448067904807019555738202084428396348618625",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x272f7850ebcbbf545a67e50da7af80a79097143f",
+      "exposureNative9": "193299239",
+      "heldNative9": "193299239",
+      "retainedSourceUnits": "174735215089423651257090983709818052228020665",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc0a525ac5d2425261bdd0a023c5cb2cabba13be4",
+      "exposureNative9": "180178631",
+      "heldNative9": "180178631",
+      "retainedSourceUnits": "162874680461017354158175201918598196516672093",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x59917fe2a0e9f4fff2ec78beaee9599a5a97920d",
+      "exposureNative9": "173669781",
+      "heldNative9": "0",
+      "retainedSourceUnits": "423333236081688010642848819136186944",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x16ddc47973e04dbbf96e99b6350d4c17b5437d4c",
+      "exposureNative9": "172866278",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3e3a93684e4406f07099a3cf7f7352556b333995",
+      "exposureNative9": "161269297",
+      "heldNative9": "161269297",
+      "retainedSourceUnits": "145781356860450045146536395313595270609684826",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x104d39c07f2c2b29b2104ea39c15730146a70d4c",
+      "exposureNative9": "156757679",
+      "heldNative9": "156757679",
+      "retainedSourceUnits": "141703023763693721036816631523107101685000714",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe9a06d28a352c7d8e9aab096d1fe85b11fa7ff1b",
+      "exposureNative9": "141516488",
+      "heldNative9": "0",
+      "retainedSourceUnits": "729647918095992719147450270933958076",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x92f2f5b081143eb02d8cbb5861505e1ceb6bb14c",
+      "exposureNative9": "131501933",
+      "heldNative9": "131501933",
+      "retainedSourceUnits": "118872783280143513561872866926310328961906973",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x0f67ee9f041a681d8e0a2de3220ffabb6cc1b2a7",
+      "exposureNative9": "122026190",
+      "heldNative9": "122026190",
+      "retainedSourceUnits": "110307069426345569500338172640560414849262019",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x55a026d8b5c9f8fe78e8116755e109da3646f66e",
+      "exposureNative9": "120118073",
+      "heldNative9": "120118073",
+      "retainedSourceUnits": "108582203681577106037085787054660774384430238",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xa709f05606a95d75af8d8a3e36dedc0ae74f598b",
+      "exposureNative9": "114522742",
+      "heldNative9": "114522742",
+      "retainedSourceUnits": "103524235476422607963484405102104762374213366",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xdb543bbd0c14b0962ed81a3f0052161da5e2643a",
+      "exposureNative9": "104289815",
+      "heldNative9": "104289815",
+      "retainedSourceUnits": "94274055548650988927622681513707514751504610",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "exposureNative9": "103085395",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x0a64ca14cf822cd95b5d4aa9a4260ce78b5ab6a8",
+      "exposureNative9": "89873962",
+      "heldNative9": "0",
+      "retainedSourceUnits": "567089118028474709918954256488782685",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xe6cb14baf3b6ec616a539d1959139051a94e0b59",
+      "exposureNative9": "88217720",
+      "heldNative9": "0",
+      "retainedSourceUnits": "370101370731295675010682689215930994",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf9b7850ee758ca9878a052aeed04f24a50531ea1",
+      "exposureNative9": "87033329",
+      "heldNative9": "87033329",
+      "retainedSourceUnits": "78674844289282745026123782931653139262367852",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "exposureNative9": "80932480",
+      "heldNative9": "80932480",
+      "retainedSourceUnits": "73159906514887518189359651086949552907389995",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x4dfebb21d855115d4019819393e514977e490e5d",
+      "exposureNative9": "79694022",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x90521f46836578fa2de59f812f14ed12502ff8aa",
+      "exposureNative9": "77479206",
+      "heldNative9": "77479206",
+      "retainedSourceUnits": "70038277220949446353244841943874173970475744",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x613da43d00e3547dde2162179c28bd156a24270f",
+      "exposureNative9": "74013545",
+      "heldNative9": "74013545",
+      "retainedSourceUnits": "66905450447861366247393942248630341942630413",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf6f029bb7ce3e639b8e1776923e656cbefecad2d",
+      "exposureNative9": "73522670",
+      "heldNative9": "73522670",
+      "retainedSourceUnits": "66461718497426942322605004531869172789044268",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xfcca65e8bcf342cb04f5e13bcdcf6ac22b8afdf3",
+      "exposureNative9": "68780985",
+      "heldNative9": "68780985",
+      "retainedSourceUnits": "62175414368974996913832056432256663343281245",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc00ee78ca9808503b84fca6b53fadcb6066d421e",
+      "exposureNative9": "65006135",
+      "heldNative9": "65006135",
+      "retainedSourceUnits": "58763092533777250406132504151281439342182619",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x4fa93dedbde082f4504dd1671f905b40a7d87e3f",
+      "exposureNative9": "64788638",
+      "heldNative9": "64788638",
+      "retainedSourceUnits": "58566482952817743393423634639118919349312065",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x245d2be3b71e18e033ddb989cc6c2857c729a147",
+      "exposureNative9": "56114802",
+      "heldNative9": "0",
+      "retainedSourceUnits": "523146995196934584609494647017870567",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3971dc928fba632e14c36b461dd853e4ab86156a",
+      "exposureNative9": "55026252",
+      "heldNative9": "55026252",
+      "retainedSourceUnits": "49741654907473186760346614743405526378232176",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5e06fe5bd6e33350d61a6db9e428e9c829082ea6",
+      "exposureNative9": "49572855",
+      "heldNative9": "49572855",
+      "retainedSourceUnits": "44811990154762153476056385947686218555196602",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc03f5370a0d437ce586860a54602e1583e9cfdcb",
+      "exposureNative9": "49455093",
+      "heldNative9": "49455093",
+      "retainedSourceUnits": "44705537762108026231581053891690467883290357",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x1380785213b1491399db65b8a5a033b079c16fb4",
+      "exposureNative9": "46922192",
+      "heldNative9": "46922192",
+      "retainedSourceUnits": "42415890425699518149802016468572000397775117",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x93a24d1be1a5f90502e50d04bf4c15c7b3081bef",
+      "exposureNative9": "44281253",
+      "heldNative9": "44281253",
+      "retainedSourceUnits": "40028581665161305917983982344276165009717660",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x1a1235c25e5d6dc07556e7647819127c5d0f51e3",
+      "exposureNative9": "44091849",
+      "heldNative9": "44091849",
+      "retainedSourceUnits": "39857366937659737262962006426049903486748904",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x9e67d64e077503c2d6f7e82a40036b4e83faf161",
+      "exposureNative9": "31604271",
+      "heldNative9": "31604271",
+      "retainedSourceUnits": "28569067849566823171133782142739706803818409",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "exposureNative9": "27022874",
+      "heldNative9": "27022874",
+      "retainedSourceUnits": "24427658692983247498933053255869904160698399",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xf908d8bd6592fd82e18091ef768321ff1b38456a",
+      "exposureNative9": "25525729",
+      "heldNative9": "25525729",
+      "retainedSourceUnits": "23074295920348384767520826321198638927954433",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x5c3a02ea98eff4aa4bc8b2f763ccb9b15f2a226f",
+      "exposureNative9": "25272404",
+      "heldNative9": "0",
+      "retainedSourceUnits": "658567079970871783184085927161446419",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x64894c29c356c433a56ff451a372d06a4d4d2042",
+      "exposureNative9": "23290203",
+      "heldNative9": "23290203",
+      "retainedSourceUnits": "21053464519955077811650941334341458439819474",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xee580fec4152169716474cf9c78c377767a81423",
+      "exposureNative9": "21594732",
+      "heldNative9": "21594732",
+      "retainedSourceUnits": "19520823314667098139136308141943022670390768",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x77d95e599e1b3f552d2aca955fa1b2843473a3fc",
+      "exposureNative9": "19580978",
+      "heldNative9": "0",
+      "retainedSourceUnits": "553443932094370742719576911049378261",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x844f897e34b96d0c6bdb3d2a42e1b580774c18c2",
+      "exposureNative9": "18973802",
+      "heldNative9": "0",
+      "retainedSourceUnits": "536226406717766375968349462321972398",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x30c6e1f4984fd45f6834790866b6cc967cdb0e27",
+      "exposureNative9": "15788969",
+      "heldNative9": "15788969",
+      "retainedSourceUnits": "14272632754653529708971411046928226036251850",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x99994676b4d0452842586f8dfa8112c657f0a9a9",
+      "exposureNative9": "13948995",
+      "heldNative9": "13948995",
+      "retainedSourceUnits": "12609365680308069956951138956484079124976640",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xb595e389f7ee6bff83c743dbbd21f462a87f58b0",
+      "exposureNative9": "13179384",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x342d854d7bc8e37431bc3e11f4d82f2b6ca820aa",
+      "exposureNative9": "11743921",
+      "heldNative9": "11743921",
+      "retainedSourceUnits": "10616061270182325155450800912070002451989536",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x8ce1de121ee39e6539b0e8f52373fec4ebb1ecb9",
+      "exposureNative9": "11269429",
+      "heldNative9": "11269429",
+      "retainedSourceUnits": "10187139161498865284219718624658481703764968",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x7429ddb528111afe7f995aecfb63f2b839c3d56b",
+      "exposureNative9": "9143229",
+      "heldNative9": "9143229",
+      "retainedSourceUnits": "8265134672520260608596889341915327491623520",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xcda93cfff3ebd828dfdf599dd34fe15f539dfcb3",
+      "exposureNative9": "8714816",
+      "heldNative9": "8714816",
+      "retainedSourceUnits": "7877865155860972931670181007726734706144709",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "exposureNative9": "6424044",
+      "heldNative9": "6424044",
+      "retainedSourceUnits": "5807093748395341559972036335575791331744544",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x3aee15dc61b9376734910b20895f63a12ae64f3e",
+      "exposureNative9": "1367331",
+      "heldNative9": "1367331",
+      "retainedSourceUnits": "1236016334107412866118088298322974942659060",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0xc198039a60ce12c0e93d9e228cff3d103b2c546b",
+      "exposureNative9": "501295",
+      "heldNative9": "501295",
+      "retainedSourceUnits": "453152417657164929143178261657069516307098",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x52181215886f6bc17801e1e4f49d273ac954d6a8",
+      "exposureNative9": "308787",
+      "heldNative9": "308787",
+      "retainedSourceUnits": "279132164081642663061166253669595261542235",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:staked:0x53139af3e07742ebb31a4259011e4ebe6bc27503",
+      "exposureNative9": "8268",
+      "heldNative9": "8268",
+      "retainedSourceUnits": "7474140121400589663048621769096846326120",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:sy:0x98a0efc622cdc86b38484ce6a6729606d26e500e",
+      "exposureNative9": "3995047331",
+      "heldNative9": "3995047331",
+      "retainedSourceUnits": "3611371952",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xa2ad64b2d890a59ce18c0ddd51a7de9ef69eb3da",
+      "exposureNative9": "1820961176",
+      "heldNative9": "1820961176",
+      "retainedSourceUnits": "1646080152",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xfa608f4a8ad11e94031c1c56aeda99a9ef01b250",
+      "exposureNative9": "988437746",
+      "heldNative9": "988437746",
+      "retainedSourceUnits": "893510404",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0x280a85761d09366dcf8a3a2b2ececeb28298450e",
+      "exposureNative9": "945749439",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xa198dc7f2e61b45ba194568b671e49cf1ae77fdb",
+      "exposureNative9": "19971991",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xc2fbc60e0cefd21a00e004a831abe50d00faf849",
+      "exposureNative9": "3994398424",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xd0a7f1268f73de7abab34577c3bc44ccf8c09652",
+      "exposureNative9": "2583647781",
+      "heldNative9": "2583647781",
+      "retainedSourceUnits": "2335520047",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0x80337d2fbf7697a148bb46484197af0915e3805e",
+      "exposureNative9": "331807227",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xf9b7850ee758ca9878a052aeed04f24a50531ea1",
+      "exposureNative9": "68839226",
+      "heldNative9": "68839226",
+      "retainedSourceUnits": "62228062",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0x4a3101d25b370e26d914381bf8d48b8977689f13",
+      "exposureNative9": "459282125",
+      "heldNative9": "459282125",
+      "retainedSourceUnits": "415173701",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xe07d157b8ea4fd13466ecb99e653604093617602",
+      "exposureNative9": "477467195",
+      "heldNative9": "477467195",
+      "retainedSourceUnits": "431612318",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0x18a3e8b8286013bf86741eb4a6378d5c7541cd8a",
+      "exposureNative9": "433217471",
+      "heldNative9": "433217471",
+      "retainedSourceUnits": "391612238",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0x8193c89d86414a7b6d1b899b01f64735582c5fc8",
+      "exposureNative9": "17974792917",
+      "heldNative9": "17974792917",
+      "retainedSourceUnits": "16248534149",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xcf2abf57dc877e61dd484b57f852327f38740b75",
+      "exposureNative9": "105692810",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0x165481239cc2827f92f738571b2ce1e532c900ca",
+      "exposureNative9": "20371431",
+      "heldNative9": "20371431",
+      "retainedSourceUnits": "18415005",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0x11c17f25e958e4637dd26ca362adeae12e24ed5b",
+      "exposureNative9": "89542",
+      "heldNative9": "89542",
+      "retainedSourceUnits": "80943",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:sy:0xa4e71c31c4994c323aa09abfa9e93d5b7694742a",
+      "exposureNative9": "14230241",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "SY_raw_9"
+    },
+    {
+      "position": "weighted:legacy_stake:0x0cc7cedb0935ceab0b4a6b38ee7dcfd403b19a7b",
+      "exposureNative9": "9985996069",
+      "heldNative9": "9985996069",
+      "retainedSourceUnits": "5000000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x1de6459390dd59bcd8ee7ffba9b8d6e6284a67bc",
+      "exposureNative9": "4114515179",
+      "heldNative9": "4114515179",
+      "retainedSourceUnits": "2060142599051729141053669",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x2f343d13d6fc2f03661b8956170c521afc58fdf3",
+      "exposureNative9": "2353240215",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x0d3b074b2e077165f2c411088c03453157afaa89",
+      "exposureNative9": "2018438082",
+      "heldNative9": "2018438082",
+      "retainedSourceUnits": "1010634326754501348144882",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x627d5c398e0c3bba50f61e9b08f5a723b00e81ad",
+      "exposureNative9": "1942509168",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xa49c2e824ba242ddce833b8093769f31d74ab80a",
+      "exposureNative9": "1898486107",
+      "heldNative9": "1898486107",
+      "retainedSourceUnits": "950574231364902568541966",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xc76f6e0cf34777f8532ada4fcb4b46cf3bc12faf",
+      "exposureNative9": "1418011441",
+      "heldNative9": "1418011441",
+      "retainedSourceUnits": "710000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x900701edaf6c82be2992dcd220df37620077fd4a",
+      "exposureNative9": "1198321372",
+      "heldNative9": "1198321372",
+      "retainedSourceUnits": "600000923332181246865873",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xfa3eebf1f6d13b9d88797ff3d60530214dc6aeb0",
+      "exposureNative9": "1150169431",
+      "heldNative9": "1150169431",
+      "retainedSourceUnits": "575891190115524393473017",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x5a6f6d26e17a01d65e2bffad8a95235924ae567c",
+      "exposureNative9": "1022490214",
+      "heldNative9": "1022490214",
+      "retainedSourceUnits": "511962055248166741833187",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xf5bff2894248b614bd84fe4f04c63302e91ea205",
+      "exposureNative9": "1003917805",
+      "heldNative9": "1003917805",
+      "retainedSourceUnits": "502662828432658302971957",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xfa1b87f9f7889a7c54240054aab6ce65d5d7907d",
+      "exposureNative9": "810754589",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xad0694ebfb550995be3275bfd4488f9c393ec558",
+      "exposureNative9": "801038354",
+      "heldNative9": "801038354",
+      "retainedSourceUnits": "401080848246041180305826",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x207bfad97ca2bf071cb07022b3e44c68587e9ca9",
+      "exposureNative9": "709135373",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x5dc0062b3bc99b8597385de95dcf0fea3ab2632e",
+      "exposureNative9": "693664314",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xf2e0a707e0725e952dd921cc74f4d5db6f94eee1",
+      "exposureNative9": "659610585",
+      "heldNative9": "659610585",
+      "retainedSourceUnits": "330267797501176011273496",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xde5f01e1a1674b27d97b838f499038e7db88989f",
+      "exposureNative9": "630897256",
+      "heldNative9": "630897256",
+      "retainedSourceUnits": "315891000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xf2f86bc7e613cf7241babf4bd23882be5f029254",
+      "exposureNative9": "548616326",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xcfe98d2810719ff7bc3aa21012c3875aa2d4ca19",
+      "exposureNative9": "451949617",
+      "heldNative9": "451949617",
+      "retainedSourceUnits": "226291706291327553196858",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x3d03f8ec826df6cef898add75e0bba67737c2375",
+      "exposureNative9": "399439841",
+      "heldNative9": "399439841",
+      "retainedSourceUnits": "200000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x01b0b538d0201efacdde7bb0397abb2133723009",
+      "exposureNative9": "371404984",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x770c9e80e4f777480d6a24d5601907b47bec025d",
+      "exposureNative9": "322961351",
+      "heldNative9": "322961351",
+      "retainedSourceUnits": "161707129500059325017027",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x70b4ecfb9b7d167f258e0b7df6203be8360b2071",
+      "exposureNative9": "289928731",
+      "heldNative9": "289928731",
+      "retainedSourceUnits": "145167658026761690122092",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xb831cc6389ab0ef6ee76f079b6655fe9e00aab23",
+      "exposureNative9": "274203536",
+      "heldNative9": "274203536",
+      "retainedSourceUnits": "137294033842762471504876",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x3d2fa04af6099a759fc3477fe601a9c7aadf0229",
+      "exposureNative9": "256556417",
+      "heldNative9": "256556417",
+      "retainedSourceUnits": "128458100864867685706303",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xb36915984c01aa2251607a6b2d631790796721ce",
+      "exposureNative9": "233043890",
+      "heldNative9": "233043890",
+      "retainedSourceUnits": "116685350771810187877722",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x082cb14f04d9c485473dedc00d604d7e9abca303",
+      "exposureNative9": "208957613",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x58fbac0714a77a30b266776616d93911e36d363e",
+      "exposureNative9": "207715173",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x56188b8bbe70013408553ce28124f6d48e5896e6",
+      "exposureNative9": "201900551",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xf410e458d0d603789323937ee05774d2178cb553",
+      "exposureNative9": "199719920",
+      "heldNative9": "199719920",
+      "retainedSourceUnits": "100000000068542895116015",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xcc242e943cb785794f93acaa835307fabae84bd4",
+      "exposureNative9": "199719920",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xd5b54e64991b6bd2e805023e881b2526422b9239",
+      "exposureNative9": "164315148",
+      "heldNative9": "164315148",
+      "retainedSourceUnits": "82272788445831185456024",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xa3826327e4f2ed3750065f8a2704ad056181cc5f",
+      "exposureNative9": "152266619",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x812e1cfdd31d8678800e99b6851119b9788e2203",
+      "exposureNative9": "146662723",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xeedb50c86266c3ed96e99b01d30580e4be76e643",
+      "exposureNative9": "134012918",
+      "heldNative9": "134012918",
+      "retainedSourceUnits": "67100426784814370828116",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xfc25529b34482646527abc46896c71dba15bceab",
+      "exposureNative9": "132011437",
+      "heldNative9": "132011437",
+      "retainedSourceUnits": "66098282663783102176279",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+      "exposureNative9": "129599816",
+      "heldNative9": "129599816",
+      "retainedSourceUnits": "64890781291192882058375",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x8bb482b62e2cf88485d1cd9079329db67c7b5b65",
+      "exposureNative9": "127325444",
+      "heldNative9": "127325444",
+      "retainedSourceUnits": "63752000398836617655812",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x72a80114df86c9e16eb6e4f64f27a4c5c06e8759",
+      "exposureNative9": "122381883",
+      "heldNative9": "122381883",
+      "retainedSourceUnits": "61276753311442285141128",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x4858fbd70f681b703adb5f3be5b103bf27edae02",
+      "exposureNative9": "121904241",
+      "heldNative9": "121904241",
+      "retainedSourceUnits": "61037597602896461475063",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xfc2efc94ab994e26cf81a5f0cb4ce048a63d33e2",
+      "exposureNative9": "91794751",
+      "heldNative9": "91794751",
+      "retainedSourceUnits": "45961740709489582197386",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xb75e34c02bdeeb29fd9826e8e6b887cddc4cab8e",
+      "exposureNative9": "87559908",
+      "heldNative9": "87559908",
+      "retainedSourceUnits": "43841349306744122532907",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xcdf905eb668d41d413fad1f98fd659d1f82c3ef8",
+      "exposureNative9": "83642147",
+      "heldNative9": "83642147",
+      "retainedSourceUnits": "41879721711688329967762",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x50a6802ed8919437c1f80ca0b5458bf4263813c6",
+      "exposureNative9": "82476263",
+      "heldNative9": "82476263",
+      "retainedSourceUnits": "41295962495166743163200",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x16de682381d61b51b65fee8161d1f2afe3df90ca",
+      "exposureNative9": "81266035",
+      "heldNative9": "81266035",
+      "retainedSourceUnits": "40690000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x6587f9bc19a2d19cf07e0718609cca64dd936537",
+      "exposureNative9": "80923451",
+      "heldNative9": "80923451",
+      "retainedSourceUnits": "40518467965119270506900",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x63bbaac65606f7904c0f30cfff7d220b5313d7de",
+      "exposureNative9": "73693410",
+      "heldNative9": "73693410",
+      "retainedSourceUnits": "36898377794449036527277",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xbb84331b91add0a9dbeb32a0064a076bc273e0ca",
+      "exposureNative9": "73554908",
+      "heldNative9": "73554908",
+      "retainedSourceUnits": "36829029719965938899308",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xadf3dd93e4ba976d2020d804957e0ae3defa4092",
+      "exposureNative9": "65159985",
+      "heldNative9": "65159985",
+      "retainedSourceUnits": "32625681694318425192239",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x73d40b3fa164c6ca26b47574777076389c7ba23a",
+      "exposureNative9": "58986212",
+      "heldNative9": "58986212",
+      "retainedSourceUnits": "29534466205772921856052",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x9b9a5cc80a431866751ee66139fc8890790c6b20",
+      "exposureNative9": "49929980",
+      "heldNative9": "49929980",
+      "retainedSourceUnits": "25000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x1512bb3b85696fa4d85cb4bbf78e9c4fe95db90f",
+      "exposureNative9": "49499258",
+      "heldNative9": "49499258",
+      "retainedSourceUnits": "24784337555438463314611",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x5151e65d3537aef202007dc5f62d3bbdbd261073",
+      "exposureNative9": "48988919",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x3ce87096dc62090355e97b305174f6497f3e4506",
+      "exposureNative9": "42170164",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xe2c67c79ac2601bf3d7dd19d10dd6a655881f1bf",
+      "exposureNative9": "40014778",
+      "heldNative9": "40014778",
+      "retainedSourceUnits": "20035446854343612240271",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x2c0400cf47e5ea01364e44c237aed22d7ae86199",
+      "exposureNative9": "39943983",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xe87a10d5b212d169ccbc9a50cf5e23dd3da27cb6",
+      "exposureNative9": "39498232",
+      "heldNative9": "39498232",
+      "retainedSourceUnits": "19776811808751415918157",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x23f1883cae632c63bdafe7df7f57c358d76ef737",
+      "exposureNative9": "38364622",
+      "heldNative9": "38364622",
+      "retainedSourceUnits": "19209211966862438045804",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xb48ded0bc73fbeea411c2cb08c2f4c12d8396edf",
+      "exposureNative9": "37810975",
+      "heldNative9": "37810975",
+      "retainedSourceUnits": "18932000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x9ce4fe68a3fd27d1275bab0e1f36734fc3503e92",
+      "exposureNative9": "31888025",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x29a27efe52fe2b931f22b1fef9833301b4021d32",
+      "exposureNative9": "28362701",
+      "heldNative9": "28362701",
+      "retainedSourceUnits": "14201238019573119144395",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x4e4f1c1c6a1d02a89eace8c58f8f76f5d5a89e16",
+      "exposureNative9": "27826559",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x4fc3b50ab3c30d294ab2ab8b06bd178c54157a6e",
+      "exposureNative9": "27464467",
+      "heldNative9": "27464467",
+      "retainedSourceUnits": "13751491943874637443314",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xc91a004d5baa708230527283bfaee3e1d19100b2",
+      "exposureNative9": "27389679",
+      "heldNative9": "27389679",
+      "retainedSourceUnits": "13714044896556085902358",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x6cce37b17da8884a2f336c8a29892ab2257bb16e",
+      "exposureNative9": "26871771",
+      "heldNative9": "26871771",
+      "retainedSourceUnits": "13454727740486532724790",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x2acacb690810c1c724e9d439fe2fcb6ded119baf",
+      "exposureNative9": "26413952",
+      "heldNative9": "26413952",
+      "retainedSourceUnits": "13225497751411459762399",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x7e308573643db0139faea81d7fcd8edb2723b7fd",
+      "exposureNative9": "21492639",
+      "heldNative9": "21492639",
+      "retainedSourceUnits": "10761390340979568930332",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x37a54f17128e8d9ea6ab9d266f6b8e675a022033",
+      "exposureNative9": "19971991",
+      "heldNative9": "19971991",
+      "retainedSourceUnits": "10000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xa846c62be11d142de48c359d5826c56d98cbab0f",
+      "exposureNative9": "18045521",
+      "heldNative9": "18045521",
+      "retainedSourceUnits": "9035413870494489069345",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xbd5408beed525d3cb300bbe001008af9bd0be359",
+      "exposureNative9": "16733992",
+      "heldNative9": "16733992",
+      "retainedSourceUnits": "8378729733701946059240",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xe39a088d0b5f2cb0f4b9b444247e22839d531a90",
+      "exposureNative9": "15912160",
+      "heldNative9": "15912160",
+      "retainedSourceUnits": "7967237796020424302044",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xbb06b2dca1acf363ccbc97d2ce2019ce32a6f7f5",
+      "exposureNative9": "13980393",
+      "heldNative9": "13980393",
+      "retainedSourceUnits": "7000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x7d82a5771191bc72d3eff99e0eec60258aa07b4d",
+      "exposureNative9": "13877595",
+      "heldNative9": "13877595",
+      "retainedSourceUnits": "6948528762337797937739",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xfdf1bff1850f05641075588e380622d25774a7ec",
+      "exposureNative9": "10331131",
+      "heldNative9": "10331131",
+      "retainedSourceUnits": "5172810368844804452404",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x6d970b360b62634c3996817daecfdbe670876b41",
+      "exposureNative9": "9985995",
+      "heldNative9": "9985995",
+      "retainedSourceUnits": "5000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xd37c7a10b69e55b848d6426ed9875522779d7df0",
+      "exposureNative9": "9985995",
+      "heldNative9": "9985995",
+      "retainedSourceUnits": "5000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xa80f4b0e958bb28bfe4b77770dffcd95037a9989",
+      "exposureNative9": "9793321",
+      "heldNative9": "9793321",
+      "retainedSourceUnits": "4903528033408776988990",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x8489b7bfa6c7054b9aa23457f766b34511da40d7",
+      "exposureNative9": "9703373",
+      "heldNative9": "9703373",
+      "retainedSourceUnits": "4858490515374289134473",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xdd434d4e41e83c6128e56238286605b7c65aab64",
+      "exposureNative9": "9164714",
+      "heldNative9": "9164714",
+      "retainedSourceUnits": "4588783777790503682049",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xc1cecf809a3e09b16f4f63b3c0ce340a555bd8b1",
+      "exposureNative9": "6827760",
+      "heldNative9": "6827760",
+      "retainedSourceUnits": "3418667911132907965020",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xbaf570ed1b390caf00265b4f5f652bbd6c840036",
+      "exposureNative9": "6552076",
+      "heldNative9": "6552076",
+      "retainedSourceUnits": "3280632581943480254151",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x20f9a11d2668a675e2381151c709b1996de1da5e",
+      "exposureNative9": "5991597",
+      "heldNative9": "5991597",
+      "retainedSourceUnits": "3000000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xc198039a60ce12c0e93d9e228cff3d103b2c546b",
+      "exposureNative9": "998599",
+      "heldNative9": "998599",
+      "retainedSourceUnits": "500000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xd5e6a1d77b30981462a0fcdcc9087c622f3543e0",
+      "exposureNative9": "667697",
+      "heldNative9": "667697",
+      "retainedSourceUnits": "334317064552264873450",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xa73c366a05815eab2a96c287d1f260d9ec95f6c8",
+      "exposureNative9": "459355",
+      "heldNative9": "459355",
+      "retainedSourceUnits": "230000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xec0dc369b21cc836ef370a17e0ed2fcaf52806b9",
+      "exposureNative9": "199719",
+      "heldNative9": "199719",
+      "retainedSourceUnits": "100000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xc0742eb52bf513e6bb4f639d768dcf88572d198d",
+      "exposureNative9": "199719",
+      "heldNative9": "199719",
+      "retainedSourceUnits": "100000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xf2992b4e9f2006eed7944aff5bfeb2778f72e109",
+      "exposureNative9": "199719",
+      "heldNative9": "199719",
+      "retainedSourceUnits": "100000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xcea5c73c5691ab5057a6833874f42055799dd474",
+      "exposureNative9": "197721",
+      "heldNative9": "197721",
+      "retainedSourceUnits": "99000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0x89cc65a71c8fc2646575efcd739262603f09060a",
+      "exposureNative9": "1996",
+      "heldNative9": "1996",
+      "retainedSourceUnits": "1000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xbe398a663f41607f6b4c9c1ae3a8ec56128b2316",
+      "exposureNative9": "1996",
+      "heldNative9": "1996",
+      "retainedSourceUnits": "1000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:legacy_stake:0xb9f3f3535dbc326c11013a5cee6958aab96d2e23",
+      "exposureNative9": "1996",
+      "heldNative9": "1996",
+      "retainedSourceUnits": "1000000000000000000",
+      "unit": "legacy_weight_DTF_raw_18"
+    },
+    {
+      "position": "weighted:funded_bond:3",
+      "exposureNative9": "4173052206",
+      "heldNative9": "4173052206",
+      "retainedSourceUnits": "3772281649000000000000000000000000000000000000",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:4",
+      "exposureNative9": "289604856",
+      "heldNative9": "289604856",
+      "retainedSourceUnits": "261791856370923794511485487961491956362989152",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:5",
+      "exposureNative9": "501454560",
+      "heldNative9": "501454560",
+      "retainedSourceUnits": "453295991454330444087591413967110450400213630",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:6",
+      "exposureNative9": "762460827",
+      "heldNative9": "762460827",
+      "retainedSourceUnits": "689235802629449558882730101444218858155558313",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:7",
+      "exposureNative9": "1235151135",
+      "heldNative9": "1235151135",
+      "retainedSourceUnits": "1116529995523634422025531650985757638771679201",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:8",
+      "exposureNative9": "1994353903",
+      "heldNative9": "1994353903",
+      "retainedSourceUnits": "1802820636001209582337693769730169829681701284",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:9",
+      "exposureNative9": "3239531113",
+      "heldNative9": "3239531113",
+      "retainedSourceUnits": "2928413823836834869031026091495001076507317016",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:10",
+      "exposureNative9": "5225765508",
+      "heldNative9": "5225765508",
+      "retainedSourceUnits": "4723894730696012279054225960105948817713109088",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:11",
+      "exposureNative9": "45541525",
+      "heldNative9": "45541525",
+      "retainedSourceUnits": "41167820046037649899699428422793187524935445",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:12",
+      "exposureNative9": "1504419189",
+      "heldNative9": "1504419189",
+      "retainedSourceUnits": "1359938151001406761469084960427214297372703660",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:13",
+      "exposureNative9": "1977",
+      "heldNative9": "1977",
+      "retainedSourceUnits": "1787976253626859327236234856476817900045",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:14",
+      "exposureNative9": "189403",
+      "heldNative9": "189403",
+      "retainedSourceUnits": "171213667453178982582431063521052666036001",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:15",
+      "exposureNative9": "1977",
+      "heldNative9": "1977",
+      "retainedSourceUnits": "1787976224610791187300671379470814702940",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:16",
+      "exposureNative9": "158064155",
+      "heldNative9": "158064155",
+      "retainedSourceUnits": "142884029530585275147311715514234264316409216",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:17",
+      "exposureNative9": "185527",
+      "heldNative9": "185527",
+      "retainedSourceUnits": "167710025491008673919147055082567962112592",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:18",
+      "exposureNative9": "50644682",
+      "heldNative9": "50644682",
+      "retainedSourceUnits": "45780880539169618064543883782517655567023471",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:19",
+      "exposureNative9": "137253537",
+      "heldNative9": "137253537",
+      "retainedSourceUnits": "124072016268769023250244112163593057929176635",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:20",
+      "exposureNative9": "274766750",
+      "heldNative9": "274766750",
+      "retainedSourceUnits": "248378769526909352381288775325418167945677957",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:21",
+      "exposureNative9": "16970491",
+      "heldNative9": "16970491",
+      "retainedSourceUnits": "15340683507815430424819793441116270340397942",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:22",
+      "exposureNative9": "1247957930",
+      "heldNative9": "1247957930",
+      "retainedSourceUnits": "1128106854880014899272229485340650764910516565",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:23",
+      "exposureNative9": "260797539",
+      "heldNative9": "260797539",
+      "retainedSourceUnits": "235751129368871970961551823860098698214383800",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:24",
+      "exposureNative9": "1338882181",
+      "heldNative9": "1338882181",
+      "retainedSourceUnits": "1210298945040245527139648071189890095968939443",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:25",
+      "exposureNative9": "54918741",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:26",
+      "exposureNative9": "58033",
+      "heldNative9": "58033",
+      "retainedSourceUnits": "52459819993299340272568633160568566648246",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:27",
+      "exposureNative9": "3403002204",
+      "heldNative9": "3403002204",
+      "retainedSourceUnits": "3076185518866204797976378583205328493921044450",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:28",
+      "exposureNative9": "3837988331",
+      "heldNative9": "3837988331",
+      "retainedSourceUnits": "3469396555836269725096704139213508901213705228",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:29",
+      "exposureNative9": "1830513167",
+      "heldNative9": "1830513167",
+      "retainedSourceUnits": "1654714795763346130809714618714684556175109696",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:30",
+      "exposureNative9": "470458425",
+      "heldNative9": "470458425",
+      "retainedSourceUnits": "425276655163225354692141785970709458656040470",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:31",
+      "exposureNative9": "4148958967",
+      "heldNative9": "4148958967",
+      "retainedSourceUnits": "3750502270489502823326329257490031458027963330",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:32",
+      "exposureNative9": "55994597",
+      "heldNative9": "45425386",
+      "retainedSourceUnits": "41062834499417785941044116460172046082113827",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:33",
+      "exposureNative9": "14189537270",
+      "heldNative9": "14189537270",
+      "retainedSourceUnits": "12826805993223361480059614856878504909308201332",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:34",
+      "exposureNative9": "59953494",
+      "heldNative9": "50574921",
+      "retainedSourceUnits": "45717820078274902327505585136087412911256944",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:35",
+      "exposureNative9": "184214039",
+      "heldNative9": "184214039",
+      "retainedSourceUnits": "166522537297956598148533537324425493147520240",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:36",
+      "exposureNative9": "1642678895",
+      "heldNative9": "1642678895",
+      "retainedSourceUnits": "1484919705460206686302023890260071573586215236",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:37",
+      "exposureNative9": "51689116512",
+      "heldNative9": "51689116512",
+      "retainedSourceUnits": "46725009901794501977757559736534902587807874464",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:38",
+      "exposureNative9": "28620097654",
+      "heldNative9": "28620097654",
+      "retainedSourceUnits": "25871487782156753521863973835534684797708903765",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:39",
+      "exposureNative9": "74439902325",
+      "heldNative9": "74439902325",
+      "retainedSourceUnits": "67290861364037960564186641365189179874517894800",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:40",
+      "exposureNative9": "15784051279",
+      "heldNative9": "15784051279",
+      "retainedSourceUnits": "14268186459582721851301485015070097774835301345",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:41",
+      "exposureNative9": "749290609",
+      "heldNative9": "749290609",
+      "retainedSourceUnits": "677330422647826011043687021041739976919465881",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:42",
+      "exposureNative9": "5137211254",
+      "heldNative9": "0",
+      "retainedSourceUnits": "0",
+      "unit": "gons"
+    },
+    {
+      "position": "weighted:funded_bond:43",
+      "exposureNative9": "1565397553",
+      "heldNative9": "1565397553",
+      "retainedSourceUnits": "1415060289522125030639482392580391566948352892",
+      "unit": "gons"
+    }
+  ],
+  "eventTimeGons": [
+    {
+      "source": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624:49",
+      "eventIndex": "1000000000000000000000000000000000000",
+      "signedGons": "3772281649000000000000000000000000000000000000"
+    },
+    {
+      "source": "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe:246",
+      "eventIndex": "981326675095704663486906942960359408",
+      "signedGons": "276132744782629890275725048115129442643230032"
+    },
+    {
+      "source": "0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293:30",
+      "eventIndex": "980214737548687200475642139189458370",
+      "signedGons": "453295991454330444087591413967110450400213630"
+    },
+    {
+      "source": "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917:184",
+      "eventIndex": "978436944585305932186443192284479075",
+      "signedGons": "724851170779869078881288716315576311381087625"
+    },
+    {
+      "source": "0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296:87",
+      "eventIndex": "975760339637119269459209243534975801",
+      "signedGons": "1171013036752609559824191151032047479719381329"
+    },
+    {
+      "source": "0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb:30",
+      "eventIndex": "971793486530592026550197655717580930",
+      "signedGons": "1883105611496176522855162748666705756167053220"
+    },
+    {
+      "source": "0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a:90",
+      "eventIndex": "965949090592117875938386089029525224",
+      "signedGons": "3040428952805449552126522557359151634219236312"
+    },
+    {
+      "source": "0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651:106",
+      "eventIndex": "958404920341075582394758193828270749",
+      "signedGons": "4866283639736372777505645713618769211660026096"
+    },
+    {
+      "source": "0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b:34",
+      "eventIndex": "934594088426763976291596001931971785",
+      "signedGons": "41167820046037649899699428422793187524935445"
+    },
+    {
+      "source": "0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1:112",
+      "eventIndex": "934051357576341474495313639834248110",
+      "signedGons": "1359938151001406761469084960427214297372703660"
+    },
+    {
+      "source": "0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb:60",
+      "eventIndex": "933669061946140640854430734452646423",
+      "signedGons": "1787976253626859327236234856476817900045"
+    },
+    {
+      "source": "0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd:80",
+      "eventIndex": "933669061794962072644983724015551966",
+      "signedGons": "178893793247100118004996816472551803341498"
+    },
+    {
+      "source": "0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27:62",
+      "eventIndex": "933669046794146834099567299984759636",
+      "signedGons": "1787976224610791187300671379470814702940"
+    },
+    {
+      "source": "0x6168c6e2a65335b24d93f294064207d50b41931cd738aaab9c1b868a27f1a8c1:2",
+      "eventIndex": "933659740012750275453406229553781129",
+      "signedGons": "-37346389600510011018136249182151245160"
+    },
+    {
+      "source": "0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1:66",
+      "eventIndex": "933393667291916144804781957563940656",
+      "signedGons": "142884029530585275147311715514234264316409216"
+    },
+    {
+      "source": "0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b:27",
+      "eventIndex": "933298601476987099986349474014824827",
+      "signedGons": "167710025491008673919147055082567962112592"
+    },
+    {
+      "source": "0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd:35",
+      "eventIndex": "933291976923089679796370203804126363",
+      "signedGons": "45780880539169618064543883782517655567023471"
+    },
+    {
+      "source": "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9:41",
+      "eventIndex": "932829385607206712423840531453993165",
+      "signedGons": "124072016268769023250244112163593057929176635"
+    },
+    {
+      "source": "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71:86",
+      "eventIndex": "932818822229278622262996756887151449",
+      "signedGons": "248378769526909352381288775325418167945677957"
+    },
+    {
+      "source": "0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d:109",
+      "eventIndex": "932648376265979195776804753455990488",
+      "signedGons": "16461699906150526869287338756022672092548632"
+    },
+    {
+      "source": "0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac:68",
+      "eventIndex": "932635381888506879981558130606459982",
+      "signedGons": "1201266762299209849260188631734996419171174860"
+    },
+    {
+      "source": "0xb76c35b8cbcf976712dac07d1816b2df06fb5258b6bd844ae9352d02c0d37077:83",
+      "eventIndex": "932349347862421459394845670973247677",
+      "signedGons": "-3866407992816764395880374044933851400630504"
+    },
+    {
+      "source": "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a:29",
+      "eventIndex": "932319822776290433747042187948498600",
+      "signedGons": "235751129368871970961551823860098698214383800"
+    },
+    {
+      "source": "0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352:38",
+      "eventIndex": "932277302908576084615221290747246487",
+      "signedGons": "1212790926314655844507191278642702578139020659"
+    },
+    {
+      "source": "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970:83",
+      "eventIndex": "931853061204703871033631808176624452",
+      "signedGons": "49644469040121415115205121479714243150426644"
+    },
+    {
+      "source": "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d:144",
+      "eventIndex": "931807314398112582329502001111361954",
+      "signedGons": "52459819993299340272568633160568566648246"
+    },
+    {
+      "source": "0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0:99",
+      "eventIndex": "931458734746639964272650937968881230",
+      "signedGons": "3076185518866204797976378583205328493921044450"
+    },
+    {
+      "source": "0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737:62",
+      "eventIndex": "931047631323505054401253553001542721",
+      "signedGons": "3469396555836269725096704139213508901213705228"
+    },
+    {
+      "source": "0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1:28",
+      "eventIndex": "930707115202199299468195559073141216",
+      "signedGons": "1654714795763346130809714618714684556175109696"
+    },
+    {
+      "source": "0x98c198c8c25946098971110ac701ac1891036d573232db84788f7c3f665d19cf:32",
+      "eventIndex": "930361706745067540415487821134931152",
+      "signedGons": "-14340888411706095764239560153637486280240880"
+    },
+    {
+      "source": "0x25bcdec5ebd3f1a1b5223f30c7a4a5be7b1c7b732fa7fb36a8a2cbdc45e803bc:1",
+      "eventIndex": "930361706745067540415487821134931152",
+      "signedGons": "-35615368150419519998558614871357453225529312"
+    },
+    {
+      "source": "0x8af05d894ccb05f0a57eb5bea4838f3267726b41033609a1007ea744a5f406ff:29",
+      "eventIndex": "930361706745067540415487821134931152",
+      "signedGons": "-54483041228975137798659500046289840947702128"
+    },
+    {
+      "source": "0x1db62f8a403bb8e6c1e2ff44853a105cfd033d8fc70902e51795bb483b9bf3ed:5",
+      "eventIndex": "930361706745067540415487821134931152",
+      "signedGons": "-80284975494966940517468978936535926485351936"
+    },
+    {
+      "source": "0xeea4d604f7178e4caa89c36898574e34ebb484404985ab12662670c96e9b51f5:67",
+      "eventIndex": "930361706745067540415487821134931152",
+      "signedGons": "-112015128968614683095496465864150557711919296"
+    },
+    {
+      "source": "0x5e92e5978d3c22ec6e00fb9bc2feeb6a251fd9ccc2e3274f7be7c96ab6470d19:110",
+      "eventIndex": "930361706745067540415487821134931152",
+      "signedGons": "-142388909040360498451419753512820393946917008"
+    },
+    {
+      "source": "0x9f1ed965eeaa9c52248ce937443ba29ff34f5a350c8b1915d1132e6459719d0f:9",
+      "eventIndex": "930361706745067540415487821134931152",
+      "signedGons": "-2491981274410317367543207452812482170081216"
+    },
+    {
+      "source": "0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9:36",
+      "eventIndex": "930328067616152201477948244648694501",
+      "signedGons": "425276655163225354692141785970709458656040470"
+    },
+    {
+      "source": "0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04:39",
+      "eventIndex": "930300888925588420525014116322084106",
+      "signedGons": "3750502270489502823326329257490031458027963330"
+    },
+    {
+      "source": "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914:27",
+      "eventIndex": "929836416833226891522552587627076144",
+      "signedGons": "50617001981648865518064881511705237802734096"
+    },
+    {
+      "source": "0x2a94d0afa94e43d4d261baf0bb4c37e0d98d32051aa924a2ddfa3320867fb572:5",
+      "eventIndex": "929833237557009987110923867541336128",
+      "signedGons": "-20760076130634017940889902142023652923589248"
+    },
+    {
+      "source": "0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc:29",
+      "eventIndex": "929570651051683059530177732254882764",
+      "signedGons": "12826805993223361480059614856878504909308201332"
+    },
+    {
+      "source": "0x1878ba4049d26b08a81843edbeb2a936edbd8e8d8be9dfb2ec26531ef0b580d4:1",
+      "eventIndex": "918934640413685873698162402587109061",
+      "signedGons": "-7642779404320625411547616702316986060337"
+    },
+    {
+      "source": "0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92:69",
+      "eventIndex": "917304022153194199240080833015632743",
+      "signedGons": "54195695750235898776014437255651439874289014"
+    },
+    {
+      "source": "0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b:51",
+      "eventIndex": "913813796659117582274165475637802860",
+      "signedGons": "166522537297956598148533537324425493147520240"
+    },
+    {
+      "source": "0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb:63",
+      "eventIndex": "913795302677196776214852581547967694",
+      "signedGons": "1500627911385111814959790205954546538564895220"
+    },
+    {
+      "source": "0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6:38",
+      "eventIndex": "913162368778862463868912157290036576",
+      "signedGons": "46725009901794501977757559736534902587807874464"
+    },
+    {
+      "source": "0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f:60",
+      "eventIndex": "912050613699080074317265107679526005",
+      "signedGons": "25871487782156753521863973835534684797708903765"
+    },
+    {
+      "source": "0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47:59",
+      "eventIndex": "911381040573277915076244102794228075",
+      "signedGons": "67290861364037960564186641365189179874517894800"
+    },
+    {
+      "source": "0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9:43",
+      "eventIndex": "909885003159625374072594812277249805",
+      "signedGons": "14268186459582721851301485015070097774835301345"
+    },
+    {
+      "source": "0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4:43",
+      "eventIndex": "907721762065905751929529396784361349",
+      "signedGons": "677330422647826011043687021041739976919465881"
+    },
+    {
+      "source": "0xf7325a1194157d76db83360914d405799cb041165bd63522a5f8f6be0ebd7f0a:20",
+      "eventIndex": "906021510571215694302055103847055156",
+      "signedGons": "-15708205924905128657766315694474964978679984"
+    },
+    {
+      "source": "0x6997764082b1c00f01956a7c576c9aeb1f9c47e4f0356327e22b0f520f0c1578:1",
+      "eventIndex": "905989968875459912439135278121600851",
+      "signedGons": "-48533423295744167651188870207388149936438543"
+    },
+    {
+      "source": "0xb973e4523b957f950800308b0327eab13782f54309bec9ffb5a5ed3d8c0fe076:76",
+      "eventIndex": "905989968875459912439135278121600851",
+      "signedGons": "-1007649291303037518294105769409069439289008"
+    },
+    {
+      "source": "0x0db6934c05928ca3f3a88b0c6be21071dcae4f873dda3f6992dea75b4b670954:16",
+      "eventIndex": "905989968875459912439135278121600851",
+      "signedGons": "-173044084055212843275874838121225762541"
+    },
+    {
+      "source": "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba:72",
+      "eventIndex": "905278763360657245713125735550775699",
+      "signedGons": "4643845028472906740034860227385141379033801319"
+    },
+    {
+      "source": "0x08c32381c229242054fbb3b1f5e66cbae181e678b9c5b4b0cb37a42854f8e029:3",
+      "eventIndex": "905212143817954155878698974459292003",
+      "signedGons": "-113194062948003713330163670659211087099141"
+    },
+    {
+      "source": "0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27:52",
+      "eventIndex": "904537650955005084154023662819508857",
+      "signedGons": "1415060289522125030639482392580391566948352892"
+    }
+  ],
+  "postIncidentClaims": 7,
+  "conversions": [
+    {
+      "conversion": "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52:bond:45",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52:35"
+    },
+    {
+      "conversion": "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f:bond:34",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f:0"
+    },
+    {
+      "conversion": "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b:bond:32",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b:9"
+    },
+    {
+      "conversion": "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289:bond:45",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289:15"
+    },
+    {
+      "conversion": "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd:bond:44",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd:5"
+    },
+    {
+      "conversion": "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83:bond:25",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83:28"
+    },
+    {
+      "conversion": "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04:bond:42",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04:14"
+    },
+    {
+      "conversion": "0x18a901415a4bd9fcf0e755073c96af42ab1e987793e621397b5f1a62a4f11633:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x18a901415a4bd9fcf0e755073c96af42ab1e987793e621397b5f1a62a4f11633:1"
+    },
+    {
+      "conversion": "0xcc2f56ba8307c54a15aab8ac3436c10e582ca25cbeb3535a33bf3ce807b8b5eb:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0xcc2f56ba8307c54a15aab8ac3436c10e582ca25cbeb3535a33bf3ce807b8b5eb:1"
+    },
+    {
+      "conversion": "0x46c378100ae0013788ac9a0b121f703d7221cd318361dd97306c611bbab5e63c:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x46c378100ae0013788ac9a0b121f703d7221cd318361dd97306c611bbab5e63c:16"
+    },
+    {
+      "conversion": "0xb75131dc5bc5972d9352c79eec2780a2e8383c07019ac83a26d1673eecd197f6:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0xb75131dc5bc5972d9352c79eec2780a2e8383c07019ac83a26d1673eecd197f6:27"
+    },
+    {
+      "conversion": "0xfe94d5b99356f17b9aa3ccb73c0f74d09710203cc6fc737d49469e8a950ce14c:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0xfe94d5b99356f17b9aa3ccb73c0f74d09710203cc6fc737d49469e8a950ce14c:31"
+    },
+    {
+      "conversion": "0x6f3a212a99ee8c6d42d4ac861c262b08ce20a3205217d7389c5b8fb60472467d:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x6f3a212a99ee8c6d42d4ac861c262b08ce20a3205217d7389c5b8fb60472467d:116"
+    },
+    {
+      "conversion": "0x1392fdbd61c35922c1dfdff61287e41f867f7d95b0a4154ea41c16a866d13c59:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x1392fdbd61c35922c1dfdff61287e41f867f7d95b0a4154ea41c16a866d13c59:34"
+    },
+    {
+      "conversion": "0x9bfb64d84640287fb616ed140aa36b4e3fdf179f560350aef16673849160e30a:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x9bfb64d84640287fb616ed140aa36b4e3fdf179f560350aef16673849160e30a:135"
+    },
+    {
+      "conversion": "0x2d2af212a74d400c88c2c02024d390ca86094db638f39cf71ff65505b90f5159:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x2d2af212a74d400c88c2c02024d390ca86094db638f39cf71ff65505b90f5159:3"
+    },
+    {
+      "conversion": "0xa2a18ead28fada4b37b69cc06ab2c204c0f4a0a86d171ab86e3de1c47fdc89b0:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0xa2a18ead28fada4b37b69cc06ab2c204c0f4a0a86d171ab86e3de1c47fdc89b0:11"
+    },
+    {
+      "conversion": "0xb6f023ef0f126751048591864cc23e9f996d945a772fe2c0d3218cd2fcfeec57:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0xb6f023ef0f126751048591864cc23e9f996d945a772fe2c0d3218cd2fcfeec57:58"
+    },
+    {
+      "conversion": "0xfb6775b9b1010052f343be52bcd7636008930ee82f0c0b2c2ef700133492fb9f:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0xfb6775b9b1010052f343be52bcd7636008930ee82f0c0b2c2ef700133492fb9f:34"
+    },
+    {
+      "conversion": "0x6ece614ad85798eef4244cc58262b3edafce211f135a66f68e0354bbf57a12bb:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x6ece614ad85798eef4244cc58262b3edafce211f135a66f68e0354bbf57a12bb:34"
+    },
+    {
+      "conversion": "0x54bfafb5c45ccad2864b8bf33b09af405ac140ea5a4d5f545f45c69c4e9fa788:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x54bfafb5c45ccad2864b8bf33b09af405ac140ea5a4d5f545f45c69c4e9fa788:10"
+    },
+    {
+      "conversion": "0x0796e4c035042a7d31f9ab7725b3d628cc4943f002e0d08319a36549f106d195:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x0796e4c035042a7d31f9ab7725b3d628cc4943f002e0d08319a36549f106d195:23"
+    },
+    {
+      "conversion": "0x0922c32033aa4f6f55ab79358e174f85ae4ce9ef25f71d7cc9b0fb7350a5c4f4:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x0922c32033aa4f6f55ab79358e174f85ae4ce9ef25f71d7cc9b0fb7350a5c4f4:61"
+    },
+    {
+      "conversion": "0x52bd26796b74db632891d2786814fad89ec88089fb33f83e1f3bc094e7cd0439:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0x52bd26796b74db632891d2786814fad89ec88089fb33f83e1f3bc094e7cd0439:1"
+    },
+    {
+      "conversion": "0xa35ed940f520b62033d876d2471d36d6ffaa042617534b6ddc4603cc9ed89e3d:legacy_claim",
+      "event": "0xb55604cf4dcdabb362078e106d20f98512391edf:0xa35ed940f520b62033d876d2471d36d6ffaa042617534b6ddc4603cc9ed89e3d:10"
+    },
+    {
+      "conversion": "0x781603149d4b49ee99d8a0296bfa4336814dbc2885f494f5d330b9e4a09ae90a:Staked:12977307327544400818275735174392544605846364764",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x781603149d4b49ee99d8a0296bfa4336814dbc2885f494f5d330b9e4a09ae90a:4"
+    },
+    {
+      "conversion": "0x97868e751f99dc771d6b3e148559fab793f389643c0fe7476ba4fdb1238362bf:Staked:26795627148364890041407391397058471653274347567",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x97868e751f99dc771d6b3e148559fab793f389643c0fe7476ba4fdb1238362bf:31"
+    },
+    {
+      "conversion": "0xb79826ffdc8b6133578bf779349a2ac00c867bde2e4847ef5eba3620f30daf6e:Staked:54344049344035360508835623185168717311283534312",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb79826ffdc8b6133578bf779349a2ac00c867bde2e4847ef5eba3620f30daf6e:2"
+    },
+    {
+      "conversion": "0x4b24c4a72a930f0efc008cff81a0e18325a0da1ed55a6e6fba30efbe68c0b693:Staked:98775682253207449245682243704927832372637111982",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4b24c4a72a930f0efc008cff81a0e18325a0da1ed55a6e6fba30efbe68c0b693:16"
+    },
+    {
+      "conversion": "0x422b9e67eafb966cbc1cb4961e4e9f25c5633e0e0294f5571f7d642d084ac047:Staked:15032298548710313205480097965369430806166046986",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x422b9e67eafb966cbc1cb4961e4e9f25c5633e0e0294f5571f7d642d084ac047:2"
+    },
+    {
+      "conversion": "0xed8462c81d9dd5ee202abbd07406c8ded95101f40a4af7e2e8fb879977306342:Staked:89711862251139027100783277368444155805704572678",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xed8462c81d9dd5ee202abbd07406c8ded95101f40a4af7e2e8fb879977306342:3"
+    },
+    {
+      "conversion": "0xa945e789dff50f6ffef7949b79e94d66ce0c87f16f6ccbc2a0143b9207c809d0:Staked:89580627505893990297237095105435734324875227324",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa945e789dff50f6ffef7949b79e94d66ce0c87f16f6ccbc2a0143b9207c809d0:13"
+    },
+    {
+      "conversion": "0x48f210043e05c4a5616bd7823e2922bb4d53da3e49a1a60d957d633b5ba2b018:Staked:5617204419343350705669801516835001420734126484",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x48f210043e05c4a5616bd7823e2922bb4d53da3e49a1a60d957d633b5ba2b018:2"
+    },
+    {
+      "conversion": "0x9568694d4299eac29308b824472e35167f3c1bec00db3af2ed2bbab1ec7441f9:Staked:1907796743443573129279848285595696176638481263",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x9568694d4299eac29308b824472e35167f3c1bec00db3af2ed2bbab1ec7441f9:2"
+    },
+    {
+      "conversion": "0xd65912b4f394e97c9bde2bef2e593e09f322d27bf1b04689d5ac2bc7d3ad6a4c:Staked:23880189555609506125985393507229114006154759344",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xd65912b4f394e97c9bde2bef2e593e09f322d27bf1b04689d5ac2bc7d3ad6a4c:12"
+    },
+    {
+      "conversion": "0x1135a61854064d95971924cfe1fb792e1e0477ad8a4827e00830d8f3b2512e27:Staked:149770660427391286135611929708630812547680152560",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x1135a61854064d95971924cfe1fb792e1e0477ad8a4827e00830d8f3b2512e27:4"
+    },
+    {
+      "conversion": "0x4132b4b29ed1b6d6129d1169c7d7e18529038008a60477a8ced0838ed985876c:Unstaked:61585792668845490611672014706446035071084444489",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x4132b4b29ed1b6d6129d1169c7d7e18529038008a60477a8ced0838ed985876c:5"
+    },
+    {
+      "conversion": "0x6a28d4cf20934e66cf6aa1a8b1b547564cd10586426253d2d9103f92b181e0e0:Unstaked:156990925750556496356024706974130460063149204",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x6a28d4cf20934e66cf6aa1a8b1b547564cd10586426253d2d9103f92b181e0e0:2"
+    },
+    {
+      "conversion": "0xfc2eeef59cef0a6fd05df8b0f72c242264b42d4051a5d58c81a618b93221b324:Staked:26333460820228396559053788886321052976082583866",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xfc2eeef59cef0a6fd05df8b0f72c242264b42d4051a5d58c81a618b93221b324:29"
+    },
+    {
+      "conversion": "0xf67c7d548c35b7bd349eb8a13254e416be2fa3d90faac68a936ff06b8b0aff1f:Unstaked:1856066970721122243040282640650016769334270274",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xf67c7d548c35b7bd349eb8a13254e416be2fa3d90faac68a936ff06b8b0aff1f:2"
+    },
+    {
+      "conversion": "0x6a49f60cffe5d806d6dba5bc180d6513509d3df8bdb265bdf021cdedd4283531:Staked:49658067311746613603023107536049225289842476790",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x6a49f60cffe5d806d6dba5bc180d6513509d3df8bdb265bdf021cdedd4283531:33"
+    },
+    {
+      "conversion": "0xc72b1c1896ee34395c326f19db308158075ec7c79c906961f487d59081032615:Unstaked:2151528542139864576585125563654264341455669860",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xc72b1c1896ee34395c326f19db308158075ec7c79c906961f487d59081032615:9"
+    },
+    {
+      "conversion": "0xac8316ac0624bbf64375acf4c50659927cdf65cbe3dca7d2d3486a12f32e6303:Staked:325626858583733714179197371563003139615629060343",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xac8316ac0624bbf64375acf4c50659927cdf65cbe3dca7d2d3486a12f32e6303:23"
+    },
+    {
+      "conversion": "0xbf29f5d473b8bbc1dac328fd04d938ada0bfea5a849a0efba9511aaaabd1d232:Unstaked:69598292806695381223945082882971714842343376252",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xbf29f5d473b8bbc1dac328fd04d938ada0bfea5a849a0efba9511aaaabd1d232:1"
+    },
+    {
+      "conversion": "0xb75b5f9deb78cb2cf768ec31e601f646d3dfd4ca306ebfb552156cd0cf9c91e3:Unstaked:54341755152566686797354579094682232301768487908",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xb75b5f9deb78cb2cf768ec31e601f646d3dfd4ca306ebfb552156cd0cf9c91e3:1"
+    },
+    {
+      "conversion": "0xacd166a04c48d40a11d9109377b78acd027f0a69971763fcedd3554480d6a229:Staked:1362136387761242806862570789154219636584810850",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xacd166a04c48d40a11d9109377b78acd027f0a69971763fcedd3554480d6a229:5"
+    },
+    {
+      "conversion": "0xdc177813688309c3b6036ba3b1055d790ec73052dfb626eac747aac5a8fb1c07:Staked:121093889767792019018485882306240497592297141842",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xdc177813688309c3b6036ba3b1055d790ec73052dfb626eac747aac5a8fb1c07:40"
+    },
+    {
+      "conversion": "0x82c8be1ce3f11c4ebb39f269e3b13a9b0f8a3617f34fa4408a5a6d2f84def2da:Unstaked:5617204419343350705669801516835001420734126484",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x82c8be1ce3f11c4ebb39f269e3b13a9b0f8a3617f34fa4408a5a6d2f84def2da:11"
+    },
+    {
+      "conversion": "0x5b2bd08f4e4ecb2d024cae397d1bf0cb7e773fa0a54ad6a8d0d7577cf7228e65:Staked:55097803831231442309757559741579489802315660618",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x5b2bd08f4e4ecb2d024cae397d1bf0cb7e773fa0a54ad6a8d0d7577cf7228e65:22"
+    },
+    {
+      "conversion": "0x5033a737c1d5a2117254d7b788df2d8025e8f475e5289361a806498d70905b4f:Staked:3597949237547631506720159227876728686459706719",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x5033a737c1d5a2117254d7b788df2d8025e8f475e5289361a806498d70905b4f:68"
+    },
+    {
+      "conversion": "0x3f6ed5633dd94a84ca80db8c9ba1333f74bb6b6d12bd68c7815ce022c4be064d:Staked:341416897807719676685100151828965191442979200",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x3f6ed5633dd94a84ca80db8c9ba1333f74bb6b6d12bd68c7815ce022c4be064d:10"
+    },
+    {
+      "conversion": "0xf39dd247bce25f0fed03630e0b21b8b7d1cf7284ab9d2a794656779f2ee08f68:Unstaked:18053925371057771886633709833633985687580665",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xf39dd247bce25f0fed03630e0b21b8b7d1cf7284ab9d2a794656779f2ee08f68:3"
+    },
+    {
+      "conversion": "0xbbefee043a1fbb05573dce52ca81bf0a31d506c6f5b388009c060d6050725bfe:Staked:26489237701614188529678239394878727606164671620",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xbbefee043a1fbb05573dce52ca81bf0a31d506c6f5b388009c060d6050725bfe:6"
+    },
+    {
+      "conversion": "0x8714836e60d1b17b171c3e0118b9b513a12b6aaa4ee4fd8db0b5f315af3a3fdd:Staked:10087593302946107029961601279521917377301974018",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x8714836e60d1b17b171c3e0118b9b513a12b6aaa4ee4fd8db0b5f315af3a3fdd:2"
+    },
+    {
+      "conversion": "0x7557db05650cf356d09dd76e18973bf00c8cd2733d3f25784e2c2a4755cb9384:Staked:798609408926303510445970986937092214566932102",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x7557db05650cf356d09dd76e18973bf00c8cd2733d3f25784e2c2a4755cb9384:10"
+    },
+    {
+      "conversion": "0xc0c5aaa94a9621d619f017ec4461417388061be4011dea3379221ae92a0b79ed:Staked:55193001281717438352411031040886459571130276944",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xc0c5aaa94a9621d619f017ec4461417388061be4011dea3379221ae92a0b79ed:21"
+    },
+    {
+      "conversion": "0x2cf21492fa20c7d02867b3319fb51154ce983a328989dcedecd39755e3241a14:Staked:84560679023655434684115673709370421143073328951",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x2cf21492fa20c7d02867b3319fb51154ce983a328989dcedecd39755e3241a14:2"
+    },
+    {
+      "conversion": "0x54038cb5401ff90832804eb4bde5f5cc320fcebe4b12e4439ac926dd38c88ee1:Staked:26449913603996865727068312801540972082019988072",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x54038cb5401ff90832804eb4bde5f5cc320fcebe4b12e4439ac926dd38c88ee1:9"
+    },
+    {
+      "conversion": "0xbc8bb9929eb99a865b8cdd56cccea7be563b075c5f3667bac63d03c6dd42c0c8:Staked:4788414738196187426991099338889144431028062952",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xbc8bb9929eb99a865b8cdd56cccea7be563b075c5f3667bac63d03c6dd42c0c8:5"
+    },
+    {
+      "conversion": "0xa7e9801b2416fd751b091f33bf14c86e5eede3956b3148045cea9c13f229c706:Staked:2702109239825222477155128835725348699292337085",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa7e9801b2416fd751b091f33bf14c86e5eede3956b3148045cea9c13f229c706:2"
+    },
+    {
+      "conversion": "0x906157691177540f8c35709bb8a8726c55807c39701fd47b3f49888aa9d986ec:Staked:286068367658426020278226150182137919352144424",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x906157691177540f8c35709bb8a8726c55807c39701fd47b3f49888aa9d986ec:3"
+    },
+    {
+      "conversion": "0xc18cde75e3e568ed5032cd67603b95525746c42d95910ce4b41c2b099f1f9355:Staked:28084236812882714528796083407391161020264909974",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xc18cde75e3e568ed5032cd67603b95525746c42d95910ce4b41c2b099f1f9355:2"
+    },
+    {
+      "conversion": "0x721425e40ecc3b2e28ee660d9b7721fd01184d5816f144532a01a416a4aca9b9:Staked:15491363617323309097798685749741351754630138696",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x721425e40ecc3b2e28ee660d9b7721fd01184d5816f144532a01a416a4aca9b9:2"
+    },
+    {
+      "conversion": "0x023e683e01ccd2667b34a9c6b36024c5e915160b7baadb7701f51e507c1c9ced:Unstaked:2258876840880014823603028479305155793256785644",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x023e683e01ccd2667b34a9c6b36024c5e915160b7baadb7701f51e507c1c9ced:2"
+    },
+    {
+      "conversion": "0xdb61b9ad26f92f37cf90f558b1f2f426dcc04e3414ec1b2b7a045939ab7f0a05:Staked:125367923659645264391780415151253366599898759348",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xdb61b9ad26f92f37cf90f558b1f2f426dcc04e3414ec1b2b7a045939ab7f0a05:3"
+    },
+    {
+      "conversion": "0xe73a07064d97c907ddab5768b17913a4a468b33040ac2d8221fbebfa87ef4b9a:Staked:13672515537060554330507195771490010122224543343",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xe73a07064d97c907ddab5768b17913a4a468b33040ac2d8221fbebfa87ef4b9a:7"
+    },
+    {
+      "conversion": "0x5c723c129486462500111b5e1c366ff00abd97454bc1c5518a5f0fdeb14f9f76:Unstaked:5647395354000999749975921209753546563711138238",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x5c723c129486462500111b5e1c366ff00abd97454bc1c5518a5f0fdeb14f9f76:1"
+    },
+    {
+      "conversion": "0xad0f875c1e71183bba1e8a67a2835d5dc571a1765600d106195470dec8f69072:Staked:23333242195973813588066217367834225597891479384",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xad0f875c1e71183bba1e8a67a2835d5dc571a1765600d106195470dec8f69072:10"
+    },
+    {
+      "conversion": "0xb71ee415a93a613ec1ccfcc06758d2ce86079871fd47a3f29864e3821cc63815:Staked:31819884427650382308087295636533388103361510166",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb71ee415a93a613ec1ccfcc06758d2ce86079871fd47a3f29864e3821cc63815:26"
+    },
+    {
+      "conversion": "0x59bd3da76170c1c3bd48d59c47399e15c9db120d43b82e313d335811bbf25913:Staked:420953813478165467866324285914338740396462923663",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x59bd3da76170c1c3bd48d59c47399e15c9db120d43b82e313d335811bbf25913:2"
+    },
+    {
+      "conversion": "0x837d07cbe17e81de349a36fc4a69154b19140335cc9259b1686ddaa984df9eba:Staked:26469748313582035020151697463693007103297957056",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x837d07cbe17e81de349a36fc4a69154b19140335cc9259b1686ddaa984df9eba:5"
+    },
+    {
+      "conversion": "0x14bcb62bf3df3e6622972c57b88b52e507772b15e50759de5243c8ec187cf169:Unstaked:8473699108971908621182168753010606795238938296",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x14bcb62bf3df3e6622972c57b88b52e507772b15e50759de5243c8ec187cf169:2"
+    },
+    {
+      "conversion": "0xb5ec7d55a454da699e3d5e419d301d3ffe531e673e960f2a48b30232838ab0fc:Staked:27358891371489075970372573494363426156405246740",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb5ec7d55a454da699e3d5e419d301d3ffe531e673e960f2a48b30232838ab0fc:5"
+    },
+    {
+      "conversion": "0xcd0c12cb6d5f0d8a50e4a0d0001c338b185c5fab576b44fdb6560e34b9817674:Unstaked:8351949934737270518164572260375128383180315396",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xcd0c12cb6d5f0d8a50e4a0d0001c338b185c5fab576b44fdb6560e34b9817674:1"
+    },
+    {
+      "conversion": "0xe606abbc979dc10e90b2bf7bc690a1967d511d27ba0b0f1bd68d39732cff4c0c:Staked:2086529121844475276658539730687656115770975700",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xe606abbc979dc10e90b2bf7bc690a1967d511d27ba0b0f1bd68d39732cff4c0c:2"
+    },
+    {
+      "conversion": "0x27145ddd8e573f0d08a8735cb7290c4358c67e99f4feca4f0e2673a366d5ea2d:Unstaked:116893885569604750067006055747030614145945439260",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x27145ddd8e573f0d08a8735cb7290c4358c67e99f4feca4f0e2673a366d5ea2d:35"
+    },
+    {
+      "conversion": "0x4cba7471f837a4e5a8ba04586209a2ddc2dd56bcb84b50c92e50faec9468d4b5:Unstaked:338981068605703592190651212145658714381792",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x4cba7471f837a4e5a8ba04586209a2ddc2dd56bcb84b50c92e50faec9468d4b5:36"
+    },
+    {
+      "conversion": "0x99afa1a915c50efe0ac9525e35629bacf5c387a2bf09fa97f96dfb4f6ccc6035:Staked:1796915107993090405960435955687821089780957960",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x99afa1a915c50efe0ac9525e35629bacf5c387a2bf09fa97f96dfb4f6ccc6035:2"
+    },
+    {
+      "conversion": "0x20a3d8cb0a2301038e0f2b8eea157dc60761913aa97536df3115b31c01ef0a50:Staked:169076567164337207723578413858292920743178966464",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x20a3d8cb0a2301038e0f2b8eea157dc60761913aa97536df3115b31c01ef0a50:3"
+    },
+    {
+      "conversion": "0x4a87b48aabe116b819678746697811a5c7e658e9234dfc0a13f6f67c76adfb67:Staked:236053192941184296725198623922673270965646192",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4a87b48aabe116b819678746697811a5c7e658e9234dfc0a13f6f67c76adfb67:2"
+    },
+    {
+      "conversion": "0xa08f793c78afb7cc08670180bff45198fd65841807405e5b1c2eb29ba778a1aa:Staked:38572063825843916825912546406585295957373756616",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa08f793c78afb7cc08670180bff45198fd65841807405e5b1c2eb29ba778a1aa:26"
+    },
+    {
+      "conversion": "0x50662ecae6752cd73b9a36b6cc9bef58662bc45faf63da787c1af6afc868f032:Staked:9294224633312218317687357557177957333748499256",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x50662ecae6752cd73b9a36b6cc9bef58662bc45faf63da787c1af6afc868f032:31"
+    },
+    {
+      "conversion": "0xd398b555a50bfe183833ecdf68d6c5176153522aa00866dba6384aa879b3ae7a:Unstaked:84560679023655434684115673709370421143073328951",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xd398b555a50bfe183833ecdf68d6c5176153522aa00866dba6384aa879b3ae7a:62"
+    },
+    {
+      "conversion": "0x54300bba1d931157d5ec0932837b648b0db1a89e72948a52b0498fb0f287cfc1:Staked:84975397190845296616961219892549132195797714976",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x54300bba1d931157d5ec0932837b648b0db1a89e72948a52b0498fb0f287cfc1:2"
+    },
+    {
+      "conversion": "0x3f5d86de66cbed21210ba444f1d22b151f84f36615be791765e4a18b31ad4db9:Staked:37599650371722686455361649780027036203377587120",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x3f5d86de66cbed21210ba444f1d22b151f84f36615be791765e4a18b31ad4db9:7"
+    },
+    {
+      "conversion": "0x95f5d82153d1b4bc270c30feeb246187bfb66c5d061831b3035c565df0d5d847:Staked:4490484430215731728942677627554768673206341717",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x95f5d82153d1b4bc270c30feeb246187bfb66c5d061831b3035c565df0d5d847:2"
+    },
+    {
+      "conversion": "0xb8eb3a65e23cac9c14e5ac04ce0fb5d051330e8a1a234eacb17da8f3cc62d250:Staked:348196308056262928597942429904835668392874088",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb8eb3a65e23cac9c14e5ac04ce0fb5d051330e8a1a234eacb17da8f3cc62d250:4"
+    },
+    {
+      "conversion": "0xb4e0dcb68360a82db99d8c6ae4ec377bbe67779244b165173531b5155d00ff14:Unstaked:2153133331927011459490571814939648144414013800",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xb4e0dcb68360a82db99d8c6ae4ec377bbe67779244b165173531b5155d00ff14:5"
+    },
+    {
+      "conversion": "0xb7ed8dbd84acb7f83597531acd2b204edb3748b14e09dc6a800b870a8d47f115:Staked:5423658893309932548123553701365859612932001960",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb7ed8dbd84acb7f83597531acd2b204edb3748b14e09dc6a800b870a8d47f115:2"
+    },
+    {
+      "conversion": "0x6af3a5b163f07dfc6c15fe63d92d6b949211f4ae9ac66037bde903461765b753:Unstaked:254051964355182504340539633750842052938976681440",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x6af3a5b163f07dfc6c15fe63d92d6b949211f4ae9ac66037bde903461765b753:25"
+    },
+    {
+      "conversion": "0x457cd31c57497de8749a745730fb43eb7a8240a181a1e04ab3e03c6457feb818:Unstaked:12983394707817506107365594178831761305924519988",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x457cd31c57497de8749a745730fb43eb7a8240a181a1e04ab3e03c6457feb818:1"
+    },
+    {
+      "conversion": "0x02db78ecd8194c14e2f2f6edbf0aa82f198fc0cc0f4fd2f770f36a0ec8932ca6:Staked:1856269029481022229236213529267116712216619200",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x02db78ecd8194c14e2f2f6edbf0aa82f198fc0cc0f4fd2f770f36a0ec8932ca6:5"
+    },
+    {
+      "conversion": "0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd:Staked:72813873014466953891526400424659744358645820",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd:25"
+    },
+    {
+      "conversion": "0xcfbd5c0b3be5fe27c3f7e0f4ac964a786ad7ca8adab6b82d7b2dac6b25eff4f1:Unstaked:360445013776763018910616132357838846184890612616",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xcfbd5c0b3be5fe27c3f7e0f4ac964a786ad7ca8adab6b82d7b2dac6b25eff4f1:4"
+    },
+    {
+      "conversion": "0xeec09c356082086d505d7e0d6c36e96a4de49955b0e2e764c4df5ca405673f87:Unstaked:19725117327349700267522405921549879753499614456",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xeec09c356082086d505d7e0d6c36e96a4de49955b0e2e764c4df5ca405673f87:20"
+    },
+    {
+      "conversion": "0x9963952a4924231f017a07df1eec99bb9beeb9e1d5cc20b2c20f8344502285ce:Staked:16238779263502667400515538124845873964889200987",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x9963952a4924231f017a07df1eec99bb9beeb9e1d5cc20b2c20f8344502285ce:9"
+    },
+    {
+      "conversion": "0x1a6425dbf6a3cd4d6ab8b618f7bb03bba4863067aaa063d71d3b97346a0b671d:Unstaked:58289632741232417328238993100226395206659467222",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x1a6425dbf6a3cd4d6ab8b618f7bb03bba4863067aaa063d71d3b97346a0b671d:41"
+    },
+    {
+      "conversion": "0xebc141c7b0717bbecc4af45a22d126f4d089558a2d3268d50faa31365d0def40:Staked:35127493637946699634832743459706631326459074542",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xebc141c7b0717bbecc4af45a22d126f4d089558a2d3268d50faa31365d0def40:8"
+    },
+    {
+      "conversion": "0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731:Staked:11317643010264157591244527010449471976950437907",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731:48"
+    },
+    {
+      "conversion": "0xd784fe7df454b30fb92013c54dc6e166edb25318132e26dad2a6b1abe7a5b1a5:Staked:3411279522777391851919033624806209989365100890",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xd784fe7df454b30fb92013c54dc6e166edb25318132e26dad2a6b1abe7a5b1a5:8"
+    },
+    {
+      "conversion": "0x8f8ee5f5e042b24809dcdb1fe4b86d75a185134dd62981ae8b36a9e13e7906ff:Staked:104620221158002975024638638411736706944407529620",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x8f8ee5f5e042b24809dcdb1fe4b86d75a185134dd62981ae8b36a9e13e7906ff:10"
+    },
+    {
+      "conversion": "0xe72ec4956b640233bdf1bdb076596b727aa31b4bf345a7f48bb525cca332b0f7:Staked:43531657630777374701142155061954063062037585838",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xe72ec4956b640233bdf1bdb076596b727aa31b4bf345a7f48bb525cca332b0f7:33"
+    },
+    {
+      "conversion": "0xe0b63b8053745af56198f87d38ab3c711d59437d0e165c2a5e20654837bc1d22:Staked:1996617434666348894961468093463591365118800912",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xe0b63b8053745af56198f87d38ab3c711d59437d0e165c2a5e20654837bc1d22:14"
+    },
+    {
+      "conversion": "0x641b9be528b12420b92fb00a43bc2bf0e27f1497e3b4a3a5f5d1b615934171b2:Unstaked:7563143650293395836313483682994889375921687947",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x641b9be528b12420b92fb00a43bc2bf0e27f1497e3b4a3a5f5d1b615934171b2:1"
+    },
+    {
+      "conversion": "0x4de1363308e3aaf03e308b221cf60722433cdd922c28faceff316d226f024ccb:Staked:6615454003591353293110456568314059466442592242",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4de1363308e3aaf03e308b221cf60722433cdd922c28faceff316d226f024ccb:14"
+    },
+    {
+      "conversion": "0xb32df5f4115dd387ae191036aac3901397d996a60745494fbf952ec66cbc0bf7:Staked:20662520151217171686434353302900535223871798339",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb32df5f4115dd387ae191036aac3901397d996a60745494fbf952ec66cbc0bf7:49"
+    },
+    {
+      "conversion": "0xcbe49c70fdec025e66e10161b4467eec6c29f369364ea84cad0a0dad6537f14a:Staked:2558301727799762698241200644392407302773657478",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xcbe49c70fdec025e66e10161b4467eec6c29f369364ea84cad0a0dad6537f14a:25"
+    },
+    {
+      "conversion": "0x90908fbed51424d5772efa5d32f7a86e1c6e87e5b870d375f6ed3cf1887ab37c:Staked:12970716856549686100008523676601673108037260497",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x90908fbed51424d5772efa5d32f7a86e1c6e87e5b870d375f6ed3cf1887ab37c:4"
+    },
+    {
+      "conversion": "0x72288e7f39082f8794321509b5fa61ddb24f9206019940ab65247ed0ecc53f8e:Unstaked:127925563212037955735802845639368220642091420",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x72288e7f39082f8794321509b5fa61ddb24f9206019940ab65247ed0ecc53f8e:67"
+    },
+    {
+      "conversion": "0x3465f4abd309ac07c6a0afd86e5591faf8d42c63f00dcc93de7746194dad1792:Staked:31345806906175775951937106113092703085577054170",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x3465f4abd309ac07c6a0afd86e5591faf8d42c63f00dcc93de7746194dad1792:14"
+    },
+    {
+      "conversion": "0x4801aac82405f45bf3eb435ac11b8fc992f0b64cef7f25396e79426a1b6b473f:Unstaked:12971460188254141626799653529551987705706895229",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x4801aac82405f45bf3eb435ac11b8fc992f0b64cef7f25396e79426a1b6b473f:52"
+    },
+    {
+      "conversion": "0x6e9d5813feb2edee154d4a3cf444e27050a3731ed6ebf5838c8c92b1a4bbd784:Unstaked:37869106351913160062308348781704998708057966871",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x6e9d5813feb2edee154d4a3cf444e27050a3731ed6ebf5838c8c92b1a4bbd784:40"
+    },
+    {
+      "conversion": "0x44ee9361b1cb912f5ff90ce40c93a07277eecf476495e0f4659346fc6a81fcb7:Unstaked:285873359197266463469421513749802189538600650",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x44ee9361b1cb912f5ff90ce40c93a07277eecf476495e0f4659346fc6a81fcb7:1"
+    },
+    {
+      "conversion": "0xf3f9ac00e0148ee704fc3f31356467aaed23ab466c4de9c18088df9e8432fcc2:Staked:56860180508669496874418244519834029001697794918",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xf3f9ac00e0148ee704fc3f31356467aaed23ab466c4de9c18088df9e8432fcc2:2"
+    },
+    {
+      "conversion": "0xf7a761e497e9cc0ec85ec1ef2dc3b9cc16b375170c7e82f20665c730360d6f44:Unstaked:1632123618717885053685617132333044251489708519",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xf7a761e497e9cc0ec85ec1ef2dc3b9cc16b375170c7e82f20665c730360d6f44:11"
+    },
+    {
+      "conversion": "0x942218061a8ce8245499650694b2e61b143b59d6d452140365699da8a78c2541:Staked:196711496904049653410803098568188294847305603360",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x942218061a8ce8245499650694b2e61b143b59d6d452140365699da8a78c2541:44"
+    },
+    {
+      "conversion": "0x5484dde6cf5f81af174ad2cc4c022a64037e6f336f726b661080a24c5c809f94:Unstaked:196711496904049653410803098568188294847305603360",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x5484dde6cf5f81af174ad2cc4c022a64037e6f336f726b661080a24c5c809f94:86"
+    },
+    {
+      "conversion": "0xc766b01faa47e47fe161c406ae6c096f0e8c0ccb872e869b8e200b6635476737:Unstaked:23848946541445029800197608000402219102285260872",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xc766b01faa47e47fe161c406ae6c096f0e8c0ccb872e869b8e200b6635476737:27"
+    },
+    {
+      "conversion": "0x6aabbfb93f6c281bc5c6a331ce5127b6d6ed5520db21bb3ce3d5b384b65687a1:Unstaked:3606959730871197798832740893029554169995339157",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x6aabbfb93f6c281bc5c6a331ce5127b6d6ed5520db21bb3ce3d5b384b65687a1:9"
+    },
+    {
+      "conversion": "0xde568784b3217407d9f4dc943fc8aa61fbabc49ff1de0f6fbec8ad8c3c3bd02d:Staked:4663552608745477690653366982446311786239966575",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xde568784b3217407d9f4dc943fc8aa61fbabc49ff1de0f6fbec8ad8c3c3bd02d:29"
+    },
+    {
+      "conversion": "0x5e18163a64aaeef8cbf3cdc15b96e28a2611f8e0b713934e239b558a2abc2624:Unstaked:2714677568833741218897416751975449919748988853",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x5e18163a64aaeef8cbf3cdc15b96e28a2611f8e0b713934e239b558a2abc2624:28"
+    },
+    {
+      "conversion": "0xe556bd0bd2d06bfbbdafbb1e289c8b4cad152701ffee776f4405dcc2670bcef9:Unstaked:22845299516576808784058809035165309005017134",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xe556bd0bd2d06bfbbdafbb1e289c8b4cad152701ffee776f4405dcc2670bcef9:87"
+    },
+    {
+      "conversion": "0x21ab9089fb28ccddcd365baaee9211c00c02ec67107b46b0355c8ac31c67ac45:Staked:22845298858009728813187025851079381843570715",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x21ab9089fb28ccddcd365baaee9211c00c02ec67107b46b0355c8ac31c67ac45:94"
+    },
+    {
+      "conversion": "0xa95096716eb937ec7aab137bd0860a1a5e0e96d4a1567a9220f26cd45f106d0e:Staked:46048488906757713051226805508040229099925142104",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa95096716eb937ec7aab137bd0860a1a5e0e96d4a1567a9220f26cd45f106d0e:116"
+    },
+    {
+      "conversion": "0x62e38ff7661ca1430ae7d340c54f524a0253b77c1a51086f6de0d93f0e6e4742:Unstaked:641792630035760799489561781459995024956320721",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x62e38ff7661ca1430ae7d340c54f524a0253b77c1a51086f6de0d93f0e6e4742:10"
+    },
+    {
+      "conversion": "0x4b99740c0319fe8a4bee41fddd48b36857227b2cc7a6863bbfbf88ac24019967:Staked:1399324674944965390343985362055092641645428090",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4b99740c0319fe8a4bee41fddd48b36857227b2cc7a6863bbfbf88ac24019967:38"
+    },
+    {
+      "conversion": "0x64804a265e75c507efc876f7ec8cd93fc12b55482835b4c3697080a39b687ab3:Staked:5406266824684430972601708005264046068927643415",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x64804a265e75c507efc876f7ec8cd93fc12b55482835b4c3697080a39b687ab3:33"
+    },
+    {
+      "conversion": "0x3aeee2a64158a1baf8dbe63e38f304fcd5ef4a758caf6159875f85b5e2341e57:Staked:91340956437994854782139969536755358523580348158",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x3aeee2a64158a1baf8dbe63e38f304fcd5ef4a758caf6159875f85b5e2341e57:2"
+    },
+    {
+      "conversion": "0x6a3efc9684d084b51a9c3ae4df9dde1d2d55cd5d86da8a77b3e1166ab75f9943:Unstaked:38043108119193938173576425466123695675846456444",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x6a3efc9684d084b51a9c3ae4df9dde1d2d55cd5d86da8a77b3e1166ab75f9943:2"
+    },
+    {
+      "conversion": "0x39ade86427bff8f96273bce0b7fa9f016d758eb87f5a46677ad689d70c566de0:Staked:85154554677806806469789653694531436350700882248",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x39ade86427bff8f96273bce0b7fa9f016d758eb87f5a46677ad689d70c566de0:2"
+    },
+    {
+      "conversion": "0xdbc7d7353b9624ea6bbdf3ae05832203b322482c63374b762db6510507595d45:Staked:10689273756566175361542577603376241640482274159",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xdbc7d7353b9624ea6bbdf3ae05832203b322482c63374b762db6510507595d45:4"
+    },
+    {
+      "conversion": "0x6c0a5985cc7152578917498175fcda712bae92ad4b6a91b4ee24baa8af6a2a65:Unstaked:49652112649954824050923034188511643975611512484",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x6c0a5985cc7152578917498175fcda712bae92ad4b6a91b4ee24baa8af6a2a65:32"
+    },
+    {
+      "conversion": "0x9204be8fae34285247ffd0e17a5e31fcfaec9903016653841b500a62f3f81c66:Unstaked:4412704026970079757490752158284855894309206604",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x9204be8fae34285247ffd0e17a5e31fcfaec9903016653841b500a62f3f81c66:15"
+    },
+    {
+      "conversion": "0x86b0c1883aecf229f33aafca679ef15de8a233bf418221cdc2c4db4309adb6e8:Staked:63200610201499477477781953320516738413170892640",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x86b0c1883aecf229f33aafca679ef15de8a233bf418221cdc2c4db4309adb6e8:17"
+    },
+    {
+      "conversion": "0x1e16ce0b2313ba007e7f70591740e7d3776ba270d512fa9676208faf5cf1241d:Staked:3235020939632047622607611090507840337247778",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x1e16ce0b2313ba007e7f70591740e7d3776ba270d512fa9676208faf5cf1241d:7"
+    },
+    {
+      "conversion": "0x9e347683cfeb88470cbc1c7b673f12c89a59cfe4f7dbc70757109ad926f9a215:Staked:302407760058024964353114285677418146108603261620",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x9e347683cfeb88470cbc1c7b673f12c89a59cfe4f7dbc70757109ad926f9a215:5"
+    },
+    {
+      "conversion": "0x57fdac5bb7108b6164dc4e6fbbe0c4b9e51f3ed257c695bc0322ab77eafd8b0b:Staked:247226682221911114448312591466346772695958003712",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x57fdac5bb7108b6164dc4e6fbbe0c4b9e51f3ed257c695bc0322ab77eafd8b0b:3"
+    },
+    {
+      "conversion": "0xaf667326c585a70bc956d830d077189edee278eaec5dcf6390263d0628dca436:Unstaked:63146079980514554580557756580774744592253084160",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xaf667326c585a70bc956d830d077189edee278eaec5dcf6390263d0628dca436:200"
+    },
+    {
+      "conversion": "0xfe44b68a1c6cef5589f46a2df86d7ca8f7f67b8e6034ad45d977d7fab953c967:Unstaked:6597372692922876964623644926507112236648691041",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xfe44b68a1c6cef5589f46a2df86d7ca8f7f67b8e6034ad45d977d7fab953c967:19"
+    },
+    {
+      "conversion": "0x2c6aba3047d2de55b63a66faa8247111edba55a8a0d512662fa03c5717d450ec:Staked:3981121334991040495111632368212537784186231086",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x2c6aba3047d2de55b63a66faa8247111edba55a8a0d512662fa03c5717d450ec:6"
+    },
+    {
+      "conversion": "0x22c3e2dea19c0b049d7a9c4d87fc5ede71569978ba95ea33e80e07b1649fba41:Unstaked:81242669458854446278786547992178106005409247",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x22c3e2dea19c0b049d7a9c4d87fc5ede71569978ba95ea33e80e07b1649fba41:13"
+    },
+    {
+      "conversion": "0x00b4748b50822e62cee42743c518cfb2af0d3566f070a29ec5491f62d9eafc78:Staked:1659929060314038781942836398208836837073435843",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x00b4748b50822e62cee42743c518cfb2af0d3566f070a29ec5491f62d9eafc78:6"
+    },
+    {
+      "conversion": "0xead68b7b6936f25f2a5ae0af51d81e82e3800c9385fefa1655225910dc1ca9ed:Staked:7466514181744292281612919824157624533916240217",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xead68b7b6936f25f2a5ae0af51d81e82e3800c9385fefa1655225910dc1ca9ed:11"
+    },
+    {
+      "conversion": "0xa043c3e43cf9c561498da2c6d4ccf5b2e053e4fb80acbeac1460a0130a984862:Staked:5898405873704923844571380364488217550380197394",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa043c3e43cf9c561498da2c6d4ccf5b2e053e4fb80acbeac1460a0130a984862:7"
+    },
+    {
+      "conversion": "0x2d792ce259be29aea250644339245b6c98d28f120ec68723dea394da0f68e14c:Staked:3894787648171894335634863923601871099388808237",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x2d792ce259be29aea250644339245b6c98d28f120ec68723dea394da0f68e14c:2"
+    },
+    {
+      "conversion": "0x23dfb50adbbece37645fc026ce2ee65d61489959e06980d1e5c45b9cc0ac8f84:Staked:14926778116062161795870895305958385945015638177",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x23dfb50adbbece37645fc026ce2ee65d61489959e06980d1e5c45b9cc0ac8f84:5"
+    },
+    {
+      "conversion": "0x59e73076b018cae1526c91c4e922430ba9d89104a7001bff2bf66ad3ba1833e6:Unstaked:17700465470677631435651664957219852607083568",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x59e73076b018cae1526c91c4e922430ba9d89104a7001bff2bf66ad3ba1833e6:2"
+    },
+    {
+      "conversion": "0x7b019464425885d3096630fc3b3d19a0a3b65ccc8716356d132a342cbd0da82b:Unstaked:11498644728206611707802887986521575794573105504",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x7b019464425885d3096630fc3b3d19a0a3b65ccc8716356d132a342cbd0da82b:1"
+    },
+    {
+      "conversion": "0xf361c083ed5cbd7d6d46d3da55ef1654df0f6c950423c7ff20ee56caef63cc26:Staked:2009905833746233040727844211262308543681289618",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xf361c083ed5cbd7d6d46d3da55ef1654df0f6c950423c7ff20ee56caef63cc26:2"
+    },
+    {
+      "conversion": "0xafbbcaf472a74b1306d6d8b1e95ce6a222b4140604e708df3154bf6af42f7dfa:Unstaked:3610785364517245414858563048141542662939473150",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xafbbcaf472a74b1306d6d8b1e95ce6a222b4140604e708df3154bf6af42f7dfa:16"
+    },
+    {
+      "conversion": "0x5ab4ceb545172160d6bc343b0cb576112edae994ca9f3e490646a3e54da93366:Unstaked:4606519478353151846824001230383865640917142964",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x5ab4ceb545172160d6bc343b0cb576112edae994ca9f3e490646a3e54da93366:14"
+    },
+    {
+      "conversion": "0x7de34082dd9bbc41c371788a926557fed695abba2e10968698ac26e8f9efba6a:Staked:2986411910279844443896000550353621291202148009",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x7de34082dd9bbc41c371788a926557fed695abba2e10968698ac26e8f9efba6a:2"
+    },
+    {
+      "conversion": "0x08dc869e7d88a9bae8560ad334f950ef7ab03fdce65e06e76443145c1da47045:Staked:2986411910279844443896000550353621291202148009",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x08dc869e7d88a9bae8560ad334f950ef7ab03fdce65e06e76443145c1da47045:19"
+    },
+    {
+      "conversion": "0x2fd0dbffe0fb4201b7bb25f05c69d52ca187aeed7ba796b3ff10ec40c4dad227:Staked:1620107567656636409556155363295147416319379195",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x2fd0dbffe0fb4201b7bb25f05c69d52ca187aeed7ba796b3ff10ec40c4dad227:2"
+    },
+    {
+      "conversion": "0xc27b0648f5bcf0205a6921c65300887c69bb7b461d80de277538802e2386cd9c:Unstaked:17151600725268833513034266784883659143797901",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xc27b0648f5bcf0205a6921c65300887c69bb7b461d80de277538802e2386cd9c:42"
+    },
+    {
+      "conversion": "0x2ead655e29573eafe4c47e361402a3dafb8aa5d70c05d1776a6f0feeda43769a:Unstaked:28825570788301746451240441992132456538689248",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x2ead655e29573eafe4c47e361402a3dafb8aa5d70c05d1776a6f0feeda43769a:9"
+    },
+    {
+      "conversion": "0x9a16445964cd3fc8aa826c757251603e2836e5b44b9b0b0dc8f6094f82479980:Staked:4990972093239754058238282853825532882734396355",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x9a16445964cd3fc8aa826c757251603e2836e5b44b9b0b0dc8f6094f82479980:63"
+    },
+    {
+      "conversion": "0x3f83d115ee80b9686c3831f81cccc9d5fdba70a3643ac9375e9a9bedb9eff612:Staked:6053179129373027130868894092908544803350196315",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x3f83d115ee80b9686c3831f81cccc9d5fdba70a3643ac9375e9a9bedb9eff612:99"
+    },
+    {
+      "conversion": "0x0eb38f74ea13debf8ec58355b31fdf2734834e190babac20b4f9a255f4479f70:Staked:3115033862645443993748093131243648146731740492",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x0eb38f74ea13debf8ec58355b31fdf2734834e190babac20b4f9a255f4479f70:13"
+    },
+    {
+      "conversion": "0x8fb18593e7d1e0875590c49f4736a757c9ac26830e21b0c6fd24158b29171752:Unstaked:10689273756566175361542577603376241640482274159",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x8fb18593e7d1e0875590c49f4736a757c9ac26830e21b0c6fd24158b29171752:1"
+    },
+    {
+      "conversion": "0x3cd005aac6d2e8359612cc817bbd37d1b5891819644ea6238cd088675573a476:Staked:10681124492198885409210436034713782542713230591",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x3cd005aac6d2e8359612cc817bbd37d1b5891819644ea6238cd088675573a476:22"
+    },
+    {
+      "conversion": "0xd404f0c904e44f5b2c98d629e3c0a0e5dae7adf85586d667855a476d2b051a02:Staked:27716695841351464985561054050267198164486920000",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xd404f0c904e44f5b2c98d629e3c0a0e5dae7adf85586d667855a476d2b051a02:43"
+    },
+    {
+      "conversion": "0x337df9adf6cd0af10156edc865ee71eeb6b68d813dea615ae84439fd88c3e5c7:Unstaked:73634919662156510975896321159287809102462733285",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x337df9adf6cd0af10156edc865ee71eeb6b68d813dea615ae84439fd88c3e5c7:63"
+    },
+    {
+      "conversion": "0xa2ff6ee4fb0ecfc35483b87c17c0ccf77b3b7926f1cc184a9090efbb39ed69ed:Unstaked:119952673648654602838200363892941863244960107370",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xa2ff6ee4fb0ecfc35483b87c17c0ccf77b3b7926f1cc184a9090efbb39ed69ed:6"
+    },
+    {
+      "conversion": "0xb82c9574bdee94ec9cd6d7338d9834d6485c0c4d241759cf14d0ad0900d98272:Staked:19029984908056941292955721272212780691422935558",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb82c9574bdee94ec9cd6d7338d9834d6485c0c4d241759cf14d0ad0900d98272:12"
+    },
+    {
+      "conversion": "0x21f06d478c8475d797ec44947cd8c64528580673423215c5e7a8159d9a260733:Staked:10246488185248438331256594421277491006148448840",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x21f06d478c8475d797ec44947cd8c64528580673423215c5e7a8159d9a260733:14"
+    },
+    {
+      "conversion": "0x7b328327c8e25589bfc5f614daa1d444a1641c8dc8511c5d25170987afb10e22:Staked:202189925974481445291036192690695765964403706976",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x7b328327c8e25589bfc5f614daa1d444a1641c8dc8511c5d25170987afb10e22:2"
+    },
+    {
+      "conversion": "0x05db7500e877fa9f1b4df946fc71f49791cd372561831d661c503b2ad42f4421:Staked:179204464208435208600041486893652879822700457000",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x05db7500e877fa9f1b4df946fc71f49791cd372561831d661c503b2ad42f4421:2"
+    },
+    {
+      "conversion": "0x4670f177323c268cd82a31a9d23f32f72734b694aed194e2ae5f174ca4643095:Staked:7484460168850308146324098464381609780275479688",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4670f177323c268cd82a31a9d23f32f72734b694aed194e2ae5f174ca4643095:19"
+    },
+    {
+      "conversion": "0x45fade9f7391673fc904628e1bf776c8f818397f6b9196940b871d416e055d6a:Staked:36733034163848433656051614473234624139181799660",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x45fade9f7391673fc904628e1bf776c8f818397f6b9196940b871d416e055d6a:11"
+    },
+    {
+      "conversion": "0xaddab112747cd1ce3c44e1eccc5d186d4245612366465f730dd0da21d76ed007:Staked:26997959572036544246356254773461530614793919848",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xaddab112747cd1ce3c44e1eccc5d186d4245612366465f730dd0da21d76ed007:2"
+    },
+    {
+      "conversion": "0xa4ff380350599ad36474b0683d937e575e372bc3ecc2472a36dff680102fb528:Staked:22201590798021721802085052566915695413056418260",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa4ff380350599ad36474b0683d937e575e372bc3ecc2472a36dff680102fb528:73"
+    },
+    {
+      "conversion": "0x8a2878ba60f6dd91af19d7cf64248ab969963cfcfe23184556f45f37c640feb3:Unstaked:894777787818388513172422382383292778000000000",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x8a2878ba60f6dd91af19d7cf64248ab969963cfcfe23184556f45f37c640feb3:40"
+    },
+    {
+      "conversion": "0x8720b47cb9bf3b9c5fad976b11a84458df31398d64bc5cd81ef29a3795d0758d:Unstaked:622029172850183175799038191218675070452875138",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x8720b47cb9bf3b9c5fad976b11a84458df31398d64bc5cd81ef29a3795d0758d:1"
+    },
+    {
+      "conversion": "0x4f036fb32170bb6067db529b17c089cb0594b164215c9b490328137fc1250aa2:Staked:58900056511618389720344943522837622491619261065",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4f036fb32170bb6067db529b17c089cb0594b164215c9b490328137fc1250aa2:19"
+    },
+    {
+      "conversion": "0x04713e99329bc598fa12d109b0796162b33772943a4cfbeb362a7a790769e4c9:Staked:46071697899381295237589755052882657838791780055",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x04713e99329bc598fa12d109b0796162b33772943a4cfbeb362a7a790769e4c9:11"
+    },
+    {
+      "conversion": "0xdc4ea11e61424722285050ca6e08dec65323635b110a63ab2405d9cbddbe896d:Staked:26939607320853363933034482177600550440051798684",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xdc4ea11e61424722285050ca6e08dec65323635b110a63ab2405d9cbddbe896d:12"
+    },
+    {
+      "conversion": "0xa47ce52028e0ec8d3f12db712a3c32caedbbd4e9eded4b8f6c487d877dd4e1ec:Unstaked:108029914483977318814385079387777894669149243700",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xa47ce52028e0ec8d3f12db712a3c32caedbbd4e9eded4b8f6c487d877dd4e1ec:8"
+    },
+    {
+      "conversion": "0x9f50952cf43227f76d48b6953f02dcec26486350b91e91b247554bf48379d149:Staked:28419513166480746122714743361076231548600880238",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x9f50952cf43227f76d48b6953f02dcec26486350b91e91b247554bf48379d149:7"
+    },
+    {
+      "conversion": "0xf981a2e649a1ce010be09d35e2b08f2660e0219b8b7cfea090e9a0c1a2ecb13f:Staked:173169794375884146606997513557105713354948897925",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xf981a2e649a1ce010be09d35e2b08f2660e0219b8b7cfea090e9a0c1a2ecb13f:5"
+    },
+    {
+      "conversion": "0x2b1cb84c984923d8ff717520c2a87af6da5a8088652d316b5c5667b01899dd36:Staked:32526053159312409817801721926417135585839694253",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x2b1cb84c984923d8ff717520c2a87af6da5a8088652d316b5c5667b01899dd36:99"
+    },
+    {
+      "conversion": "0x2bf4e2fa43586d86619819dacd32b55d58cf69b5e354256568e3d5fce46d3605:Staked:5066567375348660114289620684566195706874092880",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x2bf4e2fa43586d86619819dacd32b55d58cf69b5e354256568e3d5fce46d3605:14"
+    },
+    {
+      "conversion": "0xcb0042041803067410dedf73bd39edae4029a490dc6e0af89000ef89eb86bd93:Unstaked:187766673613096004310781083389087911169443386",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xcb0042041803067410dedf73bd39edae4029a490dc6e0af89000ef89eb86bd93:1"
+    },
+    {
+      "conversion": "0x8112059218ed3f847eebfe1b83237f1486de9cdd13828ea25decdf49dd8eb4fe:Unstaked:27624602927713954898051987645439248993892095140",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x8112059218ed3f847eebfe1b83237f1486de9cdd13828ea25decdf49dd8eb4fe:30"
+    },
+    {
+      "conversion": "0xe8a48df82e21f41f3fef45865014f1132e78e5a8bc5b67f9b99234190cf096ce:Staked:38513937215725823376608978761291097064430037806",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xe8a48df82e21f41f3fef45865014f1132e78e5a8bc5b67f9b99234190cf096ce:6"
+    },
+    {
+      "conversion": "0x4a7c66f7fb809aafdfb6cd167cfcb0b6d78f92222d3e1bf9f29e6ffceb7642b3:Staked:60622314934856288509604865373108990201029705219",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4a7c66f7fb809aafdfb6cd167cfcb0b6d78f92222d3e1bf9f29e6ffceb7642b3:6"
+    },
+    {
+      "conversion": "0x2938bdad91f083b7693cfcf95612cce8485efd12c5039fbe5c931cd29ad4a844:Unstaked:28788072492335347499355455605880437901191288925",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x2938bdad91f083b7693cfcf95612cce8485efd12c5039fbe5c931cd29ad4a844:117"
+    },
+    {
+      "conversion": "0xfb64c599f78f4b60321b600470b2ccc6ce498126eaf81a6c56714fab0e3c9555:Unstaked:2821214054887866767047530584004099841114873163",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xfb64c599f78f4b60321b600470b2ccc6ce498126eaf81a6c56714fab0e3c9555:10"
+    },
+    {
+      "conversion": "0x4373f739d30f1e17bf1320e214e48eb18d8e78ec910637288c2c62780f797b32:Staked:3927384268415657062553178327046472280019776946",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4373f739d30f1e17bf1320e214e48eb18d8e78ec910637288c2c62780f797b32:14"
+    },
+    {
+      "conversion": "0xfe1e0bb2011659d117ab530aecb4a25eb9714b804e2434d41e746fe6eb25bc0f:Unstaked:156247164798317560599588330136431746491178570",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xfe1e0bb2011659d117ab530aecb4a25eb9714b804e2434d41e746fe6eb25bc0f:17"
+    },
+    {
+      "conversion": "0xa0119fd73480440a48c0f46aeca92812aed2730889eea84a74d0c19df790291a:Staked:156247164798317560599588330136431746491178570",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa0119fd73480440a48c0f46aeca92812aed2730889eea84a74d0c19df790291a:2"
+    },
+    {
+      "conversion": "0xb5e38bc50445046e02c5da1e53dcd9f4b364ec63753040148e208f7277d1265a:Staked:7443836471892134071886175206539591081029638820",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb5e38bc50445046e02c5da1e53dcd9f4b364ec63753040148e208f7277d1265a:3"
+    },
+    {
+      "conversion": "0xb773a0d0f75d0cb8007b4e3240af213d5094fc5f9628fde35f264d060a958095:Unstaked:233790932774450589720517788229272736576049446832",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xb773a0d0f75d0cb8007b4e3240af213d5094fc5f9628fde35f264d060a958095:75"
+    },
+    {
+      "conversion": "0x0dd34637ba832098fdcf0bb343b72b7ba6feae7d44bc7cce32ca3c137b076854:Staked:233790932773564686880452628042911191629101435780",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x0dd34637ba832098fdcf0bb343b72b7ba6feae7d44bc7cce32ca3c137b076854:11"
+    },
+    {
+      "conversion": "0x8cf72f127c7273df91b1757e55bced4f78bb97d81d1d6ed8854533926f6cbe6f:Staked:33678751102799914341908866390756496404610184659",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x8cf72f127c7273df91b1757e55bced4f78bb97d81d1d6ed8854533926f6cbe6f:2"
+    },
+    {
+      "conversion": "0xe8fe760d7feddade40c1b719e10bbbf4eda72d9553fdb9fb8ce7569ac4df7751:Staked:308081414180383251285956106717092189938816958083",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xe8fe760d7feddade40c1b719e10bbbf4eda72d9553fdb9fb8ce7569ac4df7751:27"
+    },
+    {
+      "conversion": "0xc3f8bfc1d4d8a30bb2653b89127285660d95dcc56f2576e46cb8dfe234fe3430:Staked:219282773305178770730742754057715018185903378470",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xc3f8bfc1d4d8a30bb2653b89127285660d95dcc56f2576e46cb8dfe234fe3430:19"
+    },
+    {
+      "conversion": "0xdafa2035953b118b2e98da765c2df3910fb76561a5807a7dd44fad17650dcaee:Staked:6696688247735190023573965359870710884999206066",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xdafa2035953b118b2e98da765c2df3910fb76561a5807a7dd44fad17650dcaee:2"
+    },
+    {
+      "conversion": "0x31495858b200b168738da48c2e89a5e7f86378203f8b7beb1925425e1c0aa0d9:Unstaked:810523075150685113188569845862975919664620770",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x31495858b200b168738da48c2e89a5e7f86378203f8b7beb1925425e1c0aa0d9:275"
+    },
+    {
+      "conversion": "0xb56db729ef114e4aff0b0eae94aaeef824eca2a1f2160dacf6ad55ee9719eddb:Staked:810523074804097649730724791004447578549529899",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb56db729ef114e4aff0b0eae94aaeef824eca2a1f2160dacf6ad55ee9719eddb:13"
+    },
+    {
+      "conversion": "0xb83c59d5ece23dc18455e98e4647c04601a5f6f9cf6905938470cf5c3722bd7b:Staked:620485017597497181163053678579083311186163814",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xb83c59d5ece23dc18455e98e4647c04601a5f6f9cf6905938470cf5c3722bd7b:41"
+    },
+    {
+      "conversion": "0x8426cec1204761d133f8f855cf95ccc8ccd118b9f9f47b7316483678ae4c726c:Staked:359748949428858709540302868165756386087529418845",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x8426cec1204761d133f8f855cf95ccc8ccd118b9f9f47b7316483678ae4c726c:9"
+    },
+    {
+      "conversion": "0x4e4cc14d3f6db867abc0dde89dc0faaba7804318df42d329a709535ba38c7ac1:Staked:102513533990779828533891906544487090566174282530",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x4e4cc14d3f6db867abc0dde89dc0faaba7804318df42d329a709535ba38c7ac1:46"
+    },
+    {
+      "conversion": "0xd636870c62e3ade49a12d1ba4c427ade70b6de0e00a3efd414615a9bf2cc8349:Unstaked:650902634009933453333427180532816050581222229",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xd636870c62e3ade49a12d1ba4c427ade70b6de0e00a3efd414615a9bf2cc8349:26"
+    },
+    {
+      "conversion": "0x81b78060cfa1fbc9a9a968bdbfee4eb2b71bb30c7e1f32795508b3cfaaa5b5d7:Unstaked:68286406813532338425415308661745981723564",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x81b78060cfa1fbc9a9a968bdbfee4eb2b71bb30c7e1f32795508b3cfaaa5b5d7:50"
+    },
+    {
+      "conversion": "0x5a5a8a3b7bd49c834707c98538e98d211cb7964ef23a7590f4b8704c3a8fcece:Staked:583020834457229307393134542717186171385327818",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x5a5a8a3b7bd49c834707c98538e98d211cb7964ef23a7590f4b8704c3a8fcece:366"
+    },
+    {
+      "conversion": "0xe8ccac5f36d0b9254420162a4466bfeff57482ceeeb02c552dfed4fdef390a66:Unstaked:583020834457229307393134542717186171385327818",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xe8ccac5f36d0b9254420162a4466bfeff57482ceeeb02c552dfed4fdef390a66:1"
+    },
+    {
+      "conversion": "0xa286656ae50f51ce48f89a367146792ae52edc0f220cf32017b395445a708295:Staked:583020834457229307393134542717186171385327818",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xa286656ae50f51ce48f89a367146792ae52edc0f220cf32017b395445a708295:2"
+    },
+    {
+      "conversion": "0xc782f77599700de15a94a1a6caedd1a43a59871b0a5fb1fe3c63bc31cccd80a8:Staked:44170944214247567275745335259861524254386668964",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xc782f77599700de15a94a1a6caedd1a43a59871b0a5fb1fe3c63bc31cccd80a8:42"
+    },
+    {
+      "conversion": "0xbee5f48aa1a19c165c541ba7ca8f3e7e67080f416ab385d04049820f3c9573eb:Staked:196322967935033816761613614811491271778009322320",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xbee5f48aa1a19c165c541ba7ca8f3e7e67080f416ab385d04049820f3c9573eb:2"
+    },
+    {
+      "conversion": "0xa1222835779710d693f3e57787aab7e0906d0f6b40738f18a70fda1ee5d2c014:Unstaked:15353499895809753152222264538199053713360000000",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xa1222835779710d693f3e57787aab7e0906d0f6b40738f18a70fda1ee5d2c014:25"
+    },
+    {
+      "conversion": "0xd034f5ad6b63ca522207bc6ff7e2cc14b0ef4e4f5ddb8d7add845014ff199778:Unstaked:50725663381645833379570560231223900872378583",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xd034f5ad6b63ca522207bc6ff7e2cc14b0ef4e4f5ddb8d7add845014ff199778:33"
+    },
+    {
+      "conversion": "0xc70f4d1125026d5dd6144e0da54e510f999da3b1bf7e234dcda75e247cb1af5a:Unstaked:810439545675782136855093158905634080294128939",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xc70f4d1125026d5dd6144e0da54e510f999da3b1bf7e234dcda75e247cb1af5a:68"
+    },
+    {
+      "conversion": "0xdaa7acb33685eb0cca213fe6aa674d3dcf8202d3dec6c5bdf31535d76f4b3a23:Unstaked:38120236498237394872082743440145290450427743",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xdaa7acb33685eb0cca213fe6aa674d3dcf8202d3dec6c5bdf31535d76f4b3a23:2"
+    },
+    {
+      "conversion": "0xc4d93c5cea7279eb4899c70efcd0d7ed75700d841effea2a417067a855a487f7:Unstaked:180539267428011379077550914415489253671193016",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xc4d93c5cea7279eb4899c70efcd0d7ed75700d841effea2a417067a855a487f7:12"
+    },
+    {
+      "conversion": "0xfcded2fe3490c7aa0b2cd255a1f08d6d005f58516104d697939af8b5069e0750:Staked:5230764127708559376539132996605290412312599912",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xfcded2fe3490c7aa0b2cd255a1f08d6d005f58516104d697939af8b5069e0750:28"
+    },
+    {
+      "conversion": "0x4806ff305a62a253c9159e77cc687e0bd3dd8129804db209dc9f863a0f6a6175:Unstaked:36107852648037184348675195225654947294986922",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x4806ff305a62a253c9159e77cc687e0bd3dd8129804db209dc9f863a0f6a6175:9"
+    },
+    {
+      "conversion": "0xc6c983845f71fcb2c0a40bb924da05d71c58940ed6351a09d8dcffe27424de21:Unstaked:6885369723007939777232261466018052071256113180",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xc6c983845f71fcb2c0a40bb924da05d71c58940ed6351a09d8dcffe27424de21:13"
+    },
+    {
+      "conversion": "0xe36a301e0810bbdcf772c5e4048fc9432d6f872c4ee5e66bbe26ebe545352a7d:Unstaked:188889792245001378959827402303010465797539904",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xe36a301e0810bbdcf772c5e4048fc9432d6f872c4ee5e66bbe26ebe545352a7d:1"
+    },
+    {
+      "conversion": "0xb0b088972d49adf3234693b6a188b76d267b6bc64fb5a35b99b898703aa9a25b:Unstaked:79745489164053719847540996551663082826386482",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xb0b088972d49adf3234693b6a188b76d267b6bc64fb5a35b99b898703aa9a25b:22"
+    },
+    {
+      "conversion": "0x15a69b09d2491416146188ad76e440c3e2044e2fec42df71131180d983cfd1f6:Unstaked:26741927107888878939798635049457559129859499878",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x15a69b09d2491416146188ad76e440c3e2044e2fec42df71131180d983cfd1f6:15"
+    },
+    {
+      "conversion": "0x646e7f3a37f7b4a029a074cf59b5998051aeef250ca2453a073065a55c46f885:Staked:26741927107079103078477859623199421951111236128",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x646e7f3a37f7b4a029a074cf59b5998051aeef250ca2453a073065a55c46f885:3"
+    },
+    {
+      "conversion": "0x34855f27b9ed307b508d0a7cbbfb183af6612491f0f1df6988851a3a8c1a2737:Unstaked:233718201536935246321605559409602326795948372335",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x34855f27b9ed307b508d0a7cbbfb183af6612491f0f1df6988851a3a8c1a2737:10"
+    },
+    {
+      "conversion": "0xf82bab16e6ab095088a3ed4ffc6a87a402d45ca8cadc92cbc07c9001da7e3cc5:Staked:4711629517736751090669010555436077474246798500",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xf82bab16e6ab095088a3ed4ffc6a87a402d45ca8cadc92cbc07c9001da7e3cc5:2"
+    },
+    {
+      "conversion": "0x6d807f74eb7acd17fa9d625a01f11a05165d17918d529601864735b5c43a0a35:Staked:71559552897698748723406939106431927387377356745",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x6d807f74eb7acd17fa9d625a01f11a05165d17918d529601864735b5c43a0a35:14"
+    },
+    {
+      "conversion": "0x2ff73fb4c623e96c1c59c75dfdf642a61af7861bd7f609d1b68c9dc2543948bc:Staked:11087548571127566820519921943845725295183187996",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x2ff73fb4c623e96c1c59c75dfdf642a61af7861bd7f609d1b68c9dc2543948bc:5"
+    },
+    {
+      "conversion": "0x58073114d9faa14ab9869cc600cb34960290d2af2a7800d7794ea04f815c93ee:Staked:51658454996078565314082750111362282707836614493",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x58073114d9faa14ab9869cc600cb34960290d2af2a7800d7794ea04f815c93ee:168"
+    },
+    {
+      "conversion": "0x96b57c7a94dd6994468f1b1e60bd20ba633cce9d580958b4e051e11c54ade103:Staked:117517362010395810099107114434251221568141306",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x96b57c7a94dd6994468f1b1e60bd20ba633cce9d580958b4e051e11c54ade103:21"
+    },
+    {
+      "conversion": "0xa7dcd0fb2b97c04b7297eff7f9b8a17f0f99442bf6fd41415e9ef0884f0e3f35:Unstaked:156132098585178525166688902401351341660272211",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xa7dcd0fb2b97c04b7297eff7f9b8a17f0f99442bf6fd41415e9ef0884f0e3f35:17"
+    },
+    {
+      "conversion": "0xda637ea58c84c490fa74bdc9b22e97bfc8b731eb5bf8e31fc036c262d1faa31d:Unstaked:132491301566262312295116607088089341586789",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xda637ea58c84c490fa74bdc9b22e97bfc8b731eb5bf8e31fc036c262d1faa31d:15"
+    },
+    {
+      "conversion": "0x191c09d8bb9aea15e2ca110dba4977cc2847ca5d8f4b26a72b1fda4eeb61a185:Unstaked:95542309503678867221981818340384711376933424",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x191c09d8bb9aea15e2ca110dba4977cc2847ca5d8f4b26a72b1fda4eeb61a185:57"
+    },
+    {
+      "conversion": "0xcfd7a39d593292b31b23df87aed8c7fb1f32c94407cefa2a613c1aba74fab8f9:Unstaked:818637864360427655936750436693330925547032180",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xcfd7a39d593292b31b23df87aed8c7fb1f32c94407cefa2a613c1aba74fab8f9:11"
+    },
+    {
+      "conversion": "0x054770848850a7184ccdf2f14e59324abe66d89190f9174736115234cb1cdc40:Unstaked:582959088007663503840177761769181460977878568",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x054770848850a7184ccdf2f14e59324abe66d89190f9174736115234cb1cdc40:17"
+    },
+    {
+      "conversion": "0x28359070dd94b4ed377d3eee075ecddecb7fca203e616892d4e784a51482f6fe:Unstaked:81594554775900602868802724571299433767154473",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x28359070dd94b4ed377d3eee075ecddecb7fca203e616892d4e784a51482f6fe:5"
+    },
+    {
+      "conversion": "0x1e6fd7249426594942bda67750b216a32b2bdf5fa4068804cf459fd7048c2bcf:Unstaked:384015855190214279824715845305681779335575176",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x1e6fd7249426594942bda67750b216a32b2bdf5fa4068804cf459fd7048c2bcf:49"
+    },
+    {
+      "conversion": "0x116e6d8aff34495017a770fcf6c755729cfd0627100c9ed899fec2fbb230a7a6:Staked:374305234980131315180041176980839212867215788781",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x116e6d8aff34495017a770fcf6c755729cfd0627100c9ed899fec2fbb230a7a6:10"
+    },
+    {
+      "conversion": "0xf4e89546834e24749191257d4266065d9b22fa3053e85d9a1d039cfe1325dd65:Unstaked:182510475376958381117984760253440109796648955",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xf4e89546834e24749191257d4266065d9b22fa3053e85d9a1d039cfe1325dd65:1"
+    },
+    {
+      "conversion": "0x83b81b61e6ce76ee9f9c2c9aa9fd4293cb470f327b93065eb1337203877e8833:Unstaked:9611871058983542394699052875070651286971331444",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x83b81b61e6ce76ee9f9c2c9aa9fd4293cb470f327b93065eb1337203877e8833:1"
+    },
+    {
+      "conversion": "0x51e506fea91c1d7399088997b4191ebc46e44bea101a38e95ffd539b33262dfb:Unstaked:142829775146886603696451813555421229329052118",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x51e506fea91c1d7399088997b4191ebc46e44bea101a38e95ffd539b33262dfb:11"
+    },
+    {
+      "conversion": "0xcda30a01d540167c3ea3cd4e9529e7819db11db42f84556e4218331c08ce0bd6:Staked:767192606108287105959302343938553822900689515653",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xcda30a01d540167c3ea3cd4e9529e7819db11db42f84556e4218331c08ce0bd6:24"
+    },
+    {
+      "conversion": "0xfcc4cf96937d1ee897a8617ffc143a4356587a7e24d74bb94e235db2b4fc2cf4:Staked:180912505992848173632309193067966963273333441464",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xfcc4cf96937d1ee897a8617ffc143a4356587a7e24d74bb94e235db2b4fc2cf4:8"
+    },
+    {
+      "conversion": "0x35a320be1a8792bc39dbf8d298723f1553bd28e301b4913b335b3f968d3d4f39:Staked:154414733408884615220240711474483543040788955375",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x35a320be1a8792bc39dbf8d298723f1553bd28e301b4913b335b3f968d3d4f39:19"
+    },
+    {
+      "conversion": "0xe8e3fae828d20143c129d6b6d6f08be06497ee7ad97b8dcb04dd77dac39b4b45:Unstaked:948012943909122559543007075705421317661468988800",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xe8e3fae828d20143c129d6b6d6f08be06497ee7ad97b8dcb04dd77dac39b4b45:13"
+    },
+    {
+      "conversion": "0x27fbd311aae4e1c39b300a03bfbe8b10dc54bed0a6fff847037167dbda42326d:Staked:180614733316675554909946533869748842240962142113",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x27fbd311aae4e1c39b300a03bfbe8b10dc54bed0a6fff847037167dbda42326d:17"
+    },
+    {
+      "conversion": "0x193b17c54208647a94e162e2ed58489bda1e7a508e44e851a0672fa8358d3760:Staked:725435347541065944491594676289495777782442423710",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0x193b17c54208647a94e162e2ed58489bda1e7a508e44e851a0672fa8358d3760:7"
+    },
+    {
+      "conversion": "0xcba5bb0df61e1d820dacc29964c9739632f8b47f5607e582ebfdd590cd092eff:Unstaked:1317839738625429834504181038421785266236746320",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xcba5bb0df61e1d820dacc29964c9739632f8b47f5607e582ebfdd590cd092eff:10"
+    },
+    {
+      "conversion": "0xc6fb3ebdfca54faa52e6495579c48e0e2c9d5b7cb4d8125c7b3e32f2bcdf7d1f:Staked:201422836513332724194268846468422118424164261157",
+      "event": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c:0xc6fb3ebdfca54faa52e6495579c48e0e2c9d5b7cb4d8125c7b3e32f2bcdf7d1f:5"
+    },
+    {
+      "conversion": "0xaa9fd892cda93cd317086ff10f929b07e0db32d7714f1591bef150abb4c3d9c4:Unstaked:926950352246411388734467984059017364719160653184",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0xaa9fd892cda93cd317086ff10f929b07e0db32d7714f1591bef150abb4c3d9c4:1"
+    },
+    {
+      "conversion": "0x3793e46c7a7b3852642e63936fc2c6322303b720e5dc934f75fb8bf904bb8ba5:Unstaked:7592084086860083666485433012752801678343488840",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x3793e46c7a7b3852642e63936fc2c6322303b720e5dc934f75fb8bf904bb8ba5:13"
+    },
+    {
+      "conversion": "0x3daa0d88410c3f4858e3e2e76bcfd01609a319eda3cda5441c0e52c7aeb4bfbd:Unstaked:41346294151293831775111309445855231014917207335",
+      "event": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7:0x3daa0d88410c3f4858e3e2e76bcfd01609a319eda3cda5441c0e52c7aeb4bfbd:21"
+    }
+  ],
+  "allAccountMembershipsComplete": true,
+  "proofLinks": {
+    "same-unit-historical-account-sum": 422,
+    "amount-times-event-index": 57,
+    "principal-plus-rewards-and-event-time-gons": 7,
+    "funding-minus-claims-snapshot-gons": 41
+  },
+  "sourceUnitLimit": "Earlier native18 display is not internal shares; no fabricated Q0; no user native19/native28 evidence invented."
+}

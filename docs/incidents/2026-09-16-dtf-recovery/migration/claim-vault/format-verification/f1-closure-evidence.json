@@ -1,0 +1,198 @@
+{
+  "date": "2026-11-12",
+  "finding": "F1",
+  "disposition": "confirmed",
+  "closesF1": true,
+  "admitsCorrectedSourceCandidate": true,
+  "acceptsImmutableFormattingDelivery": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault",
+  "head": "9c227900b280713305d4a1a1d1cdc3d8d273f23d",
+  "exactTwoFieldDelta": [
+    {
+      "path": "/checks/0/bytes",
+      "before": 229420,
+      "after": 269164
+    },
+    {
+      "path": "/checks/1/bytes",
+      "before": 180237,
+      "after": 218681
+    }
+  ],
+  "exactRawReplacement": true,
+  "originalValidation": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-correction/validation-results.json",
+    "bytes": 2594,
+    "sha256": "bd2b881003fe1d3e6124f58e4b4bf75d6f88d44fd742ad1ff8a7c0f273bd6b70",
+    "mode": "644"
+  },
+  "originalSeal": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-correction/seal.json",
+    "bytes": 86995,
+    "sha256": "d0c49aac0d178f589d626a8639ce9790db92abcebc5eb6a287543057a3885934",
+    "mode": "644"
+  },
+  "correctionReferencesMatch": true,
+  "logs": [
+    {
+      "name": "specs",
+      "bytes": 269164,
+      "sha256": "f6897050e0874ac4b4605a5462740f60fab7083b066923a24dc2804f8075a11b",
+      "utf16CodeUnits": 229420,
+      "matches": true
+    },
+    {
+      "name": "forks",
+      "bytes": 218681,
+      "sha256": "2b97a1c267c97c0591f1e3b4ccf03b4a007956dd48c454a3ff40e0843be78051",
+      "utf16CodeUnits": 180237,
+      "matches": true
+    }
+  ],
+  "additiveSeal": {
+    "entries": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-evidence-correction/validation-results.json",
+        "bytes": 2594,
+        "sha256": "6b933633e858b16e29d47dd5d865b3c584dc8a6e043997133759aac25bfb2609",
+        "mode": "644",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-evidence-correction/correction.json",
+        "bytes": 890,
+        "sha256": "f6f0f9946cc2b1ad4c580c983b70a20612896d4678a062f1c9e4f2a4729374c2",
+        "mode": "644",
+        "matches": true
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-evidence-correction/report.md",
+        "bytes": 737,
+        "sha256": "d6163483945bfd3353a31c3cab9bf5606b89195bc456446d6159f4dde41c054f",
+        "mode": "644",
+        "matches": true
+      }
+    ],
+    "exactMembership": [
+      "correction.json",
+      "report.md",
+      "seal.json",
+      "validation-results.json"
+    ]
+  },
+  "originalSealVerification": {
+    "entries": 411,
+    "failures": [],
+    "allRawSizesAndHashesMatch": true
+  },
+  "retainedReports": [
+    {
+      "path": "format-verification/report.md",
+      "bytes": 10200,
+      "sha256": "c18b2c9adbddaa6190bda525c8f2302e6276b35ce44b4f8ba50bbcd7cbd16656",
+      "mode": "644"
+    },
+    {
+      "path": "format-verification/closure.json",
+      "bytes": 10587,
+      "sha256": "c0765d7961f6c4d6daaa7551273276bda01d4b9396be5f4b73625b93cbb56594",
+      "mode": "644"
+    },
+    {
+      "path": "format-verification/audit-bindings.json",
+      "bytes": 455111,
+      "sha256": "ea1ced6834ef49df83cf1e72d3c9d82e75fb27eb3a04545d34fb9826c8a9275b",
+      "mode": "644"
+    },
+    {
+      "path": "format-commit/verification.md",
+      "bytes": 11514,
+      "sha256": "54d4df79b8d769d685061506dd26d2acf5466284d552bbab54f3732f5d6c9167",
+      "mode": "644"
+    },
+    {
+      "path": "format-evidence-correction/seal.json",
+      "bytes": 470,
+      "sha256": "073208f389fbfd45b7a335a6f28352b87158ad905b089ab334e7b4281386bb86",
+      "mode": "644"
+    }
+  ],
+  "priorIndependentReportBindingsMatch": true,
+  "sourceBindings": {
+    "entries": 40,
+    "allMatch": true,
+    "changedPaths": [
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol"
+    ]
+  },
+  "artifactBindings": {
+    "entries": 10,
+    "allMatch": true,
+    "reference": "format-verification/audit-bindings.json:artifacts"
+  },
+  "compiledInputBindings": {
+    "entries": 628,
+    "allMatch": true,
+    "reference": "format-verification/audit-bindings.json:compiledSources"
+  },
+  "gitResults": [
+    {
+      "command": "GIT_MASTER=1 git rev-parse HEAD",
+      "exitCode": 0,
+      "stdout": "9c227900b280713305d4a1a1d1cdc3d8d273f23d\n",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git branch --show-current",
+      "exitCode": 0,
+      "stdout": "work/dtf-migration-phase-16-claim-vault\n",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --ignore-submodules=all --check 4a53299b490343ed904d70c92ecbc7360fcb7659",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --ignore-submodules=all --cached --exit-code",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git status --short --ignore-submodules=all",
+      "exitCode": 0,
+      "stdout": " M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol\n M scripts/recovery/dtf-migration/claim-vault.test.ts\n M scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts\n M scripts/recovery/dtf-migration/rehearsal-claim-vault.ts\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol\n M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol\n M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/\n",
+      "stderr": ""
+    }
+  ],
+  "reusedProof": {
+    "reference": "format-verification/report.md and audit-bindings.json",
+    "sourceStatic": "Exactly nine final LF bytes removed; remaining 31 paths unchanged",
+    "rootExecutions": "130 specs; 81 forks; 64 operator tests; both stages; strict types; fixed18566 CLI",
+    "runtime": "Prior independent artifact/runtime matches, signed journal completions and three interruption/resume receipt comparisons reused, not replayed",
+    "newSuiteExecutions": 0,
+    "newRuntimeExecutions": 0
+  },
+  "preservationBaseline": {
+    "files": 1418,
+    "recipe": "SHA-256 of JSON.stringify(array sorted by absolute path; entries contain path, bytes, sha256, mode; symlinks contain path and symlink)",
+    "sha256": "d9ec6fb74f9f0d3f8f01d61151f5bb5ce4255170a8d36a84e9cace4ace2fe6f0"
+  },
+  "limits": [
+    "D2 immutable formatting follow-up and receipt remain absent; no commit acceptance",
+    "Original D1 and all original needs-fix reports remain unchanged",
+    "Legacy equivalence, portability, operational datasets, full-category/full-plan/full-F3 and target-gas/public-execution limits retained",
+    "No source edits, Git writes, suites, runtime, installs, config, held09, retrieval or public action"
+  ],
+  "pendingOperations": 0
+}

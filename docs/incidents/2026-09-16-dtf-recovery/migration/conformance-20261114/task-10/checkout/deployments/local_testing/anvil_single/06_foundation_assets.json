@@ -1,0 +1,12 @@
+{
+  "chainId": 11155111,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "erc20MinterFacade": "0x9fCaff70E91a1a9c847108332d06aa4359278e64",
+  "networkProfile": "local_testing",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "pairToken": "0x4C3EB655F511D0cB5F2Ab2C7EDe6137e17D7C5Fc",
+  "pairTokenPkg": "0xC8aF7afF49Cf5857B9f2AC324cE9d65d3a13962b",
+  "testTokenA": "0x8A7e25a7b039E8Ce0409AC5F93093cbd7B6F2a0a",
+  "testTokenB": "0xAf3928AAFB343942c6F338eFD4040576c480F7c0",
+  "testTokenC": "0x1d818aCcbb63590779f786EA1d410Cdfc6B5501A"
+}

@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "chainId": 4663,
+  "forkBlockNumber": 62009735,
+  "forkBlockHash": "0xbc4fc4df7e0eaa484c6060120503889ba1e01cc7fa83f7f57f388012aee77c47",
+  "create3Factory": "0xD7786b10BC8Bc97dc7651CAb7B97086c8b227882",
+  "diamondPackageFactory": "0x976949aB55830fA4794bF40C88ea7D7567931003",
+  "hookFactory": "0x8BB5FCC67e8CCa44DC41dd08A5e2b2B392C22945",
+  "indexedexManager": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+  "feeCollector": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+  "tokenStaking": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00",
+  "stakingOwner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+  "managerOwner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+  "dtf": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+  "weth": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+  "poolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+  "weights": {
+    "detf": 60,
+    "weth": 20,
+    "dtf": 20
+  },
+  "basePool": {
+    "currency0": "0x0000000000000000000000000000000000000000",
+    "currency1": "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+    "fee": 0,
+    "tickSpacing": 200,
+    "hooks": "0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044"
+  },
+  "packages": {
+    "uniswapV4Se": null,
+    "rebasingAwareErc4626": null,
+    "rateProvider": null,
+    "weightedHook": null,
+    "detf": null
+  },
+  "custody": {
+    "decimalOffset": 10,
+    "salt": "0x0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "detf": {
+    "ownerOnlyLiquidity": true,
+    "creator": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+    "claimName": "Staked DTF-DETF",
+    "claimSymbol": "sDTF-DETF",
+    "bondName": "DTF-DETF Bond",
+    "bondSymbol": "DTF-DETF-BOND",
+    "creationWethPerDetfWad": "2755623935085",
+    "creationDtfPerDetfWad": "1000000000000000000",
+    "openingWethPerDetfWad": "275562393508500",
+    "openingDtfPerDetfWad": "100000000000000000000",
+    "mintThreshold": "1050000000000000000",
+    "burnThreshold": "950000000000000000",
+    "expansionClosureRatePerYearWad": "100000000000000000"
+  },
+  "bootstrap": {
+    "actor": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+    "recipient": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+    "wethInput": "1000000000000000",
+    "maxDtfInput": "363000000000000000000",
+    "lockDuration": 2592000,
+    "minBondShares": "1",
+    "deadlineSeconds": 1800,
+    "liquiditySeedWethInput": "1000000000"
+  },
+  "migration": {
+    "maxChunkInput": "223355050624580728299834717",
+    "maxChunks": 256,
+    "slippageBps": 50,
+    "deadlineSeconds": 1800
+  }
+}

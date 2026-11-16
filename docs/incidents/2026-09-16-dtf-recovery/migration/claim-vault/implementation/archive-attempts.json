@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-12",
+  "disposition": "source-authentication-blocked",
+  "attempts": [
+    {
+      "url": "https://sourcify.dev/server/v2/contract/4663/0x517234F78A4BcAfc5F880024A3E45D49cF43b305?fields=all",
+      "status": 404,
+      "body": "{\"match\":null,\"creationMatch\":null,\"runtimeMatch\":null,\"chainId\":\"4663\",\"address\":\"0x517234F78A4BcAfc5F880024A3E45D49cF43b305\"}",
+      "sha256": "412a159a54457ba1c9fc1badbae5f3dd17218a3d350a107329880a240d0b8006"
+    },
+    {
+      "url": "https://repo.sourcify.dev/contracts/full_match/4663/0x517234F78A4BcAfc5F880024A3E45D49cF43b305/metadata.json",
+      "status": 404,
+      "text": "{\n  \"type\": \"https://sourcify.dev/server/api-docs/\",\n  \"title\": \"API v1 is removed\",\n  \"status\": 404,\n  \"detail\": \"This path was part of the Sourcify API v1. API v1 is removed. Use API v2.\",\n  \"replacements\": {\n    \"/files/..., /repository/contracts/...\": \"GET /v2/contract/{chainId}/{address}?fields=sources,metadata\",\n    \"/check-by-addresses, /check-all-by-addresses\": \"GET /v2/contract/{chainId}/{address} or GET /v2/contract/all-chains/{address}\",\n    \"/verify, /session/...\": \"POST /v2/verify/{chainId}/{address}, then GET /v2/verify/{verificationId}\"\n  },\n  \"rules\": [\n    \"Request only the fields that you need, for example fields=abi or fields=sources.\",\n    \"For data on many contracts, use the free Parquet export or the BigQuery dataset.\",\n    \"Send a descriptive User-Agent with your tool name, version, and a contact URL or email.\"\n  ],\n  \"apiDocs\": \"https://sourcify.dev/server/api-docs/\",\n  \"openapi\": \"https://sourcify.dev/server/openapi.json\",\n  \"fullGuidance\": \"https://docs.sourcify.dev/llms.txt\",\n  \"bulkData\": \"https://docs.sourcify.dev/docs/repository/download-dataset/\",\n  \"contact\": \"hello@sourcify.dev\"\n}\n",
+      "sha256": "54a61cd60b962988a522293bbd54961b194b66ee10026191595d68f32a83c211"
+    },
+    {
+      "url": "https://repo.sourcify.dev/contracts/partial_match/4663/0x517234F78A4BcAfc5F880024A3E45D49cF43b305/metadata.json",
+      "status": 404,
+      "text": "{\n  \"type\": \"https://sourcify.dev/server/api-docs/\",\n  \"title\": \"API v1 is removed\",\n  \"status\": 404,\n  \"detail\": \"This path was part of the Sourcify API v1. API v1 is removed. Use API v2.\",\n  \"replacements\": {\n    \"/files/..., /repository/contracts/...\": \"GET /v2/contract/{chainId}/{address}?fields=sources,metadata\",\n    \"/check-by-addresses, /check-all-by-addresses\": \"GET /v2/contract/{chainId}/{address} or GET /v2/contract/all-chains/{address}\",\n    \"/verify, /session/...\": \"POST /v2/verify/{chainId}/{address}, then GET /v2/verify/{verificationId}\"\n  },\n  \"rules\": [\n    \"Request only the fields that you need, for example fields=abi or fields=sources.\",\n    \"For data on many contracts, use the free Parquet export or the BigQuery dataset.\",\n    \"Send a descriptive User-Agent with your tool name, version, and a contact URL or email.\"\n  ],\n  \"apiDocs\": \"https://sourcify.dev/server/api-docs/\",\n  \"openapi\": \"https://sourcify.dev/server/openapi.json\",\n  \"fullGuidance\": \"https://docs.sourcify.dev/llms.txt\",\n  \"bulkData\": \"https://docs.sourcify.dev/docs/repository/download-dataset/\",\n  \"contact\": \"hello@sourcify.dev\"\n}\n",
+      "sha256": "54a61cd60b962988a522293bbd54961b194b66ee10026191595d68f32a83c211"
+    },
+    {
+      "url": "https://sourcify.dev/server/v2/contract/4663/0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0?fields=all",
+      "status": 200,
+      "sha256": "e17c78d87ec9faf537a23b6fe765384bed4ff72f38c06487241e537862c39dc2",
+      "bytes": 1208585,
+      "bodyRetained": false,
+      "reason": "Verified diamond proxy archive excludes vault implementation; not admitted as claim deposit source",
+      "compilationTarget": "lib/crane/contracts/proxies/MinimalDiamondCallBackProxy.sol:MinimalDiamondCallBackProxy",
+      "sourcePaths": [
+        "lib/crane/contracts/proxies/MinimalDiamondCallBackProxy.sol",
+        "lib/crane/contracts/interfaces/IDiamond.sol",
+        "lib/crane/contracts/interfaces/IDiamondLoupe.sol",
+        "lib/crane/contracts/proxies/Proxy.sol",
+        "lib/crane/contracts/utils/vm/foundry/tools/betterconsole.sol",
+        "lib/crane/contracts/interfaces/IFactoryCallBack.sol",
+        "lib/crane/contracts/factories/diamondPkg/utils/FactoryCallBackAdaptor.sol",
+        "lib/crane/contracts/introspection/ERC2535/ERC2535Repo.sol",
+        "lib/crane/contracts/proxies/MinimalDiamondCallBackProxyResolution.sol",
+        "lib/crane/contracts/introspection/ERC2535/IDiamond.sol",
+        "lib/crane/contracts/utils/BetterAddress.sol",
+        "lib/crane/lib/forge-std/src/console.sol",
+        "lib/crane/lib/forge-std/src/console2.sol",
+        "lib/crane/lib/forge-std/src/Vm.sol",
+        "lib/crane/contracts/constants/Constants.sol",
+        "lib/crane/contracts/constants/FoundryConstants.sol",
+        "lib/crane/contracts/utils/BetterBytes.sol",
+        "lib/crane/contracts/utils/Bytes32.sol",
+        "lib/crane/contracts/utils/UInt256.sol",
+        "lib/crane/contracts/interfaces/IDiamondFactoryPackage.sol",
+        "lib/crane/contracts/introspection/ERC8109/IERC8109Update.sol",
+        "lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol",
+        "lib/crane/contracts/utils/collections/sets/Bytes4SetRepo.sol",
+        "lib/crane/contracts/utils/Address.sol",
+        "lib/crane/contracts/interfaces/IERC20.sol",
+        "lib/crane/contracts/interfaces/BetterIERC20.sol",
+        "lib/crane/contracts/utils/Bytecode.sol",
+        "lib/crane/contracts/external/solady/utils/LibBytes.sol",
+        "lib/crane/contracts/utils/BetterStrings.sol",
+        "lib/crane/contracts/utils/Panic.sol",
+        "lib/crane/contracts/utils/collections/BetterArrays.sol",
+        "lib/crane/contracts/factories/diamondPkg/IDiamondFactoryPackage.sol",
+        "lib/crane/contracts/GeneralErrors.sol",
+        "lib/crane/contracts/tokens/ERC20/IERC20.sol",
+        "lib/crane/contracts/interfaces/IERC20Metadata.sol",
+        "lib/crane/contracts/interfaces/IERC20Errors.sol",
+        "lib/crane/contracts/utils/Strings.sol",
+        "lib/crane/contracts/external/solady/utils/LibSort.sol",
+        "lib/crane/contracts/interfaces/IERC20Events.sol",
+        "lib/crane/contracts/tokens/ERC20/IERC20Metadata.sol",
+        "lib/crane/contracts/tokens/ERC20/IERC20Errors.sol",
+        "lib/crane/contracts/external/solady/utils/LibString.sol",
+        "lib/crane/contracts/tokens/ERC20/IERC20Events.sol"
+      ]
+    },
+    {
+      "url": "https://sourcify.dev/server/v2/contract/all-chains/0x517234F78A4BcAfc5F880024A3E45D49cF43b305",
+      "status": 404,
+      "body": "{\"results\":[]}",
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "url": "https://ipfs.io/ipfs/QmUvEgKFCaE3MSSVJpQyDk1TsD9RJBWBjstrAEcPfNDDeM",
+      "status": 429,
+      "body": "This IPFS gateway is switching to a service worker gateway only. See https://gatewaychanges.ipfs.io#/ipfs/QmUvEgKFCaE3MSSVJpQyDk1TsD9RJBWBjstrAEcPfNDDeM for more information.\n",
+      "sha256": "53fb250d1c031ccb90e10ee42659b9da05cc55afa515b6855e527ff3e2696f8e",
+      "continued": false,
+      "reason": "No retry, alternate gateway, service-worker workaround, or provider bypass after HTTP429"
+    }
+  ],
+  "limits": [
+    "HTTP404 is not proof the contract is absent or deposit is disabled",
+    "Proxy archive exact_match is not facet-source authentication",
+    "ABI selector and successful read limits are not source-authenticated deposit semantics"
+  ]
+}

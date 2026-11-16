@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":938,\"method\":\"eth_call\",\"params\":[{\"to\":\"0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0\",\"data\":\"0xcdffacc638d52e0f00000000000000000000000000000000000000000000000000000000\"},\"latest\"]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":938,\"result\":\"0x000000000000000000000000517234f78a4bcafc5f880024a3e45d49cf43b305\"}",
+  "httpStatus": 200,
+  "raw": true
+}

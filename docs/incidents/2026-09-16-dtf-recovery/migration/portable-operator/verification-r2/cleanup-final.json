@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-13T01:03:05.131Z",
+  "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/verification-r2/runtime/rehearsal-1794531335684",
+  "runtimeCleanup": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/.omo-runtime/dtf-migration-portable/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 22503,
+    "runtime": "removed"
+  },
+  "commands": [
+    {
+      "binary": "lsof",
+      "args": [
+        "-nP",
+        "-iTCP:18575",
+        "-sTCP:LISTEN"
+      ],
+      "code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "ps",
+      "args": [
+        "-p",
+        "22503",
+        "-o",
+        "pid="
+      ],
+      "code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "rev-parse",
+        "HEAD"
+      ],
+      "code": 0,
+      "stdout": "137fa0c8749165087c7d1d0156788f58a1dbf1b8\n",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "branch",
+        "--show-current"
+      ],
+      "code": 0,
+      "stdout": "work/dtf-migration-phase-26-portable-operator\n",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "diff",
+        "--check",
+        "--ignore-submodules=all"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "binary": "git",
+      "args": [
+        "--no-pager",
+        "diff",
+        "--cached",
+        "--exit-code",
+        "--ignore-submodules=all"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "candidateDiff": {
+    "bytes": 60829,
+    "sha256": "193352dc21b6dec54a33d578e75cedc1ab8a9366a2131d7f7c3e65c76e795c40",
+    "unchanged": true
+  },
+  "absent": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/.omo-runtime/dtf-migration-portable/checkpoints",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/.omo-runtime/dtf-migration-portable",
+    "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-26-portable-operator/index.lock"
+  ],
+  "producerSealRecheck": {
+    "files": 16770,
+    "directories": 179,
+    "failures": []
+  },
+  "frozenSourceAuthorityGitRecheck": {
+    "failures": []
+  },
+  "completedMonitors": [
+    "mon_AG3GJXMSTJHBWYYP",
+    "mon_N65GT7T9CZTKJNBR",
+    "mon_DDCQ5FQK8MX6VQZH",
+    "mon_4KY1FYTF62PK0JBP"
+  ],
+  "allMonitorExitCodes": 0,
+  "pendingOwnedOperations": "none",
+  "notes": "Receipt observers and fixture impersonations closed in inspected finally paths; node22503 exited; archived journals are retained evidence."
+}

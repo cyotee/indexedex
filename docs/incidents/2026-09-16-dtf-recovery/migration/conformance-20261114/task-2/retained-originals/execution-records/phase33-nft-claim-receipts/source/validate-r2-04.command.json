@@ -1,0 +1,55 @@
+{
+  "executable": "/opt/homebrew/bin/node",
+  "argv": [
+    "--check",
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/inputs.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source",
+  "startedAt": "2026-11-13T11:14:51.488Z",
+  "stoppedAt": "2026-11-13T11:14:51.532Z",
+  "pid": 73375,
+  "exitCode": 0,
+  "signal": null,
+  "childCloseObserved": true,
+  "sources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/rpc.mjs",
+      "bytes": 4439,
+      "sha256": "e5d48c0c6ed998b48d501b83585366e3b7a1a0611d408a5ba60f234010e57ac2"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/record.mjs",
+      "bytes": 2805,
+      "sha256": "f9b723b990e3d28d41fa8f0915d9ce105df99499ed6fd8e5ebf31cdaac7d35fd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/collect.mjs",
+      "bytes": 7017,
+      "sha256": "3a71fe06448898cf2cf0d5007373fdc8d58b56589f510944cd051dc8feb92a35"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/inputs.mjs",
+      "bytes": 5964,
+      "sha256": "40efd0c980c527e257a3a1521e99fe25d681656f3d6e78da5334553706e09f93"
+    }
+  ],
+  "streams": {
+    "stdout": {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/validate-r2-04.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": true
+    },
+    "stderr": {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/validate-r2-04.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw": true
+    }
+  },
+  "runtime": {
+    "bun": "1.4.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0xA2361A3d7618B9e4cE358862D32B28c2BE644D74",
+    "name": "Test Token A",
+    "symbol": "TTA",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x4FB98D08374ECeeA3E6506039EF3847b376DBFa0",
+    "name": "Test Token B",
+    "symbol": "TTB",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x447128AfeE0c3bcBD5A48C9C3d731B323cC0042b",
+    "name": "Test Token C",
+    "symbol": "TTC",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x979D448a4f11B9bbd798195c877fFb43d91A3520",
+    "name": "DemoWETH",
+    "symbol": "DemoWETH",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x9b013BAc9d00D63e351B02F82128FCd462F6C726",
+    "name": "Rich Token",
+    "symbol": "RICH",
+    "decimals": 18
+  }
+]

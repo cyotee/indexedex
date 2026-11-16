@@ -1,0 +1,576 @@
+{
+  "block": 108944663,
+  "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+  "exitCode": 0,
+  "monitor": "mon_FRHJ9F37TZS86JQM",
+  "candidateCount": 31,
+  "queryCount": 93,
+  "positive": [],
+  "results": [
+    {
+      "row": "E-S",
+      "address": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-S",
+      "address": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "E-P",
+      "address": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "balance": "0",
+      "raw": "0"
+    },
+    {
+      "row": "W-P",
+      "address": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "balance": "0",
+      "raw": "0"
+    }
+  ],
+  "log": {
+    "path": "queries-04.log",
+    "bytes": 30113,
+    "sha256": "f925bb0bd101cc3a8d4bf750cd655460d9a206fbd801ca1167e0782aa47982c6"
+  },
+  "scope": "Additional retained original-purchaser candidates only; not a holder census or proof of impossibility. No W-SW or failed-exit replay, log-range request, transfer, fork, role action or provider change.",
+  "failedAttempts": "Three wrapper failures retained separately; final installed CLI syntax and binary verified before successful collection."
+}

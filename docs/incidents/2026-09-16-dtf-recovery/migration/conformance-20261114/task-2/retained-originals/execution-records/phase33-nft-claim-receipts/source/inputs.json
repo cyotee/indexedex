@@ -1,0 +1,523 @@
+{
+  "root": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery/input-tree/2026-09-16-dtf-recovery",
+  "declarations": [
+    {
+      "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703",
+      "bytes": 24558,
+      "id": "S001",
+      "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "description": "pre-incident rebasing balances and gons",
+      "declaration": "S001"
+    },
+    {
+      "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f",
+      "bytes": 10515,
+      "id": "S002",
+      "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+      "description": "pre-incident legacy staking weights",
+      "declaration": "S002"
+    },
+    {
+      "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295",
+      "bytes": 3055,
+      "id": "S003",
+      "path": "../2026-09-16-dtf-pre-exploit/snapshot.json",
+      "description": "snapshot totals, custody and wrapper backing",
+      "declaration": "S003"
+    },
+    {
+      "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce",
+      "bytes": 1432,
+      "id": "S004",
+      "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "description": "pre-incident SY balances",
+      "declaration": "S004"
+    },
+    {
+      "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2",
+      "bytes": 41120,
+      "id": "S005",
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "description": "historical contributions and pre-incident returns",
+      "declaration": "S005"
+    },
+    {
+      "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda",
+      "bytes": 186222,
+      "id": "S006",
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "description": "individual historical input transactions",
+      "declaration": "S006"
+    },
+    {
+      "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da",
+      "bytes": 83558,
+      "id": "S007",
+      "path": "evidence/weighted-candidates.csv",
+      "description": "frozen candidate inventory; not entitlements",
+      "declaration": "S007"
+    },
+    {
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+      "bytes": 12283,
+      "id": "S008",
+      "path": "evidence/weighted-bonds.csv",
+      "description": "funded principal and claims across purchased NFTs",
+      "declaration": "S008"
+    },
+    {
+      "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223",
+      "bytes": 3709,
+      "id": "S009",
+      "path": "evidence/earlier-cp-bonds.csv",
+      "description": "old LP bonds and actual direct asset inputs",
+      "declaration": "S009"
+    },
+    {
+      "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559",
+      "bytes": 2542,
+      "id": "S010",
+      "path": "evidence/earlier-cp-wallets.csv",
+      "description": "old token/receipt/NFT holder observations",
+      "declaration": "S010"
+    },
+    {
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "bytes": 4535122,
+      "id": "S011",
+      "path": "evidence/transfers.csv",
+      "description": "normalized RPC Transfer evidence, block/transaction/log keyed",
+      "declaration": "S011"
+    },
+    {
+      "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f",
+      "bytes": 18666,
+      "id": "S012",
+      "path": "evidence/bond-accounting.csv",
+      "description": "NFT funding and claim gons proof",
+      "declaration": "S012"
+    },
+    {
+      "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c",
+      "bytes": 111333,
+      "id": "S013",
+      "path": "evidence/index-events.csv",
+      "description": "pre-incident RewardsFunded index observations",
+      "declaration": "S013"
+    },
+    {
+      "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9",
+      "bytes": 141460,
+      "id": "S014",
+      "path": "evidence/all-index-events.csv",
+      "description": "All 1077 RewardsFunded gons-per-unit observations through cutoff, for post-incident outgoing-gons bounds",
+      "declaration": "S014"
+    },
+    {
+      "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719",
+      "bytes": 3012,
+      "id": "S015",
+      "path": "evidence/post-incident-bond-claims.csv",
+      "description": "Seven post-incident bond claim conversions with exact transferred sDETF and event-time gons debits",
+      "declaration": "S015"
+    },
+    {
+      "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510",
+      "bytes": 285464,
+      "path": "account-ledger.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3",
+      "bytes": 123221,
+      "path": "positions.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94",
+      "bytes": 30839,
+      "path": "observed-recoveries.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a",
+      "bytes": 91676,
+      "path": "conversions.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f",
+      "bytes": 3404,
+      "path": "exceptions.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61",
+      "bytes": 327,
+      "path": "rounding.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89",
+      "bytes": 1798,
+      "path": "reconciliation.json",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "bytes": 4535122,
+      "path": "evidence/transfers.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f",
+      "bytes": 18666,
+      "path": "evidence/bond-accounting.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c",
+      "bytes": 111333,
+      "path": "evidence/index-events.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da",
+      "bytes": 83558,
+      "path": "evidence/weighted-candidates.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+      "bytes": 12283,
+      "path": "evidence/weighted-bonds.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223",
+      "bytes": 3709,
+      "path": "evidence/earlier-cp-bonds.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559",
+      "bytes": 2542,
+      "path": "evidence/earlier-cp-wallets.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a",
+      "bytes": 5502,
+      "path": "sources.json",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07",
+      "bytes": 15308,
+      "path": "LOSS_AND_RECOVERY_LEDGER.md",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc",
+      "bytes": 188644,
+      "path": "held-exclusions.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea",
+      "bytes": 139535,
+      "path": "custody-inventory.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9",
+      "bytes": 141460,
+      "path": "evidence/all-index-events.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719",
+      "bytes": 3012,
+      "path": "evidence/post-incident-bond-claims.csv",
+      "declaration": "manifest"
+    },
+    {
+      "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd",
+      "bytes": 7357,
+      "path": "CUSTODY_AND_HARVEST.md",
+      "declaration": "manifest"
+    }
+  ],
+  "sources": {
+    "chainId": 4663,
+    "incident": {
+      "lastFullBlock": 64394556,
+      "attackBlock": 64394557,
+      "attackTransactionIndex": 1,
+      "attackTransaction": "0x94e955638633b31a4bada2f8fecbb5f147ec2d0e0943b53e0bcb447fc755e658"
+    },
+    "evidenceCutoff": {
+      "block": 108944663,
+      "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "utc": "2026-11-08T04:08:21Z"
+    },
+    "sourceNotes": [
+      "Main event histories and current main balances use the cutoff; old CP current receipt balances were latest-state calls on November 8, with an unresolved supply discrepancy.",
+      "S007-S010 copied from prior research exports; durable copies are here, not dependent on /tmp.",
+      "Normalized transfers preserve raw integer values and log locators; rebasing token balances must not be reconstructed by summing Transfer alone.",
+      "S011 DTF coverage is transfers to/from weighted DETF, not all market trades; WETH coverage is inbound only through block69999999, not a complete post-incident recovery history.",
+      "Current holding observations remain at the recorded cutoff, not a new on-chain scan. Lower-bound exclusions use source units and event-time gons; unmatched remainder stays on hold, not eligible.",
+      "User correction: no upfront new bond credit for held tokens/NFTs even when deposited for DTF harvesting; replaces the former retained-outside-only K rule."
+    ],
+    "sources": [
+      {
+        "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703",
+        "bytes": 24558,
+        "id": "S001",
+        "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+        "description": "pre-incident rebasing balances and gons"
+      },
+      {
+        "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f",
+        "bytes": 10515,
+        "id": "S002",
+        "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+        "description": "pre-incident legacy staking weights"
+      },
+      {
+        "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295",
+        "bytes": 3055,
+        "id": "S003",
+        "path": "../2026-09-16-dtf-pre-exploit/snapshot.json",
+        "description": "snapshot totals, custody and wrapper backing"
+      },
+      {
+        "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce",
+        "bytes": 1432,
+        "id": "S004",
+        "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+        "description": "pre-incident SY balances"
+      },
+      {
+        "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2",
+        "bytes": 41120,
+        "id": "S005",
+        "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+        "description": "historical contributions and pre-incident returns"
+      },
+      {
+        "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda",
+        "bytes": 186222,
+        "id": "S006",
+        "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+        "description": "individual historical input transactions"
+      },
+      {
+        "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da",
+        "bytes": 83558,
+        "id": "S007",
+        "path": "evidence/weighted-candidates.csv",
+        "description": "frozen candidate inventory; not entitlements"
+      },
+      {
+        "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+        "bytes": 12283,
+        "id": "S008",
+        "path": "evidence/weighted-bonds.csv",
+        "description": "funded principal and claims across purchased NFTs"
+      },
+      {
+        "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223",
+        "bytes": 3709,
+        "id": "S009",
+        "path": "evidence/earlier-cp-bonds.csv",
+        "description": "old LP bonds and actual direct asset inputs"
+      },
+      {
+        "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559",
+        "bytes": 2542,
+        "id": "S010",
+        "path": "evidence/earlier-cp-wallets.csv",
+        "description": "old token/receipt/NFT holder observations"
+      },
+      {
+        "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+        "bytes": 4535122,
+        "id": "S011",
+        "path": "evidence/transfers.csv",
+        "description": "normalized RPC Transfer evidence, block/transaction/log keyed"
+      },
+      {
+        "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f",
+        "bytes": 18666,
+        "id": "S012",
+        "path": "evidence/bond-accounting.csv",
+        "description": "NFT funding and claim gons proof"
+      },
+      {
+        "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c",
+        "bytes": 111333,
+        "id": "S013",
+        "path": "evidence/index-events.csv",
+        "description": "pre-incident RewardsFunded index observations"
+      },
+      {
+        "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9",
+        "bytes": 141460,
+        "id": "S014",
+        "path": "evidence/all-index-events.csv",
+        "description": "All 1077 RewardsFunded gons-per-unit observations through cutoff, for post-incident outgoing-gons bounds"
+      },
+      {
+        "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719",
+        "bytes": 3012,
+        "id": "S015",
+        "path": "evidence/post-incident-bond-claims.csv",
+        "description": "Seven post-incident bond claim conversions with exact transferred sDETF and event-time gons debits"
+      }
+    ]
+  },
+  "identities": [
+    {
+      "path": "manifest.json",
+      "bytes": 3209,
+      "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "bytes": 24558,
+      "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+      "bytes": 10515,
+      "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/snapshot.json",
+      "bytes": 3055,
+      "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "bytes": 1432,
+      "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "bytes": 41120,
+      "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "bytes": 186222,
+      "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "bytes": 83558,
+      "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "bytes": 12283,
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "bytes": 3709,
+      "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "bytes": 2542,
+      "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "bytes": 4535122,
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "bytes": 18666,
+      "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "bytes": 111333,
+      "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "bytes": 141460,
+      "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "bytes": 3012,
+      "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+    },
+    {
+      "path": "account-ledger.csv",
+      "bytes": 285464,
+      "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+    },
+    {
+      "path": "positions.csv",
+      "bytes": 123221,
+      "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+    },
+    {
+      "path": "observed-recoveries.csv",
+      "bytes": 30839,
+      "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+    },
+    {
+      "path": "conversions.csv",
+      "bytes": 91676,
+      "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+    },
+    {
+      "path": "exceptions.csv",
+      "bytes": 3404,
+      "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+    },
+    {
+      "path": "rounding.csv",
+      "bytes": 327,
+      "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+    },
+    {
+      "path": "reconciliation.json",
+      "bytes": 1798,
+      "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 5502,
+      "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+    },
+    {
+      "path": "LOSS_AND_RECOVERY_LEDGER.md",
+      "bytes": 15308,
+      "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+    },
+    {
+      "path": "held-exclusions.csv",
+      "bytes": 188644,
+      "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+    },
+    {
+      "path": "custody-inventory.csv",
+      "bytes": 139535,
+      "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+    },
+    {
+      "path": "CUSTODY_AND_HARVEST.md",
+      "bytes": 7357,
+      "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+    }
+  ],
+  "qualification": "hash-authenticated recovered bodies, not located original captures"
+}

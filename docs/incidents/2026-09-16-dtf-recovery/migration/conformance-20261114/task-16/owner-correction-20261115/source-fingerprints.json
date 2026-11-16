@@ -1,0 +1,81 @@
+{
+  "ownSourceState": [
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "beforeSha256": "81166388c25d1283d73556c6e95c6599ee448cdc3e9f96d97bd14f7e9090d7c0",
+      "sha256": "36b05aa0a22d78b215c9d2e6ffd556c84afeda7d2fe50ff64380c153faab8f93",
+      "bytes": 9123,
+      "changed": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "beforeSha256": "4ccb78785ea6838aabc5944d7b544b524cfe99f1f83b263796dbe6c2f7c2cf37",
+      "sha256": "8f1bc772dcbe4cb4020e0e11d4d82a50b75cb24a1cff3b733abede138119529d",
+      "bytes": 8321,
+      "changed": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "beforeSha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+      "sha256": "01505bf4ca5fbb81d7466ec6cfe7e8b9382a949c8a6cd9a072973dba1ad62282",
+      "bytes": 1793,
+      "changed": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "beforeSha256": "3fa56907627a4a1bf737b699bdd999745ec806e17006dcd33021f9e7b75d9268",
+      "sha256": "6fdc999ed41fa75b694f0efdb43c3f59a0e46c01d2338d10709ca5ecffb4911e",
+      "bytes": 34081,
+      "changed": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "beforeSha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+      "sha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+      "bytes": 13749,
+      "changed": false
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "beforeSha256": "0804827556835e51d00fa553d3f99cd027263ed7042d501cdff088d46f02d011",
+      "sha256": "0804827556835e51d00fa553d3f99cd027263ed7042d501cdff088d46f02d011",
+      "bytes": 13446,
+      "changed": false
+    }
+  ],
+  "commandBindings": [
+    {
+      "attempt": "08-bundle-tests",
+      "sources": 89,
+      "mismatches": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/run-attempt.ts",
+          "recorded": "eaf928c2a8ca92328d5157817b1558588418e674359adf68d080d2437e20d68a",
+          "current": "437c8f5f7e220d8f2ee33eb487dafa6107742b713c19593f90f8c1fc277d445f"
+        }
+      ]
+    },
+    {
+      "attempt": "09-operator-types",
+      "sources": 88,
+      "mismatches": [
+        {
+          "path": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-16/owner-correction-20261115/run-attempt.ts",
+          "recorded": "eaf928c2a8ca92328d5157817b1558588418e674359adf68d080d2437e20d68a",
+          "current": "437c8f5f7e220d8f2ee33eb487dafa6107742b713c19593f90f8c1fc277d445f"
+        }
+      ]
+    },
+    {
+      "attempt": "12-evidence-types",
+      "sources": 90,
+      "mismatches": []
+    },
+    {
+      "attempt": "13-manual-transport",
+      "sources": 89,
+      "mismatches": []
+    }
+  ],
+  "qualification": "08 and 09 may record the older evidence-only recorder before its Node-compatible metadata fix; all operator and test source hashes are final. 12 and 13 bind the final helper sources. Native setup was not repeated solely for recorder/helper metadata changes."
+}

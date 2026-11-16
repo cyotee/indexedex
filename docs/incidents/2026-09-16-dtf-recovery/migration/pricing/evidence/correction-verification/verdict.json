@@ -1,0 +1,217 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "date": "2026-11-10",
+  "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/correction-verification/report.md",
+  "scope": "Independent disposition of F1/F2 corrections only; exact local QA CLI guard and evidence-selection contract.",
+  "requiredHandoff": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/correction/report.md",
+    "present": true,
+    "sha256": "6b9b0ced33a275e37461941ec7a04cc4ff3f22d009b7eae792993428dbe2ea2d"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "disposition": "confirmed",
+      "evidence": [
+        "source-artifact-binding.json",
+        "negative-command.txt",
+        "negative.log:9-19",
+        "negative-exit.txt",
+        "negative-before-rpc.json",
+        "negative-after-rpc.json",
+        "positive-command.txt",
+        "positive-exit.txt",
+        "mined-receipts.log:705",
+        "mined-receipts-exit.txt",
+        "positive-readbacks.json"
+      ],
+      "result": "Exact authorized CLI independently mined 233 successful transactions. A selected endpoint of 18547 was rejected by the actual CLI guard before startBroadcast/fixture deployment while 18546 remained available; both latest/pending sender nonces and both genesis blocks stayed unchanged."
+    },
+    {
+      "id": "F2",
+      "disposition": "confirmed",
+      "evidence": [
+        "../../../quote-evidence.md:107-130",
+        "f2-receipt-check.json",
+        "coverage-gates.log:1-4",
+        "coverage-gates-exit.txt",
+        "../implementation/regression-final.log:3773,3814",
+        "../verification/real-proxy-exact-signature.log:7,3340,3342"
+      ],
+      "result": "Both retained original zero-selection logs are correctly labeled; actual named-case coverage is separately cited; exact ABI-signature regex and nonzero PASS gate reject empty selection."
+    }
+  ],
+  "checks": {
+    "originalAuthoredSourcesUnchanged": 16,
+    "authorizedChangedQaScriptMatchesCorrection": true,
+    "declaredCorrectionHashesMatched": 3,
+    "currentArtifactsChecked": 11,
+    "uniqueSourceDependenciesChecked": 599,
+    "metadataMismatches": 0,
+    "preservedManifestFiles": 5351,
+    "preExistingEvidenceFiles": 210,
+    "preservationMismatches": 0,
+    "newFoundryTestExecutions": 0,
+    "acceptedPriorRegressionPasses": 111,
+    "acceptedPriorExactSignaturePasses": 1,
+    "priorEmptySelectionPasses": 0,
+    "independentNegative": {
+      "commandExit": 1,
+      "teeExit": 0,
+      "authorizedEndpointAvailable": true,
+      "mismatchedEndpoint": "http://127.0.0.1:18547",
+      "beforeAndAfter": {
+        "18546": {
+          "latestNonce": 0,
+          "pendingNonce": 0,
+          "block": 0
+        },
+        "18547": {
+          "latestNonce": 0,
+          "pendingNonce": 0,
+          "block": 0
+        }
+      },
+      "rejectedBeforeBroadcast": true
+    },
+    "independentPositive": {
+      "commandExit": 0,
+      "teeExit": 0,
+      "receiptAuditCommandExit": 0,
+      "receiptAuditTeeExit": 0,
+      "distinctSuccessfulMinedReceipts": 233,
+      "latestNonce": 233,
+      "pendingNonce": 233,
+      "lastBlock": 233,
+      "maximumActualTransactionGas": 33584353,
+      "capture": {
+        "transactionHash": "0x62ce38bce79510802c79b490e03103a80db58f16c79a705a6e43857ba2d68dc8",
+        "blockHash": "0xc38ff14d9cfac952b1a2c7f0c7bf7226aca2d340a7af1bf5e66066ab8663a6ed",
+        "block": 226,
+        "status": 1,
+        "gas": 3842683
+      },
+      "readbacks": [
+        {
+          "blockTag": "0xe2",
+          "eth": "1192506671",
+          "dtf": "1773603429",
+          "sum": "2966110100",
+          "snapshot": {
+            "bytes": 5632,
+            "keccak256": "0x8091af243f6786523c82f07b4149040fb26a49ccc8c1b214813adf12d46ba1ab"
+          }
+        },
+        {
+          "blockTag": "0xe9",
+          "eth": "1192506671",
+          "dtf": "1773603429",
+          "sum": "2966110100",
+          "snapshot": {
+            "bytes": 5632,
+            "keccak256": "0x8091af243f6786523c82f07b4149040fb26a49ccc8c1b214813adf12d46ba1ab"
+          }
+        }
+      ],
+      "broadcast": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/correction-verification/broadcast/MigrationSnapshotLocalQA.s.sol/31337/run-latest.json"
+    },
+    "documentationGate": {
+      "originalProducerZeroSelectionExit": 1,
+      "originalVerifierZeroSelectionExit": 1,
+      "actualExactSignaturePassExit": 0,
+      "aggregateCommandExit": 0,
+      "teeExit": 0
+    }
+  },
+  "cleanup": {
+    "status": "complete",
+    "time": "2026-11-10T16:01:35Z",
+    "evidence": [
+      "stop-nodes.log",
+      "anvil-18546-exit.txt",
+      "anvil-18547-exit.txt",
+      "cleanup.log",
+      "cleanup-exit.txt",
+      "final-preservation.json"
+    ],
+    "ownedNodePids": [
+      5698,
+      5705
+    ],
+    "ownedRecorderPids": [
+      5367,
+      5696,
+      5702,
+      5710,
+      5884,
+      6206,
+      6468,
+      7226,
+      7936
+    ],
+    "allCheckedPidsAbsent": true,
+    "nodeExitCodes": [
+      0,
+      0
+    ],
+    "ports": [
+      18546,
+      18547
+    ],
+    "listenerProbeExits": [
+      1,
+      1
+    ],
+    "endpointProbeExits": [
+      7,
+      7
+    ],
+    "temporaryRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-correction-verification.st01a1c62a",
+    "temporaryRootAbsent": true,
+    "cleanupCommandExit": 0,
+    "cleanupTeeExit": 0,
+    "allOwnedMonitorsCompleted": true,
+    "allMempoolsEmptyBeforeStop": true,
+    "sharedLinksPreserved": true,
+    "warmCachesRetained": true,
+    "intentionallyRetained": [
+      "correction-verification evidence and separate broadcast",
+      "normal generated Foundry cache outputs"
+    ]
+  },
+  "rootReportedRedispatchCleanup": {
+    "evidenceSource": "Root follow-up message; not independently re-executed by this verifier.",
+    "actor": "root",
+    "directories": [
+      "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-baseline.qs0jth",
+      "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-dependencies.rws0ar"
+    ],
+    "reportedOperation": "rmdir on only the two empty directories, followed by test ! -e for both",
+    "reportedReceipt": {
+      "session": "root-session bash_10; distinct from verifier cleanup session",
+      "exit": 0,
+      "sentinel": "REDISPATCH_EMPTY_ROOTS_REMOVED_AND_ABSENT"
+    },
+    "reportedSourceOrEvidenceFileChanges": 0,
+    "cleanupPerformedByThisVerifier": false,
+    "generatedOutAndCacheSideEffects": "unreconstructed",
+    "zeroRedispatchSideEffectsClaimed": false
+  },
+  "sourceProductScriptTestPlanPolicyEditsByVerifier": 0,
+  "delegation": 0,
+  "gitOperations": 0,
+  "publicChainActions": 0,
+  "fullTask2ActualConfigurationE3": "not-closed",
+  "lifecycleIntegration": "not-closed",
+  "boundedPriorPricingConfirmation": "retained on unchanged source inputs; not re-expanded",
+  "residualExposure": [
+    "Exact CLI host-process guard, not authentication against a malicious executable/helper or a forwarding service at the permitted loopback endpoint.",
+    "Only authorized local 18546 and mismatched local 18547 were executed; no nonlocal endpoint certification.",
+    "Target-chain gas feasibility and actual recovery composition remain outside scope.",
+    "Earlier redispatch effects outside preserved manifests/generated-cache history are not reconstructed."
+  ],
+  "toolLimits": [
+    "Bash language server and Biome unavailable; no installation attempted."
+  ]
+}

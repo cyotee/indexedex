@@ -1,0 +1,113 @@
+{
+  "parent": "0x406cd20cb6f03f51cd303a3d14d6b1fbbcccab88",
+  "staking": {
+    "totalGons": "1416176165680858659435357140800263187536702280",
+    "gonsPerUnit": "525096587753919033863740427634928695",
+    "accountedBacking": "2696982231",
+    "allocationDust": "2",
+    "stakingDust": "1",
+    "feeWeight": "315627661841934084968218929995607223678210590",
+    "creatorWeight": "736464544297846198259177503323083521915824710"
+  },
+  "holders": [
+    {
+      "address": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "gons": "564829615784656326213146191271604301985621715",
+      "deferred": [
+        "159280105445259717377780344334206455",
+        "0",
+        "336228620813681080"
+      ]
+    },
+    {
+      "address": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+      "gons": "2903654956518584793184154084675957490891030",
+      "deferred": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "address": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+      "gons": "529244037980202929420135833971811805",
+      "deferred": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "address": "0xfa53c3188bcbdae211fe037acd211c4031b8fe9d",
+      "gons": "146820420634958475377495143914331564165961600",
+      "deferred": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "address": "0x3af09b5667ccd422f4cc883f4d991bc5bfb4af96",
+      "gons": "0",
+      "deferred": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "address": "0xd5a995b3199be66ec1b6825014cbae48691c3425",
+      "gons": "315474152609350580607189199063747503642516120",
+      "deferred": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "address": "0x186a8c0806facedc673789980f7483dccc633430",
+      "gons": "0",
+      "deferred": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "address": "0xc02c5970bc54eb54442c421c7de43eec12481c5d",
+      "gons": "386148321166130654464139523045768026279900010",
+      "deferred": [
+        "0",
+        "369963932534943211706126868823924270",
+        "0"
+      ]
+    },
+    {
+      "address": "0x406cd20cb6f03f51cd303a3d14d6b1fbbcccab88",
+      "gons": "0",
+      "deferred": [
+        "0",
+        "0",
+        "0"
+      ]
+    }
+  ],
+  "sumPhysical": "1416176165680858659435357140800263187536702280",
+  "sumDeferred": "529244037980202929420135833971811805",
+  "escrowGons": "529244037980202929420135833971811805",
+  "E": "0",
+  "rtSupply": "0",
+  "bonded": "146820420634958475377495143914331564165961600",
+  "syAttributed": "315474152609350580607189199063747503642516120",
+  "heldBacking": "2696982231",
+  "U": 0,
+  "identities": {
+    "physicalEqualsTotal": true,
+    "escrowEqualsDeferredPlusE": true,
+    "tokenizedEqualsRTSupply": true,
+    "bondAttributedEqualsPhysical": true,
+    "syAttributedEqualsPhysical": true,
+    "heldBackingEqualsAccounted": true,
+    "backingEqualsLiabilityAndDust": true
+  }
+}

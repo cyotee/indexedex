@@ -1,0 +1,719 @@
+{
+  "argv": [
+    "bun",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--target",
+    "ES2022",
+    "--module",
+    "ESNext",
+    "--moduleResolution",
+    "Bundler",
+    "--strict",
+    "--noUncheckedIndexedAccess",
+    "--exactOptionalPropertyTypes",
+    "--verbatimModuleSyntax",
+    "--skipLibCheck",
+    "--types",
+    "node",
+    "scripts/recovery/dtf-migration/bundle-files.ts",
+    "scripts/recovery/dtf-migration/bundle-materialize.ts",
+    "scripts/recovery/dtf-migration/bundle.test.ts",
+    "scripts/recovery/dtf-migration/bundle.ts",
+    "scripts/recovery/dtf-migration/candidate-input.ts",
+    "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+    "scripts/recovery/dtf-migration/candidate-inventory.ts",
+    "scripts/recovery/dtf-migration/candidate-nfts.ts",
+    "scripts/recovery/dtf-migration/candidate-proofs.ts",
+    "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+    "scripts/recovery/dtf-migration/candidates.test.ts",
+    "scripts/recovery/dtf-migration/candidates.ts",
+    "scripts/recovery/dtf-migration/claim-vault.test.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+    "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+    "scripts/recovery/dtf-migration/claimed-sy.ts",
+    "scripts/recovery/dtf-migration/cli.ts",
+    "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+    "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+    "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+    "scripts/recovery/dtf-migration/execution-deployment.ts",
+    "scripts/recovery/dtf-migration/execution-domain.test.ts",
+    "scripts/recovery/dtf-migration/execution-domain.ts",
+    "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+    "scripts/recovery/dtf-migration/execution-plan.ts",
+    "scripts/recovery/dtf-migration/execution-rpc.ts",
+    "scripts/recovery/dtf-migration/execution-schema.ts",
+    "scripts/recovery/dtf-migration/execution-state.test.ts",
+    "scripts/recovery/dtf-migration/execution-state.ts",
+    "scripts/recovery/dtf-migration/execution.test.ts",
+    "scripts/recovery/dtf-migration/execution.ts",
+    "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+    "scripts/recovery/dtf-migration/journal.ts",
+    "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+    "scripts/recovery/dtf-migration/payloads.ts",
+    "scripts/recovery/dtf-migration/preparation.fixture.ts",
+    "scripts/recovery/dtf-migration/preparation.test.ts",
+    "scripts/recovery/dtf-migration/preparation.ts",
+    "scripts/recovery/dtf-migration/provenance.ts",
+    "scripts/recovery/dtf-migration/quotes.ts",
+    "scripts/recovery/dtf-migration/receipt-association.ts",
+    "scripts/recovery/dtf-migration/receipt-evidence.ts",
+    "scripts/recovery/dtf-migration/receipt-input.ts",
+    "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+    "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+    "scripts/recovery/dtf-migration/receipt-rpc.ts",
+    "scripts/recovery/dtf-migration/receipt.fixture.ts",
+    "scripts/recovery/dtf-migration/receipt.test.ts",
+    "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+    "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+    "scripts/recovery/dtf-migration/rehearsal-data.ts",
+    "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+    "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+    "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+    "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+    "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+    "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+    "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+    "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+    "scripts/recovery/dtf-migration/rehearsal-process.ts",
+    "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+    "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+    "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+    "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+    "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+    "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+    "scripts/recovery/dtf-migration/rehearse.ts",
+    "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+    "scripts/recovery/dtf-migration/schema.ts",
+    "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+    "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+    "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/record-qa.ts"
+  ],
+  "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/bundle-files.ts scripts/recovery/dtf-migration/bundle-materialize.ts scripts/recovery/dtf-migration/bundle.test.ts scripts/recovery/dtf-migration/bundle.ts scripts/recovery/dtf-migration/candidate-input.ts scripts/recovery/dtf-migration/candidate-inventory.test.ts scripts/recovery/dtf-migration/candidate-inventory.ts scripts/recovery/dtf-migration/candidate-nfts.ts scripts/recovery/dtf-migration/candidate-proofs.ts scripts/recovery/dtf-migration/candidate-reconciliation.ts scripts/recovery/dtf-migration/candidates.test.ts scripts/recovery/dtf-migration/candidates.ts scripts/recovery/dtf-migration/claim-vault.test.ts scripts/recovery/dtf-migration/claimed-sy-member.ts scripts/recovery/dtf-migration/claimed-sy-source.ts scripts/recovery/dtf-migration/claimed-sy-state.test.ts scripts/recovery/dtf-migration/claimed-sy-state.ts scripts/recovery/dtf-migration/claimed-sy-witness.test.ts scripts/recovery/dtf-migration/claimed-sy-witness.ts scripts/recovery/dtf-migration/claimed-sy.ts scripts/recovery/dtf-migration/cli.ts scripts/recovery/dtf-migration/dtf-custody-se.test.ts scripts/recovery/dtf-migration/earlier-liquid.test.ts scripts/recovery/dtf-migration/earlier-receipt.test.ts scripts/recovery/dtf-migration/execution-deployment.ts scripts/recovery/dtf-migration/execution-domain.test.ts scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/execution-owner-bond.ts scripts/recovery/dtf-migration/execution-plan.ts scripts/recovery/dtf-migration/execution-rpc.ts scripts/recovery/dtf-migration/execution-schema.ts scripts/recovery/dtf-migration/execution-state.test.ts scripts/recovery/dtf-migration/execution-state.ts scripts/recovery/dtf-migration/execution.test.ts scripts/recovery/dtf-migration/execution.ts scripts/recovery/dtf-migration/held-se-lp.test.ts scripts/recovery/dtf-migration/journal.ts scripts/recovery/dtf-migration/nft-contributions.test.ts scripts/recovery/dtf-migration/payloads.ts scripts/recovery/dtf-migration/preparation.fixture.ts scripts/recovery/dtf-migration/preparation.test.ts scripts/recovery/dtf-migration/preparation.ts scripts/recovery/dtf-migration/provenance.ts scripts/recovery/dtf-migration/quotes.ts scripts/recovery/dtf-migration/receipt-association.ts scripts/recovery/dtf-migration/receipt-evidence.ts scripts/recovery/dtf-migration/receipt-input.ts scripts/recovery/dtf-migration/receipt-reconciliation.test.ts scripts/recovery/dtf-migration/receipt-reconciliation.ts scripts/recovery/dtf-migration/receipt-rpc.ts scripts/recovery/dtf-migration/receipt.fixture.ts scripts/recovery/dtf-migration/receipt.test.ts scripts/recovery/dtf-migration/rehearsal-admission.ts scripts/recovery/dtf-migration/rehearsal-chain.ts scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts scripts/recovery/dtf-migration/rehearsal-claim-vault.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts scripts/recovery/dtf-migration/rehearsal-data.ts scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts scripts/recovery/dtf-migration/rehearsal-owner-bond.ts scripts/recovery/dtf-migration/rehearsal-portable.ts scripts/recovery/dtf-migration/rehearsal-process.ts scripts/recovery/dtf-migration/rehearsal-proof.ts scripts/recovery/dtf-migration/rehearsal-recovery.ts scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts scripts/recovery/dtf-migration/rehearse.ts scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts scripts/recovery/dtf-migration/schema.ts scripts/recovery/dtf-migration/weighted-liquid.test.ts scripts/recovery/dtf-migration/weighted-receipt.test.ts scripts/recovery/dtf-migration/weighted-sy.test.ts docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/record-qa.ts",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "runtime": {
+    "bun": "1.4.2",
+    "nodeCompatibility": "v26.3.0"
+  },
+  "sourceFingerprint": "cb516981715892776b9ab9da9ff72ef5c5fd6b2b52e477e0b7ab9ca7d8f82dea",
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "sha256": "0727d187dcdeed9ab09331551ede6ffcfeca715215b7661e5ed7167210e49c42"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "sha256": "99380ffff76132e19dcfdf2d2051280523331ee85d54678b7e45e98647575cb4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "sha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "514fb54a14f0fde6d43622694d167f0c36528ae647de85823d8b6ba96881a920"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+      "sha256": "c4945faa5e9a3bae8eedd5d3a45ea617a3091d0005a630b447c628c13de81ee8"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "sha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "sha256": "cae8158660b7ca37e353407aaa466e722dac88ff086aec1367818bb5b094a44d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+      "sha256": "f565e291d92abdd25e93e3c050b54caa75ab440050f37b6156514b9f00c707a7"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+      "sha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+      "sha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "sha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "sha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "sha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "sha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "sha256": "294492b0045f05ef4106d203ba78e55aa534099218f006cb80de44576421d373"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+      "sha256": "9a1b6d52be1dd6b478e4b4b97bf2428db11f759ab9a758f0f04c2f6138224862"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookTarget.sol",
+      "sha256": "e5d34dd8726b31faba071a8b6c264e85a903ef4f6ca8c729f4a26332a78b0e29"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+      "sha256": "8c3b5ee20863a8fdf05f23808c6258d78f59e0bea5402f36a7e7632672053a05"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+      "sha256": "bca895a9e049f8c952bdd8d05b2f3564a957b5d05edba05f268e6da345d829ba"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "sha256": "a2695d87fda6ba7424c30674b15f6a200c251e4584544a0a07a18668a5e1b4d9"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+      "sha256": "1feaa1299df7459978cacc8eea70a63e20f9f0cbe66dc807efe29e098bae7e53"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+      "sha256": "d221484a5f76a87d49f8a1fa3dbda38547624eada91376b0f3ac68ffefeb24a2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+      "sha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+      "sha256": "8124ba8db325eb86d95230d8ee7a1f4a949102f1dd697c70776b358a9260c826"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+      "sha256": "fe7c7af7b5763002c2cf98a9e916db53642d09f37c10ec18ef680f22208ddcfa"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+      "sha256": "0ff0492b25bbc7dbfb0f8dbbf50104427a7ca84a9594225470626da560fe63dd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+      "sha256": "3f60c4c5ab04d54dd94ccd71d5bb3e35d144a49394b12a6af3e3e22ccbdc8883"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+      "sha256": "ddf387adb7bac8ab812f758d82f457229b34d6b6ce40d338701921ab58610ea0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+      "sha256": "158179fae2a02aa32488e9b11a5bfb8a904c482a5664325dd8c9120b467c863c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+      "sha256": "8509fe92cecb2647910d0c85e7abc661b9c7b322c0bdfc7ac6c8f97fcaa8d408"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+      "sha256": "4ac726b53d462a4462ff35c761b7d4edb9d11c217a4e7c1bad32abaf169b638e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "5ef058fa8b316182dbf139d263db4330d4b5648f21cd45a3d5c2581ae5967eb4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "sha256": "d26a5e76c703774a2a6a7a455f73a1689c0d299851d249c1c2c9c2b8c8385b90"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "sha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol",
+      "sha256": "d71c777d4a685b17c6e5231970c7b458cedd1501cbfff65dd404f04c887cdb54"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyClaimHandler.sol",
+      "sha256": "fe5e61c3dbe69a22d51536325b4257c8052cfcf119462b90a92137711368d0a5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "sha256": "4aac3dad7bf6b051994deac97cec3331a4c059259d9fa6db961d6498b201aeca"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "sha256": "529d3f830cddafc5ee7329a82ef4cf595713acb10897f094ee1c8fac3fb3ae8a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "sha256": "3bc0d8c7062b056375cb6858f3b37a4ccd26a4845bc296e74cd78d3d02eae4cb"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "sha256": "001fe52dc4cb135e6ed7d90445ab2dcaf3885c7ef7a95096e1431a587dadbbe9"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "sha256": "774475bdcb0f48b4da8aad3d95e3731b8a6c4edd8e4a265e5a512932e4daff80"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "sha256": "fe4b2eba13557e311ec824f723a442a78bdbb46eb0bb4f18f90a484959240703"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "sha256": "585a26a81505ab6e43f6d860ee3d023b6f97e4aed0525f4e370d4d45e73731dc"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "sha256": "d908281791e911bcdaf72cc742a58dc825e3949bb489c4143f7e8406d21ff2c4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "sha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "sha256": "265a30306d97d134a15dd9f4c4b0bc824aed06f1c5432179a90f92a5a0b496cd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol",
+      "sha256": "282903679430d3be4a6f2e0370a6be0dbaedf34c5e50dfa7c7243f69c26be395"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "sha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "sha256": "98e01a423cf543c09386fb205c796944c124251f462fbe1de5ca0d333936f045"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "sha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+      "sha256": "3e64df05c6439d4ee91e5d48d5c30383c3e2e6f95be77e3a9bd1c075a6facea9"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "sha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "sha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+      "sha256": "a06aefe620cc0d1c2ac0f772f0ebeeef54f382c245e8ec6c9d703f09252a8a58"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+      "sha256": "64ae16d6eca22757acdc52d554f12b704e7e4dc1bf0ca54ed37d47613e8e160c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+      "sha256": "6d53b7d2c5707917620e4fe161f120fb9f6777270f4b7d0490f46331c1a33c27"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+      "sha256": "2227f918cc9f86c9ab39d83921bb437aaf172ed033269bb80e1e0d72f4be5e7d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+      "sha256": "905838499d6f5c782ba228c878454e8a9d4ec42c4c1375c9fd311f53a4bb1edb"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+      "sha256": "442b97b7086d95cfca2e9908516ffd85e003d306c368cd1901c70ab6b7da728a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+      "sha256": "8d93bf9c1e283d1b85dd0b5d990532739f584aa57052baab2a6044ac28ac666d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+      "sha256": "badb65c0bf026d99fbdaca7a623bfb5b3b65aa21613049f3c4f8d679617e7d3d"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "sha256": "b1fdc282c3d476a34048b992004cdcf05913ee8ac1b6960e5c7da78763805c83"
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "sha256": "e0d17ccb9bcd0c943a6c0ad5ae597da3f16225d7ca4bced1b1de37eccc1bfe3e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "sha256": "4ccb78785ea6838aabc5944d7b544b524cfe99f1f83b263796dbe6c2f7c2cf37"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "sha256": "6a3e899762ad66dbfe19aa7108dc2745a11cc17c5d3b020849060c79e0813d5a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "sha256": "81166388c25d1283d73556c6e95c6599ee448cdc3e9f96d97bd14f7e9090d7c0"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "8698f081eccd5fc7d359479e74ef04cdfc5764efddef48451dd17a9d12bd540c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+      "sha256": "8e0e4366c0fa89b6d34438653eb551ac14795b3d2364cebbab2d3336b4da2207"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+      "sha256": "b190815f8e4f4f08016e0afaa20badce2f36ec0fdc958f36f57f2c1893e643af"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "sha256": "3b262fb7ab7b7b29457b60ebda0bcf8c9c8b33802e8621186b0262cb8f6f0595"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+      "sha256": "20fe7aaedb39de4ec7ae7f41f0be01c1cf523d90320d708284abfb38a890c44e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "sha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "sha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "125ead9248793eead4aa4395bd8eaa02b34ab9eef7c783dc090ce4956449c922"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "0804827556835e51d00fa553d3f99cd027263ed7042d501cdff088d46f02d011"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "sha256": "36e4fccd336ad8dffdac38c633d845587e5fd7b1f5d7d530d70b7a8a00d18bd2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "sha256": "7c652f7d60f1f4109bfb8988fa19f959192a302aeac4682d5d9f732e3833ec4a"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "sha256": "daab8beeb5428aefd8e97f134638f02dab2d0d3044c2363ef3179c97eb2d8f97"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-deployment.ts",
+      "sha256": "954459c19f063c0a79d2628abdb4e16fcac868cd9b8073a141d0ebfd43dfd57b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "809a7b83f8a1991ba6a60c45e45ec54166788a930f2dda1edc8e3504e511736b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "sha256": "dfe3ec68ac7a865b1ab21b4fb0f2810ff8c7720437d44b066ff09047a3bfed61"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "01443b64a889f745157ff7800b0b54d99d975a4edf49a1f838e312dc7f4930f5"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "sha256": "e008c79da92a705dcc158d36b795044fc13373696aed1fcd46c293aaf30fa754"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "sha256": "c54fb704b8dedbca6062456fcf34427392fc68a251bb57db46b7f33eea060912"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "sha256": "33ac83c00d4d9e071f0457b5ed1324397480228a3546b2723c6d21b25ee1998c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "d84784b41a70331fb11248a4bc9dcdc067cdcb8ab1d7e3adb9c2a9aa55020cd1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "cffee37d8425db7b3d1ba1e22b279a7f1e0fe11fd4b0865b5a054de655970a0e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "735ac6fd772b4ddbb1c57ad476145082d5654066c3ac68015e10672820edbd15"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "sha256": "5016194f2904a251077dbd265e21c7a253d4f2aa59ee7c2364e363e0b3af09f2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "8457eef560dde6013e4d226e2ced42386fc6afd497592ad1d24864307c6d5b1d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "sha256": "caabc9a7604339920c25487c4af6dd7577cb12df4d4edb9abc6cdbf863f2bda4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "f48b9f03a3ccfd3b6dee7815b29ae4076e9cd0ffa5c6271a1001c460134535e3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "3653252e020f372f09ba6262220a95b9908c3740cee1773d1315af37f3118a2d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "a95d112842150b1749a86ce65495749b08f2057e93f7500b2f661ed4473f7c95"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "6d33b68b347a100dcd643afef879e1fe610279c5e3808fd07a20dc20c70058f2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "5483b6f5606d1dc618c97ce647c3b2997964c62c829d3174b079843b0fda664c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "sha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "sha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "sha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "sha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "sha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "sha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+      "sha256": "f6b85235915eb23d2f22a736f6af5616e58d68f1ea4b64c68c80d183495c6958"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+      "sha256": "8f9717e4478bc9a1333991c34782060d2bb4dee1d9d1c65931faecf798be3668"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+      "sha256": "6d0c7195f8603df8c2b4d8111c479fc87aa99a5a05cff51c4827c0c57060e09b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "sha256": "134a65e6ec14bb01eb9dd620f83e7a2f38df8a98689879eb9b7e08d6e266abe9"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+      "sha256": "1c277d81758444791a2fcf2d0b9e871b86a4113bd5290f28d313eabc0af2f8e3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+      "sha256": "583558715dae13f2c405655ab18b5dd0a44b54fbd294de73472e3b8080b7c4d8"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "sha256": "14607d15bf59bf8a660a9339d28f710e309c3d6c53969fe3b6733bfb08971615"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "e643bdc6b5914106810275581815a79558c0571f0f7e1e7776fb29c867cbaa83"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "sha256": "ad822ba0cd573e615ec09433e30047ac0f426ac0d5fe4e40fd80cdc2c290fcfe"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "sha256": "c625d384632c459a4d40a1fe434096635b86b172ad867ceb5b3d35cbd228d9b5"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "sha256": "50960d918b03d2c0a517ef498dba4ea601aefdc439fe39e425c2c6e156b04b30"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "sha256": "4adf63cf79fcf192aa31ec8b5e194e71b3729992d6484bf5661c9f2120da0048"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "sha256": "e77b66b1d2f2fbbd5bd47fbf7186941acaf1f2ad71a9ccfe27fc13fd51ebd80b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "sha256": "fb0c0792ad24458d32745a16758c89527c0bbea0ac4a80174a2cc27c097d14ff"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "sha256": "33865e649a1ef7774230f8729438cfc684920f5195efb56a23255255a5dd597d"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "sha256": "a0f9a4b18e12baaf714a9ce9f1e66e7ee80dec0b810bf5f473b2a69a7d80c26f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "e75f026c7f3c44b67c23e1468a6f596a6c0d5e23eace61c00208b0f8875cdc37"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "sha256": "4c54dd134cdaf5fd6d46ebf8bdbf02c741509d447c8e664ba2cacb888feb6154"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "sha256": "83a04df23bd0ea7b9e99cfabe8e0a5dfa49873a2e94ec21f400c6640bfd40e16"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "sha256": "9d3d647dfb1e30060da8748e10ac1e7d1d902eeea52cfbc237a8848123644e37"
+    }
+  ],
+  "startedAt": "2026-11-15T04:42:30.365Z",
+  "log": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/types-acceptance.log",
+  "completedAt": "2026-11-15T04:42:31.882Z",
+  "exitCode": 0,
+  "sourceUnchanged": true,
+  "logSha256": "dbb57e248beaebc9c8be37fef2058d5a76f0f6d911ed3ceaca787bb47d5f79f6",
+  "passed": 0,
+  "failed": 0
+}

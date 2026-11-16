@@ -1,0 +1,18 @@
+{
+  "capturedInputRecords": 24,
+  "independentProducerRuntimeDrift": 0,
+  "independentFreshDrift": 0,
+  "producerAuditKeys": [
+    "schema",
+    "runtime",
+    "checks",
+    "coverage",
+    "runtimeBindings",
+    "signedReceipts",
+    "er",
+    "ed",
+    "lifecycle",
+    "parentEvidencePreserved",
+    "cleanup"
+  ]
+}

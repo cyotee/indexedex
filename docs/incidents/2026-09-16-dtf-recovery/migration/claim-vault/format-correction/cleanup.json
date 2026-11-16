@@ -1,0 +1,15 @@
+{
+  "runtime": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/.omo-runtime/dtf-migration-claim-vault/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 67199,
+    "runtime": "removed"
+  },
+  "externalProbe": "FORMAT_CLEANUP_AND_DIFF_OK",
+  "port18566": "no listener; lsof exit1",
+  "pid67199": "absent; ps exit1",
+  "checkpoint": "absent",
+  "emptyParent": "removed",
+  "pendingRuntime": false
+}

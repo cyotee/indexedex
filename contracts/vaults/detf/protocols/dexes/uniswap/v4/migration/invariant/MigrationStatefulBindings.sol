@@ -11,7 +11,7 @@ library MigrationStatefulBindings {
     function capture(Migration m_, address package_, address registry_) internal view {
         console2.log("STATEFUL_SUBJECT");
         console2.logBytes(abi.encode(address(m_), m_.hook(), m_.bondNftVault(), m_.rebasingClaimToken(),
-            m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), package_, registry_, m_.migrationSnapshot().id));
+            m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), package_, registry_, m_.migrationWeightedPricing().id));
         address[8] memory roots_ = [address(m_), m_.hook(), m_.bondNftVault(), m_.rebasingClaimToken(),
             m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), registry_];
         for (uint256 i_; i_ < roots_.length; ++i_) {

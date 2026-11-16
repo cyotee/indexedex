@@ -1,0 +1,68 @@
+{
+  "evidenceContent": 5842,
+  "evidencePerms": 5849,
+  "evidenceDirs": 7,
+  "inputContent": 30,
+  "inputPerms": 35,
+  "inputDirs": 5,
+  "indexes": 32,
+  "foreignIndexes": 31,
+  "refs": 60,
+  "frozen": 70,
+  "seals": 20,
+  "stagedBeforeEmpty": true,
+  "whitespaceUnstaged": 0,
+  "whitespaceStaged": 0,
+  "showRefStatus": 0,
+  "showRefBytes": 6774,
+  "statusLines": 5850,
+  "diffNameStatus": "M\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\nM\tscripts/recovery/dtf-migration/cli.ts\nM\tscripts/recovery/dtf-migration/receipt-evidence.ts\nM\tscripts/recovery/dtf-migration/receipt-input.ts\nM\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\nM\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\nM\tscripts/recovery/dtf-migration/receipt.fixture.ts\nM\tscripts/recovery/dtf-migration/receipt.test.ts",
+  "inventories": {
+    "evidence.jsonl": {
+      "file": "evidence.jsonl",
+      "bytes": 1710196,
+      "sha256": "69535830f7d81b086ed57d6e222df9738010f66e596941edc501eca886b7b20f",
+      "rows": 5842
+    },
+    "evidence-perms.jsonl": {
+      "file": "evidence-perms.jsonl",
+      "bytes": 1600457,
+      "sha256": "7bc075805c7f55be5f186a1c66e81cd5eb9e95074e237032ce5fe935ee9ed1fc",
+      "rows": 5849
+    },
+    "evidence-dirs.jsonl": {
+      "file": "evidence-dirs.jsonl",
+      "bytes": 2046,
+      "sha256": "b9f01ec959d98138ca979e9f900e947cb09ac162d50c4e03e15bb037ac3989db",
+      "rows": 7
+    },
+    "input.jsonl": {
+      "file": "input.jsonl",
+      "bytes": 7898,
+      "sha256": "a28a29eb85372bf3c41c3f4d461475b7b0aaba7d9bfbdb8ead12b2f222c44800",
+      "rows": 30
+    },
+    "input-perms.jsonl": {
+      "file": "input-perms.jsonl",
+      "bytes": 8076,
+      "sha256": "1caf7f698a7113d62eed6c92b73d4f70115c89439137a5a9e311b13291145e73",
+      "rows": 35
+    },
+    "input-dirs.jsonl": {
+      "file": "input-dirs.jsonl",
+      "bytes": 1296,
+      "sha256": "6ae2df4d65fe91a66d30c747628271679dbab1ecf8a1d7f35fac89f5d49f91f9",
+      "rows": 5
+    }
+  },
+  "usedArtifact": {
+    "bytes": 394495,
+    "sha256": "b623239c02a6c647a9160b6e6f1c0b1108f082e41f4c4d40a6b2866e8e0dc15b",
+    "st_mode": 33188
+  },
+  "craneGitlink": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0\tlib/crane",
+  "nodeModulesTarget": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/node_modules",
+  "nodeModulesTargetKind": "symlink",
+  "outAbsent": true,
+  "savedDiffMatchesManifest": true
+}

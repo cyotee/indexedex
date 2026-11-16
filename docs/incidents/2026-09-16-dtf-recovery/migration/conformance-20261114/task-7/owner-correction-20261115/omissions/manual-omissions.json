@@ -1,0 +1,452 @@
+{
+  "label": "schema validation, not contract QA",
+  "pass": true,
+  "validRows": [
+    {
+      "category": "claimVault",
+      "success": true,
+      "pricingKind": "load",
+      "issues": []
+    },
+    {
+      "category": "dtfCustodySe",
+      "success": true,
+      "pricingKind": "load",
+      "issues": []
+    },
+    {
+      "category": "weightedLiquid",
+      "success": true,
+      "pricingKind": "load",
+      "issues": []
+    },
+    {
+      "category": "weightedSy",
+      "success": true,
+      "pricingKind": "load",
+      "issues": []
+    }
+  ],
+  "omissions": [
+    {
+      "category": "claimVault",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "issues": [
+        {
+          "path": "claimVault.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "claimVault",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "issues": [
+        {
+          "path": "claimVault.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "claimVault",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "issues": [
+        {
+          "path": "claimVault.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "claimVault",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "issues": [
+        {
+          "path": "claimVault.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "claimVault",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "issues": [
+        {
+          "path": "claimVault.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "claimVault",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "issues": [
+        {
+          "path": "claimVault.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "claimVault",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "issues": [
+        {
+          "path": "claimVault.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "issues": [
+        {
+          "path": "dtfCustodySe.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "issues": [
+        {
+          "path": "dtfCustodySe.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "issues": [
+        {
+          "path": "dtfCustodySe.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "issues": [
+        {
+          "path": "dtfCustodySe.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "issues": [
+        {
+          "path": "dtfCustodySe.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "issues": [
+        {
+          "path": "dtfCustodySe.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "dtfCustodySe",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "issues": [
+        {
+          "path": "dtfCustodySe.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "issues": [
+        {
+          "path": "weightedLiquid.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "issues": [
+        {
+          "path": "weightedLiquid.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "issues": [
+        {
+          "path": "weightedLiquid.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "issues": [
+        {
+          "path": "weightedLiquid.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "issues": [
+        {
+          "path": "weightedLiquid.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "issues": [
+        {
+          "path": "weightedLiquid.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedLiquid",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "issues": [
+        {
+          "path": "weightedLiquid.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalId",
+      "intendedRegression": "schema stops requiring the original identity key",
+      "issues": [
+        {
+          "path": "weightedSy.0.original.originalId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalWallet",
+      "intendedRegression": "schema stops requiring the original wallet",
+      "issues": [
+        {
+          "path": "weightedSy.0.original.originalWallet",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalUnits",
+      "intendedRegression": "schema stops requiring the positive original quantity",
+      "issues": [
+        {
+          "path": "weightedSy.0.original.originalUnits",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalEth",
+      "intendedRegression": "schema stops requiring the ETH component",
+      "issues": [
+        {
+          "path": "weightedSy.0.original.originalEth",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedSy",
+      "field": "originalDtf",
+      "intendedRegression": "schema stops requiring the DTF component",
+      "issues": [
+        {
+          "path": "weightedSy.0.original.originalDtf",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedSy",
+      "field": "source",
+      "intendedRegression": "schema stops requiring the fixed source address",
+      "issues": [
+        {
+          "path": "weightedSy.0.original.source",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    },
+    {
+      "category": "weightedSy",
+      "field": "evidenceId",
+      "intendedRegression": "schema stops requiring the evidence binding",
+      "issues": [
+        {
+          "path": "weightedSy.0.original.evidenceId",
+          "code": "invalid_type",
+          "message": "Required"
+        }
+      ],
+      "reportsIntendedField": true,
+      "reportsPricing": false,
+      "restoredSuccess": true
+    }
+  ]
+}

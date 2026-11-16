@@ -1,0 +1,184 @@
+{
+  "status": "custody-verified-original-funding-unresolved",
+  "token": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+  "holder": "0xbab6a03be445094a10695772a79777407dcdc0e7",
+  "mint": {
+    "transactionHash": "0x01c689522da55be117f6e4b991d7ddefe8e2c2866a4739dc72568a8244e94e53",
+    "block": "78511776",
+    "utc": "2026-10-02T20:19:27.000Z",
+    "selector": "0xd02d3063",
+    "tokenIn": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+    "declaredAmountInRaw": "1",
+    "tokenOut": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+    "recipient": "0xbab6a03be445094a10695772a79777407dcdc0e7",
+    "pretransferred": true,
+    "nativeValueRaw": "0",
+    "callerDtfDebitEvents": 0
+  },
+  "retainedEvidence": "es-known-recipients-113279837/capture-110.json and capture-112.json",
+  "checks": {
+    "paymentWindow": {
+      "fromBlock": 78511767,
+      "toBlock": 78511776,
+      "matchingCallerToSeDtfTransfers": 0,
+      "capture": "capture-113.json"
+    },
+    "previousNonce": "68",
+    "previousOwnTransaction": {
+      "block": "71682886",
+      "hash": "0x8ddd5eed17e35606c3f9437d0ddda0a77960794c1099cb7ab9ba26db7ecf0cad",
+      "to": "0x79f6934718fe9d52f062708f2967bef1ff2a242b",
+      "selector": "0xdc52df1c"
+    },
+    "nonceSearch": {
+      "lo": 71682885,
+      "hi": 71682886,
+      "steps": [
+        {
+          "block": 39255887,
+          "nonce": "0",
+          "capture": 114
+        },
+        {
+          "block": 58883831,
+          "nonce": "0",
+          "capture": 115
+        },
+        {
+          "block": 68697803,
+          "nonce": "21",
+          "capture": 116
+        },
+        {
+          "block": 73604789,
+          "nonce": "69",
+          "capture": 117
+        },
+        {
+          "block": 71151296,
+          "nonce": "32",
+          "capture": 118
+        },
+        {
+          "block": 72378042,
+          "nonce": "69",
+          "capture": 119
+        },
+        {
+          "block": 71764669,
+          "nonce": "69",
+          "capture": 120
+        },
+        {
+          "block": 71457982,
+          "nonce": "32",
+          "capture": 121
+        },
+        {
+          "block": 71611325,
+          "nonce": "51",
+          "capture": 122
+        },
+        {
+          "block": 71687997,
+          "nonce": "69",
+          "capture": 123
+        },
+        {
+          "block": 71649661,
+          "nonce": "51",
+          "capture": 124
+        },
+        {
+          "block": 71668829,
+          "nonce": "51",
+          "capture": 125
+        },
+        {
+          "block": 71678413,
+          "nonce": "65",
+          "capture": 126
+        },
+        {
+          "block": 71683205,
+          "nonce": "69",
+          "capture": 127
+        },
+        {
+          "block": 71680809,
+          "nonce": "67",
+          "capture": 128
+        },
+        {
+          "block": 71682007,
+          "nonce": "67",
+          "capture": 129
+        },
+        {
+          "block": 71682606,
+          "nonce": "67",
+          "capture": 130
+        },
+        {
+          "block": 71682905,
+          "nonce": "69",
+          "capture": 131
+        },
+        {
+          "block": 71682755,
+          "nonce": "67",
+          "capture": 132
+        },
+        {
+          "block": 71682830,
+          "nonce": "67",
+          "capture": 133
+        },
+        {
+          "block": 71682867,
+          "nonce": "67",
+          "capture": 134
+        },
+        {
+          "block": 71682886,
+          "nonce": "69",
+          "capture": 135
+        },
+        {
+          "block": 71682876,
+          "nonce": "67",
+          "capture": 136
+        },
+        {
+          "block": 71682881,
+          "nonce": "68",
+          "capture": 137
+        },
+        {
+          "block": 71682883,
+          "nonce": "68",
+          "capture": 138
+        },
+        {
+          "block": 71682884,
+          "nonce": "68",
+          "capture": 139
+        },
+        {
+          "block": 71682885,
+          "nonce": "68",
+          "capture": 140
+        }
+      ]
+    }
+  },
+  "conclusions": [
+    "Declared amount is not a receipt-proven caller payment when pretransferred=true.",
+    "The narrow negative payment lookup and unrelated prior transaction are not proof of no earlier or indirect funding.",
+    "The real holder/control/custody results remain valid; no historical qualifying contribution or compensation eligibility follows.",
+    "Existing E-S tests explicitly use synthetic eligible units and financial inputs, not this mint as paid-capital evidence."
+  ],
+  "approvedOriginalEth": null,
+  "approvedOriginalDtf": null,
+  "approvedCredit": null
+}

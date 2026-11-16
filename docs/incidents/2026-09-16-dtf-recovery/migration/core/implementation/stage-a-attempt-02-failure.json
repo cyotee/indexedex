@@ -1,0 +1,172 @@
+{
+  "transaction": {
+    "hash": "0xbd185a556050cf789dd576b9ec46cdeb23ff9e6e9c19d1ed11402f227aa4fb6b",
+    "transactionType": "CALL",
+    "contractName": "MinimalDiamondCallBackProxy",
+    "contractAddress": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+    "function": null,
+    "functionAbi": null,
+    "arguments": null,
+    "transaction": {
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+      "gas": "0x115ff1",
+      "value": "0x0",
+      "input": "0x787642e800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266c6c32ca790e6869def29e7185c8fd55e16fea4568900809440d17494e2482058",
+      "nonce": "0xe4",
+      "chainId": "0x7a69"
+    },
+    "additionalContracts": [],
+    "isFixedGasLimit": false
+  },
+  "receipt": {
+    "type": "0x2",
+    "status": "0x0",
+    "cumulativeGasUsed": "0x17d41",
+    "logs": [],
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "transactionHash": "0xbd185a556050cf789dd576b9ec46cdeb23ff9e6e9c19d1ed11402f227aa4fb6b",
+    "transactionIndex": "0x0",
+    "blockHash": "0xf1a9e6ca3a67a018d9ece8c8b13345cb7f308c5ba479520a7fba7752c0584f79",
+    "blockNumber": "0xe5",
+    "gasUsed": "0x17d41",
+    "effectiveGasPrice": "0x9",
+    "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+    "to": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+    "contractAddress": null,
+    "blockTimestamp": 1794346544
+  },
+  "trace": {
+    "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+    "gas": "0x11092d",
+    "gasUsed": "0x17d41",
+    "to": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+    "input": "0x787642e800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266c6c32ca790e6869def29e7185c8fd55e16fea4568900809440d17494e2482058",
+    "output": "0x335ccde3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266c6c32ca790e6869def29e7185c8fd55e16fea4568900809440d17494e2482058369dca41e29ce4c9788290ff25270e5f34e5d8ea3887d5d414862ae11b6f76e6",
+    "error": "execution reverted",
+    "calls": [
+      {
+        "from": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+        "gas": "0x10b1d8",
+        "gasUsed": "0x112d3",
+        "to": "0x0a69db3b30b7cb13eaff786832e062d157630bb2",
+        "input": "0x787642e800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266c6c32ca790e6869def29e7185c8fd55e16fea4568900809440d17494e2482058",
+        "output": "0x335ccde3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266c6c32ca790e6869def29e7185c8fd55e16fea4568900809440d17494e2482058369dca41e29ce4c9788290ff25270e5f34e5d8ea3887d5d414862ae11b6f76e6",
+        "error": "execution reverted",
+        "calls": [
+          {
+            "from": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+            "gas": "0x10298e",
+            "gasUsed": "0x1cf7",
+            "to": "0xfce5f671249ab47a9548e1b4a8dce607eaf3df9d",
+            "input": "0x07b101f9",
+            "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "calls": [
+              {
+                "from": "0xfce5f671249ab47a9548e1b4a8dce607eaf3df9d",
+                "gas": "0xfd5c9",
+                "gasUsed": "0x967",
+                "to": "0x2961a135928e633bddb5d4ed52603ee46ce023f9",
+                "input": "0x07b101f9",
+                "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "value": "0x0",
+                "type": "DELEGATECALL"
+              }
+            ],
+            "type": "STATICCALL"
+          },
+          {
+            "from": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+            "gas": "0x100272",
+            "gasUsed": "0x1c50",
+            "to": "0x1d6526af1d6e9b4171db309430d20f432409e36b",
+            "input": "0x07b101f9",
+            "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "calls": [
+              {
+                "from": "0x1d6526af1d6e9b4171db309430d20f432409e36b",
+                "gas": "0xfaf49",
+                "gasUsed": "0x8c0",
+                "to": "0xa4c01791f5042a7878391c9b6603eebefbc3b5a7",
+                "input": "0x07b101f9",
+                "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "value": "0x0",
+                "type": "DELEGATECALL"
+              }
+            ],
+            "type": "STATICCALL"
+          },
+          {
+            "from": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+            "gas": "0xfdbfa",
+            "gasUsed": "0x1c69",
+            "to": "0x09efef1a49a2a1687d1b716b6b5641a8000ad25c",
+            "input": "0x07b101f9",
+            "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "calls": [
+              {
+                "from": "0x09efef1a49a2a1687d1b716b6b5641a8000ad25c",
+                "gas": "0xf896b",
+                "gasUsed": "0x8d9",
+                "to": "0x306be37febb704cbb482c36c0c65a7f03e415c7b",
+                "input": "0x07b101f9",
+                "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "value": "0x0",
+                "type": "DELEGATECALL"
+              }
+            ],
+            "type": "STATICCALL"
+          },
+          {
+            "from": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+            "gas": "0xfb56a",
+            "gasUsed": "0x12a5",
+            "to": "0x10df9ce3b34629d34067ddd9f0f57f2f73d32a61",
+            "input": "0x07b101f9",
+            "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "calls": [
+              {
+                "from": "0x10df9ce3b34629d34067ddd9f0f57f2f73d32a61",
+                "gas": "0xf6d12",
+                "gasUsed": "0x8d9",
+                "to": "0x306be37febb704cbb482c36c0c65a7f03e415c7b",
+                "input": "0x07b101f9",
+                "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "value": "0x0",
+                "type": "DELEGATECALL"
+              }
+            ],
+            "type": "STATICCALL"
+          },
+          {
+            "from": "0x786dba6193c868304e945a9edd7fe96aaa5adf8d",
+            "gas": "0xf9876",
+            "gasUsed": "0x1c4c",
+            "to": "0xe1da47fb2b21fcfb0175ec00dbaf580a70b4cd5d",
+            "input": "0x07b101f9",
+            "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "calls": [
+              {
+                "from": "0xe1da47fb2b21fcfb0175ec00dbaf580a70b4cd5d",
+                "gas": "0xf46f5",
+                "gasUsed": "0x8bc",
+                "to": "0x30615a3688433e11461671c76b738ab06396a5bb",
+                "input": "0x07b101f9",
+                "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "value": "0x0",
+                "type": "DELEGATECALL"
+              }
+            ],
+            "type": "STATICCALL"
+          }
+        ],
+        "value": "0x0",
+        "type": "DELEGATECALL"
+      }
+    ],
+    "value": "0x0",
+    "type": "CALL"
+  },
+  "recordedSuccessfulReceipts": 228,
+  "reason": "IndependentConfigurationMismatch: the simulated snapshot and mined snapshot have different block provenance. Fixed by a real contract owner reading the configuration ID on-chain before calling the genuine parent issuer."
+}

@@ -1,0 +1,362 @@
+{
+  "nodeInstance": "0x86c73d741983bdf3fbff119692d28fb7951dd9b3b335e8105e9dd94a00fd477a",
+  "callbackFactory": "0xe68f9de49c682fdb3f5b4b302f896da93da7bee7",
+  "facets": [
+    {
+      "address": "0x8A46938130169b0cF558BcFEc89991a92f2324C5",
+      "name": "ERC165Facet",
+      "runtimeBytes": 538,
+      "keccak256": "0x615d0edb68e477e436cabda8e66faae68e3b03a2aa569e9c05af810e71518a8b",
+      "artifactFile": "out/ERC165Facet.sol/ERC165Facet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xf4494590ABdD98f643794d155a8ED2e8af4F9a0f",
+      "name": "DiamondLoupeFacet",
+      "runtimeBytes": 1458,
+      "keccak256": "0xe0b3837895469a427f844521f3041183e921ab25bd0464b03aa39c50db65a04c",
+      "artifactFile": "out/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x001777Cd7993390a12Ad544D9836d73dFe78BB4A",
+      "name": "ERC8109IntrospectionFacet",
+      "runtimeBytes": 1160,
+      "keccak256": "0xedd12dcfc4e750c70fcc3f4a968b7297dd407e84825b427666aad294a740c81f",
+      "artifactFile": "out/ERC8109IntrospectionFacet.sol/ERC8109IntrospectionFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x0A69Db3b30b7cB13EaFf786832e062D157630bb2",
+      "name": "UniswapV4DetfMigrationAllocationFacet",
+      "runtimeBytes": 20183,
+      "keccak256": "0xd5d9c187f871c2f3773d81c09fae26051dff0c8df5de0bd6af7923a01ff0db96",
+      "artifactFile": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "matches": true,
+      "linkOffsets": [
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 10874,
+          "length": 20
+        },
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 11063,
+          "length": 20
+        },
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 11610,
+          "length": 20
+        },
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 11825,
+          "length": 20
+        },
+        {
+          "path": "contracts/utils/StandardExchangeFrozenQuoteLib.sol",
+          "name": "StandardExchangeFrozenV3CaptureIdentity",
+          "start": 10379,
+          "length": 20
+        },
+        {
+          "path": "contracts/utils/StandardExchangeFrozenQuoteLib.sol",
+          "name": "StandardExchangeFrozenV3PreviewIdentity",
+          "start": 10436,
+          "length": 20
+        }
+      ],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xecd6e45d2938A6d434a8a051201853706f84619E",
+      "name": "ERC20Facet",
+      "runtimeBytes": 1726,
+      "keccak256": "0xd2c38526c9f982688af35f64fac7c89092b49def2231fad5d5b63d4f6d2bc05f",
+      "artifactFile": "out/ERC20Facet.sol/ERC20Facet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x5816d71d52C79844388bcbeAdb13F26d52F031ee",
+      "name": "ERC5267Facet",
+      "runtimeBytes": 974,
+      "keccak256": "0x76102a311a187629400430f9521318e69cda4c20e538815a5cd8c509aed4b8ec",
+      "artifactFile": "out/ERC5267Facet.sol/ERC5267Facet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xD5641A39250E0a4BC648E490ac5eFa8cc0Fd8De0",
+      "name": "ERC2612Facet",
+      "runtimeBytes": 1219,
+      "keccak256": "0xd2c5869b775231df8f2aff82ae2f4ea6679858e10ebc09f92d9b33cb3930706d",
+      "artifactFile": "out/ERC2612Facet.sol/ERC2612Facet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x4022629690473e24Fc5cF641694a6feB8a4516af",
+      "name": "MultiAssetBasicVaultFacet",
+      "runtimeBytes": 1004,
+      "keccak256": "0x3dec918b5cc2dd0d25d2e5aefddc2b5ddc67bf767149fd9f1e05cfa2d61c40cd",
+      "artifactFile": "out/MultiAssetBasicVaultFacet.sol/MultiAssetBasicVaultFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xdDd1E0cDE46B5c90cD1b93b91352A7Dc00c24009",
+      "name": "MultiAssetStandardVaultFacet",
+      "runtimeBytes": 1212,
+      "keccak256": "0x63c551bb61182cad1d91df952d5b978f16731912994d8051f4b5784d9be91b1b",
+      "artifactFile": "out/MultiAssetStandardVaultFacet.sol/MultiAssetStandardVaultFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xb084b225AA4395B47cc7aFfD375B8f56fc26083f",
+      "name": "UniswapV4DetfMigrationExchangeFacet",
+      "runtimeBytes": 9122,
+      "keccak256": "0xfac559bd61c4d3878517a056fb592718252aa335900d61ad1d4ff43c3b611efc",
+      "artifactFile": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x046402dB2a88B54da34dEC0fdd0f9ae549b43Cc0",
+      "name": "UniswapV4DetfMigrationBondFacet",
+      "runtimeBytes": 9596,
+      "keccak256": "0xcdaede3bcdc9df0b25d999a800d3b56dc9eb729286392502595363a339966801",
+      "artifactFile": "out/UniswapV4DetfMigrationBondFacet.sol/UniswapV4DetfMigrationBondFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x77BE20724AF3F142979fc53aF037b5738Df07d3a",
+      "name": "UniswapV4DetfMigrationMaintenanceFacet",
+      "runtimeBytes": 11613,
+      "keccak256": "0x9a4ca923343268ca5629dd074d7b350e65fb438193a3de4cd4889d03d328fb2b",
+      "artifactFile": "out/UniswapV4DetfMigrationMaintenanceFacet.sol/UniswapV4DetfMigrationMaintenanceFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xC6B7B81dfd59E97337BbcA6f5E7D6B3BaA772453",
+      "name": "UniswapV4DetfClaimFacet",
+      "runtimeBytes": 2662,
+      "keccak256": "0x7b63e4615ff9e921bee504fded3116752575b52722fa7f30e2197e584ed7573b",
+      "artifactFile": "out/UniswapV4DetfClaimFacet.sol/UniswapV4DetfClaimFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x8F06dd279099a5d11AC504dec681C851f1aBB223",
+      "name": "UniswapV4DetfMigrationQueryFacet",
+      "runtimeBytes": 10738,
+      "keccak256": "0xb9baef59f4379d7cd26190637e8014d2e2c86cc2405ff6e33c0884dd48770bfb",
+      "artifactFile": "out/UniswapV4DetfMigrationQueryFacet.sol/UniswapV4DetfMigrationQueryFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xD1d56864Ab234Ff18cb7279362e50A2B7960BB59",
+      "name": "MultiStepOwnableFacet",
+      "runtimeBytes": 1422,
+      "keccak256": "0x03022f12407c5f848da7a9e3d1722a0976dd2b52e5c066643b8a314c9ea7d2bc",
+      "artifactFile": "out/MultiStepOwnableFacet.sol/MultiStepOwnableFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xCd29F772d1c9DbdBafDB0e54504160A5A977C0E8",
+      "name": "UniswapV4DetfMigrationFacet",
+      "runtimeBytes": 16210,
+      "keccak256": "0xf577aa2e4b2b046e3ff1739bd2038dbf182ddd55f969a5abc02611c711604e4b",
+      "artifactFile": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "matches": true,
+      "linkOffsets": [
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 10101,
+          "length": 20
+        },
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 10301,
+          "length": 20
+        },
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 11013,
+          "length": 20
+        },
+        {
+          "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+          "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+          "start": 11228,
+          "length": 20
+        }
+      ],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xa4C01791F5042A7878391c9B6603EeBEFbC3b5A7",
+      "name": "UniswapV4DetfMigrationStakedDETFFacet",
+      "runtimeBytes": 12536,
+      "keccak256": "0xcc8b00f621867aabc053c12857ebda4664c79c95998b450e04b7a4aee1c66d61",
+      "artifactFile": "out/UniswapV4DetfMigrationStakedDETFFacet.sol/UniswapV4DetfMigrationStakedDETFFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0xFCfBd6d21DB3E51dFd40b399f3dFBf4765B6268A",
+      "name": "UniswapV4DetfMigrationBondMetadataFacet",
+      "runtimeBytes": 12099,
+      "keccak256": "0x623e42f93407f74179fb4f64ea1db530337fbce656eb79b9b55855a651f9b568",
+      "artifactFile": "out/UniswapV4DetfMigrationBondMetadataFacet.sol/UniswapV4DetfMigrationBondMetadataFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x6EE568C5f08f35680998218847884cC5124C7E7B",
+      "name": "ERC721Facet",
+      "runtimeBytes": 1981,
+      "keccak256": "0xd3f393499252ae72e1d03be4d2c2b7d5ef9e6983dfe63da3e98efee323330421",
+      "artifactFile": "out/ERC721Facet.sol/ERC721Facet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x2961a135928E633BDdB5d4ED52603ee46CE023f9",
+      "name": "UniswapV4DetfMigrationBondNFTVaultFacet",
+      "runtimeBytes": 9408,
+      "keccak256": "0xf6b6ca55025e920f87068a6049aaccc75f3d3815ae9e2367ef02ee89f9c86e6f",
+      "artifactFile": "out/UniswapV4DetfMigrationBondNFTVaultFacet.sol/UniswapV4DetfMigrationBondNFTVaultFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x306be37fEBB704cbB482C36c0C65a7F03E415c7B",
+      "name": "UniswapV4DetfMigrationSYFacet",
+      "runtimeBytes": 9405,
+      "keccak256": "0x16f1555cdc58a2c328a8f3c0c0f07316f1c928a3f7272c7209647888ec316306",
+      "artifactFile": "out/UniswapV4DetfMigrationSYFacet.sol/UniswapV4DetfMigrationSYFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    },
+    {
+      "address": "0x30615A3688433e11461671C76B738AB06396A5BB",
+      "name": "UniswapV4DetfMigrationRewardTokenFacet",
+      "runtimeBytes": 3288,
+      "keccak256": "0x57639e98351a95bceb31d9a59d5089fbf35cbe6f1c2e1ed335a102199bb5dd44",
+      "artifactFile": "out/UniswapV4DetfMigrationRewardTokenFacet.sol/UniswapV4DetfMigrationRewardTokenFacet.json",
+      "matches": true,
+      "linkOffsets": [],
+      "immutableOffsets": {}
+    }
+  ],
+  "libraries": [
+    {
+      "name": "UniswapV4StandardExchangeWeightedBufferHookMath",
+      "address": "0xe5d5e6a31abecb23810e49dbb5a24ed3c399434b",
+      "runtimeBytes": 6481,
+      "keccak256": "0x5e563ee491931de428a1779e92c5c4df80833af85e7967fc68a49c947c97606a",
+      "matches": true
+    },
+    {
+      "name": "StandardExchangeFrozenV3CaptureIdentity",
+      "address": "0x4fbb8dde4ddafb7db976223f1813b3c51f570e26",
+      "file": "out/StandardExchangeFrozenQuoteLib.sol/StandardExchangeFrozenV3CaptureIdentity.json",
+      "runtimeBytes": 16109,
+      "keccak256": "0x9d9bfc7a5f0a6404b2a66173822d43acbd50bc4189ad35fc726b4f931414c52f",
+      "matches": true
+    },
+    {
+      "name": "StandardExchangeFrozenV3PreviewIdentity",
+      "address": "0x01d6d8a2ad5ac973d3e127d7d6b009825fc5cddd",
+      "file": "out/StandardExchangeFrozenQuoteLib.sol/StandardExchangeFrozenV3PreviewIdentity.json",
+      "runtimeBytes": 11148,
+      "keccak256": "0x38ae55153d900a8552c6fbceb7647e726522ca279a3379e7140c991c49ee2928",
+      "matches": true
+    }
+  ],
+  "packages": [
+    {
+      "role": "parent",
+      "proxy": "0x406cd20cb6f03f51cd303a3d14d6b1fbbcccab88",
+      "package": "0x642fa76f2F7A6b97ec0822D67a785379A92DF347",
+      "name": "UniswapV4DetfMigrationDFPkg",
+      "runtimeBytes": 16632,
+      "hash": "0xf65308fdae93755957b3272d47abbd2eafc54c886154300919abab312748f643",
+      "matches": true
+    },
+    {
+      "role": "receipt",
+      "proxy": "0xEf2E550310745309Fc07B1DdE1853447e6a528bF",
+      "package": "0x758bE53E89C90bb594BFd5963458910685bc67eE",
+      "name": "RebasingClaimTokenDFPkg",
+      "runtimeBytes": 4543,
+      "hash": "0xb52588c48b3f7d17528151530dadd4c32a4400a250457d6d961d5d184d629348",
+      "matches": true
+    },
+    {
+      "role": "bond",
+      "proxy": "0xfA53c3188BcbDaE211Fe037aCD211C4031b8fE9d",
+      "package": "0x75170821C0f42C76871925B807E4b5F1d3d18c23",
+      "name": "UniswapV4DetfMigrationBondNFTVaultDFPkg",
+      "runtimeBytes": 4306,
+      "hash": "0x14172b498da194a349da9cecef82395d4cbb896fc7643a1e3567838841317d3f",
+      "matches": true
+    },
+    {
+      "role": "raw",
+      "proxy": "0x3af09b5667CCd422F4Cc883F4D991Bc5bFB4Af96",
+      "package": "0x8f50Fb05F59191482D6AD32F5811730830359705",
+      "name": "DETFSYDFPkg",
+      "runtimeBytes": 6192,
+      "hash": "0xd009187b262227eb1198f631fc7efef6836d6453c11060968d42e80872c5f390",
+      "matches": true
+    },
+    {
+      "role": "rt",
+      "proxy": "0x186a8c0806FACeDC673789980F7483DCCC633430",
+      "package": "0x918b025C58621B1e893685aCbC110C02A737B34f",
+      "name": "UniswapV4DetfMigrationRewardTokenDFPkg",
+      "runtimeBytes": 3705,
+      "hash": "0x67b81b5d6f09e0e6f6597cca7ce005b6c6ef079986d25cdaf742b08bab49a1ac",
+      "matches": true
+    }
+  ],
+  "codeSizeLimit": 24576,
+  "enforcementEnabled": true
+}

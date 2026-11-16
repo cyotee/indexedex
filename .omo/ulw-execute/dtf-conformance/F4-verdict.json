@@ -1,0 +1,100 @@
+{
+  "verifier": "F4",
+  "title": "Ideal-state fidelity",
+  "date": "2026-11-15",
+  "disposition": "APPROVE",
+  "scope": "Landed-evidence fidelity under the current assignment; known named [~] gaps alone are not new defects.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/F4-fidelity.md",
+  "summary": "All seven IS rows were assessed. No new forced reload, global pricing freshness gate, pricing-dependent economic identity, source-category waiver, omitted program in the inspected scope, or principal-withdrawing routine harvest was found. Known lifecycle, witness-pin, documentation and delivery gaps remain open.",
+  "new_gaps": [],
+  "full_conformance_complete": false,
+  "final_delivery_certified": false,
+  "plan_checkboxes_changed": false,
+  "ideal_state_rows": [
+    {
+      "id": "IS-1",
+      "assessment": "Landed fourteen-source custody, units and conservation evidence holds; stable NFT identity excludes pricing.",
+      "known_limits": ["Task 7/13 claimed-SY operator witness pin", "Source-specific external conditions and unapproved financial datasets"]
+    },
+    {
+      "id": "IS-2",
+      "assessment": "Landed manual pricing evidence preserves canonical arithmetic, rounding, limits and live independence.",
+      "known_limits": ["Task 14 current manual-book quote documentation reconciliation"]
+    },
+    {
+      "id": "IS-3",
+      "assessment": "Current-owner setter remains available after paid purchase and is removed by the existing activation cut.",
+      "known_limits": ["Task 10 unset-pricing owner-bond/activation CLI receipt"]
+    },
+    {
+      "id": "IS-4",
+      "assessment": "Landed registry/child, funded cliff, paid-purchase, reward-gate and ordinary-family witnesses hold.",
+      "known_limits": ["Task 10 integrated lifecycle and NFT 3 two-bond/second-callback receipts"]
+    },
+    {
+      "id": "IS-5",
+      "assessment": "Repeated reward-only maturity tests retain principal and NFT custody; other dispositions remain source-specific.",
+      "known_limits": ["Task 10 end-to-end recovery lifecycle", "Task 11 gas samples remain bounded snapshot-branch experiments"]
+    },
+    {
+      "id": "IS-6",
+      "assessment": "Landed contract and synthetic operator evidence separates current B configuration from immutable A issuance and retains other A rows without current-price reload.",
+      "known_limits": ["Task 10 real mixed/same-block/donation/NFT 3 lifecycle", "Task 12 real portable current-chain and owner-purchase/donation proofs"]
+    },
+    {
+      "id": "IS-7",
+      "assessment": "Inspected retained programs and source-qualified evidence are present; complete final delivery is not established.",
+      "known_limits": ["Task 14 final traceability and documentation", "Task 15 final delivery inventory and receipt", "Final-wave additive delivery closeout"]
+    }
+  ],
+  "counter_case": {
+    "current_configuration": "B",
+    "immutable_issuance": "A",
+    "other_retained_row": "Weighted SY under A",
+    "configuration_and_issuance_checked_independently": true,
+    "task_12_evidence": "Synthetic transport only: offline signed bytes and supplied wire responses; no transaction submitted to an EVM.",
+    "task_12_numerical_limit": "The relocation fixture copies A quote values under B's book ID; the separate task-7 execution-state test checks differing B credit against immutable A credit.",
+    "real_task_10_lifecycle_proven": false
+  },
+  "known_incomplete_tasks": [7, 10, 12, 13, 14, 15],
+  "artifact_presence": {
+    "surrender_spec": "present and read completely",
+    "package_evidence": "present and read completely",
+    "quote_evidence": "present; historical November 10, 2026 frozen-snapshot report; current reconciliation missing",
+    "verification": "present; historical November 13, 2026 report; final reconciliation missing",
+    "task_14_traceability_review": "absent",
+    "task_15_delivery_receipt": "absent",
+    "task_10_named_lifecycle_receipts": "absent at the named locations and explicitly not delivered in the task-10 claim"
+  },
+  "recorded_execution_results": {
+    "fresh_runs_by_this_reviewer": 0,
+    "task_13_hermetic": {"passed": 28641, "failed": 0, "skipped": 0, "exit_code": 0},
+    "task_13_forks": {"passed": 183, "failed": 0, "skipped": 0, "exit_code": 0},
+    "task_13_operator": {"passed": 240, "failed": 1, "exit_code": 1, "failure": "Known claimed-SY fixed witness-pin mismatch"},
+    "task_12_offline_selected_tests": {"passed": 91, "failed": 0, "exit_code": 0, "task_complete": false}
+  },
+  "read_only_consistency_checks": {
+    "task_13_recorded_migration_operator_and_test_sources_compared": 209,
+    "task_13_source_mismatches": [],
+    "task_12_recorded_sources_compared": 10,
+    "task_12_source_mismatches": [],
+    "complete_final_inventory_reconstructed": false
+  },
+  "operations": {
+    "implementation_changes": false,
+    "delegation": false,
+    "tests_or_builds_run": false,
+    "project_scripts_run": false,
+    "git_commands_or_commits": false,
+    "rpc_calls": false,
+    "public_transactions": false,
+    "task_10_receipts_created": false
+  },
+  "files_written_in_order": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/F4-fidelity.md",
+    ".omo/ulw-execute/dtf-conformance/F4-verdict.json"
+  ],
+  "verdict_written_last": true
+}

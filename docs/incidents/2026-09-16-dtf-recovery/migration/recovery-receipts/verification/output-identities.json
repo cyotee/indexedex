@@ -1,0 +1,44 @@
+{
+  "outputs": [
+    {
+      "path": "actual/archive.json",
+      "bytes": 5917231,
+      "sha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0"
+    },
+    {
+      "path": "actual/reconciliation.json",
+      "bytes": 841408,
+      "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2"
+    },
+    {
+      "path": "actual/http-manifest.json",
+      "bytes": 638076,
+      "sha256": "dc93956548bb279085571472b19cc87d9e62e257ea90c76559ce8d7be46e8290"
+    },
+    {
+      "path": "actual/inputs.json",
+      "bytes": 15092,
+      "sha256": "19eb74c736823d28d9016d4b788c54a0eeecd2b50ea8d96cb4eed1541c6d5050"
+    },
+    {
+      "path": "actual/references.json",
+      "bytes": 536354,
+      "sha256": "70f22fac3543dcfe54bb1fc2e556e8e1c6c0e6f108d905a9330ccf73080ec95b"
+    }
+  ],
+  "proof": {
+    "bytes": 4434725,
+    "sha256": "a49921f03a27653a651d97fedbe6deac16683b98458d58ea700feceb03024032"
+  },
+  "methods": {
+    "eth_chainId": 1,
+    "eth_getBlockByNumber": 320,
+    "eth_getTransactionByHash": 319,
+    "eth_getTransactionReceipt": 319,
+    "eth_getBlockByHash": 319
+  },
+  "range": {
+    "min": 64397386,
+    "max": 104818717
+  }
+}

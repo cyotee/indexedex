@@ -1,0 +1,352 @@
+{
+  "schema": "phase01-recovery-observations/1",
+  "at": "2026-11-10T13:22:15.658Z",
+  "adopted": {
+    "probePid": 86670,
+    "parentPid": 86603,
+    "identityRechecked": true,
+    "observedCommand": "'/opt/homebrew/bin/bun' '--preload' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/other-sources-metered.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered'",
+    "observedElapsed": "20:35",
+    "monitor": "mon_N5TPT9DNV2TWP7AD",
+    "terminal": {
+      "label": "other-metered",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+      "argv": [
+        "/opt/homebrew/bin/bun",
+        "--preload",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/other-sources-metered.mjs",
+        "--chain-id",
+        "4663",
+        "--block",
+        "108944663",
+        "--rpc-alias",
+        "robinhood_mainnet_alchemy",
+        "--local-fork",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered"
+      ],
+      "literal": "'/opt/homebrew/bin/bun' '--preload' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/runners/other-sources-metered.mjs' '--chain-id' '4663' '--block' '108944663' '--rpc-alias' 'robinhood_mainnet_alchemy' '--local-fork' '--output' '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered'",
+      "binaryPassObservable": "complete pinned source acquisition and mined custody/rollback receipts; FAIL routes remain FAIL",
+      "started": "2026-11-10T12:57:57.577Z",
+      "runtime": {
+        "bun": "1.4.2",
+        "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun"
+      },
+      "resources": {
+        "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB",
+        "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB",
+        "HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB",
+        "BUN_INSTALL_CACHE_DIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB/bun-cache",
+        "npm_config_cache": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB/node-cache",
+        "XDG_CACHE_HOME": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB/cache"
+      },
+      "credentialPresent": true,
+      "childPid": 86670,
+      "code": 2,
+      "signal": null,
+      "finished": "2026-11-10T13:19:53.551Z"
+    }
+  },
+  "runtimeEnvironment": {
+    "TMPDIR": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz",
+    "NODE_COMPILE_CACHE": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/node-compile",
+    "BUN_RUNTIME_TRANSPILER_CACHE_PATH": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/bun-transpiler"
+  },
+  "invocations": {
+    "tokenstakingCaller": "export TMPDIR='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz' NODE_COMPILE_CACHE='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/node-compile' BUN_RUNTIME_TRANSPILER_CACHE_PATH='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/bun-transpiler'; cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01'; /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/run-command.mjs' tokenstaking-caller 'Two actual pinned claimant/callback assertions; restored source state; terminal exit' /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/tokenstaking-caller.mjs'",
+    "receiptAudit": "export TMPDIR='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz' NODE_COMPILE_CACHE='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/node-compile' BUN_RUNTIME_TRANSPILER_CACHE_PATH='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/bun-transpiler'; cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01'; /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/run-command.mjs' receipt-audit 'All actual receipt checks equal expected values; failed array empty' /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/audit-receipts.mjs'",
+    "workspaceAudit": "export TMPDIR='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz' NODE_COMPILE_CACHE='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/node-compile' BUN_RUNTIME_TRANSPILER_CACHE_PATH='/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification-recovery.rh6nSz/bun-transpiler'; cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01'; /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/run-command.mjs' workspace-after 'No changed or added original input/product files against predecessor baseline' /opt/homebrew/bin/bun '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/workspace-audit.mjs' after"
+  },
+  "metered": {
+    "pin": {
+      "chainId": "0x1237",
+      "block": "108944663",
+      "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+      "timestamp": "0x6aeff5b5",
+      "rpcAlias": "robinhood_mainnet_alchemy",
+      "label": "requested-historical"
+    },
+    "overall": "FAIL",
+    "harnessError": null,
+    "counts": {
+      "PASS": 21,
+      "FAIL": 4,
+      "UNPROVEN": 3
+    },
+    "cases": [
+      {
+        "name": "stale runtime identity rejected",
+        "verdict": "PASS"
+      },
+      {
+        "name": "local source runtime matches upstream pin",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking atomic source-right surrender",
+        "verdict": "PASS"
+      },
+      {
+        "name": "staking claim extinguishment into SY custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claimed position rejects second exercise",
+        "verdict": "PASS"
+      },
+      {
+        "name": "zero claim and wrong operator cannot redirect victim",
+        "verdict": "PASS"
+      },
+      {
+        "name": "successful inner claim rolled back by failed outer transaction",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "claim-vault shares: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier underlying SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier underlying SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "earlier fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "earlier fungible LP: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted WETH-leg SE: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted WETH-leg SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: harvest",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted DTF custody SE: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: partial exact custody",
+        "verdict": "PASS"
+      },
+      {
+        "name": "weighted fungible LP: harvest",
+        "verdict": "FAIL"
+      },
+      {
+        "name": "weighted fungible LP: failed transfer outer rollback",
+        "verdict": "PASS"
+      },
+      {
+        "name": "integrated atomic Migration issuance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "postactivation fungible provenance",
+        "verdict": "UNPROVEN"
+      },
+      {
+        "name": "complete exposure and source absence",
+        "verdict": "UNPROVEN"
+      }
+    ]
+  },
+  "caller": {
+    "pin": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "sourceFacet": "0x9c90d4a476f3473b9a0e32b530af3474271a80b1",
+    "sourceCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742",
+    "sourceArchiveStatus": 404,
+    "bindings": [
+      {
+        "signature": "approve(address,uint256)",
+        "selector": "0x095ea7b3",
+        "facet": "0x0000000000000000000000000000000000000000"
+      },
+      {
+        "signature": "transferFrom(address,address,uint256)",
+        "selector": "0x23b872dd",
+        "facet": "0x0000000000000000000000000000000000000000"
+      },
+      {
+        "signature": "transfer(address,uint256)",
+        "selector": "0xa9059cbb",
+        "facet": "0x0000000000000000000000000000000000000000"
+      },
+      {
+        "signature": "reassign(address,uint256)",
+        "selector": "0xcc447fba",
+        "facet": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+      },
+      {
+        "signature": "withdrawClaim(uint256)",
+        "selector": "0xa224dcb7",
+        "facet": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+      },
+      {
+        "signature": "multicall(bytes[])",
+        "selector": "0xac9650d8",
+        "facet": "0x0000000000000000000000000000000000000000"
+      },
+      {
+        "signature": "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)",
+        "selector": "0xd505accf",
+        "facet": "0x0000000000000000000000000000000000000000"
+      }
+    ],
+    "before": {
+      "holder": "64890781291192882058375",
+      "custody": "0",
+      "supply": "15338080546808403036783930"
+    },
+    "restored": {
+      "holder": "64890781291192882058375",
+      "custody": "0",
+      "supply": "15338080546808403036783930"
+    },
+    "checks": [
+      {
+        "name": "ordinary contract caller cannot reassign claimant weight",
+        "pass": true,
+        "transaction": "0x0680e83cb5044541501f6103c8e432475e90f2db5d5671d1f289622867a03e7b",
+        "status": "0x0",
+        "trace": {
+          "from": "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+          "gas": "0x9842a8",
+          "gasUsed": "0x1a0f3",
+          "to": "0x1a0511e3d0657f00eb5d2695478f9ee1d1debce4",
+          "input": "0xcc447fba000000000000000000000000000000000000000000000000000000000000c057000000000000000000000000000000000000000000000dbdbc7e523eeb885487",
+          "output": "0x936d426d0000000000000000000000001a0511e3d0657f00eb5d2695478f9ee1d1debce4000000000000000000000000000000000000000000000dbdbc7e523eeb8854870000000000000000000000000000000000000000000000000000000000000000",
+          "error": "execution reverted",
+          "calls": [
+            {
+              "from": "0x1a0511e3d0657f00eb5d2695478f9ee1d1debce4",
+              "gas": "0x95d775",
+              "gasUsed": "0x142a0",
+              "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+              "input": "0xcc447fba000000000000000000000000000000000000000000000000000000000000c057000000000000000000000000000000000000000000000dbdbc7e523eeb885487",
+              "output": "0x936d426d0000000000000000000000001a0511e3d0657f00eb5d2695478f9ee1d1debce4000000000000000000000000000000000000000000000dbdbc7e523eeb8854870000000000000000000000000000000000000000000000000000000000000000",
+              "error": "execution reverted",
+              "calls": [
+                {
+                  "from": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+                  "gas": "0x936b0f",
+                  "gasUsed": "0x12d12",
+                  "to": "0x9c90d4a476f3473b9a0e32b530af3474271a80b1",
+                  "input": "0xcc447fba000000000000000000000000000000000000000000000000000000000000c057000000000000000000000000000000000000000000000dbdbc7e523eeb885487",
+                  "output": "0x936d426d0000000000000000000000001a0511e3d0657f00eb5d2695478f9ee1d1debce4000000000000000000000000000000000000000000000dbdbc7e523eeb8854870000000000000000000000000000000000000000000000000000000000000000",
+                  "error": "execution reverted",
+                  "value": "0x0",
+                  "type": "DELEGATECALL"
+                }
+              ],
+              "value": "0x0",
+              "type": "CALL"
+            }
+          ],
+          "value": "0x0",
+          "type": "CALL"
+        },
+        "expectedError": "0x936d426d0000000000000000000000001a0511e3d0657f00eb5d2695478f9ee1d1debce4000000000000000000000000000000000000000000000dbdbc7e523eeb8854870000000000000000000000000000000000000000000000000000000000000000"
+      },
+      {
+        "name": "holder reassignment has no recipient callback in actual trace",
+        "pass": true,
+        "transaction": "0xa0c6447b5598bf960de0c5ddd077ea1af6831f530476c533aaa1b8454cfe66fe",
+        "status": "0x1",
+        "trace": {
+          "from": "0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3",
+          "gas": "0x9841d0",
+          "gasUsed": "0x1f8aa",
+          "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "input": "0xcc447fba00000000000000000000000053e09d9496ac2de30db5d6afa8557f22b6660226000000000000000000000000000000000000000000000dbdbc7e523eeb885487",
+          "calls": [
+            {
+              "from": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+              "gas": "0x95cbc1",
+              "gasUsed": "0x1eef5",
+              "to": "0x9c90d4a476f3473b9a0e32b530af3474271a80b1",
+              "input": "0xcc447fba00000000000000000000000053e09d9496ac2de30db5d6afa8557f22b6660226000000000000000000000000000000000000000000000dbdbc7e523eeb885487",
+              "value": "0x0",
+              "type": "DELEGATECALL"
+            }
+          ],
+          "value": "0x0",
+          "type": "CALL"
+        },
+        "holderAfter": "0",
+        "recipientAfter": "64890781291192882058375"
+      }
+    ],
+    "failure": null,
+    "cleanup": {
+      "snapshotRestored": true,
+      "exit": 0
+    }
+  },
+  "receiptAudit": {
+    "checks": 311,
+    "failed": []
+  },
+  "independentReconciliation": {
+    "checks": 19082,
+    "failed": [],
+    "byteIdentity": [
+      {
+        "name": "producer rerun byte determinism",
+        "actual": "874eb99734cb6f06a6c75982fbe9dcfc52f84e535c3666fb8d2f2f23b11f684f",
+        "expected": "874eb99734cb6f06a6c75982fbe9dcfc52f84e535c3666fb8d2f2f23b11f684f",
+        "pass": true
+      },
+      {
+        "name": "producer output reproduced byte for byte",
+        "actual": "874eb99734cb6f06a6c75982fbe9dcfc52f84e535c3666fb8d2f2f23b11f684f",
+        "expected": "874eb99734cb6f06a6c75982fbe9dcfc52f84e535c3666fb8d2f2f23b11f684f",
+        "pass": true
+      }
+    ]
+  },
+  "limits": [
+    "Source operation and authority feasibility only; no task-six Migration code was required or tested.",
+    "Sourcify 404 is not source authentication; deployed runtime and observed traces support the focused result.",
+    "No global impossibility claim for cryptographic history verification or alternative account execution."
+  ]
+}

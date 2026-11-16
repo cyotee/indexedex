@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"EOAPretransferNotAllowed","inputs":[]},{"type":"error","name":"TransferDeltaInsufficient","inputs":[{"name":"claimed","type":"uint256","internalType":"uint256"},{"name":"observedDelta","type":"uint256","internalType":"uint256"}]}],"id":846}

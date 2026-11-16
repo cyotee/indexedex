@@ -1,0 +1,20 @@
+{
+  "invocation": "/opt/homebrew/bin/bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/attribution/witness.mjs",
+  "binaryPassObservable": "exit 0 and ATTRIBUTION_COUNTEREXAMPLE_PASS; E2 remains FAIL",
+  "runtime": {
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "bun": "1.4.2",
+    "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+    "pid": 64031,
+    "sourceSha256": "ecea8c1694d9aa117f65816ac1fc3e076c655aedb88cb1227b104c3be8acd5cd"
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/attribution.cIEIBO"
+  },
+  "rpc": [],
+  "checks": [],
+  "cleanup": {},
+  "failure": "AssertionError: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   1667n,\n+   2333n\n-   1334n,\n-   2666n\n  ]\n",
+  "binaryPass": false,
+  "e2Verdict": "FAIL_CURRENT_INTERFACES"
+}

@@ -1,0 +1,10 @@
+Tue Nov 10 15:47:30 UTC 2026
+cwd=/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02
+TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-correction.20261110-1549
+NODE_COMPILE_CACHE=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-correction.20261110-1549/node-cache
+BUN_RUNTIME_TRANSPILER_CACHE_PATH=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/pricing-correction.20261110-1549/bun-cache
+recorder_pid=97973
+PATH=/Users/cyotee/.foundry/bin:/Users/cyotee/.omo/agent/bin:/Users/cyotee/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/usr/local/MacGPG2/bin:/opt/homebrew/bin:/Users/cyotee/.local/bin:/Users/cyotee/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/sbin:/Users/cyotee/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand:/Applications/Visual Studio Code.app/Contents/Resources/app/bin/copilot-shim:/Users/cyotee/.omo/agent/bundled-bun/73037c5e5dfb0244
+FOUNDRY_BLOCK_GAS_LIMIT=unset
+FOUNDRY_BROADCAST=/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/correction/broadcast
+bash -c $'set -euo pipefail; rpc=http://127.0.0.1:18546; consumer=0x28dB1faE7d59B36aE6BBB939766F3F7F1c3eabec; before=$(cast call --rpc-url "$rpc" --block 226 "$consumer" "snapshotBytes()(bytes)"); after=$(cast call --rpc-url "$rpc" --block 233 "$consumer" "snapshotBytes()(bytes)"); test "$before" = "$after"; printf "SNAPSHOT_BYTES=%s\\nSNAPSHOT_KECCAK=" "$(( (\0024{#before} - 2) / 2 ))"; cast keccak "$before"; printf "SNAPSHOT_READBACK_PASS\\n"' 

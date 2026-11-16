@@ -1,0 +1,175 @@
+{
+  "date": "2026-11-12T17:33:29.391Z",
+  "head": "15fd629375edeb361f6a39262795bdc66723ca3a",
+  "branch": "work/dtf-migration-phase-24-stateful-invariants",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants",
+  "disposition": "confirmed for bounded stopped test-only increment; complete twelve-property all-source/unit closure remains open",
+  "producerSealSha256": "97d7df1bb3b21d7c17f272e48c73fe0e44e5a4377d7ce9318aa125e0a450c303",
+  "source": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "bytes": 12828,
+      "sha256": "036326dac3b032ea5041058a925c1c1e473ec11ecdfa5c92117ac895315ea991",
+      "mode": 33188
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "bytes": 9495,
+      "sha256": "cf46ddab94407cf8d4666882da4547e96ad8390d342848b4fc868e01891a58e5",
+      "mode": 33188
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "bytes": 14647,
+      "sha256": "98b29c7a27484df9bfbf2c5193fac5c4b60a977a28c3552b21daff4e13169b75",
+      "mode": 33188
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "bytes": 9439,
+      "sha256": "de7a91ccf5ccd4ad5ff2d577a6da91e5057bc2ac51bda7e80619501d6b8fe7d9",
+      "mode": 33188
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "bytes": 1525,
+      "sha256": "4a4d82bbcf31cdf10bf9d21f08b29ecc9de708ac674c61e938b4241f1300c7ca",
+      "mode": 33188
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "bytes": 6089,
+      "sha256": "8860da03ba242e188a077fe5193138c25536e54c033dc0aa24cadbfc91ce0b3e",
+      "mode": 33188
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "bytes": 6133,
+      "sha256": "f4f78a0d2a05215cdcee3ea1e87afe2d144af945ed00812a0ecf2bdcbfbe1b48",
+      "mode": 33188
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "bytes": 1792,
+      "sha256": "e23bf73a7b786dea75f9efb90025bc12c578cf28ed899143f1ba54014feea1b8",
+      "mode": 33188
+    }
+  ],
+  "files": [
+    {
+      "path": "admission.json",
+      "bytes": 16148,
+      "sha256": "5f1a027d5c2e8de5c338309624e196641fa372c982a5231af426a46e04a6834b",
+      "mode": 33188
+    },
+    {
+      "path": "authored-whitespace.log",
+      "bytes": 2820,
+      "sha256": "650668b5ea60e2367e1f44134f45a721b4176170fa6eb1e5156ebb3556693c7c",
+      "mode": 33188
+    },
+    {
+      "path": "cleanup.log",
+      "bytes": 2767,
+      "sha256": "7964b4651efbc240be44365b97566d0f5cdc9b7f1148d0e98523b2158f49202f",
+      "mode": 33188
+    },
+    {
+      "path": "execution-plan.json",
+      "bytes": 12590,
+      "sha256": "0e8e0559b01016e9e43840210e23e51b1daae62da32373d4b849c5347973f934",
+      "mode": 33188
+    },
+    {
+      "path": "execution-results.json",
+      "bytes": 60588,
+      "sha256": "9d729d46abf90d871171551f4f3bbda9d250bce5202fa01dff492dc430034f9e",
+      "mode": 33188
+    },
+    {
+      "path": "forks-final-01.log",
+      "bytes": 1635284,
+      "sha256": "55d8b44725228d08bca3efc2fbf3351ee871dfb8ef6c13ec34d464d431e3abf1",
+      "mode": 33188
+    },
+    {
+      "path": "ordinary-final-01.log",
+      "bytes": 325271,
+      "sha256": "efa382d0c281d4870582b7de5508f9f07adc473e20ac925da6a25536d1075462",
+      "mode": 33188
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 16204,
+      "sha256": "eb1ca3177de48b6d6f64c9ce13d0afe6237bb052a5827b376ce5100261bc097e",
+      "mode": 33188
+    },
+    {
+      "path": "report.md",
+      "bytes": 32280,
+      "sha256": "7a2293aafbc718349502c276296ccfcf9594c84a4c81b8e46438a5897da40290",
+      "mode": 33188
+    },
+    {
+      "path": "source-artifact-deployment.json",
+      "bytes": 850905,
+      "sha256": "7b63d3c7dd77e6a9a82f701c83a381703ca615bb59922a7990f0e3f987adfa8c",
+      "mode": 33188
+    },
+    {
+      "path": "specs-final-01.log",
+      "bytes": 3108616,
+      "sha256": "1fdf725fa21a462f5ed30c28bcd8ada7490aec4ea596ebb07e2191685f6952c0",
+      "mode": 33188
+    },
+    {
+      "path": "whitespace.log",
+      "bytes": 93442,
+      "sha256": "abe1871aedb2b950d81777f4b6dfca7000633d8e00aae7d676b5fe28a2312ea2",
+      "mode": 33188
+    }
+  ],
+  "evidenceExclusion": "seal.json only",
+  "ownedOperationsPending": 0,
+  "ownedMonitors": [
+    {
+      "id": "mon_YTKEB2R4J9MVA455",
+      "exitCode": 0
+    },
+    {
+      "id": "mon_DEXQ2AFJG28RGPPX",
+      "exitCode": 0
+    },
+    {
+      "id": "mon_0XP4TAV0YN013RDT",
+      "exitCode": 0
+    }
+  ],
+  "tests": {
+    "specs": 169,
+    "forks": 144,
+    "ordinary": 58,
+    "native": {
+      "seed": "0x24a1",
+      "runs": 32,
+      "depth": 16,
+      "calls": 512,
+      "unexpectedReverts": 0
+    },
+    "legacy": {
+      "seed": "0x24a2",
+      "runs": 32,
+      "depth": 16,
+      "calls": 512,
+      "unexpectedReverts": 0
+    }
+  },
+  "compilerBinding": {
+    "artifacts": 179,
+    "sources": 970,
+    "sourceMismatches": 0,
+    "rawRuntimeCaptures": 522,
+    "uniqueMatchedRuntimePairs": 66
+  },
+  "whitespace": "Candidate source and authored Markdown/JSON pass; broad generated raw-log whitespace failure preserved, not edited."
+}

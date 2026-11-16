@@ -1,0 +1,28 @@
+{
+  "alias": "robinhood_mainnet_alchemy",
+  "start": "2026-11-13T14:08:52.447Z",
+  "stop": "2026-11-13T14:08:52.480Z",
+  "requests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 286,
+      "method": "eth_getLogs",
+      "params": [
+        {
+          "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+          "fromBlock": "0x4adfe9f",
+          "toBlock": "0x4adfea0",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+          ]
+        }
+      ]
+    }
+  ],
+  "httpStatus": 200,
+  "responseText": "[{\"jsonrpc\":\"2.0\",\"id\":286,\"result\":[{\"address\":\"0xb7d4bb379d361ad442cddee53ea71a33957826a7\",\"topics\":[\"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef\",\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"0x000000000000000000000000bab6a03be445094a10695772a79777407dcdc0e7\"],\"data\":\"0x0000000000000000000000000000000000000000000000001c0c5ad4344c729f\",\"blockNumber\":\"0x4adfea0\",\"transactionHash\":\"0x01c689522da55be117f6e4b991d7ddefe8e2c2866a4739dc72568a8244e94e53\",\"transactionIndex\":\"0x8\",\"blockHash\":\"0x98e0e13664ef5fba39ee92d9c1db717ecc615f096ed44319eab3e8f9a3d8dd06\",\"blockTimestamp\":\"0x6ac011cf\",\"logIndex\":\"0x24\",\"removed\":false}]}]",
+  "responseUtf8Bytes": 673,
+  "responseSha256": "43124d744ef942a645633f668de811cd524586d941d28f659729ea0e04141138",
+  "raw": true,
+  "transportFailure": null
+}

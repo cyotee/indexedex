@@ -1,0 +1,103 @@
+{
+  "schema": "phase20-se-lp-source-seal-v1",
+  "date": "2026-11-12",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source",
+  "branch": "work/dtf-migration-phase-20-se-lp-source",
+  "head": "1df9076c73b94a4f63172395763fa8cdd48fe060",
+  "excluded": [
+    "seal.json"
+  ],
+  "dispositions": [
+    {
+      "row": "E-S",
+      "disposition": "not-ready"
+    },
+    {
+      "row": "W-SW",
+      "disposition": "admitted-proposal",
+      "limit": "source-only approved exact native18 custody-and-hold"
+    },
+    {
+      "row": "E-P",
+      "disposition": "not-ready"
+    },
+    {
+      "row": "W-P",
+      "disposition": "not-ready"
+    }
+  ],
+  "files": [
+    {
+      "path": "cleanup.json",
+      "bytes": 1308,
+      "sha256": "9a8c97984b0f5b152d8cb29c823ab69e34da6c2423a42bae18a3de3c0eb897fa"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 2720,
+      "sha256": "81194b122ce34fd00a9d0ca48d3fdac0343a74eab7b516bc5c2d477ee8880fa0"
+    },
+    {
+      "path": "contract.md",
+      "bytes": 18766,
+      "sha256": "330c2ce3f77ad20976c27377aec832d375d7f5c615a00d16cdab66946f660df3"
+    },
+    {
+      "path": "inputs.json",
+      "bytes": 4390,
+      "sha256": "cf48d5b9ee52104f63f25d4b72dcc60a8f9579ffe88bc820dd8280168af5ebfb"
+    },
+    {
+      "path": "probe/build/build-info/43def96dedd32cfa.json",
+      "bytes": 92,
+      "sha256": "5449244ce60258d20fcf82a375642168e83b74b45b91c245f0cf1ad56dd4f4f3"
+    },
+    {
+      "path": "probe/build/CustodyProbe.sol/CustodyProbe.json",
+      "bytes": 11925,
+      "sha256": "07898effa82cee701375e9e8ce123bdf32f3479d7d3520fb10cafe29935e5417"
+    },
+    {
+      "path": "probe/build/CustodyProbe.sol/ISource.json",
+      "bytes": 3341,
+      "sha256": "abaf57573a9792246e42803fc06ad17b79fde0f662d6e98119d7acc85929a1b3"
+    },
+    {
+      "path": "probe/cache/solidity-files-cache.json",
+      "bytes": 1499,
+      "sha256": "ef88af5deae363ba002f4b020b6d8c36a41ed954b2a424b25de2a12e2f3e79b9"
+    },
+    {
+      "path": "probe/CustodyProbe.sol",
+      "bytes": 1718,
+      "sha256": "aab37b63ad94741fc8ffb56a8ad5da2446e08ca48c948840b63b7db27c87d3f4"
+    },
+    {
+      "path": "report.md",
+      "bytes": 14318,
+      "sha256": "e430835838d44f2e5ef5a5ef6baca90233a385676a2aa6fc16e44946e27c10d3"
+    },
+    {
+      "path": "rpc.json",
+      "bytes": 365083,
+      "sha256": "22174e2edb8951183be2d20e5b5c852e66800ce12cce032e443b332c8d4f07be"
+    },
+    {
+      "path": "runtime.json",
+      "bytes": 116636,
+      "sha256": "15b986be06a244cd0c545cb31077a640c952ccbb64ec17ae215c200383ca5908"
+    },
+    {
+      "path": "source-evidence.json",
+      "bytes": 226839,
+      "sha256": "ef728f8b05033c5d89f72ee937b0c92695ac99a7009f00925092100dc4900da4"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 2993,
+      "sha256": "8c9e634a33704df7bc5979afe330c52f9401634181979c6699d9b45e8e8d1e4d"
+    }
+  ],
+  "cleanup": "cleanup.json; all owned executions stopped, no pending owned operation",
+  "writeBoundary": "source/probe and evidence writes stop after this seal; independent verification is disjoint"
+}

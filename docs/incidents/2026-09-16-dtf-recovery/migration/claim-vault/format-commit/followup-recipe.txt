@@ -1,0 +1,39 @@
+Follow-up precommit inventory recipe v1
+Captured before staging or committing the nine-file EOF correction.
+The walks completed before any followup-* file existed under format-commit/.
+Inventory files written afterward are excluded evidence and are not members of the preservation set.
+No build, deletion, chmod, cache write, or runtime rerun is part of this recipe.
+
+Git-mode inventory
+Walk: os.walk(root, followlinks=False). Symlinked directories are recorded and not descended. Filenames and symlink directory entries are recorded; ordinary directories are not entries.
+Fields, fixed key order: path, kind, mode, size, sha256, target.
+path: POSIX relative to worktree root, sorted ascending.
+kind: file, symlink, or other from lstat.
+mode: 100644 regular non-executable, 100755 regular executable, 120000 symlink, 000000 other.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the raw symlink target string encoded UTF-8 for symlinks; null otherwise.
+target: symlink target string, else null.
+Serialization: UTF-8 JSON Lines, json.dumps(separators=(',', ':'), ensure_ascii=False), one record per line, each line ending in \n, no extra trailing blank line beyond the last record newline.
+Aggregate SHA-256 is SHA-256 of those exact JSONL bytes and is not a substitute for the JSONL.
+Applies to followup-docs-incidents.jsonl, followup-out.jsonl and followup-cache-forge.jsonl.
+The git-mode field collapses 0o400, 0o444, 0o600 and 0o644 regular files to 100644. It is not a read-only-mode proof.
+
+Permission inventory recipe
+File: followup-docs-incidents-perms.jsonl.
+Walk: os.walk(docs/incidents, followlinks=False). Ordinary directories are recorded, including the walk root. Symlinked directories are recorded and not descended.
+Fields, fixed key order: path, kind, perm, size, sha256.
+path: POSIX relative to worktree root, sorted ascending. Directory paths have no trailing slash.
+kind: dir, file, symlink, or other from lstat.
+perm: oct(st_mode & 0o777), including 0o400, 0o444, 0o555, 0o600, 0o644 and 0o755.
+size: lstat st_size.
+sha256: SHA-256 of file bytes for regular files; SHA-256 of the symlink target string encoded UTF-8 for symlinks; null for directories and other.
+Serialization: same UTF-8 JSON Lines rules as the git-mode inventory.
+This permission inventory is the preservation encoding for sealed read-only modes. Do not chmod to make a later walk match.
+
+Other baselines
+followup-refs.txt: exact UTF-8 bytes of GIT_MASTER=1 git show-ref, captured before staging.
+followup-indexes.json: SHA-256 of each linked worktree index file from git rev-parse --git-path index, with worktree, branch, HEAD, size and mode. Only the phase16 index may change after the follow-up commit.
+followup-extra.json: lib/crane and node_modules symlink target, inode and mode; phase15 archive size and SHA-256; protected historical evidence hashes; inventory aggregate hashes.
+followup-precommit-diff.txt: exact GIT_MASTER=1 git diff --ignore-submodules=all before staging.
+followup-byte-proof.json: independent 40-path current-versus-HEAD byte comparison before staging.
+Reproduce a walk by executing the same field rules against the same roots and comparing each JSONL record, not only the aggregate hash.

@@ -1,0 +1,836 @@
+{
+  "date": "2026-11-11",
+  "verdict": "unproven-binding",
+  "writeScope": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-06-e2/docs/incidents/2026-09-16-dtf-recovery/migration/attribution-feasibility/native-surface-verification",
+  "inheritedFileCount": 110,
+  "inheritedAllUnchanged": true,
+  "preservation": [
+    {
+      "path": "anchors/calculations.json",
+      "bytes": 11291,
+      "sha256": "1ce1c106afe83e66ebcf19ec5095f937c9d26b45a463b4599bc70044473ec1b4",
+      "afterSha256": "1ce1c106afe83e66ebcf19ec5095f937c9d26b45a463b4599bc70044473ec1b4",
+      "unchanged": true
+    },
+    {
+      "path": "anchors/commands.md",
+      "bytes": 6851,
+      "sha256": "48094c1e24512b1b49bf3a28c73c20731f25bb337fc9cb74da69992954713301",
+      "afterSha256": "48094c1e24512b1b49bf3a28c73c20731f25bb337fc9cb74da69992954713301",
+      "unchanged": true
+    },
+    {
+      "path": "anchors/contract.md",
+      "bytes": 20835,
+      "sha256": "0da4818b6f35ae947d17949c259271d80f9d8df9e12773122049d9bee4b61356",
+      "afterSha256": "0da4818b6f35ae947d17949c259271d80f9d8df9e12773122049d9bee4b61356",
+      "unchanged": true
+    },
+    {
+      "path": "anchors/primary-sources.json",
+      "bytes": 48691,
+      "sha256": "48a9a8676e262f189f96199feabb9e044c03e05790e4b37f21979f2d033508a3",
+      "afterSha256": "48a9a8676e262f189f96199feabb9e044c03e05790e4b37f21979f2d033508a3",
+      "unchanged": true
+    },
+    {
+      "path": "anchors/rpc.json",
+      "bytes": 51166,
+      "sha256": "de29563f9ecf6ef080269ed85569afd8f62310ea5cd0672d217063713d6ca855",
+      "afterSha256": "de29563f9ecf6ef080269ed85569afd8f62310ea5cd0672d217063713d6ca855",
+      "unchanged": true
+    },
+    {
+      "path": "anchors/verification.json",
+      "bytes": 4962,
+      "sha256": "498474ce218dbc71acf343d0caf45ff287a6be6bfcf0971e0dd68dab5abb934f",
+      "afterSha256": "498474ce218dbc71acf343d0caf45ff287a6be6bfcf0971e0dd68dab5abb934f",
+      "unchanged": true
+    },
+    {
+      "path": "construction/evidence.json",
+      "bytes": 7621,
+      "sha256": "b365d0f9f0a15cf7bc5ac24fb537d85639f185f9db549079bd79d23444f9504c",
+      "afterSha256": "b365d0f9f0a15cf7bc5ac24fb537d85639f185f9db549079bd79d23444f9504c",
+      "unchanged": true
+    },
+    {
+      "path": "construction/invocations.md",
+      "bytes": 11096,
+      "sha256": "08defb9ec53b9e5cbfc476a215f247a746b16b8f70f6834c9b6f913ad7473763",
+      "afterSha256": "08defb9ec53b9e5cbfc476a215f247a746b16b8f70f6834c9b6f913ad7473763",
+      "unchanged": true
+    },
+    {
+      "path": "construction/report.md",
+      "bytes": 38056,
+      "sha256": "207d0673b6332e67c6e8404e97b939208f772f1e032812418103cd40244a7fba",
+      "afterSha256": "207d0673b6332e67c6e8404e97b939208f772f1e032812418103cd40244a7fba",
+      "unchanged": true
+    },
+    {
+      "path": "construction/verification.json",
+      "bytes": 8424,
+      "sha256": "e9635d898b71c1e0772d67ec7937b87a641d2c17fb514f0bfe00f4fd5575cdf1",
+      "afterSha256": "e9635d898b71c1e0772d67ec7937b87a641d2c17fb514f0bfe00f4fd5575cdf1",
+      "unchanged": true
+    },
+    {
+      "path": "freshness/contract.md",
+      "bytes": 28592,
+      "sha256": "6aa5a871b6c92d8c67f5e06e34be815d30b20b06cade74d8cee83e70bb070fa6",
+      "afterSha256": "6aa5a871b6c92d8c67f5e06e34be815d30b20b06cade74d8cee83e70bb070fa6",
+      "unchanged": true
+    },
+    {
+      "path": "freshness/invocations.md",
+      "bytes": 6418,
+      "sha256": "42f0f2905b441f129299774aa3d1e0d8d6242ad9102572ac798876d066bc5d3d",
+      "afterSha256": "42f0f2905b441f129299774aa3d1e0d8d6242ad9102572ac798876d066bc5d3d",
+      "unchanged": true
+    },
+    {
+      "path": "freshness/protocol-sources.json",
+      "bytes": 4523,
+      "sha256": "da96d043fdd8462301ae263f79367ad48102211179e8ccb3faef6843b115bf99",
+      "afterSha256": "da96d043fdd8462301ae263f79367ad48102211179e8ccb3faef6843b115bf99",
+      "unchanged": true
+    },
+    {
+      "path": "freshness/runtime-evidence.json",
+      "bytes": 168084,
+      "sha256": "49f4a9837d4e36842be7fed26c00b2bd37faeea41961c81b6573825ca7a6caab",
+      "afterSha256": "49f4a9837d4e36842be7fed26c00b2bd37faeea41961c81b6573825ca7a6caab",
+      "unchanged": true
+    },
+    {
+      "path": "freshness/verification.json",
+      "bytes": 6528,
+      "sha256": "07e3610ed779e82b7ec3982325c19e19de4a9c7af4b52cf18bf8d018d97e3bbb",
+      "afterSha256": "07e3610ed779e82b7ec3982325c19e19de4a9c7af4b52cf18bf8d018d97e3bbb",
+      "unchanged": true
+    },
+    {
+      "path": "freshness/witness.mjs",
+      "bytes": 7692,
+      "sha256": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa",
+      "afterSha256": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/cleanup.json",
+      "bytes": 26100,
+      "sha256": "bc2c3828622c84d9ba044ad643db419e503b6f300d4aa7a103a14d5dda8bbec0",
+      "afterSha256": "bc2c3828622c84d9ba044ad643db419e503b6f300d4aa7a103a14d5dda8bbec0",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/commands.md",
+      "bytes": 8213,
+      "sha256": "01881e3ae73c67b0a68481169214e588ece19ee17a72bf11c8aceff732d678f6",
+      "afterSha256": "01881e3ae73c67b0a68481169214e588ece19ee17a72bf11c8aceff732d678f6",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/completeness.json",
+      "bytes": 203727,
+      "sha256": "d26d81162589376c7045d2c66f7be158ba603d74e5b67efc785317f6df52a757",
+      "afterSha256": "d26d81162589376c7045d2c66f7be158ba603d74e5b67efc785317f6df52a757",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/contract.md",
+      "bytes": 23001,
+      "sha256": "db48ed0ecdc8a806f4b5e0b40c379359fd1c5c8459bd7acd612b779e7bc51582",
+      "afterSha256": "db48ed0ecdc8a806f4b5e0b40c379359fd1c5c8459bd7acd612b779e7bc51582",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/dataflows.json",
+      "bytes": 14501,
+      "sha256": "2ac9804f672b5a0fefbc0155c86d624be34a00ba6ef82ce95cce4c1552b994a2",
+      "afterSha256": "2ac9804f672b5a0fefbc0155c86d624be34a00ba6ef82ce95cce4c1552b994a2",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/deployment-observations.json",
+      "bytes": 35496,
+      "sha256": "500c5d10e69b9d3c595ce72cf7aaba746324ad1ad7f896e99bda1e593af06598",
+      "afterSha256": "500c5d10e69b9d3c595ce72cf7aaba746324ad1ad7f896e99bda1e593af06598",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/inventory.json",
+      "bytes": 361968,
+      "sha256": "716c1b93bd70cfbd7682ae0cd76fedfc52cc644c846ef46bdbd5d1adea8a56cf",
+      "afterSha256": "716c1b93bd70cfbd7682ae0cd76fedfc52cc644c846ef46bdbd5d1adea8a56cf",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/method-inventory.md",
+      "bytes": 48898,
+      "sha256": "7f7612bce79eb89b6bfaafdb49bd7e92ee1089347c726afe90a3f3c003429436",
+      "afterSha256": "7f7612bce79eb89b6bfaafdb49bd7e92ee1089347c726afe90a3f3c003429436",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/opcode-hooks.json",
+      "bytes": 17451,
+      "sha256": "9093bb823e80fe7dca5a61af5ff26aa291a9c0caabad028927caeac8cc3afed1",
+      "afterSha256": "9093bb823e80fe7dca5a61af5ff26aa291a9c0caabad028927caeac8cc3afed1",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/source-provenance.json",
+      "bytes": 76190,
+      "sha256": "fef51ee2d518f4424b589720165c2e364b6286b69022641c32563f4d338cba5a",
+      "afterSha256": "fef51ee2d518f4424b589720165c2e364b6286b69022641c32563f4d338cba5a",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/evm.go",
+      "bytes": 5286,
+      "sha256": "63a26d7a30347aa384638d327b56d63b87790b8ea9c8b8c9437618dd0b724b77",
+      "afterSha256": "63a26d7a30347aa384638d327b56d63b87790b8ea9c8b8c9437618dd0b724b77",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/state/statedb.go",
+      "bytes": 60400,
+      "sha256": "3e8566fe7a24f883ccbd98915dca6657e96874513f8fcfe863fbdce1bd381d5c",
+      "afterSha256": "3e8566fe7a24f883ccbd98915dca6657e96874513f8fcfe863fbdce1bd381d5c",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/types/arbitrum_signer.go",
+      "bytes": 3502,
+      "sha256": "0db68d4c489c8bf6c34f84a7ba24aa294e12b1e38bdfcbb77a7616676e958f85",
+      "afterSha256": "0db68d4c489c8bf6c34f84a7ba24aa294e12b1e38bdfcbb77a7616676e958f85",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/types/block.go",
+      "bytes": 18888,
+      "sha256": "f76e3bd2f3acc9488727419afce5c94a38beedb14c3ff2954ec0a9065a85502b",
+      "afterSha256": "f76e3bd2f3acc9488727419afce5c94a38beedb14c3ff2954ec0a9065a85502b",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/vm/contracts.go",
+      "bytes": 48772,
+      "sha256": "9c28e68e923a5077cfcd7896086320a9119d1b6f615c3fb60446e26da853ccbd",
+      "afterSha256": "9c28e68e923a5077cfcd7896086320a9119d1b6f615c3fb60446e26da853ccbd",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/vm/contracts_arbitrum.go",
+      "bytes": 1592,
+      "sha256": "433b881d6763488deb823cc044a3a3a82939f09c0314659515b684e82b379a69",
+      "afterSha256": "433b881d6763488deb823cc044a3a3a82939f09c0314659515b684e82b379a69",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/vm/eips.go",
+      "bytes": 17416,
+      "sha256": "1af4accd143025d69e67bd0a35e883e37f0d90cb2007d4bda43783e68d937b2e",
+      "afterSha256": "1af4accd143025d69e67bd0a35e883e37f0d90cb2007d4bda43783e68d937b2e",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/vm/evm.go",
+      "bytes": 36452,
+      "sha256": "3292951d31c79ab74709d6e7d24a591b5052f2d427cd476cac1cfbd2dd2c869a",
+      "afterSha256": "3292951d31c79ab74709d6e7d24a591b5052f2d427cd476cac1cfbd2dd2c869a",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/core/vm/instructions.go",
+      "bytes": 38699,
+      "sha256": "b2f27b875ade767429a30669d5ef49d800d3c04da28ebf2124e78b99cef26196",
+      "afterSha256": "b2f27b875ade767429a30669d5ef49d800d3c04da28ebf2124e78b99cef26196",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/params/config.go",
+      "bytes": 62268,
+      "sha256": "a8dee8f8ef54db8f3c95230aa0ad99df4166c39c6ccce761808f6894427efece",
+      "afterSha256": "a8dee8f8ef54db8f3c95230aa0ad99df4166c39c6ccce761808f6894427efece",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/params/config_arbitrum.go",
+      "bytes": 5344,
+      "sha256": "229c8897ce78450384d53ad21e091d4876fc35be70103656372a382fbf7714ac",
+      "afterSha256": "229c8897ce78450384d53ad21e091d4876fc35be70103656372a382fbf7714ac",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/go-ethereum/params/protocol_params.go",
+      "bytes": 21395,
+      "sha256": "f5ec4a8345962f208613329a38ce4b0c9bcf4d0b94c2ec25954a78c513165f80",
+      "afterSha256": "f5ec4a8345962f208613329a38ce4b0c9bcf4d0b94c2ec25954a78c513165f80",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbAddressTable.sol",
+      "bytes": 2272,
+      "sha256": "545343f7e16e5dca19de89be9593389f7359ed233903a59589c986e91b4fe116",
+      "afterSha256": "545343f7e16e5dca19de89be9593389f7359ed233903a59589c986e91b4fe116",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbAggregator.sol",
+      "bytes": 2873,
+      "sha256": "9a7904a771b6cf88b0318a4088fcbeecab27aca2d7b13fbbb41d46cd8f7ecaf8",
+      "afterSha256": "9a7904a771b6cf88b0318a4088fcbeecab27aca2d7b13fbbb41d46cd8f7ecaf8",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbBLS.sol",
+      "bytes": 425,
+      "sha256": "88091e28a13c87764e66c395651cbaba66d9b114a720171ec500f694fe300660",
+      "afterSha256": "88091e28a13c87764e66c395651cbaba66d9b114a720171ec500f694fe300660",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbDebug.sol",
+      "bytes": 1594,
+      "sha256": "67b7f243d371f72e681827e99c84468ed9faeadc13e17342d30a1285b56f22ab",
+      "afterSha256": "67b7f243d371f72e681827e99c84468ed9faeadc13e17342d30a1285b56f22ab",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbFilteredTransactionsManager.sol",
+      "bytes": 1437,
+      "sha256": "14cb6b3c300629fda9e6eb5aa83c414c3b31a69e049708c6f4cbaff6857039e6",
+      "afterSha256": "14cb6b3c300629fda9e6eb5aa83c414c3b31a69e049708c6f4cbaff6857039e6",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbFunctionTable.sol",
+      "bytes": 1043,
+      "sha256": "86b80bd87a20625d2f3eb8678ad701c6e40b1576322c7445fe39ea7de8a2f376",
+      "afterSha256": "86b80bd87a20625d2f3eb8678ad701c6e40b1576322c7445fe39ea7de8a2f376",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbGasInfo.sol",
+      "bytes": 9960,
+      "sha256": "ec622f01a4e4a2fa191a62415df3c5d2c5e008c581570fb5f0b16a270b0a6949",
+      "afterSha256": "ec622f01a4e4a2fa191a62415df3c5d2c5e008c581570fb5f0b16a270b0a6949",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbInfo.sol",
+      "bytes": 781,
+      "sha256": "d9ce39a86d5e167bf2fa954d9d3c58a210103526e3ff2f98ed6e9d67826167a0",
+      "afterSha256": "d9ce39a86d5e167bf2fa954d9d3c58a210103526e3ff2f98ed6e9d67826167a0",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbMultiGasConstraintsTypes.sol",
+      "bytes": 2112,
+      "sha256": "b1079f2ad650c6263bdc752c3014c1b1b6e38c71301cd4eaf6d675dfab85b8cb",
+      "afterSha256": "b1079f2ad650c6263bdc752c3014c1b1b6e38c71301cd4eaf6d675dfab85b8cb",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbNativeTokenManager.sol",
+      "bytes": 1348,
+      "sha256": "c18543955ef3b12a04a239f8e45b81f892cbeeb9f06117f8d0530f11dae9edbe",
+      "afterSha256": "c18543955ef3b12a04a239f8e45b81f892cbeeb9f06117f8d0530f11dae9edbe",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbOwner.sol",
+      "bytes": 18128,
+      "sha256": "4192fdc91ea9b10baa245ead4cbb304ce9fb89c15ee7da8cce5b31c1ca60c63b",
+      "afterSha256": "4192fdc91ea9b10baa245ead4cbb304ce9fb89c15ee7da8cce5b31c1ca60c63b",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbOwnerPublic.sol",
+      "bytes": 4266,
+      "sha256": "1dbc44a27c056a640f966afaa14c44168683b58519009db7a736c75cb2fde1a0",
+      "afterSha256": "1dbc44a27c056a640f966afaa14c44168683b58519009db7a736c75cb2fde1a0",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbRetryableTx.sol",
+      "bytes": 3914,
+      "sha256": "195c78d75962132116dd1c2f0ce04ab8c977d2fb278becdefc925f02ce621bb0",
+      "afterSha256": "195c78d75962132116dd1c2f0ce04ab8c977d2fb278becdefc925f02ce621bb0",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbStatistics.sol",
+      "bytes": 1004,
+      "sha256": "680bfb36762a508154613605958ab139e231589b12bbc61c0fb093093c4f829d",
+      "afterSha256": "680bfb36762a508154613605958ab139e231589b12bbc61c0fb093093c4f829d",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbSys.sol",
+      "bytes": 5488,
+      "sha256": "55251738b340761189c5ef8874c9de135cce76e7a8b4bbe682a46db75f5fd87d",
+      "afterSha256": "55251738b340761189c5ef8874c9de135cce76e7a8b4bbe682a46db75f5fd87d",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbWasm.sol",
+      "bytes": 5776,
+      "sha256": "6d2076d064b6a12e1b8df4ffa26a0fdde6c93fc79b4c3ee2e8adf98e96a243f1",
+      "afterSha256": "6d2076d064b6a12e1b8df4ffa26a0fdde6c93fc79b4c3ee2e8adf98e96a243f1",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbWasmCache.sol",
+      "bytes": 1845,
+      "sha256": "69a3855c597c3e165f5ab18b99355c33e264aa08d5f1eabafb95d7782f1ef67b",
+      "afterSha256": "69a3855c597c3e165f5ab18b99355c33e264aa08d5f1eabafb95d7782f1ef67b",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbosActs.sol",
+      "bytes": 1769,
+      "sha256": "0decceb7e4bc2b70a22bee2c94cb23b3690a952bbb64a46c1ca40b376afd0d86",
+      "afterSha256": "0decceb7e4bc2b70a22bee2c94cb23b3690a952bbb64a46c1ca40b376afd0d86",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro-precompile-interfaces/ArbosTest.sol",
+      "bytes": 778,
+      "sha256": "32b5cf1ba3639c3bfc9a2bb0767bc9c899b8c8ea388c44dc407562b40210116e",
+      "afterSha256": "32b5cf1ba3639c3bfc9a2bb0767bc9c899b8c8ea388c44dc407562b40210116e",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/addressSet/addressSet.go",
+      "bytes": 4733,
+      "sha256": "64de5db4b3f9de60f4a6b8ce7919cbf6e4a679f20a095e42d22b9848c610d3d5",
+      "afterSha256": "64de5db4b3f9de60f4a6b8ce7919cbf6e4a679f20a095e42d22b9848c610d3d5",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/addressTable/addressTable.go",
+      "bytes": 3441,
+      "sha256": "b567eff3341b52ff4ea69e41960d60e6fddaa2bceceaa319211b55555c7bfb0f",
+      "afterSha256": "b567eff3341b52ff4ea69e41960d60e6fddaa2bceceaa319211b55555c7bfb0f",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/arbosState/arbosstate.go",
+      "bytes": 28493,
+      "sha256": "d784755e8b24c799e374206f613f606f7a184d60df4040885ec2175dfd706faf",
+      "afterSha256": "d784755e8b24c799e374206f613f606f7a184d60df4040885ec2175dfd706faf",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/block_processor.go",
+      "bytes": 33262,
+      "sha256": "1a847ed646a64f8df933d44dcce75f7dd062890363927739395f077cd906ac34",
+      "afterSha256": "1a847ed646a64f8df933d44dcce75f7dd062890363927739395f077cd906ac34",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/blockhash/blockhash.go",
+      "bytes": 2235,
+      "sha256": "3c70cec4d47a9cd744152ad6c4dfc43536b698cd0170cf0bde66570e14432ec8",
+      "afterSha256": "3c70cec4d47a9cd744152ad6c4dfc43536b698cd0170cf0bde66570e14432ec8",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/features/features.go",
+      "bytes": 1580,
+      "sha256": "6cb8308a7e2efbca9a592f4c81595aa95cc5dbee6e04113d61e07e1e6ef84fd4",
+      "afterSha256": "6cb8308a7e2efbca9a592f4c81595aa95cc5dbee6e04113d61e07e1e6ef84fd4",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/filteredTransactions/state.go",
+      "bytes": 1674,
+      "sha256": "f3abb1583c504d525208b529d243ddf06bfa5cc706236f9d73633d933e69deea",
+      "afterSha256": "f3abb1583c504d525208b529d243ddf06bfa5cc706236f9d73633d933e69deea",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/internal_tx.go",
+      "bytes": 7313,
+      "sha256": "c48800495c1d4fa564c10948ea753b66be9ef47baf2c592064eb2ae01b96110a",
+      "afterSha256": "c48800495c1d4fa564c10948ea753b66be9ef47baf2c592064eb2ae01b96110a",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/l1pricing/batchPoster.go",
+      "bytes": 4655,
+      "sha256": "9235317cbc58ca352d877687319ca64895b45ab8ee927601c80ea7ae87941d36",
+      "afterSha256": "9235317cbc58ca352d877687319ca64895b45ab8ee927601c80ea7ae87941d36",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/l1pricing/l1pricing.go",
+      "bytes": 20102,
+      "sha256": "73dc5dc56215d3617c816884e76491bffce93bd93f1626fe2e886cea0e140dd6",
+      "afterSha256": "73dc5dc56215d3617c816884e76491bffce93bd93f1626fe2e886cea0e140dd6",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/l2pricing/gas_constraint.go",
+      "bytes": 1873,
+      "sha256": "b105dc65de2c732f6db7652f7aa0db3461d39f83fe3099b7572a2b45d922fd02",
+      "afterSha256": "b105dc65de2c732f6db7652f7aa0db3461d39f83fe3099b7572a2b45d922fd02",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/l2pricing/l2pricing.go",
+      "bytes": 10152,
+      "sha256": "3b59b6f6d5b2ada784819f0cc5b765c8d2cd805d73e0aeb0d571969a97cb1c12",
+      "afterSha256": "3b59b6f6d5b2ada784819f0cc5b765c8d2cd805d73e0aeb0d571969a97cb1c12",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/l2pricing/model.go",
+      "bytes": 13257,
+      "sha256": "6d8959dd7f2ec8f532293ab8c4cdc8bf363234b6eb853a4c8d912eae239419af",
+      "afterSha256": "6d8959dd7f2ec8f532293ab8c4cdc8bf363234b6eb853a4c8d912eae239419af",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/l2pricing/multi_gas_constraint.go",
+      "bytes": 5504,
+      "sha256": "e78a48d45460a38d5f76fc6814cc524a0a00a4ea80bfa943ace9aa0d488d712c",
+      "afterSha256": "e78a48d45460a38d5f76fc6814cc524a0a00a4ea80bfa943ace9aa0d488d712c",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/l2pricing/multi_gas_fees.go",
+      "bytes": 2328,
+      "sha256": "bd3b07a68d4515aed647d1514b659cf4fbeccb46a3f63ec8794872cbe89e4e91",
+      "afterSha256": "bd3b07a68d4515aed647d1514b659cf4fbeccb46a3f63ec8794872cbe89e4e91",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/merkleAccumulator/merkleAccumulator.go",
+      "bytes": 7272,
+      "sha256": "d1b6f806059cb09473a2c31a7ae01fcc545200911726219aa09a18190cdf8557",
+      "afterSha256": "d1b6f806059cb09473a2c31a7ae01fcc545200911726219aa09a18190cdf8557",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/programs/data_pricer.go",
+      "bytes": 3095,
+      "sha256": "a38c52a53998a58d7bc8e5f7ac33bc387103691a54f16f702efa442d4c858406",
+      "afterSha256": "a38c52a53998a58d7bc8e5f7ac33bc387103691a54f16f702efa442d4c858406",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/programs/params.go",
+      "bytes": 9293,
+      "sha256": "c748b57e1b30fa26c6e353a63b3d3072ddf4ca4d651c24b045be42b879c6434a",
+      "afterSha256": "c748b57e1b30fa26c6e353a63b3d3072ddf4ca4d651c24b045be42b879c6434a",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/programs/programs.go",
+      "bytes": 28679,
+      "sha256": "eabecb9fd2c659a05be891583ff860d766a345ef5bad1b1ce50d0a93ff08c036",
+      "afterSha256": "eabecb9fd2c659a05be891583ff860d766a345ef5bad1b1ce50d0a93ff08c036",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/retryables/retryable.go",
+      "bytes": 12964,
+      "sha256": "36beedf7fae0ab6b8d23b09bf6ae4623a962588a3bd4815183b6a39e5ce2b705",
+      "afterSha256": "36beedf7fae0ab6b8d23b09bf6ae4623a962588a3bd4815183b6a39e5ce2b705",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/arbos/tx_processor.go",
+      "bytes": 44942,
+      "sha256": "f639d682351430d0ce751d0774f890dcf2fd9e292836e60538e0e3c2593c3c54",
+      "afterSha256": "f639d682351430d0ce751d0774f890dcf2fd9e292836e60538e0e3c2593c3c54",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/execution/nodeinterface/node_interface.go",
+      "bytes": 21674,
+      "sha256": "95d1112f677a9285e1884c032eec6172d00c268600871e8d63e0aa4c267f7439",
+      "afterSha256": "95d1112f677a9285e1884c032eec6172d00c268600871e8d63e0aa4c267f7439",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/execution/nodeinterface/virtual_contracts.go",
+      "bytes": 6256,
+      "sha256": "5c2017b4657b8a84d850b292c658e715937f571007a13133af2e68167de371ea",
+      "afterSha256": "5c2017b4657b8a84d850b292c658e715937f571007a13133af2e68167de371ea",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/gethhook/geth-hook.go",
+      "bytes": 5974,
+      "sha256": "2efe217e3c32e6407848149ec3e93450d6e114c798ce63543a3dc77cfbaa874d",
+      "afterSha256": "2efe217e3c32e6407848149ec3e93450d6e114c798ce63543a3dc77cfbaa874d",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbAddressTable.go",
+      "bytes": 2596,
+      "sha256": "e7395408ab80eb63df3c659715ab820959b4556a2fb55501d83c1fb8ceb796aa",
+      "afterSha256": "e7395408ab80eb63df3c659715ab820959b4556a2fb55501d83c1fb8ceb796aa",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbAggregator.go",
+      "bytes": 3577,
+      "sha256": "a9c22c66547e91d10a004495c1237fff52e4d630cde5b7f43617d6641b5b0e58",
+      "afterSha256": "a9c22c66547e91d10a004495c1237fff52e4d630cde5b7f43617d6641b5b0e58",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbBLS.go",
+      "bytes": 259,
+      "sha256": "73fb359b55ff4b896fdf341756d8c4130ea9dd670379caaad7e3f5570e7c4c7c",
+      "afterSha256": "73fb359b55ff4b896fdf341756d8c4130ea9dd670379caaad7e3f5570e7c4c7c",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbDebug.go",
+      "bytes": 2647,
+      "sha256": "c53e795fd61c55c300da2c21d6c11470ad581346e7ec480e8d3ccd9a40dd18b1",
+      "afterSha256": "c53e795fd61c55c300da2c21d6c11470ad581346e7ec480e8d3ccd9a40dd18b1",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbFilteredTransactionsManager.go",
+      "bytes": 2144,
+      "sha256": "e1a0a62f8dc61d08d50a512ae1fe9cbd8ebc3bc803b025b82aefc3584a599ecd",
+      "afterSha256": "e1a0a62f8dc61d08d50a512ae1fe9cbd8ebc3bc803b025b82aefc3584a599ecd",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbFunctionTable.go",
+      "bytes": 958,
+      "sha256": "761515da44816bea73647a519968dd121374f100faea797bf4aaa11d5adbeeb8",
+      "afterSha256": "761515da44816bea73647a519968dd121374f100faea797bf4aaa11d5adbeeb8",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbGasInfo.go",
+      "bytes": 13762,
+      "sha256": "adf4bc79cf1cb650fd5a14f02f49578d39af8483d214be9c63769fef4701d54d",
+      "afterSha256": "adf4bc79cf1cb650fd5a14f02f49578d39af8483d214be9c63769fef4701d54d",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbInfo.go",
+      "bytes": 1203,
+      "sha256": "d7ba3232f9587c93fb020d24405c20cf8f99373972a53152c0286826d4e3a401",
+      "afterSha256": "d7ba3232f9587c93fb020d24405c20cf8f99373972a53152c0286826d4e3a401",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbMultiGasConstraintsTypes.go",
+      "bytes": 568,
+      "sha256": "c1103c33c8dde1e25769311c8d66e1441df2c78ed92a490a7e6d17c2444cdb81",
+      "afterSha256": "c1103c33c8dde1e25769311c8d66e1441df2c78ed92a490a7e6d17c2444cdb81",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbNativeTokenManager.go",
+      "bytes": 2250,
+      "sha256": "7a657df13501c4638b33d764ebcf9989ebda5b3edcf0a967353ca95c4d14ed41",
+      "afterSha256": "7a657df13501c4638b33d764ebcf9989ebda5b3edcf0a967353ca95c4d14ed41",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbOwner.go",
+      "bytes": 25491,
+      "sha256": "ffe02545d3af25ab2aec245d70c8b7d511e1a27cc342c491299d90692a7df0f9",
+      "afterSha256": "ffe02545d3af25ab2aec245d70c8b7d511e1a27cc342c491299d90692a7df0f9",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbOwnerPublic.go",
+      "bytes": 5018,
+      "sha256": "3e7f40582f6446ec9b0030fb3ad6bf90c5d9dbc529140a09f2d083fdcdce7572",
+      "afterSha256": "3e7f40582f6446ec9b0030fb3ad6bf90c5d9dbc529140a09f2d083fdcdce7572",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbRetryableTx.go",
+      "bytes": 10114,
+      "sha256": "6d113ee3dd6617e0f9f13238cd1f17a99e8dd478aa8239072f12953eca332ad0",
+      "afterSha256": "6d113ee3dd6617e0f9f13238cd1f17a99e8dd478aa8239072f12953eca332ad0",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbStatistics.go",
+      "bytes": 1282,
+      "sha256": "84d420a95f8fa1c10aa78db0ffc4009a542cec4ab502b6bba4a7486393605e7a",
+      "afterSha256": "84d420a95f8fa1c10aa78db0ffc4009a542cec4ab502b6bba4a7486393605e7a",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbSys.go",
+      "bytes": 8307,
+      "sha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "afterSha256": "21534cbf1645dc6139219590714b9d91de44bf3b8ccad9463dcb2cc7e87543bd",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbWasm.go",
+      "bytes": 8606,
+      "sha256": "d69353ea1a6f2a083d3220491d2f3044a24d1e97fb56b869815b4e97e361e597",
+      "afterSha256": "d69353ea1a6f2a083d3220491d2f3044a24d1e97fb56b869815b4e97e361e597",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbWasmCache.go",
+      "bytes": 2666,
+      "sha256": "e48a942fd72f604544d9736c64a7c30d82b41a5946a6e735eb2f0a1471d16c60",
+      "afterSha256": "e48a942fd72f604544d9736c64a7c30d82b41a5946a6e735eb2f0a1471d16c60",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbosActs.go",
+      "bytes": 1034,
+      "sha256": "a59f30c2b99de75a47e32b1be610178da86836829ea896fcd90d8143b23a4408",
+      "afterSha256": "a59f30c2b99de75a47e32b1be610178da86836829ea896fcd90d8143b23a4408",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/ArbosTest.go",
+      "bytes": 729,
+      "sha256": "26429e31f81c999e7df50cd0280128acce7f70737317892af558c7e0db5b4b4a",
+      "afterSha256": "26429e31f81c999e7df50cd0280128acce7f70737317892af558c7e0db5b4b4a",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/context.go",
+      "bytes": 4383,
+      "sha256": "f961d0a24f4fc44e9ab3c4251826df6ccc10e004911c9acaa2b8b860571848eb",
+      "afterSha256": "f961d0a24f4fc44e9ab3c4251826df6ccc10e004911c9acaa2b8b860571848eb",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/precompile.go",
+      "bytes": 33644,
+      "sha256": "c284cea90f037b84048ba59306d73fb7bce25b15e2e469ebc898c0d8b9838d3d",
+      "afterSha256": "c284cea90f037b84048ba59306d73fb7bce25b15e2e469ebc898c0d8b9838d3d",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/precompiles/wrapper.go",
+      "bytes": 5926,
+      "sha256": "fd770434dfafe6718bd53590f99476bd8a8dcffa43dbbc7b855e4f9b56abac45",
+      "afterSha256": "fd770434dfafe6718bd53590f99476bd8a8dcffa43dbbc7b855e4f9b56abac45",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/solgen/gen.go",
+      "bytes": 8801,
+      "sha256": "54abce5afd85c027e418a6f6d4c7a0b92296a75805ff9305d65a2cf10f583013",
+      "afterSha256": "54abce5afd85c027e418a6f6d4c7a0b92296a75805ff9305d65a2cf10f583013",
+      "unchanged": true
+    },
+    {
+      "path": "verification/audit.json",
+      "bytes": 62148,
+      "sha256": "6c1bf41abfb9f64385760d1a571564f2230d9429475f5827f169cb4dfc0dd04c",
+      "afterSha256": "6c1bf41abfb9f64385760d1a571564f2230d9429475f5827f169cb4dfc0dd04c",
+      "unchanged": true
+    },
+    {
+      "path": "verification/cleanup.json",
+      "bytes": 11338,
+      "sha256": "a41343c52a41ce4c759b5af2ec6a5f899cbe4799ad8623a88c8a4055834f5779",
+      "afterSha256": "a41343c52a41ce4c759b5af2ec6a5f899cbe4799ad8623a88c8a4055834f5779",
+      "unchanged": true
+    },
+    {
+      "path": "verification/invocations.md",
+      "bytes": 14878,
+      "sha256": "da8818854f416c00bfc9cba9276cdb9f47350eb8e535b9e4d72c9929251a393c",
+      "afterSha256": "da8818854f416c00bfc9cba9276cdb9f47350eb8e535b9e4d72c9929251a393c",
+      "unchanged": true
+    },
+    {
+      "path": "verification/native-surface-scope.json",
+      "bytes": 2953,
+      "sha256": "a65f6a8090298ac2c8a82b6d773b40611e4f5cd3b253996a1b2a6db91f46d31c",
+      "afterSha256": "a65f6a8090298ac2c8a82b6d773b40611e4f5cd3b253996a1b2a6db91f46d31c",
+      "unchanged": true
+    },
+    {
+      "path": "verification/report.md",
+      "bytes": 36165,
+      "sha256": "97fded0ed38c3ac8838173cfa33ee4b99632726051527e372e06711e6919fbb7",
+      "afterSha256": "97fded0ed38c3ac8838173cfa33ee4b99632726051527e372e06711e6919fbb7",
+      "unchanged": true
+    },
+    {
+      "path": "native-surface/sources/nitro/.gitmodules",
+      "bytes": 1718,
+      "sha256": "38aef0443de19d2a2d137ca453edb7ad6604d3b69a64aad9a32e3d92ca4331d2",
+      "afterSha256": "38aef0443de19d2a2d137ca453edb7ad6604d3b69a64aad9a32e3d92ca4331d2",
+      "unchanged": true
+    }
+  ],
+  "ownedArtifacts": [
+    {
+      "path": "report.md",
+      "bytes": 26314,
+      "sha256": "c0dacf8c1825e2210ab8a4f1f6c3e68e117d22002a3538948e8761ce4e557d6e"
+    },
+    {
+      "path": "audit.json",
+      "bytes": 262930,
+      "sha256": "38e34a13ccb202d1cfbe81fe26bcbf454c47ea884ae76ddf609b0e0d0f922fd0"
+    },
+    {
+      "path": "commands.md",
+      "bytes": 9614,
+      "sha256": "c128ec83a0d4511d37a00c33accde5622381f56fb87e16a4e313c00fbab56e7f"
+    },
+    {
+      "path": "sources/go-ethereum/core/state_processor.go",
+      "bytes": 19567,
+      "sha256": "bdcf2423180e6dadc6b3fd419195deca64c1cc6fae66dfb8e0839575e351da5c"
+    }
+  ],
+  "cleanupSelfHashExcluded": true,
+  "validation": {
+    "auditJsonParsed": true,
+    "methodRows": 191,
+    "structuralFailures": [],
+    "missingReferences": [],
+    "extraSourceCopyMatchesPinnedResponse": true,
+    "producerSourceBlobMatches": 79,
+    "independentlyVerifiedAdditionalSourceBlobs": 1,
+    "reportBindingAndOriginalObligationsInspected": true
+  },
+  "unavailableDiagnostics": [
+    "gopls not installed",
+    "Biome not installed"
+  ],
+  "buildsRun": 0,
+  "testSuitesRun": 0,
+  "newChainRpcCalls": 0,
+  "publicTransactions": 0,
+  "ownedRuntime": {
+    "started": false,
+    "pending": false,
+    "listeners": [],
+    "forks": [],
+    "children": [],
+    "monitors": [],
+    "temporaryRoots": []
+  },
+  "prohibitedActionsPerformed": [],
+  "limits": [
+    "No source-to-active-executable attestation acquired",
+    "No generated precompilesgen metadata rebuilt or runtime-attested",
+    "No mined Nitro caller-position prefix experiment",
+    "No arbitrary-contract or universal-impossibility claim"
+  ]
+}

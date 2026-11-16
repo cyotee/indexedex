@@ -1,0 +1,47 @@
+{
+  "commands": [
+    {
+      "name": "head",
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git rev-parse HEAD",
+      "exitCode": 0,
+      "stdout": "a96f0fd26c1a1fdba35750cff74d866afa3a9796\n",
+      "stderr": ""
+    },
+    {
+      "name": "whitespace",
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --check",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "index",
+      "command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --cached --ignore-submodules=all --exit-code",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "port",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "pids",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/.omo-runtime/dtf-migration-weighted-receipt/checkpoints",
+  "checkpointAbsent": true,
+  "nodePid": 40856,
+  "producerPid": 29538,
+  "monitor": "mon_MY3A0ZDYC5H5NJHH",
+  "monitorExitCode": 0,
+  "sourceChangesStopped": true,
+  "noOwnedPendingOperation": true,
+  "preservedProducerEntries": 958,
+  "preservedCandidateSources": 36
+}

@@ -1,0 +1,382 @@
+{
+  "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI",
+  "processes": [
+    {
+      "pid": 83171,
+      "absent": true
+    },
+    {
+      "pid": 84737,
+      "absent": true
+    },
+    {
+      "pid": 2401,
+      "absent": true
+    },
+    {
+      "pid": 2133,
+      "absent": true
+    },
+    {
+      "pid": 85008,
+      "absent": true
+    },
+    {
+      "pid": 84952,
+      "absent": true
+    },
+    {
+      "pid": 85468,
+      "absent": true
+    },
+    {
+      "pid": 2132,
+      "absent": true
+    },
+    {
+      "pid": 85467,
+      "absent": true
+    },
+    {
+      "pid": 87791,
+      "absent": true
+    },
+    {
+      "pid": 92679,
+      "absent": true
+    },
+    {
+      "pid": 83169,
+      "absent": true
+    },
+    {
+      "pid": 86612,
+      "absent": true
+    },
+    {
+      "pid": 83441,
+      "absent": true
+    },
+    {
+      "pid": 90976,
+      "absent": true
+    },
+    {
+      "pid": 83175,
+      "absent": true
+    },
+    {
+      "pid": 86670,
+      "absent": true
+    },
+    {
+      "pid": 3439,
+      "absent": true
+    },
+    {
+      "pid": 87790,
+      "absent": true
+    },
+    {
+      "pid": 84752,
+      "absent": true
+    },
+    {
+      "pid": 86665,
+      "absent": true
+    },
+    {
+      "pid": 84751,
+      "absent": true
+    },
+    {
+      "pid": 84747,
+      "absent": true
+    },
+    {
+      "pid": 2051,
+      "absent": true
+    },
+    {
+      "pid": 84726,
+      "absent": true
+    },
+    {
+      "pid": 82945,
+      "absent": true
+    },
+    {
+      "pid": 83173,
+      "absent": true
+    },
+    {
+      "pid": 90984,
+      "absent": true
+    },
+    {
+      "pid": 84741,
+      "absent": true
+    },
+    {
+      "pid": 83177,
+      "absent": true
+    },
+    {
+      "pid": 82618,
+      "absent": true
+    },
+    {
+      "pid": 90980,
+      "absent": true
+    },
+    {
+      "pid": 3255,
+      "absent": true
+    },
+    {
+      "pid": 84745,
+      "absent": true
+    },
+    {
+      "pid": 84739,
+      "absent": true
+    },
+    {
+      "pid": 90982,
+      "absent": true
+    },
+    {
+      "pid": 2053,
+      "absent": true
+    },
+    {
+      "pid": 83335,
+      "absent": true
+    },
+    {
+      "pid": 84743,
+      "absent": true
+    },
+    {
+      "pid": 83178,
+      "absent": true
+    },
+    {
+      "pid": 90978,
+      "absent": true
+    },
+    {
+      "pid": 84735,
+      "absent": true
+    },
+    {
+      "pid": 84749,
+      "absent": true
+    },
+    {
+      "pid": 99661,
+      "absent": true
+    }
+  ],
+  "ports": [
+    {
+      "endpoint": "http://127.0.0.1:60621",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:59408",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:59294",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:59553",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:60571",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    },
+    {
+      "endpoint": "http://127.0.0.1:60411",
+      "refused": true,
+      "code": "ECONNREFUSED"
+    }
+  ],
+  "directories": [
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/earlier-cp-original.jjvTdH",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-leading-zero.3L7Dt4",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit.8o2GlG",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-caller.wzthpX",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/cp-replay.m5VPZu/earlier-cp.WLV3OE",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-replay.QpmVTY",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/workspace-before.m55KlJ",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered.Kr1zpB",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/control-blank-zero-clean.SYuG12",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/tokenstaking-source.qBMV9S",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/weighted-original.MaKkOm",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-metered.8mXENb",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/weighted-replay.NrIfF7",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-1.kJSwAx",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/cp-replay.m5VPZu",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-unlisted-float.WdfGmm",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/reconciliation.wdbQHP",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/witness-original.tHuAlK",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/control-negative-clean.7TgcDp",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/workspace-after.DI0gWh",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-unterminated.85R2K3",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/independent-reconciliation.Rwg2kf",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-float.vhIA47",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/stale-reject.pz5Q6n",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-replay.uvjQui",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/stale-seed.B6TadN",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-negative.A8C5aq",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-duplicate-header.qWHFrw",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/native-replay.iMwywZ",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-exponent.x8OGMX",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/workspace-before-r2.SAF0Uh",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-sources-original.2qQ55o",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-5.gZ0NlS",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-2.DJAff4",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-4.3yTExQ",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/syntax-3.PeFOYs",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/receipt-audit-r2.pY7eN9",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/malformed-blank-zero.EjPPV5",
+      "absent": true
+    },
+    {
+      "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/reconciliation-repeat.Mha983",
+      "absent": true
+    }
+  ],
+  "deleted": true,
+  "secretScan": {
+    "scannedFiles": 245,
+    "credentialPresentForCheck": true,
+    "pass": true
+  },
+  "pass": true
+}

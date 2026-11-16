@@ -1,0 +1,279 @@
+{
+  "type": "AdversarialVerify",
+  "task": "F3",
+  "date": "2026-11-15",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "scope": "Independent bounded partial-evidence review of retained actual cli.ts rehearse receipts, canonical trace/state, cleanup, signed gas applicability and qualified historical suite evidence.",
+  "confirmed_means": "The bounded package accurately discloses supported partial observations, interruptions, cleanup and known unmet requirements. It does not mean full real lifecycle or conformance acceptance.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "full_goal_met": false,
+  "known_unmet": [10, 12, 13, 14, 15],
+  "full_real_lifecycle_accepted": false,
+  "task10_complete": false,
+  "task13_renewed_complete_acceptance": false,
+  "task15_full_acceptance": false,
+  "closed_work_requeued": false,
+  "genuinely_new_inconsistencies": [],
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+    "bytes": 15031,
+    "sha256": "2b50cdc1e6eee7acb7c1b6a1391163df85901459f4121e0f15c4a853af00e49f"
+  },
+  "boundary_handoff": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/partial-boundary-done.json",
+    "bytes": 40461,
+    "sha256": "ba5fbf826937e7961d3c6994622a0e1c3362790c600d8c30f505e7233c826dd4",
+    "preparation_note_sent_before_final_writes": true,
+    "waited_for_actual_handoff": true,
+    "subscription": "mon_P9Y6C1YFCPWN4PMM",
+    "subscription_result": "Create event delivered; watcher completed; no polling or rearming.",
+    "companion_catalog_review": {
+      "task_owned_files": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/task-owned-files.json",
+      "ownership_dispositions": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/ownership-dispositions.json",
+      "exterior_entries": 311,
+      "unverified_wip_paths": 10,
+      "mixed_ownership_path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "ownership_category_capture_entries": 123312,
+      "qualification": "Ownership categories describe discovery; published inventory includes later additive bookkeeping. Both delivered helpers have actual regular-file entries. The signed-gas helper matches historical task-13 identity, not earlier origin."
+    },
+    "inventory": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+      "bytes": 33680555,
+      "sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+      "actual_bytes_and_hash_match": true,
+      "published_entries": 123368,
+      "corrected_recorder_snapshot_entries": 123361,
+      "different_additive_capture_points": true
+    },
+    "strict_delivery": {
+      "result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/result.json",
+      "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected/delivery.json",
+      "actual_exit": 1,
+      "signal": null,
+      "completed": false,
+      "failure_messages": 340,
+      "distinct_preserved_symlinks": 166,
+      "distinct_retained_divergences": [
+        "recovery-route-disposition.md",
+        "resumed-integration/verify-bounded-deployments.ts",
+        "source-manifest.json",
+        "source-route-matrix.md"
+      ],
+      "failure_not_represented_as_success": true,
+      "earlier_failed_delivery_pointers_retained": true
+    }
+  },
+  "retained_input_bindings": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-10-verdict.json",
+      "bytes": 17821,
+      "sha256": "054b6bae9d62850255f8128e70fa2031c06a057776ffa3eb1dd8595e3e9ac1d6",
+      "reused_scope": "Settled offline receipt/signature authentication, checkpoint preservation and explicit incomplete lifecycle mapping."
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-10-done.json",
+      "bytes": 25079,
+      "sha256": "f2eb4c3859fd5a93a51cff82395b7db80055e7d1798a9eea9dfc521342eb2084",
+      "status": "INCOMPLETE/BOUNDED-STOP"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-repairs-verdict.json",
+      "bytes": 8276,
+      "sha256": "2aaa161c9d6cf2e65ff95e0af63a1010b10d3a045f4e4955dcae53b031798f8b",
+      "reused_scope": "336 passing tests, strict operator and retained helper types; in-process production CLI on synthetic loopback transport; no real lifecycle acceptance.",
+      "historical_helper_inventory_limit": "28/29, without invented historical identity for task-11/recovery.ts"
+    }
+  ],
+  "actual_surface": {
+    "command_receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/attempts/52-portable-cli/command.json",
+    "surface": "bun scripts/recovery/dtf-migration/cli.ts rehearse",
+    "fork_block": 108944663,
+    "port": 18575,
+    "runtime": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-attempt-10/rehearsal-1794768218770",
+    "review_channel": "Reading retained actual command, transaction, canonical trace, receipt, state and owned teardown files.",
+    "replacement_simulation_used": false,
+    "new_runtime_invocation": false
+  },
+  "met_partial_observations": [
+    {
+      "case": "Local donor transfer",
+      "transaction": "0x32c40dbe164f2578efc8693bd4ac11f6c80562d527aedae62a9904d255108327",
+      "status": "0x1",
+      "raw_dtf_budget": "10000000000000000000000",
+      "donor_delta_and_developer_delta_agree": true,
+      "compensation_exclusion_recorded": true,
+      "public_funding_approval": false
+    },
+    {
+      "case": "Deployment",
+      "transaction": "0x12dcbd47492f6de1517e489ce701b7185ea9357ceeb27c04f7dc012ccae30ad7",
+      "status": "0x1",
+      "limit": "Deployment and registry/proxy logs do not establish the subsequent complete lifecycle."
+    },
+    {
+      "case": "Configure A mined interruption",
+      "transaction": "0x8614d4e76a949cd7414587de30b88f9605b108f8b35fad31643ec3e00c8494d7",
+      "nonce": 2230,
+      "native_credit": "736",
+      "completion_present": false,
+      "command_exit": null,
+      "command_signal": "SIGKILL",
+      "canonical_trace_read": "runtime-attempt-09/rehearsal-1794767163207/journal-interrupted-a/e516ee0b340ae8bbcbd98fd4ac19d3efb9fc29b66e8000fc522bc859631e239b.canonical-chain.json",
+      "cross_run_block_or_domain_rebinding": false
+    },
+    {
+      "case": "Separate owner B setter",
+      "transaction": "0x6a0fe35c9f274e05d7043e4c7e734d742ea46cb94f93462ac9563cd1c66f1fcb",
+      "status": "0x1",
+      "book_id": "0xc00ae1d4a2af803c2ce2fdc7b7cb7d2b7b9d1d0cd3941f1c8ee186ecb7b25340",
+      "configure_a_block": "0x67e5e87",
+      "setter_b_block": "0x67e5e88",
+      "same_block_proved": false,
+      "after_bound_partial_observation_only": true
+    },
+    {
+      "case": "Distinct donation identities and original receipt recovery",
+      "first_transaction": "0x9855a1646ff910da4cdb96e9b3fc7c98364a6eb49428e7117b220db413ff69a0",
+      "second_transaction": "0x7c367d4e52ffcbe806215af93f654d487c9702ce5557e9a03e2b661b8e986895",
+      "identical_donation_calldata": true,
+      "separate_approval_and_donation_operations": 6,
+      "completed_resends": 0,
+      "completed_and_resumed_nonce": "0x894",
+      "scope": "Narrow retained local evidence, using settled complete authentication."
+    },
+    {
+      "case": "Controlled command failures",
+      "scope": "Retained preparation/provenance/state rejections with unchanged captured nonces; failed owner-bond/activation commands are not successful activation."
+    }
+  ],
+  "unproved_real_cases": [
+    "Complete A-after-B recovery and mixed accepted configurations without resend",
+    "Same-recipient current B configuration with immutable A issuance",
+    "Same-block A/B transaction-prefix recovery and runtime tamper corpus",
+    "Successful paid owner-first purchase, post-purchase setter and unset-pricing activation",
+    "Final removed and retained selector census",
+    "Original-wallet NFT 3 two exactly funded bonds, principal/gon and aggregate conservation, fresh clocks and exact cliff claims",
+    "Second-callback receiver rollback followed by funded success",
+    "Complete postactivation source, repeated reward-only recovery, ordinary-deposit and portability lifecycle"
+  ],
+  "gas_evidence": {
+    "source": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/signed-envelopes",
+    "samples": 51,
+    "records": 299,
+    "distinct_transaction_hashes": 298,
+    "construction_receipts": 4,
+    "construction_parent_count": 2,
+    "retained_two_owner_construction_scope": true,
+    "construction_gas_used": ["19746754", "29860062", "19595874", "29298754"],
+    "historical_applicable_limit": "32000000",
+    "accepting_command_exit": 0,
+    "current_source_comparison": {
+      "manifest": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-signed-final/commands.json",
+      "entries": 221,
+      "matches": 189,
+      "changed": 32,
+      "changed_in_historical_reachable_helper_list": 11,
+      "selected_contract_gas_generator_and_signed_helper_paths": 65,
+      "changed_selected_contract_gas_generator_and_signed_helper_paths": 0,
+      "changed_historical_reachable_paths": [
+        "scripts/recovery/dtf-migration/bundle-files.ts",
+        "scripts/recovery/dtf-migration/bundle.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "scripts/recovery/dtf-migration/execution-domain.ts",
+        "scripts/recovery/dtf-migration/execution-state.ts",
+        "scripts/recovery/dtf-migration/execution.ts",
+        "scripts/recovery/dtf-migration/preparation.ts",
+        "scripts/recovery/dtf-migration/quotes.ts",
+        "scripts/recovery/dtf-migration/rehearsal-data.ts"
+      ],
+      "current_cli_or_helper_execution_certified": false
+    },
+    "limits": [
+      "Gas results retain captured-source applicability; no fresh complete runtime-byte certification.",
+      "Snapshot recovery branches were canonical at capture and later reverted.",
+      "Records are not 299 distinct transactions surviving on one final chain.",
+      "Measured batch axes do not establish arbitrary calldata or their Cartesian product.",
+      "The permissive local 100m limit is not the target transaction policy or ArbOS fee emulation.",
+      "Construction scope does not establish task-10 owner-first activation."
+    ]
+  },
+  "historical_task13": {
+    "build_exit": 0,
+    "hermetic_exit": 0,
+    "hermetic_passed": 28641,
+    "fork_exit": 0,
+    "fork_passed": 183,
+    "operator_exit": 1,
+    "operator_passed": 240,
+    "operator_failed": 1,
+    "qualification": "Actual retained results/log endings at historical captured sources. The former pin requirement and donor-blocker wording are not reinstated. The current 336-test gate neither rewrites these records nor supplies missing lifecycle acceptance."
+  },
+  "adversarial_review": {
+    "stale_state": "Historical task-11 and task-13 source claims remain dated; current gas helper differences are explicit. Same transaction hash across fork runs does not permit cross-run block/domain substitution.",
+    "misleading_success": "Incomplete task-10, failed strict delivery, historical operator failure and synthetic CLI limits remain explicit; no success text overrides exits or unexecuted cases.",
+    "interruption": "Configure-A intentional SIGKILL and final forced termination have null normal exits. A lock without completion is preserved interruption evidence, not a live-process or replay-ready claim.",
+    "dirty_worktree": "Ten frozen rehearsal WIP paths remain isolated, uncommitted and unlanded. rehearsal-data.ts has mixed ownership; no clean-tree or landing claim is made.",
+    "receipt_authentication": "Read underlying partial transaction/trace/state observations and reused settled task-10 full-corpus authentication instead of redundant reauthentication.",
+    "current_operator_bindings": "execution-domain.ts, execution-state.ts and execution.ts match the admitted boundary repair hashes."
+  },
+  "cleanup": {
+    "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/bounded-stop-termination.json",
+    "receipt_sha256": "452b794af56192555eaf21185eb54ee8c8ff7131e5251bd4f737d5033808f822",
+    "actual_command_session": "bash_37",
+    "actual_command_teardown": "Killed bash_37.",
+    "deadline_session": "bash_38",
+    "deadline_teardown": "Killed bash_38.",
+    "normal_attempt52_exit": null,
+    "normal_attempt52_result_exists": false,
+    "monitor_exit_not_used_as_normal_command_exit": true,
+    "retained_port_probe": {
+      "port": 18575,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "producer_reported_remaining_owned_processes": [],
+    "producer_reported_remaining_owned_monitors": [],
+    "preserved_checkpoint_files": 107,
+    "preserved_checkpoint_bytes": 677799,
+    "checkpoint_integrity_scope": "Reused independently settled preservation; no redundant rehash or rewritten relocated domains.",
+    "fresh_process_or_network_probe": false,
+    "reviewer_started_runtime_processes": false,
+    "reviewer_pending_runtime_processes": [],
+    "reviewer_subscription_completed": true,
+    "resolved_subscription_teardown": {
+      "returned_handle": "watch_1",
+      "tool_result": "No terminal session found with id: watch_1",
+      "rearmed": false
+    }
+  },
+  "verification": {
+    "method": "Offline evidence reading, JSON parsing, sample counts, source/content hashing and actual command/receipt/log joins.",
+    "tests_or_builds_run": false,
+    "product_acceptance_rerun": false,
+    "public_rpc": false,
+    "new_anvil_or_simulation": false,
+    "source_or_tests_edited": false,
+    "delegated": false,
+    "git_operations": false,
+    "installs": false,
+    "live_chain_calls": false,
+    "public_actions": false,
+    "lsp_diagnostics": "Automatic diagnostics unavailable because Biome is not installed; no installation performed. JSON syntax is checked offline.",
+    "only_authored_paths": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F3-real-qa.md",
+      ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/F3-verdict.json"
+    ]
+  },
+  "limits": [
+    "Confirmation is exclusively an accurate bounded partial-evidence review, not full conformance, release readiness or task-15 acceptance.",
+    "No exhaustive archive-byte, external symlink-target availability or clean-worktree certification.",
+    "Known gaps remain closed unmet; no acceptance retry, implementation, requeue, landing, merge, commit or public allocation is authorized.",
+    "The coordinator's later additive closeout must include the actual new reports and verdicts; that closeout is not claimed executed here."
+  ],
+  "verdict_written_last": true
+}

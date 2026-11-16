@@ -1,0 +1,93 @@
+{
+  "schema": "dtf-migration.claimed-sy.implementation-validation.v1",
+  "status": "bounded-candidate-complete-producer-audited",
+  "base": "4eaa7decab80d24cf37cb3781eff5ffaf9362942",
+  "branch": "work/dtf-migration-phase-23-claimed-sy-integration",
+  "sourcePaths": 28,
+  "productionContractEdits": 0,
+  "sourceAndPreservationBindingsVerified": 64,
+  "checks": [
+    {
+      "name": "artifact-first-specifications",
+      "exitCode": 0,
+      "passed": 167,
+      "log": "specs.log"
+    },
+    {
+      "name": "artifact-first-forks",
+      "exitCode": 0,
+      "passed": 142,
+      "log": "forks-01.log"
+    },
+    {
+      "name": "both-operator-stages",
+      "exitCode": 0,
+      "log": "stages.log",
+      "targets": [
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol",
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol"
+      ]
+    },
+    {
+      "name": "final-strict-types",
+      "exitCode": 0,
+      "log": "types-final-02.log"
+    },
+    {
+      "name": "final-complete-operator-suite",
+      "exitCode": 0,
+      "passed": 91,
+      "failed": 0,
+      "log": "operator-tests-final-02.log"
+    },
+    {
+      "name": "final-probe-strict-types",
+      "exitCode": 0,
+      "log": "probe-types-final.log"
+    },
+    {
+      "name": "final-cumulative-cli",
+      "exitCode": 0,
+      "log": "cli-03.log",
+      "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime-03/rehearsal-1794496225193"
+    },
+    {
+      "name": "stopped-producer-audit",
+      "exitCode": 0,
+      "log": "audit-final.json"
+    },
+    {
+      "name": "cleanup-and-readonly-git",
+      "exitCode": 0,
+      "log": "cleanup-final-02.log"
+    }
+  ],
+  "actualAuditSummary": {
+    "sourcePaths": 28,
+    "productionContractEdits": 0,
+    "artifacts": 57,
+    "runtimeCaptures": 75,
+    "originalInputReferences": 68,
+    "originalInputUniquePaths": 35,
+    "originalRawSigned": 184,
+    "reconstructedSigned": 4,
+    "canonicalResumes": 3,
+    "httpBodies": 2531,
+    "canonicalReceipts": 840,
+    "blocks": 849,
+    "claimedOriginals": 2,
+    "uniqueEligibleClaims": 4,
+    "actualRegistrationGas": "0x2b06d06",
+    "preparedInputDrift": 0
+  },
+  "pendingOperations": [],
+  "independentVerificationClaimed": false,
+  "fullTask9": "open",
+  "gasBudgetVerdict": "unchanged; local actual registration observation only",
+  "unchangedRawPullReplayed": false,
+  "limitations": [
+    "Original eligibility, E0/D0, complete W0, prior zero delivery and opaque aliases remain explicitly reviewed owner inputs.",
+    "Canonical parent configuration census is not a universal historical source-claim census.",
+    "Native JSON LSP is unavailable (Biome absent); some TS LSP requests timed out; strict CLI types passed."
+  ]
+}

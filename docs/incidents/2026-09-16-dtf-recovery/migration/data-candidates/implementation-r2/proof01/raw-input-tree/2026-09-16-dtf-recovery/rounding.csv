@@ -1,0 +1,6 @@
+"layer","unit","unallocated_raw","claimable"
+"sdetf_account_rounding","sDETF_raw_9","100","false"
+"nft_position_rounding","sDETF_raw_9","20","false"
+"legacy_weight_to_sy_rounding","SY_raw_9","40","false"
+"sy_and_legacy_lookthrough_rounding","sDETF_raw_9","100","false"
+"funded_staking_backing_surplus","DETF_raw_9","3","false"

@@ -1,0 +1,130 @@
+{
+  "type": "DoneClaim",
+  "task": 12,
+  "title": "Preserve portable bundles and exact journal provenance",
+  "status": "partial",
+  "complete": false,
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "commit": "N",
+  "summary": "Supported synthetic wire relocation and rejection branches pass. The required task 10 real portable current-chain proof remains unavailable. This partial claim does not complete task 12.",
+  "evidenceDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12",
+  "changedFiles": [
+    "scripts/recovery/dtf-migration/bundle.test.ts",
+    "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/",
+    ".omo/ulw-execute/dtf-conformance/task-12-done.json"
+  ],
+  "acceptance": {
+    "met": [
+      {
+        "item": "Export, materialize and rehydrate complete mixed A/B preparation into two distinct fresh directories",
+        "scope": "Task 7 derived synthetic wire fixture with one complete independent recipient and one ordinary weighted-SY original; not an EVM lifecycle proof."
+      },
+      {
+        "item": "Byte-identical books, pricing inputs and complete transitive raw references",
+        "result": "27 original files archived losslessly as base64 with exact SHA-256 and size; both locations match every byte. Owned native originals are moved out of reach before materialization."
+      },
+      {
+        "item": "Exact B configuration and independent A issuance survive relocation",
+        "result": "The current recipient retains B while its immutable issuance retains A; the ordinary weighted-SY row retains A. Complete payloads, books and issuance history remain equal."
+      },
+      {
+        "item": "Historical configure and issuance domain hashes recompute from their original contexts",
+        "result": "Four historical contexts per location authenticate their own original prepared manifest, execution manifest, journal, intent and completion. Fresh location domains differ without rebinding historical signatures."
+      },
+      {
+        "item": "Default relocated validate and verify remain read-only without current-price acquisition",
+        "result": "Both CLI commands pass after possible previewOriginalCredit responses are made undecodable. Tests assert no nonce query, transaction submission or new checkpoint."
+      },
+      {
+        "item": "Tamper, omitted history, unsafe bundle and identity rejection",
+        "result": "23 logged rejection cases include separate one-byte book/input/intent/receipt changes, rehashed historical domainHash forgery, omitted execution/journal files and fields, omitted old configured SY, cycle, duplicate/missing files, wrong network/purpose, unknown facet and v1 execution."
+      },
+      {
+        "item": "Copied and moved live signed checkpoints remain unusable",
+        "result": "Both active location reservations reject relocation while the original domain and signed intent bytes stay unchanged."
+      },
+      {
+        "item": "Accepted rows and immutable issuance cannot be repeated",
+        "result": "The relocated current preparation has no configure operation and rejects a new independent issuance selection; native accepted evidence survives independent tamper branches unchanged."
+      },
+      {
+        "item": "Archived evidence remains independently auditable",
+        "result": "The evidence auditor validates all 27 archived files, performs 228 transitive reference reads, checks both byte-comparison reports and all historical domains, and verifies every rejection label and final test-log hash."
+      }
+    ],
+    "unmet": [
+      {
+        "item": "Task 10 real portable mode produces a current-chain proof",
+        "missingArtifact": "A successful task-10 portable rehearsal runtime and its current-chain proof.",
+        "reason": "Task 10 has no admissible authority-bundle donor covering 10000 DTF and did not run its rehearsal. NFT 3 was not spent. This task did not bypass the donor provenance contract."
+      },
+      {
+        "item": "Real lifecycle reconciliation of current-owner purchase receipts and donation checkpoints",
+        "missingArtifact": "Task 10 real purchase/donation lifecycle and resume evidence, including donation-identity-resume.json.",
+        "reason": "Those lifecycle branches were not run. Existing execution tests pass for durable saved intents and paid-purchase argument constraints, but they do not replace the missing real lifecycle proof. No purchase or donation was repeated."
+      }
+    ]
+  },
+  "happyQA": {
+    "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/bundle.test.ts ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts",
+    "exitCode": 0,
+    "passed": 91,
+    "failed": 0,
+    "durationSeconds": 66.99,
+    "log": "final.log",
+    "argvReceipt": "final.argv.json",
+    "resultReceipt": "final.result.json",
+    "exactArgvAndObservedExitPrecedeHelperOutput": true,
+    "sourceBytesUnchangedDuringRun": true
+  },
+  "failureQA": {
+    "log": "tamper-rejections.log",
+    "observedRejections": 23,
+    "executionBoundary": "Offline materialization, schema/domain reconstruction, read-only verification and journal acquisition. Fixture setup signs fixed offline records; rejected operations do not allocate a nonce or submit a transaction.",
+    "cycles": "The real reference walker rejects recurrence to an active path after one valid edge; no self-hashing complete bundle is fabricated.",
+    "acceptedNativeBytesPreserved": true,
+    "bundleEqualityWeakened": false
+  },
+  "checks": {
+    "scopedStrictTypeScript": { "exitCode": 0, "receipt": "types.result.json" },
+    "evidenceAuditorStrictTypeScript": { "exitCode": 0, "receipt": "audit-types.result.json" },
+    "testQuality": { "exitCode": 0, "receipt": "test-quality.result.json", "findings": 0 },
+    "scopedDiffCheck": { "exitCode": 0, "receipt": "diff-check.result.json" },
+    "scopedDiffReview": { "exitCode": 0, "receipt": "diff-review.result.json" },
+    "integrityAudit": { "exitCode": 0, "receipt": "integrity-audit.result.json", "audit": "audit.json", "taskComplete": false }
+  },
+  "evidenceHashes": {
+    "portable-integrity.json": "4d00449771af2ba9d6c05b898aa6b0ed641877145158eecb6f439368cfc632bc",
+    "final.log": "e919860e3d55a7eccc4fb993d8ea450e7e7ec2d8c1e56b0514ca83b1ab7958dd",
+    "tamper-rejections.log": "e60db2c53dd950e41197a70bf931d8775ef1481a9004bc93ca277036a9362228"
+  },
+  "assumptionsAndLimits": [
+    "Task 7 synthetic fixtures are admissible for transport integrity tests. Their wire receipts are explicitly synthetic and are not task 10 mixed-pricing, same-block, donation or NFT-three current-chain receipts.",
+    "The complete fixture covers its independent and ordinary weighted-SY origin partitions; it does not stand in for a claimed-SY certificate.",
+    "Economic fixture facts and signed calldata are deterministic. Isolated temporary paths, RPC environment names and the original domain hashes containing them vary across runs and are preserved exactly.",
+    "The synthetic RPC servers and temporary native files are removed after tests. Archived bytes and hashes remain independently checkable; chain reauthentication requires the fixture server.",
+    "Task 7 B2 remains unchanged and red as a dependency follow-up; its witness pin and assertion were not retuned or rerun.",
+    "No product owner mutation test was performed because task 7 product files are outside the allowed writes. Hostile artifact and historical-preimage mutations exercise the existing validators directly.",
+    "No Forge build or test was needed for the allowed TypeScript-only changes. No task 10 rehearsal was run."
+  ],
+  "constraints": {
+    "delegation": false,
+    "commits": false,
+    "publicTransactions": false,
+    "financialAllocations": false,
+    "dtfMintOrEtch": false,
+    "nftThreeSpent": false,
+    "oldCaptureAliasesRestored": false,
+    "taskSevenProductFilesEdited": false,
+    "taskTenProductFilesEdited": false,
+    "taskElevenProductFilesEdited": false,
+    "preparationTestEdited": false,
+    "executionTestEdited": false,
+    "rehearsalProofEdited": false,
+    "planCheckboxChanged": false,
+    "doneClaimWrittenLast": true
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "full-hermetic-preservation-compare-v1",
+  "comparedBeforeCommitSupportExisted": true,
+  "contentPassRehashedFileBytes": true,
+  "permissionPassFileSha256Recomputed": false,
+  "permissionPassFalsePositive": "The permission-pass changed counts equal the file counts because that pass left file sha256 null and then compared it. Samples show sha256 as the only bad field. Those counts are not observed byte or mode changes.",
+  "content": {
+    "docs-incidents.jsonl": {
+      "rows": 36,
+      "missing": 0,
+      "changed": 0
+    },
+    "out.jsonl": {
+      "rows": 7376,
+      "missing": 0,
+      "changed": 0
+    },
+    "cache_forge.jsonl": {
+      "rows": 6498,
+      "missing": 0,
+      "changed": 0
+    }
+  },
+  "directories": "Directory rows in the permission inventories were not in the false-positive set, so their kind, perm, st_mode, and size matched.",
+  "indexes": {
+    "total": 27,
+    "foreignUnchanged": 26,
+    "foreignChanged": [],
+    "own": {
+      "path": ".git/worktrees/dtf-migration-phase-25-full-hermetic/index",
+      "before": {
+        "size": 2076067,
+        "sha256": "d43d7e1a878ed266e0805f2502061ba52b0511f1704db2eddab86b70aa14d6ad",
+        "st_mode": 33188
+      },
+      "after": {
+        "size": 2076067,
+        "sha256": "71bf551379036296f359bc66b9eaadfee6ded0c7574612847ddfeb107b75e771",
+        "st_mode": 33188,
+        "perm": "0o644"
+      }
+    }
+  },
+  "refs": {
+    "total": 52,
+    "unchanged": 51,
+    "changed": [
+      {
+        "path": ".git/refs/heads/work/dtf-migration-phase-25-full-hermetic",
+        "beforeSha256": "bbad16e5c6ca428ad8c6deeb8792560a9e2bf7c70aeb20c9b87b35f6fa3fb30c",
+        "afterSha256": "9f631241fe1d82ef6d8e279442be85e640fd477ee94da3690c0ef01ba31e76c4",
+        "beforeSize": 41,
+        "afterSize": 41,
+        "mode": 33188
+      }
+    ]
+  },
+  "showRef": {
+    "beforeBytes": 6288,
+    "beforeSha256": "cfdc34bd4eb32ef2698809eb3d8a92eca7ddf6600ff612f20e837786ed65bb2a",
+    "lines": 65,
+    "removed": [
+      "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca refs/heads/work/dtf-migration-phase-25-full-hermetic"
+    ],
+    "added": [
+      "137fa0c8749165087c7d1d0156788f58a1dbf1b8 refs/heads/work/dtf-migration-phase-25-full-hermetic"
+    ]
+  },
+  "hostDepsUnchanged": true,
+  "craneGitlinkUnchanged": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89",
+  "held09WorktreeOpened": false,
+  "selfDigest": "This compare file does not claim its own raw SHA-256."
+}

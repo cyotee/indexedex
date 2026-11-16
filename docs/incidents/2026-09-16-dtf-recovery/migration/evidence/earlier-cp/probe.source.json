@@ -1,0 +1,299 @@
+{
+  "provider": "https://sourcify.dev/server/v2/contract",
+  "chainId": 4663,
+  "contracts": {
+    "0x69a470758a14176c86927ee080f9419d30c49480": {
+      "address": "0x69A470758A14176C86927Ee080f9419D30c49480",
+      "endpoint": "https://sourcify.dev/server/v2/contract/4663/0x69A470758A14176C86927Ee080f9419D30c49480?fields=all",
+      "match": "exact_match",
+      "runtimeMatch": "exact_match",
+      "compilation": {
+        "language": "Solidity",
+        "compiler": "solc",
+        "compilerVersion": "0.8.35+commit.47b9dedd",
+        "compilerSettings": {
+          "viaIR": false,
+          "metadata": {
+            "appendCBOR": true,
+            "bytecodeHash": "ipfs",
+            "useLiteralContent": false
+          },
+          "libraries": {},
+          "optimizer": {
+            "runs": 1,
+            "enabled": true
+          },
+          "evmVersion": "prague",
+          "remappings": [
+            "forge-std/=lib/crane/lib/forge-std/src/",
+            "@crane/=lib/crane/",
+            "contracts/solady/=lib/crane/contracts/external/solady/",
+            "contracts/external/solady/=lib/crane/contracts/external/solady/",
+            "contracts/protocols/launchpads/uniswap/continuous-clearing/=lib/crane/contracts/protocols/launchpads/uniswap/continuous-clearing/",
+            "tests/=lib/crane/test/foundry/spec/protocols/lending/aave/v4/",
+            "battlechain-lib/=lib/crane/lib/battlechain-lib/src/",
+            "@battlechain-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/src/",
+            "@chainlink/contracts-ccip/=lib/crane/lib/chainlink-local/lib/chainlink-ccip/chains/evm/",
+            "@chainlink/contracts/=lib/crane/lib/chainlink-local/lib/chainlink-evm/contracts/",
+            "@chainlink/local/src/=lib/crane/lib/chainlink-local/src/",
+            "@matterlabs/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/",
+            "@openzeppelin/contracts-upgradeable/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/contracts/",
+            "@openzeppelin/contracts/=lib/crane/contracts/external/openzeppelin-contracts/",
+            "@openzeppelin/contracts@4.8.3/=lib/crane/lib/chainlink-local/src/vendor/openzeppelin-solidity/v4.8.3/contracts/",
+            "@openzeppelin/contracts@5.0.2/=lib/crane/lib/chainlink-local/src/vendor/openzeppelin-solidity/v5.0.2/contracts/",
+            "@oz/=lib/crane/lib/openzeppelin-contracts/",
+            "@ozu/=lib/crane/contracts/external/openzeppelin-upgradeable/",
+            "@solady/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/solady/src/",
+            "battlechain-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/",
+            "battlechain-lib-mocks/=lib/crane/lib/battlechain-lib/test/mocks/",
+            "battlechain-safe-harbor-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/",
+            "chainlink-ccip/=lib/crane/lib/chainlink-local/lib/chainlink-ccip/chains/evm/contracts/vendor/optimism/interop-lib/v0/src/",
+            "chainlink-evm/=lib/crane/lib/chainlink-local/lib/chainlink-evm/",
+            "chainlink-local/=lib/crane/lib/chainlink-local/src/",
+            "clones/=lib/crane/contracts/external/clones-with-immutable-args/",
+            "crane/=lib/crane/",
+            "createx/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/src/",
+            "ds-test/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/forge-std/lib/ds-test/src/",
+            "erc4626-tests/=lib/crane/contracts/external/erc4626-tests/",
+            "gitlawb-contracts/=lib/crane/lib/gitlawb-contracts/",
+            "halmos-cheatcodes/=lib/crane/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+            "hardhat/=node_modules/hardhat/",
+            "l1-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/l1-contracts/contracts/",
+            "l2-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/l2-contracts/contracts/",
+            "murky/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/",
+            "openzeppelin-contracts-upgradeable-v4/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-upgradeable-v4/",
+            "openzeppelin-contracts-upgradeable/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/",
+            "openzeppelin-contracts-v4/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-v4/",
+            "openzeppelin-contracts/=lib/crane/lib/openzeppelin-contracts/",
+            "openzeppelin/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/openzeppelin-contracts/contracts/",
+            "solady/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/solady/src/",
+            "solmate/=lib/crane/contracts/external/solmate/",
+            "system-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/system-contracts/contracts/",
+            "lib/battlechain-lib/:src/=lib/crane/lib/battlechain-lib/src/"
+          ]
+        },
+        "name": "ERC165Facet",
+        "fullyQualifiedName": "lib/crane/contracts/introspection/ERC165/ERC165Facet.sol:ERC165Facet"
+      },
+      "abi": [
+        {
+          "name": "facetFuncs",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "facetInterfaces",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "facetMetadata",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "functions",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "facetName",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name",
+              "type": "string",
+              "internalType": "string"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "supportsInterface",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "interfaceId",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "isSupported",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ],
+      "sources": {
+        "lib/crane/contracts/introspection/ERC165/ERC165Facet.sol": {
+          "content": "// SPDX-License-Identifier: AGPL-3.0-or-later\npragma solidity ^0.8.0;\n\nimport {IERC165} from \"@crane/contracts/interfaces/IERC165.sol\";\nimport {IFacet} from \"@crane/contracts/interfaces/IFacet.sol\";\n\n/* -------------------------------------------------------------------------- */\n/*                                    Crane                                   */\n/* -------------------------------------------------------------------------- */\n\nimport {ERC165Target} from \"@crane/contracts/introspection/ERC165/ERC165Target.sol\";\n\n// tag::ERC165Facet[]\n/**\n * @title ERC165Facet - Reusable Diamond facet implementing ERC-165 standard introspection (IERC165).\n * @author cyotee doge <not_cyotee@proton.me>\n * @dev Extends ERC165Target for business logic (delegates to ERC165Repo). Implements IFacet to declare\n *      supported interfaces and functions for use with Diamond loupes, DFPkgs, registries, and composition.\n * @custom:contractlistipfs\n */\ncontract ERC165Facet is ERC165Target, IFacet {\n    /* -------------------------------------------------------------------------- */\n    /*                                   IFacet                                   */\n    /* -------------------------------------------------------------------------- */\n\n    // tag::facetName()[]\n    /**\n     * @inheritdoc IFacet\n     * @notice Declares a canonical nonunique name for the exposing facet.\n     * @return name The name of the facet.\n     * @custom:selector 0x5b6f4d01\n     * @custom:signature facetName()\n     */\n    function facetName() public pure returns (string memory name) {\n        return type(ERC165Facet).name;\n    }\n\n    // end::facetName()[]\n\n    // tag::facetInterfaces()[]\n    /**\n     * @inheritdoc IFacet\n     * @notice Declares the interfaces implemented by the exposing facet for use in a composing proxy.\n     * @return interfaces The interface IDs implemented by the facet.\n     * @custom:selector 0x2ea80826\n     * @custom:signature facetInterfaces()\n     */\n    function facetInterfaces() public pure virtual returns (bytes4[] memory interfaces) {\n        interfaces = new bytes4[](1);\n\n        interfaces[0] = type(IERC165).interfaceId;\n    }\n\n    // end::facetInterfaces()[]\n\n    // tag::facetFuncs()[]\n    /**\n     * @inheritdoc IFacet\n     * @notice Declares the function selectors implemented by the exposing facet for use in a composing proxy.\n     * @return funcs The function selectors implemented by the facet.\n     * @custom:selector 0x574a4cff\n     * @custom:signature facetFuncs()\n     */\n    function facetFuncs()\n        public\n        pure\n        virtual\n        returns (\n            // override\n            bytes4[] memory funcs\n        )\n    {\n        funcs = new bytes4[](1);\n\n        funcs[0] = IERC165.supportsInterface.selector;\n    }\n\n    // end::facetFuncs()[]\n\n    // tag::facetMetadata()[]\n    /**\n     * @inheritdoc IFacet\n     * @notice Declares comprehensive metadata about the exposing facet.\n     * @dev Exposed to allow for single call retrieval of all facet metadata.\n     * @return name The name of the facet.\n     * @return interfaces The interface IDs implemented by the facet.\n     * @return functions The function selectors implemented by the facet.\n     * @custom:selector 0xf10d7a75\n     * @custom:signature facetMetadata()\n     */\n    function facetMetadata()\n        external\n        pure\n        returns (string memory name, bytes4[] memory interfaces, bytes4[] memory functions)\n    {\n        name = facetName();\n        interfaces = facetInterfaces();\n        functions = facetFuncs();\n    }\n    // end::facetMetadata()[]\n}\n// end::ERC165Facet[]\n"
+        },
+        "lib/crane/contracts/interfaces/IERC165.sol": {
+          "content": "// SPDX-License-Identifier: MIT\n// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC165.sol)\n\npragma solidity ^0.8.0;\n\nimport {IERC165} from \"@crane/contracts/introspection/ERC165/IERC165.sol\";\n"
+        },
+        "lib/crane/contracts/interfaces/IFacet.sol": {
+          "content": "// SPDX-License-Identifier: AGPL-3.0-or-later\npragma solidity ^0.8.0;\n\nimport {IFacet} from \"@crane/contracts/factories/diamondPkg/IFacet.sol\";\n"
+        },
+        "lib/crane/contracts/introspection/ERC165/ERC165Target.sol": {
+          "content": "// SPDX-License-Identifier: AGPL-3.0-or-later\npragma solidity ^0.8.0;\n\nimport {IERC165} from \"@crane/contracts/interfaces/IERC165.sol\";\nimport {ERC165Repo} from \"@crane/contracts/introspection/ERC165/ERC165Repo.sol\";\n\n// tag::ERC165Target[]\n/**\n * @title ERC165Target - Target contract implementing IERC165.\n * @author cyotee doge <not_cyotee@proton.me>\n * @notice Exposes supportsInterface by delegating to ERC165Repo.\n * @dev Follows Facet-Target-Repo. Delegates entirely to ERC165Repo._supportsInterface.\n *      Inherited by ERC165Facet.\n */\ncontract ERC165Target is IERC165 {\n    /* ------ ERC165 ------ */\n\n    // tag::supportsInterface(bytes4)[]\n    /**\n     * @inheritdoc IERC165\n     * @notice query whether contract has registered support for given interface\n     * @param interfaceId interface id\n     * @return isSupported whether interface is supported\n     * @custom:selector 0x01ffc9a7\n     * @custom:signature \"supportsInterface(bytes4)\"\n     * @dev Delegates to ERC165Repo._supportsInterface(interfaceId).\n     */\n    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool isSupported) {\n        return ERC165Repo._supportsInterface(interfaceId);\n    }\n    // end::supportsInterface(bytes4)[]\n}\n// end::ERC165Target[]\n"
+        },
+        "lib/crane/contracts/introspection/ERC165/IERC165.sol": {
+          "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\n/**\n * @dev Interface of the ERC-165 standard, as defined in the\n * https://eips.ethereum.org/EIPS/eip-165[ERC].\n * @notice Native Crane implementation - no external dependencies\n *\n * Implementers can declare support of contract interfaces, which can then be\n * queried by others ({ERC165Checker}).\n *\n * For an implementation, see {ERC165}.\n */\ninterface IERC165 {\n    /**\n     * @dev Returns true if this contract implements the interface defined by\n     * `interfaceId`. See the corresponding\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[ERC section]\n     * to learn more about how these ids are created.\n     *\n     * This function call must use less than 30 000 gas.\n     */\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\n}\n"
+        },
+        "lib/crane/contracts/factories/diamondPkg/IFacet.sol": {
+          "content": "// SPDX-License-Identifier: AGPL-3.0-or-later\npragma solidity ^0.8.0;\n\n// tag::IFacet[]\n/**\n * @title IFacet - Optional declarative interface for Facet functionality and metadata.\n * @author cyotee doge <not_cyotee@proton.me>\n * @dev Optional for facets to implement for declarative metadata about the facet.\n */\ninterface IFacet {\n    // tag::facetName()[]\n    /**\n     * @notice Declares a canonical nonunique name for the exposing facet.\n     * @return name The name of the facet.\n     * @custom:selector 0x5b6f4d01\n     * @custom:signature facetName()\n     */\n    function facetName() external view returns (string memory name);\n    // end::facetName()[]\n\n    // tag::facetInterfaces()[]\n    /**\n     * @notice Declares the interfaces implemented by the exposing facet for use in a composing proxy.\n     * @return interfaces The interface IDs implemented by the facet.\n     * @custom:selector 0x2ea80826\n     * @custom:signature facetInterfaces()\n     */\n    function facetInterfaces() external view returns (bytes4[] memory interfaces);\n    // end::facetInterfaces()[]\n\n    // tag::facetFuncs()[]\n    /**\n     * @notice Declares the function selectors implemented by the exposing facet for use in a composing proxy.\n     * @return funcs The function selectors implemented by the facet.\n     * @custom:selector 0x574a4cff\n     * @custom:signature facetFuncs()\n     */\n    function facetFuncs() external view returns (bytes4[] memory funcs);\n    // end::facetFuncs()[]\n\n    // tag::facetMetadata()[]\n    /**\n     * @notice Declares comprehensive metadata about the exposing facet.\n     * @dev Exposed to allow for single call retrieval of all facet metadata.\n     * @return name The name of the facet.\n     * @return interfaces The interface IDs implemented by the facet.\n     * @return functions The function selectors implemented by the facet.\n     * @custom:selector 0xf10d7a75\n     * @custom:signature facetMetadata()\n     */\n    function facetMetadata()\n        external\n        view\n        returns (string memory name, bytes4[] memory interfaces, bytes4[] memory functions);\n    // end::facetMetadata()[]\n}\n// end::IFacet[]\n"
+        },
+        "lib/crane/contracts/introspection/ERC165/ERC165Repo.sol": {
+          "content": "// SPDX-License-Identifier: AGPL-3.0-or-later\npragma solidity ^0.8.24;\n\n// tag::ERC165Repo[]\n/**\n * @title ERC165Repo - Repository library for ERC165 relevant state.\n * @author cyotee doge <doge.cyotee>\n * @dev Storage library (Repo) implementing interface support registry for IERC165.\n * @dev Provides dual (parameterized + default) overloads for all storage accessors and mutators.\n * @dev This is a low-level storage library that intentionally does NOT enforce ERC-165\n * strict semantics (i.e., rejecting 0xffffffff). The ERC-165 specification reserves\n * 0xffffffff as an invalid interface ID that must always return false from supportsInterface().\n *\n * This Repo is designed as a generic mapping to allow flexibility:\n * - Higher-level Targets or Facets should enforce ERC-165 compliance by checking\n *   `interfaceId != 0xffffffff` in their supportsInterface() implementations.\n * - The ERC165Target/ERC165Facet implementations handle this constraint.\n *\n * If 0xffffffff is registered via _registerInterface(), _supportsInterface() will return true,\n * which violates ERC-165. Callers are responsible for preventing this at the appropriate layer.\n */\nlibrary ERC165Repo {\n    // tag::ERC165_STORAGE_SLOT[]\n    /**\n     * @dev Standardized storage slot for ERC-165 (introspection) data.\n     * Uses ERC1967 derivation: bytes32(uint256(keccak256(abi.encode(...))) - 1).\n     */\n    bytes32 internal constant ERC165_STORAGE_SLOT = bytes32(uint256(keccak256(abi.encode(\"eip.erc.165\"))) - 1);\n\n    // end::ERC165_STORAGE_SLOT[]\n\n    // tag::Storage[]\n    /**\n     * @dev Standardized storage layout for ERC-165 interface support flags.\n     */\n    /// forge-lint: disable-next-line(pascal-case-struct)\n    struct Storage {\n        mapping(bytes4 interfaceId => bool isSupportedInterface) isSupportedInterface;\n    }\n\n    // end::Storage[]\n\n    // tag::_layoutStruct(bytes32)[]\n    /**\n     * @dev Argumented version of _layoutStruct to allow for custom storage slot usage.\n     * @param storageSlot Storage slot to bind to the Repo's Storage struct.\n     * @return layoutStruct The bound Storage struct.\n     */\n    function _layoutStruct(bytes32 storageSlot) internal pure returns (Storage storage layoutStruct) {\n        assembly {\n            layoutStruct.slot := storageSlot\n        }\n    }\n\n    // end::_layoutStruct(bytes32)[]\n\n    // tag::_layoutStruct()[]\n    /**\n     * @dev Default version of _layoutStruct binding to the standard ERC165_STORAGE_SLOT.\n     * @return layoutStruct The bound Storage struct.\n     */\n    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {\n        return _layoutStruct(ERC165_STORAGE_SLOT);\n    }\n\n    // end::_layoutStruct()[]\n\n    // tag::_registerInterface(Storage-bytes4)[]\n    /**\n     * @dev Argumented version of _registerInterface to allow direct Storage access.\n     * @param layoutStruct The Storage struct to operate on.\n     * @param interfaceId The ERC165 interface ID to register as supported.\n     */\n    function _registerInterface(Storage storage layoutStruct, bytes4 interfaceId) internal {\n        layoutStruct.isSupportedInterface[interfaceId] = true;\n    }\n\n    // end::_registerInterface(Storage-bytes4)[]\n\n    // tag::_registerInterface(bytes4)[]\n    /**\n     * @dev Default version of _registerInterface binding to the standard ERC165_STORAGE_SLOT.\n     * @param interfaceId The ERC165 interface ID to register as supported.\n     */\n    function _registerInterface(bytes4 interfaceId) internal {\n        _registerInterface(_layoutStruct(), interfaceId);\n    }\n\n    // end::_registerInterface(bytes4)[]\n\n    // tag::_registerInterfaces(Storage-bytes4[])[]\n    /**\n     * @dev Argumented version of _registerInterfaces to allow direct Storage access.\n     * @param layoutStruct The Storage struct to operate on.\n     * @param interfaceIds The array of ERC165 interface IDs to register as supported.\n     */\n    function _registerInterfaces(Storage storage layoutStruct, bytes4[] memory interfaceIds) internal {\n        for (uint256 cursor = 0; cursor < interfaceIds.length; cursor++) {\n            _registerInterface(layoutStruct, interfaceIds[cursor]);\n        }\n    }\n\n    // end::_registerInterfaces(Storage-bytes4[])[]\n\n    // tag::_registerInterfaces(bytes4[])[]\n    /**\n     * @dev Default version of _registerInterfaces binding to the standard ERC165_STORAGE_SLOT.\n     * @param interfaceIds The array of ERC165 interface IDs to register as supported.\n     */\n    function _registerInterfaces(bytes4[] memory interfaceIds) internal {\n        _registerInterfaces(_layoutStruct(), interfaceIds);\n    }\n\n    // end::_registerInterfaces(bytes4[])[]\n\n    // tag::_supportsInterface(Storage-bytes4)[]\n    /**\n     * @dev Argumented version of _supportsInterface to allow direct Storage access.\n     * @param layoutStruct The Storage struct to operate on.\n     * @param interfaceId The ERC165 interface ID to query.\n     * @return True if the interface is registered as supported, false otherwise.\n     */\n    function _supportsInterface(Storage storage layoutStruct, bytes4 interfaceId) internal view returns (bool) {\n        return layoutStruct.isSupportedInterface[interfaceId];\n    }\n\n    // end::_supportsInterface(Storage-bytes4)[]\n\n    // tag::_supportsInterface(bytes4)[]\n    /**\n     * @dev Default version of _supportsInterface binding to the standard ERC165_STORAGE_SLOT.\n     * @param interfaceId The ERC165 interface ID to query.\n     * @return True if the interface is registered as supported, false otherwise.\n     */\n    function _supportsInterface(bytes4 interfaceId) internal view returns (bool) {\n        return _supportsInterface(_layoutStruct(), interfaceId);\n    }\n\n    // end::_supportsInterface(bytes4)[]\n}\n// end::ERC165Repo[]\n"
+        }
+      },
+      "onchainBytecode": "0x608060405234801561000f575f5ffd5b5060043610610055575f3560e01c806301ffc9a7146100595780632ea8082614610081578063574a4cff146100965780635b6f4d011461009e578063f10d7a75146100b3575b5f5ffd5b61006c610067366004610246565b6100ca565b60405190151581526020015b60405180910390f35b6100896100da565b60405161007891906102b8565b610089610132565b6100a661016e565b60405161007891906102f8565b6100bb610193565b6040516100789392919061030a565b5f6100d4826101bb565b92915050565b604080516001808252818301909252606091602080830190803683370190505090506301ffc9a760e01b815f815181106101165761011661034c565b6001600160e01b03199092166020928302919091019091015290565b604080516001808252818301909252606091602080830190803683370190505090506301ffc9a760e01b815f815181106101165761011661034c565b60408051808201909152600b81526a115490cc4d8d519858d95d60aa1b602082015290565b60608060606101a061016e565b92506101aa6100da565b91506101b4610132565b9050909192565b5f6100d46101c76101e7565b836001600160e01b0319165f908152602091909152604090205460ff1690565b5f610241600160405160200161021c906020808252600b908201526a6569702e6572632e31363560a81b604082015260600190565b604051602081830303815290604052805190602001205f1c61023e9190610360565b90565b905090565b5f60208284031215610256575f5ffd5b81356001600160e01b03198116811461026d575f5ffd5b9392505050565b5f8151808452602084019350602083015f5b828110156102ae5781516001600160e01b031916865260209586019590910190600101610286565b5093949350505050565b602081525f61026d6020830184610274565b5f81518084528060208401602086015e5f602082860101526020601f19601f83011685010191505092915050565b602081525f61026d60208301846102ca565b606081525f61031c60608301866102ca565b828103602084015261032e8186610274565b905082810360408401526103428185610274565b9695505050505050565b634e487b7160e01b5f52603260045260245ffd5b818103818111156100d457634e487b7160e01b5f52601160045260245ffdfea2646970667358221220632f325ff4c35bc2b5fef60d6535447e22b6ee5497e4f6798247b62d88d4583c64736f6c63430008230033",
+      "recompiledBytecode": "0x608060405234801561000f575f5ffd5b5060043610610055575f3560e01c806301ffc9a7146100595780632ea8082614610081578063574a4cff146100965780635b6f4d011461009e578063f10d7a75146100b3575b5f5ffd5b61006c610067366004610246565b6100ca565b60405190151581526020015b60405180910390f35b6100896100da565b60405161007891906102b8565b610089610132565b6100a661016e565b60405161007891906102f8565b6100bb610193565b6040516100789392919061030a565b5f6100d4826101bb565b92915050565b604080516001808252818301909252606091602080830190803683370190505090506301ffc9a760e01b815f815181106101165761011661034c565b6001600160e01b03199092166020928302919091019091015290565b604080516001808252818301909252606091602080830190803683370190505090506301ffc9a760e01b815f815181106101165761011661034c565b60408051808201909152600b81526a115490cc4d8d519858d95d60aa1b602082015290565b60608060606101a061016e565b92506101aa6100da565b91506101b4610132565b9050909192565b5f6100d46101c76101e7565b836001600160e01b0319165f908152602091909152604090205460ff1690565b5f610241600160405160200161021c906020808252600b908201526a6569702e6572632e31363560a81b604082015260600190565b604051602081830303815290604052805190602001205f1c61023e9190610360565b90565b905090565b5f60208284031215610256575f5ffd5b81356001600160e01b03198116811461026d575f5ffd5b9392505050565b5f8151808452602084019350602083015f5b828110156102ae5781516001600160e01b031916865260209586019590910190600101610286565b5093949350505050565b602081525f61026d6020830184610274565b5f81518084528060208401602086015e5f602082860101526020601f19601f83011685010191505092915050565b602081525f61026d60208301846102ca565b606081525f61031c60608301866102ca565b828103602084015261032e8186610274565b905082810360408401526103428185610274565b9695505050505050565b634e487b7160e01b5f52603260045260245ffd5b818103818111156100d457634e487b7160e01b5f52601160045260245ffdfea2646970667358221220632f325ff4c35bc2b5fef60d6535447e22b6ee5497e4f6798247b62d88d4583c64736f6c63430008230033",
+      "transformations": [],
+      "deployment": {
+        "transactionHash": null,
+        "blockNumber": null,
+        "transactionIndex": null,
+        "deployer": null
+      }
+    }
+  },
+  "proxies": {
+    "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391": {
+      "address": "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+      "block": "0x69b9347",
+      "code": "0x60806040523661000b57005b5f61001461006d565b90506001600160a01b0381163b61004f576040516323dbef4b60e01b81526001600160e01b03195f3516600482015260240160405180910390fd5b365f5f375f5f365f845af43d5f5f3e808015610069573d5ff35b3d5ffd5b5f6100825f356001600160e01b031916610087565b905090565b5f6100bc6100936100c2565b836001600160e01b0319165f90815260029190910160205260409020546001600160a01b031690565b92915050565b5f61008260016040516020016100f8906020808252600c908201526b6569702e6572632e3235333560a01b604082015260600190565b604051602081830303815290604052805190602001205f1c61011a919061011d565b90565b818103818111156100bc57634e487b7160e01b5f52601160045260245ffdfea264697066735822122054fc31b4c3e1c62b0939ddfcc44168aa90aa084bd7d9988b27afb67f647bd10664736f6c63430008230033",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "facets": [
+        {
+          "facetAddress": "0x69A470758A14176C86927Ee080f9419D30c49480",
+          "functionSelectors": [
+            "0x01ffc9a7"
+          ]
+        },
+        {
+          "facetAddress": "0x343590eD92498739225e351C27133BC2c11B91B9",
+          "functionSelectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ]
+        },
+        {
+          "facetAddress": "0xe3d915C0211A87077b14DFE995009741Dac2F5DA",
+          "functionSelectors": [
+            "0x60b5befb"
+          ]
+        },
+        {
+          "facetAddress": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b",
+          "functionSelectors": [
+            "0x614db07c",
+            "0x651ab22a",
+            "0xa031e9fd",
+            "0x6c7b69cb",
+            "0x804ef18d",
+            "0x2115e3dc",
+            "0xeb02c301",
+            "0x7dcb2abf",
+            "0x3a98ef39",
+            "0x8a91f8bc",
+            "0x5fcbd285",
+            "0xf7c618c1",
+            "0x0cc18df6",
+            "0x46f96023",
+            "0x0f3767df",
+            "0x1f8c4087",
+            "0x75d2d262",
+            "0x72abc8b7",
+            "0xc6e6f592",
+            "0x07a2d13a",
+            "0x7935d598",
+            "0xc87b56dd",
+            "0x3ec90986",
+            "0x24f3dac0",
+            "0xa079d2d7",
+            "0x75893a4d",
+            "0x70c94b9e",
+            "0x872eb2ed",
+            "0x2bd949e3",
+            "0x1b552ac9",
+            "0x23c9a046",
+            "0xe0c623c6",
+            "0x85eb9aab",
+            "0x27c76759",
+            "0x0ed4fd8f",
+            "0x9430e218",
+            "0x3d9f5912",
+            "0xb88d4fde",
+            "0x42842e0e",
+            "0x23b872dd"
+          ]
+        },
+        {
+          "facetAddress": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279",
+          "functionSelectors": [
+            "0x70a08231",
+            "0x6352211e",
+            "0xe985e9c5",
+            "0x081812fc",
+            "0xa22cb465",
+            "0x095ea7b3"
+          ]
+        },
+        {
+          "facetAddress": "0x2c88bD365D7c6dCc6BbbDb74a8E1FDd2b4AF572E",
+          "functionSelectors": [
+            "0x69722233",
+            "0x46f910ac",
+            "0x75172a8b"
+          ]
+        },
+        {
+          "facetAddress": "0x44CbE64D43c244f104D1fE2eC4f7EB85a0c250af",
+          "functionSelectors": [
+            "0x6a4d3f12",
+            "0xf5ee7c5b",
+            "0x36abf3dc",
+            "0x7cc34bb4"
+          ]
+        }
+      ]
+    }
+  }
+}

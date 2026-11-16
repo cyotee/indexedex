@@ -1,0 +1,26 @@
+{
+  "libCrane": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/lib/crane",
+    "kind": "symlink",
+    "gitMode": "120000",
+    "perm": "0o755",
+    "st_mode": 41453,
+    "size": 42,
+    "sha256": "3dcc99d9c280a1a007d6284e027f5543690bc104fd2b33cf4626f14871b963ab",
+    "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+    "inode": 20472031
+  },
+  "nodeModules": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/node_modules",
+    "kind": "symlink",
+    "gitMode": "120000",
+    "perm": "0o755",
+    "st_mode": 41453,
+    "size": 45,
+    "sha256": "c8ce23751ae468dd00158f2465a4c8ced85fb4811e0f46af46d458d9b79bc861",
+    "target": "/Users/cyotee/Projects/indexedex/node_modules",
+    "inode": 20472032
+  },
+  "gitlink": "160000 fc0618bf5c34d0564f4367130feff443bd4efc89 0\tlib/crane\n",
+  "targetsOpened": false
+}

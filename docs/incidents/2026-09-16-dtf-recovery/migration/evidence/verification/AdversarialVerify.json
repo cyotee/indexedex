@@ -1,0 +1,127 @@
+{
+  "schema": "AdversarialVerify/1",
+  "verdict": "needs-human-review",
+  "verificationComplete": true,
+  "task1GateClosure": "NOT_MET",
+  "implementationReady": false,
+  "report": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/phase01-verification.md",
+  "scope": "Delta-only completion using predecessor evidence; no repeat of passed probes",
+  "E1": {
+    "status": "NOT_CLOSED",
+    "basis": "Source primitives and actual caller authority, not the existence of task-six Migration code",
+    "gap": "TokenStaking ordinary external caller cannot debit claimant weight, and holder reassignment has no observed recipient callback; compliant atomic composition remains unproved.",
+    "limits": [
+      "NFT and ERC20 custody feasibility is demonstrated.",
+      "Infrastructure-holder impersonation does not prove user authority.",
+      "Disabled harvests and LP caller restrictions remain observed route failures, not universal impossibility.",
+      "Specialized account-level execution was not tested."
+    ]
+  },
+  "E2": {
+    "status": "FAIL_CURRENT_INTERFACES",
+    "balanceOnlyCounterexampleConfirmed": true,
+    "postactivationAuthenticatedAncestry": "UNPROVEN",
+    "sameFinalBalances": [
+      "100",
+      "100"
+    ],
+    "historyCredits": [
+      [
+        "1666",
+        "2334"
+      ],
+      [
+        "1400",
+        "2600"
+      ]
+    ],
+    "universalCryptographicImpossibilityClaim": false
+  },
+  "pendingRun": {
+    "pid": 86670,
+    "finished": "2026-11-10T13:19:53.551Z",
+    "exitCode": 2,
+    "signal": null,
+    "overall": "FAIL",
+    "harnessError": null,
+    "counts": {
+      "PASS": 21,
+      "FAIL": 4,
+      "UNPROVEN": 3
+    },
+    "evidence": "other-metered.exit.json"
+  },
+  "checks": {
+    "preservedIntegerChecks": 19082,
+    "preservedIntegerFailures": 0,
+    "receiptAuditChecks": 311,
+    "receiptAuditFailures": 0,
+    "additionalInheritedReceiptAuditChecks": 370,
+    "additionalInheritedReceiptAuditFailures": 0,
+    "recoveryReceiptChecks": 94,
+    "recoveryReceiptFailures": 0,
+    "focusedClaimantAssertions": 2,
+    "focusedClaimantExitCode": 0,
+    "sourceLinksResolved": 334
+  },
+  "cleanup": {
+    "pass": true,
+    "recordedWorkloadPidsAbsent": 45,
+    "endpointsRefuseTcp": 6,
+    "ownedPathsAbsent": 42,
+    "receipts": [
+      "cleanup.json",
+      "recovery-cleanup.json",
+      "cleanup-independent-readback.json",
+      "final-checks.json"
+    ]
+  },
+  "integrity": {
+    "baselineEntries": 13017,
+    "changedOriginalFiles": [],
+    "addedOutsideBoundary": [],
+    "receipt": "workspace-after.json"
+  },
+  "findings": [
+    {
+      "id": "E2-ancestry",
+      "severity": "blocking",
+      "evidence": [
+        "witness-r4.results.json",
+        "receipt-audit-r2.json"
+      ],
+      "meaning": "Balance-only attribution fails MIG-P15; no compliant complete-history mechanism demonstrated."
+    },
+    {
+      "id": "E1-claimant",
+      "severity": "blocking",
+      "evidence": [
+        "tokenstaking-caller.json",
+        "recovery-receipt-audit.json"
+      ],
+      "meaning": "Ordinary caller pull/callback composition is unavailable in the tested source; other compliant account compositions remain unproved."
+    },
+    {
+      "id": "runner-stale-output",
+      "severity": "evidence-consumption",
+      "evidence": [
+        "stale-reject.exit.json",
+        "stale-output.json",
+        "runner-findings.md"
+      ],
+      "meaning": "Failed run can leave old success output; require matching command/input/terminal status and actual result fields."
+    }
+  ],
+  "preservedNonBlockerDistinctions": [
+    "Sourcify404 is not authentication; no new source fetch was required.",
+    "Prior provider429 failures remain preserved; historical metered custody now completed.",
+    "Future funded C0 and approved allocations are expected operational inputs.",
+    "Task-six atomic bond implementation was not required to exist for E1 feasibility."
+  ],
+  "unrun": [
+    "Forge build/test and MigrationLegacySources integration suite",
+    "Clean LSP/typecheck: Biome unavailable; inherited diagnostic limitations retained"
+  ],
+  "evidenceDirectory": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification",
+  "finalChecks": "final-checks.json"
+}

@@ -1,0 +1,896 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase.sol";
+
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
+import {
+    toBeforeSwapDelta,
+    BeforeSwapDelta
+} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BeforeSwapDelta.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {ModifyLiquidityParams, SwapParams} from
+    "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib as ClaimLib
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib as PullLib
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol";
+import {
+    IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+
+/**
+ * @title UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget
+ * @notice Product logic only: CP hooks, liquidity, SE In/Out, product views.
+ * @dev LP ERC-20, IBasicVault, IStandardVault are cut as shared facets on the diamond.
+ *      LP supply/balances use ERC20Repo; vaultTokens/reserves use MultiAssetBasicVaultRepo
+ *      (pair reserve accounting = virtual SE claim; raw = face inventory).
+ */
+abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget is UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase, IHooks {
+    using SafeERC20 for IERC20;
+
+    address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+
+    error ZeroAddress();
+    error ZeroAmount();
+    error NotPoolManager();
+    error TokenNotInVaultTokens();
+    error SameToken();
+    error RawIsSE();
+    error NotLive();
+    error NotZapEligible();
+    error InvalidToken();
+    error DeadlineExpired();
+    error InsufficientLpOut();
+    error InsufficientTokenOut();
+    error AlreadyInitialized();
+    error Reentrancy();
+    error LiquidityNotAllowed();
+    error InvalidPoolToken();
+    error InvalidPoolFee();
+    error HookNotImplemented();
+    error UnsupportedRoute();
+    error InvalidRoute();
+
+    modifier nonReentrant() {
+        Repo.Layout storage l = Repo._layout();
+        if (l.reentrancyStatus == Repo.ENTERED) revert Reentrancy();
+        l.reentrancyStatus = Repo.ENTERED;
+        _;
+        l.reentrancyStatus = Repo.NOT_ENTERED;
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                              bindings / views                          */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice Fixed direct-liquidity policy selected at deployment.
+    function ownerOnlyLiquidity() external view returns (bool) {
+        return Repo._layout().ownerOnlyLiquidity;
+    }
+
+    function poolManager() public view returns (address) {
+        return Repo._layout().poolManager;
+    }
+
+    function feeOracle() public view returns (address) {
+        return Repo._layout().feeOracle;
+    }
+
+    function permit2() public pure returns (address) {
+        return PERMIT2;
+    }
+
+    function standardExchange() public view returns (address) {
+        return Repo._layout().standardExchange;
+    }
+
+    function pairToken() public view returns (address) {
+        return Repo._layout().pairToken;
+    }
+
+    function rawToken() public view returns (address) {
+        return Repo._layout().rawToken;
+    }
+
+    function currency0() public view returns (address) {
+        return Repo._layout().currency0;
+    }
+
+    function currency1() public view returns (address) {
+        return Repo._layout().currency1;
+    }
+
+    function rawReserve() public view returns (uint256) {
+        return Repo._layout().bookedRaw;
+    }
+
+    function seClaimSupply() public view returns (uint256) {
+        return _seClaim();
+    }
+
+    function reserveCurrency0() public view returns (uint256) {
+        return _reserveOfCurrency(Repo._layout().currency0);
+    }
+
+    function reserveCurrency1() public view returns (uint256) {
+        return _reserveOfCurrency(Repo._layout().currency1);
+    }
+
+    function isLive() public view returns (bool) {
+        return _isLive();
+    }
+
+    function isZapEligible() public view returns (bool) {
+        return _isZapEligible();
+    }
+
+    function tradingFeePercent() public pure returns (uint256) {
+        return Repo.TRADING_FEE_PERCENT;
+    }
+
+    function tradingFeeDenominator() public pure returns (uint256) {
+        return Repo.TRADING_FEE_DENOMINATOR;
+    }
+
+    function dexSwapFeeAndFeeTo() public view returns (address feeTo_, uint256 dexFeeWad) {
+        (IFeeCollectorProxy ft, uint256 wad) =
+            IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeAndFeeToOfVault(address(this));
+        return (address(ft), wad);
+    }
+
+    function kLast() public view returns (uint256) {
+        return Repo._layout().kLast;
+    }
+
+    function tokens() public view returns (address[] memory t) {
+        t = new address[](2);
+        t[0] = Repo._layout().rawToken;
+        t[1] = Repo._layout().pairToken;
+    }
+
+    function standardExchangeOf(address token) public view returns (address) {
+        return Repo._layout().legs.standardExchangeOf[token];
+    }
+
+    function syntheticNumeraires() public view returns (address[] memory n) {
+        n = new address[](1);
+        n[0] = Repo._layout().pairToken;
+    }
+
+    function requiredFirstBondTokens() public view returns (address[] memory required) {
+        required = new address[](2);
+        required[0] = Repo._layout().rawToken;
+        required[1] = Repo._layout().standardExchange;
+    }
+
+    function firstJoinMustBeFullBook() public pure returns (bool) {
+        return true;
+    }
+
+    function tradingFeeWad() public pure returns (uint256) {
+        return (Repo.TRADING_FEE_PERCENT * 1e18) / Repo.TRADING_FEE_DENOMINATOR;
+    }
+
+    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        public
+        view
+        returns (uint256 amountOut)
+    {
+        if (!_isLive() || amountIn == 0) return 0;
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) return 0;
+        return _quoteExactInContext(zfo, amountIn, Repo._layout().poolManager).amountOut;
+    }
+
+    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        public
+        view
+        returns (uint256 amountIn)
+    {
+        if (!_isLive() || amountOut == 0) return 0;
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) return 0;
+        return ClaimLib.quoteExactOutContext(zfo, amountOut, Repo._layout().poolManager);
+    }
+
+    function _quotePairClaimIn(uint256 seClaim, uint256 claimIn) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        return Math.fromWadFloor(Math.saleQuote(
+            Math.toWad(claimIn, _decimalsOf(l.pairToken)),
+            Math.toWad(seClaim, _decimalsOf(l.pairToken)),
+            Math.toWad(IERC20(l.rawToken).balanceOf(address(this)), _decimalsOf(l.rawToken))
+        ), _decimalsOf(l.rawToken));
+    }
+
+    function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
+        external
+        view
+        returns (uint256 wad)
+    {
+        if (ctx.ownedLp == 0 || ctx.detfTotalSupply == 0 || ctx.creationPairPerDetfWad == 0) {
+            return 0;
+        }
+        if (!_isLive()) return 0;
+        address out_ = numeraire == address(0) ? Repo._layout().pairToken : numeraire;
+        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
+        if (pairOut == 0) return 0;
+        uint256 pairWad = DETFDecimalScaleLib.nativeToWad(out_, pairOut);
+        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+    }
+
+    function _tryRouteZeroForOne(address tokenIn, address tokenOut) internal view returns (bool ok, bool zfo) {
+        Repo.Layout storage l = Repo._layout();
+        UniswapV4SeBufferHookLegLib.LegKind kIn = UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
+        UniswapV4SeBufferHookLegLib.LegKind kOut = UniswapV4SeBufferHookLegLib.classify(l.legs, tokenOut);
+        if (
+            kIn == UniswapV4SeBufferHookLegLib.LegKind.Unknown
+                || kOut == UniswapV4SeBufferHookLegLib.LegKind.Unknown
+        ) {
+            return (false, false);
+        }
+        address in_ = kIn == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange ? l.pairToken : tokenIn;
+        address out_ = kOut == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange ? l.pairToken : tokenOut;
+        if (in_ == l.currency0 && out_ == l.currency1) return (true, true);
+        if (in_ == l.currency1 && out_ == l.currency0) return (true, false);
+        return (false, false);
+    }
+
+    /// @dev D60: SE shares held x provider rate (pair units); never an SE self-quote.
+    function _seClaim() internal view returns (uint256) {
+        return ClaimLib.ratedReserve();
+    }
+
+    function _reserveOfCurrency(address c) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (c == l.rawToken) return l.bookedRaw;
+        if (c == l.pairToken) return _seClaim();
+        return 0;
+    }
+
+    function _isLive() internal view returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        return ERC20Repo._totalSupply() != 0 && l.bookedRaw != 0
+            && (l.bookedSeShares != 0 || l.localPairReserve != 0);
+    }
+
+    function _isZapEligible() internal view returns (bool) {
+        return _isLive() && ERC20Repo._totalSupply() > Repo.MINIMUM_LIQUIDITY;
+    }
+
+    /// @dev Keep MultiAssetBasicVaultRepo reserves aligned with product book (raw face × virtual pair).
+    function _syncReserves() internal {
+        Repo.Layout storage l = Repo._layout();
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.rawToken), l.bookedRaw);
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.pairToken), _seClaim());
+    }
+
+    function _mintLp(address to, uint256 amount) internal {
+        if (amount == 0) return;
+        ERC20Repo._mint(to, amount);
+    }
+
+    function _burnLp(address from, uint256 amount) internal {
+        ERC20Repo._burn(from, amount);
+    }
+
+    function _onlyPoolManager() internal view {
+        if (msg.sender != Repo._layout().poolManager) revert NotPoolManager();
+    }
+
+    function _requireLive() internal view {
+        if (!_isLive()) revert NotLive();
+    }
+
+    function _requireZapEligible() internal view {
+        if (!_isZapEligible()) revert NotZapEligible();
+    }
+
+    function _requireNonZero(uint256 amount) internal pure {
+        if (amount == 0) revert ZeroAmount();
+    }
+
+    function _requireDeadline(uint256 deadline) internal view {
+        if (block.timestamp > deadline) revert DeadlineExpired();
+    }
+
+    function _decimalsOf(address token) internal view returns (uint8 d) {
+        Repo.Layout storage l = Repo._layout();
+        if (token == l.currency0) d = l.decimalsCurrency0;
+        else if (token == l.currency1) d = l.decimalsCurrency1;
+        else revert InvalidToken();
+        // CREATE3 DETF may not exist at hook bind, so stored decimals can be 0.
+        if (d == 0) d = 18;
+    }
+
+    function _wadProduct() internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        return Math.toWad(reserveCurrency0(), _decimalsOf(l.currency0))
+            * Math.toWad(reserveCurrency1(), _decimalsOf(l.currency1));
+    }
+
+    function _feeOnAndShare()
+        internal
+        view
+        returns (bool feeOn, address feeTo_, uint256 ownerFeeShare)
+    {
+        uint256 dexFeeWad;
+        (feeTo_, dexFeeWad) = dexSwapFeeAndFeeTo();
+        feeOn = feeTo_ != address(0) && dexFeeWad != 0;
+        ownerFeeShare = (dexFeeWad * Repo.TRADING_FEE_DENOMINATOR) / 1e18;
+    }
+
+    function _previewBufferClaimIn(uint256 amountInRaw) internal view returns (uint256) {
+        return ClaimLib.previewBufferClaimIn(amountInRaw);
+    }
+
+    function _invertBufferClaimIn(uint256 claimInNeeded) internal view returns (uint256) {
+        return ClaimLib.invertBufferClaimIn(claimInNeeded);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                              SE buffer / unwrap                        */
+    /* ---------------------------------------------------------------------- */
+
+    function _bufferPair(uint256 amount) internal returns (uint256) {
+        return ClaimLib.bufferPoolPair(amount);
+    }
+
+    function _spendableSeShares() internal view returns (uint256) {
+        return Repo._layout().bookedSeShares;
+    }
+
+    function _spendableRaw() internal view returns (uint256) {
+        return Repo._layout().bookedRaw;
+    }
+
+    function _unwrapSeShares(uint256 seIn) internal returns (uint256 pairOut) {
+        uint256 cap = _spendableSeShares();
+        if (seIn > cap) seIn = cap;
+        if (seIn == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return seIn;(uint256 minOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
+        );
+        // Uni V3/V4 SE pulls shares via transferFrom when pretransferred=false.
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);(pairOut,) = IStandardExchangeIn(l.standardExchange).exchangeIn(IERC20(l.standardExchange),
+            seIn,
+            IERC20(l.pairToken),
+            minOut,
+            address(this),
+            false,
+            block.timestamp
+        );
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
+    }
+
+    function _unwrapExactPairOut(uint256 pairOut) internal returns (uint256 seIn) {
+        _requireNonZero(pairOut);
+        Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return pairOut;
+        uint256 cap = _spendableSeShares();
+        if (cap == 0) revert InsufficientTokenOut();
+        seIn = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+            IERC20(l.standardExchange), IERC20(l.pairToken), pairOut
+        );
+        // Exact-output never falls back to a clamped exact-input redemption.
+        if (seIn == 0 || seIn > cap) revert InsufficientTokenOut();
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
+        uint256 spent = IStandardExchangeOut(l.standardExchange).exchangeOut(
+            IERC20(l.standardExchange),
+            seIn,
+            IERC20(l.pairToken),
+            pairOut,
+            address(this),
+            false,
+            block.timestamp
+        );
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
+        require(spent == seIn, "unwrap exact-out");
+    }
+
+    function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256) {
+        return ClaimLib.takeExactPair(pairWant);
+    }
+
+    function _take(Currency currency, address to, uint256 amount) internal {
+        if (amount == 0) return;
+        IPoolManager(Repo._layout().poolManager).take(currency, to, amount);
+    }
+
+    function _settle(Currency currency, uint256 amount) internal {
+        if (amount == 0) return;
+        IPoolManager pm = IPoolManager(Repo._layout().poolManager);
+        pm.sync(currency);
+        IERC20(Currency.unwrap(currency)).safeTransfer(address(pm), amount);
+        pm.settle();
+    }
+
+
+    /* ---------------------------------------------------------------------- */
+    /*                                  IHooks                                */
+    /* ---------------------------------------------------------------------- */
+
+    function getHookPermissions() public pure returns (Hooks.Permissions memory) {
+        return Hooks.Permissions({
+            beforeInitialize: true,
+            beforeAddLiquidity: true,
+            beforeSwap: true,
+            beforeSwapReturnDelta: true,
+            afterSwap: false,
+            afterInitialize: false,
+            beforeRemoveLiquidity: false,
+            afterAddLiquidity: false,
+            afterRemoveLiquidity: false,
+            beforeDonate: false,
+            afterDonate: false,
+            afterSwapReturnDelta: false,
+            afterAddLiquidityReturnDelta: false,
+            afterRemoveLiquidityReturnDelta: false
+        });
+    }
+
+    function beforeInitialize(address, PoolKey calldata poolKey, uint160)
+        external
+        override
+        returns (bytes4)
+    {
+        return BeforeInitializeLib.beforeInitialize(poolKey);
+    }
+
+    function afterInitialize(address, PoolKey calldata, uint160, int24)
+        external
+        pure
+        override
+        returns (bytes4)
+    {
+        revert HookNotImplemented();
+    }
+
+    function beforeAddLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
+        external
+        view
+        override
+        returns (bytes4)
+    {
+        _onlyPoolManager();
+        revert LiquidityNotAllowed();
+    }
+
+    function afterAddLiquidity(
+        address,
+        PoolKey calldata,
+        ModifyLiquidityParams calldata,
+        BalanceDelta,
+        BalanceDelta,
+        bytes calldata
+    ) external pure override returns (bytes4, BalanceDelta) {
+        revert HookNotImplemented();
+    }
+
+    function beforeRemoveLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
+        external
+        pure
+        override
+        returns (bytes4)
+    {
+        revert HookNotImplemented();
+    }
+
+    function afterRemoveLiquidity(
+        address,
+        PoolKey calldata,
+        ModifyLiquidityParams calldata,
+        BalanceDelta,
+        BalanceDelta,
+        bytes calldata
+    ) external pure override returns (bytes4, BalanceDelta) {
+        revert HookNotImplemented();
+    }
+
+    function beforeSwap(address, PoolKey calldata, SwapParams calldata params, bytes calldata)
+        external
+        override
+        nonReentrant
+        returns (bytes4, BeforeSwapDelta swapDelta, uint24)
+    {
+        _onlyPoolManager();
+        _requireLive();
+        if (params.amountSpecified < 0) {
+            swapDelta = _swapExactInPm(params.zeroForOne, uint256(-params.amountSpecified));
+        } else {
+            swapDelta = _swapExactOutPm(params.zeroForOne, uint256(params.amountSpecified));
+        }
+        return (IHooks.beforeSwap.selector, swapDelta, 0);
+    }
+
+    function afterSwap(address, PoolKey calldata, SwapParams calldata, BalanceDelta, bytes calldata)
+        external
+        pure
+        override
+        returns (bytes4, int128)
+    {
+        revert HookNotImplemented();
+    }
+
+    function beforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
+        external
+        pure
+        override
+        returns (bytes4)
+    {
+        revert HookNotImplemented();
+    }
+
+    function afterDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
+        external
+        pure
+        override
+        returns (bytes4)
+    {
+        revert HookNotImplemented();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                              swap core                                 */
+    /* ---------------------------------------------------------------------- */
+
+    function _zeroForOneIsRawIn() internal view returns (bool) {
+        return Repo._layout().currency0 == Repo._layout().rawToken;
+    }
+
+    /// @dev zeroForOne: currency0 → currency1
+    function _swapExactInPm(bool zeroForOne, uint256 amountInRaw)
+        internal
+        returns (BeforeSwapDelta swapDelta)
+    {
+        uint256 amountOut = _execExactIn(zeroForOne, amountInRaw, true);
+        swapDelta = toBeforeSwapDelta(int128(int256(amountInRaw)), int128(-int256(amountOut)));
+    }
+
+    function _swapExactOutPm(bool zeroForOne, uint256 amountOut)
+        internal
+        returns (BeforeSwapDelta swapDelta)
+    {
+        uint256 amountInRaw = _execExactOut(zeroForOne, amountOut, true);
+        swapDelta = toBeforeSwapDelta(int128(-int256(amountOut)), int128(int256(amountInRaw)));
+    }
+
+    /// @param viaPm if true, take/settle with PoolManager; else tokens already on hook / pay recipient externally
+    function _execExactIn(bool zeroForOne, uint256 amountIn, bool viaPm)
+        internal
+        returns (uint256 amountOut)
+    {
+        _requireNonZero(amountIn);
+        Repo.Layout storage l = Repo._layout();
+        bool rawIn = zeroForOne == _zeroForOneIsRawIn();
+        address tokenIn = zeroForOne ? l.currency0 : l.currency1;
+        address tokenOut = zeroForOne ? l.currency1 : l.currency0;
+
+        ClaimLib.ExactInOutput memory output = _quoteExactInPlan(zeroForOne, amountIn);
+        amountOut = output.amountOut;
+        if (amountOut == 0) revert ZeroAmount();
+
+        if (viaPm) {
+            _take(Currency.wrap(tokenIn), address(this), amountIn);
+        }
+
+        if (rawIn) {
+            l.bookedRaw += amountIn;
+            amountOut = ClaimLib.unwrapQuoted(output);
+        } else {
+            // pair → raw: buffer pair last after quote; pay raw
+            _bufferPair(amountIn);
+            IERC20(l.rawToken); // raw inventory already held
+            if (amountOut > _spendableRaw()) revert InsufficientTokenOut();
+            l.bookedRaw -= amountOut;
+        }
+
+        if (viaPm) {
+            _settle(Currency.wrap(tokenOut), amountOut);
+        }
+        _syncReserves();
+    }
+
+    function _execExactOut(bool zeroForOne, uint256 amountOut, bool viaPm)
+        internal
+        returns (uint256 amountIn)
+    {
+        _requireNonZero(amountOut);
+        Repo.Layout storage l = Repo._layout();
+        bool rawIn = zeroForOne == _zeroForOneIsRawIn();
+        address tokenIn = zeroForOne ? l.currency0 : l.currency1;
+        address tokenOut = zeroForOne ? l.currency1 : l.currency0;
+
+        amountIn = _quoteExactOut(zeroForOne, amountOut);
+        _requireNonZero(amountIn);
+
+        if (viaPm) {
+            _take(Currency.wrap(tokenIn), address(this), amountIn);
+        }
+
+        if (rawIn) {
+            l.bookedRaw += amountIn;
+            uint256 got = _unwrapPairLeavingDust(amountOut);
+            if (got < amountOut) revert InsufficientTokenOut();
+        } else {
+            _bufferPair(amountIn);
+            if (amountOut > _spendableRaw()) revert InsufficientTokenOut();
+            l.bookedRaw -= amountOut;
+        }
+
+        if (viaPm) {
+            _settle(Currency.wrap(tokenOut), amountOut);
+        }
+        _syncReserves();
+    }
+
+    function _quoteExactIn(bool zeroForOne, uint256 amountIn) internal view returns (uint256 amountOut) {
+        return _quoteExactInPlan(zeroForOne, amountIn).amountOut;
+    }
+
+    function _quoteExactInPlan(bool zeroForOne, uint256 amountIn) internal view returns (ClaimLib.ExactInOutput memory output) {
+        return _quoteExactInContext(zeroForOne, amountIn, address(0));
+    }
+
+    function _quoteExactInContext(bool zeroForOne, uint256 amountIn, address manager) internal view returns (ClaimLib.ExactInOutput memory output) {
+        return _singleExchangeQuotePlan(zeroForOne, amountIn, manager);
+    }
+
+    function _quoteExactOut(bool zeroForOne, uint256 amountOut) internal view returns (uint256 amountIn) {
+        return ClaimLib.quoteExactOutContext(zeroForOne, amountOut, address(0));
+    }
+    function previewSwapExactIn(bool zeroForOne, uint256 amountIn)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        return _quoteExactInContext(zeroForOne, amountIn, Repo._layout().poolManager).amountOut;
+    }
+
+    function previewSwapExactOut(bool zeroForOne, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        return ClaimLib.quoteExactOutContext(zeroForOne, amountOut, Repo._layout().poolManager);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                         IStandardExchangeIn / Out                      */
+    /* ---------------------------------------------------------------------- */
+
+    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut);
+        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
+        return _quoteExactOut(zfo, amountOut);
+    }
+
+    function exchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 amountIn) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+        return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountIn) {
+        _requireDeadline(deadline);
+        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
+        amountIn = _quoteExactOut(zfo, amountOut);
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+        // D15: false-flag pulls exactly `amountIn`; true-flag credits `budget(unbooked, maxAmountIn)`
+        // and refunds only `credit - amountIn` (never booked inventory or SE book).
+        _pullExactOutInput(IERC20(address(tokenIn)), amountIn, maxAmountIn, pretransferred);
+
+        Repo.Layout storage l = Repo._layout();
+        bool rawIn = zfo == _zeroForOneIsRawIn();
+        if (rawIn) {
+            l.bookedRaw += amountIn;
+            uint256 got = _unwrapPairLeavingDust(amountOut);
+            if (got < amountOut) revert InsufficientTokenOut();
+            IERC20(l.pairToken).safeTransfer(recipient, amountOut);
+        } else {
+            _bufferPair(amountIn);
+            if (amountOut > _spendableRaw()) revert InsufficientTokenOut();
+            l.bookedRaw -= amountOut;
+            IERC20(l.rawToken).safeTransfer(recipient, amountOut);
+        }
+        _syncReserves();
+    }
+
+    /// @notice D89: owner exact-in; internal book settlement so this works while PoolManager is already unlocked.
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        _requireLive();
+        bool zfo = _routeZeroForOne(tokenIn, tokenOut);
+        ClaimLib.ExactInOutput memory output = _quoteExactInPlan(zfo, amountIn);
+        amountOut = output.amountOut;
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        if (amountOut == 0) revert ZeroAmount();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        if (zfo == _zeroForOneIsRawIn()) {
+            Repo._layout().bookedRaw += amountIn;
+            amountOut = ClaimLib.unwrapQuoted(output);
+            IERC20(Repo._layout().pairToken).safeTransfer(msg.sender, amountOut);
+            _syncReserves();
+        } else {
+            amountOut = _payOwnerSwap(zfo, amountIn, amountOut);
+        }
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+    }
+
+    /// @notice D89: owner exact-out; internal book settlement so this works while PoolManager is already unlocked.
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        _requireLive();
+        bool zfo = _routeZeroForOne(tokenIn, tokenOut);
+        amountIn = _quoteExactOut(zfo, amountOut);
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        uint256 paid_ = _payOwnerSwap(zfo, amountIn, amountOut);
+        if (paid_ < amountOut) revert InsufficientTokenOut();
+    }
+
+    function _onlyHookOwner() private view {
+        address owner_ = IMultiStepOwnable(address(this)).owner();
+        if (msg.sender != owner_) {
+            revert IMultiStepOwnable.NotOwner(msg.sender);
+        }
+    }
+
+    function _payOwnerSwap(bool zfo, uint256 amountIn, uint256 amountOut)
+        private
+        returns (uint256 paidOut)
+    {
+        Repo.Layout storage l = Repo._layout();
+        bool rawIn = zfo == _zeroForOneIsRawIn();
+        if (rawIn) {
+            l.bookedRaw += amountIn;
+            uint256 got = _unwrapPairLeavingDust(amountOut);
+            if (got == 0) revert InsufficientTokenOut();
+            if (got < amountOut) revert InsufficientTokenOut();
+            paidOut = amountOut;
+            IERC20(l.pairToken).safeTransfer(msg.sender, paidOut);
+        } else {
+            _bufferPair(amountIn);
+            uint256 cap = _spendableRaw();
+            if (cap == 0) revert InsufficientTokenOut();
+            if (amountOut > cap) revert InsufficientTokenOut();
+            paidOut = amountOut;
+            l.bookedRaw -= paidOut;
+            IERC20(l.rawToken).safeTransfer(msg.sender, paidOut);
+        }
+        _syncReserves();
+    }
+
+    /// @dev Pulls must deliver exactly `claimed`; contract pretransfers may consume only
+    ///      unbooked local tokens in native units, independent of the reserve's rated value.
+    function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
+        internal
+        returns (uint256 observedDelta)
+    {
+        uint256 B0 = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            tokenIn.safeTransferFrom(msg.sender, address(this), claimed);
+            uint256 delta = tokenIn.balanceOf(address(this)) - B0;
+            if (delta != claimed) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, delta);
+            }
+            return claimed;
+        }
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 U = _unbookedBalance(tokenIn);
+        if (claimed > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
+        }
+        return claimed;
+    }
+
+    /// @dev Pending or ambient inventory is distinct from every native custody book.
+    function _unbookedBalance(IERC20 token) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 booked;
+        if (address(token) == l.rawToken) {
+            booked = l.bookedRaw;
+        } else if (address(token) == l.pairToken) {
+            booked = l.localPairReserve;
+        } else if (address(token) == l.standardExchange) {
+            booked = l.bookedSeShares;
+        }
+        return LocalCreditLib.available(token.balanceOf(address(this)), booked);
+    }
+
+    /// @dev Exact-out input (D15): false-flag pulls `used` and refunds nothing. True-flag credits
+    ///      `budget(available, maxAmountIn)` and refunds `credit - used` to `msg.sender` only.
+    function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)
+        internal
+    {
+        _securePull(token, used, pretransferred);
+        if (!pretransferred) return;
+        uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);
+        if (credit > used) token.safeTransfer(msg.sender, credit - used);
+    }
+
+    function _routeZeroForOne(address tokenIn, address tokenOut) internal view returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        if (tokenIn == l.currency0 && tokenOut == l.currency1) return true;
+        if (tokenIn == l.currency1 && tokenOut == l.currency0) return false;
+        revert UnsupportedRoute();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                              protocol fee                              */
+    /* ---------------------------------------------------------------------- */
+
+
+
+    function _supplyAfterProtocolMint() internal view returns (uint256) { return ERC20Repo._totalSupply(); }
+
+    /* ---------------------------------------------------------------------- */
+}

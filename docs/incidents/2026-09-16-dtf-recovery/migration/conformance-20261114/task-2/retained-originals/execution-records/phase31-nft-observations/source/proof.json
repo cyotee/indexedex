@@ -1,0 +1,683 @@
+{
+  "status": "PRODUCER-RAW-ORACLE-PASS-NOT-INDEPENDENT-VERIFIER",
+  "checks": 4055,
+  "rows": [
+    {
+      "locator": "evidence/weighted-bonds.csv#row=2",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "3",
+      "state": "present-at-pin",
+      "remaining": "3772281649",
+      "owner": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=3",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "4",
+      "state": "present-at-pin",
+      "remaining": "281387179",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=4",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "5",
+      "state": "present-at-pin",
+      "remaining": "462445599",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=5",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "6",
+      "state": "present-at-pin",
+      "remaining": "740825635",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=6",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "7",
+      "state": "present-at-pin",
+      "remaining": "1200103129",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=7",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "8",
+      "state": "present-at-pin",
+      "remaining": "1937763154",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=8",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "9",
+      "state": "present-at-pin",
+      "remaining": "3147607863",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=9",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "10",
+      "state": "present-at-pin",
+      "remaining": "5077481904",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=10",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "11",
+      "state": "present-at-pin",
+      "remaining": "44048877",
+      "owner": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=11",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "12",
+      "state": "present-at-pin",
+      "remaining": "1455956506",
+      "owner": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=12",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "13",
+      "state": "present-at-pin",
+      "remaining": "1915",
+      "owner": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=13",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "14",
+      "state": "present-at-pin",
+      "remaining": "186317",
+      "owner": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=14",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "15",
+      "state": "present-at-pin",
+      "remaining": "1915",
+      "owner": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=15",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "16",
+      "state": "present-at-pin",
+      "remaining": "153080136",
+      "owner": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=16",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "17",
+      "state": "present-at-pin",
+      "remaining": "179696",
+      "owner": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=17",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "18",
+      "state": "present-at-pin",
+      "remaining": "49053117",
+      "owner": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=18",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "19",
+      "state": "present-at-pin",
+      "remaining": "133006119",
+      "owner": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=19",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "20",
+      "state": "present-at-pin",
+      "remaining": "266266893",
+      "owner": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=20",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "21",
+      "state": "present-at-pin",
+      "remaining": "16947058",
+      "owner": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=21",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "22",
+      "state": "present-at-pin",
+      "remaining": "1245164840",
+      "owner": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=22",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "23",
+      "state": "present-at-pin",
+      "remaining": "252865083",
+      "owner": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=23",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "24",
+      "state": "present-at-pin",
+      "remaining": "1300890757",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=24",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "25",
+      "state": "absent-at-pin-after-proved-historical-mint",
+      "remaining": null,
+      "owner": "0x0000000000000000000000000000000000000000",
+      "originalRecipientControlsAtPin": null,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=25",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "26",
+      "state": "present-at-pin",
+      "remaining": "56299",
+      "owner": "0x2e69e40c4a4ab5ca6826850f347acf8076a8063e",
+      "originalRecipientControlsAtPin": false,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=26",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "27",
+      "state": "present-at-pin",
+      "remaining": "3302546215",
+      "owner": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=27",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "28",
+      "state": "present-at-pin",
+      "remaining": "3726336268",
+      "owner": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=28",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "29",
+      "state": "present-at-pin",
+      "remaining": "1777911406",
+      "owner": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=29",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "30",
+      "state": "present-at-pin",
+      "remaining": "457125470",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=30",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "31",
+      "state": "present-at-pin",
+      "remaining": "4031493805",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=31",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "32",
+      "state": "present-at-pin",
+      "remaining": "46365243",
+      "owner": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=32",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "33",
+      "state": "present-at-pin",
+      "remaining": "13798634863",
+      "owner": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=33",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "34",
+      "state": "present-at-pin",
+      "remaining": "51139140",
+      "owner": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=34",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "35",
+      "state": "present-at-pin",
+      "remaining": "182228084",
+      "owner": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=35",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "36",
+      "state": "present-at-pin",
+      "remaining": "1638945309",
+      "owner": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=36",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "37",
+      "state": "present-at-pin",
+      "remaining": "51168348039",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=37",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "38",
+      "state": "present-at-pin",
+      "remaining": "28366285153",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=38",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "39",
+      "state": "present-at-pin",
+      "remaining": "73833949104",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=39",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "40",
+      "state": "present-at-pin",
+      "remaining": "15681307429",
+      "owner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=40",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "41",
+      "state": "present-at-pin",
+      "remaining": "746187269",
+      "owner": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=41",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "42",
+      "state": "absent-at-pin-after-proved-historical-mint",
+      "remaining": null,
+      "owner": "0x0000000000000000000000000000000000000000",
+      "originalRecipientControlsAtPin": null,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=42",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "43",
+      "state": "present-at-pin",
+      "remaining": "1564401756",
+      "owner": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=43",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "44",
+      "state": "present-at-pin",
+      "remaining": "7290760",
+      "owner": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=44",
+      "collection": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "45",
+      "state": "present-at-pin",
+      "remaining": "1135766469",
+      "owner": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=2",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "3",
+      "state": "present-at-pin",
+      "remaining": "562524912595035608166",
+      "owner": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=3",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "4",
+      "state": "present-at-pin",
+      "remaining": "2281854312954086546",
+      "owner": "0x230f95db9644c5b3608ba676d18426d03e435b1d",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=4",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "5",
+      "state": "present-at-pin",
+      "remaining": "4733571557235944381",
+      "owner": "0xfad14e74911353728b9bbfd9f0566827790c16c2",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=5",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "6",
+      "state": "present-at-pin",
+      "remaining": "17499787460727814908",
+      "owner": "0xd3d58fdd70b33143052de127be8700fa37825e96",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=6",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "7",
+      "state": "present-at-pin",
+      "remaining": "101771406718761253180",
+      "owner": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=7",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "8",
+      "state": "present-at-pin",
+      "remaining": "3177276484339682675",
+      "owner": "0x73c121d572e065c8b6fa6acec6b40deffb62e1df",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=8",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "9",
+      "state": "present-at-pin",
+      "remaining": "26355776123062198039",
+      "owner": "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=9",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "10",
+      "state": "present-at-pin",
+      "remaining": "635830119561554894104",
+      "owner": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=10",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "11",
+      "state": "present-at-pin",
+      "remaining": "63710177980044045505074",
+      "owner": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=11",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "12",
+      "state": "present-at-pin",
+      "remaining": "47848240999749918187208884",
+      "owner": "0x52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=12",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "13",
+      "state": "present-at-pin",
+      "remaining": "14076427465745415752889694594",
+      "owner": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=13",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "14",
+      "state": "present-at-pin",
+      "remaining": "63994795678617495504331915305",
+      "owner": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=14",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "15",
+      "state": "present-at-pin",
+      "remaining": "384036613756141320755161221429",
+      "owner": "0x5f0a91bef93b0f947cd82ea39ec2939d6aec663a",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=15",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "16",
+      "state": "present-at-pin",
+      "remaining": "682214153247983854950221048859993",
+      "owner": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=16",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "17",
+      "state": "present-at-pin",
+      "remaining": "75379755917867944374016634265685128",
+      "owner": "0xbedf78eb17a054d972c85ce222e2175f19899cd6",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=17",
+      "collection": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "tokenId": "18",
+      "state": "present-at-pin",
+      "remaining": "900849466801106375326463227667169",
+      "owner": "0x24e447b7407a304b024a5a57d7638f4cb6d5d0fb",
+      "originalRecipientControlsAtPin": true,
+      "issues": []
+    }
+  ],
+  "pin": "113279837",
+  "captures": 268,
+  "failures": [
+    {
+      "id": 126,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "data": "0x46f960230000000000000000000000000000000000000000000000000000000000000019"
+        },
+        "0x6c0835d"
+      ],
+      "failure": {
+        "kind": "rpc",
+        "error": {
+          "code": 3,
+          "message": "execution reverted",
+          "data": "0x7e2732890000000000000000000000000000000000000000000000000000000000000019"
+        }
+      }
+    },
+    {
+      "id": 127,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "data": "0xae648e900000000000000000000000000000000000000000000000000000000000000019"
+        },
+        "0x6c0835d"
+      ],
+      "failure": {
+        "kind": "rpc",
+        "error": {
+          "code": 3,
+          "message": "execution reverted",
+          "data": "0x7e2732890000000000000000000000000000000000000000000000000000000000000019"
+        }
+      }
+    },
+    {
+      "id": 177,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "data": "0x46f96023000000000000000000000000000000000000000000000000000000000000002a"
+        },
+        "0x6c0835d"
+      ],
+      "failure": {
+        "kind": "rpc",
+        "error": {
+          "code": 3,
+          "message": "execution reverted",
+          "data": "0x7e273289000000000000000000000000000000000000000000000000000000000000002a"
+        }
+      }
+    },
+    {
+      "id": 178,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+          "data": "0xae648e90000000000000000000000000000000000000000000000000000000000000002a"
+        },
+        "0x6c0835d"
+      ],
+      "failure": {
+        "kind": "rpc",
+        "error": {
+          "code": 3,
+          "message": "execution reverted",
+          "data": "0x7e273289000000000000000000000000000000000000000000000000000000000000002a"
+        }
+      }
+    }
+  ],
+  "canonical": true,
+  "inputDeclarations": 36,
+  "scope": "All 59 original rows; exact raw static ABI, selected routes/code, principal and preview arithmetic; no new live acquisition",
+  "limits": [
+    "same-provider observations, not trustless proof",
+    "no eligibility, original-wallet authority, E0/D0, prior compensation, C0 or credit approval"
+  ]
+}

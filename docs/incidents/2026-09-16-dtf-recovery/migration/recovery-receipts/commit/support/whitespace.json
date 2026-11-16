@@ -1,0 +1,16 @@
+{
+  "unstaged": {
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "staged": {
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "checkAttr": {
+    "status": 0,
+    "bytes": 0
+  }
+}

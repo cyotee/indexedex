@@ -1,0 +1,56 @@
+{
+  "source": "failures.log",
+  "exitCode": 0,
+  "executedTests": 29,
+  "families": {
+    "StaleBook": [
+      "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+      "test_StaleBook_WeightedReceiptReplacementPreservesRecords",
+      "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+      "test_StaleBook_EarlierReceiptReplacementPreservesRecords",
+      "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+      "test_StaleBook_WeightedLiquidReplacementPreservesRecords",
+      "test_StaleBook_ClaimVaultReplacementPreservesRecords",
+      "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+      "test_StaleBook_ClaimedSyReplacementPreservesRecords",
+      "test_StaleBook_EarlierLiquidReplacementPreservesRecords",
+      "test_StaleBook_NftReplacementPreservesRecords",
+      "test_StaleBook_DtfCustodySeReplacementPreservesRecords",
+      "test_StaleBook_WeightedSyReplacementPreservesRecords",
+      "test_StaleBook_AllTwelveEmptyLoaders",
+      "test_StaleBook_IndependentOriginIndexRemainsAllocated",
+      "test_StaleBook_SeparateNftPreservesStableOriginAndBothCredits"
+    ],
+    "InvalidManual": [
+      "test_InvalidManual_ProviderOperandsAndInactiveFields",
+      "test_InvalidManual_UnsupportedRoleAtomic",
+      "test_InvalidManual_AuxiliaryDenominatorAndDisabledUnusedRate",
+      "test_InvalidManual_BufferModelsScalesAndOutput",
+      "test_InvalidManual_PricingRollback_AllStructuralFields"
+    ],
+    "UnsetPricing": [
+      "test_ActivationCut_UnsetPricingAndEmptyEntitlements",
+      "test_UnsetPricing_GetterPreviewAndAllLoaders"
+    ],
+    "UnauthorizedPricing": [
+      "test_UnauthorizedPricing_CurrentPendingFormerOwnerAndRollback"
+    ],
+    "PricingRollback": [
+      "test_InvalidManual_PricingRollback_AllStructuralFields",
+      "test_PricingRollback_CheckedOverflow"
+    ],
+    "OriginCollision": [
+      "test_OriginCollision_StableAcrossBooksAndIndependentIssuance"
+    ],
+    "MaxIn": [
+      "test_ManualDifferential_MappedNativeMaxInBoundary",
+      "test_MaxIn_RawBoundaryAndNativeOutputCap"
+    ],
+    "ZeroOutput": [
+      "test_ZeroOutput_NativeFloorAndEmptyV3"
+    ],
+    "ActivationCut": [
+      "test_ActivationCut_UnsetPricingAndEmptyEntitlements"
+    ]
+  }
+}

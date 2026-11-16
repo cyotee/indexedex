@@ -1,0 +1,350 @@
+{
+  "kind": "HarnessRepair",
+  "task": 7,
+  "status": "complete",
+  "productAttemptIncrement": false,
+  "pathsRelativeTo": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7",
+  "resolvedFindings": [
+    "H3",
+    "H4",
+    "B1"
+  ],
+  "unresolvedFollowUps": [
+    "B2"
+  ],
+  "runSummary": [
+    {
+      "label": "happy",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution-domain.test.ts ./scripts/recovery/dtf-migration/execution-state.test.ts",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/preparation.test.ts",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts"
+      ],
+      "exitCode": 0,
+      "processExitCode": 0,
+      "processSignal": null,
+      "passed": 57,
+      "failed": 0,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8"
+      },
+      "log": "attempt-5/happy.log",
+      "receipt": "attempt-5/happy.command.json",
+      "logSha256": "ef55099e9a46f34fa1f784331c6f3eaaed8d92c028f4abcb576eac9b3d9d735f"
+    },
+    {
+      "label": "rejection",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution-domain.test.ts ./scripts/recovery/dtf-migration/execution-state.test.ts ./scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/preparation.test.ts",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts",
+        "./scripts/recovery/dtf-migration/nft-contributions.test.ts"
+      ],
+      "exitCode": 0,
+      "processExitCode": 0,
+      "processSignal": null,
+      "passed": 71,
+      "failed": 0,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8"
+      },
+      "log": "attempt-5/rejection.log",
+      "receipt": "attempt-5/rejection.command.json",
+      "logSha256": "274a799c4ff64b61aa2b46a79e6ca16b0e8ecb559e60ed8bef52f7aadfec24d6"
+    },
+    {
+      "label": "forge",
+      "command": "python3 scripts/forge-artifacts.py script scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol --sig 'runMixedRecordRehearsal()' -vv",
+      "argv": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "script",
+        "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+        "--sig",
+        "runMixedRecordRehearsal()",
+        "-vv"
+      ],
+      "exitCode": 0,
+      "processExitCode": 0,
+      "processSignal": null,
+      "passed": null,
+      "failed": null,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "922f5ff16788ca5971738fb4214d1a53806ee45864829906206872c2f3f90045"
+      },
+      "log": "attempt-5/forge.log",
+      "receipt": "attempt-5/forge.command.json",
+      "logSha256": "2df723a3877bb30e7909a856c931d8353c22235071711f445df8a6a754a5e8ee"
+    },
+    {
+      "label": "types",
+      "command": "bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck --types node scripts/recovery/dtf-migration/execution-domain.test.ts docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/record-qa.ts docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-5/script-harness.test.ts",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/record-qa.ts",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-5/script-harness.test.ts"
+      ],
+      "exitCode": 0,
+      "processExitCode": 0,
+      "processSignal": null,
+      "passed": null,
+      "failed": null,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "922f5ff16788ca5971738fb4214d1a53806ee45864829906206872c2f3f90045"
+      },
+      "log": "attempt-5/types.log",
+      "receipt": "attempt-5/types.command.json",
+      "logSha256": "617635cb06e3106d47cb4d2fbd86adbb0ba4cce75b2cf17f11f854cbf4ca1a63"
+    },
+    {
+      "label": "script-harness",
+      "command": "bun test --timeout 15000 ./docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-5/script-harness.test.ts",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/attempt-5/script-harness.test.ts"
+      ],
+      "exitCode": 0,
+      "processExitCode": 0,
+      "processSignal": null,
+      "passed": 4,
+      "failed": 0,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "922f5ff16788ca5971738fb4214d1a53806ee45864829906206872c2f3f90045"
+      },
+      "log": "attempt-5/script-harness.log",
+      "receipt": "attempt-5/script-harness.command.json",
+      "logSha256": "6af24c1d662ba11d000ac344d2582a4f4af0784fe64297b0d7ef34d03bacb0bc"
+    },
+    {
+      "label": "helper-before",
+      "command": "python3 scripts/test_forge_artifacts.py",
+      "argv": [
+        "python3",
+        "scripts/test_forge_artifacts.py"
+      ],
+      "exitCode": 1,
+      "processExitCode": 1,
+      "processSignal": null,
+      "passed": null,
+      "failed": null,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8"
+      },
+      "log": "attempt-5/helper-before.log",
+      "receipt": "attempt-5/helper-before.command.json",
+      "logSha256": "635c6aa0c8b33425b20972849f45bea9843658538805677e1dd53b81fe93720e"
+    },
+    {
+      "label": "helper-after",
+      "command": "python3 scripts/test_forge_artifacts.py",
+      "argv": [
+        "python3",
+        "scripts/test_forge_artifacts.py"
+      ],
+      "exitCode": 1,
+      "processExitCode": 1,
+      "processSignal": null,
+      "passed": null,
+      "failed": null,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "922f5ff16788ca5971738fb4214d1a53806ee45864829906206872c2f3f90045"
+      },
+      "log": "attempt-5/helper-after.log",
+      "receipt": "attempt-5/helper-after.command.json",
+      "logSha256": "0b7357f73bb8d22c178521fa3340b29bbae8cdf190970e7a8f47f6cafaba5a95"
+    },
+    {
+      "label": "witness",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts"
+      ],
+      "exitCode": 1,
+      "processExitCode": 1,
+      "processSignal": null,
+      "passed": 3,
+      "failed": 1,
+      "sourceUnchanged": true,
+      "sourceFingerprint": "1ac17de99eaf257c9106a9dde5c9012e444510b32688b15429e59bb20c8aaf1a",
+      "harness": {
+        "recorderSha256": "fd0c87d80cf72cd54564ac156a247ccae9945064ea08616a06d7951cde353e09",
+        "forgeHelperSha256": "922f5ff16788ca5971738fb4214d1a53806ee45864829906206872c2f3f90045"
+      },
+      "log": "attempt-5/witness.log",
+      "receipt": "attempt-5/witness.command.json",
+      "logSha256": "417bd4df7455f366f4944dd673b6c9ef73aeb03376a96a71e56727b929407b36"
+    }
+  ],
+  "rawLogChecks": {
+    "happyExactArgvFirst": true,
+    "happyExitFooter": "PROCESS_EXIT_CODE=0",
+    "rejectionExactArgvFirst": true,
+    "combinedNft3Label": "weighted NFT three rejects combined before transport and transaction creation",
+    "v1Label": "v1 execution manifest is rejected before RPC or signing",
+    "rejectionExitFooter": "PROCESS_EXIT_CODE=0",
+    "requiredForgeExactArgvFirst": true,
+    "requiredForgeExitFooter": "PROCESS_EXIT_CODE=0",
+    "artifactBuildPrecedesScript": true
+  },
+  "scriptAction": {
+    "path": "scripts/forge-artifacts.py",
+    "beforeSha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8",
+    "afterSha256": "922f5ff16788ca5971738fb4214d1a53806ee45864829906206872c2f3f90045",
+    "behavior": "Refresh the selected script and transitive runtime artifacts with Solar, then invoke forge script --use solar with forwarded arguments. Match a same-named concrete script contract unless the caller already selected one. Do not override process environment.",
+    "remainingArguments": "--sig runMixedRecordRehearsal() -vv preserved",
+    "qaEnvironment": {
+      "PATH": "/Users/cyotee/.foundry/bin:/Users/cyotee/.omo/agent/kill-guard/5.1.70:/Users/cyotee/.omo/agent/bin:/Users/cyotee/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/usr/local/MacGPG2/bin:/opt/homebrew/bin:/Users/cyotee/.local/bin:/Users/cyotee/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/sbin:/Users/cyotee/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand:/Applications/Visual Studio Code.app/Contents/Resources/app/bin/copilot-shim:/Users/cyotee/.omo/agent/bundled-bun/ae26b2601119d790",
+      "FOUNDRY_SCRIPT_EXECUTION_PROTECTION": "false"
+    }
+  },
+  "legacyHelperChecks": {
+    "testFile": "scripts/test_forge_artifacts.py",
+    "testFileUnchanged": true,
+    "before": {
+      "tests": 24,
+      "passed": 20,
+      "failed": 4,
+      "exitCode": 1,
+      "log": "attempt-5/helper-before.log"
+    },
+    "after": {
+      "tests": 24,
+      "passed": 20,
+      "failed": 4,
+      "exitCode": 1,
+      "log": "attempt-5/helper-after.log"
+    },
+    "failureNamesUnchanged": true,
+    "failures": [
+      "FAIL: test_cli_accepts_options_before_sources_and_separate_forge_options (__main__.ArtifactPlanTest.test_cli_accepts_options_before_sources_and_separate_forge_options)",
+      "FAIL: test_exact_test_file_scope_does_not_expand_to_sibling_tests (__main__.ArtifactPlanTest.test_exact_test_file_scope_does_not_expand_to_sibling_tests)",
+      "FAIL: test_explicit_runtime_test_artifact_is_not_skipped_by_build (__main__.ArtifactPlanTest.test_explicit_runtime_test_artifact_is_not_skipped_by_build)",
+      "FAIL: test_imported_external_test_file_adds_execution_filter (__main__.ArtifactPlanTest.test_imported_external_test_file_adds_execution_filter)"
+    ],
+    "reason": "The four existing expectations omit the already-mandatory --use solar arguments. Neither these assertions nor audit/plan/build/test behavior was changed.",
+    "newScriptBoundaryChecks": {
+      "passed": 4,
+      "failed": 0,
+      "qualification": "Real helper process with an external Forge CLI fixture; the exact real Solar rehearsal is separate evidence."
+    }
+  },
+  "protectedFiles": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-7-verdict.json",
+      "sha256": "6a35a7210d3b9fd95f01a6b1ff460285f03da39f73e4085c92a3cdb6c4226718",
+      "afterSha256": "6a35a7210d3b9fd95f01a6b1ff460285f03da39f73e4085c92a3cdb6c4226718",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "sha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c",
+      "afterSha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "sha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231",
+      "afterSha256": "3ef41ca2e5004fd43a721bea7e146604bc18501d6ff1acf4ebd299bd66ed0231",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "afterSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/verification.md",
+      "sha256": "883c4dddfbd1f89173c2e0b5c7b2209fac54962d20b95a417256c8673746f9bc",
+      "afterSha256": "883c4dddfbd1f89173c2e0b5c7b2209fac54962d20b95a417256c8673746f9bc",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/package-evidence.md",
+      "sha256": "cd9e62951d4e635db2bb482908a20b53b0c0b97a3c7f130c8e23f46822723f5f",
+      "afterSha256": "cd9e62951d4e635db2bb482908a20b53b0c0b97a3c7f130c8e23f46822723f5f",
+      "unchanged": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/surrender-spec.md",
+      "sha256": "9995fd4dfb9db089883241d24a617aa95caf0c7d964fa66dff38a3d6603091b9",
+      "afterSha256": "9995fd4dfb9db089883241d24a617aa95caf0c7d964fa66dff38a3d6603091b9",
+      "unchanged": true
+    }
+  ],
+  "productSourceManifestDifferences": [
+    "scripts/recovery/dtf-migration/execution-domain.test.ts"
+  ],
+  "witnessFollowUp": {
+    "failureClass": "harness",
+    "status": "unresolved",
+    "pinEdited": false,
+    "assertionEdited": false,
+    "exitCode": 1,
+    "passed": 3,
+    "failed": 1,
+    "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+    "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+    "log": "attempt-5/witness.log"
+  },
+  "diagnostics": {
+    "typescriptExitCode": 0,
+    "diffCheckExitCode": 0,
+    "python": "Existing and new helper behavior tests executed Python successfully; basedpyright LSP is unavailable and no installation was attempted."
+  },
+  "forbiddenOperationsPerformed": []
+}

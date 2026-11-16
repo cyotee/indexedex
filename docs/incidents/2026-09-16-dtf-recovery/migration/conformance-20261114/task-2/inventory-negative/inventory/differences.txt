@@ -1,0 +1,7 @@
+Retained root: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/source
+Destination root: /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/inventory-negative/destination
+Source entries: 3; destination entries: 1
+semantic	different.bin	unresolved; delivery must fail until restored or source-qualified
+missing	missing.bin	unresolved; delivery must fail until restored or source-qualified
+symlink	outward-link	unresolved; delivery must fail until restored or source-qualified
+Additional historical-source differences and exact archived destinations: conformance-20261114/task-2/recovery-differences.json (when present).

@@ -1,0 +1,60 @@
+{
+  "task": 8,
+  "createdAt": "2026-11-15T06:19:43.031Z",
+  "sourceFingerprint": "fff34a8dc3f181b39cd28d4f1a5fd38afab657bbad40ce1bd4b9e71ee273042e",
+  "fingerprintPreimage": "UTF-8 JSON.stringify of sourceHashes array in its recorded order",
+  "sourceHashes": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol",
+      "sha256": "eeda26cf81f610e6f78a0b9930ac91cca520b91d8eaca7334487c664937445cc"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "sha256": "b3aa57ad63e737467395f99f2ff9b3b9e1faf8c9fe05c4174a7aec4a44ebe0b2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "sha256": "994d79aaf449a15066dc86cfc13e9153856be2ad53a256b5b1345fe53003e578"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+      "sha256": "9e0928461d4ce6e2c06e7d0982ac2720ee54147454e6e4c36888a38b3c33eb7c"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol",
+      "sha256": "97331292af6ab2a747f9483380856310563b4e5d9d23147a98606cc71f22f375"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "sha256": "787e3b0dd904e89a2b7b036ba5e92cad54abe6f84f8222b2b3ec61a83ae4d0ab"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "sha256": "d7709beabbb24fa3884eee84c4c7229e27ce0725229169b7fe9b4a423ecd4e98"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "sha256": "807573ffcd3b6d50bb8fd283d82db43b284879789721f37f370391c5de70510e"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "sha256": "7c504d5bfca9d3c258832d740aa5343e45b1fc380b8f02697ecb314da2e8a015"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "sha256": "0dc03589b65477f0d89b022acf516bde4d335eb2d822c7ac7ae1aae0ab1b9aa9"
+    }
+  ],
+  "initialBinding": "source-bindings.json",
+  "sourceChangesAfterInitialBinding": [
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol"
+  ],
+  "note": "These are the final code bytes exercised by happy-5.log, hostile-rollback.log, fork-4.log and inherited.log. Earlier source-bindings.json is retained as the initial checkpoint; its stale test-file versions were rejected by the evidence probe.",
+  "protectedFileMatches": 144,
+  "protectedFileMismatches": [],
+  "priorTask6MigrationBindingsMatched": 59,
+  "productionEdits": [],
+  "claimedSyWitnessPinEdited": false
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"linkedComponents","inputs":[],"outputs":[{"name":"","type":"address[6]","internalType":"address[6]"}],"stateMutability":"pure"}],"id":2534}

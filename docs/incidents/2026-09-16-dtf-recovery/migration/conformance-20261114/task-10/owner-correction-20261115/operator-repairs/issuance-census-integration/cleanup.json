@@ -1,0 +1,26 @@
+{
+  "monitor": "mon_3PQEANVD0SJ92DSV",
+  "session": "bash_1",
+  "completion": "ISSUANCE_CENSUS_COMPLETE exit=0; watcher completed (exit code 0)",
+  "pendingProcesses": [],
+  "priorTempDirectories": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "afterTempDirectories": [
+    "dtf-prepare-test-6ABTvq",
+    "dtf-prepare-test-sSyY0e"
+  ],
+  "newTempDirectories": [],
+  "removedPriorTempDirectories": [],
+  "resourceDisposition": "Recorder and child commands completed naturally. The existing issuance fixture closes its RPC provider and loopback server and removes its temporary fixture directory in finally. No new dtf-prefixed directory remained; prior unknown checkpoint directories were preserved.",
+  "retainedNewEvidenceDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/issuance-census-integration/manual-issuance-current",
+  "cleanupDeletionsPerformedByQA": false,
+  "anvilStarted": false,
+  "forgeStarted": false,
+  "installedPackages": false,
+  "delegated": false,
+  "committed": false,
+  "productOrTestsEdited": false,
+  "parentReadinessWritten": false
+}

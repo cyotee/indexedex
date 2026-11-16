@@ -1,0 +1,171 @@
+{
+  "type": "IndependentFinalReview",
+  "task": "F2",
+  "role": "code-quality-reviewer",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "approval_scope": "Truthful bounded partial delivery and the reviewed source-qualified verified code scope only.",
+  "full_goal_met": false,
+  "known_unmet": [10, 12, 13, 14, 15],
+  "confirmed_implementation_rows": [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 16],
+  "findings": [],
+  "summary": "No new blocking code-quality defect identified in reviewed verified scope. Exact book commitments, canonical math reuse, guarded loaders, stable originals, immutable issuance, historical/current census boundaries, required-event selection and source authentication remain supported. Real lifecycle gaps and strict delivery failure remain explicit and unmet.",
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/F2-quality.md",
+    "sha256": "c9b789771418e99bd6c022bcc6baa89f70194ebdeb60eb7d1dfa52c6c7b919c6",
+    "bytes": 14571
+  },
+  "boundary": {
+    "claim": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/partial-boundary-done.json",
+    "inventory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+    "inventory_sha256": "e6a417a096e2746cfb48a85edbd5f3ad86b793cf4eca0a4a48354db301a7c8d0",
+    "inventory_bytes": 33680555,
+    "inventory_hash_matches": true,
+    "migration_tree_entries": 123368,
+    "regular_files": 98075,
+    "directories": 25127,
+    "symlinks": 166,
+    "retained_source_entries": 13613,
+    "exterior_catalog_entries": 311,
+    "exterior_source_entries": 224,
+    "exterior_regular_source_hashes_checked": 220,
+    "exterior_regular_source_mismatches": [],
+    "explicit_deleted_source_tombstones": 4,
+    "catalog_ownership_boundary_and_corrected_delivery_hashes_match_claim": true,
+    "full_16gb_tree_independently_rehashed": false,
+    "external_symlink_targets_traversed": false,
+    "baseline_edited": false
+  },
+  "strict_delivery": {
+    "receipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/delivery-corrected/delivery.json",
+    "receipt_sha256": "62567227331d35062e499681536c9cc7cd060a2f138fdc2db28363fdee1370a6",
+    "command_result": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/commands/delivery-corrected/result.json",
+    "actual_exit": 1,
+    "completed": false,
+    "raw_stdout": "DELIVERY_FAILED entries=123361 failures=340",
+    "failure_messages": 340,
+    "failure_class_counts": {
+      "different retained bytes/type; unresolved divergence": 4,
+      "unresolved symlink in delivered tree": 166,
+      "different bytes/type": 4,
+      "unresolved new symlink": 166
+    },
+    "distinct_preserved_symlinks": 166,
+    "distinct_retained_byte_differences": [
+      "recovery-route-disposition.md",
+      "resumed-integration/verify-bounded-deployments.ts",
+      "source-manifest.json",
+      "source-route-matrix.md"
+    ],
+    "both_helpers_present": true,
+    "bounded_helper_current_sha256": "3bab69eab0e0f97d91fb7cca12de36340360563144e8154e135afc823e84b895",
+    "bounded_helper_qualification": "Matches retained task-13 identity, not earlier task-2 origin. Historical receipts are not rewritten.",
+    "failure_preserved_as_failure": true,
+    "task15_acceptance": false
+  },
+  "review_checks": {
+    "complete_current_plan_and_F2_read": true,
+    "bounded_brief_and_applicable_repo_instructions_read": true,
+    "actual_task_owned_diff_inspected": true,
+    "reviewed_behavior_tests_read": true,
+    "git_diff_check": {
+      "command": "GIT_MASTER=1 git -C /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1 diff --check",
+      "exit": 0,
+      "stdout_empty": true,
+      "stderr_empty": true,
+      "scope": "Tracked working-tree diff; untracked source identities separately covered by the supplied catalog."
+    },
+    "book_tuple_and_zero_id_preimage": "confirmed",
+    "canonical_math_and_raw_rated_branches": "confirmed",
+    "all_twelve_expected_book_loader_guards": "confirmed",
+    "stable_originals_and_immutable_issuance_separation": "confirmed",
+    "owner_authority_and_actual_selector_retirement": "confirmed at reviewed source and retained Foundry scope",
+    "historical_and_current_census_separation": "confirmed at unit and synthetic CLI scope",
+    "required_issuance_event_emitter_topic_selection": "confirmed",
+    "source_transaction_trace_and_conservation_checks_retained": true,
+    "removed_witness_bytecode_pin_restored": false,
+    "replacement_arbitrary_pin_found": false
+  },
+  "retained_evidence": {
+    "combined_repairs_verdict": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/issuance-census-repairs-verdict.json",
+    "task7_verdict": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-7-verdict.json",
+    "task16_verdict": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/task-16-verdict.json",
+    "operator_tests": {
+      "passed": 336,
+      "failed": 0,
+      "files": 21,
+      "timeout_ms": 15000,
+      "raw": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/prepared-fixture/02-full-tests/stderr.log",
+      "reviewer_reran": false
+    },
+    "operator_types": {
+      "retained_exit": 0,
+      "raw_diagnostics_empty": true,
+      "reviewer_reran": false
+    },
+    "selected_operator_fixture_helper_source_comparison": {
+      "checked": 90,
+      "matched": 89,
+      "different": ["scripts/recovery/dtf-migration/rehearse.ts"],
+      "qualification": "The differing file is explicitly unverified rehearsal WIP; no renewed whole-tree type or lifecycle claim."
+    },
+    "scoped_solidity_test_and_math_historical_source_comparison": {
+      "checked": 165,
+      "mismatches": 0
+    },
+    "task4_retained_happy_passes": 229,
+    "task4_retained_negative_passes": 29,
+    "task6_retained_fork_passes": 182,
+    "task13_historical_hermetic_passes": 28641,
+    "task13_historical_fork_passes": 183,
+    "task13_renewed_completion": false,
+    "historical_helper_reachable_inputs": 29,
+    "historical_helper_bound_inputs": 28,
+    "historical_helper_unbound_input": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/recovery.ts"
+  },
+  "unverified_rehearsal_paths": [
+    "scripts/recovery/dtf-migration/rehearse.ts",
+    "scripts/recovery/dtf-migration/rehearsal-data.ts",
+    "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+    "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+    "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+    "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+    "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+    "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+    "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+    "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol"
+  ],
+  "mixed_ownership": {
+    "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+    "confirmed_scope": "Generated pricing-ABI source binding at lines 69-75.",
+    "unverified_scope": "Broader fixture and rehearsal lifecycle changes.",
+    "edited_or_reverted": false
+  },
+  "limits": [
+    "Approval applies only to accurate bounded partial delivery; known tasks 10,12,13,14,15 remain unmet and unqueued.",
+    "Real A/B recovery, same-recipient and same-block proof, unset-pricing lifecycle, NFT 3 dual funded cliffs and second-callback rollback, complete recovery and portability remain unproved.",
+    "Attempt 52 normal result and normal exit remain absent; forced termination is not success.",
+    "Strict delivery exited 1 with 340 messages over 166 symlinks and four retained-byte differences; this review does not waive or repair that contract.",
+    "Synthetic transport tests and retained Foundry cases are not complete real-chain operator lifecycle proof.",
+    "Historical helper source coverage remains 28/29; current hashes cannot create missing historical provenance.",
+    "Compiler warnings, module size debt and dependency provenance limits remain disclosed; no optional editor-tool or general flake-free claim.",
+    "The earlier delivery path mentioned in boundary.md is historical; the corrected receipt named here governs the 340-message result.",
+    "Later additive closeout must include this report and verdict while preserving the fixed baseline and genuine strict failure."
+  ],
+  "actions": {
+    "source_or_fixture_edits": false,
+    "new_tests_or_builds": false,
+    "new_runtime_qa": false,
+    "rpc_or_transactions": false,
+    "installs": false,
+    "commits_or_prs": false,
+    "delegation": false,
+    "main_checkout_inspection": false,
+    "hidden_exclusions": false,
+    "boundary_subscriptions_created": 0,
+    "pending_owned_subscriptions": 0
+  },
+  "written_last": true
+}

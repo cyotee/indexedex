@@ -1,0 +1,281 @@
+{
+  "date": "2026-11-11",
+  "disposition": "unproven",
+  "scope": "Offline reconstruction of inherited raw evidence; not a new fork probe or deployed verifier",
+  "runtime": {
+    "bun": "1.4.4",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "count": 24,
+  "allPassed": true,
+  "checks": [
+    {
+      "name": "header-3",
+      "pass": true,
+      "details": {
+        "computed": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+        "number": "108944663"
+      }
+    },
+    {
+      "name": "header-5",
+      "pass": true,
+      "details": {
+        "computed": "0x309c2f18fbdfc1ae225dd123693dfc66157dbce50640cc0ed040198fcfe5af42",
+        "number": "111330887"
+      }
+    },
+    {
+      "name": "header-42",
+      "pass": true,
+      "details": {
+        "computed": "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+        "number": "108944662"
+      }
+    },
+    {
+      "name": "parent-bound-to-native-hash",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "ArbSys-current-rejected",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "history-current-rejected-both-pins",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "history-runtime-same",
+      "pass": true,
+      "details": {
+        "hash": "0xceef1f6ad6c0cb7eb8fb15678abf11da3ce0d3a7c7106aa900c5930e556a43ff"
+      }
+    },
+    {
+      "name": "native-receipt-root",
+      "pass": true,
+      "details": {
+        "root": "0xed4030c56b19861b12d407133d34d67e86eb659431133713cbdc126ba9f35a17"
+      }
+    },
+    {
+      "name": "control-root-from-raw-receipts",
+      "pass": true,
+      "details": {
+        "root": "0x9a8004d24a432c866ee94c38a5fc0e6e6303488e2e43bdb73f474d71982b3f77"
+      }
+    },
+    {
+      "name": "control-ordered-success",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "control-reordered-root-rejected",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "control-credit-replay",
+      "pass": true,
+      "details": {
+        "award": "500",
+        "transitions": [
+          {
+            "from": "0x000000000000000000000000000000000000e601",
+            "to": "0x000000000000000000000000000000000000e601",
+            "q": "50",
+            "credit": "0"
+          },
+          {
+            "from": "0x000000000000000000000000000000000000e602",
+            "to": "0x000000000000000000000000000000000000e602",
+            "q": "50",
+            "credit": "0"
+          },
+          {
+            "from": "0x000000000000000000000000000000000000e601",
+            "to": "0x000000000000000000000000000000000000e604",
+            "q": "50",
+            "credit": "500"
+          }
+        ]
+      }
+    },
+    {
+      "name": "control-conservation",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "mixing-root-from-raw-receipts",
+      "pass": true,
+      "details": {
+        "root": "0xffeba2de437b5e51d7e357b584fd669ca4bf0194e31df68d7493e3a7e996a3ae"
+      }
+    },
+    {
+      "name": "mixing-ordered-success",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "mixing-reordered-root-rejected",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "mixing-credit-replay",
+      "pass": true,
+      "details": {
+        "award": "833",
+        "transitions": [
+          {
+            "from": "0x000000000000000000000000000000000000e601",
+            "to": "0x000000000000000000000000000000000000e602",
+            "q": "50",
+            "credit": "500"
+          },
+          {
+            "from": "0x000000000000000000000000000000000000e602",
+            "to": "0x000000000000000000000000000000000000e601",
+            "q": "50",
+            "credit": "1166"
+          },
+          {
+            "from": "0x000000000000000000000000000000000000e601",
+            "to": "0x000000000000000000000000000000000000e604",
+            "q": "50",
+            "credit": "833"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mixing-conservation",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "same-custody-token-prestate",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "different-required-awards",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "same-custody-event",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "different-full-consensus-custody-receipts",
+      "pass": true,
+      "details": {
+        "cumulativeGas": [
+          "125872",
+          "141072"
+        ]
+      }
+    },
+    {
+      "name": "same-parent",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "raw-snapshots-restored",
+      "pass": true,
+      "details": {}
+    }
+  ],
+  "inputFingerprints": {
+    "anchors/commands.md": {
+      "sha256": "48094c1e24512b1b49bf3a28c73c20731f25bb337fc9cb74da69992954713301",
+      "bytes": 6851
+    },
+    "anchors/primary-sources.json": {
+      "sha256": "48a9a8676e262f189f96199feabb9e044c03e05790e4b37f21979f2d033508a3",
+      "bytes": 48691
+    },
+    "anchors/contract.md": {
+      "sha256": "0da4818b6f35ae947d17949c259271d80f9d8df9e12773122049d9bee4b61356",
+      "bytes": 20835
+    },
+    "anchors/calculations.json": {
+      "sha256": "1ce1c106afe83e66ebcf19ec5095f937c9d26b45a463b4599bc70044473ec1b4",
+      "bytes": 11291
+    },
+    "anchors/rpc.json": {
+      "sha256": "de29563f9ecf6ef080269ed85569afd8f62310ea5cd0672d217063713d6ca855",
+      "bytes": 51166
+    },
+    "anchors/verification.json": {
+      "sha256": "498474ce218dbc71acf343d0caf45ff287a6be6bfcf0971e0dd68dab5abb934f",
+      "bytes": 4962
+    },
+    "freshness/runtime-evidence.json": {
+      "sha256": "49f4a9837d4e36842be7fed26c00b2bd37faeea41961c81b6573825ca7a6caab",
+      "bytes": 168084
+    },
+    "freshness/contract.md": {
+      "sha256": "6aa5a871b6c92d8c67f5e06e34be815d30b20b06cade74d8cee83e70bb070fa6",
+      "bytes": 28592
+    },
+    "freshness/invocations.md": {
+      "sha256": "42f0f2905b441f129299774aa3d1e0d8d6242ad9102572ac798876d066bc5d3d",
+      "bytes": 6418
+    },
+    "freshness/verification.json": {
+      "sha256": "07e3610ed779e82b7ec3982325c19e19de4a9c7af4b52cf18bf8d018d97e3bbb",
+      "bytes": 6528
+    },
+    "freshness/protocol-sources.json": {
+      "sha256": "da96d043fdd8462301ae263f79367ad48102211179e8ccb3faef6843b115bf99",
+      "bytes": 4523
+    },
+    "freshness/witness.mjs": {
+      "sha256": "ebf1a54eae84bb8adb2696d052332c199d6d28ecd8164334816b1157b48801aa",
+      "bytes": 7692
+    }
+  },
+  "rawLocators": {
+    "native": "../anchors/rpc.json requests by request.id",
+    "fork": "../freshness/runtime-evidence.json records by zero-based index",
+    "controlReceipts": [
+      62,
+      64,
+      63
+    ],
+    "mixingReceipts": [
+      84,
+      83,
+      85
+    ],
+    "controlBlock": 65,
+    "mixingBlock": 86,
+    "controlPrestate": 66,
+    "mixingPrestate": 87,
+    "restores": [
+      76,
+      97,
+      98
+    ]
+  },
+  "limits": [
+    "No general receipt-trie verifier: root reconstruction accepts exactly 2 or 3 receipts.",
+    "Native codec check covers observed 16-field headers and receipt types 0x6a/0x02; local branch receipts are legacy type 0.",
+    "Credit baseline is synthetic 1000/3000 on 100/100 units, not incident allocations.",
+    "No current canonical prefix authentication, source-complete replay, atomic new bond or bounded continuation is executed.",
+    "Local fork state roots are zero and are not global-state-equality evidence.",
+    "Existing raw RPC evidence is provider-dependent; offline hashing does not turn RPC responses into an onchain light client."
+  ]
+}

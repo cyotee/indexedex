@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"requiredHookFlags","inputs":[],"outputs":[{"name":"flags","type":"uint160","internalType":"uint160"}],"stateMutability":"view"}],"id":93}

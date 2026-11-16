@@ -1,0 +1,29 @@
+{
+  "key": "dtf-migration-phase26-portable-operator-delivery",
+  "name": "Migration DETF phase 26: portable operator immutable delivery",
+  "nodes": [
+    {
+      "id": "commit-portable-operator",
+      "label": "Commit verified portable operator",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "task_summary": "Commit the 24 verified portability files with exact source and preservation proof",
+      "prompt": "Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-commit-source.json fully, then all actual required reports/seals. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator at soleparent137fa0c8749165087c7d1d0156788f58a1dbf1b8.\nMUST: Inspect full24path diff/new files; source current/tested/staged exact bytes/modes and full whitespace must pass. Capture original reproducible per-entry evidence/out/cache/host/refs/foreign-index baselines before staging. Stage exactly24allowed source paths, no evidence. Commit one repo-style verified increment with exactlyone required coauthor. Independently establish actualparent, committed/current/tested equality and full immutablewhitespace/cleanindex/source; reproduce every original preservation row, including mode distinctions and additive directory bookkeeping. Write only new /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/receipt.md, source-manifest.json and support.\nFORBIDDEN: Sourcefixes, tests/build/runtime replay, old evidence edits, historyrewrite/merge/push, config/dependency/provider/public or held09 work. All Git GIT_MASTER=1 --no-pager GIT_PAGER=cat; reads GIT_OPTIONAL_LOCKS=0; diff/status ignore submodules. Keep P1/operational/source/gas/cold limits.\nSTOP: Actual scopedcommit and complete receipt/proof, all owned actions finished; or precise blocker without commit."
+    },
+    {
+      "id": "audit-portable-operator",
+      "label": "Audit portable operator commit",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-portable-operator"
+      ],
+      "task_summary": "Independently audit committed portability code, actual runtime evidence and every preservation row",
+      "prompt": "Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase26-portable-operator-commit-source.json fully and all actual required reports/seals. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator. Own only new /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-26-portable-operator/docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/commit/verification.md and support.\nMUST: Require complete actualreceipt/manifest; independently verify soleparent137fa0c8749165087c7d1d0156788f58a1dbf1b8, exact24paths including5new sourcebodies, onecoauthor, committed/current/index/tested bytes/modes, complete immutablewhitespace/clean source/index. Read actual independent109test/relocatedCLI/3resumes/14cuts/nativecompatibility and canonicaleconomic proof/logs/seals. Reproduce every original per-entry evidence/out/cache/host/refs/foreign-index baseline using actualraw identities, not aggregate counts or newer replacements. Qualify additive directory growth honestly. Preserve all original failed attempts/intake and P1.\nFORBIDDEN: Runtime/tests/build replay, source/evidence edits, commit/index/ref mutation, provider/held09/public actions. Git GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 --no-pager GIT_PAGER=cat; diff/status ignore submodules. No fullplan/operational/cold/crossplatform/targetgas acceptance.\nSTOP: Complete confirmed/needs-fix immutable delivery report and stopped cleanup, no pending operations."
+    }
+  ]
+}

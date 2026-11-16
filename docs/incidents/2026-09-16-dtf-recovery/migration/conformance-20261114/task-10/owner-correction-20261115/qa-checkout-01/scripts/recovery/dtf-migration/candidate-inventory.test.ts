@@ -1,0 +1,88 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { deriveInventory } from "./candidate-inventory.js";
+import type { CandidateInput, RawRow } from "./candidate-input.js";
+import { reconcileHistoricalProofs } from "./candidate-proofs.js";
+
+const wallet = `0x${"1".repeat(40)}`, asset = `0x${"2".repeat(40)}`, tx = `0x${"a".repeat(64)}`;
+const position = `weighted:liquid:${wallet}`, holding = `held:${wallet}`, recovery = `${tx}:11`;
+const rowCsv = (rows: readonly RawRow[], emptyHeader: string): string => {
+  const keys = Object.keys(rows[0] ?? { [emptyHeader]: "" });
+  return [keys.join(","), ...rows.map((r) => keys.map((k) => `"${r[k] ?? ""}"`).join(","))].join("\n") + "\n";
+};
+function inventoryInput(change?: { readonly path: string; readonly column: string; readonly value: string }): CandidateInput {
+  const data = new Map<string, readonly RawRow[]>([
+    ["positions.csv", [{ position_id: position, product: "weighted", account: wallet, kind: "liquid", asset,
+      quantity_raw: "5", decimals: "9", detf_equivalent_raw: "5", source_id: "S001", source_key: wallet }]],
+    ["held-exclusions.csv", [{ position_id: position, snapshot_account: wallet, asset,
+      held_exclusion_detf_raw: "3", unresolved_snapshot_remainder_detf_raw: "2", source_ids: "S001" }]],
+    ["account-ledger.csv", [{ ledger_id: `weighted:${wallet}`, product: "weighted", account: wallet,
+      position_ids: position, current_holding_ids: holding, observed_recovery_ids: recovery,
+      observed_recovery_count: "1", exception_ids: "E", nominal_detf_exposure_raw: "5" }]],
+    ["custody-inventory.csv", [{ holding_id: holding, product: "weighted", observed_holder: wallet, asset,
+      observed_quantity_raw: "3", decimals: "9" }]],
+    ["observed-recoveries.csv", [{ recovery_id: recovery, product: "weighted", recipient: wallet,
+      asset, observed_amount_raw: "4", tx, log_index: "11" }]],
+    ["evidence/transfers.csv", [{ event_id: `${asset}:${tx}:11`, to: wallet, amount_raw: "4" }]],
+    ["exceptions.csv", [{ exception_id: "E" }]],
+    ["conversions.csv", []], ["rounding.csv", []],
+    ["evidence/index-events.csv", [{ source: `${tx}:5`, gons_per_unit: "10" }]],
+    ["evidence/all-index-events.csv", [{ source: `${tx}:5`, gons_per_unit: "10" }]],
+    ["holders.csv", [{ address: wallet }]],
+    ["evidence/bond-accounting.csv", [{ gons_delta: "-30" }]],
+  ]);
+  if (change) data.set(change.path, (data.get(change.path) ?? []).map((r) => ({ ...r, [change.column]: change.value })));
+  return { sources: {
+    chainId: 4663, incident: { lastFullBlock: 19, attackBlock: 20, attackTransactionIndex: 1, attackTransaction: tx },
+    evidenceCutoff: { block: 30, hash: tx, utc: "historical" }, sourceNotes: [],
+    sources: [{ id: "S001", path: "holders.csv", description: "holders", sha256: "0".repeat(64), bytes: 0 }],
+  }, bindings: [], bytes: new Map([...data].map(([p, rows]) => [p, Buffer.from(rowCsv(rows, p === "conversions.csv" ? "conversion_id" : "layer"))])) };
+}
+test("inventory links each account, exclusion, source, holding and observed recovery without granting basis", () => {
+  const inventory = deriveInventory(inventoryInput());
+  const p = inventory.records.find((r) => r.path === "positions.csv");
+  assert.ok(p);
+  assert.deepEqual(p.links, ["account-ledger.csv#row=2", "held-exclusions.csv#row=2", "holders.csv#row=2"]);
+  assert.ok(inventory.records.find((r) => r.path === "account-ledger.csv")?.links.includes("holders.csv#row=2"));
+  assert.equal(inventory.records.find((r) => r.path === "evidence/bond-accounting.csv")?.quantities["gons_delta"]?.raw, "-30");
+  assert.equal(inventory.issues.filter((r) => r.code === "independent-basis-unresolved").length, 1);
+});
+for (const [path, column, value, message] of [
+  ["account-ledger.csv", "position_ids", `${position}|${position}`, /duplicate or mismatched/],
+  ["account-ledger.csv", "current_holding_ids", "missing", /missing link/],
+  ["held-exclusions.csv", "unresolved_snapshot_remainder_detf_raw", "3", /partition differs/],
+  ["positions.csv", "source_id", "S999", /unknown source/],
+  ["evidence/all-index-events.csv", "gons_per_unit", "11", /index subset differs/],
+  ["observed-recoveries.csv", "observed_amount_raw", "5", /recovery event differs/],
+] as const) {
+  test(`inventory rejects broken ${path} ${column} relation`, () => {
+    assert.throws(() => deriveInventory(inventoryInput({ path, column, value })), message);
+  });
+}
+test("blank recovery count remains unknown rather than an inferred zero", () => {
+  const inventory = deriveInventory(inventoryInput({ path: "account-ledger.csv", column: "observed_recovery_count", value: "" }));
+  assert.equal(inventory.issues.filter((r) => r.code === "unknown-recovery-count").length, 1);
+});
+test("historical proofs check event-time divisor and signed claim conservation", () => {
+  const source = `0x${"b".repeat(64)}:5`;
+  const data = new Map<string, readonly RawRow[]>([
+    ["evidence/all-index-events.csv", [{ source, block: "2", transaction_index: "0", log_index: "5", gons_per_unit: "10" }]],
+    ["evidence/bond-accounting.csv", [
+      { token_id: "3", event: "funding", staking_source: "fund", staking_block: "1", staking_transaction_index: "0",
+        staking_log_index: "1", amount_raw: "1", gons_per_unit: (10n ** 36n).toString(), gons_delta: (10n ** 36n).toString() },
+      { token_id: "3", event: "claim_conversion", staking_source: "claim", staking_block: "3", staking_transaction_index: "0",
+        staking_log_index: "1", amount_raw: "3", gons_per_unit: "10", gons_delta: "-30" },
+    ]],
+    ["positions.csv", [{ kind: "funded_bond", source_key: "3", staking_gons: (10n ** 36n - 30n).toString() }]],
+    ["evidence/transfers.csv", []], ["evidence/post-incident-bond-claims.csv", []],
+    ["account-ledger.csv", []], ["conversions.csv", []],
+  ]);
+  const tables = new Map([...data].map(([p, rows]) => [p, rows.map((fields, i) => ({ path: p, row: i + 2, locator: `${p}#row=${i + 2}`, fields }))]));
+  assert.equal(reconcileHistoricalProofs(tables).links.length, 3);
+  const proofs = tables.get("evidence/bond-accounting.csv");
+  assert.ok(proofs);
+  const corrupt = new Map(tables);
+  corrupt.set("evidence/bond-accounting.csv", proofs.map((r) =>
+    r.fields["event"] === "claim_conversion" ? { ...r, fields: { ...r.fields, gons_delta: "30" } } : r));
+  assert.throws(() => reconcileHistoricalProofs(corrupt), /gons proof differs/);
+});

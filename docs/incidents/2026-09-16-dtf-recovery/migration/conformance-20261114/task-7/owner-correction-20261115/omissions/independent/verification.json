@@ -1,0 +1,123 @@
+{
+  "kind": "AdversarialVerify",
+  "date": "2026-11-15",
+  "task": 7,
+  "lane": "F2-02-omissions",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "scope": "Only the completed required-original-field omission-test repair in the four owned tests; excludes census/F2-01, full task 7, integration and contract execution.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "evidence": {
+    "root_finding_valid": true,
+    "complete_priced_valid_controls": 4,
+    "distinct_single_field_omissions": 28,
+    "exact_intended_issue_only": 28,
+    "successful_restorations": 28,
+    "unexpected_pricing_failures": 0,
+    "preexisting_assertions_preserved": true,
+    "preservation_method": "In-memory replacement of only each repaired omission block with its HEAD counterpart reproduces all four pre-lane hashes in baseline-before.json; reviewed owned-diff-before.patch.",
+    "focused": {
+      "argv": [
+        "bun", "test", "--timeout", "15000",
+        "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "exitCode": 0,
+      "passed": 15,
+      "failed": 0,
+      "rerun_by_verifier": false,
+      "binding": "Exact matching command sidecar, current raw source hashes, four named files, 15 passing entries and 15/0 raw summary.",
+      "log_sha256": "e21be78ab318f8597234744821c85ff3f839f6ccd335e224bd3e9e4588fd3e05"
+    },
+    "manual": {
+      "argv": [
+        "bun",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.ts"
+      ],
+      "exitCode": 0,
+      "rerun_by_verifier": false,
+      "binding": "Exact matching command sidecar; all seven source hashes match; both retained logs have exit-0 receipt headers and bodies exactly equal to the JSON artifact before MANUAL_PASS.",
+      "artifact_sha256": "e6ae64c84ff913aa335531e128675b1dfad807e4e4c114dcb377073a144b3d03",
+      "both_log_sha256": "90819356d6d9329c8e1c9b5fe50580cbb084053941cb46cf19d02f675347b1bd",
+      "not_contract_execution": true
+    },
+    "source_hashes": {
+      "scripts/recovery/dtf-migration/claim-vault.test.ts": "75aeece9077d5e4030344fc06d24ec11054f66a861574908cba0d5c306da4bc8",
+      "scripts/recovery/dtf-migration/dtf-custody-se.test.ts": "6e5aebb5c965959823441f8dd8d346e86166ed2901b8eedd70c0ba9f4c7e979c",
+      "scripts/recovery/dtf-migration/weighted-liquid.test.ts": "c2af2343c48f106e1fe77d2892896c98a42ffddf80333d0dbceea805dfc604e1",
+      "scripts/recovery/dtf-migration/weighted-sy.test.ts": "7ab5b5e1218c7ae89de49169930ca0394cd99221f95b44f65e2db655aeadbba8",
+      "scripts/recovery/dtf-migration/schema.ts": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+      "scripts/recovery/dtf-migration/preparation.fixture.ts": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+      "manual-omissions.ts": "b6582e6a7fa437adc0c336278bd1b3081a472b71cc46231a207c3f57712b7188"
+    },
+    "reproduction": {
+      "before_test_hashes_match_baseline": true,
+      "old_shapes_with_pricing_failure": 28,
+      "restored_old_shapes_failing_only_pricing": 28,
+      "isolated_shapes_with_intended_issue": 28,
+      "restored_complete_shapes_without_issues": 28
+    },
+    "independent_probes": {
+      "changed_source_bytes_rejected_by_digest": 7,
+      "misleading_pass_flag_mutations_rejected": [
+        "pricing-only failure",
+        "wrong required field",
+        "failed restoration",
+        "zero negative cases",
+        "failed valid control",
+        "unrelated extra issue"
+      ],
+      "method": "Memory-only evidence and byte mutations, not production/test edits or product reruns.",
+      "dirty_status_entries": 185,
+      "current_status_matches_producer_after": true,
+      "producer_before_after_status_equal": true
+    },
+    "cleanup": {
+      "actual_tmpdir": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T",
+      "observed_leftovers": [
+        "dtf-prepare-test-6ABTvq",
+        "dtf-prepare-test-sSyY0e"
+      ],
+      "both_contain": [
+        "A-prepared.json", "A-execution.json", "A-sources.json",
+        "B-prepared.json", "B-execution.json", "B-sources.json",
+        "prepared.json", "execution.json", "deployment.json",
+        "evidence.json", "checkpoint-7", "checkpoint-8"
+      ],
+      "ownership_evidence": "Preparation fixture and omission scripts do not create A/B or checkpoint files; execution.fixture.ts:17-28,45-46,101-127 creates this layout.",
+      "exact_worker_identity": "not established",
+      "deleted": false,
+      "verifier_created_temporary_resources": false
+    }
+  },
+  "ultraqa_classes": {
+    "stale_state": "Applicable; current source hashes match receipts, changed bytes fail digests, old pricing-less shape exposed.",
+    "dirty_worktree": "Applicable; 185 entries preserved; current status equals producer status; outside-block bytes match pre-lane hashes.",
+    "malformed_input": "Applicable; all 28 distinct omissions have the exact intended issue and successful restoration.",
+    "misleading_success_output": "Applicable; six corrupted evidence copies with pass:true rejected, actual selected-test and pair counts checked.",
+    "untrusted_claims": "Applicable; DoneClaim cross-checked with actual sources, raw logs and sidecars.",
+    "external_prompt_injection": "Inapplicable; synthetic local schema inputs, no external instruction-bearing input.",
+    "generated_cached_artifacts": "Applicable limitation; warm ABI read by fixture, no compiled-runtime freshness or contract-execution certification.",
+    "concurrent_work": "Applicable; census excluded and shared integration commands deferred to parent.",
+    "flakiness": "Applicable limited inspection; deterministic synchronous assertions, no added sleeps/retries/clocks, fresh fixture resources; no repeated-run claim.",
+    "cancel_resume": "Inapplicable to synchronous parser changes.",
+    "repeated_interruptions": "Inapplicable; no resumable transaction flow in the changed assertions.",
+    "hung_long_commands": "Inapplicable to verifier work; no long run started, retained focused command finished in 300 ms.",
+    "partial_output_zero_cases": "Applicable; complete manual bodies and 28 distinct pairs checked, 15 focused passing entries counted.",
+    "resource_cleanup": "Applicable; actual leftovers inspected and traced to execution-fixture layout; no foreign cleanup performed."
+  },
+  "limitations": [
+    "Retained settled green commands were inspected rather than rerun.",
+    "Manual script pass predicate is weaker than exact issue equality; current saved records and owned tests satisfy the stronger condition.",
+    "No production schema mutation was performed.",
+    "Schema and synthetic transport proof is not real contract execution.",
+    "Warm artifact runtime freshness is not certified.",
+    "Census/F2-01, full task 7, full strict TypeScript and full operator suite remain outside this lane; parent runs integration after census finishes.",
+    "Producer process exits are retained receipts; exact worker ownership of leftover execution-fixture directories is not established."
+  ],
+  "fixes": [],
+  "forbidden_operations_performed": []
+}

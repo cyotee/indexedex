@@ -1,0 +1,141 @@
+{
+  "version": "independent-category-oracle-v1",
+  "authority": "Current F1 section 4 and current plan source identities, not producer coverage as category oracle",
+  "expected": [
+    {
+      "category": "W-L",
+      "asset": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "positions": 34,
+      "holdings": 52,
+      "transfers": 5260,
+      "pass": true
+    },
+    {
+      "category": "E-L",
+      "asset": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "positions": 6,
+      "holdings": 6,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "W-N",
+      "asset": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "positions": 41,
+      "holdings": 41,
+      "transfers": 49,
+      "pass": true
+    },
+    {
+      "category": "E-N",
+      "asset": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "positions": 16,
+      "holdings": 16,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "W-R",
+      "asset": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+      "positions": 198,
+      "holdings": 194,
+      "transfers": 3536,
+      "pass": true
+    },
+    {
+      "category": "E-R",
+      "asset": "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+      "positions": 7,
+      "holdings": 7,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "W-Y",
+      "asset": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "positions": 17,
+      "holdings": 13,
+      "transfers": 797,
+      "pass": true
+    },
+    {
+      "category": "T",
+      "asset": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "positions": 92,
+      "holdings": 74,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "C",
+      "asset": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "E-S",
+      "asset": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "W-SW",
+      "asset": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "W-SD",
+      "asset": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "E-P",
+      "asset": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "W-P",
+      "asset": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "ETH",
+      "asset": "native",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 0,
+      "pass": true
+    },
+    {
+      "category": "WETH",
+      "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "positions": 0,
+      "holdings": 0,
+      "transfers": 27,
+      "pass": true
+    }
+  ],
+  "completeCategorySet": true,
+  "s006CategoryCounts": {
+    "bond": 27,
+    "tokenstaking_migration": 203,
+    "liquid": 585,
+    "donation": 4
+  }
+}

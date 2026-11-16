@@ -1,0 +1,6 @@
++ /bin/bash -n /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/run.sh
++ printf 'SHELL_SYNTAX_EXIT=%s\n' 0
+SHELL_SYNTAX_EXIT=0
++ python3 -m json.tool /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/baseline/observations.json
++ printf 'OBSERVATIONS_JSON_EXIT=%s\n' 0
+OBSERVATIONS_JSON_EXIT=0

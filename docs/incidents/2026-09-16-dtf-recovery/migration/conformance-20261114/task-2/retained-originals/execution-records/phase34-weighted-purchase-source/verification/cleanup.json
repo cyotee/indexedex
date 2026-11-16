@@ -1,0 +1,83 @@
+{
+  "version": "phase34-independent-stopped-cleanup-v1",
+  "stopped": true,
+  "pendingOwnedOperations": 0,
+  "newNetworkRequests": 0,
+  "ownedDirectory": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification",
+  "producerStoppedSeal": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/seal.json",
+    "bytes": 3573,
+    "sha256": "c1e6733b0f7a28cd7021f0af8112c2e61e233b51bc938c1e4155543a2c4cf7f1"
+  },
+  "producerInventoryUnchanged": true,
+  "producerRecordedChildPidsAbsent": true,
+  "proofCommands": [
+    {
+      "path": "attempt-01.command.json",
+      "exit": 1,
+      "pid": 10033
+    },
+    {
+      "path": "attempt-02.command.json",
+      "exit": 1,
+      "pid": 10355
+    },
+    {
+      "path": "proof-03.command.json",
+      "exit": 0,
+      "pid": 10635
+    },
+    {
+      "path": "proof-04.command.json",
+      "exit": 0,
+      "pid": 11432
+    }
+  ],
+  "allCommandEndsObserved": true,
+  "finalProof": {
+    "path": "proof.json",
+    "bytes": 6275016,
+    "sha256": "66351a0b9218a5db2cca5f99409c75414772d7ad161973f8e60dfbf57954ce2c",
+    "exit": 0,
+    "stderrBytes": 0
+  },
+  "syntax": {
+    "paths": [
+      "syntax-commands.json",
+      "final-syntax.command.json"
+    ],
+    "allExitsZero": true,
+    "lsp": "Biome unavailable; no install or clean LSP/strict checked-JS claim"
+  },
+  "processInspection": {
+    "path": "process-check.json",
+    "stdout": "process-check.stdout",
+    "exit": 0,
+    "remainingRecordedChildPids": [],
+    "inspectionChildExited": true
+  },
+  "preservation": {
+    "path": "preservation.json",
+    "checked": 6780,
+    "changed": 0,
+    "finishedAt": "2026-11-13T12:26:10.767Z"
+  },
+  "artifactValidation": {
+    "path": "artifact-checks.json",
+    "allPassed": true
+  },
+  "failuresPreserved": [
+    "attempt01 compared wrapper helper metadata rather than exact locator/fields",
+    "attempt02 selected zero-address LP mint before protocol-recipient LP mint",
+    "phase32 first 243 raw entities/outcomes remain unavailable; not reconstructed"
+  ],
+  "credentialsAccessed": false,
+  "temporaryRuntimeCreated": false,
+  "dependencyOrCacheCreated": false,
+  "deletionRequired": false,
+  "sharedServicesModified": false,
+  "providerOrSignerOrServerOrChainOrMonitorOrSubagentStarted": false,
+  "gitOrCompilerOrOldGateRun": false,
+  "sourceOrProductionOrConfigurationModified": false,
+  "scope": "Only verification artifacts. Gross token observations, not approved original NFT cost, E0/D0/C0, eligibility, financial/source-wide/operational/full-plan acceptance."
+}

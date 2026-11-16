@@ -1,0 +1,169 @@
+{
+  "kind": "Task11HarnessRepairPolicyBinding",
+  "finding": "H2",
+  "date": "2026-11-15",
+  "qualification": "New read-only local Cast capture of the same historical target policy using the existing archive alias. This is not an original historical stdout reconstruction, a public transaction, an operation rerun, or a new policy.",
+  "search": {
+    "paths": [
+      "D/deployment-gas",
+      "D/nft-recovery",
+      "D/deployment-gas-resumed",
+      "D/**/*.log",
+      "D/**/*.command.json"
+    ],
+    "patterns": [
+      "getMaxTxGasLimit",
+      "0xaae1cd4c",
+      "eth_getBlockByNumber",
+      "MAX_TX_EXIT"
+    ],
+    "result": "No adequate command-bearing getter/header capture recovered in the searched portions. The historical chain-gas-limits.log remains preserved, with its original lack of command provenance disclosed.",
+    "limits": "The widened tool search read 5523 files but only the first 4 MiB of 55 large files and skipped 42 binary files. No exhaustive absence claim is made."
+  },
+  "rawCapture": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/harness-repair/policy-capture.log",
+    "sha256": "e808c5e6eec229b92f73671c87f8feb06f65186e45919cbb70c8fe33e867c7c0",
+    "bytes": 3646,
+    "captureExitCode": 0,
+    "commandExitCodes": [
+      0,
+      0,
+      0
+    ],
+    "argvs": [
+      [
+        "/Users/cyotee/.foundry/bin/cast",
+        "chain-id",
+        "--rpc-url",
+        "robinhood_mainnet_alchemy"
+      ],
+      [
+        "/Users/cyotee/.foundry/bin/cast",
+        "block",
+        "108944663",
+        "--json",
+        "--rpc-url",
+        "robinhood_mainnet_alchemy"
+      ],
+      [
+        "/Users/cyotee/.foundry/bin/cast",
+        "call",
+        "0x000000000000000000000000000000000000006c",
+        "getMaxTxGasLimit()(uint256)",
+        "--rpc-url",
+        "robinhood_mainnet_alchemy",
+        "--block",
+        "108944663"
+      ]
+    ],
+    "headerResponseLine": 18
+  },
+  "source": {
+    "alias": "robinhood_mainnet_alchemy",
+    "endpointTemplate": "https://robinhood-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}",
+    "definition": {
+      "path": "foundry.toml",
+      "line": 91,
+      "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839"
+    },
+    "credential": "Existing login-shell credential; no value recorded."
+  },
+  "identity": {
+    "chainId": "4663",
+    "blockNumber": "108944663",
+    "blockTag": "0x67e5d17",
+    "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "l1BlockNumber": "0x19256ab"
+  },
+  "calls": [
+    {
+      "argv": [
+        "/Users/cyotee/.foundry/bin/cast",
+        "chain-id",
+        "--rpc-url",
+        "robinhood_mainnet_alchemy"
+      ],
+      "rpcMethod": "eth_chainId",
+      "rpcParams": [],
+      "result": "4663",
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "/Users/cyotee/.foundry/bin/cast",
+        "block",
+        "108944663",
+        "--json",
+        "--rpc-url",
+        "robinhood_mainnet_alchemy"
+      ],
+      "rpcMethod": "eth_getBlockByNumber",
+      "rpcParams": [
+        "0x67e5d17",
+        false
+      ],
+      "result": {
+        "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+        "parentHash": "0x22205b831726e31a4aeaa054c3a9e527198d25e3e5ad234ed0e3d363ec6cd03e",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "miner": "0xa4b000000000000000000073657175656e636572",
+        "stateRoot": "0xb1f528ad90e54a44bcde0886f181c790b65647d9256d743596f2f9623a6b2071",
+        "transactionsRoot": "0x33c7e74b2b83169ffe7ccc0d196e7389b7edcf9da4b2aec25c442f450a5db7ab",
+        "receiptsRoot": "0xed4030c56b19861b12d407133d34d67e86eb659431133713cbdc126ba9f35a17",
+        "logsBloom": "0x00000000000000200000000000000000000000000004000000000000000000000000000000000000000080000000000000000000000020000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000",
+        "difficulty": "0x1",
+        "number": "0x67e5d17",
+        "gasLimit": "0x4000000000000",
+        "gasUsed": "0x7cbe",
+        "timestamp": "0x6aeff5b5",
+        "extraData": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c",
+        "mixHash": "0x0000000000000ea500000000019256ab000000000000003d0000000000000000",
+        "nonce": "0x0000000000069efe",
+        "baseFeePerGas": "0x13134d0",
+        "size": "0x34d",
+        "uncles": [],
+        "transactions": [
+          "0x3b092c0a635bf7308445d38cd9e4057f66ac9673c4988feafbe6b59be795c5a7",
+          "0xa0827ff9299145bc2c8be17e3f803c4e1aa21cf6d0295104d4d06946a1ea815c"
+        ],
+        "l1BlockNumber": "0x19256ab",
+        "sendCount": "0xea5",
+        "sendRoot": "0x60b5ceb61cc2cbb99ed10bbbdc376cc4c2fb0bbaa05208bb31d5da90fcfa8f7c"
+      },
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "/Users/cyotee/.foundry/bin/cast",
+        "call",
+        "0x000000000000000000000000000000000000006c",
+        "getMaxTxGasLimit()(uint256)",
+        "--rpc-url",
+        "robinhood_mainnet_alchemy",
+        "--block",
+        "108944663"
+      ],
+      "rpcMethod": "eth_call",
+      "signature": "getMaxTxGasLimit()(uint256)",
+      "calledAddress": "0x000000000000000000000000000000000000006c",
+      "selector": "0xaae1cd4c",
+      "rpcParams": [
+        {
+          "to": "0x000000000000000000000000000000000000006c",
+          "data": "0xaae1cd4c"
+        },
+        "0x67e5d17"
+      ],
+      "decodedResult": "32000000",
+      "exitCode": 0
+    }
+  ],
+  "policy": {
+    "transactionLimit": "32000000",
+    "headerLimit": "0x4000000000000",
+    "applicableMinimum": "32000000",
+    "localAnvilBlockLimit": "100000000",
+    "localLimitQualification": "Permissive experimental node setting only; not queried or used as the target policy in this read-only capture."
+  },
+  "launchNote": "An initial shell launcher had a quoting parse error before any RPC ran. The corrected launcher produced the new raw capture above; it does not count as a new task attempt."
+}

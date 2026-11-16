@@ -1,0 +1,51 @@
+
+scripts/recovery/dtf-migration/execution-domain.test.ts:
+(pass) saved v2 preparation rehydrates without a current-price quote [158.21ms]
+(pass) v1 execution manifest is rejected before RPC or signing [76.21ms]
+(pass) overwritten intra-block book authenticates through its exact setter and subsequent load [209.16ms]
+(pass) historical intent domain is reconstructed independently of surrounding reference hashes [175.17ms]
+(pass) resume rejects wrong nonce, chain, or gas in a persisted signed intent [77.25ms]
+(pass) stale journal and second active checkpoint reject before any signer is created [71.86ms]
+(pass) an unsigned blocked attempt closes without trapping the operator root or rewriting its journal [71.74ms]
+(pass) duplicate configure batch rejects while intentional identical donations keep distinct IDs [69.58ms]
+
+scripts/recovery/dtf-migration/execution-state.test.ts:
+890 |     result.ok = function ok(...args) {
+891 |       plan?.count(), innerOk(ok, args.length, ...args);
+892 |     };
+893 |   return result;
+894 | }
+895 |   let error = Error(message);
+                         ^
+error: 1 subtest failed
+ failureType: "subtestsFailed",
+       code: "ERR_TEST_FAILURE"
+
+      at makeTestFailure (node:test:895:20)
+      at executeTestNode (node:test:1470:34)
+
+119 |     case "setMigrationWeightedPricing": {
+120 |       const { nextBookId } = await import("./execution-domain.js");
+121 |       const expected = nextBookId(domain);
+122 |       const actual = events.filter((e) => e.name === "MigrationWeightedPricingSet");
+123 |       if (canonical(actual) !== canonical([{ name: "MigrationWeightedPricingSet", values: [expected] }])) {
+124 |         throw new ExecutionError("STATE", "manual setter event differs from exact Inputs");
+                        ^
+ExecutionError: manual setter event differs from exact Inputs
+ code: "STATE"
+
+      at captureAtReceipt (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-state.ts:124:19)
+      at atReceipt (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-rpc.ts:172:24)
+      at processTicksAndRejections (unknown:7:39)
+(fail) new source-bound setter recognizes its exact book and rejects independently corrupted receipts [151.81ms]
+(pass) unsent A rejects current B before nonce allocation or transaction submission [67.91ms]
+(pass) changed quote rejects before nonce allocation even when the book id agrees [72.35ms]
+(pass) all selected loaders bind their own book and stable NFT identity excludes repricing [65.46ms]
+(pass) NFT current verification binds consumed credit to each original component floor [76.73ms]
+(pass) same-block A completion reads transaction-prefix A rather than overwritten block-end B [72.51ms]
+(pass) canonical completion rejects forged receipt order and altered transaction log contents [76.58ms]
+(pass) current B configuration is verified independently of authenticated A issuance and principal [260.81ms]
+
+ 15 pass
+ 1 fail
+Ran 16 tests across 2 files. [1.81s]

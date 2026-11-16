@@ -1,0 +1,78 @@
+[
+  {
+    "name": "weighted",
+    "originalSha256": "17e618d198559cdf6bf77674286858911fa61532ca274e04b52f753aa9249df0",
+    "copySha256": "17dea567d633b83f4a438301f422f0e17ae8df7f52062f0aafb1354e3f171a09",
+    "replacements": [
+      [
+        "const root = resolve(import.meta.dir, \"../../../../..\");",
+        "const root = \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01\";"
+      ],
+      [
+        "migration/evidence/weighted",
+        "migration/evidence/verification"
+      ],
+      [
+        "migration/evidence/weighted",
+        "migration/evidence/verification"
+      ],
+      [
+        "/\\/weighted\\.[A-Za-z0-9]+\\/?$/",
+        "/\\/weighted-replay\\.[A-Za-z0-9]+\\/?$/"
+      ]
+    ]
+  },
+  {
+    "name": "earlier-cp",
+    "originalSha256": "5bb091adf4f1ad6d85c6b97aa91dca9d6928066b20fc4aa55ec65c08140529fb",
+    "copySha256": "fa1076a079cdd78b73de618671825c1010ee1c19c3eeed76b13c7d3287da339a",
+    "replacements": [
+      [
+        "const ROOT = resolve(import.meta.dir, \"../../../../..\");",
+        "const ROOT = \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01\";"
+      ],
+      [
+        "migration/evidence/earlier-cp",
+        "migration/evidence/verification"
+      ],
+      [
+        "await mkdtemp(\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/earlier-cp.\")",
+        "await mkdtemp(`${process.env.TMPDIR}/earlier-cp.`)"
+      ]
+    ]
+  },
+  {
+    "name": "other-sources",
+    "originalSha256": "00251d3df8f67df94be8fafd290fd5201da9f468bcb9f26047727c3fedc4bce1",
+    "copySha256": "c31d26fd086745e822d633c09da52baa1905b37a684f88c41381d2ecd81cbac8",
+    "replacements": [
+      [
+        "const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), \"../../../../..\");",
+        "const ROOT = \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01\";"
+      ],
+      [
+        "migration/evidence/other-sources",
+        "migration/evidence/verification"
+      ],
+      [
+        "\"/tmp.enuGXu0sUI/other-sources.\"",
+        "\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-replay.\""
+      ]
+    ]
+  },
+  {
+    "name": "witness",
+    "originalSha256": "6b2d4ffcb16f28a586124e9664226224fc7d8b87575a8f813584086a3a857ff7",
+    "copySha256": "37dcb2171d487efebeeeee87ec3834e739736248c4d043d8909d08ea5670fbb2",
+    "replacements": [
+      [
+        "const output = `${base}/attribution`;",
+        "const output = `${base}/verification`;"
+      ],
+      [
+        "/\\/tmp\\.enuGXu0sUI\\/attribution\\.[A-Za-z0-9]+$/",
+        "/\\/witness-replay\\.[A-Za-z0-9]+$/"
+      ]
+    ]
+  }
+]

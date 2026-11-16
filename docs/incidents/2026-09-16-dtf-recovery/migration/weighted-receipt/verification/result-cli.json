@@ -1,0 +1,9 @@
+{
+  "name": "cli",
+  "command": "bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18567 --checkpoint .omo-runtime/dtf-migration-weighted-receipt/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/verification/runtime-01",
+  "bootstrap": "/bin/zsh -lc; approved existing login environment",
+  "code": 0,
+  "signal": null,
+  "bytes": 262,
+  "sha256": "6478e870392006ca25473bd3460e8760dab498e132f5abf92775a52eb4be984a"
+}

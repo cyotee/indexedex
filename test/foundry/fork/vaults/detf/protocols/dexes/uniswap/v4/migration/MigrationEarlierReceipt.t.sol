@@ -78,7 +78,7 @@ contract MigrationEarlierReceiptTest is MigrationRecoveryDonationForkBase {
             ORIGIN, who_, Legacy.EARLIER_RECEIPT, q_, 0.01 ether, 0,
             keccak256("synthetic known components; genuine original ER acquisition"), true
         );
-        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(a_);
+        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(a_, pricingId);
         c_ = migration.earlierReceiptEntitlement(ORIGIN).credit;
         assertEq(c_, migration.previewOriginalCredit(0.01 ether, 0));
     }
@@ -242,7 +242,7 @@ contract MigrationEarlierReceiptTest is MigrationRecoveryDonationForkBase {
             ORIGIN, erWallet, Legacy.EARLIER_RECEIPT, q0_, 1e10, 0,
             keccak256("synthetic small known components; genuine acquisition denominator"), true
         );
-        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(a_);
+        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(a_, pricingId);
         uint256 c0_ = migration.earlierReceiptEntitlement(ORIGIN).credit;
         assertGt(c0_, 0);
         assertLt(c0_, 10000);

@@ -1,0 +1,48 @@
+[
+  {
+    "name": "other-sources",
+    "sha256": "d0fce25cecc97408f8762dde5ff292888f3bec16f952b6ded95fca490f42d68c",
+    "replacements": [
+      [
+        "const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), \"../../../../..\");",
+        "const ROOT = \"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01\";"
+      ],
+      [
+        "migration/evidence/other-sources",
+        "migration/evidence/verification"
+      ],
+      [
+        "\"/tmp.enuGXu0sUI/other-sources.\"",
+        "\"/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-replay.\""
+      ],
+      [
+        "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-replay.",
+        "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/verification.30kbMI/other-metered."
+      ],
+      [
+        "\"--no-storage-caching\", \"--steps-tracing\",",
+        "\"--no-storage-caching\", \"--steps-tracing\", \"--compute-units-per-second\", \"10\","
+      ]
+    ],
+    "preload": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs"
+  },
+  {
+    "name": "witness",
+    "sha256": "60089caa5b4b4059c4c419a692ebf6da8938186ce9d196f9ad955952eac6e23e",
+    "replacements": [
+      [
+        "const output = `${base}/attribution`;",
+        "const output = `${base}/verification`;"
+      ],
+      [
+        "/\\/tmp\\.enuGXu0sUI\\/attribution\\.[A-Za-z0-9]+$/",
+        "/\\/witness-replay\\.[A-Za-z0-9]+$/"
+      ],
+      [
+        "witness-replay\\.",
+        "witness-metered\\."
+      ]
+    ],
+    "preload": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/meter-public-fetch.mjs"
+  }
+]

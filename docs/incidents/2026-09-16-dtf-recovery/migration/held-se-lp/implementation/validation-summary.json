@@ -1,0 +1,47 @@
+{
+  "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/runtime-01/rehearsal-1794485231687",
+  "summary": {
+    "sourcePaths": 35,
+    "artifacts": 57,
+    "captures": 75,
+    "rawSigned": 155,
+    "reconstructedSigned": 4,
+    "resumes": 3,
+    "registrationGas": "0x2b06d06",
+    "inputDrift": 0,
+    "heldSources": 3,
+    "heldBonds": 6,
+    "httpBodies": 1999,
+    "canonicalReceipts": 663
+  },
+  "wire": {
+    "blocks": 671,
+    "responses": 1999,
+    "receipts": 663,
+    "transactions": 663,
+    "synthetic": 172,
+    "authenticated": 491
+  },
+  "registrationGas": "45116678",
+  "sourceFreeze": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/source-manifest.json",
+    "bytes": 1014053,
+    "sha256": "8ece84ba35c35957e70790ce14172d661a3932624aeb3e75b169fddfbbb707b8",
+    "mode": 420
+  },
+  "audit": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/audit-01.json",
+    "bytes": 9555133,
+    "sha256": "c7416adcee3753c3e99bcb001241fa86a1db9a3f57de2b9a65524b26a8101315",
+    "mode": 420
+  },
+  "originalCaptures": 30,
+  "preservedBaseline": 1237,
+  "preservedInherited": 1386,
+  "heldBonds": 6,
+  "heldExpectedReverts": 18,
+  "loads": 6,
+  "sourceStopped": true,
+  "ownedRuntimeStopped": true,
+  "noPendingOperation": true
+}

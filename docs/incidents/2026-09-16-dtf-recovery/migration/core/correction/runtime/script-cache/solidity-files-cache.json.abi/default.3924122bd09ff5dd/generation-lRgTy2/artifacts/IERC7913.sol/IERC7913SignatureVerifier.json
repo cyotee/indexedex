@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"verify","inputs":[{"name":"key","type":"bytes","internalType":"bytes"},{"name":"hash","type":"bytes32","internalType":"bytes32"},{"name":"signature","type":"bytes","internalType":"bytes"}],"outputs":[{"name":"","type":"bytes4","internalType":"bytes4"}],"stateMutability":"view"}],"id":1898}

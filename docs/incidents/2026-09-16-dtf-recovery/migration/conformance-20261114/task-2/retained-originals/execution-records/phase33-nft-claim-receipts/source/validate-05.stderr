@@ -1,0 +1,11 @@
+41 |   for (const dir of roots) {
+42 |     const seal = await bind(`${dir}/seal.json`);
+43 |     const direct = Object.values(seal).filter(x => x && typeof x === "object" && typeof x.path === "string");
+44 |     for (const b of [...direct, ...(seal.bindings ?? [])]) await bind(resolve(dir, b.path), b);
+45 |     const manifest = await json(`${dir}/manifest.json`);
+46 |     for (const b of Array.isArray(manifest) ? manifest : manifest.files) await bind(resolve(dir, b.path), b);
+                    ^
+TypeError: undefined is not an object (evaluating 'b of Array.isArray(manifest) ? manifest : manifest.files')
+      at intake (/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/inputs.mjs:46:16)
+
+Bun v1.4.2 (macOS arm64)

@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":232,\"method\":\"evm_mine\",\"params\":[]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":232,\"result\":\"0x0\"}",
+  "httpStatus": 200,
+  "raw": true
+}

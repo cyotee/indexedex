@@ -1,0 +1,699 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IHooks} from
+    "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
+import {
+    HookFlags,
+    TokenConfig,
+    TokenType,
+    LiquidityManagement,
+    PoolSwapParams,
+    SwapKind,
+    AfterSwapParams,
+    AddLiquidityKind,
+    RemoveLiquidityKind,
+    AddLiquidityParams,
+    RemoveLiquidityParams
+} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {WeightedMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {
+    IBalancerV3StandardExchangeRouterPrepay
+} from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
+
+import {IStandardExchangeBufferPool} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+import {StandardExchangeBufferPoolRepo as Repo} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol";
+import {StandardExchangeBufferPoolCommon} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.sol";
+
+/**
+ * @title StandardExchangeBufferHookTarget
+ * @notice Abstract hook target implementing IHooks for the StandardExchangeBufferPool.
+ * @dev Abstract because `_balancerV3Vault()` and `_expectedFactory()` are left virtual
+ *      for the facet (Task 12) to provide. This slice covers registration + initialization.
+ *      Swap and LP hooks are filled in by Tasks 8-11.
+ */
+abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPoolCommon, IHooks {
+
+    /* ----- Virtual hooks (resolved by the facet) ----- */
+
+    /// @dev Returns the Balancer V3 Vault address. Implemented by the facet.
+    function _balancerV3Vault() internal view virtual returns (address);
+
+    /// @dev Returns the expected pool factory address. Implemented by the facet.
+    function _expectedFactory() internal view virtual returns (address);
+
+    /* ----- Registration ----- */
+
+    /**
+     * @notice Returns the set of hooks this contract implements.
+     * @return hookFlags Flags indicating which hooks are active.
+     */
+    function getHookFlags() external pure virtual override returns (HookFlags memory) {
+        return HookFlags({
+            enableHookAdjustedAmounts: false,
+            shouldCallBeforeInitialize: true,
+            shouldCallAfterInitialize: false,
+            shouldCallComputeDynamicSwapFee: false,
+            shouldCallBeforeSwap: true,
+            shouldCallAfterSwap: true,
+            shouldCallBeforeAddLiquidity: true,
+            shouldCallAfterAddLiquidity: true,
+            shouldCallBeforeRemoveLiquidity: false,
+            shouldCallAfterRemoveLiquidity: true
+        });
+    }
+
+    /**
+     * @notice Hook executed when a pool is registered with this hook contract.
+     * @dev Validates: msg.sender is Vault, factory matches expected, pool is this contract,
+     *      tokenConfig has exactly 2 entries with correct types and rate provider, and all
+     *      required LiquidityManagement flags are set.
+     */
+    function onRegister(
+        address factory,
+        address pool,
+        TokenConfig[] memory tokenConfig,
+        LiquidityManagement calldata lm
+    ) external view virtual override returns (bool) {
+        if (msg.sender != _balancerV3Vault()) return false;
+        if (factory != _expectedFactory()) return false;
+        if (pool != address(this)) return false;
+        if (tokenConfig.length != 2) return false;
+
+        uint256 ttaIdx = Repo._ttaIndex();
+        uint256 sharesIdx = Repo._sharesIndex();
+
+        if (address(tokenConfig[ttaIdx].token) != address(Repo._ttaToken())) return false;
+        if (address(tokenConfig[sharesIdx].token) != address(Repo._shareToken())) return false;
+        if (tokenConfig[ttaIdx].tokenType != TokenType.STANDARD) return false;
+        if (tokenConfig[sharesIdx].tokenType != TokenType.WITH_RATE) return false;
+        if (address(tokenConfig[sharesIdx].rateProvider) != address(Repo._rateProvider())) return false;
+
+        if (lm.disableUnbalancedLiquidity) return false;
+        if (!lm.enableAddLiquidityCustom) return false;
+        if (!lm.enableRemoveLiquidityCustom) return false;
+        if (!lm.enableDonation) return false;
+
+        return true;
+    }
+
+    /* ----- Initialization ----- */
+
+    /**
+     * @notice Hook executed before pool initialization.
+     * @dev Seeds virtualTTA from the shares-side scaled18 amount, resets hookSharesDelta to 0,
+     *      and captures the Vault-reported share rate as baselineRate for effective weight computation.
+     *
+     *      Balancer V3 passes `exactAmountsInScaled18` to this hook.  For a WITH_RATE share token
+     *      the scaled18 value is `rawShares * rate / 1e18`, which is already expressed in TTA-equivalent
+     *      units (i.e. the economic DAI value of the seeded shares).  Therefore virtualTTA is set
+     *      directly to `exactAmountsIn[sharesIdx]` — no further rate multiplication is needed.
+     *
+     *      Using the scaled18 amount also keeps virtualTTA consistent with Balancer's live-balance
+     *      accounting: after initialization `liveBalance[sharesIdx] == rawBalance * rate / 1e18`,
+     *      so `virtualTTA == liveBalance[sharesIdx]` immediately after the seed.
+     *
+     *      baselineRate is anchored to the rate at initialization time, making the seeded inventory
+     *      the equilibrium point for effective weight computation: when currentRate == baselineRate,
+     *      the weights are exactly 50/50.
+     *
+     *      Reverts if the Vault-reported rate is zero or the resulting virtualTTA is zero.
+     */
+    function onBeforeInitialize(uint256[] memory exactAmountsIn, bytes memory)
+        external virtual override returns (bool)
+    {
+        if (msg.sender != _balancerV3Vault()) return false;
+        uint256 sharesIdx = Repo._sharesIndex();
+        // Read the rate the Vault itself just applied (reverts RateProviderZero on 0).
+        (uint256 rate, ) = _vaultSharesRateAndScale();
+        // exactAmountsIn is exactAmountsInScaled18 from Balancer. For WITH_RATE tokens,
+        // scaled18 = rawShares * rate / 1e18 — already in TTA-equivalent units.
+        uint256 virtualInit = exactAmountsIn[sharesIdx];
+        if (virtualInit == 0) revert IStandardExchangeBufferPool.InitialInvariantTooSmall();
+        Repo._setVirtualTTA(virtualInit);
+        // Anchor for effective weights: weights are 50/50 at this rate, so the seeded
+        // inventory is the equilibrium point and the pool quotes NAV immediately.
+        Repo._setBaselineRate(rate);
+        Repo._setHookSharesDelta(0);
+        return true;
+    }
+
+    /* ----- Stubs for remaining IHooks methods (filled in Tasks 8-11) ----- */
+
+    /// @dev Not used (shouldCallAfterInitialize = false). Returns false.
+    function onAfterInitialize(uint256[] memory, uint256, bytes memory)
+        external virtual override returns (bool)
+    {
+        return false;
+    }
+
+    /**
+     * @notice Hook executed before add-liquidity operations.
+     * @dev All standard add-liquidity kinds are permitted: PROPORTIONAL, UNBALANCED,
+     *      SINGLE_TOKEN_EXACT_OUT, CUSTOM, and DONATION.
+     *      Returns true without modification for all accepted kinds; state updates
+     *      (virtualTTA, hookSharesDelta) are handled entirely in onAfterAddLiquidity.
+     *
+     *      NOTE: A TTA-only contribution path (where the hook converts TTA→shares on behalf of the LP)
+     *      cannot be implemented here because vault.sendTo would fail — the vault has not yet received
+     *      any TTA from the LP at the time this hook runs. Such a path would require a CUSTOM
+     *      add-liquidity kind where the LP pre-sends TTA to the hook before the vault call.
+     */
+    function onBeforeAddLiquidity(
+        address /*router*/,
+        address pool,
+        AddLiquidityKind /*kind*/,
+        uint256[] memory /*maxAmountsInScaled18*/,
+        uint256 /*minBptAmountOut*/,
+        uint256[] memory /*balancesScaled18*/,
+        bytes memory /*userData*/
+    ) external virtual override returns (bool) {
+        if (msg.sender != _balancerV3Vault()) return false;
+        if (pool != address(this)) return false;
+        return true;
+    }
+
+    /**
+     * @notice Hook executed after add-liquidity operations.
+     * @dev Kind-aware state update for virtualTTA and hookSharesDelta.
+     *
+     *      PROPORTIONAL: proportionally scales virtualTTA and hookSharesDelta by bptOut/totalSupply_pre.
+     *        virtualTTA  += bptAmountOut * virtualTTA_pre  / T_pre
+     *        hookSharesDelta += bptAmountOut * hookSharesDelta_pre / T_pre (signed)
+     *        First-mint case (T_pre == 0): returns early with no state change.
+     *
+     *      UNBALANCED / SINGLE_TOKEN_EXACT_OUT: increments virtualTTA by the actual TTA scaled18
+     *        contributed (amountsInScaled18[ttaIdx]). hookSharesDelta is NOT mutated for the shares
+     *        contribution — derived_y (= actualShares - hookSharesDelta) grows naturally as the LP's
+     *        shares are credited to the pool's balance, keeping the weighted invariant consistent.
+     *        This also means unbalanced TTA adds leave physical TTA sitting in the pool between
+     *        operations ("eventual zero TTA" semantics); subsequent TTA→shares swaps or an explicit
+     *        sweep will drain it to the Standard Exchange Vault.
+     *
+     *      DONATION: like UNBALANCED but bptAmountOut == 0; grows virtualTTA by the donated TTA
+     *        scaled18 amount. The donated shares side grows actualShares (and thus derived_y)
+     *        naturally.
+     *
+     *      CUSTOM: the hook's own reconcile path is self-bookkeeping. Skip.
+     *
+     *      Returns (true, amountsInRaw) since enableHookAdjustedAmounts = false.
+     */
+    function onAfterAddLiquidity(
+        address /*router*/, address pool, AddLiquidityKind kind,
+        uint256[] memory amountsInScaled18,
+        uint256[] memory amountsInRaw,
+        uint256 bptAmountOut,
+        uint256[] memory /*balancesScaled18*/,
+        bytes memory /*userData*/
+    ) external virtual override returns (bool, uint256[] memory) {
+        if (msg.sender != _balancerV3Vault()) return (false, amountsInRaw);
+        if (pool != address(this)) return (false, amountsInRaw);
+
+        if (kind == AddLiquidityKind.PROPORTIONAL) {
+            uint256 tPost = IVault(_balancerV3Vault()).totalSupply(address(this));
+            uint256 tPre = tPost - bptAmountOut;
+            if (tPre == 0) return (true, amountsInRaw); // first-mint case
+
+            uint256 vtPre = Repo._virtualTTA();
+            int256 hPre = Repo._hookSharesDelta();
+
+            Repo._setVirtualTTA(vtPre + (bptAmountOut * vtPre) / tPre);
+            int256 hAdd = (int256(bptAmountOut) * hPre) / int256(tPre);
+            Repo._setHookSharesDelta(hPre + hAdd);
+        } else if (
+            kind == AddLiquidityKind.UNBALANCED ||
+            kind == AddLiquidityKind.SINGLE_TOKEN_EXACT_OUT
+        ) {
+            // Non-proportional LP adds: virtualTTA grows by the actual TTA contributed
+            // (amountsInScaled18[ttaIdx]). virtualTTA is stored in Vault scaled18
+            // (raw * 10^(18-decimals) for STANDARD TTA). Do not add amountsInRaw.
+            // hookSharesDelta is left unchanged: the LP's shares contribution is credited to
+            // actualShares by the Vault, so derived_y = (actualShares - hookSharesDelta) * r
+            // grows by exactly sharesInScaled without any delta adjustment.
+            // NOTE: Physical TTA deposited sits in the pool between operations under the
+            // "eventual zero TTA" invariant.  The next TTA→shares swap reconcile drains it.
+            uint256 ttaIdx = Repo._ttaIndex();
+            uint256 ttaInScaled = amountsInScaled18[ttaIdx];
+            if (ttaInScaled > 0) {
+                Repo._setVirtualTTA(Repo._virtualTTA() + ttaInScaled);
+            }
+        }
+        // DONATION and CUSTOM kinds use a bptAmountOut of 0; the proportional branch above
+        // would zero out the delta anyway.  More importantly, DONATION is used internally by
+        // _preSeatShares and onAfterSwap to move tokens into the pool as part of swap
+        // reconciliation — incrementing virtualTTA in those paths would double-count.
+        // DONATION therefore remains a no-op for virtualTTA / hookSharesDelta here.
+
+        return (true, amountsInRaw);
+    }
+
+    /// @dev Not used (shouldCallBeforeRemoveLiquidity = false). Returns false.
+    function onBeforeRemoveLiquidity(
+        address,
+        address,
+        RemoveLiquidityKind,
+        uint256,
+        uint256[] memory,
+        uint256[] memory,
+        bytes memory
+    ) external virtual override returns (bool) {
+        return false;
+    }
+
+    /**
+     * @notice Hook executed after remove-liquidity operations.
+     * @dev Scales virtualTTA and hookSharesDelta proportionally by the BPT redeemed.
+     *      If T_pre = 0, returns early. Otherwise:
+     *      Deduction = bptAmountIn * virtualTTA_pre / T_pre
+     *      virtualTTA -= min(Deduction, virtualTTA_pre) [clamp at zero]
+     *      hookSharesDelta -= bptAmountIn * hookSharesDelta_pre / T_pre (signed)
+     *      Returns (true, amountsOutRaw) since enableHookAdjustedAmounts = false.
+     */
+    function onAfterRemoveLiquidity(
+        address /*router*/, address pool, RemoveLiquidityKind /*kind*/,
+        uint256 bptAmountIn,
+        uint256[] memory /*amountsOutScaled18*/,
+        uint256[] memory amountsOutRaw,
+        uint256[] memory /*balancesScaled18*/,
+        bytes memory /*userData*/
+    ) external virtual override returns (bool, uint256[] memory) {
+        if (msg.sender != _balancerV3Vault()) return (false, amountsOutRaw);
+        if (pool != address(this)) return (false, amountsOutRaw);
+            uint256 tPost = IVault(_balancerV3Vault()).totalSupply(address(this));
+        uint256 tPre = tPost + bptAmountIn;
+        if (tPre == 0) return (true, amountsOutRaw);
+
+        uint256 vtPre = Repo._virtualTTA();
+        int256 hPre = Repo._hookSharesDelta();
+
+        uint256 vtSub = (bptAmountIn * vtPre) / tPre;
+        Repo._setVirtualTTA(vtSub >= vtPre ? 0 : vtPre - vtSub);
+
+        int256 hSub = (int256(bptAmountIn) * hPre) / int256(tPre);
+        Repo._setHookSharesDelta(hPre - hSub);
+
+        return (true, amountsOutRaw);
+    }
+
+    /**
+     * @notice Hook executed before each swap.
+     * @dev For shares→TTA swaps (indexIn == sharesIndex): performs the pre-seat operation that
+     *      redeems virtual TTA from the Standard Exchange Vault and seats it in the Balancer pool
+     *      before the swap math runs. This ensures the Vault has real TTA to deliver.
+     *      For TTA→shares swaps (indexIn == ttaIndex): no-op; reconciliation is done in onAfterSwap.
+     */
+    function onBeforeSwap(PoolSwapParams calldata params, address pool)
+        public virtual override returns (bool)
+    {
+        if (msg.sender != _balancerV3Vault()) return false;
+        if (pool != address(this)) return false;
+
+        uint256 ttaIdx = Repo._ttaIndex();
+        if (params.indexIn == ttaIdx) {
+            // TTA->shares: post-swap reconcile (Task 9) handles it; nothing to do here.
+            return true;
+        }
+
+        // shares->TTA: pre-seat TTA into the pool before swap math runs.
+        _preSeatShares(params, pool);
+        return true;
+    }
+
+    /* ----- Internal helpers ----- */
+
+    /**
+     * @dev TTA->shares post-swap reconcile, best-effort:
+     *      1. Drain the X_raw TTA the swap added to the pool into this hook.
+     *      2. Deposit ALL of it into the SE vault via exchangeIn, minting M shares to the
+     *         Balancer Vault (M is whatever X_raw affords at NAV — the user's shares were
+     *         already delivered from pool reserves, so no exact target is required).
+     *      3. Settle the minted shares (round-trip capped, see _bv3SharesDonationRaw).
+     *      4. DONATE [0, M] into the pool; the donation credits donationRaw to the pool
+     *         balance and hookSharesDelta grows by the same amount, so derivedY is
+     *         unchanged for ANY M.
+     *      5. CUSTOM removeLiquidity [X_raw, 0] zeroes the swap-added TTA in pool balance.
+     *      6. virtualTTA += X_scaled18.
+     *
+     *      Rationale: the prior implementation minted EXACTLY sharesOut via exchangeOut with
+     *      an X_raw budget. Whenever the pool's execution price fell below NAV (post-shift
+     *      imbalance, slippage on large trades), minting sharesOut cost more than X_raw and
+     *      the whole swap reverted PostSwapDepositFailed. The buffer does not need exactly
+     *      sharesOut: the user's shares are physically delivered from pool reserves; the
+     *      reconcile only converts the incoming TTA into shares. Depositing all of X_raw
+     *      best-effort keeps derivedY correct for ANY minted amount M, because the donation
+     *      credits the pool balance with M and hookSharesDelta grows by the same
+     *      round-tripped amount — the two cancel in derivedY.
+     */
+    function _reconcileTTAToShares(uint256 X_scaled18, address seRouter) internal {
+        IVault vault = IVault(_balancerV3Vault());
+        IStandardExchange seVault = Repo._standardExchangeVault();
+        IERC20 ttaTok = Repo._ttaToken();
+        IERC20 shareTok = Repo._shareToken();
+        uint256 ttaIdx = Repo._ttaIndex();
+        uint256 sharesIdx = Repo._sharesIndex();
+        uint256 X_raw = _ttaToRaw(X_scaled18);
+        if (X_raw == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_scaled18);
+
+        // 1) Drain the swap's TTA input (native units, not Vault scaled18).
+        vault.sendTo(ttaTok, address(this), X_raw);
+
+        // 2) Best-effort deposit of the full amount.
+        //    When IndexedEx router has a prepay session, pass auth to the SE (hooks==pool principal).
+        ttaTok.approve(address(seVault), X_raw);
+        _passPrepay(seRouter, address(seVault));(uint256 minted,) = seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp);
+        _restorePrepay(seRouter);
+        if (minted == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
+
+        // 3) Credit the Balancer Vault for the minted shares (round-trip capped).
+        uint256 donationRaw = _bv3SharesDonationRaw(minted);
+        vault.settle(shareTok, donationRaw);
+
+        // 4) DONATE the minted shares into the pool.
+        {
+            uint256[] memory addAmts = new uint256[](2);
+            addAmts[sharesIdx] = minted;
+            vault.addLiquidity(_buildAddLiquidityParams(address(this), addAmts, 0, AddLiquidityKind.DONATION));
+        }
+
+        // 5) Remove the swap-added TTA from the pool's balance.
+        {
+            uint256[] memory remAmts = new uint256[](2);
+            remAmts[ttaIdx] = X_raw;
+            vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
+        }
+
+        // 6) Update state. derivedY: pool balance +donationRaw, delta +donationRaw — net zero.
+        //    virtualTTA is scaled18; X_raw was used only for ERC-20 / SE vault I/O.
+        Repo._setVirtualTTA(Repo._virtualTTA() + X_scaled18);
+        Repo._setHookSharesDelta(Repo._hookSharesDelta() + int256(donationRaw));
+    }
+
+    /**
+     * @dev Computes Y_TTA — the TTA amount the swap math will produce for the given shares
+     *      input — using rate-scaled effective weights, matching onSwap's output exactly.
+     *      Extracted from `_preSeatShares` to avoid stack-too-deep.
+     *
+     *      EXACT_IN: replicates the Vault's fee deduction (FixedPoint.mulUp(amountIn, feePercent))
+     *      then runs the same WeightedMath.computeOutGivenExactIn call onSwap will run.
+     *      EXACT_OUT: amountGivenScaled18 is TTA out in Vault scaled18 (raw * 10^(18-decimals)).
+     *      Caller converts to native before SE vault / settle.
+     */
+    function _quotePreSeatYTta(
+        PoolSwapParams calldata params,
+        address pool,
+        IVault vault,
+        uint256 x,
+        uint256 y
+    ) internal view returns (uint256 Y_TTA_raw) {
+        if (params.kind != SwapKind.EXACT_IN) {
+            // EXACT_OUT shares->TTA: the given amount IS the TTA the Vault must deliver.
+            return params.amountGivenScaled18;
+        }
+        (uint256 wTta, uint256 wShares) = _currentEffectiveWeights();
+        // The Vault deducts the swap fee from amountGiven before calling onSwap;
+        // replicate so the pre-seated TTA matches onSwap's output exactly.
+        uint256 swapFeePercentage = vault.getStaticSwapFeePercentage(pool);
+        uint256 feeAmount = Math.mulDiv(params.amountGivenScaled18, swapFeePercentage, 1e18, Math.Rounding.Ceil);
+        Y_TTA_raw = WeightedMath.computeOutGivenExactIn(
+            y, wShares, x, wTta, params.amountGivenScaled18 - feeAmount
+        );
+    }
+
+    /**
+     * @dev Executes the shares→TTA pre-seat operation.
+     *      Extracted to avoid stack-too-deep in onBeforeSwap.
+     *
+     *      Algorithm:
+     *      1. Compute Y_TTA (fee-adjusted): the TTA amount the weighted formula (rate-scaled
+     *         effective weights) will produce for the given shares input. The swap fee is
+     *         subtracted from the scaled18 input to match what onSwap will see (the Vault
+     *         deducts fees before calling onSwap).
+     *      2. Query how many shares S are needed to redeem Y_TTA from the SE Vault.
+     *      3. Drain S shares from the Balancer Vault to this hook; exchange for Y_TTA via seVault.
+     *      4. Settle + DONATE the Y_TTA into the pool so the swap has real TTA to deliver.
+     *      5. removeLiquidity(S shares) to decrement the pool's raw shares balance.
+     *      6. Update hookSharesDelta -= S (keeps derivedY stable for onSwap despite step 5).
+     *      7. Store S in pendingPreSeatS; decrement virtualTTA in onAfterSwap (after swap math).
+     */
+    function _preSeatShares(PoolSwapParams calldata params, address pool) internal {
+        uint256 x = Repo._virtualTTA();
+        if (x == 0) revert IStandardExchangeBufferPool.PoolTTASideExhausted();
+
+        uint256 y = _derivedY(params.balancesScaled18);
+        if (y == 0) revert IStandardExchangeBufferPool.PoolSharesSideExhausted();
+
+        IVault vault = IVault(_balancerV3Vault());
+        IStandardExchange seVault = Repo._standardExchangeVault();
+
+        // Compute Y_TTA in Vault scaled18 (same units as virtualTTA / onSwap), then the
+        // native amount the Vault will debit on DONATION (round-trip capped).
+        uint256 Y_TTA_scaled18 = _quotePreSeatYTta(params, pool, vault, x, y);
+        if (Y_TTA_scaled18 > x) revert IStandardExchangeBufferPool.VirtualTTAUnderflow(x, Y_TTA_scaled18);
+        uint256 Y_TTA_raw = _bv3TtaDonationRaw(_ttaToRaw(Y_TTA_scaled18));
+        if (Y_TTA_raw == 0) revert IStandardExchangeBufferPool.PreSeatRedemptionFailed(0, Y_TTA_scaled18);
+
+        IERC20 shareTok = Repo._shareToken();
+        IERC20 ttaTok = Repo._ttaToken();
+
+        // 1) Preview the shares needed (S) and align the drain amount with what
+        //    `removeLiquidity` will actually return (`drainAmount`).
+        //
+        //    For rate providers returning rate < 1e18, Balancer V3's
+        //    `ceil(sRaw*rate/1e18) → floor(scaled*1e18/rate)` round-trip overshoots:
+        //    a removeLiq request for minAmountsOut = S returns `amountOutRaw > S`.
+        //    Passing the projected `amountOutRaw` (drainAmount) as both the
+        //    `sendTo`/`exchangeOut` amount AND the `minAmountsOut` argument makes the
+        //    round-trip self-consistent and balances the Vault's delta accounting.
+        //    On identity-rate providers (rate == 1e18) drainAmount == S.
+        uint256 S = seVault.previewExchangeOut(shareTok, ttaTok, Y_TTA_raw);
+        uint256 drainAmount = _bv3SharesRemoveOutRaw(S);
+
+        // 2) Drain and removeLiquidity BEFORE the exchangeOut.
+        //    Ordering matters: the SE Vault's exchangeOut burns shares and drains
+        //    underlying reserves, which perturbs the rate provider's quote.  If
+        //    removeLiquidity ran AFTER exchangeOut, BV3 would re-read the rate at that
+        //    later point and the round-trip `floor(ceil(drainAmount*rate'/1e18)*1e18/rate')`
+        //    would diverge from drainAmount.  Running it here, back-to-back with the
+        //    sendTo, guarantees both use the same pre-exchange rate.
+        vault.sendTo(shareTok, address(this), drainAmount);
+        {
+            uint256[] memory remAmts = new uint256[](2);
+            remAmts[Repo._sharesIndex()] = drainAmount;
+            vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
+        }
+
+        // 3) Approve SE Vault and exchangeOut the drained shares for Y_TTA_raw.
+        //    Pass prepay auth when IndexedEx router session is active (hooks==pool principal).
+        shareTok.approve(address(seVault), drainAmount);
+        address seRouter = params.router;
+        _passPrepay(seRouter, address(seVault));
+        uint256 sharesConsumed =
+            seVault.exchangeOut(shareTok, drainAmount, ttaTok, Y_TTA_raw, address(vault), false, block.timestamp);
+        _restorePrepay(seRouter);
+        if (sharesConsumed == 0) revert IStandardExchangeBufferPool.PreSeatRedemptionFailed(drainAmount, Y_TTA_raw);
+
+        // 4) Settle TTA received from the SE Vault.
+        vault.settle(ttaTok, Y_TTA_raw);
+
+        // 5) If exchangeOut left a surplus of shares (drainAmount - sharesConsumed), return
+        //    the surplus to the Vault and settle, capping the settle credit at the
+        //    precision-aware DONATION amount so the subsequent debit exactly matches.
+        //    This call to _bv3SharesDonationRaw uses the POST-exchange rate (because
+        //    exchangeOut has already mutated SE Vault state); the subsequent DONATION will
+        //    use the same rate when re-reading via Vault rate-loading, so the values align.
+        uint256 sharesSurplus = drainAmount > sharesConsumed ? drainAmount - sharesConsumed : 0;
+        uint256 surplusDonationRaw = _bv3SharesDonationRaw(sharesSurplus);
+        if (sharesSurplus > 0) {
+            shareTok.transfer(address(vault), sharesSurplus);
+            vault.settle(shareTok, surplusDonationRaw);
+        }
+
+        // 6) DONATE [Y_TTA_raw, sharesSurplus] into pool.  BV3 round-trips the shares amount
+        //    to `surplusDonationRaw` (matching step 5's settle credit) and adds Y_TTA_raw
+        //    native TTA (Vault scaled18 converted via _ttaToRaw).
+        {
+            uint256 ttaIdx = Repo._ttaIndex();
+            uint256 sharesIdx_ = Repo._sharesIndex();
+            uint256[] memory addAmts = new uint256[](2);
+            addAmts[ttaIdx] = Y_TTA_raw;
+            addAmts[sharesIdx_] = sharesSurplus;
+            vault.addLiquidity(_buildAddLiquidityParams(address(this), addAmts, 0, AddLiquidityKind.DONATION));
+        }
+
+        // 7) Update hookSharesDelta to keep derivedY = lift(pool.balance[shares]) -
+        //    lift(hookSharesDelta) UNCHANGED for onSwap (which the Vault calls after
+        //    onBeforeSwap with `reloadBalancesAndRates`-fresh state).
+        //
+        //    Net pool.balance[shares] change from this pre-seat:
+        //      -drainAmount (removeLiq) + surplusDonationRaw (donation)
+        //    => hookSharesDelta -= (drainAmount - surplusDonationRaw)
+        //
+        //    In the identity-rate case where drainAmount == S and surplusDonationRaw ==
+        //    sharesSurplus == S - sharesConsumed, this reduces to the original
+        //    `hookSharesDelta -= sharesConsumed` invariant.
+        //
+        //    virtualTTA is deferred to onAfterSwap so onSwap sees the original x.
+        //    pendingPreSeatTtaRaw is the native TTA seated; onAfterSwap reclaims any remainder
+        //    the swap did not consume (6/9-dec scaled18 vs raw, or rate-drift dust).
+        uint256 hdSub = drainAmount > surplusDonationRaw ? drainAmount - surplusDonationRaw : 0;
+        Repo._setHookSharesDelta(Repo._hookSharesDelta() - int256(hdSub));
+        Repo._setPendingPreSeatS(drainAmount);
+        Repo._setPendingPreSeatTtaRaw(Y_TTA_raw);
+    }
+
+    /**
+     * @dev After a shares→TTA swap, return native TTA the swap did not consume to the SE vault.
+     *      Spec 6.3: pool actual TTA returns to the pre-swap baseline. Pre-seat donates Y_raw;
+     *      the Vault then drains amountOutRaw. For 6/9-dec TTA those can differ by the decimal
+     *      scale if anything still treats scaled18 as raw; even with a correct conversion, rate
+     *      drift on exchangeOut leaves dust. CUSTOM-remove the excess, deposit it back into the
+     *      SE vault, and donate the minted shares so derivedY is unchanged.
+     */
+    function _returnExcessPreSeatTta(uint256 excessRaw) internal {
+        if (excessRaw == 0) return;
+        IVault vault = IVault(_balancerV3Vault());
+        IERC20 ttaTok = Repo._ttaToken();
+        uint256 drainRaw = _bv3TtaRemoveOutRaw(excessRaw);
+        if (drainRaw == 0) return;
+
+        // Same order as `_preSeatShares` / `_reconcileTTAToShares`: sendTo (debit + transfer)
+        // then CUSTOM removeLiquidity (credit that nets the debit and drops pool raw TTA).
+        // removeLiquidity-first then sendTo double-decrements `_reservesOf` → panic 0x11.
+        vault.sendTo(ttaTok, address(this), drainRaw);
+        {
+            uint256[] memory remAmts = new uint256[](2);
+            remAmts[Repo._ttaIndex()] = drainRaw;
+            vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
+        }
+
+        IStandardExchange seVault = Repo._standardExchangeVault();
+        IERC20 shareTok = Repo._shareToken();
+        ttaTok.approve(address(seVault), drainRaw);(uint256 minted,) = seVault.exchangeIn(ttaTok, drainRaw, shareTok, 0, address(vault), false, block.timestamp);
+        if (minted == 0) return;
+
+        uint256 donationRaw = _bv3SharesDonationRaw(minted);
+        vault.settle(shareTok, donationRaw);
+        {
+            uint256[] memory addAmts = new uint256[](2);
+            addAmts[Repo._sharesIndex()] = minted;
+            vault.addLiquidity(_buildAddLiquidityParams(address(this), addAmts, 0, AddLiquidityKind.DONATION));
+        }
+        Repo._setHookSharesDelta(Repo._hookSharesDelta() + int256(donationRaw));
+    }
+
+    function _isPrepayRouter(address seRouter) internal view returns (bool) {
+        if (seRouter == address(0) || seRouter.code.length == 0) return false;
+        (bool ok, bytes memory ret) = seRouter.staticcall(
+            abi.encodeWithSelector(IBalancerV3StandardExchangeRouterPrepay.prepaySessionActive.selector)
+        );
+        return ok && ret.length == 32;
+    }
+
+    function _passPrepay(address seRouter, address seVault) internal {
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault);
+    }
+
+    function _restorePrepay(address seRouter) internal {
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth();
+    }
+
+    /**
+     * @dev Builds an AddLiquidityParams struct for calling vault.addLiquidity.
+     */
+    function _buildAddLiquidityParams(
+        address to_,
+        uint256[] memory maxAmountsIn_,
+        uint256 minBptAmountOut_,
+        AddLiquidityKind kind_
+    ) internal view returns (AddLiquidityParams memory) {
+        return AddLiquidityParams({
+            pool: address(this),
+            to: to_,
+            maxAmountsIn: maxAmountsIn_,
+            minBptAmountOut: minBptAmountOut_,
+            kind: kind_,
+            userData: ""
+        });
+    }
+
+    /**
+     * @dev Builds a RemoveLiquidityParams struct for calling vault.removeLiquidity.
+     */
+    function _buildRemoveLiquidityParams(
+        address from_,
+        uint256 maxBptAmountIn_,
+        uint256[] memory minAmountsOut_,
+        RemoveLiquidityKind kind_
+    ) internal view returns (RemoveLiquidityParams memory) {
+        return RemoveLiquidityParams({
+            pool: address(this),
+            from: from_,
+            maxBptAmountIn: maxBptAmountIn_,
+            minAmountsOut: minAmountsOut_,
+            kind: kind_,
+            userData: ""
+        });
+    }
+
+    /**
+     * @notice Hook executed after each swap.
+     * @dev For TTA→shares swaps (tokenIn == ttaToken): performs the post-swap reconcile that
+     *      drains the TTA the swap added to the pool, deposits it into the Standard Exchange Vault
+     *      to mint shares, credits those shares to the Balancer Vault, then adjusts the pool's
+     *      per-pool balances accordingly.
+     *      For shares→TTA swaps (tokenIn == shareToken): applies the deferred state update from
+     *      onBeforeSwap — decrements virtualTTA by the actual TTA out and hookSharesDelta by the
+     *      pre-seat shares S that were stored in pendingPreSeatS.
+     *      Always returns the Vault-computed amount unchanged (enableHookAdjustedAmounts = false).
+     */
+    function onAfterSwap(AfterSwapParams calldata params)
+        public virtual override returns (bool, uint256)
+    {
+        if (msg.sender != _balancerV3Vault()) return (false, params.amountCalculatedRaw);
+        if (params.pool != address(this)) return (false, params.amountCalculatedRaw);
+
+        bool ttaIn = (address(params.tokenIn) == address(Repo._ttaToken()));
+        if (!ttaIn) {
+            // shares->TTA: apply deferred virtualTTA update from onBeforeSwap pre-seat.
+            // hookSharesDelta was already decremented by S in onBeforeSwap (to keep derivedY stable
+            // for the swap math).  Now we decrement virtualTTA by the actual TTA delivered to the user.
+            // virtualTTA is scaled18, so subtract amountOutScaled18 (not amountCalculatedRaw,
+            // which is shares for EXACT_OUT).
+            uint256 actualTTAOut = params.amountOutScaled18;
+            uint256 seatedRaw = Repo._pendingPreSeatTtaRaw();
+            uint256 consumedRaw = params.kind == SwapKind.EXACT_IN
+                ? params.amountCalculatedRaw
+                : _ttaToRaw(params.amountOutScaled18);
+            Repo._setPendingPreSeatS(0);
+            Repo._setPendingPreSeatTtaRaw(0);
+            if (seatedRaw > consumedRaw) {
+                _returnExcessPreSeatTta(seatedRaw - consumedRaw);
+            }
+            uint256 vtNow = Repo._virtualTTA();
+            if (actualTTAOut > vtNow) revert IStandardExchangeBufferPool.VirtualTTAUnderflow(vtNow, actualTTAOut);
+            Repo._setVirtualTTA(vtNow - actualTTAOut);
+            return (true, params.amountCalculatedRaw);
+        }
+
+        // TTA->shares post-swap reconcile: extracted to avoid stack-too-deep.
+        // `params.router` is the contract that called Vault.swap (IndexedEx SE router when used).
+        _reconcileTTAToShares(params.amountInScaled18, params.router);
+        return (true, params.amountCalculatedRaw);
+    }
+
+    /// @dev Not used (shouldCallComputeDynamicSwapFee = false). Returns (false, 0).
+    function onComputeDynamicSwapFeePercentage(PoolSwapParams calldata, address, uint256)
+        external view virtual override returns (bool, uint256)
+    {
+        return (false, 0);
+    }
+}

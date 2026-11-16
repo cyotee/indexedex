@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-12",
+  "tools": {
+    "forge": "1.9.1-nightly",
+    "forgeCommit": "430523103f3e2f9ba432ffdd2031a9f966153d0d",
+    "compilerFlag": "--use solar",
+    "reportedCompiler": "Solar 0.8.38",
+    "bun": "1.4.2"
+  },
+  "checks": [
+    {
+      "name": "complete artifact-first Migration specs",
+      "command": "zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/specs.log'",
+      "monitor": {
+        "monitor_id": "mon_9X07S8TM3PJ3D7AF",
+        "bash_id": "bash_12",
+        "monitor": true
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "complete artifact-first pinned Migration forks",
+      "command": "zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/forks.log'",
+      "monitor": {
+        "monitor_id": "mon_D7TZBC3DFXDC4ZC3",
+        "bash_id": "bash_14",
+        "monitor": true
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "operator artifact preparation and both stage builds",
+      "command": "zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py build contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/operator-artifacts.log && PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/operator-stages.log'",
+      "monitor": {
+        "monitor_id": "mon_NQVGNMZ2Q108K6NN",
+        "bash_id": "bash_15",
+        "monitor": true
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "operator tests single invocation",
+      "command": "zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se && set -o pipefail && bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts ./scripts/recovery/dtf-migration/weighted-sy.test.ts ./scripts/recovery/dtf-migration/dtf-custody-se.test.ts 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/operator-tests.log'",
+      "monitor": {
+        "monitor_id": "mon_JCXDS0MNJP26HD7T",
+        "bash_id": "bash_16",
+        "monitor": true
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "strict final operator TypeScript",
+      "command": "zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se && set -o pipefail && bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/operator-types-final.log'",
+      "monitor": {
+        "monitor_id": "mon_KBSAPWJTK6PQAHHP",
+        "bash_id": "bash_17",
+        "monitor": true
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "real pinned18565 CLI with three interruption resumes",
+      "command": "zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18565 --checkpoint .omo-runtime/dtf-migration-dtf-custody-se/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/rehearsal-final.log'",
+      "monitor": {
+        "monitor_id": "mon_XW37CQP95C20KDAV",
+        "bash_id": "bash_18",
+        "monitor": true
+      },
+      "exitCode": 0
+    }
+  ],
+  "artifactDriftBeforeCli": [
+    {
+      "path": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+      "admitted": "a333899524467f478b78168fa79bb29600066910cb652eceec20f60bfe0d9e3c",
+      "actual": "99ce5bd22525c8acad1b84c632a7bc50e7bb958a3d8d5b212a421dce27a9a2e5",
+      "targets": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol": "MigrationNftConfigurationTest"
+      },
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+    }
+  ],
+  "scope": "Independent full bounded Migration specs/forks, operator artifacts/stages/tests/types and actual fixed18565 CLI. No full-category or gas acceptance."
+}
+

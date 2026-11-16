@@ -1,0 +1,65 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "scope": "Generated source-bound pricing ABI and setter receipt repair only; excludes task 10, configure interruption, integration and readiness",
+  "confidence": "high",
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+      "bytes": 14667,
+      "pureLines": 219
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67",
+      "bytes": 29608,
+      "pureLines": 416
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "sha256": "130932ca3a517b4753b3f3e34bdc2df11eca8f11c64429b629abc8eb66881acd",
+      "bytes": 14055,
+      "pureLines": 222
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "sha256": "d8834a16ed91152100a700b529bc0a52f9a04e7ef3a06017171031b6bc8ac6fe",
+      "bytes": 19308,
+      "pureLines": 290
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+      "bytes": 31166,
+      "pureLines": 424
+    }
+  ],
+  "evidence": {
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/independent/report.md",
+    "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/setter/independent/verification.json",
+    "retainedFocusedPasses": 18,
+    "retainedCorruptedReceiptRejections": 12,
+    "historicalHashesMatch": true,
+    "artifactMetadataMatches": true,
+    "originalDomainStillRejected": true,
+    "newPositive": "synthetic source-bound wire context only",
+    "retainedRunsAuthenticatedBy": "Original producer monitor commands, completion notifications, raw stdout/stderr hashes and exit sidecars",
+    "testsRerun": false
+  },
+  "limitations": [
+    "No fresh Anvil transaction or lifecycle proof.",
+    "No shared suite or strict whole-operator typecheck accepted; later integration gate required.",
+    "File audit exit 2: required TypeScript API unresolved; test/fixture LSP freshness timed out.",
+    "Witness-pin lane untouched and not certified.",
+    "Read-only verification; no RPC, transactions, Forge, installs, commits or delegation.",
+    "JSON artifact LSP unavailable: biome not installed; JSON produced by JSON.stringify. No install performed."
+  ],
+  "fixes": [],
+  "task10Complete": false,
+  "parentReadiness": false,
+  "sharedIntegrationGate": false,
+  "freshRealLifecycle": false,
+  "writtenLastForSetterRepair": true
+}

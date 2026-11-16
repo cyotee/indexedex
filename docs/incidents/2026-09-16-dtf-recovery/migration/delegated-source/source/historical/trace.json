@@ -1,0 +1,5 @@
+{
+  "trace": null,
+  "traceFailure": "RPC debug_traceTransaction failed; see /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00007.json",
+  "attempts": 1
+}

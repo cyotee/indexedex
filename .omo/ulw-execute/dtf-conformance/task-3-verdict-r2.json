@@ -1,0 +1,293 @@
+{
+  "type": "AdversarialVerify",
+  "task": 3,
+  "round": 2,
+  "date": "2026-11-15",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": 0.95,
+  "acceptance_met": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "scope": "Independent verification of plan task 3 source/recovery evidence only. No implementation, fixes, delegation, allocation or later-task certification.",
+  "producer_claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-3-done.json",
+    "sha256": "5d50fc0b157e2e1a968c5cb3d8a85752eb10a0bc6a00371159f3a71a7fd04ea4",
+    "treated_as_untrusted": true,
+    "structured_file_bindings_checked": 27,
+    "all_match": true
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification-r2/report.md",
+  "evidence_paths": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification-r2/report.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification-r2/hash-recompute.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/commands.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-complete.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-custody-live.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inputs-and-results.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative/delivery.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/final-source-20261113.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/03.log",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/final-fork-20261113/results.json"
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "requirement": 1,
+      "result": "PASS",
+      "observation": "All 14 required rows exist in all four indexes, including ownership/current units, original/remaining units, equation, disabled behavior, surrender/rollback and conditional recovery. 118 ABI references and selector/facet joins checked; 2 are explicitly absent TokenStaking routes."
+    },
+    {
+      "requirement": 2,
+      "result": "PASS",
+      "observation": "All 38 archive binding comparisons across 37 unique raw files match byte size and SHA-256. No cited archive missing or mismatched. Explicit baseline test hash resolves to preserved baseline bytes rather than current strengthened source."
+    },
+    {
+      "requirement": 3,
+      "result": "PASS",
+      "observation": "Formerly null weighted-NFT and weighted/earlier-receipt hashes recovered from archived raw code. Weighted NFT /rpc/550 equals authenticated pin /rpc/2. All 34 runtime hashes independently recomputed; shared proxy identity is separate from each delegated facet."
+    },
+    {
+      "requirement": 4,
+      "result": "PASS",
+      "observation": "Earlier IDs 0/1/2 are reserved roles based on deployed initialization/constants, wired=true and exact owner/position reads. Separate ordinary ID 3 receipt inspected. Missing exact reserved mint receipts remain explicit supplemental provenance, never no-exposure evidence."
+    },
+    {
+      "requirement": 5,
+      "result": "PASS",
+      "observation": "E-P exact withdrawal facet/hash and three owner-only exits, parent intake/claimLiquidity, NFT forwarding and collector paths inspected. Current-fee-recipient exception is W-P-only. Disabled source, dust and absent income stay conditional."
+    },
+    {
+      "requirement": 6,
+      "result": "PASS",
+      "observation": "Exact requested artifact-helper invocation binds to full raw source-state-assertions.log, commands.json exit 0, 13 named passes, 0 failures/skips and all 50 matching scoped source-file hashes. No Forge rerun. Aggregate fingerprint identifier retained with explicit serialization limitation in report."
+    },
+    {
+      "requirement": 7,
+      "result": "PASS",
+      "observation": "Wrong wallet, invalid/nonexistent ID and unauthorized E-P exit appear in raw suite output and bind to actual unchanged holdings/supply assertions. Retained wrong-runtime descriptor helper rejection has exit 1 and completed:false; exact original/wrong descriptor hashes independently reconstructed. Commentary excerpt is not accepted as proof."
+    },
+    {
+      "requirement": 8,
+      "result": "PASS",
+      "observation": "No actual unresolved task-3 source/custody/conservation gate found. Per-row closure and external prerequisites are recorded. No exposure dataset or allocation invented."
+    }
+  ],
+  "manual_qa": {
+    "channel": "Raw artifact inspection and hash recomputation; not a new test",
+    "result": "PASS",
+    "comparison_file": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification-r2/hash-recompute.json",
+    "comparisons": 38,
+    "unique_archive_files": 37,
+    "required_rows": 14,
+    "missing_files": 0,
+    "mismatched_hashes": 0,
+    "runtime_hashes_recomputed": 34,
+    "route_joins_checked": 118,
+    "source_file_fingerprints_matched": 50,
+    "token_id_guard_used_as_role_evidence": false
+  },
+  "accepted_happy_qa": {
+    "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol -- -vv",
+    "command_record": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/commands.json#source-state-assertions",
+    "raw_log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+    "raw_log_sha256": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063",
+    "exit_code": 0,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "source_fingerprint": "5c9111e657d552eb95054c24912dad33af16cf5ae59946a3f075162fdcfdded8",
+    "source_binding": {
+      "recorded": "5c9111e657d552eb95054c24912dad33af16cf5ae59946a3f075162fdcfdded8",
+      "allFiftyConstituentRawHashesMatch": true,
+      "qualification": "The aggregate is retained as the command record identifier; no aggregate serialization algorithm is specified there. Independent verification uses the complete 50 path/byte/SHA-256 bindings rather than asserting a recomputed aggregate preimage."
+    },
+    "rerun": false
+  },
+  "failure_qa": {
+    "wrong_wallet_raw_line": 5802,
+    "invalid_source_id_raw_line": 5792,
+    "unauthorized_ep_exit_raw_line": 5787,
+    "source_assertions": [
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol:16-29",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol:178-207",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol:213-220",
+      "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol:38-90"
+    ],
+    "inventory_helper_exit": 1,
+    "inventory_helper_completed": false,
+    "malformed_input_review": {
+      "changedKeys": [
+        "runtimeCodeHash"
+      ],
+      "pinnedCodeMatches": true,
+      "computedRuntimeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "wrongExpectedHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "rejectedByRuntimeComparison": true,
+      "helperExit": 1,
+      "archiveSha256": "4d7730a459848682d7d21209578d3c28a8b35367b7699be1909a5ba6b53b7472",
+      "helperReadLines": "record-verification.ts:232-241,281-294",
+      "freshHelperRun": false,
+      "originalDescriptorSha256": "6f28e0381759a6daeaa2bb3e2fc1e3738fd9321e41073ec70b2de6e14204d318",
+      "wrongDescriptorSha256": "35ebda36dba95b2a5d983814de51b12a2cf2aee59105d56f505cad2df79d0b76",
+      "inventoryExpectedSha256": "6f28e0381759a6daeaa2bb3e2fc1e3738fd9321e41073ec70b2de6e14204d318",
+      "positiveDescriptorMatchesInventory": true,
+      "wrongDescriptorFailsInventory": true,
+      "descriptorSerialization": "JSON.stringify(value, null, 2) + newline"
+    },
+    "source_negative_excerpt_accepted_as_oracle": false
+  },
+  "actual_source_custody_conservation_gates": [],
+  "adversarial_classes": {
+    "stale_state": {
+      "result": "PASS",
+      "observable": "Current indexes differ from all three preserved baselines; preliminary needs-fix verdict remains untouched and applies to earlier blocked claim."
+    },
+    "dirty_worktree": {
+      "result": "PASS",
+      "observable": "Before/after read-only status byte-identical, 60373 entries; P diff unchanged, 4023 task-2 entries preserved, seven protected hashes unchanged."
+    },
+    "misleading_success_output": {
+      "result": "PASS",
+      "observable": "Full raw output, command exit and exact source assertions inspected. Comment headers, acceptance_met and aggregate counts were not result oracles."
+    },
+    "generated_or_cached_artifacts": {
+      "result": "PASS",
+      "observable": "Raw output records Solar build-before-test and changed test compilation; 50 scoped hashes match. Historical test sources bind through replacement archive or recorded Git base. No out/ existence claim."
+    },
+    "untrusted_external_text": {
+      "result": "PASS",
+      "observable": "Archives, Markdown and producer claims treated solely as evidence; no embedded instructions executed."
+    },
+    "malformed_input": {
+      "result": "PASS",
+      "observable": "Only runtimeCodeHash changed; reconstructed SHA-256 mismatch agrees with actual retained helper failure. Independent keccak rejects zero hash. Original archive unchanged; no fresh helper run."
+    },
+    "cancel_resume": {
+      "result": "PASS",
+      "observable": "All 27 structured final claim file bindings match final delivered bytes, including amended indexes and preserved concurrent claim."
+    },
+    "hung_or_long_commands": {
+      "result": "not-applicable",
+      "reason": "No Forge or long-running process started or rerun."
+    },
+    "flaky_tests": {
+      "result": "not-applicable",
+      "reason": "No test rerun; repeatability beyond retained output is not claimed."
+    },
+    "repeated_interruptions": {
+      "result": "not-applicable",
+      "reason": "No repeated interruption introduced or observed during this verification."
+    }
+  },
+  "preservation": {
+    "statusCommand": "GIT_MASTER=1 git -C /Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1 status --short --untracked-files=all",
+    "beforeExit": 0,
+    "afterExit": 0,
+    "beforeSha256": "36026f9809b52fe440ff2aedf12f47aadc100e50a5045907057732a2f78c360b",
+    "afterSha256": "36026f9809b52fe440ff2aedf12f47aadc100e50a5045907057732a2f78c360b",
+    "beforeEntries": 60373,
+    "afterEntries": 60373,
+    "delta": {
+      "added": [],
+      "removed": []
+    },
+    "task1DiffBeforeSha256": "928269f94a952b9db2e882bed9e773343ebd6d5abd8e895522acdd65a0130536",
+    "task1DiffAfterSha256": "928269f94a952b9db2e882bed9e773343ebd6d5abd8e895522acdd65a0130536",
+    "task1DiffUnchanged": true,
+    "task2BeforeCount": 4023,
+    "task2AfterCount": 4023,
+    "task2StatusUnchanged": true,
+    "protectedFiles": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+        "before": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "after": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+        "unchanged": true
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+        "before": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677",
+        "after": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677",
+        "unchanged": true
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+        "before": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298",
+        "after": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298",
+        "unchanged": true
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+        "before": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64",
+        "after": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64",
+        "unchanged": true
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+        "before": "82233f20f3eb4ba21ee927a4f421b75615e57f9ee0f426ad4a6a1cb93b5a465a",
+        "after": "82233f20f3eb4ba21ee927a4f421b75615e57f9ee0f426ad4a6a1cb93b5a465a",
+        "unchanged": true
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/task-3-done.json",
+        "before": "5d50fc0b157e2e1a968c5cb3d8a85752eb10a0bc6a00371159f3a71a7fd04ea4",
+        "after": "5d50fc0b157e2e1a968c5cb3d8a85752eb10a0bc6a00371159f3a71a7fd04ea4",
+        "unchanged": true
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/task-3-verdict.json",
+        "before": "f07f9bf8b3d2bef6eee6e2a14bf6d4752267a2c68699956f2e188bb6b7c8649e",
+        "after": "f07f9bf8b3d2bef6eee6e2a14bf6d4752267a2c68699956f2e188bb6b7c8649e",
+        "unchanged": true
+      }
+    ]
+  },
+  "repro": [
+    {
+      "step": 1,
+      "action": "From the worktree, parse source-observations.json; read raw Buffer bytes for every archiveBindings/liveEvidenceBindings path plus acceptedSourceQa.rawFile and historicalSourceFileBinding. Compute SHA-256 and compare bytes/hash against hash-recompute.json."
+    },
+    {
+      "step": 2,
+      "action": "Resolve each runtime/loupe pointer, hash exact code hex using keccak256, recompute selectors from ABI entries and compare delegated facet identities. Compare weighted NFT journal /rpc/550 to pinned /rpc/2."
+    },
+    {
+      "step": 3,
+      "action": "Read deployed earlier initialization at archived DETFNFTVaultFacet.sol:1353-1356,16262-16321,16473-16483, then pinned wired/owner/position log and ordinary ID 3 acquisition. Do not use Migration numeric guards."
+    },
+    {
+      "step": 4,
+      "action": "Inspect exact E-P/W-P archive guards, parent intake/claimLiquidity, NFT forwarding and collector paths at locations in report.md. Match full raw test cases to unchanged-state assertion bodies."
+    },
+    {
+      "step": 5,
+      "action": "Use commands.json recorded exact invocation/exit and source-state-assertions.log; compare all 50 source files. Do not rerun Forge. Resolve historical test sources through final-source-20261113.json or GIT_MASTER=1 git show 1694e68a4bd66dd67d3b5e3f145f1da23074ff48:<recorded path>."
+    },
+    {
+      "step": 6,
+      "action": "Serialize retained unchangedDescriptor and wrongHashDescriptor using JSON.stringify(value,null,2) plus newline. Compare hashes with inventoried descriptor and actual integrity-negative.log/delivery.json. Preserve raw archive."
+    }
+  ],
+  "limits": [
+    "Exact reserved mint receipts remain unavailable; deployed initialization and pinned position evidence independently establish source roles.",
+    "No exhaustive operational exposure dataset or financial allocation is supplied or approved.",
+    "Source enablement, reward income and W-P fee-recipient authority remain explicit external conditions.",
+    "Task 3 does not prove later two-bond NFT 3 behavior, manual pricing, operator workflows, gas bounds or final whole-tree conformance.",
+    "No Forge, RPC, test suite or inventory helper was rerun. Runtime and archive hashes were independently recomputed offline.",
+    "The aggregate source fingerprint serialization is unspecified; all 50 constituent raw file bindings were independently verified instead of claiming an aggregate preimage reconstruction.",
+    "Biome LSP is unavailable; no installation attempted. JSON is serialized from structured data. Historical warnings remain preserved."
+  ],
+  "writes": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification-r2/hash-recompute.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification-r2/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-3-verdict-r2.json"
+  ],
+  "written_last": true
+}

@@ -1,0 +1,4336 @@
+{
+  "identity": {
+    "scriptSourceSha256": "10c68a9dbee00498e2bc071f8ab50795194c931be24f7c70be5327d18891c942",
+    "instanceId": "public-4663",
+    "configSha256": "b60db8f761239bd0a3368ae2bfa0e2bd4f90f288237002c300e7951d87a938cc",
+    "forkBlockNumber": 62009735,
+    "forkBlockHash": "0xbc4fc4df7e0eaa484c6060120503889ba1e01cc7fa83f7f57f388012aee77c47",
+    "coreCodeSha256": {
+      "create3Factory": "ac361e0392f597421e13020ea29e294d499a5cea46a60b99ea05a4e5494f995a",
+      "diamondPackageFactory": "9be66cbeb82bdb583a4bdee2919f17e8d7a4bd4dc30de088d04d556ae33ab87c",
+      "hookFactory": "0e2b7468a4e5e09a7bc344ef02050641ff3f37d84c0607e9ce541b97d6729e65",
+      "indexedexManager": "96292454f5c035559e92a771bd401579f80426cc95068a802a3fbebe12c0d960",
+      "feeCollector": "96292454f5c035559e92a771bd401579f80426cc95068a802a3fbebe12c0d960",
+      "tokenStaking": "96292454f5c035559e92a771bd401579f80426cc95068a802a3fbebe12c0d960",
+      "dtf": "b7ed9983dfff8dc07820689bb5ba686215efc4644c063377c2b869abcf54d644",
+      "weth": "eb5a5f69ebb602e71cdf5fdeb7d49ca9e4b37d105432c0cbd31a754fc4d360a7"
+    }
+  },
+  "stages": [
+    {
+      "stage": "07-01",
+      "receipts": [
+        {
+          "transactionHash": "0x74c830658b57e3c301f062b7655ec63d0780c3b43d0493b7ff4c8b35cc156245",
+          "blockHash": "0x01f3df73c08f223d8e219d8ba9963fa82c79f803c3535a10b688697e31569292",
+          "blockNumber": "0x3b3f162"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "07-02",
+      "receipts": [
+        {
+          "transactionHash": "0x69bf324f4c13b941a73411f06a7ec9994078cd1fbf444be976b74f31fcd8aa9c",
+          "blockHash": "0xa1ae84d1756559c94fbbecd6d596808542602ed82ca0f7b1b9834ca25fce9d43",
+          "blockNumber": "0x3b3f6e6"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "07-03",
+      "receipts": [
+        {
+          "transactionHash": "0x2a0c9ee1ddcd5e0e31630d8d0d6a84251f82415d97018d52149d7b646f36b0a4",
+          "blockHash": "0x4a19b65fcda75848b3d72c9fd573308276d38d690b0a1a1ce87997d19e1e1dfb",
+          "blockNumber": "0x3b3fec2"
+        },
+        {
+          "transactionHash": "0x3cda903f7f9d26cc980c83e50a39c8c4eb006a64283943d819ccd8c838767e84",
+          "blockHash": "0x0935eeb2ffd2a81926ee8bfd907ee9b9898d47282432182e090b3c5b68efc199",
+          "blockNumber": "0x3b3fed9"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "07-04",
+      "receipts": [
+        {
+          "transactionHash": "0xfb47dbdd5e9e3ac0b99754dbb62ed6c08d8461db5192146827a2e5c7e85f519b",
+          "blockHash": "0x938d5d57cb367a17e1d36945012586d7ff1d7bef404903c43d8850566bdb68c0",
+          "blockNumber": "0x3b43005"
+        },
+        {
+          "transactionHash": "0x305f50b077d55a05c88c828a0eadd335943a44769b222f521306084194392a1e",
+          "blockHash": "0x8205d8895f53915c179c98ee0f06f8eb2564695c2d554d7c4ff8fbca8276d944",
+          "blockNumber": "0x3b4301c"
+        },
+        {
+          "transactionHash": "0x6c28176d549268954d6271ffab213f92487b850d6be35921676b696aabaf6d00",
+          "blockHash": "0xbc55869d9c9ff1a00467af316ae28dd196e31c111eb1cbffbc403e410bde6c61",
+          "blockNumber": "0x3b43034"
+        },
+        {
+          "transactionHash": "0x7986648b7bf844c3b8eed126b152478ce7c355ca2a2ac95ac21c6b8c47491aad",
+          "blockHash": "0xee9de1ba143c176a13c97cb83c2ece36da6ab3afdb34a27abd3e3e1472b82942",
+          "blockNumber": "0x3b4304b"
+        },
+        {
+          "transactionHash": "0x4f6d79bdfcfaf0f801146af2523680980646ca925a215be2d15e09b2951c4c23",
+          "blockHash": "0xd02ed57a766158f8fdd95639817bd56c74ae1c8285b8c50782c5552981e551c9",
+          "blockNumber": "0x3b43062"
+        },
+        {
+          "transactionHash": "0xb6f3f17ae43dd7c4f3168057d32461e0dcfc681dcb5141d23b7c9b97f8ffb456",
+          "blockHash": "0x2379786f6ef1763fe4ed8000159cc7b6dd62e505f5a942d55eef3a789e3225bc",
+          "blockNumber": "0x3b43079"
+        },
+        {
+          "transactionHash": "0x57f4373fecdda5533a853452c66e62dfbe400f3709d53463f405721faba800ff",
+          "blockHash": "0xb116eaceefa9ea1a65c1eff3c7803e0a3601e067f74d16a4d020107878d22e0a",
+          "blockNumber": "0x3b43090"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "08-03",
+      "receipts": [
+        {
+          "transactionHash": "0x64f5423b92a433200ef5abdaad02655aabeb52a86c8bdbbd9b4a92f1f221a569",
+          "blockHash": "0x0255de6b3f3cc8f1b2fadfd592637b5b4834d3b9de1575a8c887c2103ef80458",
+          "blockNumber": "0x3b43d35"
+        },
+        {
+          "transactionHash": "0x836def5c2577b8708d22b7fc0094894745031065984472779d40359c6498f552",
+          "blockHash": "0x0fec3e5d91a45afdb517cdc1f3d8bb5bd202a4486545f686390b9b739433ed39",
+          "blockNumber": "0x3b43d4d"
+        },
+        {
+          "transactionHash": "0x79b3f095d991b774fc4436974e589fa7d314e1acadddb47e78c99bcc2b4590a8",
+          "blockHash": "0xfb4753a9f137e9ecc525b30635ac6930bd3b779705dd454d4d367b7df14aa228",
+          "blockNumber": "0x3b43d64"
+        },
+        {
+          "transactionHash": "0xf4297d553f4614ce9504d78f467b64f6c2624e7ef38edcf0b21ce9d8c0824b43",
+          "blockHash": "0x3f94d9ce1d364fde338a0a8692dea07c49e9353d487cbc39707dd6bb594de596",
+          "blockNumber": "0x3b43d7a"
+        },
+        {
+          "transactionHash": "0xf16bc60503811c1659c5e272294f72b84babb6e774d4d05c6a28c1f59ab543e5",
+          "blockHash": "0x03776cc4b0421478176c280f9da466a90ece537b5165500fb6b95d18aa80fb90",
+          "blockNumber": "0x3b43d91"
+        },
+        {
+          "transactionHash": "0x7274d0886309b9b81d589cc35c87b95702ef748a53c65f7228c313f06286274b",
+          "blockHash": "0xf5b9a9bc1083c9e753ea657b6c32f0e460b2a3648bcb3e917a757c7890c7a6ff",
+          "blockNumber": "0x3b43da8"
+        },
+        {
+          "transactionHash": "0x24a356137435a51dfe2ea7b773fe9babd0e027606ae1d7c62f72f4197cb82bf2",
+          "blockHash": "0x1a742a36e4a3cbc6e2c3dffa5f412c24306406f0477276747686a27037f92f6a",
+          "blockNumber": "0x3b43dbf"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "08-04",
+      "receipts": [
+        {
+          "transactionHash": "0x2ad82dfdbfed41098ce9c199c0bb8d957140dd58764ebc84fc4a5f5edc59629a",
+          "blockHash": "0xd8b7001a64249911f0810dc42dab289fea8368a77205837a86aab89543a3cd4a",
+          "blockNumber": "0x3b44770"
+        },
+        {
+          "transactionHash": "0x67c888b07535c5f46331b753621f3ce33fbb29df3ee60cd267224623a0728ead",
+          "blockHash": "0x18bcee0d0f856a0c63c7a4e736c00965d6cd0357ee2dd6f6678efb1ad183c1d7",
+          "blockNumber": "0x3b44789"
+        },
+        {
+          "transactionHash": "0x2c6b2a494052a78e028f328cc53f3753d395b661e0e9d421560c84825783bf2c",
+          "blockHash": "0x8ab61c9137dffb5b84dbc7e236a1a84bea82bd0ef68d7238c76e1d084629be7b",
+          "blockNumber": "0x3b447a1"
+        },
+        {
+          "transactionHash": "0xa23d500e1e717cfdc9a068fc67f6c7e51a6bf902aaebdf3edef60a2736ead7a1",
+          "blockHash": "0x9dd5820c4c614f3f422f4cc510f32fbead974c53de58e2e43577afcff1346c13",
+          "blockNumber": "0x3b447ba"
+        },
+        {
+          "transactionHash": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+          "blockHash": "0x290860f0f8368766b57b381e233eba3930acd735a67f76d476e9521c9103599f",
+          "blockNumber": "0x3b447d2"
+        },
+        {
+          "transactionHash": "0xc47de869ab5326543022ef95efe2fc257760a47dafc050d90e80cb93c86490bb",
+          "blockHash": "0xb4b1fdac72990af4144c34a97cc4b0f6794115fea1d53531f3895f6b75a2d5b3",
+          "blockNumber": "0x3b447ea"
+        },
+        {
+          "transactionHash": "0x88305728e659c03dabb18ea7c493beb5d520d7b9658bcc66d21ade8e22caa72d",
+          "blockHash": "0x7ba9e12b0691146f386f2ba5f01f56ab8bc8528473c4154dd967e6728e99407e",
+          "blockNumber": "0x3b44802"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "08-05",
+      "receipts": [
+        {
+          "transactionHash": "0x2e857a1508532e971a1c047209481e5b26bc7396f77a5eee376cf27c620928bd",
+          "blockHash": "0x36cbb1e7372a7404c6827fa709df630c8ac28e7078c3e7830d36c076d547918b",
+          "blockNumber": "0x3b45539"
+        },
+        {
+          "transactionHash": "0xd42267de033fe9083be159a8048a7aae061b70ba08dee3043c70f9fdc93afee4",
+          "blockHash": "0x6d3fe47729e2636af721a4e3410748a399a3228b1191df3039c165afe47e0eea",
+          "blockNumber": "0x3b45552"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x59af375f9f0234137843c58a2cb94a07b60fbde30c4ef7084643963df1e396fb",
+          "blockHash": "0x1c868dcb443bcdda416bc61c687001d3af6be593cb0ff891d6ebb0f38643690e",
+          "blockNumber": "0x3b5618d"
+        },
+        {
+          "transactionHash": "0xfa2f5ec3d9ac3f5fc922a794927a85b127755fe18a16d534de1843c9ad6629b7",
+          "blockHash": "0x3022d5547dcc3f7c8447464388ec62dc100a367c087fb40e27e6fdf878136ee3",
+          "blockNumber": "0x3b561a3"
+        },
+        {
+          "transactionHash": "0x3f32857950ffaf6b996042da4246d22aa88f115d367ba04c6f590e9275d76daa",
+          "blockHash": "0x82657cfd2406cee8093277bb3a7916d5f562be1d053808306a1e7207016adef9",
+          "blockNumber": "0x3b561ba"
+        },
+        {
+          "transactionHash": "0x2a294b0bf73cb50828c21205a47b6c8776c7fbf0c55abb11caef738c9e2d3ea8",
+          "blockHash": "0xb93012fd735ab5dc2a053c5d1b5a49b7ee3b8f0cc1380ffa4dd5ae23b7c8a9a6",
+          "blockNumber": "0x3b561d1"
+        }
+      ],
+      "reserveRemaining": 153620223733760449828422403,
+      "phase": 1,
+      "migration": {
+        "amountIn": 523077474431250000000,
+        "detfOut": 1038729508,
+        "claimOut": 1025596207,
+        "sharesOut": 10255962070000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153710538270316037923232103",
+          "amountIn": "90723464400000000000",
+          "beforeRemaining": "153710628993780437923232103",
+          "claimOut": 256540628,
+          "deadline": 1789329977,
+          "minClaimOut": 255257924,
+          "principalBefore": "151970245906850316916647706",
+          "sharesOut": 2565406280000000000
+        },
+        {
+          "afterRemaining": "153710424865985537923232103",
+          "amountIn": "113404330500000000000",
+          "beforeRemaining": "153710538270316037923232103",
+          "claimOut": 256442404,
+          "deadline": 1789329977,
+          "minClaimOut": 255160191,
+          "principalBefore": "151970245906850316916647706",
+          "sharesOut": 2564424040000000000
+        },
+        {
+          "afterRemaining": "153710283110572412923232103",
+          "amountIn": "141755413125000000000",
+          "beforeRemaining": "153710424865985537923232103",
+          "claimOut": 256350108,
+          "deadline": 1789329977,
+          "minClaimOut": 255068357,
+          "principalBefore": "151970245906850316916647706",
+          "sharesOut": 2563501080000000000
+        },
+        {
+          "afterRemaining": "153710105916306006673232103",
+          "amountIn": "177194266406250000000",
+          "beforeRemaining": "153710283110572412923232103",
+          "claimOut": 256263067,
+          "deadline": 1789329977,
+          "minClaimOut": 254981751,
+          "principalBefore": "151970245906850316916647706",
+          "sharesOut": 2562630670000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x678ae9a7a84df7399df2c06d1670c0766fc81ece889614c6a145fe149216431e",
+          "blockHash": "0xe477dfca456e6e53caf1d2afb89b48b459452443ea623bf2ef69db4f9935ce11",
+          "blockNumber": "0x3b5eea7"
+        },
+        {
+          "transactionHash": "0x112003acbfc42bfc57ac2d6d52c94e181214a4e5c91a683514aa1b67034e5274",
+          "blockHash": "0xad3d4d82b474d245fca54df35df3930b8d07b07212ed1072c18a8b4723032b68",
+          "blockNumber": "0x3b5eebe"
+        },
+        {
+          "transactionHash": "0x6b797c8ce3f9949e15e3ee5353c76d52fa6e1218144edeeb96df81bea54de6f0",
+          "blockHash": "0xdf1255255bedc4363bc09e6c96a2bc494a2f5c91b2f9dae63dec3afb08ef6019",
+          "blockNumber": "0x3b5eed5"
+        },
+        {
+          "transactionHash": "0xbd61fd248f0fefeeae143274522113a95ade07532ee459584d17dea6ece105ab",
+          "blockHash": "0x506a92c11b860f20e5110095d9f51f8a7fba30b7b333d1313d8690e6fadadc67",
+          "blockNumber": "0x3b5eeed"
+        }
+      ],
+      "reserveRemaining": 153618946689145139159477091,
+      "phase": 1,
+      "migration": {
+        "amountIn": 1277044615310668945312,
+        "detfOut": 1038729508,
+        "claimOut": 1024268879,
+        "sharesOut": 10242688790000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153620002240927442015922403",
+          "amountIn": "221492833007812500000",
+          "beforeRemaining": "153620223733760449828422403",
+          "claimOut": 256180715,
+          "deadline": 1789334362,
+          "minClaimOut": 254899811,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2561807150000000000
+        },
+        {
+          "afterRemaining": "153619725374886182250297403",
+          "amountIn": "276866041259765625000",
+          "beforeRemaining": "153620002240927442015922403",
+          "claimOut": 256102575,
+          "deadline": 1789334362,
+          "minClaimOut": 254822062,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2561025750000000000
+        },
+        {
+          "afterRemaining": "153619379292334607543266153",
+          "amountIn": "346082551574707031250",
+          "beforeRemaining": "153619725374886182250297403",
+          "claimOut": 256028238,
+          "deadline": 1789334362,
+          "minClaimOut": 254748096,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2560282380000000000
+        },
+        {
+          "afterRemaining": "153618946689145139159477091",
+          "amountIn": "432603189468383789062",
+          "beforeRemaining": "153619379292334607543266153",
+          "claimOut": 255957351,
+          "deadline": 1789334362,
+          "minClaimOut": 254677564,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2559573510000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xc710a56d9d4f602c2b50f770e037059550144bddbb3ea88b429e51ac03cacc5b",
+          "blockHash": "0x9315b8a48e91a9a374974b23a5efbe9c2d8f60eaf749e67adb0960db673772ee",
+          "blockNumber": "0x3b5ff14"
+        },
+        {
+          "transactionHash": "0x3a1145d623a84f97ec1fd1d92fc6ccf29098becd1a7299d1115a427104624ab8",
+          "blockHash": "0x69e8573fc2e008fedeb7f794f9cb06f27b75e0456c3f30dd87b7427a98f7072c",
+          "blockNumber": "0x3b5ff2b"
+        },
+        {
+          "transactionHash": "0xb6451da2b6286635f0fa3cd4d534a7d090cc1ba1de2c50213f03010d1df3bace",
+          "blockHash": "0x71c371a706d19f94e05b9e4d936fe8298fe14123404e033aff3e7e5f6bf2989e",
+          "blockNumber": "0x3b5ff42"
+        },
+        {
+          "transactionHash": "0xbb8cf22d8a27863977938b6723cdeaefe09c11ec9a6121479aa4c5830c09f795",
+          "blockHash": "0x119106f898f19cabba6aa6030896057cb48678e69db5fec49f8a7138422d7739",
+          "blockNumber": "0x3b5ff59"
+        }
+      ],
+      "reserveRemaining": 153615828904439790846622326,
+      "phase": 1,
+      "migration": {
+        "amountIn": 3117784705348312854765,
+        "detfOut": 1038729508,
+        "claimOut": 1023179641,
+        "sharesOut": 10231796410000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153618405935158303679740763",
+          "amountIn": "540753986835479736328",
+          "beforeRemaining": "153618946689145139159477091",
+          "claimOut": 255889610,
+          "deadline": 1789334639,
+          "minClaimOut": 254610161,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2558896100000000000
+        },
+        {
+          "afterRemaining": "153617729992674759330070353",
+          "amountIn": "675942483544349670410",
+          "beforeRemaining": "153618405935158303679740763",
+          "claimOut": 255824748,
+          "deadline": 1789334639,
+          "minClaimOut": 254545624,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2558247480000000000
+        },
+        {
+          "afterRemaining": "153616885064570328892982341",
+          "amountIn": "844928104430437088012",
+          "beforeRemaining": "153617729992674759330070353",
+          "claimOut": 255762531,
+          "deadline": 1789334639,
+          "minClaimOut": 254483718,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2557625310000000000
+        },
+        {
+          "afterRemaining": "153615828904439790846622326",
+          "amountIn": "1056160130538046360015",
+          "beforeRemaining": "153616885064570328892982341",
+          "claimOut": 255702752,
+          "deadline": 1789334639,
+          "minClaimOut": 254424238,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2557027520000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x64758c847a12a873746f9cb6d73e0a67f67c9d813ae45fef07160673f5bebc8e",
+          "blockHash": "0xd23a0e539bc8529a6da53592669c498b6194d93c5abc897ac3726f21d6d5da89",
+          "blockNumber": "0x3b60402"
+        },
+        {
+          "transactionHash": "0x895a9846b8bfb7bc934823ef4584e6dfd4a1c53074dd320c90efc14bb5336ee6",
+          "blockHash": "0x16a3fabcd4f599c1b583afa196258cac8cd6b4ee0f20c9801e1475050ebfea42",
+          "blockNumber": "0x3b60419"
+        },
+        {
+          "transactionHash": "0x6128a1b318c6c96c8f2702fa734cd952cfbd12855bae8551ace41ce0fd1a1f01",
+          "blockHash": "0x36864d41a1672ae68c3fa318c27a811beecd909431bef66ff16adeee61d7cc4d",
+          "blockNumber": "0x3b60431"
+        },
+        {
+          "transactionHash": "0xe18e468a3e917d6e5d1505d2700bd0e9f1b80e629b763ec16a3ce4aa47229d92",
+          "blockHash": "0x521b3752cf9766d54c265cc7a13e5bd9a3b88edeb6228e90b5d20eeba5e619e7",
+          "blockNumber": "0x3b60448"
+        }
+      ],
+      "reserveRemaining": 153608217125373999067191747,
+      "phase": 1,
+      "migration": {
+        "amountIn": 7611779065791779430579,
+        "detfOut": 1038729508,
+        "claimOut": 1022255966,
+        "sharesOut": 10222559660000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153614508704276618288672307",
+          "amountIn": "1320200163172557950019",
+          "beforeRemaining": "153615828904439790846622326",
+          "claimOut": 255645228,
+          "deadline": 1789335068,
+          "minClaimOut": 254367001,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2556452280000000000
+        },
+        {
+          "afterRemaining": "153612858454072652591234783",
+          "amountIn": "1650250203965697437524",
+          "beforeRemaining": "153614508704276618288672307",
+          "claimOut": 255589796,
+          "deadline": 1789335068,
+          "minClaimOut": 254311847,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2555897960000000000
+        },
+        {
+          "afterRemaining": "153610795641317695469437878",
+          "amountIn": "2062812754957121796905",
+          "beforeRemaining": "153612858454072652591234783",
+          "claimOut": 255536308,
+          "deadline": 1789335068,
+          "minClaimOut": 254258626,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2555363080000000000
+        },
+        {
+          "afterRemaining": "153608217125373999067191747",
+          "amountIn": "2578515943696402246131",
+          "beforeRemaining": "153610795641317695469437878",
+          "claimOut": 255484634,
+          "deadline": 1789335068,
+          "minClaimOut": 254207210,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2554846340000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x24add31e6c04bbb3241b866c34ab32a208d17edc0bcfb62a327b46aa0a31dd8f",
+          "blockHash": "0x2b25fa8c7b331e157bfc4d5dce10ccb02220ac9c779efc2e583e35e2a183a81d",
+          "blockNumber": "0x3b60902"
+        },
+        {
+          "transactionHash": "0x2dd9c17c70182a9f938275f71f325583a8433e15560a8296c0bd83f9c2e6b137",
+          "blockHash": "0xcad0a3c744db69af91fa30ef08a1cd349d778b1c88b3aac3150d724179b6d6d0",
+          "blockNumber": "0x3b60919"
+        },
+        {
+          "transactionHash": "0x1b95aedc650faded127ead324059c3e23345671295ef9f3a07e4c319e658f415",
+          "blockHash": "0xa14262ef72f0fe186c2d30ac6b2ce06c63c08b3bbe34f7313777e35f6ac07b84",
+          "blockNumber": "0x3b6092f"
+        },
+        {
+          "transactionHash": "0x3b4b3944a1a7d2fd9a25a9f4c055a5aa03cc9f8a96e54b09342189ae1316bd83",
+          "blockHash": "0x19b0889e433268f933e996d35f860a07be9c01df757ddb56c0f36e64ba7886d3",
+          "blockNumber": "0x3b60946"
+        }
+      ],
+      "reserveRemaining": 153589633680389155855691310,
+      "phase": 1,
+      "migration": {
+        "amountIn": 18583444984843211500437,
+        "detfOut": 1038729508,
+        "claimOut": 1021454139,
+        "sharesOut": 10214541390000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153604993980444378564384083",
+          "amountIn": "3223144929620502807664",
+          "beforeRemaining": "153608217125373999067191747",
+          "claimOut": 255434654,
+          "deadline": 1789335192,
+          "minClaimOut": 254157480,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2554346540000000000
+        },
+        {
+          "afterRemaining": "153600965049282352935874503",
+          "amountIn": "4028931162025628509580",
+          "beforeRemaining": "153604993980444378564384083",
+          "claimOut": 255386263,
+          "deadline": 1789335192,
+          "minClaimOut": 254109331,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2553862630000000000
+        },
+        {
+          "afterRemaining": "153595928885329820900237528",
+          "amountIn": "5036163952532035636975",
+          "beforeRemaining": "153600965049282352935874503",
+          "claimOut": 255339361,
+          "deadline": 1789335192,
+          "minClaimOut": 254062664,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2553393610000000000
+        },
+        {
+          "afterRemaining": "153589633680389155855691310",
+          "amountIn": "6295204940665044546218",
+          "beforeRemaining": "153595928885329820900237528",
+          "claimOut": 255293861,
+          "deadline": 1789335192,
+          "minClaimOut": 254017391,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2552938610000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x6399e1943998fd5bb05ba14b7bd0c7a485e161bd1894488c589e23b2a1993014",
+          "blockHash": "0xb975ca2dbe58f8d632ec0cf2c2114937647cb787395da00003cf8837a950eca1",
+          "blockNumber": "0x3b6103c"
+        },
+        {
+          "transactionHash": "0x149029f64d4d3b7c1462a6731518b6a241b1586656d81deb275273a4c0d088e2",
+          "blockHash": "0xe41264cb72754073044f69b46a4459e3c12cca62b26bc2212d9204eb7fca8b35",
+          "blockNumber": "0x3b61054"
+        },
+        {
+          "transactionHash": "0x6ff1e81b8f92a2d6059f3c3f70396a4aaaa94a1334fbeeb268ca152c697756de",
+          "blockHash": "0x35e87914fb59cba4eeaf5fd00923a159cc271cc3efa595270639ede4c912bffb",
+          "blockNumber": "0x3b6106b"
+        },
+        {
+          "transactionHash": "0x51c19434fd939cbc712cdbc6a85fa817a5917a5b13140427b1d4d0494b7d3b5c",
+          "blockHash": "0x7e5cbb3f77288f9fd7f9fa740204fae9ab52b30d024f182066943635fa8aedd5",
+          "blockNumber": "0x3b61082"
+        }
+      ],
+      "reserveRemaining": 153544263941656628483864072,
+      "phase": 1,
+      "migration": {
+        "amountIn": 45369738732527371827238,
+        "detfOut": 1038729508,
+        "claimOut": 1020745766,
+        "sharesOut": 10207457660000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153581764674213324550008537",
+          "amountIn": "7869006175831305682773",
+          "beforeRemaining": "153589633680389155855691310",
+          "claimOut": 255249681,
+          "deadline": 1789335330,
+          "minClaimOut": 253973432,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2552496810000000000
+        },
+        {
+          "afterRemaining": "153571928416493535417905071",
+          "amountIn": "9836257719789132103466",
+          "beforeRemaining": "153581764674213324550008537",
+          "claimOut": 255206746,
+          "deadline": 1789335330,
+          "minClaimOut": 253930712,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2552067460000000000
+        },
+        {
+          "afterRemaining": "153559633094343799002775738",
+          "amountIn": "12295322149736415129333",
+          "beforeRemaining": "153571928416493535417905071",
+          "claimOut": 255164990,
+          "deadline": 1789335330,
+          "minClaimOut": 253889165,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2551649900000000000
+        },
+        {
+          "afterRemaining": "153544263941656628483864072",
+          "amountIn": "15369152687170518911666",
+          "beforeRemaining": "153559633094343799002775738",
+          "claimOut": 255124349,
+          "deadline": 1789335330,
+          "minClaimOut": 253848727,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2551243490000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x55e0e911145918df3b8ff65875236411a5bff3d97baa919384ad35bf98932839",
+          "blockHash": "0x563e5c96e4ba96e5380846a5f2201a6e304c9e35f944239545d0526c54a81fe9",
+          "blockNumber": "0x3b61545"
+        },
+        {
+          "transactionHash": "0xff44c99f49d344eaa94749d4fe21ff559a319c14f177a0d7342a7bb5f7d2762b",
+          "blockHash": "0xc14af3ecf2fb3a6e21cce0f96d58a344bed2190849e5c0be2e7cb12bed613716",
+          "blockNumber": "0x3b6155c"
+        },
+        {
+          "transactionHash": "0x8acf93d5d75f3464cd49fbb4c2f8145840ee4dbce3d1b5de9f1b1920407c8eda",
+          "blockHash": "0x5168893a04497f57d50aae7c5cb229dafbdc5ad787ad137b7c40ef9ce8ea9441",
+          "blockNumber": "0x3b61573"
+        },
+        {
+          "transactionHash": "0x6b2b3ddaff63ab058bf2c4e9b07c92bca1664a8c5e9aef3fa7be1ffa9ca0ca16",
+          "blockHash": "0x3f8a06a100de2007a8908215ca002db2db97304ba5f79f52c2e8caebd2905e49",
+          "blockNumber": "0x3b6158a"
+        }
+      ],
+      "reserveRemaining": 153433497977954169079988981,
+      "phase": 1,
+      "migration": {
+        "amountIn": 110765963702459403875091,
+        "detfOut": 1038729508,
+        "claimOut": 1020111350,
+        "sharesOut": 10201113500000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153525052500797665335224490",
+          "amountIn": "19211440858963148639582",
+          "beforeRemaining": "153544263941656628483864072",
+          "claimOut": 255084765,
+          "deadline": 1789335513,
+          "minClaimOut": 253809341,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2550847650000000000
+        },
+        {
+          "afterRemaining": "153501038199723961399425012",
+          "amountIn": "24014301073703935799478",
+          "beforeRemaining": "153525052500797665335224490",
+          "claimOut": 255046185,
+          "deadline": 1789335513,
+          "minClaimOut": 253770954,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2550461850000000000
+        },
+        {
+          "afterRemaining": "153471020323381831479675665",
+          "amountIn": "30017876342129919749347",
+          "beforeRemaining": "153501038199723961399425012",
+          "claimOut": 255008559,
+          "deadline": 1789335513,
+          "minClaimOut": 253733516,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2550085590000000000
+        },
+        {
+          "afterRemaining": "153433497977954169079988981",
+          "amountIn": "37522345427662399686684",
+          "beforeRemaining": "153471020323381831479675665",
+          "claimOut": 254971841,
+          "deadline": 1789335513,
+          "minClaimOut": 253696981,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2549718410000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xdbcfa2fe91589daa1b04312900b4f7acbb27cbec3c5e14b383a2c7404c4c2354",
+          "blockHash": "0xbd01f0cf7a8e28107f8a9f9805a4c3ed5f6378f4633cb6fdfa44f22c91d25093",
+          "blockNumber": "0x3b676f0"
+        },
+        {
+          "transactionHash": "0xfffad07321cc58f2cf998a2682f3e5a698654e5cd0c19e0d6d5d9f6563649446",
+          "blockHash": "0x01918abeef72e4078e5c95a2ac89416ce52e19a6b645e1c0285c0ef4624bd069",
+          "blockNumber": "0x3b67707"
+        },
+        {
+          "transactionHash": "0x70b8773ae099d196c1945a82bc32f24da7e21bf041090509a4c1850dcd75dfdf",
+          "blockHash": "0xfc64f99c0f31b59bdac6c6adaf0f1f0249e6e2006f070b5b0d763899401243d6",
+          "blockNumber": "0x3b6771e"
+        },
+        {
+          "transactionHash": "0xaf9d68a4b6796ffe5379adfdaabacb0c47f825fd3c6a769680813373b42a2840",
+          "blockHash": "0x3b5ade8973f287d4a3c782894a519cc274346f43eba271d2d15cffa1dc0a9e7a",
+          "blockNumber": "0x3b67736"
+        }
+      ],
+      "reserveRemaining": 153374935924829334988863990,
+      "phase": 1,
+      "migration": {
+        "amountIn": 58562053124834091124991,
+        "detfOut": 1038729508,
+        "claimOut": 1019536921,
+        "sharesOut": 10195369210000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153423340873889157205105514",
+          "amountIn": "10157104065011874883467",
+          "beforeRemaining": "153433497977954169079988981",
+          "claimOut": 254935989,
+          "deadline": 1789337698,
+          "minClaimOut": 253661309,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2549359890000000000
+        },
+        {
+          "afterRemaining": "153410644493807892361501180",
+          "amountIn": "12696380081264843604334",
+          "beforeRemaining": "153423340873889157205105514",
+          "claimOut": 254900963,
+          "deadline": 1789337698,
+          "minClaimOut": 253626458,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2549009630000000000
+        },
+        {
+          "afterRemaining": "153394774018706311306995762",
+          "amountIn": "15870475101581054505418",
+          "beforeRemaining": "153410644493807892361501180",
+          "claimOut": 254866726,
+          "deadline": 1789337698,
+          "minClaimOut": 253592392,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2548667260000000000
+        },
+        {
+          "afterRemaining": "153374935924829334988863990",
+          "amountIn": "19838093876976318131772",
+          "beforeRemaining": "153394774018706311306995762",
+          "claimOut": 254833243,
+          "deadline": 1789337698,
+          "minClaimOut": 253559076,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 2548332430000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x49e105abfa7fc5c61871602517334dc95a0ec4b0fcb9180bb18ebd2d22daa386",
+          "blockHash": "0xf14794ac7b483de752cef0e3eefaf57552a4c2d29bcb36677d6f109c226fc4b5",
+          "blockNumber": "0x3b783ed"
+        },
+        {
+          "transactionHash": "0xd34e96fd364029598d5fbfc6f1d436196545f58e4bda3992acfe83c256b51416",
+          "blockHash": "0xabe7714c65b40dea4c50d5287b13f9b3ec7635f3f69f04dc4fb3359f63251b00",
+          "blockNumber": "0x3b78406"
+        },
+        {
+          "transactionHash": "0xea7eb85677cd41aebb48990b08e8b1d3c7c2726edec3c40efb856ad40658eedc",
+          "blockHash": "0xafdd12363d684f5affe5aa3c528bebf8bddb60e0d24201b3b4c3471168660112",
+          "blockNumber": "0x3b78420"
+        },
+        {
+          "transactionHash": "0xfb7ccc22398352288543b7a7bb384b28dd29cbe997b3c9265cceafd419c69666",
+          "blockHash": "0xc0c6abd83284d405f3f2444d5c79b12915834cbefbddf3ba353d8cf69a94d920",
+          "blockNumber": "0x3b7843b"
+        }
+      ],
+      "reserveRemaining": 153323682246231493676629783,
+      "phase": 1,
+      "migration": {
+        "amountIn": 51253678597841312234207,
+        "detfOut": 6498520072,
+        "claimOut": 6160599285,
+        "sharesOut": 61605992850000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153363044464930180947569548",
+          "amountIn": "11891459899154041294442",
+          "beforeRemaining": "153374935924829334988863990",
+          "claimOut": 1540937584,
+          "deadline": 1789344994,
+          "minClaimOut": 1533232896,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15409375840000000000
+        },
+        {
+          "afterRemaining": "153350558432036069204210384",
+          "amountIn": "12486032894111743359164",
+          "beforeRemaining": "153363044464930180947569548",
+          "claimOut": 1540392602,
+          "deadline": 1789344994,
+          "minClaimOut": 1532690638,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15403926020000000000
+        },
+        {
+          "afterRemaining": "153337448097497251873683262",
+          "amountIn": "13110334538817330527122",
+          "beforeRemaining": "153350558432036069204210384",
+          "claimOut": 1539878137,
+          "deadline": 1789344994,
+          "minClaimOut": 1532178746,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15398781370000000000
+        },
+        {
+          "afterRemaining": "153323682246231493676629783",
+          "amountIn": "13765851265758197053479",
+          "beforeRemaining": "153337448097497251873683262",
+          "claimOut": 1539390962,
+          "deadline": 1789344994,
+          "minClaimOut": 1531694007,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15393909620000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xe3255ab70758d78d7000f6590a2e456da69d8ac8b080488e39ca2e037fe1672c",
+          "blockHash": "0x31ff2682a335657483fdabe0730e4ad0a9a382eb237c59ad171eefb6d66e1a83",
+          "blockNumber": "0x3b7a0c3"
+        },
+        {
+          "transactionHash": "0x1f239d9e1727c16c18cf6b96db7184c445cd58af318018ab38c5632ab2850d7d",
+          "blockHash": "0x08f20b5cf8177afcbe5d54d865ee92b69aaa2b554074f1a2c3f4b71462db892e",
+          "blockNumber": "0x3b7a0db"
+        },
+        {
+          "transactionHash": "0x368596ea735ed135caf90c4bdd96745ab80b93c8a3cc808ae9c6a29c20ad0f93",
+          "blockHash": "0x68c699d2ccd1e82c26d0bfc23e9f8c3e7a22b215af9aeda49dc31c3f3df7a332",
+          "blockNumber": "0x3b7a0f3"
+        },
+        {
+          "transactionHash": "0xc2b676396108febeca220968783c74ca4b2be7e12b9f461ed3c5c398e1c95eb3",
+          "blockHash": "0x26edf62795cd7620b8922eb9257a0b3772c8a7f4be28d0014ac29edebe3ce7cd",
+          "blockNumber": "0x3b7a10a"
+        }
+      ],
+      "reserveRemaining": 153261383079560326325100902,
+      "phase": 1,
+      "migration": {
+        "amountIn": 62299166671167351528881,
+        "detfOut": 6498520072,
+        "claimOut": 6153149697,
+        "sharesOut": 61531496970000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153309228102402447569723630",
+          "amountIn": "14454143829046106906153",
+          "beforeRemaining": "153323682246231493676629783",
+          "claimOut": 1538928335,
+          "deadline": 1789345164,
+          "minClaimOut": 1531233693,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15389283350000000000
+        },
+        {
+          "afterRemaining": "153294051251381949157472170",
+          "amountIn": "15176851020498412251460",
+          "beforeRemaining": "153309228102402447569723630",
+          "claimOut": 1538487907,
+          "deadline": 1789345164,
+          "minClaimOut": 1530795467,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15384879070000000000
+        },
+        {
+          "afterRemaining": "153278115557810425824608137",
+          "amountIn": "15935693571523332864033",
+          "beforeRemaining": "153294051251381949157472170",
+          "claimOut": 1538067651,
+          "deadline": 1789345164,
+          "minClaimOut": 1530377312,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15380676510000000000
+        },
+        {
+          "afterRemaining": "153261383079560326325100902",
+          "amountIn": "16732478250099499507235",
+          "beforeRemaining": "153278115557810425824608137",
+          "claimOut": 1537665804,
+          "deadline": 1789345164,
+          "minClaimOut": 1529977474,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15376658040000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x113307486d5e4215f754d5f60c3ba19b993ebf85fcecba1e9128ab429b20690c",
+          "blockHash": "0x8fed5bcfeafced3705187aba311d77eb48af3a7b552191213e983361f2ccd0b8",
+          "blockNumber": "0x3b7ac8d"
+        },
+        {
+          "transactionHash": "0xf8c1690c70d949d5b0e3cc025576478c82ab2af53cc295b7a5c07dd63a4d6dd2",
+          "blockHash": "0xe641e299a792721be69368dd0f71c1d2fab0d3e4230c37cc4e9f8ee9bcda6793",
+          "blockNumber": "0x3b7aca6"
+        },
+        {
+          "transactionHash": "0x231ef3d4289b52c46d951ddbde240babadf78bc50b38ee6f5a0914509a6929a0",
+          "blockHash": "0x79f30a36abb52bfa2db842795e8e2ffad978dbdc864233d753c56069796cb71d",
+          "blockNumber": "0x3b7acbe"
+        },
+        {
+          "transactionHash": "0xf27a70fc6b65b84ef0e79f23a55ab82ed39702e56c071c226a6f21eb7c1bcdb8",
+          "blockHash": "0x13ad70c3e80834afc6f4009622859901b03e026bbf7870b9b69a7cc84e18d90d",
+          "blockNumber": "0x3b7acd7"
+        }
+      ],
+      "reserveRemaining": 153185658053101730714521600,
+      "phase": 1,
+      "migration": {
+        "amountIn": 75725026458595610579302,
+        "detfOut": 6498520072,
+        "claimOut": 6146962711,
+        "sharesOut": 61469627110000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153243813977397721850618305",
+          "amountIn": "17569102162604474482597",
+          "beforeRemaining": "153261383079560326325100902",
+          "claimOut": 1537280826,
+          "deadline": 1789345915,
+          "minClaimOut": 1529594421,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15372808260000000000
+        },
+        {
+          "afterRemaining": "153225366420126987152411579",
+          "amountIn": "18447557270734698206726",
+          "beforeRemaining": "153243813977397721850618305",
+          "claimOut": 1536911362,
+          "deadline": 1789345915,
+          "minClaimOut": 1529226805,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15369113620000000000
+        },
+        {
+          "afterRemaining": "153205996484992715719294516",
+          "amountIn": "19369935134271433117063",
+          "beforeRemaining": "153225366420126987152411579",
+          "claimOut": 1536556212,
+          "deadline": 1789345915,
+          "minClaimOut": 1528873430,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15365562120000000000
+        },
+        {
+          "afterRemaining": "153185658053101730714521600",
+          "amountIn": "20338431890985004772916",
+          "beforeRemaining": "153205996484992715719294516",
+          "claimOut": 1536214311,
+          "deadline": 1789345915,
+          "minClaimOut": 1528533239,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15362143110000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x9c8e64c2681009a8454ed4e7b99f1477bd0bbdcb52d4593532fe342e3827a79d",
+          "blockHash": "0x5dff6cbe1f12fe24821b1a6aed0918428bc7ca867dce8b709ee3b2735463183c",
+          "blockNumber": "0x3b7ba1f"
+        },
+        {
+          "transactionHash": "0x860b26597e09d61d6f3c8988d2b1c4367ddb3e9a92d371108a369bb9666f8b96",
+          "blockHash": "0xa7de577fb21fada50a5fa6dd16df4966b6eca44822da2ce223ec050d9d0d15b8",
+          "blockNumber": "0x3b7ba2b"
+        },
+        {
+          "transactionHash": "0x5f56f3920f7801be5799a0cf6d139f38ce8e1d2628dc53a758dfd1415b9b23bf",
+          "blockHash": "0x915a416fe52f39ca029b5fa5b345d282da0d3e7bb2ff5c7348896b6ebdb821d2",
+          "blockNumber": "0x3b7ba42"
+        },
+        {
+          "transactionHash": "0xbfe01ad343e0734a4948bb49e6b82973490e6e9553efbdcd8762b16737a136d0",
+          "blockHash": "0xea208351850aafe0f0b3790bc10d0ac57b9970df79ab96ecd24c6e0b3666a8ce",
+          "blockNumber": "0x3b7ba59"
+        }
+      ],
+      "reserveRemaining": 153093613810159892383639892,
+      "phase": 1,
+      "migration": {
+        "amountIn": 92044242941838330881708,
+        "detfOut": 6498520072,
+        "claimOut": 6141671955,
+        "sharesOut": 61416719550000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153164302699616196459510038",
+          "amountIn": "21355353485534255011562",
+          "beforeRemaining": "153185658053101730714521600",
+          "claimOut": 1535884711,
+          "deadline": 1789346219,
+          "minClaimOut": 1528205287,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15358847110000000000
+        },
+        {
+          "afterRemaining": "153141879578456385491747898",
+          "amountIn": "22423121159810967762140",
+          "beforeRemaining": "153164302699616196459510038",
+          "claimOut": 1535566557,
+          "deadline": 1789346219,
+          "minClaimOut": 1527888724,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15355665570000000000
+        },
+        {
+          "afterRemaining": "153118335301238583975597651",
+          "amountIn": "23544277217801516150247",
+          "beforeRemaining": "153141879578456385491747898",
+          "claimOut": 1535259085,
+          "deadline": 1789346219,
+          "minClaimOut": 1527582789,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15352590850000000000
+        },
+        {
+          "afterRemaining": "153093613810159892383639892",
+          "amountIn": "24721491078691591957759",
+          "beforeRemaining": "153118335301238583975597651",
+          "claimOut": 1534961602,
+          "deadline": 1789346219,
+          "minClaimOut": 1527286793,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15349616020000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xc9372d0082b6913d070c0123887320ce2a07f6263f2b957e13097770a0e322da",
+          "blockHash": "0x8d14052d2a34b7fdff1ea460b31df1f9903073dc6e7f062aea663204e43a5feb",
+          "blockNumber": "0x3b7c416"
+        },
+        {
+          "transactionHash": "0x857843ebfdb753b61870f587c5916e748f2fbf568592f2725620940a54146b0b",
+          "blockHash": "0xdd62c02eb36bdb390104c4c7aac0d09899f04b66bfff0c45c818042a23cb2690",
+          "blockNumber": "0x3b7c42d"
+        },
+        {
+          "transactionHash": "0xf7422a239758865e45e203986ec69d71adcdaf86e25f83f107067c53105855f7",
+          "blockHash": "0x9b91a4049fc98f37e0b5954a6e32ab892fb31bcef9ce5b2131cc6129b50095d4",
+          "blockNumber": "0x3b7c444"
+        },
+        {
+          "transactionHash": "0x08647bc824736bbab7536fb1f88974edb90a1599846313e73618cf976d82bf35",
+          "blockHash": "0x7dfb90ff1f30b353b7b2ccd3e553b127ab7449a90d570638917509e9c3cc333c",
+          "blockNumber": "0x3b7c45b"
+        }
+      ],
+      "reserveRemaining": 152981733457587569505963609,
+      "phase": 1,
+      "migration": {
+        "amountIn": 111880352572322877676283,
+        "detfOut": 6498520072,
+        "claimOut": 6137050579,
+        "sharesOut": 61370505790000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "153067656244527266212084245",
+          "amountIn": "25957565632626171555647",
+          "beforeRemaining": "153093613810159892383639892",
+          "claimOut": 1534673482,
+          "deadline": 1789346568,
+          "minClaimOut": 1527000114,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15346734820000000000
+        },
+        {
+          "afterRemaining": "153040400800613008731950816",
+          "amountIn": "27255443914257480133429",
+          "beforeRemaining": "153067656244527266212084245",
+          "claimOut": 1534394154,
+          "deadline": 1789346568,
+          "minClaimOut": 1526722183,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15343941540000000000
+        },
+        {
+          "afterRemaining": "153011782584503038377810715",
+          "amountIn": "28618216109970354140101",
+          "beforeRemaining": "153040400800613008731950816",
+          "claimOut": 1534123099,
+          "deadline": 1789346568,
+          "minClaimOut": 1526452483,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15341230990000000000
+        },
+        {
+          "afterRemaining": "152981733457587569505963609",
+          "amountIn": "30049126915468871847106",
+          "beforeRemaining": "153011782584503038377810715",
+          "claimOut": 1533859844,
+          "deadline": 1789346568,
+          "minClaimOut": 1526190544,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15338598440000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xe4f90412b3d0a74b9c150c5ed268801e837b968bec014aad6736d9af88b6af92",
+          "blockHash": "0xac5f8d5ece7f9c146aa94c38053c8aa6d6bc3310be70ba47b78fbf08c80e2424",
+          "blockNumber": "0x3b7db63"
+        },
+        {
+          "transactionHash": "0xdc8b78a7b824461f73c447a4ca123d65e3bf84bd340119347af98452f4746d9e",
+          "blockHash": "0x67f3d66febaa1118256e12bbf45bfad4301f0424e5000926996d9b3838fb03b0",
+          "blockNumber": "0x3b7db7c"
+        },
+        {
+          "transactionHash": "0xcac134b9d6f5c3d2bc2623f91889797e0341fd0650792b6191a6de50b55d1523",
+          "blockHash": "0xf580d58860e3757af4a39a0723e4b27abf2176dfd48aa394c96f28dab69f5d39",
+          "blockNumber": "0x3b7db93"
+        },
+        {
+          "transactionHash": "0x06ce2c3a949093f8c6f26265e2e75e7a6219a6ef111cd9266da2eae61d000f38",
+          "blockHash": "0x9790ac4c6d1c5b7307b141f5c853974a7abb90511548d48ab8c3faea1b71998a",
+          "blockNumber": "0x3b7dbaa"
+        }
+      ],
+      "reserveRemaining": 152845742189783707471130102,
+      "phase": 1,
+      "migration": {
+        "amountIn": 135991267803862034833507,
+        "detfOut": 6882066270,
+        "claimOut": 6494766678,
+        "sharesOut": 64947666780000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "152950181874326327190524148",
+          "amountIn": "31551583261242315439461",
+          "beforeRemaining": "152981733457587569505963609",
+          "claimOut": 1533603952,
+          "deadline": 1789346826,
+          "minClaimOut": 1525935932,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15336039520000000000
+        },
+        {
+          "afterRemaining": "152917052711902022759312714",
+          "amountIn": "33129162424304431211434",
+          "beforeRemaining": "152950181874326327190524148",
+          "claimOut": 1533355023,
+          "deadline": 1789346826,
+          "minClaimOut": 1525688247,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15333550230000000000
+        },
+        {
+          "afterRemaining": "152882267091356503106540708",
+          "amountIn": "34785620545519652772006",
+          "beforeRemaining": "152917052711902022759312714",
+          "claimOut": 1533112692,
+          "deadline": 1789346826,
+          "minClaimOut": 1525447128,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15331126920000000000
+        },
+        {
+          "afterRemaining": "152845742189783707471130102",
+          "amountIn": "36524901572795635410606",
+          "beforeRemaining": "152882267091356503106540708",
+          "claimOut": 1532876616,
+          "deadline": 1789346826,
+          "minClaimOut": 1525212232,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15328766160000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x830e8259ebc6e9c375af2519d83a9332d4a0742ff7f22c2cb6df9966f7bd7e31",
+          "blockHash": "0xc8024c4fc06a907203a7fcb97273d26ebafb51651ee7d6786720d955b0fefa5d",
+          "blockNumber": "0x3b7ec09"
+        },
+        {
+          "transactionHash": "0xb3b787f64ca00cbd98704ff570851a9d6a9e281463115749e80e5fc3c3ca6918",
+          "blockHash": "0xd52139eb78cd9587e48b6a43f0e317fa8d9dc03b4aad214806221c3e03553b58",
+          "blockNumber": "0x3b7ec21"
+        },
+        {
+          "transactionHash": "0x1850038876509e10d270f78baa9b711a0f0c9b1d6e5d69f7579ab01bc90caf56",
+          "blockHash": "0x3ca0258aee14c507e6e0e35a840cdcae124e21a09051bcd17d9c9a5bcf7417ea",
+          "blockNumber": "0x3b7ec38"
+        },
+        {
+          "transactionHash": "0x1a16fa3e350cee58d7665ac465d82df45fe0917f7ae2e34beb4918dd95ba1024",
+          "blockHash": "0xa05bee06c17806804c85db0f6a4a948d5dc3cb0fc189234e44ad82cceb7eef86",
+          "blockNumber": "0x3b7ec4f"
+        }
+      ],
+      "reserveRemaining": 152698672558878279359022500,
+      "phase": 1,
+      "migration": {
+        "amountIn": 147069630905428112107602,
+        "detfOut": 6498520072,
+        "claimOut": 6129050632,
+        "sharesOut": 61290506320000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "152811620295197024228275753",
+          "amountIn": "34121894586683242854349",
+          "beforeRemaining": "152845742189783707471130102",
+          "claimOut": 1532592180,
+          "deadline": 1789347440,
+          "minClaimOut": 1524929219,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15325921800000000000
+        },
+        {
+          "afterRemaining": "152775792305881006823278686",
+          "amountIn": "35827989316017404997067",
+          "beforeRemaining": "152811620295197024228275753",
+          "claimOut": 1532368993,
+          "deadline": 1789347440,
+          "minClaimOut": 1524707148,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15323689930000000000
+        },
+        {
+          "afterRemaining": "152738172917099188548031766",
+          "amountIn": "37619388781818275246920",
+          "beforeRemaining": "152775792305881006823278686",
+          "claimOut": 1532151126,
+          "deadline": 1789347440,
+          "minClaimOut": 1524490370,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15321511260000000000
+        },
+        {
+          "afterRemaining": "152698672558878279359022500",
+          "amountIn": "39500358220909189009266",
+          "beforeRemaining": "152738172917099188548031766",
+          "claimOut": 1531938333,
+          "deadline": 1789347440,
+          "minClaimOut": 1524278641,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15319383330000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x269395b709d26f0a143f7674407c228771eb88cc70303a5b51e080da7b9a0443",
+          "blockHash": "0x8f34398e9d6735a434127ead52a15d8f0e01ac1a248e595ccafdaf76febc847e",
+          "blockNumber": "0x3b7f0c0"
+        },
+        {
+          "transactionHash": "0x2e570f88ffac2e5cc72febe0ec5bc654f9ef0cc896e7c17a6e2e26849fe0ec04",
+          "blockHash": "0xbe9e49bb7917701a7724e084ea65b9faf406a8274c1374341496259a0a1e7484",
+          "blockNumber": "0x3b7f0d7"
+        },
+        {
+          "transactionHash": "0x85d6904115300262a7545425b32b80d107a30f41fdc9f65f45c5cb4f7ae8c62f",
+          "blockHash": "0x4fab60b9a818a7bb079d1d5e11a600cbdfbc52af3f5907669e689f15fbfc48ad",
+          "blockNumber": "0x3b7f0ef"
+        },
+        {
+          "transactionHash": "0xb49d44655bb082e8d1ef6aeee63fe356a188aec8f66b5d10bce0a275af850f8d",
+          "blockHash": "0x7fc0370b337febd2b894c3ad4945333eb0f70b590f201161daead95b3e6b1b0f",
+          "blockNumber": "0x3b7f106"
+        }
+      ],
+      "reserveRemaining": 152529822123260094075821335,
+      "phase": 1,
+      "migration": {
+        "amountIn": 168850435618185283201165,
+        "detfOut": 6581029167,
+        "claimOut": 6203469475,
+        "sharesOut": 62034694750000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "152659497259874611186243018",
+          "amountIn": "39175299003668172779482",
+          "beforeRemaining": "152698672558878279359022500",
+          "claimOut": 1531730382,
+          "deadline": 1789347866,
+          "minClaimOut": 1524071730,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15317303820000000000
+        },
+        {
+          "afterRemaining": "152618363195920759604824562",
+          "amountIn": "41134063953851581418456",
+          "beforeRemaining": "152659497259874611186243018",
+          "claimOut": 1531527060,
+          "deadline": 1789347866,
+          "minClaimOut": 1523869424,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15315270600000000000
+        },
+        {
+          "afterRemaining": "152575172428769215444335183",
+          "amountIn": "43190767151544160489379",
+          "beforeRemaining": "152618363195920759604824562",
+          "claimOut": 1531328165,
+          "deadline": 1789347866,
+          "minClaimOut": 1523671524,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15313281650000000000
+        },
+        {
+          "afterRemaining": "152529822123260094075821335",
+          "amountIn": "45350305509121368513848",
+          "beforeRemaining": "152575172428769215444335183",
+          "claimOut": 1531133509,
+          "deadline": 1789347866,
+          "minClaimOut": 1523477841,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15311335090000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x8c441bd3ff7fdba1cbe7ca871e117cd274838d44fb9137e4807335b9989fb42e",
+          "blockHash": "0x47e41af643e67e256dfb994d8a61705facd5c944631e95565510ca6a8f65703a",
+          "blockNumber": "0x3b7f59d"
+        },
+        {
+          "transactionHash": "0xffae1141250271be43970f52ce134181bd47ef26dd8d6c6ad13349719f03c132",
+          "blockHash": "0x6de4070e5d154864785b22996e619c0c0236cfb0caa166cca18e1b6fbf561d7c",
+          "blockNumber": "0x3b7f5b5"
+        },
+        {
+          "transactionHash": "0x4f756abe0304dd97e207ac6e80ad74d8bd1aaa6efc978d1867065b4653e5b83f",
+          "blockHash": "0xc307118c2574118edc8f2a1765a80329b6d3d361d250c4c78fff4bb52341fa2d",
+          "blockNumber": "0x3b7f5cd"
+        },
+        {
+          "transactionHash": "0x1eb26158d8a82045082cbe4b6a91555c175b92d2925009f8bfb493c5274b5da5",
+          "blockHash": "0x91634ec3bdc2eaec35aa5d2100cf997f7ce230e0c705dda0259f5da61388384a",
+          "blockNumber": "0x3b7f5e4"
+        }
+      ],
+      "reserveRemaining": 152334344937269658226234173,
+      "phase": 1,
+      "migration": {
+        "amountIn": 195477185990435849587162,
+        "detfOut": 6644092759,
+        "claimOut": 6259739381,
+        "sharesOut": 62597393810000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "152484469103106285114460084",
+          "amountIn": "45353020153808961361251",
+          "beforeRemaining": "152529822123260094075821335",
+          "claimOut": 1530933233,
+          "deadline": 1789347992,
+          "minClaimOut": 1523278566,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15309332330000000000
+        },
+        {
+          "afterRemaining": "152436848431944785705030770",
+          "amountIn": "47620671161499409429314",
+          "beforeRemaining": "152484469103106285114460084",
+          "claimOut": 1530746731,
+          "deadline": 1789347992,
+          "minClaimOut": 1523092997,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15307467310000000000
+        },
+        {
+          "afterRemaining": "152386846727225211325129991",
+          "amountIn": "50001704719574379900779",
+          "beforeRemaining": "152436848431944785705030770",
+          "claimOut": 1530563962,
+          "deadline": 1789347992,
+          "minClaimOut": 1522911142,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15305639620000000000
+        },
+        {
+          "afterRemaining": "152334344937269658226234173",
+          "amountIn": "52501789955553098895818",
+          "beforeRemaining": "152386846727225211325129991",
+          "claimOut": 1530384780,
+          "deadline": 1789347992,
+          "minClaimOut": 1522732856,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15303847800000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x60bbb94e3a2a2575220cb37afdf63234769b3a0b8d89af89f147788163ee1682",
+          "blockHash": "0x430b75072f512eeba73a61c4a777bbe34bbff142cb331db02e273baed63eeccf",
+          "blockNumber": "0x3b80928"
+        },
+        {
+          "transactionHash": "0x3a31df011a807db03e3d246df687a02515e79e40a39bab585ebddb53c0fd1e23",
+          "blockHash": "0xc85305bb3204042dbf73e71d0d695361f3cc384068fdeb5f22f64f0754417a40",
+          "blockNumber": "0x3b80940"
+        },
+        {
+          "transactionHash": "0x14de88abcb8f4983a0904b778ee0740834e366091af64d83bf040f873fb389c3",
+          "blockHash": "0x5a03969d89bcaaf36ee67c4d9318a8d68595ecaa7c0fe66bba636993da384cec",
+          "blockNumber": "0x3b8095a"
+        },
+        {
+          "transactionHash": "0x4f66e2a8b74c517b29c30e4b86625e88922fbadccfcdd584137c5a87b7dbb2de",
+          "blockHash": "0xb7e54632cb7c59f321afbeb81f14c85b5c1843c5f5291d1a49bc556d1032e110",
+          "blockNumber": "0x3b80971"
+        }
+      ],
+      "reserveRemaining": 152112520431663224953148187,
+      "phase": 1,
+      "migration": {
+        "amountIn": 221824505606433273085986,
+        "detfOut": 6607026398,
+        "claimOut": 6221906575,
+        "sharesOut": 62219065750000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "152282879027207552539488200",
+          "amountIn": "51465910062105686745973",
+          "beforeRemaining": "152334344937269658226234173",
+          "claimOut": 1530193302,
+          "deadline": 1789348115,
+          "minClaimOut": 1522542335,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15301933020000000000
+        },
+        {
+          "afterRemaining": "152228839821642341568404929",
+          "amountIn": "54039205565210971083271",
+          "beforeRemaining": "152282879027207552539488200",
+          "claimOut": 1530021181,
+          "deadline": 1789348115,
+          "minClaimOut": 1522371075,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15300211810000000000
+        },
+        {
+          "afterRemaining": "152172098655798870048767494",
+          "amountIn": "56741165843471519637435",
+          "beforeRemaining": "152228839821642341568404929",
+          "claimOut": 1529852247,
+          "deadline": 1789348115,
+          "minClaimOut": 1522202985,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15298522470000000000
+        },
+        {
+          "afterRemaining": "152112520431663224953148187",
+          "amountIn": "59578224135645095619307",
+          "beforeRemaining": "152172098655798870048767494",
+          "claimOut": 1529686384,
+          "deadline": 1789348115,
+          "minClaimOut": 1522037952,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15296863840000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x697d07f32e9eecd45d15423b0d8b13d17e581a526f2d644f4c60897a6691fe50",
+          "blockHash": "0xcbda0e460cba8ef9f65a916d23705a175e0366d1e97954a7e3b71f5b2e4f2348",
+          "blockNumber": "0x3b80e23"
+        },
+        {
+          "transactionHash": "0xaf8815cbf7d5f1c264f1272e053de66d9331f244d7db0ce35969f0170c67c919",
+          "blockHash": "0x902f8c7b3b72c43a2b79cd337e55c3ada047bc964a71c95685fc92e28a4dc5e0",
+          "blockNumber": "0x3b80e3b"
+        },
+        {
+          "transactionHash": "0xe2efae0366953ce8d8b7364f3988521a813fb90d3e1c2e6a9d79e0040e3bac4e",
+          "blockHash": "0xb03021ca64739c95e38df1ef833940271cca619cb064376e1907a4d405487224",
+          "blockNumber": "0x3b80e53"
+        },
+        {
+          "transactionHash": "0x871d907bd653cb8b007c7b05f45c6a2228865593e170793afbd153819f193789",
+          "blockHash": "0xae8e6ee1f200f90a32d249d027a466b6e83aea475dc3dfb22fdcda0c9b3e0d22",
+          "blockNumber": "0x3b80e6b"
+        }
+      ],
+      "reserveRemaining": 151854603387085405280857406,
+      "phase": 1,
+      "migration": {
+        "amountIn": 257917044577819672290781,
+        "detfOut": 6642754436,
+        "claimOut": 6252835451,
+        "sharesOut": 62528354510000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "152052680625491056008560552",
+          "amountIn": "59839806172168944587635",
+          "beforeRemaining": "152112520431663224953148187",
+          "claimOut": 1529512601,
+          "deadline": 1789348623,
+          "minClaimOut": 1521865037,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15295126010000000000
+        },
+        {
+          "afterRemaining": "151989848829010278616743535",
+          "amountIn": "62831796480777391817017",
+          "beforeRemaining": "152052680625491056008560552",
+          "claimOut": 1529352745,
+          "deadline": 1789348623,
+          "minClaimOut": 1521705981,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15293527450000000000
+        },
+        {
+          "afterRemaining": "151923875442705462355335667",
+          "amountIn": "65973386304816261407868",
+          "beforeRemaining": "151989848829010278616743535",
+          "claimOut": 1529195642,
+          "deadline": 1789348623,
+          "minClaimOut": 1521549663,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15291956420000000000
+        },
+        {
+          "afterRemaining": "151854603387085405280857406",
+          "amountIn": "69272055620057074478261",
+          "beforeRemaining": "151923875442705462355335667",
+          "claimOut": 1529041199,
+          "deadline": 1789348623,
+          "minClaimOut": 1521395993,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15290411990000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x5b6ffdc95c52ff0002384658fc10f390e79510bb4c8760520d0217162b24e641",
+          "blockHash": "0xc2abf2709febe597bde47151d4ab62f1f48d19d4897dee53cd231b04d50f6663",
+          "blockNumber": "0x3b81b66"
+        },
+        {
+          "transactionHash": "0xe0df763df5b31b7f21cf66500fea618b04847dd189ffd7fbeb09476dd778e6e3",
+          "blockHash": "0x48284604a46eccb8c246c508a4cbdb1d65f049baea36ed9d8ec9ecff8e9396d5",
+          "blockNumber": "0x3b81b7c"
+        },
+        {
+          "transactionHash": "0x1605125f1a870a50d766dc20a8bdf40a1b814ba08d675bfe97d79bcfdb69138b",
+          "blockHash": "0xfc9efd342bc2bff2568f52b84dea898591933e62f39ef49edf982b5a1d5e14ee",
+          "blockNumber": "0x3b81b93"
+        },
+        {
+          "transactionHash": "0x4bb1b722dfc8e04ee761a230beccf1d78983161066fed6a0a0c301c5cf9d4317",
+          "blockHash": "0xe62a687eaf532779b1736cde3d34c73ccaf1768dc29ffa34a8d4f4d3892c1af7",
+          "blockNumber": "0x3b81baa"
+        }
+      ],
+      "reserveRemaining": 151550825589631943371203912,
+      "phase": 1,
+      "migration": {
+        "amountIn": 303777797453461909653494,
+        "detfOut": 6852812421,
+        "claimOut": 6447896041,
+        "sharesOut": 64478960410000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "151784123343593984055335294",
+          "amountIn": "70480043491421225522112",
+          "beforeRemaining": "151854603387085405280857406",
+          "claimOut": 1528875846,
+          "deadline": 1789348762,
+          "minClaimOut": 1521231466,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15288758460000000000
+        },
+        {
+          "afterRemaining": "151710119297927991768537076",
+          "amountIn": "74004045665992286798218",
+          "beforeRemaining": "151784123343593984055335294",
+          "claimOut": 1528726680,
+          "deadline": 1789348762,
+          "minClaimOut": 1521083046,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15287266800000000000
+        },
+        {
+          "afterRemaining": "151632415049978699867398947",
+          "amountIn": "77704247949291901138129",
+          "beforeRemaining": "151710119297927991768537076",
+          "claimOut": 1528579915,
+          "deadline": 1789348762,
+          "minClaimOut": 1520937015,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15285799150000000000
+        },
+        {
+          "afterRemaining": "151550825589631943371203912",
+          "amountIn": "81589460346756496195035",
+          "beforeRemaining": "151632415049978699867398947",
+          "claimOut": 1528435476,
+          "deadline": 1789348762,
+          "minClaimOut": 1520793298,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15284354760000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x2cdadc375476c8438dcb3941c0326ec112b62c2ba8e6c09ac65883d3a3a80594",
+          "blockHash": "0x1e397bb8d4a44c1c259c629affc87f771ab5201c84ba89a8a26ce2a5bd52db68",
+          "blockNumber": "0x3b82065"
+        },
+        {
+          "transactionHash": "0x55694d369cac619c7cc73d830059e49b1a71719a98e92f61af2c0d36190f546e",
+          "blockHash": "0x5aeb9087d5d1043ee31386d2c35e71238d6d10cf0da1f8361ad5a023be6a013f",
+          "blockNumber": "0x3b8207c"
+        },
+        {
+          "transactionHash": "0xcde55464d50beab369f5b4613dc123121ba0128ddabf58476277f755acc89450",
+          "blockHash": "0xefc0fd5260c4ca6ad1fcfef7a36b271858da0238a90d544cb16b0d102a880735",
+          "blockNumber": "0x3b820b4"
+        },
+        {
+          "transactionHash": "0x5a6ccbf839e8a566d10bb1cc74b7a513051e7c48d8f335821125dced7ad805c9",
+          "blockHash": "0xef4c5cd0ae25cbba2c3dabd8c80e9bbdb44a82a7a99bd815c3a3bf7485a6214a",
+          "blockNumber": "0x3b820ca"
+        }
+      ],
+      "reserveRemaining": 151219002905905320889980822,
+      "phase": 1,
+      "migration": {
+        "amountIn": 331822683726622481223090,
+        "detfOut": 6571731325,
+        "claimOut": 6181064004,
+        "sharesOut": 61810640040000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "151473838800681130464101893",
+          "amountIn": "76986788950812907102019",
+          "beforeRemaining": "151550825589631943371203912",
+          "claimOut": 1528262304,
+          "deadline": 1789349092,
+          "minClaimOut": 1520620992,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15282623040000000000
+        },
+        {
+          "afterRemaining": "151393002672282776911644773",
+          "amountIn": "80836128398353552457120",
+          "beforeRemaining": "151473838800681130464101893",
+          "claimOut": 1528122769,
+          "deadline": 1789349092,
+          "minClaimOut": 1520482155,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15281227690000000000
+        },
+        {
+          "afterRemaining": "151308124737464505681564797",
+          "amountIn": "84877934818271230079976",
+          "beforeRemaining": "151393002672282776911644773",
+          "claimOut": 1527985338,
+          "deadline": 1789349092,
+          "minClaimOut": 1520345411,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15279853380000000000
+        },
+        {
+          "afterRemaining": "151219002905905320889980822",
+          "amountIn": "89121831559184791583975",
+          "beforeRemaining": "151308124737464505681564797",
+          "claimOut": 1527849948,
+          "deadline": 1789349092,
+          "minClaimOut": 1520210698,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15278499480000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x53e59d0e75831da6be139f7a271d0e63b5813d8e0ee009d40a3a63452121a3dc",
+          "blockHash": "0xe102ae1311fdc6dc82137482b8987c01b367192806791e7047fa8f2852797bcb",
+          "blockNumber": "0x3b82f23"
+        },
+        {
+          "transactionHash": "0x7cfafe38ffe3e41bd1c0927478213c971822963d706ff55c3c1dd8883460eb6e",
+          "blockHash": "0x8c0bc59b4e7afba78215f7555dfa8cb23630f7b4fa641b8d87a2233f7b3291a1",
+          "blockNumber": "0x3b82f39"
+        },
+        {
+          "transactionHash": "0x545f1b96955dcdb6c27a67045855fa82711ae834dac8dbcbeeee1b6a963924f1",
+          "blockHash": "0xb41b387e40b8a173ad87ae8292c475528073ee0e6c4389aa6e5cc5cfdccfcce8",
+          "blockNumber": "0x3b82f50"
+        },
+        {
+          "transactionHash": "0x6673eec09ccf9ef7fe17d55c59b53a2a3a39ce315abc29d56afb90f52bc905e6",
+          "blockHash": "0x11de7c13d54d50e8e8eacff7261fd88b109a13158682c98f30d27d2217959ce0",
+          "blockNumber": "0x3b82f68"
+        }
+      ],
+      "reserveRemaining": 150832785167479118862395327,
+      "phase": 1,
+      "migration": {
+        "amountIn": 386217738426202027585495,
+        "detfOut": 6664699029,
+        "claimOut": 6266272601,
+        "sharesOut": 62662726010000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "151129395820629092931955128",
+          "amountIn": "89607085276227958025694",
+          "beforeRemaining": "151219002905905320889980822",
+          "claimOut": 1527710528,
+          "deadline": 1789349227,
+          "minClaimOut": 1520071975,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15277105280000000000
+        },
+        {
+          "afterRemaining": "151035308381089053576028149",
+          "amountIn": "94087439540039355926979",
+          "beforeRemaining": "151129395820629092931955128",
+          "claimOut": 1527579132,
+          "deadline": 1789349227,
+          "minClaimOut": 1519941236,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15275791320000000000
+        },
+        {
+          "afterRemaining": "150936516569572012252304821",
+          "amountIn": "98791811517041323723328",
+          "beforeRemaining": "151035308381089053576028149",
+          "claimOut": 1527449603,
+          "deadline": 1789349227,
+          "minClaimOut": 1519812354,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15274496030000000000
+        },
+        {
+          "afterRemaining": "150832785167479118862395327",
+          "amountIn": "103731402092893389909494",
+          "beforeRemaining": "150936516569572012252304821",
+          "claimOut": 1527321890,
+          "deadline": 1789349227,
+          "minClaimOut": 1519685280,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15273218900000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xdfdeca746c475a0f9a8919035e3287d0572d230b9985d6bf8883ce16a218f81e",
+          "blockHash": "0xfe21adeafa150eb9769f4ded6af88379767646e8422e9dc348180e070859354e",
+          "blockNumber": "0x3b8349f"
+        },
+        {
+          "transactionHash": "0x2623f69c9d370febc37774b610a8907b99aa2d8dd3fef8b4060e3cf9d00f9bed",
+          "blockHash": "0xb5a2317c23f80da81231d7e72014f02fac5c2a3f183827174cbec7198aae9fc6",
+          "blockNumber": "0x3b834b7"
+        },
+        {
+          "transactionHash": "0x7e70d4c785fe616917bc54eae6e135221aef4dee4500040065afc9b75a0edec9",
+          "blockHash": "0xc8324ecf859c96729ab50f8e1f5937ddc0b32b5dd19f75f4c1c080fb4d3f875d",
+          "blockNumber": "0x3b834cd"
+        },
+        {
+          "transactionHash": "0x30efd0face15eaa5c43a22e41c9a2d431259b2ed90185f324d62c01502b4a83a",
+          "blockHash": "0x29b9187821c6cda4fca9b901a38ceb9a72c77578c83e84ab32199e6fc8e2c304",
+          "blockNumber": "0x3b834e4"
+        }
+      ],
+      "reserveRemaining": 150396795431438101239507518,
+      "phase": 1,
+      "migration": {
+        "amountIn": 435989736041017622887809,
+        "detfOut": 6578929970,
+        "claimOut": 6183556951,
+        "sharesOut": 61835569510000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "150731630389823942359883727",
+          "amountIn": "101154777655176502511600",
+          "beforeRemaining": "150832785167479118862395327",
+          "claimOut": 1527183062,
+          "deadline": 1789349614,
+          "minClaimOut": 1519547146,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15271830620000000000
+        },
+        {
+          "afterRemaining": "150625417873286007032246547",
+          "amountIn": "106212516537935327637180",
+          "beforeRemaining": "150731630389823942359883727",
+          "claimOut": 1527059006,
+          "deadline": 1789349614,
+          "minClaimOut": 1519423710,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15270590060000000000
+        },
+        {
+          "afterRemaining": "150513894730921174938227508",
+          "amountIn": "111523142364832094019039",
+          "beforeRemaining": "150625417873286007032246547",
+          "claimOut": 1526936617,
+          "deadline": 1789349614,
+          "minClaimOut": 1519301933,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15269366170000000000
+        },
+        {
+          "afterRemaining": "150396795431438101239507518",
+          "amountIn": "117099299483073698719990",
+          "beforeRemaining": "150513894730921174938227508",
+          "claimOut": 1526815851,
+          "deadline": 1789349614,
+          "minClaimOut": 1519181771,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15268158510000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x4900711f373d8b8d00995b4af6e612103b32ea987901d9047abd44c063b6a560",
+          "blockHash": "0x3c9f1573446a8110655bb273dab01e2969b0bef967619987af0d3112d527ec93",
+          "blockNumber": "0x3b83a7b"
+        },
+        {
+          "transactionHash": "0xd069c2b0330e7914f0c8602bdb4202a5ea41ae777cba1000db3923c3542ffdcb",
+          "blockHash": "0x97b51d65ed654a2ffdfc46bc5c42ea9f169180c3ec4cf0703228db1890114cfe",
+          "blockNumber": "0x3b83a92"
+        },
+        {
+          "transactionHash": "0x84703cc22d7984cb6b4e68a83ec4c956d9559b9dd122a7aa4aa6fe0d4579334c",
+          "blockHash": "0x09043635e646fac1d1f9851c41d8125d213a32ea337b8dda9c004bec3e2daf94",
+          "blockNumber": "0x3b83aa9"
+        },
+        {
+          "transactionHash": "0x003bbf9c3c8d535ea972bae2133f9abe740caccddc60526fd3492ff49ff39548",
+          "blockHash": "0x321b254e505e61224e59a784628f81241d724d908ca47bee96081d77c2174e51",
+          "blockNumber": "0x3b83ac1"
+        }
+      ],
+      "reserveRemaining": 149895889446510588829743007,
+      "phase": 1,
+      "migration": {
+        "amountIn": 500905984927512409764511,
+        "detfOut": 6508696329,
+        "claimOut": 6115623487,
+        "sharesOut": 61156234870000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "150280579315913026581634600",
+          "amountIn": "116216115525074657872918",
+          "beforeRemaining": "150396795431438101239507518",
+          "claimOut": 1526690766,
+          "deadline": 1789349751,
+          "minClaimOut": 1519057312,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15266907660000000000
+        },
+        {
+          "afterRemaining": "150158552394611698190868036",
+          "amountIn": "122026921301328390766564",
+          "beforeRemaining": "150280579315913026581634600",
+          "claimOut": 1526573196,
+          "deadline": 1789349751,
+          "minClaimOut": 1518940330,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15265731960000000000
+        },
+        {
+          "afterRemaining": "150030424127245303380563144",
+          "amountIn": "128128267366394810304892",
+          "beforeRemaining": "150158552394611698190868036",
+          "claimOut": 1526457124,
+          "deadline": 1789349751,
+          "minClaimOut": 1518824838,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15264571240000000000
+        },
+        {
+          "afterRemaining": "149895889446510588829743007",
+          "amountIn": "134534680734714550820137",
+          "beforeRemaining": "150030424127245303380563144",
+          "claimOut": 1526342513,
+          "deadline": 1789349751,
+          "minClaimOut": 1518710800,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15263425130000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xb83fe08b3f6ac830628cf99ce913440c9e148cf5d4ce34e899b96cf120517d05",
+          "blockHash": "0xb31c9091601488791b64b76d356e0106b894fad1e9c3e7696ae94acfc11d1856",
+          "blockNumber": "0x3b83f80"
+        },
+        {
+          "transactionHash": "0xc9cd4ea6f67851ef33189422c41beafb4bde3eeb3504fc547d8e754c545cf93b",
+          "blockHash": "0x02a834287a1914a723f70e0b795f37448fd015c92b0e5ba64e8eb66eca647dbb",
+          "blockNumber": "0x3b83f97"
+        },
+        {
+          "transactionHash": "0xa69f0789fa31584ffdd774862059d44302107ff10d259942ff609250a072212c",
+          "blockHash": "0x56e091f77e65ffcc7b5a103a8bfd16e19742a4a8577784e1a028ad60bc3d366a",
+          "blockNumber": "0x3b83fad"
+        },
+        {
+          "transactionHash": "0x57d49ce66370b41a30cb31c3f7f5fa0fedc1f63ffba34bad19a156b03272bc4d",
+          "blockHash": "0xa3f6a2dd0ec6dd8c265a369f3b44dd9fc34d1bf3631adbddf8d7e17396715d5b",
+          "blockNumber": "0x3b83fc4"
+        }
+      ],
+      "reserveRemaining": 149326115733444244343163534,
+      "phase": 1,
+      "migration": {
+        "amountIn": 569773713066344486579473,
+        "detfOut": 6498520072,
+        "claimOut": 6104249148,
+        "sharesOut": 61042491480000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "149763695203172786680946981",
+          "amountIn": "132194243337802148796026",
+          "beforeRemaining": "149895889446510588829743007",
+          "claimOut": 1526228619,
+          "deadline": 1789349914,
+          "minClaimOut": 1518597475,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15262286190000000000
+        },
+        {
+          "afterRemaining": "149624891247668094424711153",
+          "amountIn": "138803955504692256235828",
+          "beforeRemaining": "149763695203172786680946981",
+          "claimOut": 1526116832,
+          "deadline": 1789349914,
+          "minClaimOut": 1518486247,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15261168320000000000
+        },
+        {
+          "afterRemaining": "149479147094388167555663534",
+          "amountIn": "145744153279926869047619",
+          "beforeRemaining": "149624891247668094424711153",
+          "claimOut": 1526006402,
+          "deadline": 1789349914,
+          "minClaimOut": 1518376369,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15260064020000000000
+        },
+        {
+          "afterRemaining": "149326115733444244343163534",
+          "amountIn": "153031360943923212500000",
+          "beforeRemaining": "149479147094388167555663534",
+          "claimOut": 1525897295,
+          "deadline": 1789349914,
+          "minClaimOut": 1518267808,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15258972950000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xd0bed44d3824cf70494fbd2e55eb5731080e9a7d5ac76549eb197ba5c0e7e2a8",
+          "blockHash": "0xf1bd32eabe03858b558ed06970b49c0dc7c63f45d566998f8c51d76875a44e2a",
+          "blockNumber": "0x3b848d7"
+        },
+        {
+          "transactionHash": "0x67b855f134b6685f1209401dc117761d097abf5efaf12cf83857985ee41b7db0",
+          "blockHash": "0xb1ef099c830f6f2c1978ab7d3a31aa06636f58a1eb36d5f72449e4338a814ba7",
+          "blockNumber": "0x3b848ee"
+        },
+        {
+          "transactionHash": "0x8bc32bab8ebcbd4c48654ccb569d6e2eb8a363cb91b9ae2aab293b9359ca4a33",
+          "blockHash": "0xdc14287ea11e8bbc8cfe1d881257bd821a6f0d3c395139e94db9fc6c0642fc50",
+          "blockNumber": "0x3b84904"
+        },
+        {
+          "transactionHash": "0xc5309df2d232d40594b1f3db010b2f577fd6bbe4e8260f3af8df5163893c329b",
+          "blockHash": "0xa75e02d9af266f16f6d44703689357ab4c1b1df3e8119b05c185ce605bffa004",
+          "blockNumber": "0x3b8491b"
+        }
+      ],
+      "reserveRemaining": 148676921571334642858068317,
+      "phase": 1,
+      "migration": {
+        "amountIn": 649194162109601485095217,
+        "detfOut": 6598401921,
+        "claimOut": 6196302515,
+        "sharesOut": 61963025150000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "149175495006177726206196458",
+          "amountIn": "150620727266518136967076",
+          "beforeRemaining": "149326115733444244343163534",
+          "claimOut": 1525789481,
+          "deadline": 1789350026,
+          "minClaimOut": 1518160533,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15257894810000000000
+        },
+        {
+          "afterRemaining": "149017343242547882162381029",
+          "amountIn": "158151763629844043815429",
+          "beforeRemaining": "149175495006177726206196458",
+          "claimOut": 1525682929,
+          "deadline": 1789350026,
+          "minClaimOut": 1518054514,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15256829290000000000
+        },
+        {
+          "afterRemaining": "148851283890736545916374828",
+          "amountIn": "166059351811336246006201",
+          "beforeRemaining": "149017343242547882162381029",
+          "claimOut": 1525577611,
+          "deadline": 1789350026,
+          "minClaimOut": 1517949722,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15255776110000000000
+        },
+        {
+          "afterRemaining": "148676921571334642858068317",
+          "amountIn": "174362319401903058306511",
+          "beforeRemaining": "148851283890736545916374828",
+          "claimOut": 1525473497,
+          "deadline": 1789350026,
+          "minClaimOut": 1517846129,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15254734970000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x965f88cce5f76fa5ec8a6170b0c7252f66beee8684be00f921a9daf4ce59d7ad",
+          "blockHash": "0x3418789d6bcdf2d8bf6017b012d6ca15cedfa5125a389bcd175c30824a6c3649",
+          "blockNumber": "0x3b84e44"
+        },
+        {
+          "transactionHash": "0x1980127ff3795eb9303f062009eceeb648d950bdab6ae59f6f5d2f21c03fb460",
+          "blockHash": "0x574aa4d54088852406850ed471b6796e53483f49be7ad69c588af0b2bbbc5ada",
+          "blockNumber": "0x3b84e5b"
+        },
+        {
+          "transactionHash": "0x9da275548a6dec5188557d23d0c93dfd7770ac050c464a82a64e6418f59eb4a3",
+          "blockHash": "0x949d822c53ba92caad034877c752e3e8d5ff9839c7cb266df80d3d48b843fc6f",
+          "blockNumber": "0x3b84e71"
+        },
+        {
+          "transactionHash": "0x0ae624c983ac25bbae4f1d7de449ca7971363f821f151fd8000fafbf0428fc11",
+          "blockHash": "0x2760f19b2aa72a660c3717952068439c9d807d9101210bc3386ab77c22e6af67",
+          "blockNumber": "0x3b84e88"
+        }
+      ],
+      "reserveRemaining": 147934978665039535176688901,
+      "phase": 1,
+      "migration": {
+        "amountIn": 741942906295107681379416,
+        "detfOut": 6578080527,
+        "claimOut": 6175530504,
+        "sharesOut": 61755305040000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "148504782037957975665961495",
+          "amountIn": "172139533376667192106822",
+          "beforeRemaining": "148676921571334642858068317",
+          "claimOut": 1525364234,
+          "deadline": 1789350275,
+          "minClaimOut": 1517737412,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15253642340000000000
+        },
+        {
+          "afterRemaining": "148324035527912475114249332",
+          "amountIn": "180746510045500551712163",
+          "beforeRemaining": "148504782037957975665961495",
+          "claimOut": 1525262520,
+          "deadline": 1789350275,
+          "minClaimOut": 1517636207,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15252625200000000000
+        },
+        {
+          "afterRemaining": "148134251692364699534951561",
+          "amountIn": "189783835547775579297771",
+          "beforeRemaining": "148324035527912475114249332",
+          "claimOut": 1525161930,
+          "deadline": 1789350275,
+          "minClaimOut": 1517536120,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15251619300000000000
+        },
+        {
+          "afterRemaining": "147934978665039535176688901",
+          "amountIn": "199273027325164358262660",
+          "beforeRemaining": "148134251692364699534951561",
+          "claimOut": 1525062441,
+          "deadline": 1789350275,
+          "minClaimOut": 1517437128,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15250624410000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xcbb91881ce65b6daa5dc9161ec77d70dfbd073f35f5311acc04ce4205aba7e39",
+          "blockHash": "0x82c6a414977bbc807c644b351c8e9d86faf6ee0bdfb5a6a072ae08b896bf0c43",
+          "blockNumber": "0x3b85335"
+        },
+        {
+          "transactionHash": "0x93b580310dcfb63482c3d9a787c38b18baa83a4d6dbed467fe48ee93663863cb",
+          "blockHash": "0xb3fe68847fab1ef37005cb6e0abd87895a9bb57d1bc0b9ce43d22a8248fab3a6",
+          "blockNumber": "0x3b8534b"
+        },
+        {
+          "transactionHash": "0x8f336fa90e0992d177e8f5d054d662fd9e12e4f1855f71804cfdd8bb503eecad",
+          "blockHash": "0x0b43c5d61c71d98c0d29bb8fa6b75c10ae7b2a54ac2f64b4f62e60883ad48458",
+          "blockNumber": "0x3b85362"
+        },
+        {
+          "transactionHash": "0x0f96649fee4bf190ac0d2a7e431faaee334d45c6886bb6bb6e04d636b8745c77",
+          "blockHash": "0xaa0b5193c682bb12ed573f5f4055a057cefd5234ae2e7071dfa830beb6fc9fec",
+          "blockNumber": "0x3b85379"
+        }
+      ],
+      "reserveRemaining": 147074574291928708238106129,
+      "phase": 1,
+      "migration": {
+        "amountIn": 860404373110826938582772,
+        "detfOut": 6674048751,
+        "claimOut": 6263974771,
+        "sharesOut": 62639747710000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "147735354669654058667635736",
+          "amountIn": "199623995385476509053165",
+          "beforeRemaining": "147934978665039535176688901",
+          "claimOut": 1524959209,
+          "deadline": 1789350412,
+          "minClaimOut": 1517334412,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15249592090000000000
+        },
+        {
+          "afterRemaining": "147525749474499308333129913",
+          "amountIn": "209605195154750334505823",
+          "beforeRemaining": "147735354669654058667635736",
+          "claimOut": 1524861901,
+          "deadline": 1789350412,
+          "minClaimOut": 1517237591,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15248619010000000000
+        },
+        {
+          "afterRemaining": "147305664019586820481898799",
+          "amountIn": "220085454912487851231114",
+          "beforeRemaining": "147525749474499308333129913",
+          "claimOut": 1524765623,
+          "deadline": 1789350412,
+          "minClaimOut": 1517141794,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15247656230000000000
+        },
+        {
+          "afterRemaining": "147074574291928708238106129",
+          "amountIn": "231089727658112243792670",
+          "beforeRemaining": "147305664019586820481898799",
+          "claimOut": 1524670354,
+          "deadline": 1789350412,
+          "minClaimOut": 1517047002,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15246703540000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x69cb0c9947e32e05ff48e25d156998e7b925457a83fec00b7196ed97372f8eac",
+          "blockHash": "0xeacbf6e5340b13bd09402140f3c45766ce084cc1f1b9b000d0657d2e34a45873",
+          "blockNumber": "0x3b85937"
+        },
+        {
+          "transactionHash": "0xabdc34c8aac28376819dae2821e1ddf880acd49cd49c526de59a9e8b337188af",
+          "blockHash": "0x0ae692772d6d38ee7bbf1549094675089b37625fa62a2ec4c27caf6f84a0910e",
+          "blockNumber": "0x3b8594e"
+        },
+        {
+          "transactionHash": "0x7732b6a55b2b3d0ed88d3dc6e01eaa8be8b5b570da41a073fa087c7105c21a69",
+          "blockHash": "0x80fead1dd08887e6c84f68a04af662dfe986720e3798f7a742e9f701c753de90",
+          "blockNumber": "0x3b85965"
+        },
+        {
+          "transactionHash": "0x5fa0d6cc12d54bd9026d5eae4b9229c1bc22e8dbe0a1c9a6285686b3ef9b7f38",
+          "blockHash": "0x2d65a27c37b16fd8d99cccc83a805f19f48e65f5c72665543b8ba1b45c8a97b3",
+          "blockNumber": "0x3b8598b"
+        }
+      ],
+      "reserveRemaining": 146072320339423763259058568,
+      "phase": 1,
+      "migration": {
+        "amountIn": 1002253952504944979047561,
+        "detfOut": 6789565182,
+        "claimOut": 6370759105,
+        "sharesOut": 63707591050000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "146842039515673972011419534",
+          "amountIn": "232534776254736226686595",
+          "beforeRemaining": "147074574291928708238106129",
+          "claimOut": 1524565888,
+          "deadline": 1789350540,
+          "minClaimOut": 1516943058,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15245658880000000000
+        },
+        {
+          "afterRemaining": "146597878000606498973398609",
+          "amountIn": "244161515067473038020925",
+          "beforeRemaining": "146842039515673972011419534",
+          "claimOut": 1524472677,
+          "deadline": 1789350540,
+          "minClaimOut": 1516850313,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15244726770000000000
+        },
+        {
+          "afterRemaining": "146341508409785652283476638",
+          "amountIn": "256369590820846689921971",
+          "beforeRemaining": "146597878000606498973398609",
+          "claimOut": 1524380412,
+          "deadline": 1789350540,
+          "minClaimOut": 1516758509,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15243804120000000000
+        },
+        {
+          "afterRemaining": "146072320339423763259058568",
+          "amountIn": "269188070361889024418070",
+          "beforeRemaining": "146341508409785652283476638",
+          "claimOut": 1524289074,
+          "deadline": 1789350540,
+          "minClaimOut": 1516667628,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15242890740000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x310dfc62c9317112000ca883251b3ccf2b661d545a36a4b08b76131ece339cbe",
+          "blockHash": "0x278f6afa8a3ac7f1f81140011f445193461860a5cf616863174aab39df3b5362",
+          "blockNumber": "0x3b85eb6"
+        },
+        {
+          "transactionHash": "0x1d1594255bcfe9bcbdf6a3684a51244d81cb5cb4477e931b95e8b63b915d4499",
+          "blockHash": "0xfa458ae12470b13a9f8a3d9f3999d5cc79b6a96b9d990ca8563e1674788ccb7c",
+          "blockNumber": "0x3b85ecd"
+        },
+        {
+          "transactionHash": "0x9933a79eaad1224b59c3295e07a768a86412251f4fa4b6471abb63f161ce8b74",
+          "blockHash": "0x578abf20b667c68540a21f4659521dd8a5a6f660f83c8fdbfb75d352419e0f63",
+          "blockNumber": "0x3b85ee4"
+        },
+        {
+          "transactionHash": "0x940214615a4bf1b8762ab9e465ff752341a5c63be83179912847d8503b1858d9",
+          "blockHash": "0x8fe728a0f04275ed44502b5c87614851e4df30ac197c11e1f749779a6877e4c7",
+          "blockNumber": "0x3b85efc"
+        }
+      ],
+      "reserveRemaining": 144956958359575416845702891,
+      "phase": 1,
+      "migration": {
+        "amountIn": 1115361979848346413355677,
+        "detfOut": 6574393496,
+        "claimOut": 6167362628,
+        "sharesOut": 61673626280000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "145813543162462921888250140",
+          "amountIn": "258777176960841370808428",
+          "beforeRemaining": "146072320339423763259058568",
+          "claimOut": 1524182453,
+          "deadline": 1789350706,
+          "minClaimOut": 1516561540,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15241824530000000000
+        },
+        {
+          "afterRemaining": "145541827126654038448901290",
+          "amountIn": "271716035808883439348850",
+          "beforeRemaining": "145813543162462921888250140",
+          "claimOut": 1524093072,
+          "deadline": 1789350706,
+          "minClaimOut": 1516472606,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15240930720000000000
+        },
+        {
+          "afterRemaining": "145256525289054710837584998",
+          "amountIn": "285301837599327611316292",
+          "beforeRemaining": "145541827126654038448901290",
+          "claimOut": 1524004561,
+          "deadline": 1789350706,
+          "minClaimOut": 1516384538,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15240045610000000000
+        },
+        {
+          "afterRemaining": "144956958359575416845702891",
+          "amountIn": "299566929479293991882107",
+          "beforeRemaining": "145256525289054710837584998",
+          "claimOut": 1523916904,
+          "deadline": 1789350706,
+          "minClaimOut": 1516297319,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15239169040000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x4887bd845760c9a5fa9910ee81c542e6e34d0606d58cad1fec471fccc0caabde",
+          "blockHash": "0xe9f93049d6e1df768d2d41fa91192c50fef7b03b93185ad855033652e391bb95",
+          "blockNumber": "0x3b865c3"
+        },
+        {
+          "transactionHash": "0xec196640dd05e1ca61cbef028d3ff74f78b03bc42c910eddd9ba836fec0ec65c",
+          "blockHash": "0x793c818c29f883123fc7fdb6ec7e8c598d398f662525550dbd8c7d731a6016c9",
+          "blockNumber": "0x3b865da"
+        },
+        {
+          "transactionHash": "0xa1c45ee24cd45a965ce586b14d7013d6f8b482b855cc49992cceef1e874378bb",
+          "blockHash": "0x326912845a7eb9f08e23190fa4a59894ab704b40611549fd21d75abdcb2c3a48",
+          "blockNumber": "0x3b865f1"
+        },
+        {
+          "transactionHash": "0xfbcdb71442bd3ad8bdbdee7cfa5e4dc9801fba5ec00b5345557aba223d30297f",
+          "blockHash": "0xbf1e96f312c447fc0eae9e87b76c535255cb5fbec4cb0726d6689f6f56928e9e",
+          "blockNumber": "0x3b86608"
+        }
+      ],
+      "reserveRemaining": 143680220877163985048674744,
+      "phase": 1,
+      "migration": {
+        "amountIn": 1276737482411431797028147,
+        "detfOut": 6615433578,
+        "claimOut": 6204426090,
+        "sharesOut": 62044260900000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "144660740156527609230603991",
+          "amountIn": "296218203047807615098900",
+          "beforeRemaining": "144956958359575416845702891",
+          "claimOut": 1523826029,
+          "deadline": 1789350838,
+          "minClaimOut": 1516206898,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15238260290000000000
+        },
+        {
+          "afterRemaining": "144349711043327411234750146",
+          "amountIn": "311029113200197995853845",
+          "beforeRemaining": "144660740156527609230603991",
+          "claimOut": 1523740069,
+          "deadline": 1789350838,
+          "minClaimOut": 1516121368,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15237400690000000000
+        },
+        {
+          "afterRemaining": "144023130474467203339103608",
+          "amountIn": "326580568860207895646538",
+          "beforeRemaining": "144349711043327411234750146",
+          "claimOut": 1523654914,
+          "deadline": 1789350838,
+          "minClaimOut": 1516036639,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15236549140000000000
+        },
+        {
+          "afterRemaining": "143680220877163985048674744",
+          "amountIn": "342909597303218290428864",
+          "beforeRemaining": "144023130474467203339103608",
+          "claimOut": 1523570550,
+          "deadline": 1789350838,
+          "minClaimOut": 1515952697,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15235705500000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x499809dbf780d54a08e17dbbb08a3baa14d97473adde1ed5655c6ac09e57eb8a",
+          "blockHash": "0xcb3e9b5053bdefed68352b90772bdfde8f06d6f1d351bd5805f78ee9b73201c1",
+          "blockNumber": "0x3b86ab2"
+        },
+        {
+          "transactionHash": "0x7bfa58e30bbf1181bbb34cf598adc9e3c5a14bfd54535021ce3aad440b4ffced",
+          "blockHash": "0x55092970d1046a106ffc8fcc8e93702b69a39d0d566098166184e2073a34fb1a",
+          "blockNumber": "0x3b86ac9"
+        },
+        {
+          "transactionHash": "0x44a1999ce5b966074c8075df4adc3ff6134a480ef0c3dc02f69f282b6d973a7b",
+          "blockHash": "0x560bc8d1ad9e192ae251b84b2c22dfada589ff932046cb48d7bd05c38991994a",
+          "blockNumber": "0x3b86ae0"
+        },
+        {
+          "transactionHash": "0x1d6bee164b70431dee2c3d5311c86824fc33dcb2d9dbdfe0dc37218047441e52",
+          "blockHash": "0xd3f81ec3f805e8ca6fa0480c67d606238610e30c9158d211b725f9bf330e7bd1",
+          "blockNumber": "0x3b86af7"
+        }
+      ],
+      "reserveRemaining": 142222139957294852256163609,
+      "phase": 1,
+      "migration": {
+        "amountIn": 1458080919869132792511135,
+        "detfOut": 6579453212,
+        "claimOut": 6169307918,
+        "sharesOut": 61693079180000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "143341928850861004788818908",
+          "amountIn": "338292026302980259855836",
+          "beforeRemaining": "143680220877163985048674744",
+          "claimOut": 1523480947,
+          "deadline": 1789351022,
+          "minClaimOut": 1515863542,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15234809470000000000
+        },
+        {
+          "afterRemaining": "142986722223242875515970280",
+          "amountIn": "355206627618129272848628",
+          "beforeRemaining": "143341928850861004788818908",
+          "claimOut": 1523398175,
+          "deadline": 1789351022,
+          "minClaimOut": 1515781184,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15233981750000000000
+        },
+        {
+          "afterRemaining": "142613755264243839779479221",
+          "amountIn": "372966958999035736491059",
+          "beforeRemaining": "142986722223242875515970280",
+          "claimOut": 1523316150,
+          "deadline": 1789351022,
+          "minClaimOut": 1515699569,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15233161500000000000
+        },
+        {
+          "afterRemaining": "142222139957294852256163609",
+          "amountIn": "391615306948987523315612",
+          "beforeRemaining": "142613755264243839779479221",
+          "claimOut": 1523234859,
+          "deadline": 1789351022,
+          "minClaimOut": 1515618684,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15232348590000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x329b2ab29c4cd6dc1a4f3d7629ea298cf1b5b6b88e945d636727e4052ceb34d0",
+          "blockHash": "0xe978494dae7f2028bca5441c96a888806f28319e3a53f63b94d8717422e915ca",
+          "blockNumber": "0x3b873bc"
+        },
+        {
+          "transactionHash": "0xb967d4b9a2fd07943ffd191eca773f8c4a058db258640a789a8354a9dfd5790d",
+          "blockHash": "0xbc258e3309f39519c2414e57608397c704ad30abf4fd4159b167d893a8e12e6b",
+          "blockNumber": "0x3b873d3"
+        },
+        {
+          "transactionHash": "0x69a59751f279b68448afdd44c69ad31d4aeea097b7d194350db7a1e33b6502a0",
+          "blockHash": "0x8d650fc706340c5b369e254785d57da23e82a086619f4f2f0bd0b59bdc465be0",
+          "blockNumber": "0x3b873ea"
+        },
+        {
+          "transactionHash": "0xd09e85b82e73fa8ef6fbd227a5ccfe181752e250061f4860fadb0fac74cfc5b0",
+          "blockHash": "0x8735025f0e6074fd8cecd485040392d226c60d0c2af2c71bc07ee01b9a737d9d",
+          "blockNumber": "0x3b87401"
+        }
+      ],
+      "reserveRemaining": 140552734381548386597615764,
+      "phase": 1,
+      "migration": {
+        "amountIn": 1669405575746465658547845,
+        "detfOut": 6597620944,
+        "claimOut": 6185016111,
+        "sharesOut": 61850161110000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "141834818110307475867184671",
+          "amountIn": "387321846987376388978938",
+          "beforeRemaining": "142222139957294852256163609",
+          "claimOut": 1523150276,
+          "deadline": 1789351154,
+          "minClaimOut": 1515534524,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15231502760000000000
+        },
+        {
+          "afterRemaining": "141428130170970730658756786",
+          "amountIn": "406687939336745208427885",
+          "beforeRemaining": "141834818110307475867184671",
+          "claimOut": 1523070449,
+          "deadline": 1789351154,
+          "minClaimOut": 1515455096,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15230704490000000000
+        },
+        {
+          "afterRemaining": "141001107834667148189907507",
+          "amountIn": "427022336303582468849279",
+          "beforeRemaining": "141428130170970730658756786",
+          "claimOut": 1522991318,
+          "deadline": 1789351154,
+          "minClaimOut": 1515376361,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15229913180000000000
+        },
+        {
+          "afterRemaining": "140552734381548386597615764",
+          "amountIn": "448373453118761592291743",
+          "beforeRemaining": "141001107834667148189907507",
+          "claimOut": 1522912870,
+          "deadline": 1789351154,
+          "minClaimOut": 1515298305,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15229128700000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x70d1f18d810884a0740b160b1a98ff674868c3ae85efe63e303e64e7ffc2266a",
+          "blockHash": "0x150704862980a9e6327e68c2ee1afa15ae9c3f6874c24491d5b58793a41e4239",
+          "blockNumber": "0x3b89a43"
+        },
+        {
+          "transactionHash": "0xb1fe352c56c278dfc26f2be7a8bcdd247c9c8b412a882df215ceab11f2b01434",
+          "blockHash": "0x0a777142144550682ac11d4953ec69d2458be435bc23ad3c4fba74c0ea9291f7",
+          "blockNumber": "0x3b89a5a"
+        },
+        {
+          "transactionHash": "0x4f55b8574ea9360cbc00ef91abd7df2cfc49a8804f0f34fe6643ba613372e735",
+          "blockHash": "0xe260319c15bf5305f000c07295221479f36bca789f780b11cb9fdb3a301e79ee",
+          "blockNumber": "0x3b89a71"
+        },
+        {
+          "transactionHash": "0xe0bb1e5c2cbd13a8777199dba3fc149254f570b8236239e246264226f943fa54",
+          "blockHash": "0x7f925cf712480db78546a8af4be4c81ea67a5d7ecb2a48d3490069a016629edc",
+          "blockNumber": "0x3b89a88"
+        }
+      ],
+      "reserveRemaining": 138640728069453659876962365,
+      "phase": 1,
+      "migration": {
+        "amountIn": 1912006312094726720653399,
+        "detfOut": 6525300879,
+        "claimOut": 6115959195,
+        "sharesOut": 61159591950000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "140109126293129900655641135",
+          "amountIn": "443608088418485941974629",
+          "beforeRemaining": "140552734381548386597615764",
+          "claimOut": 1522830350,
+          "deadline": 1789351385,
+          "minClaimOut": 1515216198,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15228303500000000000
+        },
+        {
+          "afterRemaining": "139643337800290490416567774",
+          "amountIn": "465788492839410239073361",
+          "beforeRemaining": "140109126293129900655641135",
+          "claimOut": 1522753274,
+          "deadline": 1789351385,
+          "minClaimOut": 1515139507,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15227532740000000000
+        },
+        {
+          "afterRemaining": "139154259882809109665540745",
+          "amountIn": "489077917481380751027029",
+          "beforeRemaining": "139643337800290490416567774",
+          "claimOut": 1522676847,
+          "deadline": 1789351385,
+          "minClaimOut": 1515063462,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15226768470000000000
+        },
+        {
+          "afterRemaining": "138640728069453659876962365",
+          "amountIn": "513531813355449788578380",
+          "beforeRemaining": "139154259882809109665540745",
+          "claimOut": 1522601058,
+          "deadline": 1789351385,
+          "minClaimOut": 1514988052,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15226010580000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x8b3d06593d7c54dd2eebb6a56e9aeeb23c83bf9f785ecfb0e34564ca8f968702",
+          "blockHash": "0x2d82b500698adc8f89d1e674cc8ba0cf9342dda20e8dc4399f19eca10ea247e7",
+          "blockNumber": "0x3b8a523"
+        },
+        {
+          "transactionHash": "0xdd55a932aaab56e65357bba4243056f7b60b2b7dc1dd3bad031e367b4dac6198",
+          "blockHash": "0xffd5be6300bb77741e88386179024f7c28e3e8bf5e376028c48c4244696c9250",
+          "blockNumber": "0x3b8a53a"
+        },
+        {
+          "transactionHash": "0xc08d93cfc6820c84899d1860bda7121cf1926c62f9d7290f27d6d60e64d1568d",
+          "blockHash": "0xbf98e054e3fc0179ea76ab267dc49599ba0c7ab28618d8f63fec449cdf2e7190",
+          "blockNumber": "0x3b8a562"
+        },
+        {
+          "transactionHash": "0x07d38ffb560d9894a099e8261dc677b3d125a5af4b8960afd9e99befe735ea08",
+          "blockHash": "0x4275eb511de01d8bf905af33013af908f837b636ada86a3bdb05b155a79b8432",
+          "blockNumber": "0x3b8a58b"
+        }
+      ],
+      "reserveRemaining": 136384001286520763641988233,
+      "phase": 1,
+      "migration": {
+        "amountIn": 2256726782932896234974132,
+        "detfOut": 6554476276,
+        "claimOut": 6141576609,
+        "sharesOut": 61415766090000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "138117140752860081677960217",
+          "amountIn": "523587316593578199002148",
+          "beforeRemaining": "138640728069453659876962365",
+          "claimOut": 1522399106,
+          "deadline": 1789352392,
+          "minClaimOut": 1514787110,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15223991060000000000
+        },
+        {
+          "afterRemaining": "137567374070436824569007962",
+          "amountIn": "549766682423257108952255",
+          "beforeRemaining": "138117140752860081677960217",
+          "claimOut": 1522324587,
+          "deadline": 1789352392,
+          "minClaimOut": 1514712964,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15223245870000000000
+        },
+        {
+          "afterRemaining": "136990119053892404604608094",
+          "amountIn": "577255016544419964399868",
+          "beforeRemaining": "137567374070436824569007962",
+          "claimOut": 1522250675,
+          "deadline": 1789352392,
+          "minClaimOut": 1514639421,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15222506750000000000
+        },
+        {
+          "afterRemaining": "136384001286520763641988233",
+          "amountIn": "606117767371640962619861",
+          "beforeRemaining": "136990119053892404604608094",
+          "claimOut": 1522177360,
+          "deadline": 1789352392,
+          "minClaimOut": 1514566473,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15221773600000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x8e79a04081d75acd24e5cfc0d1a50cc689988f16ef3e09f68b87310108f8da10",
+          "blockHash": "0x944f74f45a161361e722876a3514c0013c38061f3d755605b53f3d1e8a85c618",
+          "blockNumber": "0x3b8abcb"
+        },
+        {
+          "transactionHash": "0xbd984a931284ab3faefc2d092cb15f03132368d190ca2da7b4fba334eead4219",
+          "blockHash": "0xf44335e2045788f85890b95bf00b06652c673a25538f1dd1cb9b3cc84dd075ac",
+          "blockNumber": "0x3b8abe2"
+        },
+        {
+          "transactionHash": "0xd7a717c4e6d934da7c05315d7e21ce52a60c40934da3ea4a0734f03bd3c377eb",
+          "blockHash": "0x4402c41d7510c228af7505babbe107b50c79b0f0415ffcd6f4292e05fac7165f",
+          "blockNumber": "0x3b8abf9"
+        },
+        {
+          "transactionHash": "0x58a62814f93fe8a31cbbe48e4c145ac2140d2b3677a908107ff6e3a4f1d9a970",
+          "blockHash": "0xe8391c9ca0903cd961b11e65269c6ec70a822e583a29538b57ca3f5eb1db6820",
+          "blockNumber": "0x3b8ac0f"
+        }
+      ],
+      "reserveRemaining": 133723900018069442615669770,
+      "phase": 1,
+      "migration": {
+        "amountIn": 2660101268451321026318463,
+        "detfOut": 6670393359,
+        "claimOut": 6248973814,
+        "sharesOut": 62489738140000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "135766826316316576750350876",
+          "amountIn": "617174970204186891637357",
+          "beforeRemaining": "136384001286520763641988233",
+          "claimOut": 1522102127,
+          "deadline": 1789352673,
+          "minClaimOut": 1514491616,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15221021270000000000
+        },
+        {
+          "afterRemaining": "135118792597602180514131651",
+          "amountIn": "648033718714396236219225",
+          "beforeRemaining": "135766826316316576750350876",
+          "claimOut": 1522029997,
+          "deadline": 1789352673,
+          "minClaimOut": 1514419847,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15220299970000000000
+        },
+        {
+          "afterRemaining": "134438357192952064466101465",
+          "amountIn": "680435404650116048030186",
+          "beforeRemaining": "135118792597602180514131651",
+          "claimOut": 1521958435,
+          "deadline": 1789352673,
+          "minClaimOut": 1514348642,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15219584350000000000
+        },
+        {
+          "afterRemaining": "133723900018069442615669770",
+          "amountIn": "714457174882621850431695",
+          "beforeRemaining": "134438357192952064466101465",
+          "claimOut": 1521887434,
+          "deadline": 1789352673,
+          "minClaimOut": 1514277996,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15218874340000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x935ef35fc9bd16340812786d6e0af022bcd982702fd80bb32ad373f768139089",
+          "blockHash": "0x516017d1bc5ecdcdf2e6f8bc06292db00c6c3469022b3bcf13864f28fc694cd1",
+          "blockNumber": "0x3b8d95c"
+        },
+        {
+          "transactionHash": "0x58b4886d913c161cddd87bf6587c39456536688f0c648d9098cd2655dbe3ab28",
+          "blockHash": "0x4bfcfbb73968d03d2eda98d74301422acbad7069b1f39bc8ae5bfcb8dc59bef6",
+          "blockNumber": "0x3b8d972"
+        },
+        {
+          "transactionHash": "0x99a45f38cdb42c824b3184d3df1ab7df12064ceeded1c2cb89fd2cc3b945271a",
+          "blockHash": "0x74e9dc75cd30aa2cda2c84230ed942ba6594ee429fcd0e7026cf64367e453bb4",
+          "blockNumber": "0x3b8d989"
+        },
+        {
+          "transactionHash": "0x3bab682b954a3a95e61fd7573e4cd8b11df93801eb0fa8735a421ef458bb91b6",
+          "blockHash": "0x0f03f458a77375855c5bbf387ffc63800c9647cc9a152d598d8df62ba1edc361",
+          "blockNumber": "0x3b8d99f"
+        }
+      ],
+      "reserveRemaining": 130664395829856339441765014,
+      "phase": 1,
+      "migration": {
+        "amountIn": 3059504188213103173904756,
+        "detfOut": 7194030230,
+        "claimOut": 6738186780,
+        "sharesOut": 67381867800000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "133014058844504150849443789",
+          "amountIn": "709841173565291766225981",
+          "beforeRemaining": "133723900018069442615669770",
+          "claimOut": 1521809531,
+          "deadline": 1789352842,
+          "minClaimOut": 1514200483,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15218095310000000000
+        },
+        {
+          "afterRemaining": "132268725612260594494906509",
+          "amountIn": "745333232243556354537280",
+          "beforeRemaining": "133014058844504150849443789",
+          "claimOut": 1521739680,
+          "deadline": 1789352842,
+          "minClaimOut": 1514130981,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15217396800000000000
+        },
+        {
+          "afterRemaining": "131486125718404860322642365",
+          "amountIn": "782599893855734172264144",
+          "beforeRemaining": "132268725612260594494906509",
+          "claimOut": 1521670362,
+          "deadline": 1789352842,
+          "minClaimOut": 1514062010,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15216703620000000000
+        },
+        {
+          "afterRemaining": "130664395829856339441765014",
+          "amountIn": "821729888548520880877351",
+          "beforeRemaining": "131486125718404860322642365",
+          "claimOut": 1521601570,
+          "deadline": 1789352842,
+          "minClaimOut": 1513993562,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15216015700000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x51611b3245daf604e32f4b3f9b03b6f4ab7e7f6f8e425fa87b5c35e9b00e4bbc",
+          "blockHash": "0xd8f6282e6c7faeb867301efc3a65f7b419ce47c002034ec5770816470a683adf",
+          "blockNumber": "0x3b8dddf"
+        },
+        {
+          "transactionHash": "0x24d4c4039da75a14a409872e50516f6336ce8a5a5e992f30d868390b2c7693a2",
+          "blockHash": "0x631562dc4a1343295257b77e99613a902349a1a46776811e6fc77b9b16f8a543",
+          "blockNumber": "0x3b8ddf6"
+        },
+        {
+          "transactionHash": "0x76bb104df8ba7ff5d0416e761a53c13dc03aeed9883ccfcc68e02515cc833ff7",
+          "blockHash": "0x0e0b138ea234ca65bd6fad8502fd93dfc10dc8307e3c2214d149c5e8a342fab5",
+          "blockNumber": "0x3b8de0d"
+        },
+        {
+          "transactionHash": "0x144ee4d9ec593d0cfa7ad239cad9e0f4a8a45871d191226a09496a91c0b955d5",
+          "blockHash": "0x306aee300b02b8a98d84a12dd33b8045c5d31fd04552ac4b0651a35ccdeff1e5",
+          "blockNumber": "0x3b8de23"
+        }
+      ],
+      "reserveRemaining": 127430530278058842988466288,
+      "phase": 1,
+      "migration": {
+        "amountIn": 3233865551797496453298726,
+        "detfOut": 6582805651,
+        "claimOut": 6164534476,
+        "sharesOut": 61645344760000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "129914100756790593911577670",
+          "amountIn": "750295073065745530187344",
+          "beforeRemaining": "130664395829856339441765014",
+          "claimOut": 1521504099,
+          "deadline": 1789354026,
+          "minClaimOut": 1513896578,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15215040990000000000
+        },
+        {
+          "afterRemaining": "129126290930071561104880959",
+          "amountIn": "787809826719032806696711",
+          "beforeRemaining": "129914100756790593911577670",
+          "claimOut": 1521436550,
+          "deadline": 1789354026,
+          "minClaimOut": 1513829367,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15214365500000000000
+        },
+        {
+          "afterRemaining": "128299090612016576657849412",
+          "amountIn": "827200318054984447031547",
+          "beforeRemaining": "129126290930071561104880959",
+          "claimOut": 1521369500,
+          "deadline": 1789354026,
+          "minClaimOut": 1513762652,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15213695000000000000
+        },
+        {
+          "afterRemaining": "127430530278058842988466288",
+          "amountIn": "868560333957733669383124",
+          "beforeRemaining": "128299090612016576657849412",
+          "claimOut": 1521302942,
+          "deadline": 1789354026,
+          "minClaimOut": 1513696427,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15213029420000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x6e99bef563dcf85eabba621538b1034215275bc693c33a3ffed890333f826cbc",
+          "blockHash": "0xd5d099cc9c6a5d9ce789a33774c0a687938e977e391e87825165556609acb043",
+          "blockNumber": "0x3b8e26a"
+        },
+        {
+          "transactionHash": "0x9c9189e6d65cbdcf142db0bba7855b0bcaf5cc18d692c99547f9ca96ea70bdcd",
+          "blockHash": "0x7263a2970dadab92c84985abaf552f976e516190ee02face1b9268961129a261",
+          "blockNumber": "0x3b8e281"
+        },
+        {
+          "transactionHash": "0x1c6d1c9bfc88bcc2d470428587a1b78f04e6b08844bc9b7d00dbd27d21dc9586",
+          "blockHash": "0xd1d24e3a66c3303bf8b6b9b9936f31f99e7738d6a168fe71f22388d1d1917eaf",
+          "blockNumber": "0x3b8e299"
+        },
+        {
+          "transactionHash": "0x3c9de346c26f2f82aed182403618b9a129a33d315517b0271bdae98581253fee",
+          "blockHash": "0xcdb9792b58e03910acf00944e4667fbb2aa495a6d6c8412d725da1eb041697ac",
+          "blockNumber": "0x3b8e2b1"
+        }
+      ],
+      "reserveRemaining": 123698800027368513662582928,
+      "phase": 1,
+      "migration": {
+        "amountIn": 3731730250690329325883360,
+        "detfOut": 6600125876,
+        "claimOut": 6179665054,
+        "sharesOut": 61796650540000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "126564724703814400118274969",
+          "amountIn": "865805574244442870191319",
+          "beforeRemaining": "127430530278058842988466288",
+          "claimOut": 1521233441,
+          "deadline": 1789354143,
+          "minClaimOut": 1513627273,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15212334410000000000
+        },
+        {
+          "afterRemaining": "125655628850857735104574084",
+          "amountIn": "909095852956665013700885",
+          "beforeRemaining": "126564724703814400118274969",
+          "claimOut": 1521167870,
+          "deadline": 1789354143,
+          "minClaimOut": 1513562030,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15211678700000000000
+        },
+        {
+          "afterRemaining": "124701078205253236840188154",
+          "amountIn": "954550645604498264385930",
+          "beforeRemaining": "125655628850857735104574084",
+          "claimOut": 1521102770,
+          "deadline": 1789354143,
+          "minClaimOut": 1513497256,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15211027700000000000
+        },
+        {
+          "afterRemaining": "123698800027368513662582928",
+          "amountIn": "1002278177884723177605226",
+          "beforeRemaining": "124701078205253236840188154",
+          "claimOut": 1521038133,
+          "deadline": 1789354143,
+          "minClaimOut": 1513432942,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15210381330000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x32f6e1733598552cf673fdcb6fc653a7efc7465f9560cec0787e06aa6000c46e",
+          "blockHash": "0x64c0cfb945b713e1175801acc972111a4b3d4f688c0fe9516a3151c9cca6d23b",
+          "blockNumber": "0x3b8e87a"
+        },
+        {
+          "transactionHash": "0x5aa3743b7559e903109e68da8de6aea3e5de21205b4622340a66afca6dcf8ea3",
+          "blockHash": "0x4dc5a20f9bcf20542407fd138568530926f184d1cccc4f74f71ec7c2f811cd3d",
+          "blockNumber": "0x3b8e892"
+        },
+        {
+          "transactionHash": "0x8f964e4fecd7865a04673cfc5a264de934733fb51d9e972b4286b4bf85a917c9",
+          "blockHash": "0x3d1689b32911fde3f5b3a2fb0600bd222ab0fa4016d04f297a999172477ef876",
+          "blockNumber": "0x3b8e8a9"
+        },
+        {
+          "transactionHash": "0x011fe0549fb09213dda1762c17cc261942961d7b26661110b83ac73c465547da",
+          "blockHash": "0x0f619780f8f20225de6f2d6599563bed28c10f677dec53527f6cdb9fa1b6e789",
+          "blockNumber": "0x3b8e8c1"
+        }
+      ],
+      "reserveRemaining": 119363484747381103187025606,
+      "phase": 1,
+      "migration": {
+        "amountIn": 4335315279987410475557322,
+        "detfOut": 6521418055,
+        "claimOut": 6104932725,
+        "sharesOut": 61049327250000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "122692955584344840224908308",
+          "amountIn": "1005844443023673437674620",
+          "beforeRemaining": "123698800027368513662582928",
+          "claimOut": 1520969940,
+          "deadline": 1789354261,
+          "minClaimOut": 1513365090,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15209699400000000000
+        },
+        {
+          "afterRemaining": "121636818919169983115349957",
+          "amountIn": "1056136665174857109558351",
+          "beforeRemaining": "122692955584344840224908308",
+          "claimOut": 1520906240,
+          "deadline": 1789354261,
+          "minClaimOut": 1513301708,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15209062400000000000
+        },
+        {
+          "afterRemaining": "120527875420736383150313688",
+          "amountIn": "1108943498433599965036269",
+          "beforeRemaining": "121636818919169983115349957",
+          "claimOut": 1520842983,
+          "deadline": 1789354261,
+          "minClaimOut": 1513238768,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15208429830000000000
+        },
+        {
+          "afterRemaining": "119363484747381103187025606",
+          "amountIn": "1164390673355279963288082",
+          "beforeRemaining": "120527875420736383150313688",
+          "claimOut": 1520780165,
+          "deadline": 1789354261,
+          "minClaimOut": 1513176264,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15207801650000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x3e88c9c522fda42ce7d18b4c0f3b327a11095794aed7f4d3993ca65e55cedd96",
+          "blockHash": "0x9cfa8512ed657cc29a9922a8f00a5326b8b951028e1452f7ac7918465227493d",
+          "blockNumber": "0x3b8f146"
+        },
+        {
+          "transactionHash": "0xf8f2827bc85d55e747b4f294cf600b1f562323481b50c96d064791c16ef72088",
+          "blockHash": "0x718efe8830078647f810a1ba28d88b637b64824862ffc8665c18b3dea0436456",
+          "blockNumber": "0x3b8f15e"
+        },
+        {
+          "transactionHash": "0x43d42c3b6b53e8505041ecb850897069d58453544e0eb8bc1187751577c37083",
+          "blockHash": "0xb9aa38796b507f3eeb32531800659f29b1f11cfadf28316a19a47e57a878a21d",
+          "blockNumber": "0x3b8f176"
+        },
+        {
+          "transactionHash": "0xe7c274cce6d758d4ca814f382c89b5341e8ab6f53e75046e7afe10a5d3d7fb6f",
+          "blockHash": "0x653b8da7e2f1609a7725a9406b5bc4d73e8f8e2b6f3f930fdde782a2359e2363",
+          "blockNumber": "0x3b8f18e"
+        }
+      ],
+      "reserveRemaining": 114203621043149665076137111,
+      "phase": 1,
+      "migration": {
+        "amountIn": 5159863704231438110888495,
+        "detfOut": 6628782882,
+        "claimOut": 6204408614,
+        "sharesOut": 62044086140000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "118166335313378275401082392",
+          "amountIn": "1197149434002827785943214",
+          "beforeRemaining": "119363484747381103187025606",
+          "claimOut": 1520716900,
+          "deadline": 1789354417,
+          "minClaimOut": 1513113315,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15207169000000000000
+        },
+        {
+          "afterRemaining": "116909328407675306225842017",
+          "amountIn": "1257006905702969175240375",
+          "beforeRemaining": "118166335313378275401082392",
+          "claimOut": 1520654946,
+          "deadline": 1789354417,
+          "minClaimOut": 1513051671,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15206549460000000000
+        },
+        {
+          "afterRemaining": "115589471156687188591839624",
+          "amountIn": "1319857250988117634002393",
+          "beforeRemaining": "116909328407675306225842017",
+          "claimOut": 1520593412,
+          "deadline": 1789354417,
+          "minClaimOut": 1512990444,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15205934120000000000
+        },
+        {
+          "afterRemaining": "114203621043149665076137111",
+          "amountIn": "1385850113537523515702513",
+          "beforeRemaining": "115589471156687188591839624",
+          "claimOut": 1520532293,
+          "deadline": 1789354417,
+          "minClaimOut": 1512929631,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15205322930000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x43579eaea87c6c88cd0290c174e6fd3d087847e5af7c6d12873e9c760dd1769f",
+          "blockHash": "0xdc6f5e80a17b257e5048318209e17800a37a721a28ebd87f0e90e90198ce8fef",
+          "blockNumber": "0x3b8f5e4"
+        },
+        {
+          "transactionHash": "0x94fd21757bd3a2964b816f42b9d8b7e993e45fb66867f0035cf432358bdc70fb",
+          "blockHash": "0x168efa954ba7f7f26e6af604ee7f7301ad1801ff25a4bbff229a03d0ae2fe2c4",
+          "blockNumber": "0x3b8f5fb"
+        },
+        {
+          "transactionHash": "0xd2566a4d66b19fdc83ba3431009db32ab6ceb1c6e0bedc16abd930da3757239d",
+          "blockHash": "0xa63de69e5aa3e36390b6780a19ef6112faac77fa00ce50b731be4ec886ea387a",
+          "blockNumber": "0x3b8f612"
+        },
+        {
+          "transactionHash": "0x434e39a5699684ed850073512ef9f47d0ee0730f9f82dfdc9df408065d21f5a4",
+          "blockHash": "0x68ceb9e95c2c558e494a551c0917e79864893d804e58ec57fc39f7a029a95215",
+          "blockNumber": "0x3b8f629"
+        }
+      ],
+      "reserveRemaining": 108193077720182830515671553,
+      "phase": 1,
+      "migration": {
+        "amountIn": 6010543322966834560465558,
+        "detfOut": 6611393504,
+        "claimOut": 6187126517,
+        "sharesOut": 61871265170000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "112809103871845622951960769",
+          "amountIn": "1394517171304042124176342",
+          "beforeRemaining": "114203621043149665076137111",
+          "claimOut": 1520466716,
+          "deadline": 1789354647,
+          "minClaimOut": 1512864382,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15204667160000000000
+        },
+        {
+          "afterRemaining": "111344860841976378721575609",
+          "amountIn": "1464243029869244230385160",
+          "beforeRemaining": "112809103871845622951960769",
+          "claimOut": 1520406442,
+          "deadline": 1789354647,
+          "minClaimOut": 1512804409,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15204064420000000000
+        },
+        {
+          "afterRemaining": "109807405660613672279671191",
+          "amountIn": "1537455181362706441904418",
+          "beforeRemaining": "111344860841976378721575609",
+          "claimOut": 1520346566,
+          "deadline": 1789354647,
+          "minClaimOut": 1512744833,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15203465660000000000
+        },
+        {
+          "afterRemaining": "108193077720182830515671553",
+          "amountIn": "1614327940430841763999638",
+          "beforeRemaining": "109807405660613672279671191",
+          "claimOut": 1520287083,
+          "deadline": 1789354647,
+          "minClaimOut": 1512685647,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15202870830000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x8adb8741a025f2638a04b7efce966dfa7594bb8670786c04cb968aa52fa8d9f3",
+          "blockHash": "0x444750c11728f63139d27bd5740ebd70814157e93091920ff90baa236cf39093",
+          "blockNumber": "0x3b9059c"
+        },
+        {
+          "transactionHash": "0xf247b63b43b72bf62361edae472ea68d38a3b58f49c371eb12a1965b1fee7a4a",
+          "blockHash": "0x93fd8abda582a4b6490e4d3f62337a7c3b932e7f8846121457ca12eed7fe0e3e",
+          "blockNumber": "0x3b905b3"
+        },
+        {
+          "transactionHash": "0x7260430a9ca8dbc5506ff6738f64f56f664fe5f2b14f106443041fc2b12d46d6",
+          "blockHash": "0xc49365f84d9825f17148e90c7aabefdc1565d495daf09a34adc8006c57357b83",
+          "blockNumber": "0x3b905ca"
+        },
+        {
+          "transactionHash": "0xbbce6485d16659d6d483502b4650d98a9b459e36514c00db9f10acd3ba9d9892",
+          "blockHash": "0x47ca32f7e18307805628407e8b363957380d0a7234a255400758d6088f826fd4",
+          "blockNumber": "0x3b905e1"
+        }
+      ],
+      "reserveRemaining": 101414784916682332009671487,
+      "phase": 1,
+      "migration": {
+        "amountIn": 6778292803500498506000066,
+        "detfOut": 6709293697,
+        "claimOut": 6277742375,
+        "sharesOut": 62777423750000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "106620433584919816448562115",
+          "amountIn": "1572644135263014067109438",
+          "beforeRemaining": "108193077720182830515671553",
+          "claimOut": 1520223882,
+          "deadline": 1789354767,
+          "minClaimOut": 1512622762,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15202238820000000000
+        },
+        {
+          "afterRemaining": "104969157242893651678097205",
+          "amountIn": "1651276342026164770464910",
+          "beforeRemaining": "106620433584919816448562115",
+          "claimOut": 1520165196,
+          "deadline": 1789354767,
+          "minClaimOut": 1512564370,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15201651960000000000
+        },
+        {
+          "afterRemaining": "103235317083766178669109050",
+          "amountIn": "1733840159127473008988155",
+          "beforeRemaining": "104969157242893651678097205",
+          "claimOut": 1520106887,
+          "deadline": 1789354767,
+          "minClaimOut": 1512506352,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15201068870000000000
+        },
+        {
+          "afterRemaining": "101414784916682332009671487",
+          "amountIn": "1820532167083846659437563",
+          "beforeRemaining": "103235317083766178669109050",
+          "claimOut": 1520048950,
+          "deadline": 1789354767,
+          "minClaimOut": 1512448705,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15200489500000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xb13729fda5cd59f426e642dd849d8f2e015aeabbdc7b89d0c7d78cea5b14efa2",
+          "blockHash": "0x981625a279e7ed0ba11f77c65f7458c411b02603aa499f2b481706634ca647d6",
+          "blockNumber": "0x3b90de1"
+        },
+        {
+          "transactionHash": "0x83ffc64d3fa19aed19c3761f60df6ae40c8f7945295856abf837ec41122ff975",
+          "blockHash": "0x9dca49f08bfcfe4d3dcba197a79b95e0e791f1f1273bf584cb19c86ee211515d",
+          "blockNumber": "0x3b90df7"
+        },
+        {
+          "transactionHash": "0xc2b5b8a24ee3f44165cbf1e86d9c4664e24eb2d5920b19ec3530e46949ca804a",
+          "blockHash": "0x2dcb8fc7e99752babc632c66038ce9968b8f78397205dd85ec1fc61d4a531d28",
+          "blockNumber": "0x3b90e0e"
+        },
+        {
+          "transactionHash": "0x2f5e1c8cdccb3fd211a912e61f7e3b6534b1ed47936630488082bba7a39914be",
+          "blockHash": "0xdefd0b7ff918d8f4f09207d053a9999b9c19ddf9888670176e39541306030dbd",
+          "blockNumber": "0x3b90e25"
+        }
+      ],
+      "reserveRemaining": 93680799054486389482512749,
+      "phase": 1,
+      "migration": {
+        "amountIn": 7733985862195942527158738,
+        "detfOut": 6597864068,
+        "claimOut": 6172525126,
+        "sharesOut": 61725251260000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "99620408683464979258380344",
+          "amountIn": "1794376233217352751291143",
+          "beforeRemaining": "101414784916682332009671487",
+          "claimOut": 1519983915,
+          "deadline": 1789355177,
+          "minClaimOut": 1512383995,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15199839150000000000
+        },
+        {
+          "afterRemaining": "97736313638586758869524644",
+          "amountIn": "1884095044878220388855700",
+          "beforeRemaining": "99620408683464979258380344",
+          "claimOut": 1519926756,
+          "deadline": 1789355177,
+          "minClaimOut": 1512327122,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15199267560000000000
+        },
+        {
+          "afterRemaining": "95758013841464627461226159",
+          "amountIn": "1978299797122131408298485",
+          "beforeRemaining": "97736313638586758869524644",
+          "claimOut": 1519869956,
+          "deadline": 1789355177,
+          "minClaimOut": 1512270606,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15198699560000000000
+        },
+        {
+          "afterRemaining": "93680799054486389482512749",
+          "amountIn": "2077214786978237978713410",
+          "beforeRemaining": "95758013841464627461226159",
+          "claimOut": 1519813510,
+          "deadline": 1789355177,
+          "minClaimOut": 1512214442,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15198135100000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x379100adc58d0cc97f47269e7ffda8ab519327a1aa1895f0d430411b78f22733",
+          "blockHash": "0xed6af763476b870228679500333a05aa072aa6cb76c0877cc78b10673a3a38c3",
+          "blockNumber": "0x3b932f2"
+        },
+        {
+          "transactionHash": "0x59e5dd68417de2930dd2d2a1d52abfa4cd01d71f0c216cb9e61cd31e2404fb3a",
+          "blockHash": "0xbe8b0e3327dae2f3ab451989234a2a3f409d199a3d1bdb677489172f98970227",
+          "blockNumber": "0x3b93309"
+        },
+        {
+          "transactionHash": "0x9f636552d4c350e3e4a9d5f84ab5f1b521ca29dba161e56c2fbb02f219071cf0",
+          "blockHash": "0x79c83385d9cef9238154468fe0d1fc9dc8c5f7c34efc3fd52001202c113d09f7",
+          "blockNumber": "0x3b93320"
+        },
+        {
+          "transactionHash": "0x20966ebb69f04ff0c371ce89f397e2e50d9c2cd8335d0cc6423020b4182a8b0f",
+          "blockHash": "0xe5c907fc66830ce708728c8b3efe72a1deaf2e1923c1de7502d1ac50940056b3",
+          "blockNumber": "0x3b93336"
+        }
+      ],
+      "reserveRemaining": 84759103622620649937683976,
+      "phase": 1,
+      "migration": {
+        "amountIn": 8921695431865739544828773,
+        "detfOut": 6712992814,
+        "claimOut": 6279280743,
+        "sharesOut": 62792807430000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "91610860147409276975374610",
+          "amountIn": "2069938907077112507138139",
+          "beforeRemaining": "93680799054486389482512749",
+          "claimOut": 1519753982,
+          "deadline": 1789355389,
+          "minClaimOut": 1512155212,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15197539820000000000
+        },
+        {
+          "afterRemaining": "89437424294978308842879564",
+          "amountIn": "2173435852430968132495046",
+          "beforeRemaining": "91610860147409276975374610",
+          "claimOut": 1519698251,
+          "deadline": 1789355389,
+          "minClaimOut": 1512099759,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15196982510000000000
+        },
+        {
+          "afterRemaining": "87155316649925792303759765",
+          "amountIn": "2282107645052516539119799",
+          "beforeRemaining": "89437424294978308842879564",
+          "claimOut": 1519642860,
+          "deadline": 1789355389,
+          "minClaimOut": 1512044645,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15196428600000000000
+        },
+        {
+          "afterRemaining": "84759103622620649937683976",
+          "amountIn": "2396213027305142366075789",
+          "beforeRemaining": "87155316649925792303759765",
+          "claimOut": 1519587806,
+          "deadline": 1789355389,
+          "minClaimOut": 1511989866,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15195878060000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x825d247732f52a14ff75cc50e4b421ffee3bf4cd84491d8ce66871223df69650",
+          "blockHash": "0xb3a94dc34134c9fcf874aa1cdfd76bff492299c355e115b9375fbdfc0d727e85",
+          "blockNumber": "0x3b951eb"
+        },
+        {
+          "transactionHash": "0x2e362c6e279ffb11c4d24b30b96a31e6628172d6703c7158c609c10b6bf9eb34",
+          "blockHash": "0x134d251cdfd330a66f51f7427e07046fe635e8b5a5db1815fa50c974d80fac87",
+          "blockNumber": "0x3b95202"
+        },
+        {
+          "transactionHash": "0xde3e2d17c17663bf87dbce7c23ef266cd8f5159ff581458ee5156b5542b72b7e",
+          "blockHash": "0x996006470f766c85811f644712c380fdff142311ef547ae091754a7aaa5ac000",
+          "blockNumber": "0x3b95219"
+        },
+        {
+          "transactionHash": "0x948db61b6c6511c4808495bb535609bacb4eaaf0c59915295e85b943db7c6af5",
+          "blockHash": "0x1725f89258df9ea0fa4670f61919edb95d8ec97cea6cd1d6e20d3fd2baf7a15f",
+          "blockNumber": "0x3b95231"
+        }
+      ],
+      "reserveRemaining": 74392997307498030939895213,
+      "phase": 1,
+      "migration": {
+        "amountIn": 10366106315122618997788763,
+        "detfOut": 6741594056,
+        "claimOut": 6305094034,
+        "sharesOut": 63050940340000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "82354044299486722499897656",
+          "amountIn": "2405059323133927437786320",
+          "beforeRemaining": "84759103622620649937683976",
+          "claimOut": 1519525862,
+          "deadline": 1789356352,
+          "minClaimOut": 1511928232,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15195258620000000000
+        },
+        {
+          "afterRemaining": "79828732010196098690222020",
+          "amountIn": "2525312289290623809675636",
+          "beforeRemaining": "82354044299486722499897656",
+          "claimOut": 1519471512,
+          "deadline": 1789356352,
+          "minClaimOut": 1511874154,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15194715120000000000
+        },
+        {
+          "afterRemaining": "77177154106440943690062602",
+          "amountIn": "2651577903755155000159418",
+          "beforeRemaining": "79828732010196098690222020",
+          "claimOut": 1519417485,
+          "deadline": 1789356352,
+          "minClaimOut": 1511820397,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15194174850000000000
+        },
+        {
+          "afterRemaining": "74392997307498030939895213",
+          "amountIn": "2784156798942912750167389",
+          "beforeRemaining": "77177154106440943690062602",
+          "claimOut": 1519363779,
+          "deadline": 1789356352,
+          "minClaimOut": 1511766960,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15193637790000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x0d7862b8d68b44f3de4c752069dd3bbffc3fb601a9ed8b16e71c9877b4642086",
+          "blockHash": "0x054a9f7d657a73fde72e6988f11de2e49fca34d5b052971fce77c7d0c5076bd5",
+          "blockNumber": "0x3b96cdb"
+        },
+        {
+          "transactionHash": "0x67ede18ac8edba8c1c55dafb7e03a3e32a784d3ac7f8d6607521e7a4c4e5e8f2",
+          "blockHash": "0xb60bb69de07b9720a1b262b3b22a295ecae7cb8a8e8f0656c7d4f4d0f739be92",
+          "blockNumber": "0x3b96cf3"
+        },
+        {
+          "transactionHash": "0x6835a396b58127cf5c48caa2a9ce188a7ca836040bec91f9ccdac4e39355500f",
+          "blockHash": "0xed85686f4d80380e356f7b32ba59f53f6180a3b6785232bf9e9d54ee91b0d499",
+          "blockNumber": "0x3b96d0a"
+        },
+        {
+          "transactionHash": "0x57100be5470cc67481e394f967b1f8f626cb87e9624638ef7a6e854afec648d7",
+          "blockHash": "0xdfffe4d93825cb6a17e7d278d23a2758bc440e3a22f1388690bab7cd99728d72",
+          "blockNumber": "0x3b96d21"
+        }
+      ],
+      "reserveRemaining": 62578754935284002032481138,
+      "phase": 1,
+      "migration": {
+        "amountIn": 11814242372214028907414075,
+        "detfOut": 6717572947,
+        "claimOut": 6281714908,
+        "sharesOut": 62817149080000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "71651953283899172691604485",
+          "amountIn": "2741044023598858248290728",
+          "beforeRemaining": "74392997307498030939895213",
+          "claimOut": 1519302404,
+          "deadline": 1789357157,
+          "minClaimOut": 1511705891,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15193024040000000000
+        },
+        {
+          "afterRemaining": "68773857059120371530899220",
+          "amountIn": "2878096224778801160705265",
+          "beforeRemaining": "71651953283899172691604485",
+          "claimOut": 1519249373,
+          "deadline": 1789357157,
+          "minClaimOut": 1511653126,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15192493730000000000
+        },
+        {
+          "afterRemaining": "65751856023102630312158692",
+          "amountIn": "3022001036017741218740528",
+          "beforeRemaining": "68773857059120371530899220",
+          "claimOut": 1519196651,
+          "deadline": 1789357157,
+          "minClaimOut": 1511600667,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15191966510000000000
+        },
+        {
+          "afterRemaining": "62578754935284002032481138",
+          "amountIn": "3173101087818628279677554",
+          "beforeRemaining": "65751856023102630312158692",
+          "claimOut": 1519144234,
+          "deadline": 1789357157,
+          "minClaimOut": 1511548512,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15191442340000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xee892f33591fe705b757b95cc74138fde8bb37410688de82debb78eb0798458a",
+          "blockHash": "0x478d0497f6f7742cb1fbe45761eb3cd39bc7184bd5295da730b869152499b707",
+          "blockNumber": "0x3b9773d"
+        },
+        {
+          "transactionHash": "0x270a1707e629a2539b761af863dee7b6798c43f511afce2b8c2373b6141d71ea",
+          "blockHash": "0x9de75078004187f729b556d3935233659b7a785e58dfa67d35b7fb1a38b63d6f",
+          "blockNumber": "0x3b97753"
+        },
+        {
+          "transactionHash": "0x9a917acd5dc7b0d7504404bbcbb95bb6dd4d5155643bb0e9e8ac9959ddd61553",
+          "blockHash": "0xef78d46f8c11335e249b9876a9d46bd8eaeeba719e535128d0169408b96731af",
+          "blockNumber": "0x3b97769"
+        },
+        {
+          "transactionHash": "0x2e4aab34a1e40743220ede70d77471237ae07586d9ef4b51801007c66e3767d3",
+          "blockHash": "0x3d8b85c812fb4271d7ff42660615b9d79a3f63fec09e231ebc9bed701a52eb48",
+          "blockNumber": "0x3b97780"
+        }
+      ],
+      "reserveRemaining": 49028571037593714483444739,
+      "phase": 1,
+      "migration": {
+        "amountIn": 13550183897690287549036399,
+        "detfOut": 6559379685,
+        "claimOut": 6132928958,
+        "sharesOut": 61329289580000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "59434951937066946251259851",
+          "amountIn": "3143802998217055781221287",
+          "beforeRemaining": "62578754935284002032481138",
+          "claimOut": 1519085094,
+          "deadline": 1789357861,
+          "minClaimOut": 1511489668,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15190850940000000000
+        },
+        {
+          "afterRemaining": "56133958788939037680977500",
+          "amountIn": "3300993148127908570282351",
+          "beforeRemaining": "59434951937066946251259851",
+          "claimOut": 1519033316,
+          "deadline": 1789357861,
+          "minClaimOut": 1511438149,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15190333160000000000
+        },
+        {
+          "afterRemaining": "52667915983404733682181031",
+          "amountIn": "3466042805534303998796469",
+          "beforeRemaining": "56133958788939037680977500",
+          "claimOut": 1518981833,
+          "deadline": 1789357861,
+          "minClaimOut": 1511386923,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15189818330000000000
+        },
+        {
+          "afterRemaining": "49028571037593714483444739",
+          "amountIn": "3639344945811019198736292",
+          "beforeRemaining": "52667915983404733682181031",
+          "claimOut": 1518930641,
+          "deadline": 1789357861,
+          "minClaimOut": 1511335987,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15189306410000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0x8af955f8e78fcfa3df5ebf64a8226583fdbeed52b801b1bb74415d1362c3139c",
+          "blockHash": "0xea4dd44a516c8139de8fd73d3d57110c6dd386ba93defaf4df7ba49e4f188df0",
+          "blockNumber": "0x3b99821"
+        },
+        {
+          "transactionHash": "0xc2d82bc85eb5df982b6da8978ea784d0840181c3443c08b8d9bb077bea6524e8",
+          "blockHash": "0xef0883dc957d94f9368f8a9eec4fb02b4b16ae4d30b8b9d5ead79915075e8687",
+          "blockNumber": "0x3b99838"
+        },
+        {
+          "transactionHash": "0x0380d7b61f7ff57a899515087c5d564d88530567a745fd10d203209af93cb085",
+          "blockHash": "0x2aa115668ac6670198e03d8a035039e0b8b493733886463bc2c9c8dbb573a954",
+          "blockNumber": "0x3b9984f"
+        },
+        {
+          "transactionHash": "0xb1d200a5fff09fd06c9493fd89c407ad098e067afaafe2cb9c5d9fc2192c3119",
+          "blockHash": "0x46316abf503e2dab313a60d01bd4368d2dcf4f85307659f9cd81d029416d8fd3",
+          "blockNumber": "0x3b99866"
+        }
+      ],
+      "reserveRemaining": 33061418481841668629603997,
+      "phase": 1,
+      "migration": {
+        "amountIn": 15967152555752045853840742,
+        "detfOut": 6783373730,
+        "claimOut": 6341484153,
+        "sharesOut": 63414841530000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "45324002711674617971431574",
+          "amountIn": "3704568325919096512013165",
+          "beforeRemaining": "49028571037593714483444739",
+          "claimOut": 1518877829,
+          "deadline": 1789358125,
+          "minClaimOut": 1511283439,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15188778290000000000
+        },
+        {
+          "afterRemaining": "41434205969459566633817751",
+          "amountIn": "3889796742215051337613823",
+          "beforeRemaining": "45324002711674617971431574",
+          "claimOut": 1518827220,
+          "deadline": 1789358125,
+          "minClaimOut": 1511233083,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15188272200000000000
+        },
+        {
+          "afterRemaining": "37349919390133762729323237",
+          "amountIn": "4084286579325803904494514",
+          "beforeRemaining": "41434205969459566633817751",
+          "claimOut": 1518776891,
+          "deadline": 1789358125,
+          "minClaimOut": 1511183006,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15187768910000000000
+        },
+        {
+          "afterRemaining": "33061418481841668629603997",
+          "amountIn": "4288500908292094099719240",
+          "beforeRemaining": "37349919390133762729323237",
+          "claimOut": 1518726841,
+          "deadline": 1789358125,
+          "minClaimOut": 1511133206,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15187268410000000000
+        }
+      ]
+    },
+    {
+      "stage": "08-07",
+      "receipts": [
+        {
+          "transactionHash": "0xd3f276fd7e5c44f6ddf43d26bc7c3b37482dfd3aab9081e546e9caa47cea1cc7",
+          "blockHash": "0xb8f0b95cafd3b91b62e481ec454fa8eabbad8cdf940ecd0e30a54d9379d5e189",
+          "blockNumber": "0x3b9a95c"
+        },
+        {
+          "transactionHash": "0x16240f7c21643dde12aa4a641c98af92fec2584544822c1ece63ab2d603df926",
+          "blockHash": "0x00bf39e0aebc8ad2ebcc51013f96c530cc4c70bfd6002e3161c8d8ff02e6cf26",
+          "blockNumber": "0x3b9a976"
+        },
+        {
+          "transactionHash": "0x8fc359a438a130960e9e25c48322b4cfa7038de08afe8d5ac8439bd9ee2a61ab",
+          "blockHash": "0xf55214dc6eb1f146151dc07a690b53ab654398fc556672d04791ac78560027ee",
+          "blockNumber": "0x3b9a98d"
+        },
+        {
+          "transactionHash": "0x27081f789ab20b849aa19d27f0141d2c80d6b3761daa53ec2d967d4974c94c4a",
+          "blockHash": "0x2a242ac284582eb44ec4722990dd03b98165ae2119056641944b7afb5d18b715",
+          "blockNumber": "0x3b9a9a4"
+        }
+      ],
+      "reserveRemaining": 14887791691670962960245763,
+      "phase": 1,
+      "migration": {
+        "amountIn": 18173626790170705669358234,
+        "detfOut": 6535235642,
+        "claimOut": 6108694142,
+        "sharesOut": 61086941420000000000,
+        "chunks": 4
+      },
+      "quotes": [
+        {
+          "afterRemaining": "28844922025202776330805648",
+          "amountIn": "4216496456638892298798349",
+          "beforeRemaining": "33061418481841668629603997",
+          "claimOut": 1518668341,
+          "deadline": 1789358980,
+          "minClaimOut": 1511074999,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15186683410000000000
+        },
+        {
+          "afterRemaining": "24417600745731939417067382",
+          "amountIn": "4427321279470836913738266",
+          "beforeRemaining": "28844922025202776330805648",
+          "claimOut": 1518618885,
+          "deadline": 1789358980,
+          "minClaimOut": 1511025790,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15186188850000000000
+        },
+        {
+          "afterRemaining": "19768913402287560657642202",
+          "amountIn": "4648687343444378759425180",
+          "beforeRemaining": "24417600745731939417067382",
+          "claimOut": 1518569698,
+          "deadline": 1789358980,
+          "minClaimOut": 1510976849,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15185696980000000000
+        },
+        {
+          "afterRemaining": "14887791691670962960245763",
+          "amountIn": "4881121710616597697396439",
+          "beforeRemaining": "19768913402287560657642202",
+          "claimOut": 1518520776,
+          "deadline": 1789358980,
+          "minClaimOut": 1510928172,
+          "principalBefore": "151880363724304760071838006",
+          "sharesOut": 15185207760000000000
+        }
+      ]
+    }
+  ],
+  "initialReserve": 153620746811234881078422403,
+  "initialPrincipal": 151880363724304760071838006,
+  "migrationStarted": true,
+  "scriptUpdates": [
+    {
+      "from": "44691de41f5b69911877c7b6af39af10d895ffc789a0bb972134735174befe93",
+      "to": "90dcad1c28a15255889e10e5281ca3e2e5e67bc94ce2e60f952668c19cc2a11c",
+      "reason": "Reviewed migration deadline fix: four transactions per invocation, fresh sequential batches, local trace metadata, receipt-derived cutover baseline; no contract or economic config changes."
+    },
+    {
+      "from": "90dcad1c28a15255889e10e5281ca3e2e5e67bc94ce2e60f952668c19cc2a11c",
+      "to": "7b241553cb54220041d97ac3bc220b308bbc607bb053a93aaaa5ee664f184d3e",
+      "reason": "Reviewed first-batch cutover reconciliation: prove the first migration timestamp and transaction order, preserve exact actual debits and quote limits, recover the confirmed batch without broadcast. No contract or economic configuration changes."
+    },
+    {
+      "from": "7b241553cb54220041d97ac3bc220b308bbc607bb053a93aaaa5ee664f184d3e",
+      "to": "ae7112dc9a9b65443b405f644aafc73e6d49742aab990fb24f2490f46a7aaa77",
+      "reason": "Reviewed recovery for a canonically reverted first transaction with an unsent remainder: verify sender nonces, preserve failed calldata and quotes, enforce unchanged staking reserve/principal, then permit fresh quote execution. No contract, economic, slippage, or pool-limit changes."
+    },
+    {
+      "from": "ae7112dc9a9b65443b405f644aafc73e6d49742aab990fb24f2490f46a7aaa77",
+      "to": "10c68a9dbee00498e2bc071f8ab50795194c931be24f7c70be5327d18891c942",
+      "reason": "Reviewed reserve-drift sizing fix: cap migration calls at 5% of live DTF custody instead of 25%; reconcile a successful prefix followed by a reverted transaction without replay. No deployed contract, fee, slippage, deadline, weight, or pool-limit changes."
+    }
+  ],
+  "preMigrationSnapshots": [
+    {
+      "initialReserve": 164918773245602919993967737,
+      "initialPrincipal": 163083427428934015177879773
+    },
+    {
+      "initialReserve": 153710628993780437923232103,
+      "initialPrincipal": 151970245906850316916647706
+    }
+  ],
+  "failedMigrationAttempts": [
+    {
+      "transactionHash": "0x6185dd11b89407302f8208a5c448dc9171c885982fe6534a9ed4176309f3abe0",
+      "blockHash": "0x41b1f7817c6b80db74cde7f9f1fd6ec3f94f4b243311d2901f02465ee43020f5",
+      "blockNumber": "0x3b6442d",
+      "status": 0,
+      "reserveRemaining": 153433497977954169079988981,
+      "transactions": [
+        {
+          "hash": "0x6185dd11b89407302f8208a5c448dc9171c885982fe6534a9ed4176309f3abe0",
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "46902931784577999608355",
+            "253661309",
+            "1789335639"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x300cc0",
+            "value": "0x0",
+            "input": "0x763f89c80000000000000000000000000000000000000000000009ee9cef53b0d5f29a23000000000000000000000000000000000000000000000000000000000f1e907d000000000000000000000000000000000000000000000000000000006aa71857",
+            "nonce": "0x131",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        },
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "58628664730722499510444",
+            "253626458",
+            "1789335639"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x300db0",
+            "value": "0x0",
+            "input": "0x763f89c8000000000000000000000000000000000000000000000c6a442b289d0b6f40ac000000000000000000000000000000000000000000000000000000000f1e085a000000000000000000000000000000000000000000000000000000006aa71857",
+            "nonce": "0x132",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        },
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "73285830913403124388055",
+            "253592392",
+            "1789335639"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x300db0",
+            "value": "0x0",
+            "input": "0x763f89c8000000000000000000000000000000000000000000000f84d535f2c44e4b10d7000000000000000000000000000000000000000000000000000000000f1d8348000000000000000000000000000000000000000000000000000000006aa71857",
+            "nonce": "0x133",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        },
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "91607288641753905485069",
+            "253559076",
+            "1789335639"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x300d17",
+            "value": "0x0",
+            "input": "0x763f89c80000000000000000000000000000000000000000000013660a836f7561ddd50d000000000000000000000000000000000000000000000000000000000f1d0124000000000000000000000000000000000000000000000000000000006aa71857",
+            "nonce": "0x134",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        }
+      ],
+      "quote": {
+        "configHash": "0x711c124542accd49211e09a778a8cbfe85a840b39af68df2b87efa6c7a396579",
+        "receiptVerified": false,
+        "chunks": [
+          {
+            "afterRemaining": "153386595046169591080380626",
+            "amountIn": "46902931784577999608355",
+            "beforeRemaining": "153433497977954169079988981",
+            "claimOut": 254935989,
+            "deadline": 1789335639,
+            "minClaimOut": 253661309,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2549359890000000000
+          },
+          {
+            "afterRemaining": "153327966381438868580870182",
+            "amountIn": "58628664730722499510444",
+            "beforeRemaining": "153386595046169591080380626",
+            "claimOut": 254900963,
+            "deadline": 1789335639,
+            "minClaimOut": 253626458,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2549009630000000000
+          },
+          {
+            "afterRemaining": "153254680550525465456482127",
+            "amountIn": "73285830913403124388055",
+            "beforeRemaining": "153327966381438868580870182",
+            "claimOut": 254866726,
+            "deadline": 1789335639,
+            "minClaimOut": 253592392,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2548667260000000000
+          },
+          {
+            "afterRemaining": "153163073261883711550997058",
+            "amountIn": "91607288641753905485069",
+            "beforeRemaining": "153254680550525465456482127",
+            "claimOut": 254833243,
+            "deadline": 1789335639,
+            "minClaimOut": 253559076,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2548332430000000000
+          }
+        ]
+      }
+    },
+    {
+      "transactionHash": "0xd67d96cb35ee081a9c10bcc6de27a6ba58969424215bc41e7832dae6451811a8",
+      "blockHash": "0x181644f43adfac46bb31e6df07b7c452d695362107b1b990ccb306c127cf1917",
+      "blockNumber": "0x3b67fc2",
+      "status": 0,
+      "reserveRemaining": 153374935924829334988863990,
+      "transactions": [
+        {
+          "hash": "0xd67d96cb35ee081a9c10bcc6de27a6ba58969424215bc41e7832dae6451811a8",
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "24797617346220397664715",
+            "253526479",
+            "1789338192"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x32e02f",
+            "value": "0x0",
+            "input": "0x763f89c8000000000000000000000000000000000000000000000540481258fadb8f99cb000000000000000000000000000000000000000000000000000000000f1c81cf000000000000000000000000000000000000000000000000000000006aa72250",
+            "nonce": "0x136",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        },
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "30997021682775497080894",
+            "253494569",
+            "1789338192"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x300f0a",
+            "value": "0x0",
+            "input": "0x763f89c80000000000000000000000000000000000000000000006905a16ef399273803e000000000000000000000000000000000000000000000000000000000f1c0529000000000000000000000000000000000000000000000000000000006aa72250",
+            "nonce": "0x137",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        },
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "38746277103469371351117",
+            "253463319",
+            "1789338192"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x32e168",
+            "value": "0x0",
+            "input": "0x763f89c8000000000000000000000000000000000000000000000834709cab07f710604d000000000000000000000000000000000000000000000000000000000f1b8b17000000000000000000000000000000000000000000000000000000006aa72250",
+            "nonce": "0x138",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        },
+        {
+          "hash": null,
+          "transactionType": "CALL",
+          "contractName": null,
+          "contractAddress": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+          "function": "migrateToClaimVault(uint256,uint256,uint256)",
+          "arguments": [
+            "48432846379336714188897",
+            "253432702",
+            "1789338192"
+          ],
+          "transaction": {
+            "from": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+            "to": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+            "gas": "0x300aa8",
+            "value": "0x0",
+            "input": "0x763f89c8000000000000000000000000000000000000000000000a418cc3d5c9f4d47861000000000000000000000000000000000000000000000000000000000f1b137e000000000000000000000000000000000000000000000000000000006aa72250",
+            "nonce": "0x139",
+            "chainId": "0x1237"
+          },
+          "additionalContracts": [],
+          "isFixedGasLimit": false
+        }
+      ],
+      "quote": {
+        "configHash": "0x711c124542accd49211e09a778a8cbfe85a840b39af68df2b87efa6c7a396579",
+        "receiptVerified": false,
+        "chunks": [
+          {
+            "afterRemaining": "153350138307483114591199275",
+            "amountIn": "24797617346220397664715",
+            "beforeRemaining": "153374935924829334988863990",
+            "claimOut": 254800482,
+            "deadline": 1789338192,
+            "minClaimOut": 253526479,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2548004820000000000
+          },
+          {
+            "afterRemaining": "153319141285800339094118381",
+            "amountIn": "30997021682775497080894",
+            "beforeRemaining": "153350138307483114591199275",
+            "claimOut": 254768412,
+            "deadline": 1789338192,
+            "minClaimOut": 253494569,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2547684120000000000
+          },
+          {
+            "afterRemaining": "153280395008696869722767264",
+            "amountIn": "38746277103469371351117",
+            "beforeRemaining": "153319141285800339094118381",
+            "claimOut": 254737005,
+            "deadline": 1789338192,
+            "minClaimOut": 253463319,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2547370050000000000
+          },
+          {
+            "afterRemaining": "153231962162317533008578367",
+            "amountIn": "48432846379336714188897",
+            "beforeRemaining": "153280395008696869722767264",
+            "claimOut": 254706234,
+            "deadline": 1789338192,
+            "minClaimOut": 253432702,
+            "principalBefore": "151880363724304760071838006",
+            "sharesOut": 2547062340000000000
+          }
+        ]
+      }
+    }
+  ]
+}

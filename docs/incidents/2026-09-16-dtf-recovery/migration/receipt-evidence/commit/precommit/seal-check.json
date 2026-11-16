@@ -1,0 +1,104 @@
+[
+  {
+    "path": "verification/manifest.json",
+    "bytes": 123457,
+    "sha256": "1964b2db2377db6fb17727a2998f8bfd41d823a082f2c2522d6018bbca512baf",
+    "match": true
+  },
+  {
+    "path": "verification/report.md",
+    "bytes": 20647,
+    "sha256": "77bb12de3b210f0091d4f7409fdb52eff81b1fec5d8cc11dce0db38897bfa5aa",
+    "match": true
+  },
+  {
+    "path": "verification/cleanup.json",
+    "bytes": 1747,
+    "sha256": "1119ed962389cd66b99c87334058b34a703a0bb4b71cb56e563d9fa8395075ed",
+    "match": true
+  },
+  {
+    "path": "verification/final-state.json",
+    "bytes": 112437,
+    "sha256": "fec22fc537ed14f482634a0ce1322a18f732012f4e06639268fd0f6916919f1d",
+    "match": true
+  },
+  {
+    "path": "verification/intake.json",
+    "bytes": 517207,
+    "sha256": "004b9267feeb782e2b06efa097688713945805067c238bb8270620f4234b0514",
+    "match": true
+  },
+  {
+    "path": "verification/preservation.json",
+    "bytes": 304653,
+    "sha256": "f77773784206655734471c55289ec18b3d0b31beee0767eb169ec4074a399496",
+    "match": true
+  },
+  {
+    "path": "verification/actual/archive.json",
+    "bytes": 3848804,
+    "sha256": "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b",
+    "match": true
+  },
+  {
+    "path": "verification/actual/http-manifest.json",
+    "bytes": 154633,
+    "sha256": "6feab989ce86fe70e1b70ad37acb42a775131c5e46a848b575689436f88d0731",
+    "match": true
+  },
+  {
+    "path": "verification/independent-proof.json",
+    "bytes": 7808127,
+    "sha256": "18e9c490df316d958a9d0b8f841ba0c8de103693b6ea66143e22627ea67bbb0a",
+    "match": true
+  },
+  {
+    "path": "implementation/manifest.json",
+    "bytes": 123425,
+    "sha256": "0b5f1a0714354e66e4b0e773c11c2930ff8e440ef3dc77e1207633f782070e7f",
+    "match": true
+  },
+  {
+    "path": "implementation/report.md",
+    "bytes": 17946,
+    "sha256": "931b2130f345835240f67fd438e4864e05fb71cc856f9c16db6a678f3ffab815",
+    "match": true
+  },
+  {
+    "path": "implementation/source-manifest.json",
+    "bytes": 16341,
+    "sha256": "2c91a827e237db5c664c053730d40763fff8228de5b121b7df87ed8509c59861",
+    "match": true
+  },
+  {
+    "path": "implementation/cleanup.json",
+    "bytes": 1870,
+    "sha256": "de24379a0393ff688b5548ad440924641b55ade2ca2b30c2c4633f2478a922d2",
+    "match": true
+  },
+  {
+    "path": "implementation/actual/archive.json",
+    "bytes": 3848804,
+    "sha256": "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b",
+    "match": true
+  },
+  {
+    "path": "implementation/actual/http-manifest.json",
+    "bytes": 154633,
+    "sha256": "6feab989ce86fe70e1b70ad37acb42a775131c5e46a848b575689436f88d0731",
+    "match": true
+  },
+  {
+    "path": "implementation/independent-proof.json",
+    "bytes": 143499,
+    "sha256": "c1fd3a0195f4fcd6781245e1c9b78721efe953519657b1a9f8f7f8cc10ca024f",
+    "match": true
+  },
+  {
+    "path": "implementation/reference-review.json",
+    "bytes": 225230,
+    "sha256": "b82a2a0d5cd44addfc14baee05d19d5dd4386841d4e41d6b6117c07bcf2fce51",
+    "match": true
+  }
+]

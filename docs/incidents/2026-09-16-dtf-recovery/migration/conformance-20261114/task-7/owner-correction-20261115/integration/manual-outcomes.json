@@ -1,0 +1,190 @@
+{
+  "census": {
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-15-manual/command.txt",
+    "output": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-15-manual/output.log",
+    "exit": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/attempt-15-manual/exit.txt",
+    "results": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/result.json",
+    "childChecks": [
+      {
+        "child": 1,
+        "exit": 0,
+        "signal": null,
+        "matchesResult": true
+      },
+      {
+        "child": 2,
+        "exit": 0,
+        "signal": null,
+        "matchesResult": true
+      },
+      {
+        "child": 3,
+        "exit": 0,
+        "signal": null,
+        "matchesResult": true
+      },
+      {
+        "child": 4,
+        "exit": 0,
+        "signal": null,
+        "matchesResult": true
+      },
+      {
+        "child": 5,
+        "exit": 0,
+        "signal": null,
+        "matchesResult": true
+      },
+      {
+        "child": 6,
+        "exit": 1,
+        "signal": null,
+        "matchesResult": true
+      },
+      {
+        "child": 7,
+        "exit": 1,
+        "signal": null,
+        "matchesResult": true
+      },
+      {
+        "child": 8,
+        "exit": 1,
+        "signal": null,
+        "matchesResult": true
+      }
+    ],
+    "rpcRequests": 2358,
+    "rawNonceRequests": 0,
+    "rawSends": 0,
+    "readOnlyResumes": 2,
+    "protectedByteChecks": [
+      {
+        "captured": "original-0.json",
+        "sha256": "54e82f95d618e3238331c4ed6bd2e7fd7c0a2e7eeadb6074886eb7783a552bf7",
+        "matches": true
+      },
+      {
+        "captured": "original-1.json",
+        "sha256": "44cd8efdeb7bd21331d6c902ec5ab2178225f0301554c2890351113e7ebf2885",
+        "matches": true
+      },
+      {
+        "captured": "original-2.json",
+        "sha256": "a7f076932a66eec1a69537d0233e9b61fb0f13ddaeb29e1e072a3df9f7a2d6a6",
+        "matches": true
+      },
+      {
+        "captured": "original-3.json",
+        "sha256": "cec1cf92288c90dbe9237851d8a9a967dd3936c6304591959d701bade0a46c08",
+        "matches": true
+      },
+      {
+        "captured": "original-4.json",
+        "sha256": "01ad4d6bd6e599abff5a48ab9ce32a770ffa5fab494dfa1e9f78436b9f02d060",
+        "matches": true
+      },
+      {
+        "captured": "original-5.json",
+        "sha256": "d03000e9503c0c9e31d5846a60611a15669213bae01b6f97fd282f1a9dcde9a5",
+        "matches": true
+      }
+    ]
+  },
+  "pin": {
+    "source": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/manual-trace.ts",
+    "rawCommandOutputAndExit": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/pin/verification.md",
+    "exit": 0,
+    "validBefore": [
+      17,
+      100,
+      300,
+      400,
+      5,
+      80,
+      90
+    ],
+    "validAfter": [
+      7,
+      90,
+      270,
+      370,
+      8,
+      77,
+      90
+    ],
+    "negativeReasons": [
+      "WITNESS_SHAPE",
+      "TRACE_FAILED"
+    ],
+    "evm": false
+  },
+  "omissions": {
+    "command": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.command.json",
+    "results": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.json",
+    "exit": 0,
+    "rawLogChecks": [
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.run.log",
+        "rawBytes": 12358,
+        "suffix": "MANUAL_PASS",
+        "sameArtifact": true,
+        "validControls": 4,
+        "isolatedOmissions": 28,
+        "allExpectedIssues": true,
+        "firstControl": {
+          "category": "claimVault",
+          "success": true,
+          "pricingKind": "load",
+          "issues": []
+        },
+        "lastOmission": {
+          "category": "weightedSy",
+          "field": "evidenceId",
+          "intendedRegression": "schema stops requiring the evidence binding",
+          "issues": [
+            {
+              "path": "weightedSy.0.original.evidenceId",
+              "code": "invalid_type",
+              "message": "Required"
+            }
+          ],
+          "reportsIntendedField": true,
+          "reportsPricing": false,
+          "restoredSuccess": true
+        }
+      },
+      {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/manual-omissions.rerun.log",
+        "rawBytes": 12358,
+        "suffix": "MANUAL_PASS",
+        "sameArtifact": true,
+        "validControls": 4,
+        "isolatedOmissions": 28,
+        "allExpectedIssues": true,
+        "firstControl": {
+          "category": "claimVault",
+          "success": true,
+          "pricingKind": "load",
+          "issues": []
+        },
+        "lastOmission": {
+          "category": "weightedSy",
+          "field": "evidenceId",
+          "intendedRegression": "schema stops requiring the evidence binding",
+          "issues": [
+            {
+              "path": "weightedSy.0.original.evidenceId",
+              "code": "invalid_type",
+              "message": "Required"
+            }
+          ],
+          "reportsIntendedField": true,
+          "reportsPricing": false,
+          "restoredSuccess": true
+        }
+      }
+    ]
+  },
+  "scope": "Retained exact proofs inspected, no manual rerun and no lifecycle completion inferred."
+}

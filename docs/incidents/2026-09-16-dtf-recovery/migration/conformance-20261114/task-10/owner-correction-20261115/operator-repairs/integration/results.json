@@ -1,0 +1,1267 @@
+{
+  "kind": "Task10OperatorRepairsCombinedQA",
+  "status": "complete-qa-only",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "reasonForRerun": "Affected operator inputs changed after task 7 and task 16; this is the first combined check after both task-10 repair writers finished.",
+  "environment": {
+    "environment-bun-path": {
+      "stdout": "/opt/homebrew/bin/bun",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-bun-version": {
+      "stdout": "1.4.2",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-bun-revision": {
+      "stdout": "1.4.2+50a8a8387",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-ts-version": {
+      "stdout": "Version 5.9.2",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "environment-platform": {
+      "stdout": "Darwin Mac.lan 25.6.0 Darwin Kernel Version 25.6.0: Sat Jul 11 15:27:04 PDT 2026; root:xnu-12377.161.13~4/RELEASE_ARM64_T6050 arm64",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "git-branch": {
+      "stdout": "work/dtf-conformance-20261115-wave-1",
+      "stderr": "",
+      "exitCode": 0
+    },
+    "git-head": {
+      "stdout": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3",
+      "stderr": "",
+      "exitCode": 0
+    }
+  },
+  "commands": [
+    {
+      "name": "01-tests",
+      "argv": [
+        "bun",
+        "test",
+        "--timeout",
+        "15000",
+        "./scripts/recovery/dtf-migration/bundle.test.ts",
+        "./scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "./scripts/recovery/dtf-migration/candidates.test.ts",
+        "./scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "./scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "./scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "./scripts/recovery/dtf-migration/execution-state.test.ts",
+        "./scripts/recovery/dtf-migration/execution.test.ts",
+        "./scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "./scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "./scripts/recovery/dtf-migration/preparation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "./scripts/recovery/dtf-migration/receipt.test.ts",
+        "./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "./scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exitCode": 0,
+      "started": "2026-11-15T15:54:24Z",
+      "finished": "2026-11-15T15:55:57Z",
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.stderr.log"
+    },
+    {
+      "name": "02-operator-types",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "scripts/recovery/dtf-migration/bundle-files.ts",
+        "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/bundle.ts",
+        "scripts/recovery/dtf-migration/candidate-input.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "scripts/recovery/dtf-migration/candidates.test.ts",
+        "scripts/recovery/dtf-migration/candidates.ts",
+        "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-state.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "scripts/recovery/dtf-migration/execution-deployment.ts",
+        "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "scripts/recovery/dtf-migration/execution-domain.ts",
+        "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "scripts/recovery/dtf-migration/execution-plan.ts",
+        "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "scripts/recovery/dtf-migration/execution-schema.ts",
+        "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "scripts/recovery/dtf-migration/execution-state.ts",
+        "scripts/recovery/dtf-migration/execution.fixture.ts",
+        "scripts/recovery/dtf-migration/execution.test.ts",
+        "scripts/recovery/dtf-migration/execution.ts",
+        "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "scripts/recovery/dtf-migration/journal.ts",
+        "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+        "scripts/recovery/dtf-migration/payloads.ts",
+        "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "scripts/recovery/dtf-migration/preparation.test.ts",
+        "scripts/recovery/dtf-migration/preparation.ts",
+        "scripts/recovery/dtf-migration/provenance.ts",
+        "scripts/recovery/dtf-migration/quotes.ts",
+        "scripts/recovery/dtf-migration/receipt-association.ts",
+        "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "scripts/recovery/dtf-migration/receipt-input.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "scripts/recovery/dtf-migration/receipt.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-indirect.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-intake.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-local.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-transfer.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy-witness.ts",
+        "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "scripts/recovery/dtf-migration/rehearsal-nft-contributions.ts",
+        "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "scripts/recovery/dtf-migration/rehearse.ts",
+        "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+        "scripts/recovery/dtf-migration/schema.ts",
+        "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exitCode": 0,
+      "started": "2026-11-15T15:55:57Z",
+      "finished": "2026-11-15T15:55:58Z",
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.stderr.log"
+    },
+    {
+      "name": "03-helper-types",
+      "argv": [
+        "bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "ESNext",
+        "--moduleResolution",
+        "Bundler",
+        "--strict",
+        "--noUncheckedIndexedAccess",
+        "--exactOptionalPropertyTypes",
+        "--verbatimModuleSyntax",
+        "--skipLibCheck",
+        "--types",
+        "node",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+      ],
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exitCode": 0,
+      "started": "2026-11-15T15:55:58Z",
+      "finished": "2026-11-15T15:55:59Z",
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.stdout.log",
+      "stderr": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.stderr.log"
+    }
+  ],
+  "testResult": {
+    "passed": 280,
+    "failed": 0,
+    "reportedDuration": "92.23s",
+    "selectedTests": [
+      "scripts/recovery/dtf-migration/bundle.test.ts",
+      "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "scripts/recovery/dtf-migration/candidates.test.ts",
+      "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "scripts/recovery/dtf-migration/execution.test.ts",
+      "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "scripts/recovery/dtf-migration/preparation.test.ts",
+      "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "scripts/recovery/dtf-migration/receipt.test.ts",
+      "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+    ],
+    "observedTests": [
+      "scripts/recovery/dtf-migration/bundle.test.ts",
+      "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "scripts/recovery/dtf-migration/candidates.test.ts",
+      "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-state.test.ts",
+      "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts",
+      "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "scripts/recovery/dtf-migration/execution-domain.test.ts",
+      "scripts/recovery/dtf-migration/execution-state.test.ts",
+      "scripts/recovery/dtf-migration/execution.test.ts",
+      "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "scripts/recovery/dtf-migration/nft-contributions.test.ts",
+      "scripts/recovery/dtf-migration/preparation.test.ts",
+      "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "scripts/recovery/dtf-migration/receipt.test.ts",
+      "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "scripts/recovery/dtf-migration/weighted-sy.test.ts"
+    ],
+    "allSelectedObserved": true,
+    "operatorTypecheckFileCount": 87
+  },
+  "sourceFingerprintCount": 107,
+  "sourceChanges": [],
+  "operatorSourceAddedDuringRun": [],
+  "operatorSourceRemovedDuringRun": [],
+  "protectedEvidenceFiles": 252,
+  "changedProtectedEvidence": [],
+  "originalRecordsUnchanged": true,
+  "historicalBoundSources": 35,
+  "allHistoricalBoundSourcesMatch": true,
+  "narrowOwnedPaths": [
+    "scripts/recovery/dtf-migration/execution-domain.ts",
+    "scripts/recovery/dtf-migration/execution-state.ts",
+    "scripts/recovery/dtf-migration/execution-domain.test.ts",
+    "scripts/recovery/dtf-migration/execution-state.test.ts",
+    "scripts/recovery/dtf-migration/rehearsal-data.ts",
+    "scripts/recovery/dtf-migration/execution.ts",
+    "scripts/recovery/dtf-migration/execution.test.ts"
+  ],
+  "narrowDiffComparisons": [
+    {
+      "kind": "status",
+      "beforeSha256": "4e53a296b1088859d70983d16d7844e1850d458075832975dc14bf977c5f0650",
+      "afterSha256": "4e53a296b1088859d70983d16d7844e1850d458075832975dc14bf977c5f0650",
+      "unchanged": true,
+      "bytes": 258
+    },
+    {
+      "kind": "diff",
+      "beforeSha256": "a1e7ed5217dc4dd4e6ed16e1e2578fa3778bca2e37ede43fcf61d51ec5cc46f5",
+      "afterSha256": "a1e7ed5217dc4dd4e6ed16e1e2578fa3778bca2e37ede43fcf61d51ec5cc46f5",
+      "unchanged": true,
+      "bytes": 113320
+    },
+    {
+      "kind": "staged",
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "afterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true,
+      "bytes": 0
+    }
+  ],
+  "trackedWhitespace": [
+    {
+      "when": "before",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "when": "after",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "diagnostics": "Both exact strict compiler commands exited 0 with empty stdout/stderr. No unavailable custom audit API was invoked. Editor tools reported missing Bash/Biome servers; no installation or LSP-clean claim.",
+  "manualBindings": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/manual-bindings.json",
+  "manualRerunPerformed": false,
+  "manualCoreLocalImportsMatch": [
+    {
+      "program": "setter/manual-receipt.ts",
+      "files": 28,
+      "matches": 28,
+      "changed": 0
+    },
+    {
+      "program": "configure-fault/manual-fault.ts",
+      "files": 28,
+      "matches": 28,
+      "changed": 0
+    }
+  ],
+  "manualNegativeOutcomes": [
+    {
+      "name": "wrong-hash",
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/wrong-hash-commands.json",
+      "children": [
+        {
+          "argv": [
+            "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+            "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+            "configure",
+            "--execute-local",
+            "--instance-id",
+            "configure-transport",
+            "--fault-after-mined",
+            "--manifest",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-irFHrm/execution.json",
+            "--checkpoint",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-irFHrm/checkpoints/configure"
+          ],
+          "code": 137,
+          "signal": "SIGKILL",
+          "result": {
+            "fault": "mined-before-checkpoint",
+            "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+            "nonce": "7"
+          }
+        },
+        {
+          "argv": [
+            "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+            "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+            "resume",
+            "--execute-local",
+            "--instance-id",
+            "configure-transport",
+            "--fault-after-mined",
+            "--manifest",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-irFHrm/execution.json",
+            "--checkpoint",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-irFHrm/checkpoints/configure"
+          ],
+          "code": 1,
+          "signal": null,
+          "result": {
+            "error": "AMBIGUOUS",
+            "message": "receipt is not canonical or transaction order differs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "malformed-receipt",
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/malformed-receipt-commands.json",
+      "children": [
+        {
+          "argv": [
+            "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+            "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+            "configure",
+            "--execute-local",
+            "--instance-id",
+            "configure-transport",
+            "--fault-after-mined",
+            "--manifest",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-qEOIxk/execution.json",
+            "--checkpoint",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-qEOIxk/checkpoints/configure"
+          ],
+          "code": 137,
+          "signal": "SIGKILL",
+          "result": {
+            "fault": "mined-before-checkpoint",
+            "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+            "nonce": "7"
+          }
+        },
+        {
+          "argv": [
+            "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+            "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+            "resume",
+            "--execute-local",
+            "--instance-id",
+            "configure-transport",
+            "--fault-after-mined",
+            "--manifest",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-qEOIxk/execution.json",
+            "--checkpoint",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-qEOIxk/checkpoints/configure"
+          ],
+          "code": 1,
+          "signal": null,
+          "result": {
+            "error": "INPUT",
+            "issues": [
+              {
+                "validation": "regex",
+                "code": "invalid_string",
+                "message": "Invalid",
+                "path": [
+                  "status"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "malformed-intent",
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/malformed-intent-commands.json",
+      "children": [
+        {
+          "argv": [
+            "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+            "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+            "configure",
+            "--execute-local",
+            "--instance-id",
+            "configure-transport",
+            "--fault-after-mined",
+            "--manifest",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-Znuwvd/execution.json",
+            "--checkpoint",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-Znuwvd/checkpoints/configure"
+          ],
+          "code": 137,
+          "signal": "SIGKILL",
+          "result": {
+            "fault": "mined-before-checkpoint",
+            "transactionHash": "0x1234d1495832267b0eed77c28e219f666416d23fd3d441f4324e6aa16d9fa750",
+            "nonce": "7"
+          }
+        },
+        {
+          "argv": [
+            "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+            "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+            "resume",
+            "--execute-local",
+            "--instance-id",
+            "configure-transport",
+            "--fault-after-mined",
+            "--manifest",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-Znuwvd/execution.json",
+            "--checkpoint",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-Znuwvd/checkpoints/configure"
+          ],
+          "code": 1,
+          "signal": null,
+          "result": {
+            "error": "INPUT",
+            "message": "command or file acquisition failed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "simulation",
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/configure-fault/manual-attempt-ncqQ9Y/simulation-commands.json",
+      "children": [
+        {
+          "argv": [
+            "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+            "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/cli.ts",
+            "configure",
+            "--fault-after-mined",
+            "--manifest",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-jIiEON/execution.json",
+            "--checkpoint",
+            "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-jIiEON/checkpoints/configure"
+          ],
+          "code": 1,
+          "signal": null,
+          "result": {
+            "error": "DOMAIN",
+            "message": "fault injection is synthetic-local only"
+          }
+        }
+      ]
+    }
+  ],
+  "rawReceipts": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.command.txt",
+      "sha256": "80ba1a4153bc5d27f48db2b5b9a0434d5040c78f3ec84a1c64d60c1f3e0c52b3",
+      "bytes": 404
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.started.txt",
+      "sha256": "38f4a50825cc84fa2511aad7019de72f9824599fb8a3d043d80bc313cb8c1bae",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.command.txt",
+      "sha256": "021f7dc443e5f870423ce75adbc391a12da84f10c3c6c751f0c3eecd8c2e8ea1",
+      "bytes": 392
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.command.txt",
+      "sha256": "80ce0567e4363449c924fb71910f473e1aa867e843e1a369e5203598a3c61ad5",
+      "bytes": 1200
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.command.txt",
+      "sha256": "021f7dc443e5f870423ce75adbc391a12da84f10c3c6c751f0c3eecd8c2e8ea1",
+      "bytes": 392
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.command.txt",
+      "sha256": "8ffa7a5a6493d1c021644771b9c00d425eb359e40dc768bafdc681e98c85fb07",
+      "bytes": 31
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.argv.nul",
+      "sha256": "196fb6f2e8ca9c28fcb314f1a77974ab4c4cbc3e5dd69fedbc50512f24658a28",
+      "bytes": 14
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.started.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.argv.nul",
+      "sha256": "56441c521e2438f7e6c28d90adae2459abb8e05d347055626bd205901b1dfd8c",
+      "bytes": 28
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.command.txt",
+      "sha256": "80a377c08e1b87ccd36d37fd9388e7f3c6d168920b06cb3dfed3ed48504a7f22",
+      "bytes": 413
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.argv.nul",
+      "sha256": "e130b5a208dc5e125bbeeb46e6d8ef6c0e4629d2229f4a23f78e9b16092dc0b6",
+      "bytes": 412
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.command.txt",
+      "sha256": "629da79e139c364205b1f5ce8f76da3b0ae1bf47d1ec3f034dfc94f551e80cda",
+      "bytes": 37
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.argv.nul",
+      "sha256": "2213ae70ca1a9362b282cf6f95b1bb32b9fea99d6f5c7c462f4e01ac93ad78fb",
+      "bytes": 403
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.argv.nul",
+      "sha256": "7ce39bffd2bf69c626de5d1d0049a60a8a9cf9b16b908a11e0b7dde2d5e9391d",
+      "bytes": 391
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.argv.nul",
+      "sha256": "d4567f10b58595b1ac8f0355c76526033cf59a2557a606b09dcc1b7331abdd2d",
+      "bytes": 1199
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.command.txt",
+      "sha256": "0555e5328bd3e79e9003367d831eecdf7eab58018f5e6dab20c370497ef4ecf1",
+      "bytes": 412
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.stdout.log",
+      "sha256": "a1e7ed5217dc4dd4e6ed16e1e2578fa3778bca2e37ede43fcf61d51ec5cc46f5",
+      "bytes": 113320
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.stdout.log",
+      "sha256": "4e53a296b1088859d70983d16d7844e1850d458075832975dc14bf977c5f0650",
+      "bytes": 258
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.command.txt",
+      "sha256": "7446db204d3d648102e0a7c6a1927ef99f31badcdd585a5cebf3b488a06809ff",
+      "bytes": 10
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.finished.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.stdout.log",
+      "sha256": "43c92ee3266e71a3576a0c901180eceb18343004b4074f3363702ab3a6efec10",
+      "bytes": 16
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.started.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.finished.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.argv.nul",
+      "sha256": "7cd742db4ea91b0b6fd401ad5bae4cd56f7f1e3e397301eb2027021f0ef6cc9b",
+      "bytes": 43
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.stdout.log",
+      "sha256": "f147a0710c775170603d4a14d1f6c38c72bf2f2dba7f94c3d63c27f06fd59796",
+      "bytes": 37
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.stdout.log",
+      "sha256": "8493aa53848aae22ab021f053cacdcaa34fd94fa217d622a341d2b915bac89d2",
+      "bytes": 3492
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.finished.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.argv.nul",
+      "sha256": "4002c75805952d4c96b2f1fdcce477da3350baab0caed034c36cb3fcf447fcbe",
+      "bytes": 36
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.stdout.log",
+      "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
+      "bytes": 6
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.stdout.log",
+      "sha256": "b8852309b79933c7e655033693bdd9a0089dd7a64135b0a900a3fa717d1d9916",
+      "bytes": 22
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.argv.nul",
+      "sha256": "3b69a9e6149e5d09857b02c811f896f6290b7fc2ccb27824fe88e1da8d1ada69",
+      "bytes": 414
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.finished.txt",
+      "sha256": "38f4a50825cc84fa2511aad7019de72f9824599fb8a3d043d80bc313cb8c1bae",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.argv.nul",
+      "sha256": "7e537ae342043173dad39318e61b02ea786e9984b9317088173f05b132842b0c",
+      "bytes": 411
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.command.txt",
+      "sha256": "80ba1a4153bc5d27f48db2b5b9a0434d5040c78f3ec84a1c64d60c1f3e0c52b3",
+      "bytes": 404
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.argv.nul",
+      "sha256": "3b69a9e6149e5d09857b02c811f896f6290b7fc2ccb27824fe88e1da8d1ada69",
+      "bytes": 414
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/overall.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.command.txt",
+      "sha256": "400cc68b96dce706535d30369c906759979d92a367416e26b391a1ec8ce468d3",
+      "bytes": 44
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-version.command.txt",
+      "sha256": "a52b57d3b6521e053640e9f292cb91fbad5c06b760cd5d62b55a7dfd16817310",
+      "bytes": 15
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.command.txt",
+      "sha256": "6603b4f6a6b8fbe5657f15e9dd6082d1f0846342dd96e8b29f7d064d9081ef38",
+      "bytes": 415
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.finished.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-head.stdout.log",
+      "sha256": "cf63813c67ceae627e20977fb3ec617e9777ae48726e97a79a58b02fbfe8b027",
+      "bytes": 41
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-after.stdout.log",
+      "sha256": "4e53a296b1088859d70983d16d7844e1850d458075832975dc14bf977c5f0650",
+      "bytes": 258
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-path.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.command.txt",
+      "sha256": "6603b4f6a6b8fbe5657f15e9dd6082d1f0846342dd96e8b29f7d064d9081ef38",
+      "bytes": 415
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.started.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.stdout.log",
+      "sha256": "3e404aa34d884f075f31f3c022f9ba603db607883507709595c29fba1ddc7db3",
+      "bytes": 132
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.argv.nul",
+      "sha256": "7ce39bffd2bf69c626de5d1d0049a60a8a9cf9b16b908a11e0b7dde2d5e9391d",
+      "bytes": 391
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.command.txt",
+      "sha256": "911bab9857ce78401ddd62e8a19930d0defe0be660afe96cd9061edcdaf5d6e1",
+      "bytes": 4840
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-before.argv.nul",
+      "sha256": "e130b5a208dc5e125bbeeb46e6d8ef6c0e4629d2229f4a23f78e9b16092dc0b6",
+      "bytes": 412
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.started.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.command.txt",
+      "sha256": "66649645b9646f6d102789d898a051e359371b1aadf337937122e32d03d59d4d",
+      "bytes": 47
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-before.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.argv.nul",
+      "sha256": "06e9a8a38ed9c71dfa8b8c2c9bbd50c77e4fbc29170a71f54c818bb501a719ef",
+      "bytes": 9
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.argv.nul",
+      "sha256": "cc7407ae7a51948907af531ae19aa090a636f71e26f41e62b5bb82dd8511e165",
+      "bytes": 46
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-status-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.stdout.log",
+      "sha256": "4c7ae79542506418b516a1a9f6e91321e9464f88a2130bfa070aca57929b2eb5",
+      "bytes": 14
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.finished.txt",
+      "sha256": "a7c8413642393c4a4709bce1b6d12fdac74577ca4fff756b75bd0a81a61758be",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.finished.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.argv.nul",
+      "sha256": "2213ae70ca1a9362b282cf6f95b1bb32b9fea99d6f5c7c462f4e01ac93ad78fb",
+      "bytes": 403
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-before.stdout.log",
+      "sha256": "a1e7ed5217dc4dd4e6ed16e1e2578fa3778bca2e37ede43fcf61d51ec5cc46f5",
+      "bytes": 113320
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-check-after.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-diff-after.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.command.txt",
+      "sha256": "80a377c08e1b87ccd36d37fd9388e7f3c6d168920b06cb3dfed3ed48504a7f22",
+      "bytes": 413
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-ts-version.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-owned-staged-after.finished.txt",
+      "sha256": "c0af3a45dbf40ac2c334841b62a95cb8217ced837d3f3a7d13579f5d2e0233ea",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/02-operator-types.argv.nul",
+      "sha256": "7bca625d3c93d4639207075a0ab1cc02341448aaf7ff252342be873f19df1cee",
+      "bytes": 4839
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.cwd.txt",
+      "sha256": "c2bd8ae885728bb5c99d58ab59b21fb52a8dfa1a72759d32795bdfc458f8fa8c",
+      "bytes": 68
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/03-helper-types.started.txt",
+      "sha256": "a7c8413642393c4a4709bce1b6d12fdac74577ca4fff756b75bd0a81a61758be",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/01-tests.stderr.log",
+      "sha256": "7d5a392f63c713bc28de9bb70f502e6e160f67993e51893b1582bf4e47aef184",
+      "bytes": 28879
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-platform.started.txt",
+      "sha256": "c6344cfd353314f5bf478270637653c4cb2cb36d7a889193832d918bb077fb42",
+      "bytes": 21
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.argv.nul",
+      "sha256": "74dfd4090835c6e694d7f7373b750aa0ffd367bb4f42c97cb5d8db061d3387eb",
+      "bytes": 15
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/git-branch.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/environment-bun-revision.command.txt",
+      "sha256": "b6ce41cea50761ec55c77eac61cfc3aab653c297bcba7328fbf43e608e5081ad",
+      "bytes": 16
+    }
+  ],
+  "cleanup": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/cleanup.json",
+  "limits": [
+    "Independent repair verification and real task-10 rehearsal acceptance remain separate.",
+    "No new Anvil receipt or EVM lifecycle proof was created or inferred.",
+    "Four dormant rehearsal imports differ from task-7 baseline and one is new; no full lane-era digest exists for those five CLI imports. Their mtimes predate the proofs and they are not executed by configure/resume.",
+    "Historical recursive third-party module bytes are not exhaustively fingerprinted; current manifests and lockfile are captured.",
+    "Narrow git diagnostics cover tracked paths; source hashes and actual compiler/tests also cover the two untracked domain/state test files.",
+    "Single affected run, no flake-rate estimate or repeated signature run."
+  ]
+}

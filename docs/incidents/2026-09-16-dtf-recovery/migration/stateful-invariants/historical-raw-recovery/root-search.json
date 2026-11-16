@@ -1,0 +1,158 @@
+{
+  "finding": "P1 historical first-producer raw artifact versions",
+  "targets": [
+    {
+      "relative": "out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+      "bytes": 466441,
+      "sha256": "e7e44f1c9dd1feae73302f69cc50182b084c3e156ff63108f9e1206f52b201bf"
+    },
+    {
+      "relative": "out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+      "bytes": 266621,
+      "sha256": "3628e086cdf17079f06aa157c414326519ba5de6d7a60df05e7deaa59e91d013"
+    }
+  ],
+  "peerSearch": {
+    "scope": "24 exact artifact locations across12 known non-held worktrees;size filter then raw hash only if length matched;no compilation or traversal of held09",
+    "results": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T02:53:29.504Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T05:38:06.341Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T08:37:36.731Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T05:38:06.341Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T10:16:53.292Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T08:37:36.731Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T12:35:49.920Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-21-held-se-lp/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T12:35:49.920Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T15:42:01.283Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-11T21:52:15.922Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-11T22:57:24.156Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/out/TestBase_UniswapV4DetfMigrationSnapshot.sol/MigrationSnapshotConsumer.json",
+        "bytes": 466842,
+        "modified": "2026-11-12T00:05:58.527Z",
+        "sizeMatches": false
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/out/MigrationNativeHandler.sol/MigrationNativeHandler.json",
+        "error": "Error: ENOENT: no such file or directory, stat '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/out/MigrationNativeHandler.sol/MigrationNativeHandler.json'"
+      }
+    ],
+    "exactMatches": 0
+  },
+  "retainedKernelRequests": [
+    {
+      "task": "st_01a1d0c3",
+      "role": "first independent verifier",
+      "status": "revived;completion pending"
+    },
+    {
+      "task": "st_01a1d097",
+      "role": "first producer",
+      "status": "revived;completion pending"
+    }
+  ],
+  "tooling": {
+    "threadList": "gateway schema11 exceeds binary schema10;no session list operation ran",
+    "finder": "exact prompt query returned0;original producer resolved through actual canonical task name,not guessed id"
+  },
+  "limits": "No complete historical raw-preservation acceptance;current14source/r2runtime identity and original precommit inventories pass. No reconstruction, source/out/cache/index/ref changes or test replay."
+}

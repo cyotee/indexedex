@@ -1,0 +1,40 @@
+
+scripts/recovery/dtf-migration/execution-state.test.ts:
+124 |         case "INVALID_ARGUMENT":
+125 |             error = new TypeError(message);
+126 |             break;
+127 |         case "NUMERIC_FAULT":
+128 |         case "BUFFER_OVERRUN":
+129 |             error = new RangeError(message);
+                              ^
+RangeError: data out-of-bounds (buffer=0x, length=0, offset=32, code=BUFFER_OVERRUN, version=6.17.0)
+     buffer: "",
+     length: 0,
+     offset: 32,
+ shortMessage: "data out-of-bounds",
+       code: "BUFFER_OVERRUN"
+
+      at makeError (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/utils/errors.js:129:25)
+      at assert (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/utils/errors.js:151:15)
+      at #peekBytes (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/abi/coders/abstract-coder.js:435:17)
+      at readBytes (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/abi/coders/abstract-coder.js:452:26)
+      at readValue (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/abi/coders/abstract-coder.js:460:30)
+      at decode (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/abi/coders/number.js:38:33)
+      at <anonymous> (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/abi/coders/array.js:82:31)
+      at forEach (1:11)
+      at unpack (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/abi/coders/array.js:61:12)
+      at decodeEventLog (/Users/cyotee/Projects/indexedex/node_modules/ethers/lib.esm/abi/interface.js:988:49)
+      at async atReceipt (/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/scripts/recovery/dtf-migration/execution-rpc.ts:172:24)
+(fail) issuance proof accepts ERC721 Transfer alongside the required migration position event [214.67ms]
+(pass) new source-bound setter recognizes its exact book and rejects independently corrupted receipts [166.04ms]
+(pass) unsent A rejects current B before nonce allocation or transaction submission [73.34ms]
+(pass) changed quote rejects before nonce allocation even when the book id agrees [77.80ms]
+(pass) all selected loaders bind their own book and stable NFT identity excludes repricing [68.39ms]
+(pass) NFT current verification binds consumed credit to each original component floor [81.74ms]
+(pass) same-block A completion reads transaction-prefix A rather than overwritten block-end B [82.93ms]
+(pass) canonical completion rejects forged receipt order and altered transaction log contents [86.85ms]
+(pass) current B configuration is verified independently of authenticated A issuance and principal [385.38ms]
+
+ 8 pass
+ 1 fail
+Ran 9 tests across 1 file. [1322.00ms]

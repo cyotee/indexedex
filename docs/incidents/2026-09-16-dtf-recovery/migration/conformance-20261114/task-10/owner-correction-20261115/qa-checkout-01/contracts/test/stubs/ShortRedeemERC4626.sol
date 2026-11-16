@@ -1,0 +1,54 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+
+/**
+ * @title ShortRedeemERC4626
+ * @notice ERC-4626 that can under-deliver on redeem (for Slippage exact-out tests).
+ */
+contract ShortRedeemERC4626 is SimpleYieldERC4626 {
+    bool public shortByOne;
+
+    constructor(MintableERC20Decimals asset_) SimpleYieldERC4626(asset_) {}
+
+    function setShortByOne(bool v) external {
+        shortByOne = v;
+    }
+
+    /// @dev RC-02 pays the shortfall with `withdraw`. Under-delivery has to be on that path.
+    function withdraw(uint256 assets, address receiver, address owner_)
+        external
+        override
+        returns (uint256 shares)
+    {
+        shares = previewWithdraw(assets);
+        uint256 pay = assets;
+        if (shortByOne && pay > 0) {
+            unchecked {
+                pay -= 1;
+            }
+        }
+        _burnShares(owner_, shares);
+        totalAssetsStored -= pay;
+        require(assetToken.transfer(receiver, pay), "pay");
+    }
+
+    function redeem(uint256 shares, address receiver, address owner_)
+        external
+        override
+        returns (uint256 assets)
+    {
+        assets = convertToAssets(shares);
+        if (shortByOne && assets > 0) {
+            unchecked {
+                assets -= 1;
+            }
+        }
+        _burnShares(owner_, shares);
+        totalAssetsStored -= assets;
+        // Keep the shorted wei in the vault (totalAssets already reduced by delivered only).
+        require(assetToken.transfer(receiver, assets), "pay");
+    }
+}

@@ -1,0 +1,81 @@
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol
+index 0d205254..4babbc51 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol
+@@ -17,4 +17,3 @@ contract UniswapV4DetfMigrationClaimVaultAllocationFacet is UniswapV4DetfMigrati
+         return (facetName(), facetInterfaces(), facetFuncs());
+     }
+ }
+-
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol
+index 54a21160..aa1d49db 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol
+@@ -55,4 +55,3 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
+     }
+ 
+ }
+-
+diff --git a/scripts/recovery/dtf-migration/claim-vault.test.ts b/scripts/recovery/dtf-migration/claim-vault.test.ts
+index dfde1879..0900d108 100644
+--- a/scripts/recovery/dtf-migration/claim-vault.test.ts
++++ b/scripts/recovery/dtf-migration/claim-vault.test.ts
+@@ -80,4 +80,3 @@ test("direct claim-vault complete configuration hash agrees with Solidity and ty
+     }
+   } finally { await f.close(); }
+ });
+-
+diff --git a/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts b/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+index 7727b062..7b267457 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+@@ -107,4 +107,3 @@ export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: s
+   });
+   return { originalWallet, shares: shares.toString() };
+ }
+-
+diff --git a/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts b/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
+index 07833b37..70c955c5 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
+@@ -295,4 +295,3 @@ export async function exerciseClaimVault(context: {
+     syntheticOriginalAllocation: row, originalCredit: c0.toString(), activated, observations,
+   });
+ }
+-
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol
+index 3d7b2bcd..e99f4de0 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol
+@@ -198,4 +198,3 @@ contract MigrationClaimVaultTest is MigrationClaimVaultForkBase {
+         assertFalse(wallet_.activationReentered());
+     }
+ }
+-
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol
+index ec83b05a..aeada9d4 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol
+@@ -92,4 +92,3 @@ abstract contract MigrationClaimVaultForkBase is MigrationRecoveryDonationForkBa
+         assertEq(IERC20(detf).allowance(detf, address(bonds)), 0);
+     }
+ }
+-
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol
+index 5c5fa07c..3e211037 100644
+--- a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol
+@@ -191,4 +191,3 @@ contract MigrationRecoveryClaimVaultTest is MigrationClaimVaultForkBase {
+         assertEq(_protected(bond_), protected_);
+     }
+ }
+-
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol
+index 7c0fc6dc..71dc4566 100644
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol
+@@ -248,4 +248,3 @@ contract MigrationClaimVaultConfigurationTest is TestBase_UniswapV4DetfMigration
+         allocation.configureClaimVaultEntitlements(c_);
+     }
+ }
+-

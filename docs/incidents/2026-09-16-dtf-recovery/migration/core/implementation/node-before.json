@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "clientVersion": "anvil/v1.9.1",
+    "clientSemver": "1.9.1-nightly+430523103f.1793686322.dist",
+    "clientCommitSha": "430523103f3e2f9ba432ffdd2031a9f966153d0d",
+    "chainId": 31337,
+    "instanceId": "0x3f2a949ee51348197d6a321325b376950e4fca378d476f150013e0cc01ca5707",
+    "latestBlockNumber": 0,
+    "latestBlockHash": "0x605ab43e494c605515cc6257b583803910b47fd33a2e69f224a165746c321783",
+    "forkedNetwork": null,
+    "snapshots": {}
+  },
+  "nodeInfo": {
+    "currentBlockNumber": "0x0",
+    "currentBlockTimestamp": 1794345986,
+    "currentBlockHash": "0x605ab43e494c605515cc6257b583803910b47fd33a2e69f224a165746c321783",
+    "hardFork": "Bpo1",
+    "transactionOrder": "fees",
+    "environment": {
+      "baseFee": "0x3b9aca00",
+      "chainId": 31337,
+      "gasLimit": "0x5f5e100",
+      "gasPrice": "0x77359400"
+    },
+    "forkConfig": {
+      "forkUrl": null,
+      "forkBlockNumber": null,
+      "forkRetryBackoff": null
+    },
+    "network": "ethereum",
+    "blobParams": {
+      "targetBlobCount": 10,
+      "maxBlobCount": 15,
+      "updateFraction": "0x7f5a51",
+      "minBlobFee": "0x1",
+      "maxBlobsPerTx": 6,
+      "blobBaseCost": 8192
+    }
+  },
+  "port": 18548,
+  "command": "/Users/cyotee/.foundry/bin/anvil --host 127.0.0.1 --port 18548 --chain-id 31337 --gas-limit 100000000 --balance 1000000 --silent",
+  "monitor": "Monitor started with ID: mon_P7F7VTXFJC8T19S4"
+}

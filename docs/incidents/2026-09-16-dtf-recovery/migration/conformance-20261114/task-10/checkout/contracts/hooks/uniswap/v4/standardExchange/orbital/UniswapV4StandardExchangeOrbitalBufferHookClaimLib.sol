@@ -1,0 +1,611 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IRateProvider} from
+    "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo} from "./UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookMath as Math} from "./UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+
+/**
+ * @title UniswapV4StandardExchangeOrbitalBufferHookClaimLib
+ * @notice SE claim / rate / buffer-unwrap helpers (external previews + fail-closed rates).
+ * @dev Pure Math must not call SE/RP — composition lives here.
+ */
+library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
+    error RateProviderFailed();
+    error RateProviderRequired();
+    error SeInvertUnavailable();
+    error InsufficientTokenOut();
+    error ZeroAmount();
+    error NotLive();
+    error InvalidPoolToken();
+    error InvalidRoute(address tokenIn, address tokenOut);
+
+    struct Contribution {
+        uint256 shares;
+        uint256 local;
+        uint256 convert;
+    }
+
+    /// @dev One forward-sized conversion of caller inventory. Acceptance, not this sizing
+    /// estimate, determines ownership from the actual resulting component quantities.
+    function quoteContribution(
+        address se, address token, uint256 bookedShares, uint256 bookedLocal,
+        uint256 amount, bool asShare, bool genesis, bytes memory state
+    ) public view returns (Contribution memory c) {
+        return quoteHeldContribution(se, token, bookedShares, bookedLocal, amount, asShare, genesis, state, true);
+    }
+
+    function quoteHeldContribution(
+        address se, address token, uint256 bookedShares, uint256 bookedLocal,
+        uint256 amount, bool asShare, bool genesis, bytes memory state, bool received
+    ) internal view returns (Contribution memory c) {
+        if (amount == 0) return c;
+        if (se == address(0)) {
+            if (asShare) revert InvalidRoute(se, token);
+            c.local = amount;
+            return c;
+        }
+        if (genesis) {
+            if (!asShare) {
+                if (state.length == 0) state = ContextQuote.snapshot(se, token, address(this), address(0));
+                (ExchangeInAmount.Result memory acquired, bytes memory next) =
+                    conversionQuote(se, token, amount, false, state, false);
+                c = quoteHeldContribution(se, token, 0, 0, acquired.amountOut, true, true, next, false);
+                c.local += acquired.amountRefunded;
+                return c;
+            }
+            (c.convert,) = LiquidityRoute.bootstrapSplit(amount);
+        } else if (asShare) {
+            if (bookedLocal == 0) {
+                c.shares = amount;
+                return c;
+            }
+            if (bookedShares == 0) c.convert = amount;
+            else {
+                (ExchangeInAmount.Result memory full,) = conversionQuote(se, token, amount, true, state, received);
+                uint256 localNeeded = FullMath.mulDiv(amount, bookedLocal, bookedShares, FullMath.Rounding.Ceil);
+                c.convert = FullMath.mulDiv(amount, localNeeded, full.amountOut + localNeeded, FullMath.Rounding.Ceil);
+            }
+        } else {
+            if (bookedShares == 0 || Repo._isDisabled(se)) {
+                c.local = amount;
+                return c;
+            }
+            c.convert = amount;
+            if (bookedLocal != 0) {
+                (ExchangeInAmount.Result memory full,) = conversionQuote(se, token, amount, false, state, false);
+                uint256 localNeeded = FullMath.mulDiv(full.amountOut, bookedLocal, bookedShares, FullMath.Rounding.Ceil);
+                c.convert = FullMath.mulDiv(amount, amount, amount + localNeeded);
+            }
+        }
+        (ExchangeInAmount.Result memory result,) = conversionQuote(se, token, c.convert, asShare, state, asShare && received);
+        if (asShare) {
+            c.shares = ExchangeInAmount.localCredit(amount, c.convert, result.amountRefunded);
+            c.local = result.amountOut;
+            if (genesis && (result.amountRefunded != 0 || c.local == 0)) revert ExchangeInAmount.InvalidExchangeReceipt();
+        } else {
+            c.shares = result.amountOut;
+            c.local = ExchangeInAmount.localCredit(amount, c.convert, result.amountRefunded);
+        }
+    }
+
+    /// @dev Optional state is opaque. Ordinary SE routes do not require transition support.
+    function conversionQuote(
+        address se, address token, uint256 amount, bool redeem, bytes memory state, bool received
+    ) public view returns (ExchangeInAmount.Result memory result, bytes memory next) {
+        if (amount == 0) return (result, state);
+        if (state.length == 0) {
+            return (ExchangeInAmount.previewResult(
+                IStandardExchangeIn(se), IERC20(redeem ? se : token), amount, IERC20(redeem ? token : se)
+            ), state);
+        }
+        if (received && redeem) {
+            (state,,,) = Transition(se).quoteTransition(state, Transition.Operation.ReceiveShares, amount);
+        }
+        uint256 consumed;
+        uint256 output;
+        (next, consumed, output,) = Transition(se).quoteTransition(
+            state, redeem ? Transition.Operation.RedeemExactIn : Transition.Operation.DepositExactIn, amount
+        );
+        result = ExchangeInAmount.fromConsumedInput(amount, consumed, output);
+    }
+
+    function netMint(uint256 gross) public view returns (uint256 net, uint256 fee, address recipient) {
+        IVaultFeeOracleQuery oracle = IVaultFeeOracleQuery(Repo._layout().feeOracle);
+        recipient = address(oracle.feeTo());
+        uint256 usage = oracle.usageFeeOfVault(address(this));
+        (net, fee) = LiquidityRoute.splitMintFee(gross, usage, recipient, usage != 0 && usage < 1e18);
+    }
+
+    struct SphereLegsWad {
+        uint256 R;
+        uint256 L2;
+        uint256 xWad;
+        uint256 yWad;
+        uint256 zWad;
+    }
+
+    struct SwapLiveCtx {
+        address tokenZ;
+        uint256 feeWad;
+        uint256 eOutNative;
+    }
+
+    function previewSyntheticBook(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address out_, address detf_)
+        external view returns (uint256)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256 R = l.R;
+        uint256 x = _toWad(detf_, _effectiveNativeOf(detf_));
+        uint256 y = _toWad(out_, _effectiveNativeOf(out_));
+        if (R == 0 || x >= R || y >= R || y == 0) return 0;
+        // Exclude pool DETF so its spot valuation does not cancel reserve swaps.
+        uint256 spot = ((R - x) * 1e18) / (R - y);
+        if (spot == 0) return 0;
+        uint256 others = y;
+        if (l.token0 != detf_ && l.token0 != out_) {
+            others += _toWad(l.token0, _effectiveNativeOf(l.token0));
+        }
+        if (l.token1 != detf_ && l.token1 != out_) {
+            others += _toWad(l.token1, _effectiveNativeOf(l.token1));
+        }
+        if (l.token2 != detf_ && l.token2 != out_) {
+            others += _toWad(l.token2, _effectiveNativeOf(l.token2));
+        }
+        uint256 lpSupply = ERC20Repo._totalSupply();
+        if (lpSupply == 0 || others == 0) return 0;
+        uint256 pairWad = (others * ctx.ownedLp) / lpSupply;
+        pairWad = (pairWad * spot) / 1e18;
+        if (pairWad == 0) return 0;
+        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+    }
+
+    function previewSwapExactOutBook(address tokenIn, address tokenOut, uint256 amountOut, uint256 feeWad)
+        external view returns (uint256 amountIn)
+    {
+        if (amountOut == 0) revert ZeroAmount();
+        if (feeWad >= Math.WAD) revert Math.MathDomain();
+        SwapLiveCtx memory ctx = _loadSwapLiveCtxBook(tokenIn, tokenOut);
+        ctx.feeWad = feeWad;
+        uint256 dOutNative = _faceOutToEffectiveNative(tokenOut, amountOut);
+        if (dOutNative >= ctx.eOutNative) revert Math.Drain();
+        SphereLegsWad memory legs = _loadSphereLegs(tokenIn, tokenOut, ctx.tokenZ);
+        uint256 dyWad = _toWad(tokenOut, dOutNative);
+        uint256 dxNet = _sphereExactOut(legs, dyWad);
+        uint256 dInNative = Math.fromWadCeil(Math.grossUpExactOut(dxNet, ctx.feeWad), _decimalsOf(tokenIn));
+        amountIn = _effectiveInToFaceIn(tokenIn, dInNative);
+        if (amountIn == 0) revert ZeroAmount();
+    }
+
+    function _faceOutToEffectiveNative(address token, uint256 amount) private view returns (uint256) {
+        address se = _seOf(token);
+        if (se == address(0)) return amount;
+        uint256 local = Repo._layout().reserves[token];
+        if (amount <= local) return amount;
+        uint256 shares = invertUnwrapExactTokenOut(se, token, amount - local);
+        if (shares == 0) revert InsufficientTokenOut();
+        if (shares > _spendableSeShares(token)) revert Math.Drain();
+        return local + ratedNative(shares, getRateFailClosed(_rpOf(token)), se, token);
+    }
+
+    function _effectiveInToFaceIn(address tokenIn, uint256 dInNative) private view returns (uint256 amountIn) {
+        if (_seOf(tokenIn) != address(0) && !Repo._isDisabled(_seOf(tokenIn))) {
+            address se = _seOf(tokenIn);
+            if (se != tokenIn && ContextQuote.supported(se)) {
+                uint256 shares = sharesForNativeUp(dInNative, getRateFailClosed(_rpOf(tokenIn)), se, tokenIn);
+                if (IStandardExchangeOut(se).previewExchangeOut(IERC20(tokenIn), IERC20(se), shares) == 0) revert SeInvertUnavailable();
+            }
+            amountIn = invertBufferForEffective(se, _rpOf(tokenIn), tokenIn, dInNative);
+        } else {
+            amountIn = dInNative;
+        }
+    }
+
+    /// @dev PM EO uses the same sphere and buffer-gain inverse with projected manager context.
+    function previewSwapExactOutContext(address tokenIn, address tokenOut, uint256 amountOut, uint256 feeWad, address manager)
+        external view returns (uint256 amountIn)
+    {
+        if (amountOut == 0) revert ZeroAmount();
+        if (feeWad >= Math.WAD) revert Math.MathDomain();
+        address other = _witnessAndLegs(tokenIn, tokenOut);
+        uint256 outReserve = _effectiveNativeWithContext(tokenOut, manager);
+        if (Repo._layout().R == 0 || outReserve == 0 || _effectiveNativeWithContext(tokenIn, manager) == 0) revert NotLive();
+        uint256 debit = _exactOutputDebit(tokenOut, amountOut, manager);
+        if (debit >= outReserve) revert Math.Drain();
+        SphereLegsWad memory s = _sphereLegsWithContext(tokenIn, tokenOut, other, manager);
+        uint256 net = _sphereExactOut(s, _toWad(tokenOut, debit));
+        uint256 needed = Math.fromWadCeil(Math.grossUpExactOut(net, feeWad), _decimalsOf(tokenIn));
+        amountIn = _exactOutputInput(tokenIn, needed, manager);
+        if (amountIn == 0) revert ZeroAmount();
+    }
+
+    function _sphereExactOut(SphereLegsWad memory s, uint256 dyWad) private pure returns (uint256) {
+        return Math.sphereExactOutInNetWad(s.R, s.L2, s.xWad, s.yWad, s.zWad, dyWad);
+    }
+
+    function _exactOutputDebit(address token, uint256 amount, address manager) private view returns (uint256) {
+        address se = _seOf(token);
+        if (se == address(0)) return amount;
+        uint256 local = Repo._layout().reserves[token];
+        if (amount <= local) return amount;
+        bytes memory state = ContextQuote.exactOutputState(se, token, manager);
+        uint256 shares = ContextQuote.withdrawFromState(se, token, amount - local, state);
+        if (shares == 0) revert InsufficientTokenOut();
+        if (shares > _spendableSeShares(token)) revert Math.Drain();
+        uint256 rate = state.length == 0 ? getRateFailClosed(_rpOf(token)) : ContextQuote.rateFromState(se, token, _rpOf(token), state);
+        return local + ratedNative(shares, rate, se, token);
+    }
+
+    function _exactOutputInput(address token, uint256 needed, address manager) private view returns (uint256) {
+        address se = _seOf(token);
+        if (se == address(0) || Repo._isDisabled(se)) return needed;
+        BufferClaimQuote memory quote;
+        quote.se = se;
+        quote.token = token;
+        quote.state = ContextQuote.exactOutputState(se, token, manager);
+        if (quote.state.length == 0) quote = bufferClaimQuote(se, _rpOf(token), token, address(this));
+        else {
+            if (_rpOf(token) == address(0)) revert RateProviderRequired();
+            quote.rate = ContextQuote.rateFromState(se, token, _rpOf(token), quote.state);
+        }
+        if (se != token && ContextQuote.supported(se)) {
+            uint256 shares = sharesForNativeUp(needed, quote.rate, se, token);
+            if (ContextQuote.inputForSharesFromState(se, token, shares, quote.state) == 0) revert SeInvertUnavailable();
+        }
+        return _invertBufferForEffective(quote, needed);
+    }
+
+    /// @dev Linked copy of the family quote coordinator; no funding or settlement moves here.
+    function previewSwapExactInContext(address tokenIn, address tokenOut, uint256 amountIn, uint256 feeWad, address manager)
+        external view returns (uint256 amountOut, uint256 sharesOut)
+    {
+        if (amountIn == 0) revert ZeroAmount();
+        if (feeWad >= Math.WAD) revert Math.MathDomain();
+        SwapLiveCtx memory ctx;
+        if (manager == address(0)) ctx = _loadSwapLiveCtxBook(tokenIn, tokenOut);
+        else {
+            ctx.tokenZ = _witnessAndLegs(tokenIn, tokenOut);
+            ctx.eOutNative = _effectiveNativeWithContext(tokenOut, manager);
+            if (Repo._layout().R == 0 || ctx.eOutNative == 0 || _effectiveNativeWithContext(tokenIn, manager) == 0) revert NotLive();
+        }
+        ctx.feeWad = feeWad;
+        uint256 dInNative = manager == address(0) ? _faceInToEffectiveNative(tokenIn, amountIn)
+            : previewInputWithContext(_seOf(tokenIn), _rpOf(tokenIn), tokenIn, amountIn, manager);
+        uint256 dxNet = Math.applyTradingFeeNet(_toWad(tokenIn, dInNative), ctx.feeWad);
+        SphereLegsWad memory legs = manager == address(0) ? _loadSphereLegs(tokenIn, tokenOut, ctx.tokenZ)
+            : _sphereLegsWithContext(tokenIn, tokenOut, ctx.tokenZ, manager);
+        uint256 dOutNative = _fromWadFloor(tokenOut, _sphereExactIn(legs, dxNet));
+        if (dOutNative == 0 || dOutNative >= ctx.eOutNative) revert Math.Drain();
+        if (manager == address(0)) (amountOut, sharesOut) = _effectiveOutToFaceOut(tokenOut, dOutNative);
+        else {
+            (amountOut, sharesOut) = previewOutputWithContext(_seOf(tokenOut), _rpOf(tokenOut), tokenOut, dOutNative, manager);
+            if (_seOf(tokenOut) != address(0)) {
+                if (sharesOut == 0 && amountOut == 0) revert InsufficientTokenOut();
+                if (sharesOut > _spendableSeShares(tokenOut)) revert Math.Drain();
+            }
+        }
+        if (amountOut == 0) revert Math.Drain();
+    }
+
+    function _effectiveOutToFaceOut(address tokenOut, uint256 dOutNative) private view returns (uint256 amountOut, uint256 sharesOut) {
+        address se = _seOf(tokenOut);
+        if (se != address(0)) {
+            (amountOut, sharesOut) = previewUnwrapForEffectiveOut(se, _rpOf(tokenOut), tokenOut, dOutNative);
+            if (sharesOut == 0 && amountOut == 0) revert InsufficientTokenOut();
+            if (sharesOut > _spendableSeShares(tokenOut)) revert Math.Drain();
+        } else amountOut = dOutNative;
+    }
+
+    function _sphereExactIn(SphereLegsWad memory s, uint256 dxNet) private pure returns (uint256) {
+        return Math.sphereExactInOutWad(s.R, s.L2, s.xWad, s.yWad, s.zWad, dxNet);
+    }
+
+    /// @dev Liquidity assembly may sell into an initially empty input coordinate.
+    /// Public swap entrypoints retain their live-book gates.
+    function previewLiquiditySwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 feeWad)
+        external view returns (uint256 amountOut, uint256 sharesOut)
+    {
+        SphereLegsWad memory legs = _loadSphereLegs(tokenIn, tokenOut, _witnessAndLegs(tokenIn, tokenOut));
+        uint256 net = Math.applyTradingFeeNet(_toWad(tokenIn, _faceInToEffectiveNative(tokenIn, amountIn)), feeWad);
+        uint256 budget = _fromWadFloor(tokenOut, _sphereExactIn(legs, net));
+        if (budget == 0 || budget >= _effectiveNativeOf(tokenOut)) revert Math.Drain();
+        return _effectiveOutToFaceOut(tokenOut, budget);
+    }
+
+    function _toWad(address token, uint256 amount) private view returns (uint256) {
+        return Math.toWad(amount, _decimalsOf(token));
+    }
+
+    function _fromWadFloor(address token, uint256 amount) private view returns (uint256) {
+        return Math.fromWadFloor(amount, _decimalsOf(token));
+    }
+
+    function _loadSwapLiveCtxBook(address tokenIn, address tokenOut) private view returns (SwapLiveCtx memory ctx) {
+        Repo.Layout storage l = Repo._layout();
+        if (l.R == 0) revert NotLive();
+        uint256 eIn = _effectiveNativeOf(tokenIn);
+        ctx.eOutNative = _effectiveNativeOf(tokenOut);
+        if (eIn == 0 || ctx.eOutNative == 0) revert NotLive();
+        ctx.tokenZ = _witnessAndLegs(tokenIn, tokenOut);
+    }
+
+    function _loadSphereLegs(address tokenIn, address tokenOut, address tokenZ) private view returns (SphereLegsWad memory s) {
+        s.R = Repo._layout().R;
+        s.xWad = _toWad(tokenIn, _effectiveNativeOf(tokenIn));
+        s.yWad = _toWad(tokenOut, _effectiveNativeOf(tokenOut));
+        s.zWad = _toWad(tokenZ, _effectiveNativeOf(tokenZ));
+        s.L2 = Math.recomputeL2(s.R, s.xWad, s.yWad, s.zWad);
+    }
+
+    function _sphereLegsWithContext(address input, address output, address other, address manager)
+        private view returns (SphereLegsWad memory s)
+    {
+        s.R = Repo._layout().R;
+        s.xWad = _toWad(input, _effectiveNativeWithContext(input, manager));
+        s.yWad = _toWad(output, _effectiveNativeWithContext(output, manager));
+        s.zWad = _toWad(other, _effectiveNativeWithContext(other, manager));
+        s.L2 = Math.recomputeL2(s.R, s.xWad, s.yWad, s.zWad);
+    }
+
+    function _faceInToEffectiveNative(address token, uint256 amount) private view returns (uint256) {
+        return previewBufferClaimIn(_seOf(token), _rpOf(token), token, amount, address(this));
+    }
+
+    function _effectiveNativeOf(address token) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint8 i = Repo._indexOf(l, token);
+        address t = Repo._tokenAt(l, i);
+        address se = Repo._seAt(l, i);
+        address rp = Repo._rpAt(l, i);
+        uint256 held = l.seShares[se];
+        return effectiveNative(se, rp, t, l.reserves[t], held);
+    }
+
+    function _effectiveNativeWithContext(address token, address manager) private view returns (uint256) {
+        address se = _seOf(token);
+        return effectiveNativeWithContext(se, _rpOf(token), token, Repo._layout().reserves[token],
+            Repo._layout().seShares[se], manager);
+    }
+
+    function _witnessAndLegs(address tokenIn, address tokenOut) private view returns (address) {
+        if (!_isBound(tokenIn) || !_isBound(tokenOut) || tokenIn == tokenOut) revert InvalidRoute(tokenIn, tokenOut);
+        Repo.Layout storage l = Repo._layout();
+        if (tokenIn != l.token0 && tokenOut != l.token0) return l.token0;
+        if (tokenIn != l.token1 && tokenOut != l.token1) return l.token1;
+        return l.token2;
+    }
+
+    function _isBound(address token) private view returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        return token == l.token0 || token == l.token1 || token == l.token2;
+    }
+
+    function _decimalsOf(address token) private view returns (uint8 d) {
+        Repo.Layout storage l = Repo._layout();
+        if (token == l.token0) d = l.decimals0;
+        else if (token == l.token1) d = l.decimals1;
+        else if (token == l.token2) d = l.decimals2;
+        else revert InvalidPoolToken();
+        if (d == 0) d = 18;
+    }
+
+    function _seOf(address token) private view returns (address) {
+        return Repo._seAt(Repo._layout(), Repo._indexOf(Repo._layout(), token));
+    }
+
+    function _rpOf(address token) private view returns (address) {
+        return Repo._rpAt(Repo._layout(), Repo._indexOf(Repo._layout(), token));
+    }
+
+    function _spendableSeShares(address token) private view returns (uint256) {
+        uint256 held = Repo._layout().seShares[_seOf(token)];
+        return held > 1 ? held - 1 : 0;
+    }
+
+    function invertBufferForEffective(address se, address rp, address token, uint256 dInNative)
+        public view returns (uint256 amountInRaw)
+    {
+        if (dInNative == 0) return 0;
+        BufferClaimQuote memory quote = bufferClaimQuote(se, rp, token, address(this));
+        return _invertBufferForEffective(quote, dInNative);
+    }
+
+    function _invertBufferForEffective(BufferClaimQuote memory quote, uint256 dInNative) private view returns (uint256) {
+        if (dInNative == 0) return 0;
+        uint256 hi = dInNative * 2 + 1;
+        uint256 above = previewBufferClaimIn(quote, hi);
+        uint256 guard;
+        while (above < dInNative && guard < 64) {
+            hi = hi * 2;
+            above = previewBufferClaimIn(quote, hi);
+            unchecked { ++guard; }
+        }
+        if (above < dInNative) revert SeInvertUnavailable();
+        uint256 lo = 1;
+        uint256 below;
+        uint256 probes;
+        while (lo < hi) {
+            uint256 mid = lo + (hi - lo) / 2;
+            if (above > below && probes < 8) {
+                mid = lo - 1 + FullMath.mulDiv(dInNative - below, hi - lo + 1, above - below);
+                mid = FullMath.max(lo, FullMath.min(mid, hi - 1));
+                ++probes;
+            }
+            uint256 claim = previewBufferClaimIn(quote, mid);
+            if (claim >= dInNative) { hi = mid; above = claim; }
+            else { lo = mid + 1; below = claim; }
+        }
+        return lo;
+    }
+
+    /// @dev Immutable inputs to repeated previews against one unchanged SE book.
+    struct BufferClaimQuote {
+        address se;
+        address token;
+        uint256 rate;
+        uint256 heldShares;
+        uint256 heldClaim;
+        bytes state;
+    }
+
+    function bufferClaimQuote(address se, address rp, address token, address hook)
+        internal view returns (BufferClaimQuote memory quote)
+    {
+        quote.se = se;
+        quote.token = token;
+        // D60: a buffered leg always carries a rate provider (package init rejects an SE leg without one);
+        // a raw leg may carry one. The hook never derives a rate from the SE's own quotes.
+        if (rp != address(0)) quote.rate = getRateFailClosed(rp);
+        else if (se != address(0)) revert RateProviderRequired();
+        hook;
+    }
+
+    function previewBufferClaimIn(BufferClaimQuote memory quote, uint256 amount)
+        internal view returns (uint256)
+    {
+        if (amount == 0 || quote.se == address(0) || Repo._isDisabled(quote.se)) return amount;
+        (ExchangeInAmount.Result memory result,) = conversionQuote(quote.se, quote.token, amount, false, quote.state, false);
+        return result.amountRefunded + (result.amountOut == 0 ? 0 : ratedNative(result.amountOut, quote.rate, quote.se, quote.token));
+    }
+
+
+    /// @notice D60: raw SE shares to the leg token's native units through a WAD rate of whole tokens per
+    ///         whole share, honoring share and token decimals.
+    function ratedNative(uint256 shares, uint256 rate, address se, address token) public view returns (uint256) {
+        uint8 sd = IERC20Metadata(se).decimals();
+        uint8 td = IERC20Metadata(token).decimals();
+        if (sd >= td) return FullMath.mulDiv(shares, rate, 1e18 * (10 ** uint256(sd - td)));
+        return FullMath.mulDiv(shares * (10 ** uint256(td - sd)), rate, 1e18);
+    }
+
+    /// @notice D60: inverse of `ratedNative`, rounding up.
+    function sharesForNativeUp(uint256 native, uint256 rate, address se, address token) public view returns (uint256) {
+        uint8 sd = IERC20Metadata(se).decimals();
+        uint8 td = IERC20Metadata(token).decimals();
+        if (sd >= td) return FullMath.mulDiv(native, 1e18 * (10 ** uint256(sd - td)), rate, FullMath.Rounding.Ceil);
+        return FullMath.mulDiv(native, 1e18, rate * (10 ** uint256(td - sd)), FullMath.Rounding.Ceil);
+    }
+
+    function getRateFailClosed(address rp) public view returns (uint256 rate) {
+        if (rp == address(0)) return 0;
+        (bool ok, bytes memory data) = rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
+        if (!ok || data.length < 32) revert RateProviderFailed();
+        rate = abi.decode(data, (uint256));
+        if (rate == 0) revert RateProviderFailed();
+    }
+
+    function effectiveNativeWithContext(address se, address rp, address token, uint256 local, uint256 held, address manager)
+        public view returns (uint256)
+    {
+        if (se == address(0)) return effectiveNative(se, rp, token, local, held);
+        if (held == 0) return local;
+        if (rp == address(0)) revert RateProviderRequired();
+        return local + ratedNative(held, ContextQuote.rate(se, token, rp, manager), se, token);
+    }
+
+    function previewInputWithContext(address se, address rp, address token, uint256 amount, address manager)
+        public view returns (uint256)
+    {
+        if (se == address(0) || Repo._isDisabled(se)) return amount;
+        (ExchangeInAmount.Result memory result,) = ContextQuote.depositResult(se, token, address(this), amount, manager);
+        if (result.amountOut == 0) return result.amountRefunded;
+        if (rp == address(0)) revert RateProviderRequired();
+        return result.amountRefunded + ratedNative(result.amountOut, ContextQuote.rate(se, token, rp, manager), se, token);
+    }
+
+    function previewOutputWithContext(address se, address rp, address token, uint256 budget, address manager)
+        public view returns (uint256 assets, uint256 shares)
+    {
+        if (se == address(0) || budget == 0) return (budget, 0);
+        uint256 local = Repo._layout().reserves[token];
+        if (budget <= local) return (budget, 0);
+        if (rp == address(0)) revert RateProviderRequired();
+        shares = sharesForNativeUp(budget - local, ContextQuote.rate(se, token, rp, manager), se, token);
+        (ExchangeInAmount.Result memory result,) = ContextQuote.redeemResult(se, token, address(this), shares, manager);
+        return (local + result.amountOut, shares);
+    }
+
+    /// @notice SE claim of `seBal` shares → pool token (unwrap preview; fee-inclusive).
+    function seClaimOf(address se, address token, uint256 seBal) internal view returns (uint256) {
+        if (se == address(0) || seBal == 0) return 0;
+        if (se == token) return seBal;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(token));
+        return quotedAmountOut;
+    }
+
+    /// @notice Effective native reserve for a leg: raw face, or shares×rate, or SE claim.
+    function effectiveNative(address se, address rp, address token, uint256 local, uint256 seBal)
+        public view returns (uint256)
+    {
+        if (se == address(0)) return rp == address(0) ? local : FullMath.mulDiv(local, getRateFailClosed(rp), 1e18);
+        if (seBal == 0) return local;
+        if (rp == address(0)) revert RateProviderRequired();
+        return local + ratedNative(seBal, getRateFailClosed(rp), se, token);
+    }
+
+    /// @notice Shares a face deposit would mint. Zero stays zero — no face-value ownership credit.
+    ///         Identity and raw legs return the face amount. Does not read a rate provider.
+    function previewBufferSharesIn(address se, address token, uint256 amountInRaw)
+        public
+        view
+        returns (uint256 sharesOut)
+    {
+        if (amountInRaw == 0 || se == address(0)) return 0;
+        if (se == token) return amountInRaw;(sharesOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
+    }
+
+    /// @notice Preview claim-in (effective native) from buffering `amountInRaw` pool tokens into SE.
+    function previewBufferClaimIn(address se, address rp, address token, uint256 amount, address hook)
+        public view returns (uint256)
+    {
+        return previewBufferClaimIn(bufferClaimQuote(se, rp, token, hook), amount);
+    }
+
+    /// @notice Preview pool-token out from unwrapping SE shares that deliver `dOutNative` effective.
+    function previewUnwrapForEffectiveOut(address se, address rp, address token, uint256 budget)
+        public view returns (uint256 amountOut, uint256 sharesOut)
+    {
+        if (budget == 0 || se == address(0)) return (budget, 0);
+        uint256 local = Repo._layout().reserves[token];
+        if (budget <= local) return (budget, 0);
+        if (rp == address(0)) revert RateProviderRequired();
+        sharesOut = sharesForNativeUp(budget - local, getRateFailClosed(rp), se, token);
+        ExchangeInAmount.Result memory result = ExchangeInAmount.previewResult(IStandardExchangeIn(se), IERC20(se), sharesOut, IERC20(token));
+        return (local + result.amountOut, sharesOut);
+    }
+
+    /// @notice Preview pool-token out from burning `sharesOut` SE shares (pro-rata remove).
+    function previewUnwrapShares(address se, address token, uint256 sharesOut)
+        public
+        view
+        returns (uint256)
+    {
+        if (sharesOut == 0 || se == address(0)) return 0;
+        if (se == token) return sharesOut;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
+        return quotedAmountOut;
+    }
+
+    /// @notice Shares needed so unwrap delivers at least `amountOutNative` pool tokens (exact-out).
+    function invertUnwrapExactTokenOut(address se, address token, uint256 amountOutNative)
+        public
+        view
+        returns (uint256 sharesIn)
+    {
+        if (amountOutNative == 0) return 0;
+        if (se == token) return amountOutNative;
+        return IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(token), amountOutNative);
+    }
+}

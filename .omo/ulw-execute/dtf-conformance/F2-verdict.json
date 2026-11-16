@@ -1,0 +1,112 @@
+{
+  "task": "F2",
+  "review": "Final-wave code quality review",
+  "date": "2026-11-15",
+  "disposition": "NOT-APPROVE",
+  "review_completed": true,
+  "implementation_approved": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "baseline": "c33f7068",
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/F2-quality.md",
+    "bytes": 14477,
+    "sha256": "5c2856c407f2b8819de8999aef5757bb6428250c34bfc66003fe133e07164d84"
+  },
+  "new_blockers": [
+    {
+      "id": "F2-01",
+      "severity": "P1",
+      "title": "Later SY configurations invalidate immutable historical manifests",
+      "locations": [
+        "scripts/recovery/dtf-migration/preparation.ts:223-249",
+        "scripts/recovery/dtf-migration/preparation.ts:253-270",
+        "scripts/recovery/dtf-migration/execution-domain.ts:163-180",
+        "scripts/recovery/dtf-migration/quotes.ts:241-249",
+        "scripts/recovery/dtf-migration/claimed-sy.ts:108-126"
+      ],
+      "finding": "Recursive authentication of historical A applies the deployment-to-latest SY census to A. After a complete current B retains claimed-SY X through A and loads new SY Y, reopening B fails because immutable A does not contain Y. Verification, resume and activation stop before historical reconciliation.",
+      "requested_correction": "Separate historical proof authentication from current census completeness. Preserve immutable A and all source checks, enforce the complete current census on B, and cover retained X plus subsequently loaded Y.",
+      "basis": "Static source trace; not runtime reproduced"
+    },
+    {
+      "id": "F2-02",
+      "severity": "P2",
+      "title": "Original-field omission assertions fail for unrelated missing pricing",
+      "locations": [
+        "scripts/recovery/dtf-migration/claim-vault.test.ts:15-19",
+        "scripts/recovery/dtf-migration/dtf-custody-se.test.ts:15-19",
+        "scripts/recovery/dtf-migration/weighted-liquid.test.ts:15-19",
+        "scripts/recovery/dtf-migration/weighted-sy.test.ts:136-140",
+        "scripts/recovery/dtf-migration/schema.ts:100",
+        "scripts/recovery/dtf-migration/schema.ts:156-159",
+        "scripts/recovery/dtf-migration/schema.ts:180-184"
+      ],
+      "finding": "Four loops covering seven omitted original fields each construct rows without required v2 pricing. All 28 assertions can remain green after the intended original-field validator is weakened.",
+      "requested_correction": "Keep the complete valid row and its pricing while removing only the targeted original field; assert the relevant rejection path and a valid control.",
+      "basis": "Static rejection-path analysis; no mutation test run"
+    }
+  ],
+  "known_gaps_not_counted_as_new_findings": [
+    "The unchanged claimed-SY witness pin differs from the compiled runtime; retained operator execution has exit 1.",
+    "Task 10 complete current-chain lifecycle receipts and dependent real portable proofs remain absent.",
+    "Previously recorded historical command-provenance qualifications remain."
+  ],
+  "checks": {
+    "git_diff_check": {
+      "command": "GIT_MASTER=1 git diff --check",
+      "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+      "exit_code": 0,
+      "output": "",
+      "scope": "Tracked diff; new source files inspected separately"
+    },
+    "source_freshness": {
+      "manifest": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/source-final.json",
+      "added_or_modified_source_files_compared": 114,
+      "missing_entries": 0,
+      "hash_mismatches": 0
+    },
+    "retained_diagnostics": {
+      "production_build_exit": 0,
+      "hermetic_exit": 0,
+      "hermetic_passed": 28641,
+      "hermetic_failed": 0,
+      "fork_exit": 0,
+      "fork_passed": 183,
+      "fork_failed": 0,
+      "operator_typecheck_exit": 0,
+      "operator_tests_exit": 1,
+      "operator_passed": 240,
+      "operator_failed": 1,
+      "helper_typecheck_separate_exit_receipt": 0,
+      "commands_rerun_by_reviewer": false
+    }
+  },
+  "finding_source_sha256": {
+    "scripts/recovery/dtf-migration/claimed-sy.ts": "e598d5947c65a1f69e2eee547e0dec8093944e18e6db7dc78fa790b955772a5f",
+    "scripts/recovery/dtf-migration/preparation.ts": "6e02b45f45dbe89c8ef43fc533e8869b20c16e1dfcba7513bfcea25fb23757a2",
+    "scripts/recovery/dtf-migration/execution-domain.ts": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3",
+    "scripts/recovery/dtf-migration/quotes.ts": "16ba5e93ff604e8f03668bf439fe74a5b449db22c9f04cd6766688cb37cce495",
+    "scripts/recovery/dtf-migration/schema.ts": "a72f5b7592b3c19e49f0d3fbb342b1b84a45140e130743d802a5e55d60cd333b",
+    "scripts/recovery/dtf-migration/claim-vault.test.ts": "8698f081eccd5fc7d359479e74ef04cdfc5764efddef48451dd17a9d12bd540c",
+    "scripts/recovery/dtf-migration/dtf-custody-se.test.ts": "36e4fccd336ad8dffdac38c633d845587e5fd7b1f5d7d530d70b7a8a00d18bd2",
+    "scripts/recovery/dtf-migration/weighted-liquid.test.ts": "4c54dd134cdaf5fd6d46ebf8bdbf02c741509d447c8e664ba2cacb888feb6154",
+    "scripts/recovery/dtf-migration/weighted-sy.test.ts": "9d3d647dfb1e30060da8748e10ac1e7d1d902eeea52cfbc237a8848123644e37"
+  },
+  "restrictions": {
+    "implementation_performed": false,
+    "delegated": false,
+    "tests_run": false,
+    "builds_run": false,
+    "rpc_calls_made": false,
+    "commits_created": false,
+    "transactions_sent": false,
+    "claimed_sy_pin_retuned": false,
+    "task10_receipts_invented": false,
+    "verdict_written_after_report": true
+  },
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/F2-quality.md",
+    ".omo/ulw-execute/dtf-conformance/F2-verdict.json"
+  ]
+}

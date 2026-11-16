@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/verification-r2/independent.py", line 132, in <module>
+    assert all(d["payer"] == d["bond_recipient"] == row["purchase_recipient"] for d in corroboration)
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

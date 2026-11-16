@@ -1,0 +1,98 @@
+{
+  "verifier": "F1",
+  "date": "2026-11-15",
+  "disposition": "APPROVE",
+  "scope": "Exception-relative final plan compliance audit under the requesting instruction.",
+  "reason": "No additional unsupported source, conservation, manual-quote, or payout gap was found beyond the explicitly named incomplete rows.",
+  "implementationComplete": false,
+  "publicExecutionAuthorized": false,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "planSha256AtAudit": "62f3506229cb78af4997038dd39df139a75a4c535ca169f659bad013ffaf4500",
+  "amendedMigrationPlanSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+  "report": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/F1-compliance.md",
+    "bytes": 31556,
+    "sha256": "d224481e90ec2c07161e0949288ec6f9b3896a81269c6b7f576764083169a55c"
+  },
+  "additionalGaps": [],
+  "knownUnmet": [
+    {
+      "tasks": [7, 13],
+      "gap": "Claimed-SY witness pin differs from the compiled router runtime hash.",
+      "operatorExit": 1,
+      "passed": 240,
+      "failed": 1,
+      "pinRetuned": false,
+      "expectedPin": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actualRuntimeHash": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc"
+    },
+    {
+      "tasks": [10],
+      "gap": "No admissible authority-bundle-bound 10000 DTF donor; complete rehearsal not run.",
+      "nftThreeSpentForSetup": false,
+      "qualification": "Retained evidence identifies funded candidates outside the bundle. This is not a claim of global DTF scarcity."
+    },
+    {
+      "tasks": [12],
+      "gap": "Real current-chain portability and owner-purchase/donation lifecycle proof is missing.",
+      "offlineRelocationConfirmed": true,
+      "offlineEvidenceIsChainProof": false
+    },
+    {
+      "tasks": [14, 15],
+      "gap": "Blocked by task 13; required final traceability and delivery records are absent."
+    }
+  ],
+  "absentRequiredFiles": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-14/traceability-review.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-15/delivery/delivery.json"
+  ],
+  "coverage": {
+    "migrationPolicies": 15,
+    "feasibilityGates": 5,
+    "acceptanceIds": 53,
+    "ownerClarifications": 10,
+    "arithmeticExamples": 13,
+    "statefulInvariantObligations": 12,
+    "sourceCategories": 14,
+    "qualification": "Coverage means audited and dispositioned, not that known incomplete obligations passed."
+  },
+  "localEvidenceChecks": {
+    "sourceRegularFileHashesMatched": 16405,
+    "sourceSymlinkTargetsMatched": 4,
+    "finalEvidenceIndexFilesMatched": 63,
+    "sourceArchiveBindingsMatched": 36,
+    "archivedRuntimeKeccakChecksMatched": 34,
+    "sourceCategoryPositiveAndRejectionWitnessesMatched": 14,
+    "sourceFinalManifestSha256": "489cab55f8c500ee85611d232a207aca30f5972cc4e0b4331ccc4dd4e890ae2b",
+    "finalEvidenceIndexSha256": "9a4a0a81fb8050bcb2b707c8280b18daece3620f040cef08c248bd961babe265"
+  },
+  "retainedRunResults": {
+    "buildExit": 0,
+    "hermetic": {"passed": 28641, "failed": 0, "skipped": 0},
+    "migrationFork": {"passed": 183, "failed": 0, "skipped": 0},
+    "operatorTypecheckExit": 0,
+    "operator": {"exit": 1, "passed": 240, "failed": 1},
+    "qualification": "Existing logs and command sidecars were read; no checks were rerun."
+  },
+  "limits": [
+    "APPROVE is relative to the user's named exceptions and does not certify full plan completion.",
+    "The helper typecheck retains its documented historical native-argv provenance limitation within incomplete task 13.",
+    "No fresh chain state, approved financial dataset, public deployment, complete delivery inventory, or other final-verifier result is certified.",
+    "The two absent task 14 and task 15 files were not created."
+  ],
+  "actions": {
+    "implementationEdits": false,
+    "testsRun": false,
+    "buildsRun": false,
+    "gitOperations": false,
+    "delegation": false,
+    "rpcRequests": false,
+    "publicTransactions": false,
+    "writes": [
+      "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/F1-compliance.md",
+      ".omo/ulw-execute/dtf-conformance/F1-verdict.json"
+    ]
+  }
+}

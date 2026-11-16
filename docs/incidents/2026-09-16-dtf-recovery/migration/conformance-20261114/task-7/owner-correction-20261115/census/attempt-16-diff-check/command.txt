@@ -1,0 +1,1 @@
+GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/claimed-sy.ts scripts/recovery/dtf-migration/quotes.ts scripts/recovery/dtf-migration/preparation.ts scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/preparation.fixture.ts scripts/recovery/dtf-migration/execution.test.ts

@@ -1,0 +1,17 @@
+25 |   readonly sources: z.infer<typeof sourceIndex>;
+26 |   readonly bindings: readonly CandidateBinding[];
+27 |   readonly bytes: ReadonlyMap<string, Uint8Array>;
+28 | };
+29 | export function candidateError(message: string): never {
+30 |   throw new PreparationError("PROVENANCE", `candidates: ${message}`);
+             ^
+PreparationError: candidates: malformed unsigned integer: 
+ code: "PROVENANCE"
+
+      at candidateError (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-input.ts:30:9)
+      at integer (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-input.ts:121:41)
+      at deriveInventory (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidate-inventory.ts:94:16)
+      at deriveCandidates (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/scripts/recovery/dtf-migration/candidates.ts:12:21)
+      at /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/[eval]:1:170
+
+Bun v1.4.2 (macOS arm64)

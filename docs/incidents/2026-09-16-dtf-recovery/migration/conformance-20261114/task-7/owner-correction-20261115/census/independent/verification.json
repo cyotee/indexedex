@@ -1,0 +1,1819 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "scope": "Reopened task 7 F2-01 census lane; source and retained synthetic wire/CLI evidence only",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/census-done.json",
+    "sha256": "2ce914c1daf31bb1b42e47015b6c4dbf3dcd1719e22a4120b46914e5f911c9f0"
+  },
+  "findings": [],
+  "concrete_fixes": [],
+  "source_bindings": [
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+      "bytes": 8114
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+      "bytes": 19500
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+      "bytes": 21123
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+      "bytes": 14518
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+      "bytes": 16042
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+      "bytes": 15126
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+      "bytes": 15030
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+      "bytes": 4079
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.fixture.ts",
+      "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+      "bytes": 13686
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts",
+      "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+      "bytes": 6147
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "sha256": "4439a2d7895e36ebeb1348bcec2bbbe2179ff013f540e1ac256db2d0958302ad",
+      "bytes": 6257
+    }
+  ],
+  "claim_source_checks": [
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+      "bytes": 8114,
+      "matchesClaim": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+      "bytes": 19500,
+      "matchesClaim": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+      "bytes": 21123,
+      "matchesClaim": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+      "bytes": 14518,
+      "matchesClaim": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+      "bytes": 16042,
+      "matchesClaim": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.fixture.ts",
+      "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+      "bytes": 13686,
+      "matchesClaim": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+      "bytes": 15030,
+      "matchesClaim": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts",
+      "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+      "bytes": 6147,
+      "matchesClaim": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "sha256": "4439a2d7895e36ebeb1348bcec2bbbe2179ff013f540e1ac256db2d0958302ad",
+      "bytes": 6257,
+      "matchesClaim": true
+    }
+  ],
+  "attempts": [
+    {
+      "name": "attempt-01-baseline",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 0,
+      "sourceStable": true,
+      "rawSha256": "4e5de870d10cfce7c038a667bdc999044a49578230a4cfbd723fb6a6a8fdcc7c",
+      "passLines": 54,
+      "source_bindings": [
+        {
+          "sha256": "e598d5947c65a1f69e2eee547e0dec8093944e18e6db7dc78fa790b955772a5f",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "16ba5e93ff604e8f03668bf439fe74a5b449db22c9f04cd6766688cb37cce495",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "6e02b45f45dbe89c8ef43fc533e8869b20c16e1dfcba7513bfcea25fb23757a2",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "3653252e020f372f09ba6262220a95b9908c3740cee1773d1315af37f3118a2d",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "21a65d05e07985abaed780f64ef42ba7e9f93f89790bc3bd3ef8278ab32bfbbc",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        }
+      ],
+      "failure_records": [],
+      "summary": [
+        " 54 pass",
+        " 0 fail",
+        "Ran 54 tests across 3 files. [997.00ms]"
+      ]
+    },
+    {
+      "name": "attempt-02-reproduction",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "2a3628e644738ca17c95c75a1c872c412f2d0df4cf13474982344f5548cb3a9d",
+      "passLines": 54,
+      "source_bindings": [
+        {
+          "sha256": "e598d5947c65a1f69e2eee547e0dec8093944e18e6db7dc78fa790b955772a5f",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "16ba5e93ff604e8f03668bf439fe74a5b449db22c9f04cd6766688cb37cce495",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "6e02b45f45dbe89c8ef43fc533e8869b20c16e1dfcba7513bfcea25fb23757a2",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "ee11e08bc3380295c1e217712651959a17c0165c1a9b999f4252bba19dbc5366",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "935276f329888d3aba9b4cedf24c13802382426df8076c925c759c782e661fa9",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "364bba159294c3925524edc253c9d923b796e0517fbfd92a7a8a97cfe794e00e",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [887.15ms]",
+        "(fail) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [887.15ms]"
+      ],
+      "summary": [
+        " 54 pass",
+        " 1 fail",
+        "Ran 55 tests across 3 files. [1.85s]"
+      ]
+    },
+    {
+      "name": "attempt-03-reproduction",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "2d3a260375c4941fec3baf50874c80598fa9afa7030e5d863e707c5d96e79f72",
+      "passLines": 54,
+      "source_bindings": [
+        {
+          "sha256": "e598d5947c65a1f69e2eee547e0dec8093944e18e6db7dc78fa790b955772a5f",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "16ba5e93ff604e8f03668bf439fe74a5b449db22c9f04cd6766688cb37cce495",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "6e02b45f45dbe89c8ef43fc533e8869b20c16e1dfcba7513bfcea25fb23757a2",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "ee11e08bc3380295c1e217712651959a17c0165c1a9b999f4252bba19dbc5366",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "935276f329888d3aba9b4cedf24c13802382426df8076c925c759c782e661fa9",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "8bde9b073634b813d31aad89ffd34b0feb1a9de4db678a104bea3e64e08496fe",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [2232.59ms]",
+        "(fail) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [2232.59ms]"
+      ],
+      "summary": [
+        " 54 pass",
+        " 1 fail",
+        "Ran 55 tests across 3 files. [3.17s]"
+      ]
+    },
+    {
+      "name": "attempt-04-fixture-diagnosis",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/execution.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "66a0b82e073449acd03af76895174ba518cd00510a8ed9107b0ed7d80b85b4e2",
+      "passLines": 11,
+      "source_bindings": [
+        {
+          "sha256": "e598d5947c65a1f69e2eee547e0dec8093944e18e6db7dc78fa790b955772a5f",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "16ba5e93ff604e8f03668bf439fe74a5b449db22c9f04cd6766688cb37cce495",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "6e02b45f45dbe89c8ef43fc533e8869b20c16e1dfcba7513bfcea25fb23757a2",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "935276f329888d3aba9b4cedf24c13802382426df8076c925c759c782e661fa9",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "8bde9b073634b813d31aad89ffd34b0feb1a9de4db678a104bea3e64e08496fe",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [2283.25ms]"
+      ],
+      "summary": [
+        " 11 pass",
+        " 1 fail",
+        "Ran 12 tests across 1 file. [2.38s]"
+      ]
+    },
+    {
+      "name": "attempt-05-filter-diagnosis",
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/diagnose-fixture.ts",
+      "exit": 0,
+      "sourceStable": true,
+      "rawSha256": "cefc7ba49cae9530b026cadab195bb39d35173bc71c5a5b2e8a6025d4b0ec9f1",
+      "passLines": 0,
+      "source_bindings": [
+        {
+          "sha256": "e598d5947c65a1f69e2eee547e0dec8093944e18e6db7dc78fa790b955772a5f",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "16ba5e93ff604e8f03668bf439fe74a5b449db22c9f04cd6766688cb37cce495",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "6e02b45f45dbe89c8ef43fc533e8869b20c16e1dfcba7513bfcea25fb23757a2",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "935276f329888d3aba9b4cedf24c13802382426df8076c925c759c782e661fa9",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "8bde9b073634b813d31aad89ffd34b0feb1a9de4db678a104bea3e64e08496fe",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        }
+      ],
+      "failure_records": [],
+      "summary": [
+        "Fixture filter diagnosis; not a reproduction"
+      ]
+    },
+    {
+      "name": "attempt-06-reproduction",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "d125e81b9236300df09e0bc87950673a1b5baf43389c4250494450a834bcf4c6",
+      "passLines": 54,
+      "source_bindings": [
+        {
+          "sha256": "e598d5947c65a1f69e2eee547e0dec8093944e18e6db7dc78fa790b955772a5f",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "16ba5e93ff604e8f03668bf439fe74a5b449db22c9f04cd6766688cb37cce495",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "6e02b45f45dbe89c8ef43fc533e8869b20c16e1dfcba7513bfcea25fb23757a2",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "935276f329888d3aba9b4cedf24c13802382426df8076c925c759c782e661fa9",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [1789.35ms]",
+        "(fail) complete B loads, verifies and resumes retained authentic X after Y is configured without rewriting A [1789.35ms]"
+      ],
+      "summary": [
+        " 54 pass",
+        " 1 fail",
+        "Ran 55 tests across 3 files. [2.75s]"
+      ]
+    },
+    {
+      "name": "attempt-07-root-fix",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 0,
+      "sourceStable": true,
+      "rawSha256": "d1c2ddb9be9a7249d8f0ec20e2ef10a2bdba3fddadce52cbe75c115d47006edf",
+      "passLines": 55,
+      "source_bindings": [
+        {
+          "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "935276f329888d3aba9b4cedf24c13802382426df8076c925c759c782e661fa9",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        }
+      ],
+      "failure_records": [],
+      "summary": [
+        " 55 pass",
+        " 0 fail",
+        "Ran 55 tests across 3 files. [4.09s]"
+      ]
+    },
+    {
+      "name": "attempt-08-adversarial",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 0,
+      "sourceStable": true,
+      "rawSha256": "b106780322a40ecc087edf15956ac9bd4851101104b4cd90e0d76e71602dce84",
+      "passLines": 65,
+      "source_bindings": [
+        {
+          "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        }
+      ],
+      "failure_records": [],
+      "summary": [
+        " 65 pass",
+        " 0 fail",
+        "Ran 65 tests across 3 files. [13.00s]"
+      ]
+    },
+    {
+      "name": "attempt-09-mutant-current-bound",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "814897ee02dddcce4d5e0b3780718e42fe3f5113df565b1d4b213aa40fc20d3d",
+      "passLines": 64,
+      "source_bindings": [
+        {
+          "sha256": "275fe916918cce72a5c262b38af0d074a50da394e8453975544ce4ef9a047698",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "255da4dc46bf5f9cbc6cf6aa5362038110bde0d343d19d8d8c9ba306eccb6a60",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) current census rejects omitted configured origins when keeping 0x000000000000000000000000000000000000000000000000000000000000012c [1096.65ms]",
+        "(fail) current census rejects omitted configured origins when keeping 0x000000000000000000000000000000000000000000000000000000000000012c [1096.65ms]"
+      ],
+      "summary": [
+        " 64 pass",
+        " 1 fail",
+        "Ran 65 tests across 3 files. [12.89s]"
+      ]
+    },
+    {
+      "name": "attempt-10-mutant-members",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "aa9eb7f451d8b73a1d81e1b7158171a64687aabc517b51390826d635beec3acf",
+      "passLines": 62,
+      "source_bindings": [
+        {
+          "sha256": "449d69d104555890c925eb73a572ae8b5927c362ff80078decb813c98f83a303",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "255da4dc46bf5f9cbc6cf6aa5362038110bde0d343d19d8d8c9ba306eccb6a60",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) historical source authentication still rejects member tampering after Y [468.13ms]",
+        "(fail) historical source authentication still rejects facet tampering after Y [469.86ms]",
+        "(fail) historical source authentication still rejects economics tampering after Y [526.72ms]",
+        "(fail) historical source authentication still rejects member tampering after Y [468.13ms]",
+        "(fail) historical source authentication still rejects facet tampering after Y [469.86ms]",
+        "(fail) historical source authentication still rejects economics tampering after Y [526.72ms]"
+      ],
+      "summary": [
+        " 62 pass",
+        " 3 fail",
+        "Ran 65 tests across 3 files. [7.68s]"
+      ]
+    },
+    {
+      "name": "attempt-11-mutant-domain",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "35bfeb2e410f36ba3941173023fb1bc8f1772cdd4946e0ce8c0f1b8a803e6c6e",
+      "passLines": 64,
+      "source_bindings": [
+        {
+          "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "b9dceb3da00c81f537300b7a7d148ea6254fd6cfac12a31edf617516830c4d84",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "255da4dc46bf5f9cbc6cf6aa5362038110bde0d343d19d8d8c9ba306eccb6a60",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) rehashing a historical intent and current manifest cannot change the original signed domain [1186.63ms]",
+        "(fail) rehashing a historical intent and current manifest cannot change the original signed domain [1186.63ms]"
+      ],
+      "summary": [
+        " 64 pass",
+        " 1 fail",
+        "Ran 65 tests across 3 files. [13.90s]"
+      ]
+    },
+    {
+      "name": "attempt-12-mutant-receipt",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "c68cec38dd8b67f33bbcad066f68dff86cd92b033e3af14f0a5c788fa436c336",
+      "passLines": 64,
+      "source_bindings": [
+        {
+          "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "e25d1e90d5a31a77d734a666e49f7ff929739df3e15064804cb46e5726b7e30c",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "255da4dc46bf5f9cbc6cf6aa5362038110bde0d343d19d8d8c9ba306eccb6a60",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) historical source authentication still rejects receipt tampering after Y [941.58ms]",
+        "(fail) historical source authentication still rejects receipt tampering after Y [941.58ms]"
+      ],
+      "summary": [
+        " 64 pass",
+        " 1 fail",
+        "Ran 65 tests across 3 files. [13.87s]"
+      ]
+    },
+    {
+      "name": "attempt-13-mutant-scope",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 1,
+      "sourceStable": true,
+      "rawSha256": "00b07536ad71dced744139413f127c9e353d87d1781d4d110c983a70e7458e12",
+      "passLines": 63,
+      "source_bindings": [
+        {
+          "sha256": "12996fbf1c3ccda9045776561ec5a4818e7333d13a4b0b58994185efab0eeee1",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "1de8ffb6b896781fddbf67da2b8d3f81112b4ad9c74163c96766f032a3e82b83",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "255da4dc46bf5f9cbc6cf6aa5362038110bde0d343d19d8d8c9ba306eccb6a60",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [
+        "(fail) current census rejects omitted configured origins when keeping none [821.51ms]",
+        "(fail) historical source authentication still rejects historical-census tampering after Y [949.00ms]",
+        "(fail) current census rejects omitted configured origins when keeping none [821.51ms]",
+        "(fail) historical source authentication still rejects historical-census tampering after Y [949.00ms]"
+      ],
+      "summary": [
+        " 63 pass",
+        " 2 fail",
+        "Ran 65 tests across 3 files. [13.86s]"
+      ]
+    },
+    {
+      "name": "attempt-14-final-focused",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts",
+      "exit": 0,
+      "sourceStable": true,
+      "rawSha256": "bf62649a7f78c78a891f7f9cb053a3f42afe14409a36009e6a3c8b0ae429c824",
+      "passLines": 65,
+      "source_bindings": [
+        {
+          "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "4439a2d7895e36ebeb1348bcec2bbbe2179ff013f540e1ac256db2d0958302ad",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [],
+      "summary": [
+        " 65 pass",
+        " 0 fail",
+        "Ran 65 tests across 3 files. [14.27s]"
+      ]
+    },
+    {
+      "name": "attempt-15-manual",
+      "command": "bun docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts",
+      "exit": 0,
+      "sourceStable": true,
+      "rawSha256": "4a862fadc51ddb46a4166081a7ef6370c512d45458e8d2a32c32fe41fec3ece8",
+      "passLines": 0,
+      "source_bindings": [
+        {
+          "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "4439a2d7895e36ebeb1348bcec2bbbe2179ff013f540e1ac256db2d0958302ad",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [],
+      "summary": [
+        "{\"childExits\":[0,0,0,0,0,1,1,1],\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc\",\"status\":\"PASS\"}"
+      ]
+    },
+    {
+      "name": "attempt-16-diff-check",
+      "command": "GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/claimed-sy.ts scripts/recovery/dtf-migration/quotes.ts scripts/recovery/dtf-migration/preparation.ts scripts/recovery/dtf-migration/execution-domain.ts scripts/recovery/dtf-migration/preparation.fixture.ts scripts/recovery/dtf-migration/execution.test.ts",
+      "exit": 0,
+      "sourceStable": true,
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passLines": 0,
+      "source_bindings": [
+        {
+          "sha256": "cf071cb97dce75193625e289ca46ef6666ef0daf0554c5a1a288c5af8c020102",
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts"
+        },
+        {
+          "sha256": "9a136126b0c85d276eacf54cd512a331be8839da1b2b22b9bb61cd54fa1c1759",
+          "path": "scripts/recovery/dtf-migration/quotes.ts"
+        },
+        {
+          "sha256": "0416c0ac766695954cfab7e52b542920f30b8c9d474f9603ef0611d6d4df3855",
+          "path": "scripts/recovery/dtf-migration/preparation.ts"
+        },
+        {
+          "sha256": "2e25b584b4406c89094a85ea74d3ecc0b9b666c7d1241373d080d3197b541bca",
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts"
+        },
+        {
+          "sha256": "20b49a97d6ebf38223803f7f72344098fb83895bf6d1d1aa66a6751748f56844",
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts"
+        },
+        {
+          "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9",
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts"
+        },
+        {
+          "sha256": "b5b6865d86245b76d55475a0828c6a5e7dc0318c819f5a829463fbc621b14fdd",
+          "path": "scripts/recovery/dtf-migration/execution.test.ts"
+        },
+        {
+          "sha256": "d145739b5a896ea27b0fc55c566400911a4615103f8c28c0808531355f2da405",
+          "path": "scripts/recovery/dtf-migration/remaining-claimed-sy.test.ts"
+        },
+        {
+          "sha256": "f44287c0e19a5a53061c9987f23719d55f5449bbad10355df28a85e9e302a829",
+          "path": "scripts/recovery/dtf-migration/execution.fixture.ts"
+        },
+        {
+          "sha256": "5707d57e90d0ee4448683fb5fa8ae8a23e2a338eb6ffcec62450443870091da5",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/claimed-source.fixture.ts"
+        },
+        {
+          "sha256": "4439a2d7895e36ebeb1348bcec2bbbe2179ff013f540e1ac256db2d0958302ad",
+          "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-census.ts"
+        }
+      ],
+      "failure_records": [],
+      "summary": [
+        ""
+      ]
+    }
+  ],
+  "producer_process_evidence": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1df60/sessions/st_01a1df60/2026-11-15T13-22-51.387Z_92629da0-d73c-43fe-a4f4-d1af12386029.jsonl",
+    "recorder_lines": [
+      76,
+      103
+    ],
+    "invocation_lines": [
+      171,
+      318,
+      328
+    ],
+    "root_fix_patch_lines": [
+      188,
+      190
+    ],
+    "mutation_and_restoration_patch_lines": [
+      231,
+      247,
+      263,
+      282,
+      298,
+      314,
+      316
+    ],
+    "receipts": [
+      {
+        "line": 183,
+        "entryId": "59648ca9",
+        "timestamp": "2026-11-15T13:33:35.848Z",
+        "text": "<system-reminder>Monitor event(Census authentic A/B pre-fix reproduction): CENSUS_RESULT attempt-06-reproduction exit=1\nwatcher exited_1 (exit code 1)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_6",
+            "description": "Census authentic A/B pre-fix reproduction",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 204,
+        "entryId": "cee856f8",
+        "timestamp": "2026-11-15T13:35:30.134Z",
+        "text": "<system-reminder>Monitor event(Census root-fix green check): CENSUS_RESULT attempt-07-root-fix exit=0\nwatcher completed (exit code 0)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_7",
+            "description": "Census root-fix green check",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 223,
+        "entryId": "d39a253f",
+        "timestamp": "2026-11-15T13:37:50.705Z",
+        "text": "<system-reminder>Monitor event(Census focused adversarial checks): CENSUS_RESULT attempt-08-adversarial exit=0\nwatcher completed (exit code 0)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_8",
+            "description": "Census focused adversarial checks",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 245,
+        "entryId": "d2883cb3",
+        "timestamp": "2026-11-15T13:42:00.571Z",
+        "text": "<system-reminder>Monitor event(Census current-bound mutation proof): CENSUS_RESULT attempt-09-mutant-current-bound exit=1\nwatcher exited_1 (exit code 1)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_9",
+            "description": "Census current-bound mutation proof",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 261,
+        "entryId": "672eca06",
+        "timestamp": "2026-11-15T13:43:02.159Z",
+        "text": "<system-reminder>Monitor event(Census source-authentication mutation proof): CENSUS_RESULT attempt-10-mutant-members exit=1\nwatcher exited_1 (exit code 1)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_10",
+            "description": "Census source-authentication mutation proof",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 280,
+        "entryId": "f4c6e6fc",
+        "timestamp": "2026-11-15T13:44:06.809Z",
+        "text": "<system-reminder>Monitor event(Census historical-domain mutation proof): CENSUS_RESULT attempt-11-mutant-domain exit=1\nwatcher exited_1 (exit code 1)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_11",
+            "description": "Census historical-domain mutation proof",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 296,
+        "entryId": "586e2690",
+        "timestamp": "2026-11-15T13:45:28.964Z",
+        "text": "<system-reminder>Monitor event(Census historical-receipt mutation proof): CENSUS_RESULT attempt-12-mutant-receipt exit=1\nwatcher exited_1 (exit code 1)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_12",
+            "description": "Census historical-receipt mutation proof",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 312,
+        "entryId": "dedeb4a8",
+        "timestamp": "2026-11-15T13:46:55.192Z",
+        "text": "<system-reminder>Monitor event(Census scope-completeness mutation proof): CENSUS_RESULT attempt-13-mutant-scope exit=1\nwatcher exited_1 (exit code 1)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_13",
+            "description": "Census scope-completeness mutation proof",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 332,
+        "entryId": "e53b2d08",
+        "timestamp": "2026-11-15T13:48:27.926Z",
+        "text": "<system-reminder>Monitor event(Census final focused checks): CENSUS_RESULT attempt-14-final-focused exit=0\nwatcher completed (exit code 0)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_14",
+            "description": "Census final focused checks",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 342,
+        "entryId": "153bc301",
+        "timestamp": "2026-11-15T13:48:46.511Z",
+        "text": "<system-reminder>Monitor event(Census manual public CLI evidence): CENSUS_RESULT attempt-15-manual exit=0\nwatcher completed (exit code 0)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_15",
+            "description": "Census manual public CLI evidence",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      },
+      {
+        "line": 360,
+        "entryId": "e706bbe2",
+        "timestamp": "2026-11-15T13:50:10.259Z",
+        "text": "<system-reminder>Monitor event(Census scoped whitespace check): CENSUS_RESULT attempt-16-diff-check exit=0\nwatcher completed (exit code 0)</system-reminder>",
+        "monitors": [
+          {
+            "id": "bash_16",
+            "description": "Census scoped whitespace check",
+            "eventCount": 2,
+            "kinds": [
+              "line",
+              "summary"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "mutation_proofs": [
+    {
+      "attempt": "attempt-09-mutant-current-bound",
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "computedSha256": "275fe916918cce72a5c262b38af0d074a50da394e8453975544ce4ef9a047698",
+      "recordedSha256": "275fe916918cce72a5c262b38af0d074a50da394e8453975544ce4ef9a047698",
+      "hashMatches": true,
+      "method": "Read-only in-memory reconstruction; no file mutation or test rerun by verifier"
+    },
+    {
+      "attempt": "attempt-10-mutant-members",
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "computedSha256": "449d69d104555890c925eb73a572ae8b5927c362ff80078decb813c98f83a303",
+      "recordedSha256": "449d69d104555890c925eb73a572ae8b5927c362ff80078decb813c98f83a303",
+      "hashMatches": true,
+      "method": "Read-only in-memory reconstruction; no file mutation or test rerun by verifier"
+    },
+    {
+      "attempt": "attempt-11-mutant-domain",
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "computedSha256": "b9dceb3da00c81f537300b7a7d148ea6254fd6cfac12a31edf617516830c4d84",
+      "recordedSha256": "b9dceb3da00c81f537300b7a7d148ea6254fd6cfac12a31edf617516830c4d84",
+      "hashMatches": true,
+      "method": "Read-only in-memory reconstruction; no file mutation or test rerun by verifier"
+    },
+    {
+      "attempt": "attempt-12-mutant-receipt",
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "computedSha256": "e25d1e90d5a31a77d734a666e49f7ff929739df3e15064804cb46e5726b7e30c",
+      "recordedSha256": "e25d1e90d5a31a77d734a666e49f7ff929739df3e15064804cb46e5726b7e30c",
+      "hashMatches": true,
+      "method": "Read-only in-memory reconstruction; no file mutation or test rerun by verifier"
+    },
+    {
+      "attempt": "attempt-13-mutant-scope",
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "computedSha256": "12996fbf1c3ccda9045776561ec5a4818e7333d13a4b0b58994185efab0eeee1",
+      "recordedSha256": "12996fbf1c3ccda9045776561ec5a4818e7333d13a4b0b58994185efab0eeee1",
+      "hashMatches": true,
+      "method": "Read-only in-memory reconstruction; no file mutation or test rerun by verifier"
+    }
+  ],
+  "manual": {
+    "root": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc",
+    "children": [
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "validate",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/A-prepared.json"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": "{\"command\":\"validate\",\"payloadHash\":\"eeb233a38d0d78c9800de62070cfc467b763907b5c7d7e6cb3888d58aa938833\",\"fullTask9\":\"open\",\"mode\":\"read-only\"}\n"
+      },
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "validate",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/B-prepared.json"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": "{\"command\":\"validate\",\"payloadHash\":\"f025b5f01c1ab7478b4433b1cdb89e7a03dbfb8ba2a68be7a5f433532dd5edff\",\"fullTask9\":\"open\",\"mode\":\"read-only\"}\n"
+      },
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "verify",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/B-execution.json",
+          "--checkpoint",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/checkpoint-8"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": "{\"mode\":\"read-only\",\"command\":\"verify\",\"verification\":{\"rows\":[],\"totalSupply\":\"0\"}}\n"
+      },
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "resume",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/B-execution.json",
+          "--checkpoint",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/checkpoint-8"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": "{\"mode\":\"read-only\",\"command\":\"configure\",\"domainHash\":\"01ad4d6bd6e599abff5a48ab9ce32a770ffa5fab494dfa1e9f78436b9f02d060\",\"operationIds\":[\"88f2360ff1ccdf39d5b5c717e5cb5462b18ca6c3f0c7d5f6016223beb65af59b\"],\"fullTask9\":\"open\"}\n"
+      },
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "resume",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/B-execution.json",
+          "--checkpoint",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/checkpoint-8"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": "{\"mode\":\"read-only\",\"command\":\"configure\",\"domainHash\":\"01ad4d6bd6e599abff5a48ab9ce32a770ffa5fab494dfa1e9f78436b9f02d060\",\"operationIds\":[\"88f2360ff1ccdf39d5b5c717e5cb5462b18ca6c3f0c7d5f6016223beb65af59b\"],\"fullTask9\":\"open\"}\n"
+      },
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "validate",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/incomplete-0x000000000000000000000000000000000000000000000000000000000000012c-prepared.json"
+        ],
+        "exit": 1,
+        "stderr": "{\"error\":\"PROVENANCE\",\"message\":\"claimed SY: previously configured SY origin omitted from complete census\"}\n",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "validate",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/incomplete-0x000000000000000000000000000000000000000000000000000000000000012d-prepared.json"
+        ],
+        "exit": 1,
+        "stderr": "{\"error\":\"PROVENANCE\",\"message\":\"claimed SY: previously configured SY origin omitted from complete census\"}\n",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+          "scripts/recovery/dtf-migration/cli.ts",
+          "validate",
+          "--manifest",
+          "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc/incomplete-empty-prepared.json"
+        ],
+        "exit": 1,
+        "stderr": "{\"error\":\"PROVENANCE\",\"message\":\"claimed SY: previously configured SY origin omitted from complete census\"}\n",
+        "stdout": ""
+      }
+    ],
+    "child_sidecars_match_summary": [
+      {
+        "child": 1,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 0
+      },
+      {
+        "child": 2,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 0
+      },
+      {
+        "child": 3,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 0
+      },
+      {
+        "child": 4,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 0
+      },
+      {
+        "child": 5,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 0
+      },
+      {
+        "child": 6,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 1
+      },
+      {
+        "child": 7,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 1
+      },
+      {
+        "child": 8,
+        "matchesSummary": true,
+        "signal": null,
+        "exit": 1
+      }
+    ],
+    "original_byte_checks": [
+      {
+        "captured": "original-0.json",
+        "actual": "54e82f95d618e3238331c4ed6bd2e7fd7c0a2e7eeadb6074886eb7783a552bf7",
+        "matchesBefore": true,
+        "matchesAfter": true
+      },
+      {
+        "captured": "original-1.json",
+        "actual": "44cd8efdeb7bd21331d6c902ec5ab2178225f0301554c2890351113e7ebf2885",
+        "matchesBefore": true,
+        "matchesAfter": true
+      },
+      {
+        "captured": "original-2.json",
+        "actual": "a7f076932a66eec1a69537d0233e9b61fb0f13ddaeb29e1e072a3df9f7a2d6a6",
+        "matchesBefore": true,
+        "matchesAfter": true
+      },
+      {
+        "captured": "original-3.json",
+        "actual": "cec1cf92288c90dbe9237851d8a9a967dd3936c6304591959d701bade0a46c08",
+        "matchesBefore": true,
+        "matchesAfter": true
+      },
+      {
+        "captured": "original-4.json",
+        "actual": "01ad4d6bd6e599abff5a48ab9ce32a770ffa5fab494dfa1e9f78436b9f02d060",
+        "matchesBefore": true,
+        "matchesAfter": true
+      },
+      {
+        "captured": "original-5.json",
+        "actual": "d03000e9503c0c9e31d5846a60611a15669213bae01b6f97fd282f1a9dcde9a5",
+        "matchesBefore": true,
+        "matchesAfter": true
+      }
+    ],
+    "domain_checks": {
+      "A_domain_raw_hash": true,
+      "A_execution": true,
+      "A_normalized": true,
+      "A_journal_normalized": true,
+      "A_journal_payload": true,
+      "B_domain_raw_hash": true,
+      "B_normalized": true,
+      "B_journal_normalized": true,
+      "B_journal_payload": true
+    },
+    "domain_hashes": {
+      "A": "a7f076932a66eec1a69537d0233e9b61fb0f13ddaeb29e1e072a3df9f7a2d6a6",
+      "B": "01ad4d6bd6e599abff5a48ab9ce32a770ffa5fab494dfa1e9f78436b9f02d060"
+    },
+    "current_rows": [
+      {
+        "configurationId": "0x4ff311eee5ac6b7845571f70b5f44ff50040a1f6b3258f18268a4a4735002039",
+        "credit": "12",
+        "originalId": "0x000000000000000000000000000000000000000000000000000000000000012c",
+        "pricing": "retain"
+      },
+      {
+        "configurationId": "0xcb624f306c89568dfba764471a139b35dc9897e1d346d53cf53511600515c048",
+        "credit": "12",
+        "originalId": "0x000000000000000000000000000000000000000000000000000000000000012d",
+        "pricing": "load"
+      }
+    ],
+    "original_A_rows": [
+      "0x000000000000000000000000000000000000000000000000000000000000012c"
+    ],
+    "A_block": "100",
+    "B_block": "102",
+    "configuration_blocks": [
+      "101",
+      "103"
+    ],
+    "checkpoint_before": [
+      "domain.json",
+      "88f2360ff1ccdf39d5b5c717e5cb5462b18ca6c3f0c7d5f6016223beb65af59b.intent.json",
+      "run.json"
+    ],
+    "checkpoint_after": [
+      "domain.json",
+      "88f2360ff1ccdf39d5b5c717e5cb5462b18ca6c3f0c7d5f6016223beb65af59b.intent.json",
+      "run.json"
+    ],
+    "new_intents": 0,
+    "requotes_after_Y": 0,
+    "rpc_summary": {
+      "requests": 2358,
+      "nonces": 0,
+      "sends": 0,
+      "previews": [
+        22,
+        23,
+        24,
+        117,
+        118,
+        119,
+        268,
+        269,
+        270
+      ],
+      "censusFilters": [
+        "{\"address\":\"0x000000000000000000000000000000000000000a\",\"fromBlock\":\"0x5a\",\"toBlock\":\"latest\",\"topics\":[\"0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2\"]}",
+        "{\"address\":\"0x000000000000000000000000000000000000000a\",\"fromBlock\":\"0x5a\",\"toBlock\":\"0x64\",\"topics\":[\"0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2\"]}",
+        "{\"address\":\"0x000000000000000000000000000000000000000a\",\"fromBlock\":\"0x5a\",\"toBlock\":\"latest\",\"topics\":[[\"0x59306009aea8a6c83c64e203653e34d719cab2ea6cda18efa00ed8c25d8d400b\",\"0xd1c2bd2d7e34aef74f5c3777f0ab7d0f582179408134c8d7e6306695e026673a\",\"0xc50f03b2667f754f048eb2d07be8528842bb6b437806e66b53a8d2c3d09096f9\",\"0x85d95872fb01c95b5c79ec368bf9ca44bec41bcd0cfe91e2cf2749ae0b79e232\",\"0xefcccb4ed1d365a1bfebc8e2a0dbc11034fad586b6ee762949c5fd15fa5e1ac6\",\"0x1185d100a28ebd5d143db6ea09dff456940d8a09107cc3c0f6d9fd963e3eae84\",\"0x286c5cc5454dd5423791286ff6d0889b2f1a236b36653c8362d3f45c7a83a3b6\",\"0x9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe1622\",\"0xaa6b30bf9a69ad8b85c9d0d99f86b818a231717ca2a48ec168034aec8d1dc202\",\"0x33e0d7611cd01ac585b56590f0e06f294b7f66f0ee6604c70a99a2322721f7b5\",\"0x3a84f6022b8633d1fd6f8ec94de5784deabdc601b6589270f15a2191ad56c0a2\"]]}"
+      ],
+      "signatureChecks": [
+        {
+          "record": 3,
+          "txHash": "0xed03b9c1eaff91b52fe909d2e93bbcd6ed88951e53e859b48f67ada506c2b8fb",
+          "hashMatches": true,
+          "chain": "4663",
+          "signer": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "fromMatches": true,
+          "calldataMatches": true,
+          "nonceMatches": true
+        },
+        {
+          "record": 5,
+          "txHash": "0x8fcb66a9a9ac16a8f0cd1d6c1a461fda3567d75123b99952e26044e7e23bbe80",
+          "hashMatches": true,
+          "chain": "4663",
+          "signer": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "fromMatches": true,
+          "calldataMatches": true,
+          "nonceMatches": true
+        }
+      ]
+    },
+    "rpc_method_counts": {
+      "eth_chainId": 31,
+      "eth_getBlockByNumber": 385,
+      "eth_getCode": 620,
+      "eth_call": 930,
+      "eth_getTransactionReceipt": 146,
+      "eth_getLogs": 142,
+      "eth_getTransactionByHash": 78,
+      "debug_traceTransaction": 26
+    },
+    "cleanup": {
+      "removedFixtureDirectory": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/dtf-prepare-test-4HgqDc",
+      "retained": "captured evidence only",
+      "rpcEnvironmentRemoved": "DTF_TEST_RPC_62593",
+      "serverClosed": true
+    },
+    "cleanup_observed": {
+      "fixtureDirectoryExists": false,
+      "diagnosticScriptExists": false
+    }
+  },
+  "evidence_hashes": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/report.md",
+      "sha256": "d78c2196245888d14365b27409721682a786d23ed7e520869b3dea1caaec3cd0",
+      "bytes": 10344
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/results.json",
+      "sha256": "d6ace28d4fb88d67133680b0c86f212defbf4fe53bc9e53fd67139d9181d77fe",
+      "bytes": 10528
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/result.json",
+      "sha256": "7f2954cc460616bc11d647aecc8f1a468d203f59bbb00accef52a281475fd2b8",
+      "bytes": 9757
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/cleanup.json",
+      "sha256": "6a4a4791d97716c3044b2ad2fac77f0b6479119cc2d0c4714c0b7dd3f2d64636",
+      "bytes": 203
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/rpc-requests.json",
+      "sha256": "5acba9685538e0cf677775380f1617e2a16eb9593409085983bb098363d01109",
+      "bytes": 281122
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/manual-eqooQc/B-prepared.json",
+      "sha256": "f5eb2e0942adddc1b1fd58756876c0873e3a67624cbc719de89080ef31aa983c",
+      "bytes": 25377
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/census-done.json",
+      "sha256": "2ce914c1daf31bb1b42e47015b6c4dbf3dcd1719e22a4120b46914e5f911c9f0",
+      "bytes": 6508
+    }
+  ],
+  "source_findings": [
+    {
+      "invariant": "Historical bound is internal, accepted-context-bound and canonical; current scan remains latest even when empty",
+      "sources": [
+        "scripts/recovery/dtf-migration/claimed-sy.ts:61-64,112-133",
+        "scripts/recovery/dtf-migration/preparation.ts:208-259",
+        "scripts/recovery/dtf-migration/execution-domain.ts:164-233",
+        "scripts/recovery/dtf-migration/quotes.ts:209-263",
+        "scripts/recovery/dtf-migration/schema.ts:189-201,234-262"
+      ]
+    },
+    {
+      "invariant": "Signatures, source/facet identities, measured economics, collisions and current/issuance separation remain checked",
+      "sources": [
+        "scripts/recovery/dtf-migration/claimed-sy-member.ts:27-153",
+        "scripts/recovery/dtf-migration/claimed-sy-witness.ts:54-103",
+        "scripts/recovery/dtf-migration/provenance.ts:8-139",
+        "scripts/recovery/dtf-migration/payloads.ts:98-110,147-161,216-219",
+        "scripts/recovery/dtf-migration/execution-state.ts:285-414"
+      ]
+    },
+    {
+      "invariant": "Fresh unsent-load semantics and no-resend default read-only resume remain intact",
+      "sources": [
+        "scripts/recovery/dtf-migration/execution.ts:42-69,141-190",
+        "scripts/recovery/dtf-migration/journal.ts:24-32,93-126",
+        "scripts/recovery/dtf-migration/execution-plan.ts:61-85"
+      ]
+    }
+  ],
+  "adversarial_classes": [
+    {
+      "class": "malformed_missing_rehashed_inputs",
+      "status": "reviewed",
+      "evidence": [
+        "attempt-09-mutant-current-bound",
+        "attempt-11-mutant-domain",
+        "attempt-13-mutant-scope",
+        "execution.test.ts:57-135"
+      ]
+    },
+    {
+      "class": "stale_current_vs_historical",
+      "status": "reviewed",
+      "evidence": [
+        "attempt-06-reproduction",
+        "attempt-07-root-fix",
+        "attempt-14-final-focused",
+        "execution.test.ts:29-55,138-155"
+      ]
+    },
+    {
+      "class": "source_and_receipt_authentication",
+      "status": "reviewed",
+      "evidence": [
+        "attempt-10-mutant-members",
+        "attempt-12-mutant-receipt"
+      ]
+    },
+    {
+      "class": "misleading_success",
+      "status": "reviewed",
+      "evidence": [
+        "process receipts",
+        "65 individual passes",
+        "eight child argv/exit/stdout/stderr/signal records",
+        "manual-census.ts:24-42,97-105"
+      ]
+    },
+    {
+      "class": "repeat_resume",
+      "status": "reviewed",
+      "evidence": [
+        "manual-eqooQc/result.json",
+        "manual-eqooQc/rpc-requests.json",
+        "six immutable original files"
+      ]
+    },
+    {
+      "class": "dirty_worktree",
+      "status": "reviewed",
+      "evidence": [
+        "read-only git status",
+        "nine claim hashes",
+        "11 focused before/after fingerprints"
+      ],
+      "clean_revision_claimed": false
+    },
+    {
+      "class": "fixture_resources_timing",
+      "status": "reviewed",
+      "evidence": [
+        "preparation.fixture.ts:30,149-155,234-238",
+        "manual-census.ts:24-42,97-105",
+        "cleanup.json",
+        "normal process exits"
+      ],
+      "limits": [
+        "No forced timeout, stress, disk-full or service-outage injection"
+      ]
+    },
+    {
+      "class": "journal_concurrency_partial_files",
+      "status": "existing_focused_evidence",
+      "evidence": [
+        "execution.test.ts:158-195",
+        "attempt-14-final-focused/output.log"
+      ]
+    },
+    {
+      "class": "real_evm_reorg_public_nonce_races_activation_funded_bonds",
+      "status": "inapplicable_to_census_lane",
+      "reason": "Synthetic read-only boundary proof only; task 10 retains actual on-chain requirements."
+    },
+    {
+      "class": "browser_visual_accessibility",
+      "status": "inapplicable",
+      "reason": "No UI surface changed; public surface is CLI."
+    },
+    {
+      "class": "install_packaging_deployment_cross_platform_upgrade",
+      "status": "inapplicable",
+      "reason": "No such behavior changed or claimed; evidence is macOS Bun 1.4.2."
+    },
+    {
+      "class": "performance_exhaustion_remote_outage",
+      "status": "inapplicable_to_functional_repair_claim",
+      "reason": "No performance/capacity/retry/offline contract changed; normal cleanup and bounded timing reviewed separately."
+    }
+  ],
+  "limitations": [
+    "No tests rerun or source edits by verifier.",
+    "Native TypeScript LSP freshness timeout and absent JSON Biome LSP; no clean diagnostics claim.",
+    "Combined strict TypeScript/full operator outcomes are independently reviewed in the subsequently authorized integration lane, not admitted by this census verdict.",
+    "Synthetic fixture/source transport facts and offline signatures do not establish an EVM lifecycle; task 10 owns that proof.",
+    "A and B in the census fixture use one book and isolate origin growth.",
+    "Read-only resumes authenticate receipts without writing completion files; writable recovery is not proven by this manual command.",
+    "RPC corpus retains requests, not every response; fixture code, child outputs and process receipts bound the synthetic evidence.",
+    "Existing quotes/preparation file-size debt is outside cause-only verification."
+  ],
+  "task_7_plan_complete": false,
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/census/independent/report.md"
+}

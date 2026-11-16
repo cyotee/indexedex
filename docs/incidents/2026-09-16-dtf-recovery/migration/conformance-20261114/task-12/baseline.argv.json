@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "bun",
+    "test",
+    "--timeout",
+    "15000",
+    "./scripts/recovery/dtf-migration/bundle.test.ts",
+    "./scripts/recovery/dtf-migration/preparation.test.ts",
+    "./scripts/recovery/dtf-migration/execution.test.ts"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1"
+}

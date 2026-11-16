@@ -28,11 +28,11 @@ abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration 
         MigrationNativeLedger.Seed memory s_;
         s_.isolated = detf;
         s_.isolatedBook = keccak256(abi.encode(migration.owner(), migration.hook(), migration.rebasingClaimToken(),
-            migration.bondNftVault(), migration.migrationSnapshot(), migration.independentAllocation(address(0x2499)),
+            migration.bondNftVault(), migration.migrationWeightedPricing(), migration.independentAllocation(address(0x2499)),
             migration.independentIssuance(address(0x2499)), IERC20(detf).totalSupply(), receipt.stakingState(),
             bonds.positionOf(3)));
         emit StatefulDeployment(detf, migration.hook(), address(receipt), address(bonds),
-            migration.migrationSnapshot().id, detf.codehash);
+            migration.migrationWeightedPricing().id, detf.codehash);
 
         Package.PkgArgs memory args_ = _migrationArgs(migrationOwner);
         args_.baseArgs.mintThreshold = 100e18;
@@ -67,13 +67,18 @@ abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration 
         IERC20(pairA).transfer(address(handler), 20 ether);
         handler.assertAll();
         emit StatefulDeployment(detf, migration.hook(), address(receipt), address(bonds),
-            migration.migrationSnapshot().id, detf.codehash);
+            migration.migrationWeightedPricing().id, detf.codehash);
         address[] memory facets_ = IDiamondLoupe(detf).facetAddresses();
         for (uint256 i_; i_ < facets_.length; ++i_) {
             emit log_named_address("deployed parent facet", facets_[i_]);
             emit log_named_bytes32("deployed parent facet codehash", facets_[i_].codehash);
         }
         // Mandatory successful witnesses do not depend on selecting random actions.
+        handler.setPricing(0);
+        handler.staleBook(0);
+        handler.setPricing(1);
+        handler.staleBook(1);
+        // Recipient zero keeps immutable issuance A while its configuration is explicitly replaced under B.
         handler.configure(0, 2);
         handler.failedBatch();
         handler.issue(2);
@@ -83,7 +88,7 @@ abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration 
         handler.rejectRoleRewards();
         handler.market(7);
         handler.providerRateChange(1);
-        bytes4[] memory selectors_ = new bytes4[](13);
+        bytes4[] memory selectors_ = new bytes4[](15);
         selectors_[0] = handler.configure.selector; selectors_[1] = handler.issue.selector;
         selectors_[2] = handler.failedBatch.selector; selectors_[3] = handler.activate.selector;
         selectors_[4] = handler.transferOwner.selector; selectors_[5] = handler.transferBond.selector;
@@ -92,6 +97,8 @@ abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration 
         selectors_[10] = handler.market.selector;
         selectors_[11] = handler.providerRateChange.selector;
         selectors_[12] = handler.paidBond.selector;
+        selectors_[13] = handler.setPricing.selector;
+        selectors_[14] = handler.staleBook.selector;
         targetContract(address(handler));
         string[] memory artifacts_ = new string[](1);
         artifacts_[0] = "MigrationNativeHandler.sol:MigrationNativeHandler";

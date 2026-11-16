@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-11",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy",
+  "base": "75d513cb8b36e53f14c8aa3a352f21703ad91ba1",
+  "branch": "work/dtf-migration-phase-14-weighted-sy",
+  "checks": [
+    {
+      "name": "All current Migration specs",
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy && mkdir -p /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/specs.log",
+      "monitor": "mon_YYY4T5HJ5CC9QJBZ",
+      "exitCode": 0,
+      "passed": 115
+    },
+    {
+      "name": "All current pinned Migration forks",
+      "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/forks.log'",
+      "monitor": "mon_QKF5R51DY9DZJ0J4",
+      "exitCode": 0,
+      "passed": 61
+    },
+    {
+      "name": "Artifact preparation and both operator stages",
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH python3 scripts/forge-artifacts.py build contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/operator-artifacts.log && PATH=/Users/cyotee/.foundry/bin:$PATH forge build --use solar scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/operator-stages.log",
+      "monitor": "mon_D9QA8WHG24WB1F3K",
+      "exitCode": 0,
+      "passed": null
+    },
+    {
+      "name": "Strict TypeScript",
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy && set -o pipefail && bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/operator-types.log",
+      "monitor": "mon_Y14KRXYMBCY0FB28",
+      "exitCode": 0,
+      "passed": null
+    },
+    {
+      "name": "All four bounded operator test files, one run",
+      "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy && set -o pipefail && bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts ./scripts/recovery/dtf-migration/weighted-sy.test.ts 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/operator-tests.log",
+      "monitor": "mon_WK6R2NP6DNSEFP0J",
+      "exitCode": 0,
+      "passed": 59
+    },
+    {
+      "name": "Actual pinned fixed18564 CLI",
+      "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy && set -o pipefail && PATH=/Users/cyotee/.foundry/bin:$PATH bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18564 --checkpoint .omo-runtime/dtf-migration-weighted-sy/checkpoints --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification 2>&1 | tee /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/rehearsal.log'",
+      "monitor": "mon_3DQFPCMVXHS4971B",
+      "exitCode": 0,
+      "passed": null
+    }
+  ],
+  "versions": [
+    "forge Version: 1.9.1-nightly",
+    "Commit SHA: 430523103f3e2f9ba432ffdd2031a9f966153d0d",
+    "Build Timestamp: 2026-11-03T06:12:02.538056000Z (1793686322)",
+    "Build Profile: dist",
+    "1.4.2"
+  ],
+  "qualifications": [
+    "All required final execution commands exited 0.",
+    "Compiler warnings retained in logs, not suppressed.",
+    "JSON LSP unavailable: configured Biome executable is not installed; no dependency/configuration change or install attempted.",
+    "All generated outputs remain local; no warm-seed copy to main."
+  ]
+}
+

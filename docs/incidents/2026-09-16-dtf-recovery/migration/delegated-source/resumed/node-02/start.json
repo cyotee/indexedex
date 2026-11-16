@@ -1,0 +1,33 @@
+{
+  "command": "/Users/cyotee/.foundry/bin/anvil",
+  "args": [
+    "--fork-url",
+    "robinhood_mainnet_alchemy",
+    "--fork-block-number",
+    "108944663",
+    "--chain-id",
+    "4663",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18579",
+    "--accounts",
+    "1",
+    "--hardfork",
+    "prague",
+    "--no-mining",
+    "--no-fork-node-info",
+    "--no-bal",
+    "--no-storage-caching",
+    "--compute-units-per-second",
+    "20",
+    "--retries",
+    "0",
+    "--disable-default-create2-deployer"
+  ],
+  "pid": 47015,
+  "parentPid": 47005,
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source",
+  "existingCredentialPresent": true,
+  "started": "2026-11-13T18:53:51.670Z"
+}

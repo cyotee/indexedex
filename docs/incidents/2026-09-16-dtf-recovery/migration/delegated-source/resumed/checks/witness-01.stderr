@@ -1,0 +1,17 @@
+54 |   typeof v === "bigint" ? v.toString() : v, 2) + "\n";
+55 | export class ProofError extends Error {
+56 |   constructor(readonly condition: string) { super(condition); }
+57 | }
+58 | export function check(ok: unknown, message: string): asserts ok {
+59 |   if (!ok) throw new ProofError(message);
+                      ^
+error: unexpected immutable length
+ condition: "unexpected immutable length",
+
+      at check (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/resumed/probe/common.ts:59:18)
+      at <anonymous> (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/resumed/probe/chain.ts:87:7)
+      at map (1:11)
+      at deploy (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/resumed/probe/chain.ts:86:26)
+      at async setup (/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/resumed/probe/setup.ts:32:25)
+
+Bun v1.4.2 (macOS arm64)

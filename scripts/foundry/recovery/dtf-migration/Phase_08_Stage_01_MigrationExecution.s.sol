@@ -10,8 +10,10 @@ import {IUniswapV4DetfMigrationDFPkg as Package}
 import {IUniswapV4DetfMigrationRecovery as Recovery}
     from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol";
 
-/// @notice Typed stage simulations. The CLI owns durable intents and submission.
-/// @dev No target/calldata executor and no implicit run() or broadcast flag.
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+
+/// @notice Native Foundry migration stages with explicit typed inputs.
+/// @dev Select a function with --sig; SENDER selects the account and Forge controls broadcasting.
 contract Phase_08_Stage_01_MigrationExecution is Script {
     function prepareDeployment(Package package_, Package.PkgArgs calldata args_)
         external returns (address rawSy_, address stakingSy_)
@@ -51,28 +53,28 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function capture(Allocation proxy_) external returns (bytes32 snapshot_) {
+    function setPricing(Allocation proxy_, Pricing.Inputs calldata next_) external returns (bytes32 bookId_) {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        snapshot_ = proxy_.captureMigrationSnapshot();
+        bookId_ = proxy_.setMigrationWeightedPricing(next_);
         vm.stopBroadcast();
     }
 
-    function configureIndependent(Allocation proxy_, Migration.IndependentAllocationInput[] calldata inputs_) external {
+    function configureIndependent(Allocation proxy_, Migration.IndependentAllocationInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureIndependentAllocations(inputs_);
+        proxy_.configureIndependentAllocations(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
     /// @notice Complete interface-owned inputs include the explicit original wallet; no ownerOf fallback.
-    function configureNfts(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_) external {
+    function configureNfts(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureNftEntitlements(inputs_);
+        proxy_.configureNftEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
-    function configureNftContributions(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_) external {
+    function configureNftContributions(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureNftContributionEntitlements(inputs_);
+        proxy_.configureNftContributionEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -85,9 +87,9 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
     }
 
     /// @notice Fixed W-SW/E-P/W-P/E-S custody records only; no donor-owner operation or conversion.
-    function configureHeldSeLp(Allocation proxy_, Migration.HeldSeLpEntitlementInput[] calldata inputs_) external {
+    function configureHeldSeLp(Allocation proxy_, Migration.HeldSeLpEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureHeldSeLpEntitlements(inputs_);
+        proxy_.configureHeldSeLpEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -99,11 +101,11 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function configureEarlierLiquid(Allocation proxy_, Migration.EarlierLiquidEntitlementInput[] calldata inputs_)
+    function configureEarlierLiquid(Allocation proxy_, Migration.EarlierLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external
     {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureEarlierLiquidEntitlements(inputs_);
+        proxy_.configureEarlierLiquidEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -115,11 +117,11 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function configureWeightedLiquid(Allocation proxy_, Migration.WeightedLiquidEntitlementInput[] calldata inputs_)
+    function configureWeightedLiquid(Allocation proxy_, Migration.WeightedLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external
     {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureWeightedLiquidEntitlements(inputs_);
+        proxy_.configureWeightedLiquidEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -137,15 +139,15 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function configureWeightedSy(Allocation proxy_, Migration.WeightedSyEntitlementInput[] calldata inputs_) external {
+    function configureWeightedSy(Allocation proxy_, Migration.WeightedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureWeightedSyEntitlements(inputs_);
+        proxy_.configureWeightedSyEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
-    function configureClaimedSy(Allocation proxy_, Migration.ClaimedSyEntitlementInput[] calldata inputs_) external {
+    function configureClaimedSy(Allocation proxy_, Migration.ClaimedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureClaimedSyEntitlements(inputs_);
+        proxy_.configureClaimedSyEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -157,9 +159,9 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function configureDtfCustodySe(Allocation proxy_, Migration.DtfCustodySeEntitlementInput[] calldata inputs_) external {
+    function configureDtfCustodySe(Allocation proxy_, Migration.DtfCustodySeEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureDtfCustodySeEntitlements(inputs_);
+        proxy_.configureDtfCustodySeEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -171,9 +173,9 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function configureClaimVault(Allocation proxy_, Migration.ClaimVaultEntitlementInput[] calldata inputs_) external {
+    function configureClaimVault(Allocation proxy_, Migration.ClaimVaultEntitlementInput[] calldata inputs_, bytes32 expectedBookId_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureClaimVaultEntitlements(inputs_);
+        proxy_.configureClaimVaultEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -185,11 +187,11 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function configureWeightedReceipt(Allocation proxy_, Migration.WeightedReceiptEntitlementInput[] calldata inputs_)
+    function configureWeightedReceipt(Allocation proxy_, Migration.WeightedReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external
     {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureWeightedReceiptEntitlements(inputs_);
+        proxy_.configureWeightedReceiptEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -202,11 +204,11 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    function configureEarlierReceipt(Allocation proxy_, Migration.EarlierReceiptEntitlementInput[] calldata inputs_)
+    function configureEarlierReceipt(Allocation proxy_, Migration.EarlierReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external
     {
         vm.startBroadcast(vm.envAddress("SENDER"));
-        proxy_.configureEarlierReceiptEntitlements(inputs_);
+        proxy_.configureEarlierReceiptEntitlements(inputs_, expectedBookId_);
         vm.stopBroadcast();
     }
 
@@ -219,7 +221,7 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    /// @notice Genuine paid ordinary purchase, with explicit operator amounts and duration.
+    /// @notice Paid ordinary purchase with explicit payment and duration.
     function ownerFirstBond(Migration proxy_, IERC20 token_, uint256 amount_, uint256 duration_, uint256 deadline_)
         external returns (uint256 bondId_, uint256 lpOut_)
     {

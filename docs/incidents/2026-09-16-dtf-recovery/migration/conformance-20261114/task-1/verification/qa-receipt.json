@@ -1,0 +1,121 @@
+{
+  "type": "IndependentDocumentQA",
+  "task": 1,
+  "reviewer": "st_01a1dcd3",
+  "date": "2026-11-15",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "source_content_fingerprint": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+  "environment": {
+    "git": "git version 2.54.0 (Apple Git-157)",
+    "python": "Python 3.15.2",
+    "compiler": "not invoked; document task",
+    "lsp": "Biome unavailable; no install attempted"
+  },
+  "commands": [
+    {
+      "command": "GIT_MASTER=1 git status --short",
+      "exit_code": 0,
+      "result": "Only P is tracked-modified; concurrent untracked migration and task artifacts are present."
+    },
+    {
+      "command": "GIT_MASTER=1 git diff -- docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "exit_code": 0,
+      "result": "495 diff lines; initial terminal output was truncated and its missing first portion was subsequently read from the independent saved diff. Every hunk was inspected."
+    },
+    {
+      "command": "GIT_MASTER=1 git show HEAD:docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "exit_code": 0,
+      "stdout_artifact": "original-p.md",
+      "result": "Complete Git original, independently read."
+    },
+    {
+      "command": "GIT_MASTER=1 git diff -- docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "exit_code": 0,
+      "stdout_artifact": "actual-p.diff",
+      "result": "Independent saved diff; byte-identical to executor p.diff. This second invocation captured the first invocation's truncated output for full inspection."
+    },
+    {
+      "command": "GIT_MASTER=1 git rev-parse HEAD",
+      "exit_code": 0,
+      "stdout": "c33f70683cbaabfedc2dbce1142fdd65660d4cf3"
+    },
+    {
+      "command": "shasum -a 256 docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/verification/original-p.md docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md .omo/plans/dtf-migration-conformance-remediation-20261114.md",
+      "exit_code": 0,
+      "result_artifact": "document-measurements.json"
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --check -- docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "exit_code": 0,
+      "stdout": "",
+      "result": "No whitespace errors."
+    },
+    {
+      "command": "GIT_MASTER=1 git status --short --untracked-files=all",
+      "exit_code": 0,
+      "stdout_artifact": "review-status.txt"
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --name-only",
+      "exit_code": 0,
+      "stdout": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"
+    },
+    {
+      "command": "GIT_MASTER=1 git diff --staged --name-only",
+      "exit_code": 0,
+      "stdout": ""
+    },
+    {
+      "command": "GIT_MASTER=1 git branch --show-current",
+      "exit_code": 0,
+      "stdout": "work/dtf-conformance-20261115-wave-1"
+    },
+    {
+      "command": "python3 -",
+      "input": "Inline one-off document inspection in the tool transcript; reads original/current documents, compares exact amendment and row/block bytes, hashes every DoneClaim path, and independently computes recorded status deltas. No product source or test is written.",
+      "exit_code": 0,
+      "result_artifact": "document-measurements.json",
+      "result": "Current plan differs from its approved fingerprint only by task 2 checkbox. Exact amendment and diff bytes match; all claimed artifacts exist; recorded external status deltas reproduce exactly."
+    }
+  ],
+  "tool_checks": [
+    {
+      "tool": "functions.read",
+      "result": "Complete remediation plan, original P, amended P, all diff hunks, full reconciliation and obsolete-clause report, and referenced executor records inspected. See gate report for exact paths and reading limits."
+    },
+    {
+      "tool": "functions.grep",
+      "pattern": "no contribution-price setter|no price setter|capture once|Capture once|captureMigrationSnapshot|snapshot immutability",
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "context": 2,
+      "result": "No matches found; matches=0 files=0 searched=1."
+    },
+    {
+      "tool": "functions.grep",
+      "pattern": "snapshot|Snapshot|capture|Capture|frozen|immutable|lock|UniswapV4DetfMigrationTarget\\.sol|UniswapV4DetfMigrationFacet\\.sol",
+      "result": "49 matching lines inspected with complete document context. Capture references are explicit supersession pointers; remaining frozen terms concern evidence, dated owner history or stored postactivation credit."
+    },
+    {
+      "tool": "functions.lsp_diagnostics",
+      "path": "document-measurements.json",
+      "result": "Unavailable: biome is not installed. No install was performed."
+    }
+  ],
+  "manual_qa_matrix": {
+    "exact_amendment": "pass",
+    "manual_inputs_and_canonical_arithmetic": "pass",
+    "keep_until_explicit_reload": "pass",
+    "immutable_issuance_and_stable_originals": "pass",
+    "post_purchase_setter_and_activation_removal": "pass",
+    "owner_history_and_unrelated_obligations": "pass",
+    "all_acceptance_ids_and_examples": "pass; substantive review plus byte comparisons",
+    "F2_supersession_and_other_review_obligations": "pass",
+    "stale_evidence": "pass; plan checkbox difference explained",
+    "dirty_worktree_boundary": "path/status evidence reproduced; historical untracked byte preservation cannot be proved from status snapshots",
+    "misleading_runtime_pass_claims": "none found",
+    "programming_and_remove_ai_slops": "direct pass completed; no task-owned production/test changes or persistent prose tests"
+  },
+  "test_commands": [],
+  "product_behavior_verified": false,
+  "gate_report": ".omo/evidence/dtf-conformance-task-1-gate-review.md"
+}

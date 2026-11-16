@@ -1,0 +1,451 @@
+{
+  "date": "2026-11-10T16:46:19.491Z",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03",
+  "base": "90ff0307a7a8e084aa073e02eff125e9c7973933",
+  "verdict": "confirmed",
+  "verificationMode": "Independent source/diff/artifact/receipt audit; existing valid Forge passes accepted without rerunning.",
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol",
+      "sha256": "6e3a8c25dad4c01ca1e0b517ebe365b8340520237ca8bc269a9ac3eceb94af7c",
+      "shaMatches": true,
+      "keccak256": "0x3cf91c2b5498d326ae7672e2da07a3fe6667c5a17e26696284f71cf686abd1ba",
+      "keccakMatches": true,
+      "baseMatches": null
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+      "sha256": "14112eb68aac3f67bcbae5d41d1a5e76fe3b526033f6dab782df5c1d396b899d",
+      "shaMatches": true,
+      "keccak256": "0x995a27cb27e26b078b3389c282f253e307d4fc8408e278e6ebbbc57e4f9b7f3d",
+      "keccakMatches": true,
+      "baseMatches": true
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "sha256": "ff3c95b45adec74973aabcb874be2a8d86aa79a9af8770949b0b7e635fbcc360",
+      "shaMatches": true,
+      "keccak256": "0x9af102f576bdc65223509812baa39a971992d1843576333f6e530b39d8f019db",
+      "keccakMatches": true,
+      "baseMatches": true
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "sha256": "fed9bd4bf324c8e1c3d71e1809c3ae516320d05beb580085b2deedb83bb24f82",
+      "shaMatches": true,
+      "keccak256": "0xd656cc3b805ff89dd8be8460a545386903f290f292bac97ceef9e01f8768bc62",
+      "keccakMatches": true,
+      "baseMatches": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+      "sha256": "d1a4a227847c32bb5b5f3a4b97d9fed8114d2fca47c4c4ff0106b8332248b41e",
+      "shaMatches": true,
+      "keccak256": "0x100be63c6bb32d7d9f72f0fa11be3b9ad26f60c7b1aa237e235e593b3ae1b5c9",
+      "keccakMatches": true,
+      "baseMatches": true
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact": "out/UniswapV4DetfDFPkg.sol/UniswapV4DetfDFPkg.json",
+      "sha256": "12d7e10da4040c1b8dab6b6cfdd0f09f30b26396930af7d0ea924b64459a420c",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol": "UniswapV4DetfDFPkg"
+      },
+      "creationBytes": 17128,
+      "runtimeBytes": 16298,
+      "deps": [
+        {
+          "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol",
+          "matches": true
+        },
+        {
+          "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "artifact": "out/UniswapV4DetfBondNFTVaultFacet.sol/UniswapV4DetfBondNFTVaultFacet.json",
+      "sha256": "14b3b52e2c5fe4109691cb0607a81b8ff9479e409079c25adc51ce11c89da669",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol": "UniswapV4DetfBondNFTVaultFacet"
+      },
+      "creationBytes": 8744,
+      "runtimeBytes": 8726,
+      "deps": [
+        {
+          "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "artifact": "out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json",
+      "sha256": "a059fd6fca4d75e40f5683a1d46148ccd876c383ecb5a85d79210cfa5c745f32",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol": "RebasingClaimTokenFacet"
+      },
+      "creationBytes": 6115,
+      "runtimeBytes": 6097,
+      "deps": [
+        {
+          "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+      "sha256": "ac747ced538a6dde143ba8cb30ed9d7551d32a8b891a923c926a14adb56efcd5",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol": "DETFNFTVaultFacet"
+      },
+      "creationBytes": 8732,
+      "runtimeBytes": 8714,
+      "deps": [
+        {
+          "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "artifact": "out/UniswapV4DetfExchangeFacet.sol/UniswapV4DetfExchangeFacet.json",
+      "sha256": "682799bab9c04b24812f9c687d418356012d46c1f16d35bebe82266a8c653a10",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol": "UniswapV4DetfExchangeFacet"
+      },
+      "creationBytes": 7509,
+      "runtimeBytes": 7491,
+      "deps": []
+    },
+    {
+      "artifact": "out/UniswapV4DetfBondFacet.sol/UniswapV4DetfBondFacet.json",
+      "sha256": "bc8bfa21bb65ffdd3310a42793e7c387aa98e68f3232b9ff1661f0625323ca65",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol": "UniswapV4DetfBondFacet"
+      },
+      "creationBytes": 8168,
+      "runtimeBytes": 8150,
+      "deps": []
+    },
+    {
+      "artifact": "out/UniswapV4DetfMaintenanceFacet.sol/UniswapV4DetfMaintenanceFacet.json",
+      "sha256": "c3cab443201a61641cd4f18d7002c1dfe880e5aa20d5dafe9e213b08c75cc519",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol": "UniswapV4DetfMaintenanceFacet"
+      },
+      "creationBytes": 10012,
+      "runtimeBytes": 9994,
+      "deps": []
+    },
+    {
+      "artifact": "out/UniswapV4DetfClaimFacet.sol/UniswapV4DetfClaimFacet.json",
+      "sha256": "8c9ff352851454cde79a3d7a0f2a7e7876ca07367d516b03b14ef1acdf3ff7ad",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol": "UniswapV4DetfClaimFacet"
+      },
+      "creationBytes": 2680,
+      "runtimeBytes": 2662,
+      "deps": []
+    },
+    {
+      "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+      "sha256": "7df7a7b5c947e053fd3a670abe61d9a645c4966055048a9340b6ed534f19b69d",
+      "sameAsPrior": true,
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol": "UniswapV4DetfQueryFacet"
+      },
+      "creationBytes": 10455,
+      "runtimeBytes": 10437,
+      "deps": []
+    },
+    {
+      "artifact": "out/UniswapV4Detf_Deploy.t.sol/UniswapV4Detf_Deploy.json",
+      "sha256": "5d8474f9087b19f417f8720133e5f00fcf86b2564d1154d5542cad8c62e48939",
+      "sameAsPrior": "not previously recorded",
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "target": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol": "UniswapV4Detf_Deploy"
+      },
+      "creationBytes": 127225,
+      "runtimeBytes": 127155,
+      "deps": [
+        {
+          "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+          "matches": true
+        }
+      ]
+    }
+  ],
+  "structuralComparisons": {
+    "initializerBodyEqualAfterExplicitDependencySubstitution": true,
+    "routeTableBodyByteEqual": true,
+    "creationBodyByteEqual": true,
+    "claimBodyEqualAfterDispatch": true,
+    "distributionCallerEqualAfterDispatch": true,
+    "existingDeploymentTests": [
+      {
+        "name": "test_T7_1_dualHook_reverts",
+        "bodyByteEqual": true
+      },
+      {
+        "name": "test_deploymentRejectsNoncanonicalPayload",
+        "bodyByteEqual": true
+      },
+      {
+        "name": "test_deploy_inert_until_first_bond",
+        "bodyByteEqual": true
+      }
+    ]
+  },
+  "scope": {
+    "trackedInventoriesCompared": 5207,
+    "unchanged": 5203,
+    "changed": [
+      {
+        "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+        "before": "10cbc1b1ad0a597b29053c2e14037c0e79d5432e81a9cb52b94dfcaae43931e6",
+        "after": "ff3c95b45adec74973aabcb874be2a8d86aa79a9af8770949b0b7e635fbcc360"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "before": "2c9b6ea685fa974ad0632ef831ea23e574b5250704349cd10d3d68cbad4922a6",
+        "after": "fed9bd4bf324c8e1c3d71e1809c3ae516320d05beb580085b2deedb83bb24f82"
+      },
+      {
+        "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+        "before": "dd66fe9b2bdb36d28d0c2d99420f578b5f1282141fe92f3bf05452fdfef72cc4",
+        "after": "14112eb68aac3f67bcbae5d41d1a5e76fe3b526033f6dab782df5c1d396b899d"
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+        "before": "e9ad58374e3626ca9d6f35f46f6b7174d273f5ac5c6f6b02bb9b55285d9f7929",
+        "after": "d1a4a227847c32bb5b5f3a4b97d9fed8114d2fca47c4c4ff0106b8332248b41e"
+      }
+    ],
+    "currentDiffMatchesPriorPatch": true,
+    "diffCheckExit": 0,
+    "initialStatus": " M contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol\n M contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol\n M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol\n M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol\n?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/bootstrap.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/children.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/egress/vectors.mjs\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/diagnostics.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/inspect-artifacts.mjs\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/report.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/run.sh\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/source-manifest.json\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/source.patch\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/implementation-handoff.md\n?? docs/incidents/2026-09-16-dtf-recovery/migration/package/ownership.md\n"
+  },
+  "commands": {
+    "focused": {
+      "sha256": "e33453a4402d890963bae08b66e2644e1be05dc3e8eb52678c4e713031a047bd",
+      "suiteRows": 7,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "passLines": 24,
+      "badRows": [],
+      "failLines": 0,
+      "headers": [
+        "START 2026-11-10T16:29:39Z",
+        "TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime",
+        "XDG_CACHE_HOME=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime/xdg-cache",
+        "BUN_INSTALL_CACHE_DIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime/bun-cache",
+        "npm_config_cache=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime/npm-cache",
+        "COMMAND python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se.t.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol --test-root test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol --test-root test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol --test-root test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol -- -vv ",
+        "forge Version: 1.9.1-nightly",
+        "Commit SHA: 430523103f3e2f9ba432ffdd2031a9f966153d0d",
+        "Build Timestamp: 2026-11-03T06:12:02.538056000Z (1793686322)",
+        "Build Profile: dist",
+        "107 build roots; 586 sources in import closure; 104 runtime artifact IDs."
+      ],
+      "commands": [
+        {
+          "line": 12,
+          "sha256": "e60f3478dae955268091fe92a88332dd91981c2f08365de2fbd266f6be83af93",
+          "solar": true,
+          "viaIR": false
+        },
+        {
+          "line": 13,
+          "sha256": "2247243db4032be1d4a7fce7a71ab15a5f191ab6ead4404f94a93091d17431aa",
+          "solar": true,
+          "viaIR": false
+        }
+      ],
+      "finish": [
+        "Ran 7 test suites in 377.78ms (1.80s CPU time): 24 tests passed, 0 failed, 0 skipped (24 total tests)",
+        "COMMAND_EXIT=0",
+        "END 2026-11-10T16:29:46Z"
+      ]
+    },
+    "broad": {
+      "sha256": "312e69ba69a60d6db1534b90a13d4b6946e8797e410248a7e6056817da3d86b2",
+      "suiteRows": 589,
+      "passed": 9932,
+      "failed": 0,
+      "skipped": 0,
+      "passLines": 9932,
+      "badRows": [],
+      "failLines": 0,
+      "headers": [
+        "START 2026-11-10T16:30:09Z",
+        "TMPDIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime",
+        "XDG_CACHE_HOME=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime/xdg-cache",
+        "BUN_INSTALL_CACHE_DIR=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime/bun-cache",
+        "npm_config_cache=/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/preparation-runtime/npm-cache",
+        "COMMAND python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf --test-root test/foundry/spec/vaults/detf/common -- -vv ",
+        "forge Version: 1.9.1-nightly",
+        "Commit SHA: 430523103f3e2f9ba432ffdd2031a9f966153d0d",
+        "Build Timestamp: 2026-11-03T06:12:02.538056000Z (1793686322)",
+        "Build Profile: dist",
+        "265 build roots; 1253 sources in import closure; 276 runtime artifact IDs."
+      ],
+      "commands": [
+        {
+          "line": 12,
+          "sha256": "f4f95c72fb8969bcc504b6adefe6c5d48fcd4c297b69f79c8c72e7c73bea0861",
+          "solar": true,
+          "viaIR": false
+        },
+        {
+          "line": 13,
+          "sha256": "15250bf140e2957527c42ee43dd0fe63908f9de56c25e661910c13b7e7a7beb2",
+          "solar": true,
+          "viaIR": false
+        }
+      ],
+      "finish": [
+        "Ran 589 test suites in 60.14s (919.22s CPU time): 9932 tests passed, 0 failed, 0 skipped (9932 total tests)",
+        "COMMAND_EXIT=0",
+        "END 2026-11-10T16:31:40Z"
+      ]
+    }
+  },
+  "witnesses": [
+    {
+      "name": "test_T7_10_laterBond_joinUnbalanced_unboostedG",
+      "line": 8298,
+      "suite": "Ran 11 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_P6_R18.t.sol:UniswapV4Detf_IoTables_P6_R18",
+      "result": "[PASS] test_T7_10_laterBond_joinUnbalanced_unboostedG() (gas: 4413292)"
+    },
+    {
+      "name": "test_FC_creatorZeroFundsBothRightsToOriginalFeeOwner",
+      "line": 8491,
+      "suite": "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6.t.sol:UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6",
+      "result": "[PASS] test_FC_creatorZeroFundsBothRightsToOriginalFeeOwner() (gas: 59749031)"
+    },
+    {
+      "name": "test_FC_explicitCreatorReceivesSeparateFundedIncome",
+      "line": 8492,
+      "suite": "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6.t.sol:UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6",
+      "result": "[PASS] test_FC_explicitCreatorReceivesSeparateFundedIncome() (gas: 52986237)"
+    },
+    {
+      "name": "test_FC_fullExitAndFeeToRotationPreserveStandingIncome",
+      "line": 8493,
+      "suite": "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6.t.sol:UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6",
+      "result": "[PASS] test_FC_fullExitAndFeeToRotationPreserveStandingIncome() (gas: 5288914)"
+    },
+    {
+      "name": "test_FC_fundedTwoWavesMatchIndependentFloors",
+      "line": 8494,
+      "suite": "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6.t.sol:UniswapV4Detf_Alignment_FeeCreatorClaim_P9_R6",
+      "result": "[PASS] test_FC_fundedTwoWavesMatchIndependentFloors() (gas: 6872433)"
+    },
+    {
+      "name": "test_claimRewards_whileLocked",
+      "line": 8677,
+      "suite": "Ran 3 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P9_R6.t.sol:UniswapV4Detf_Claim_P9_R6",
+      "result": "[PASS] test_claimRewards_whileLocked() (gas: 3504320)"
+    },
+    {
+      "name": "test_preMaturity_principalVestsLinearly",
+      "line": 8679,
+      "suite": "Ran 3 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P9_R6.t.sol:UniswapV4Detf_Claim_P9_R6",
+      "result": "[PASS] test_preMaturity_principalVestsLinearly() (gas: 3613009)"
+    },
+    {
+      "name": "test_feeRoleTransferSettlesOldBoundaryThenPaysNewOwnerOnLaterMint",
+      "line": 8822,
+      "suite": "Ran 9 tests for test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol:DETFNFTVaultDFPkg_Deploy_Test",
+      "result": "[PASS] test_feeRoleTransferSettlesOldBoundaryThenPaysNewOwnerOnLaterMint() (gas: 3861640)"
+    },
+    {
+      "name": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp",
+      "line": 8825,
+      "suite": "Ran 9 tests for test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol:DETFNFTVaultDFPkg_Deploy_Test",
+      "result": "[PASS] test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp() (gas: 2083006)"
+    },
+    {
+      "name": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal",
+      "line": 8830,
+      "suite": "Ran 9 tests for test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol:DETFNFTVaultDFPkg_Deploy_Test",
+      "result": "[PASS] test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal() (gas: 2126273)"
+    },
+    {
+      "name": "test_deploy_customRoutesMetadataAndChildBindings",
+      "line": 9015,
+      "suite": "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol:UniswapV4Detf_Deploy",
+      "result": "[PASS] test_deploy_customRoutesMetadataAndChildBindings() (gas: 48534520)"
+    },
+    {
+      "name": "test_deploy_parentMetadataDeclarationsAndDefaults",
+      "line": 9017,
+      "suite": "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol:UniswapV4Detf_Deploy",
+      "result": "[PASS] test_deploy_parentMetadataDeclarationsAndDefaults() (gas: 229134)"
+    },
+    {
+      "name": "test_deploy_sameArgsPreserveFundedStateAndNoInitializerRouting",
+      "line": 9018,
+      "suite": "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol:UniswapV4Detf_Deploy",
+      "result": "[PASS] test_deploy_sameArgsPreserveFundedStateAndNoInitializerRouting() (gas: 2197626)"
+    }
+  ],
+  "diagnostics": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfInitializationLib.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "result": "No diagnostics found"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+      "result": "warning[solar] (2018) at 49:4: function state mutability can be restricted to view"
+    }
+  ],
+  "referenceQuery": {
+    "file": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+    "line": 146,
+    "character": 15,
+    "result": "LSP request timeout (method: textDocument/references)"
+  },
+  "cleanup": {
+    "ownedTemporaryDirectories": [],
+    "ownedLongRunningProcesses": [],
+    "ownedRpcOrListeners": [],
+    "ownedBuildsOrTestRuns": [],
+    "action": "No cleanup required; only finite read-only Git/cast probes and tool-managed LSP were used."
+  }
+}

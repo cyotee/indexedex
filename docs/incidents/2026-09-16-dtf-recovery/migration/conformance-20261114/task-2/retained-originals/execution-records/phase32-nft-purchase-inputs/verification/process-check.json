@@ -1,0 +1,14 @@
+{
+  "executable": "/bin/ps",
+  "argv": [
+    "-axo",
+    "pid,ppid,command"
+  ],
+  "pid": 80576,
+  "startedAt": "2026-11-13T11:27:33.193Z",
+  "finishedAt": "2026-11-13T11:27:33.225Z",
+  "exit": 0,
+  "stderr": "",
+  "retainedScope": "Only exact phase32 path or recorded child PIDs; unrelated process lines not retained.",
+  "matchingProcesses": []
+}

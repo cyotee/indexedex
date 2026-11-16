@@ -1,0 +1,16 @@
+
+scripts/recovery/dtf-migration/execution-state.test.ts:
+(pass) issuance proof accepts ERC721 Transfer alongside the required migration position event [180.76ms]
+(pass) issuance proof rejects corrupt required child events and stale position state [910.07ms]
+(pass) new source-bound setter recognizes its exact book and rejects independently corrupted receipts [149.72ms]
+(pass) unsent A rejects current B before nonce allocation or transaction submission [72.10ms]
+(pass) changed quote rejects before nonce allocation even when the book id agrees [69.66ms]
+(pass) all selected loaders bind their own book and stable NFT identity excludes repricing [64.80ms]
+(pass) NFT current verification binds consumed credit to each original component floor [82.81ms]
+(pass) same-block A completion reads transaction-prefix A rather than overwritten block-end B [71.53ms]
+(pass) canonical completion rejects forged receipt order and altered transaction log contents [88.89ms]
+(pass) current B configuration is verified independently of authenticated A issuance and principal [266.49ms]
+
+ 10 pass
+ 0 fail
+Ran 10 tests across 1 file. [2.01s]

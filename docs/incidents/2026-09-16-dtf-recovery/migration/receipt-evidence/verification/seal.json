@@ -1,0 +1,80 @@
+{
+  "version": "dtf-finite-receipt-evidence-independent-seal-v1",
+  "status": "CONFIRMED-STOPPED-BOUNDED",
+  "parent": "789fced820ed494d9651c598fb8f75c646d727a7",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 123457,
+    "sha256": "1964b2db2377db6fb17727a2998f8bfd41d823a082f2c2522d6018bbca512baf"
+  },
+  "report": {
+    "path": "report.md",
+    "bytes": 20647,
+    "sha256": "77bb12de3b210f0091d4f7409fdb52eff81b1fec5d8cc11dce0db38897bfa5aa"
+  },
+  "cleanup": {
+    "path": "cleanup.json",
+    "bytes": 1747,
+    "sha256": "1119ed962389cd66b99c87334058b34a703a0bb4b71cb56e563d9fa8395075ed"
+  },
+  "sourceAndExecutionState": {
+    "path": "final-state.json",
+    "bytes": 112437,
+    "sha256": "fec22fc537ed14f482634a0ce1322a18f732012f4e06639268fd0f6916919f1d"
+  },
+  "intake": {
+    "path": "intake.json",
+    "bytes": 517207,
+    "sha256": "004b9267feeb782e2b06efa097688713945805067c238bb8270620f4234b0514"
+  },
+  "preservation": {
+    "path": "preservation.json",
+    "bytes": 304653,
+    "sha256": "f77773784206655734471c55289ec18b3d0b31beee0767eb169ec4074a399496"
+  },
+  "actualArchive": {
+    "path": "actual/archive.json",
+    "bytes": 3848804,
+    "sha256": "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b"
+  },
+  "httpManifest": {
+    "path": "actual/http-manifest.json",
+    "bytes": 154633,
+    "sha256": "6feab989ce86fe70e1b70ad37acb42a775131c5e46a848b575689436f88d0731"
+  },
+  "independentProof": {
+    "path": "independent-proof.json",
+    "bytes": 7808127,
+    "sha256": "18e9c490df316d958a9d0b8f841ba0c8de103693b6ea66143e22627ea67bbb0a"
+  },
+  "evidenceFiles": 733,
+  "results": {
+    "strictTypesExit": 0,
+    "operatorSuiteExit": 0,
+    "operatorTestsPassed": 159,
+    "operatorTestsFailed": 0,
+    "actualCollections": 1,
+    "references": 77,
+    "canonicalAssociations": 77,
+    "rawResponses": 310,
+    "receiptLogs": 2368,
+    "savedTransferMatches": 568,
+    "actualRpcFailures": 0,
+    "unavailableRecords": 0,
+    "retainedConservativeFlags": 20,
+    "credentialMatches": 0
+  },
+  "stopped": {
+    "pendingOwnedOperations": 0,
+    "producerSourceFixed": false,
+    "gitWrites": false,
+    "operationalSigner": false,
+    "publicAction": false
+  },
+  "limits": [
+    "Named-record observations only, not net contribution, eligibility or current control",
+    "Indirect/multiaction/history/refund/W0/Q0/prior-credit unknowns remain explicit",
+    "No operational, fullTask9 or full-plan acceptance",
+    "P1 remains historical preservation unchanged"
+  ]
+}

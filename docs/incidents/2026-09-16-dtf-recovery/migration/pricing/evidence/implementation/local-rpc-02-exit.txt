@@ -1,0 +1,3 @@
+command_exit=1
+tee_exit=0
+Tue Nov 10 14:59:34 UTC 2026

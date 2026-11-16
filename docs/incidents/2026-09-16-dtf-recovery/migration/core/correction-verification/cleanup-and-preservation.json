@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-11-10T23:52:07.578Z",
+  "sourceCount": 2482,
+  "artifactCount": 932,
+  "historicalCount": 101,
+  "changedSources": [],
+  "changedArtifacts": [],
+  "changedHistorical": [],
+  "ownedRuns": [
+    {
+      "id": "bash_2",
+      "exit": 0,
+      "traceCapture": "terminal tail truncated; bounded repeat captured completely"
+    },
+    {
+      "id": "bash_3",
+      "exit": 0,
+      "traceCapture": "runtime/f1-v1-full-trace.log"
+    }
+  ],
+  "ownedNodesCreated": 0,
+  "ownedListenersCreated": 0,
+  "port18548Listening": false,
+  "compilerProcessProbe": "no forge build/test/script process matched",
+  "tmpRemoved": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/runtime/tmp",
+  "retained": [
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/runtime/cache",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/correction-verification/runtime/f1-v1-full-trace.log",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/out",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/cache_forge"
+  ],
+  "otherSessionsStopped": false,
+  "noSourceTestConfigDependencyEdits": true,
+  "noCommitsDelegationPublicActions": true,
+  "diagnosticLimit": "Biome JSON LSP is not installed. No installation or configuration change was made. Evidence JSON is serialized from parsed data; no Solidity source was authored."
+}

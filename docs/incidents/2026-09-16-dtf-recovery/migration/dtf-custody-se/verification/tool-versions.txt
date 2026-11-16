@@ -1,0 +1,5 @@
+forge Version: 1.9.1-nightly
+Commit SHA: 430523103f3e2f9ba432ffdd2031a9f966153d0d
+Build Timestamp: 2026-11-03T06:12:02.538056000Z (1793686322)
+Build Profile: dist
+1.4.2

@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals} from
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals.sol";
+/// @notice Book `B_ALL9`. pairToken=token0 at 9-dec; token1 9; token2 9. Hook LP / vaultShare stay 18.
+abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_ALL9 is
+    TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals
+{
+    function _dec0() internal pure override returns (uint8) { return 9; }
+    function _dec1() internal pure override returns (uint8) { return 9; }
+    function _dec2() internal pure override returns (uint8) { return 9; }
+}

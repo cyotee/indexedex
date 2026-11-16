@@ -1,0 +1,192 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
+import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
+import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IDETFStandardizedYield} from "contracts/interfaces/IDETFStandardizedYield.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+
+/// @notice T7.1 Deployment wiring and rejection of obsolete payload encoding.
+contract UniswapV4Detf_Deploy is TestBase_UniswapV4Detf {
+    function test_T7_1_dualHook_reverts() public {
+        address dual_ = _deployDualHook();
+        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+        args.name = "DualReject";
+        args.symbol = "DUALR";
+        args.hook = dual_;
+        vm.startPrank(owner);
+        vm.expectRevert();
+        detfPkg.deployVault(args);
+        vm.stopPrank();
+    }
+
+    function test_deploymentRejectsNoncanonicalPayload() public {
+        bytes memory canonical_ = abi.encode(_defaultDetfArgs());
+        detfPkg.calcSalt(canonical_);
+        bytes memory obsolete_ = bytes.concat(canonical_, bytes32(0));
+        vm.expectRevert(IUniswapV4DetfDFPkg.InvalidPackageArguments.selector);
+        detfPkg.calcSalt(obsolete_);
+    }
+
+    function test_deploy_inert_until_first_bond() public {
+        assertFalse(detfInfo.isReserveLive(), "inert");
+        assertTrue(detfInfo.isReserveWired(), "nft+claim wired");
+        assertEq(detfInfo.reservePool(), reserveHook, "reservePool=hook");
+        assertEq(detfInfo.hook(), reserveHook, "hook");
+    }
+
+    /// @notice Parent metadata, declarations and fallback rates survive registered initialization.
+    function test_deploy_parentMetadataDeclarationsAndDefaults() public view {
+        assertEq(IERC20Metadata(detf).name(), "UniV4 DETF");
+        assertEq(IERC20Metadata(detf).symbol(), "uv4DETF");
+        assertEq(IERC20Metadata(detf).decimals(), 9);
+        (, string memory name_, string memory version_, uint256 chain_, address verifying_,,) =
+            IERC5267(detf).eip712Domain();
+        assertEq(name_, "UniV4 DETF");
+        assertEq(version_, "1");
+        assertEq(chain_, block.chainid);
+        assertEq(verifying_, detf);
+        assertEq(detfInfo.creationPairPerDetfWad()[0], DEFAULT_CREATION_PAIR_PER_DETF);
+        assertEq(detfInfo.openingPairPerDetfWad()[0], DEFAULT_CREATION_PAIR_PER_DETF);
+        assertEq(detfInfo.mintThreshold(), 1.05e18);
+        assertEq(detfInfo.burnThreshold(), 0.95e18);
+        assertTrue(detfInfo.ownerOnlyLiquidity());
+        IStandardVault.VaultConfig memory config_ = IStandardVault(detf).vaultConfig();
+        assertEq(config_.vaultFeeTypeIds, detfPkg.vaultFeeTypeIds());
+        assertEq(abi.encode(config_.vaultTypes), abi.encode(detfPkg.vaultTypes()));
+        address[] memory hookTokens_ = IUniswapV4SeBufferHook(reserveHook).tokens();
+        address[] memory contents_ = new address[](hookTokens_.length + 1);
+        for (uint256 i; i < hookTokens_.length; ++i) contents_[i] = hookTokens_[i];
+        contents_[hookTokens_.length] = reserveHook;
+        assertEq(config_.tokens, contents_);
+        assertEq(config_.contentsId, keccak256(abi.encode(contents_)));
+        IUniswapV4Detf.IoRoute[] memory donate_ = detfInfo.donateRoutes();
+        assertEq(donate_.length, 2, "default donation union");
+        assertEq(address(donate_[0].token), address(pairToken));
+        assertEq(address(donate_[1].token), se);
+        assertEq(address(donate_[0].vault), se);
+        assertEq(address(donate_[1].vault), se);
+    }
+
+    /// @notice Distinct custom tables and explicit child arguments must not be dropped or crossed.
+    function test_deploy_customRoutesMetadataAndChildBindings() public {
+        IUniswapV4Detf.PkgArgs memory args_ = _defaultDetfArgs();
+        args_.name = "Configured DETF";
+        args_.symbol = "CFG";
+        args_.claimName = "Configured Stake";
+        args_.claimSymbol = "sCFG";
+        args_.bondName = "Configured Bond";
+        args_.bondSymbol = "bCFG";
+        args_.creator = makeAddr("configured creator");
+        args_.mintThreshold = 1.2e18;
+        args_.burnThreshold = 0.8e18;
+        args_.creationPairPerDetfWad[0] = 2e18;
+        args_.openingPairPerDetfWad = new uint256[](1);
+        args_.openingPairPerDetfWad[0] = 3e18;
+        args_.mintRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args_.burnRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args_.bondRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args_.donateRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args_.mintRoutes = new IUniswapV4Detf.IoRoute[](1);
+        args_.mintRoutes[0] = IUniswapV4Detf.IoRoute(pairToken, IStandardExchange(se));
+        args_.burnRoutes = new IUniswapV4Detf.IoRoute[](1);
+        args_.burnRoutes[0] = IUniswapV4Detf.IoRoute(IERC20(se), IStandardExchange(se));
+        args_.bondRoutes = new IUniswapV4Detf.IoRoute[](2);
+        args_.bondRoutes[0] = args_.burnRoutes[0];
+        args_.bondRoutes[1] = args_.mintRoutes[0];
+        args_.donateRoutes = args_.mintRoutes;
+        address predicted_ = _predictDetf(args_);
+        address deployed_ = _deployHookThenDetf(args_);
+        assertEq(deployed_, predicted_);
+        IUniswapV4Detf info_ = IUniswapV4Detf(deployed_);
+        assertEq(uint256(info_.mintRouteMode()), uint256(args_.mintRouteMode));
+        assertEq(uint256(info_.burnRouteMode()), uint256(args_.burnRouteMode));
+        assertEq(uint256(info_.bondRouteMode()), uint256(args_.bondRouteMode));
+        assertEq(uint256(info_.donateRouteMode()), uint256(args_.donateRouteMode));
+        assertEq(abi.encode(info_.mintRoutes()), abi.encode(args_.mintRoutes));
+        assertEq(abi.encode(info_.burnRoutes()), abi.encode(args_.burnRoutes));
+        assertEq(abi.encode(info_.bondRoutes()), abi.encode(args_.bondRoutes));
+        assertEq(abi.encode(info_.donateRoutes()), abi.encode(args_.donateRoutes));
+        assertEq(info_.creationPairPerDetfWad()[0], 2e18);
+        assertEq(info_.openingPairPerDetfWad()[0], 3e18);
+        assertEq(info_.mintThreshold(), 1.2e18);
+        assertEq(info_.burnThreshold(), 0.8e18);
+        assertFalse(info_.isReserveLive());
+        assertTrue(info_.isReserveWired());
+        IDetfBondNFT bond_ = IDetfBondNFT(info_.bondNftVault());
+        assertEq(bond_.detf(), deployed_);
+        assertEq(address(bond_.lpToken()), reserveHook);
+        assertTrue(bond_.reservedBondNftsWired());
+        assertEq(bond_.ownerOf(0), address(bond_));
+        assertEq(bond_.ownerOf(1), address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
+        assertEq(bond_.ownerOf(2), args_.creator);
+        assertEq(IERC20Metadata(address(bond_)).name(), args_.bondName);
+        assertEq(IERC20Metadata(address(bond_)).symbol(), args_.bondSymbol);
+        IRebasingClaimTokenDFPkg.PkgArgs memory claimArgs_ = IRebasingClaimTokenDFPkg.PkgArgs({
+            detf: IDetf(deployed_),
+            nftVault: IDETFNFTVault(address(bond_)),
+            feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
+            name: args_.claimName,
+            symbol: args_.claimSymbol,
+            optionalSalt: keccak256(abi.encode(deployed_))
+        });
+        address staking_ = info_.rebasingClaimToken();
+        assertEq(staking_, diamondPackageFactory.calcAddress(rebasingClaimTokenPkg, abi.encode(claimArgs_)));
+        assertEq(IStakedDETF(staking_).detf(), deployed_);
+        assertEq(IERC20Metadata(staking_).name(), args_.claimName);
+        assertEq(IERC20Metadata(staking_).symbol(), args_.claimSymbol);
+        assertEq(IERC20Metadata(staking_).decimals(), 9);
+        assertEq(IStakedDETF(staking_).stakingState().totalGons, 0);
+        assertEq(IStakedDETF(staking_).stakingState().accountedBacking, 0);
+        address raw_ = IDETFStandardizedYield(deployed_).rawSY();
+        address staked_ = IDETFStandardizedYield(deployed_).stakingSY();
+        assertTrue(raw_ != staked_, "distinct wrapper modes");
+        assertEq(IStandardizedYield(raw_).yieldToken(), deployed_);
+        assertEq(IStandardizedYield(staked_).yieldToken(), staking_);
+        assertEq(IERC20Metadata(raw_).decimals(), 9);
+        assertEq(IERC20Metadata(staked_).decimals(), 9);
+        assertEq(IERC20Metadata(raw_).name(), "SY Configured DETF");
+        assertEq(IERC20Metadata(staked_).name(), "SY Staked Configured DETF");
+    }
+
+    /// @notice Same-argument deployment cannot reset a live reserve or its funded children.
+    function test_deploy_sameArgsPreserveFundedStateAndNoInitializerRouting() public {
+        _firstBond(100 ether);
+        IUniswapV4Detf.PkgArgs memory args_ = _defaultDetfArgs();
+        args_.hook = reserveHook;
+        uint256 supply_ = IERC20(detf).totalSupply();
+        address bond_ = detfInfo.bondNftVault();
+        address staking_ = detfInfo.rebasingClaimToken();
+        bytes memory state_ = abi.encode(IStakedDETF(staking_).stakingState());
+        vm.prank(owner);
+        assertEq(detfPkg.deployVault(args_), detf);
+        assertTrue(detfInfo.isReserveLive());
+        assertEq(IERC20(detf).totalSupply(), supply_);
+        assertEq(detfInfo.bondNftVault(), bond_);
+        assertEq(detfInfo.rebasingClaimToken(), staking_);
+        assertEq(abi.encode(IStakedDETF(staking_).stakingState()), state_);
+        IDiamondLoupe loupe_ = IDiamondLoupe(detf);
+        assertEq(loupe_.facetAddress(IDiamondFactoryPackage.initAccount.selector), address(0));
+        assertEq(loupe_.facetAddress(IDiamondFactoryPackage.postDeploy.selector), address(0));
+        assertEq(loupe_.facetAddress(IPostDeployAccountHook.postDeploy.selector), address(0));
+        assertEq(loupe_.facetAddress(IDiamondCut.diamondCut.selector), address(0));
+    }
+}

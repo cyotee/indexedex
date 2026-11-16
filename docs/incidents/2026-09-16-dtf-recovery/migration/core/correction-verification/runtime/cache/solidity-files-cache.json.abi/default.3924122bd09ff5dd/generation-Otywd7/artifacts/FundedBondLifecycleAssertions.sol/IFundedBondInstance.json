@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"bondNftVault","inputs":[],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"},{"type":"function","name":"rebasingClaimToken","inputs":[],"outputs":[{"name":"","type":"address","internalType":"contract IERC20"}],"stateMutability":"view"}],"id":1648}

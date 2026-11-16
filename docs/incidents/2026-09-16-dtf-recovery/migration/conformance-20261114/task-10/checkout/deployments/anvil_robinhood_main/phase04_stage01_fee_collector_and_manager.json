@@ -1,0 +1,9 @@
+{
+  "chainId": 4663,
+  "feeCollector": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+  "hookFactory": "0x8BB5FCC67e8CCa44DC41dd08A5e2b2B392C22945",
+  "indexedexManager": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+  "owner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+  "vaultFeeOracle": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+  "vaultRegistry": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc"
+}

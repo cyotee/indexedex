@@ -1,0 +1,227 @@
+[
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationBondFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationExchangeFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Component_FactoryService.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/IUniswapV4DetfMigrationBondNFTVault.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTRepo.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondNFTVaultTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/IUniswapV4DetfMigrationStakedDETF.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/claimToken/UniswapV4DetfMigrationStakedDETFRepo.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYRepo.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSY.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/IUniswapV4DetfMigrationRewardToken.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenRepo.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/rewards/UniswapV4DetfMigrationRewardTokenFacet.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadata.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/common/sy/DETFSYTarget.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  },
+  {
+    "path": "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol",
+    "text": "No diagnostics found",
+    "hasError": false
+  }
+]

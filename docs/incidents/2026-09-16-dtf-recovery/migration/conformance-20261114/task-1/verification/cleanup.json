@@ -1,0 +1,30 @@
+{
+  "type": "CleanupReceipt",
+  "task": 1,
+  "reviewer": "st_01a1dcd3",
+  "date": "2026-11-15",
+  "result": "complete",
+  "temporary_resources_created": [],
+  "background_processes_or_monitors_started": [],
+  "delegated_tasks": [],
+  "resources_requiring_teardown": [],
+  "removed_resources": [],
+  "evidence_retained_intentionally": true,
+  "product_files_edited": [],
+  "dependency_changes": [],
+  "git_mutations": [],
+  "rpc_calls": 0,
+  "builds_or_tests_run": [],
+  "concurrent_work_disposition": "Task 2, type/source work, task 3, dependency state and existing executor artifacts were left untouched. No cleanup command deleted or reverted shared files.",
+  "retained_reviewer_artifacts": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/verification/original-p.md",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/verification/actual-p.diff",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/verification/review-status.txt",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/verification/document-measurements.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/verification/qa-receipt.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/verification/cleanup.json",
+    ".omo/evidence/dtf-conformance-task-1-gate-review.md"
+  ],
+  "terminal_verdict_path": ".omo/ulw-execute/dtf-conformance/task-1-verdict.json",
+  "note": "The terminal verdict is intentionally the review's final write. There are no running sessions or temporary resources to clean up afterward."
+}

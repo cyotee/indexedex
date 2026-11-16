@@ -1,0 +1,876 @@
+{
+  "schema": "dtf-custody-se-independent-delivery-audit-v1",
+  "date": "2026-11-12",
+  "verdict": "confirmed",
+  "scope": "Bounded local W-SD source delivery only; no runtime replay or full-category/gas acceptance",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se",
+  "branch": "work/dtf-migration-phase-15-dtf-custody-se",
+  "commit": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+  "parent": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+  "tree": "318cdbf5e6af7c1ebd00d51d164edf7dade3255b",
+  "commitCount": 1,
+  "subject": "Add verified bounded DTF-custody SE surrender and recovery",
+  "coauthorTrailers": [
+    "Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>"
+  ],
+  "diff": {
+    "command": "GIT_MASTER=1 git diff --ignore-submodules=all --no-ext-diff --no-color --binary HEAD^ HEAD --",
+    "bytes": 158092,
+    "sha256": "08364611e031e46b7d37ae4777abb7162a4e8d2b2c549a39d624ca74c80755e9",
+    "insertions": 1575,
+    "deletions": 55,
+    "modifications": 27,
+    "additions": 7,
+    "whitespaceExitCode": 0
+  },
+  "acceptance": {
+    "reportSha256": "77e67678c3180b4ef487fb40567131e9aea0e6c03f7f0f0f1f66003d1226669e",
+    "manifestSha256": "c9c1c35eb5ee37e5f635116afb27975ba8939d9c87cdcc5c8072c2bb89c0b010",
+    "sourceCount": 34,
+    "pathSetExact": true,
+    "manifestMismatches": [],
+    "sourceMismatches": []
+  },
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "accepted": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a",
+      "verifierActual": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a",
+      "snapshotDeclared": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a",
+      "snapshotComputed": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a",
+      "committedSha256": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a",
+      "currentSha256": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a",
+      "committedMode": "100644",
+      "gitBlob": "59536456f542afe26993b9a4dd8605105f74da92",
+      "parentMode": "100644",
+      "parentBlob": "b660eb70399f08a3fd261028c4cee19d9730a13a",
+      "currentMode": "100644",
+      "bytes": 25584
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "accepted": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a",
+      "verifierActual": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a",
+      "snapshotDeclared": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a",
+      "snapshotComputed": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a",
+      "committedSha256": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a",
+      "currentSha256": "38ba0a91ef89e5f7a4f6c8867939b8d2e82aee3786c9f4e30fadce8950b9752a",
+      "committedMode": "100644",
+      "gitBlob": "33f8d24afea1815eecf50f2153af697f712b1410",
+      "parentMode": "100644",
+      "parentBlob": "ea845611aa5bc46ed1c42c3e3c953918fc345541",
+      "currentMode": "100644",
+      "bytes": 2720
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "accepted": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd",
+      "verifierActual": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd",
+      "snapshotDeclared": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd",
+      "snapshotComputed": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd",
+      "committedSha256": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd",
+      "currentSha256": "a95be884cbc55361877d71174a0d8c7bbf7bd7144f6d9dab42302f5b5fc2dccd",
+      "committedMode": "100644",
+      "gitBlob": "4ff7b8d0d67c383c14b3c9af3f32d47571d8705e",
+      "parentMode": "100644",
+      "parentBlob": "209e3a953b90a048b7b16e2fda302df967f4d3eb",
+      "currentMode": "100644",
+      "bytes": 4963
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "accepted": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d",
+      "verifierActual": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d",
+      "snapshotDeclared": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d",
+      "snapshotComputed": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d",
+      "committedSha256": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d",
+      "currentSha256": "0aea605049078b88c91a6df2ef2c47ca670f11812ea6944c41a84bf2f5af4b8d",
+      "committedMode": "100644",
+      "gitBlob": "baa7a6d93923ef8f37d69b699209510acd7f8c5c",
+      "parentMode": "100644",
+      "parentBlob": "6d73efdc98be8e34f77366f3bf42a0008c0e6d80",
+      "currentMode": "100644",
+      "bytes": 3965
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "accepted": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "verifierActual": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "snapshotDeclared": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "snapshotComputed": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "committedSha256": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "currentSha256": "708bc990303535d438a9c95d94c8ae0966e9c20624f6449bf945c932500376c1",
+      "committedMode": "100644",
+      "gitBlob": "79c0eed8e101bd520eb7c33ceee7df4447c01c76",
+      "parentMode": "100644",
+      "parentBlob": "0af9fb9f35407e07d1427766499d0a68bfd6333b",
+      "currentMode": "100644",
+      "bytes": 22543
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "accepted": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59",
+      "verifierActual": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59",
+      "snapshotDeclared": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59",
+      "snapshotComputed": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59",
+      "committedSha256": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59",
+      "currentSha256": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59",
+      "committedMode": "100644",
+      "gitBlob": "01fb78710aff0e23c4880914a95b0faeeb2c511b",
+      "parentMode": "100644",
+      "parentBlob": "9e05a12bb6b3dad71446603f8b81d63eb787f77b",
+      "currentMode": "100644",
+      "bytes": 23399
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "accepted": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f",
+      "verifierActual": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f",
+      "snapshotDeclared": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f",
+      "snapshotComputed": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f",
+      "committedSha256": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f",
+      "currentSha256": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f",
+      "committedMode": "100644",
+      "gitBlob": "228e51ec5a4ea8b541c2668e1a42b26d7e98f764",
+      "parentMode": "100644",
+      "parentBlob": "0c0b5d74ece275bbbc0f32007b3545693d7af9ab",
+      "currentMode": "100644",
+      "bytes": 3866
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "accepted": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25",
+      "verifierActual": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25",
+      "snapshotDeclared": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25",
+      "snapshotComputed": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25",
+      "committedSha256": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25",
+      "currentSha256": "13fbb2a6d84b5bbacd95cc3e8c0d20c55c985cb2c9755553717cb82487615e25",
+      "committedMode": "100644",
+      "gitBlob": "536c5ec76af52e549f6f8f8efb4c859f31019ed4",
+      "parentMode": "100644",
+      "parentBlob": "a38cb257a269a709de3aa10a42826ceb1779b422",
+      "currentMode": "100644",
+      "bytes": 2253
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "accepted": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac",
+      "verifierActual": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac",
+      "snapshotDeclared": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac",
+      "snapshotComputed": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac",
+      "committedSha256": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac",
+      "currentSha256": "c1854ff3cde983a3cd8737c467ec690c30be091bee1820973f28e7d35a336bac",
+      "committedMode": "100644",
+      "gitBlob": "df8cc703538c2575172d34bf6b8c45b97ba6ae80",
+      "parentMode": "100644",
+      "parentBlob": "a8b1aa64f2c18c5b91f16e7ea58ed9c38f83ff8e",
+      "currentMode": "100644",
+      "bytes": 13851
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "accepted": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+      "verifierActual": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+      "snapshotDeclared": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+      "snapshotComputed": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+      "committedSha256": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+      "currentSha256": "3fda43171ffa6858bcf3c197c98c1c02a3e5da642818b7aacc5fb0af322f09f2",
+      "committedMode": "100644",
+      "gitBlob": "cff8fcc923c5c96235c45fc19451ad3f6f24cfdd",
+      "parentMode": "100644",
+      "parentBlob": "9d3655da8da3b3a97806e79f70086ceb453fa465",
+      "currentMode": "100644",
+      "bytes": 25969
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+      "accepted": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c",
+      "verifierActual": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c",
+      "snapshotDeclared": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c",
+      "snapshotComputed": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c",
+      "committedSha256": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c",
+      "currentSha256": "9767176cbfaede1902da1b03fc3f3845d06df6a1976e0dd5606e4e12b6d7cf4c",
+      "committedMode": "100644",
+      "gitBlob": "c67554bd1f6aca88db585830a126e47417ab3c55",
+      "parentMode": "100644",
+      "parentBlob": "b4d012697b9e442d6578ca6c3e5e33825a3c06cb",
+      "currentMode": "100644",
+      "bytes": 6413
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "accepted": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5",
+      "verifierActual": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5",
+      "snapshotDeclared": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5",
+      "snapshotComputed": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5",
+      "committedSha256": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5",
+      "currentSha256": "d138a86151e5e7ee7b3e1855e11f01285942e86e3bde25fc803dd250142d9bf5",
+      "committedMode": "100644",
+      "gitBlob": "1328df30759633e62c200fba2448e8926d308b61",
+      "parentMode": "100644",
+      "parentBlob": "deaf2f95412f0ed7bab6d4f9778559b7f7f51b67",
+      "currentMode": "100644",
+      "bytes": 7813
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "accepted": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591",
+      "verifierActual": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591",
+      "snapshotDeclared": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591",
+      "snapshotComputed": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591",
+      "committedSha256": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591",
+      "currentSha256": "81bd1a56799a540b8e348253bfc2fb0b51081797ca86e35eefafeae034597591",
+      "committedMode": "100644",
+      "gitBlob": "f4e737dfe237772680fe81e5d0f4edbe4e16f900",
+      "parentMode": "100644",
+      "parentBlob": "90c572d6730173142954db5f8fdf3c8b38d3d0e8",
+      "currentMode": "100644",
+      "bytes": 5423
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "accepted": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3",
+      "verifierActual": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3",
+      "snapshotDeclared": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3",
+      "snapshotComputed": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3",
+      "committedSha256": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3",
+      "currentSha256": "eab0f5d2c8a1e43cd1a97476cba9cd7732cbf0929a9be5b2c92b355c5ec52ea3",
+      "committedMode": "100644",
+      "gitBlob": "0c71f3b828f10db7de522012426774ebbff8d2c0",
+      "parentMode": "100644",
+      "parentBlob": "66eeefffef393e08946ed6b0821bd130b84efe5a",
+      "currentMode": "100644",
+      "bytes": 21453
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "accepted": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd",
+      "verifierActual": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd",
+      "snapshotDeclared": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd",
+      "snapshotComputed": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd",
+      "committedSha256": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd",
+      "currentSha256": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd",
+      "committedMode": "100644",
+      "gitBlob": "98b0bf561d42a1f3ba8c5f1746358171ae96e980",
+      "parentMode": "100644",
+      "parentBlob": "6808db9965548083954c5c92a3b5b34e929f5b41",
+      "currentMode": "100644",
+      "bytes": 10650
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "accepted": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0",
+      "verifierActual": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0",
+      "snapshotDeclared": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0",
+      "snapshotComputed": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0",
+      "committedSha256": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0",
+      "currentSha256": "f5d1e9cc38bf0d848d8f191c4b7f37b5615a024dcb7506a2490c258f298398b0",
+      "committedMode": "100644",
+      "gitBlob": "6e71ff09afd977155ad1789302e0b1e7db19080b",
+      "parentMode": "100644",
+      "parentBlob": "e378cc48a4e9d77991c79a8b4e804cf60802d0cf",
+      "currentMode": "100644",
+      "bytes": 9366
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "accepted": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744",
+      "verifierActual": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744",
+      "snapshotDeclared": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744",
+      "snapshotComputed": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744",
+      "committedSha256": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744",
+      "currentSha256": "7deaafc7c270998135a7d2453338a2a22c3c3a805843c8671131974bd50e0744",
+      "committedMode": "100644",
+      "gitBlob": "69e0c89e9cd0c332c7a98423e7d734c09beeec28",
+      "parentMode": "100644",
+      "parentBlob": "104d6e847f977053672d0c7247bde8b0068ac805",
+      "currentMode": "100644",
+      "bytes": 14248
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "accepted": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa",
+      "verifierActual": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa",
+      "snapshotDeclared": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa",
+      "snapshotComputed": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa",
+      "committedSha256": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa",
+      "currentSha256": "e27bc44c3ac6eab38c598f0ccd71b277d994807d25d2a8bfb85ae09f75b192fa",
+      "committedMode": "100644",
+      "gitBlob": "2f2ea933a8ac7918aeb5e137d93029e5f0d6f75d",
+      "parentMode": "100644",
+      "parentBlob": "9cb91dd9d94230974ce2aabafa4ff9d538b7bd2d",
+      "currentMode": "100644",
+      "bytes": 7189
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "accepted": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606",
+      "verifierActual": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606",
+      "snapshotDeclared": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606",
+      "snapshotComputed": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606",
+      "committedSha256": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606",
+      "currentSha256": "02f9416c51bc3de686e1a4799c54c150130f0ea121b90d66a56550de3b16f606",
+      "committedMode": "100644",
+      "gitBlob": "f8f444e1fcff8ffd925ead919816b5bb31a740af",
+      "parentMode": "100644",
+      "parentBlob": "2488bbdad6e2dd04f3fe0939d296d30462c92c2e",
+      "currentMode": "100644",
+      "bytes": 4161
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "accepted": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77",
+      "verifierActual": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77",
+      "snapshotDeclared": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77",
+      "snapshotComputed": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77",
+      "committedSha256": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77",
+      "currentSha256": "928562795dfde9b09f958e888040e19b692e942a59b75556f7b9bcf83a908d77",
+      "committedMode": "100644",
+      "gitBlob": "ba47110ba02a5c620bc344e5074d1cef5d555ba6",
+      "parentMode": "100644",
+      "parentBlob": "88d754390824b37ee0a0167a9fd1441c7825c311",
+      "currentMode": "100644",
+      "bytes": 6858
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "accepted": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015",
+      "verifierActual": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015",
+      "snapshotDeclared": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015",
+      "snapshotComputed": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015",
+      "committedSha256": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015",
+      "currentSha256": "6d5d265074f9279bbf791775a1cc33495cbae3d17590979864bb9f9bae482015",
+      "committedMode": "100644",
+      "gitBlob": "4885225d09cfa1e4d823942a769b14d0fa4a4f20",
+      "parentMode": "100644",
+      "parentBlob": "faacabdb4f0e1f21594d7d45af90700f707a3d62",
+      "currentMode": "100644",
+      "bytes": 16212
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "accepted": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4",
+      "verifierActual": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4",
+      "snapshotDeclared": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4",
+      "snapshotComputed": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4",
+      "committedSha256": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4",
+      "currentSha256": "7d4d149d632d3ec30ca2fe3dd1e7e606b8b0839fbc0f3cd0cee45460daa0c7b4",
+      "committedMode": "100644",
+      "gitBlob": "5e11fdd19596940696bc96b34c24efe5e6ac6175",
+      "parentMode": "100644",
+      "parentBlob": "7f1317c0bbd33ad41c61d1b9a1900351fe0a6cc0",
+      "currentMode": "100644",
+      "bytes": 5335
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "accepted": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294",
+      "verifierActual": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294",
+      "snapshotDeclared": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294",
+      "snapshotComputed": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294",
+      "committedSha256": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294",
+      "currentSha256": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294",
+      "committedMode": "100644",
+      "gitBlob": "1ddc1888ebea5d59695af790e49919c1d83471d8",
+      "parentMode": "100644",
+      "parentBlob": "25a76bf54ede6095354870829365ffacbccfef3c",
+      "currentMode": "100644",
+      "bytes": 18715
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "accepted": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58",
+      "verifierActual": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58",
+      "snapshotDeclared": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58",
+      "snapshotComputed": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58",
+      "committedSha256": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58",
+      "currentSha256": "98abc06bf8e39f6a43ec270e7a695eae6eb4afede631919844b7da647be4ec58",
+      "committedMode": "100644",
+      "gitBlob": "725ef4884d63aea5fec5c9ef3b35984020122857",
+      "parentMode": "100644",
+      "parentBlob": "88452c3746aea27478925907623f76a5d8b72a4f",
+      "currentMode": "100644",
+      "bytes": 5830
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+      "accepted": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c",
+      "verifierActual": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c",
+      "snapshotDeclared": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c",
+      "snapshotComputed": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c",
+      "committedSha256": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c",
+      "currentSha256": "7ba8ad33eccbf82c9d72ec904d672a997d0fc978217862269bc24f08b986698c",
+      "committedMode": "100644",
+      "gitBlob": "e97194cb9d75c99440346215277d44bd420bdd7c",
+      "parentMode": "100644",
+      "parentBlob": "5b6e186cc6d24ace483b72920223981fc078677c",
+      "currentMode": "100644",
+      "bytes": 14002
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "accepted": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86",
+      "verifierActual": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86",
+      "snapshotDeclared": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86",
+      "snapshotComputed": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86",
+      "committedSha256": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86",
+      "currentSha256": "ebda069c51e0e9658ccfb7cae7f0f3d67dd5dc95f7ec9cac5eeb2c59075a4e86",
+      "committedMode": "100644",
+      "gitBlob": "a31752ae577db1c99551b0e59a1faf489dda4e4d",
+      "parentMode": "100644",
+      "parentBlob": "d794359a83823a461cec73de2f748782e4256912",
+      "currentMode": "100644",
+      "bytes": 12088
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "accepted": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea",
+      "verifierActual": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea",
+      "snapshotDeclared": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea",
+      "snapshotComputed": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea",
+      "committedSha256": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea",
+      "currentSha256": "9e25c6edf043875191bc2f05a526fc19f6a6953e817a8de7c3021c31a9f4fbea",
+      "committedMode": "100644",
+      "gitBlob": "53377ca45b037ea8b0a3d5230b10098d85646da6",
+      "parentMode": "100644",
+      "parentBlob": "77f9a62f335812762e3650beb097d837bd34b377",
+      "currentMode": "100644",
+      "bytes": 7130
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "accepted": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "verifierActual": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "snapshotDeclared": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "snapshotComputed": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "committedSha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "currentSha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "committedMode": "100644",
+      "gitBlob": "29d53e57fce815bf603b484443b5b5ef00eec568",
+      "parentMode": null,
+      "parentBlob": null,
+      "currentMode": "100644",
+      "bytes": 4667
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "accepted": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64",
+      "verifierActual": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64",
+      "snapshotDeclared": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64",
+      "snapshotComputed": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64",
+      "committedSha256": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64",
+      "currentSha256": "162bd591eb13ba55b9dc3cb8b1185653fc25ed0a1126f13bbb4fe8b50c724d64",
+      "committedMode": "100644",
+      "gitBlob": "6a8ae4ebdbc4f34372665967fc1d42ef13114fd9",
+      "parentMode": null,
+      "parentBlob": null,
+      "currentMode": "100644",
+      "bytes": 19089
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "accepted": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a",
+      "verifierActual": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a",
+      "snapshotDeclared": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a",
+      "snapshotComputed": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a",
+      "committedSha256": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a",
+      "currentSha256": "ba041d67401f146ebeb0110508e3309cc99af3cc554b0d4590dc21b9766bab7a",
+      "committedMode": "100644",
+      "gitBlob": "ff1807aa9edaf95a3af6a9b03bb73628dedcc5a9",
+      "parentMode": null,
+      "parentBlob": null,
+      "currentMode": "100644",
+      "bytes": 6506
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+      "accepted": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa",
+      "verifierActual": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa",
+      "snapshotDeclared": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa",
+      "snapshotComputed": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa",
+      "committedSha256": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa",
+      "currentSha256": "e38ffa7c66e80e9762d4dc0e5ceb0f5329e8bef01d9295df2a6e5e4cd69df4fa",
+      "committedMode": "100644",
+      "gitBlob": "11dbae6c693385a969bb8c41bc888b2d93ac0f32",
+      "parentMode": null,
+      "parentBlob": null,
+      "currentMode": "100644",
+      "bytes": 12182
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol",
+      "accepted": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0",
+      "verifierActual": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0",
+      "snapshotDeclared": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0",
+      "snapshotComputed": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0",
+      "committedSha256": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0",
+      "currentSha256": "af145d470fc7e1cada49c764603fb97caab6c381b1128125e529a7eba807e4c0",
+      "committedMode": "100644",
+      "gitBlob": "91b027db863f0cdbc37e94e75794f25cbddba7e3",
+      "parentMode": null,
+      "parentBlob": null,
+      "currentMode": "100644",
+      "bytes": 5438
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+      "accepted": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120",
+      "verifierActual": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120",
+      "snapshotDeclared": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120",
+      "snapshotComputed": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120",
+      "committedSha256": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120",
+      "currentSha256": "4b95ae2cf222d14f9a51f00e869ff9d21c81590e22f1988e2c185b4bb0499120",
+      "committedMode": "100644",
+      "gitBlob": "e8cf0b68793f2607bbf4a9a24a2516ae99ec8ad2",
+      "parentMode": null,
+      "parentBlob": null,
+      "currentMode": "100644",
+      "bytes": 11355
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeConfiguration.t.sol",
+      "accepted": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2",
+      "verifierActual": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2",
+      "snapshotDeclared": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2",
+      "snapshotComputed": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2",
+      "committedSha256": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2",
+      "currentSha256": "eb7eb5f704170fc5eca42353f11b9d13b6a78ef9c7b072e46fda69ed030986d2",
+      "committedMode": "100644",
+      "gitBlob": "964b03f7e6ba54b8299f245ec51863bae2912437",
+      "parentMode": null,
+      "parentBlob": null,
+      "currentMode": "100644",
+      "bytes": 13056
+    }
+  ],
+  "inventories": [
+    {
+      "name": "docs-incidents",
+      "root": "docs/incidents",
+      "count": 802,
+      "sha256": "976afcfeaea79c66ae6488482c4f0810c0bbd5ff3899860cfd7875a08ef40204",
+      "serializationReproduces": true,
+      "changedOrMissing": [],
+      "addedPaths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/precommit/cache_forge.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/precommit/docs-incidents.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/precommit/out.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/precommit/recipe.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/precommit/show-ref.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/precommit/status-before.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/receipt.md",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/source-manifest.json"
+      ]
+    },
+    {
+      "name": "out",
+      "root": "out",
+      "count": 7321,
+      "sha256": "90924744f2003f47870fc12db271363666e233e85ccb40b63482bceb390179ad",
+      "serializationReproduces": true,
+      "changedOrMissing": [],
+      "addedPaths": []
+    },
+    {
+      "name": "cache_forge",
+      "root": "cache_forge",
+      "count": 592,
+      "sha256": "82dfe6b7ace19101efbfff4201c5279630510a9b5766489956cbc29b03b08077",
+      "serializationReproduces": true,
+      "changedOrMissing": [],
+      "addedPaths": []
+    }
+  ],
+  "inventoryRecipe": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/precommit/recipe.txt",
+    "sha256": "44543685c7fe131d468744a8427a7ebae25b57f988ba65b870c12121d23278e9",
+    "algorithm": "For each retained JSONL entry, lstat without following symlinks; recompute kind, normalized Git mode, lstat size, SHA-256(raw bytes or UTF-8 symlink target), target. Compare every field. Independently walk root without descending symlinks to detect extras. Sort POSIX paths, use key order path/kind/mode/size/sha256/target, compact JSON and one newline per entry; hash exact UTF-8 JSONL."
+  },
+  "preservation": {
+    "precommitStatusSha256": "349a53f8806d47a0a3136251c78f2690945d6138f9d379e43293c6afd5391e00",
+    "precommitStatusEntries": 707,
+    "precommitStagedEntries": 0,
+    "foreignUntrackedBefore": 673,
+    "missingForeignStatusEntries": [],
+    "refBaselineSha256": "dc6dcb977584cbe39951d1cecb7fcd7a08e4a7a29bf8d5394f386d417690d098",
+    "refChanges": [
+      {
+        "ref": "refs/heads/work/dtf-migration-phase-15-dtf-custody-se",
+        "before": "2baab6e58dafcc3fe5f9a94570d99987d58bf42b",
+        "now": "4a53299b490343ed904d70c92ecbc7360fcb7659"
+      }
+    ],
+    "allOtherRefsUnchanged": true,
+    "links": [
+      {
+        "path": "lib/crane",
+        "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+        "inode": 18688325,
+        "permissions": "755",
+        "isSymlink": true
+      },
+      {
+        "path": "node_modules",
+        "target": "/Users/cyotee/Projects/indexedex/node_modules",
+        "inode": 18688326,
+        "permissions": "755",
+        "isSymlink": true
+      }
+    ],
+    "indexAtAuditStart": {
+      "tree": "318cdbf5e6af7c1ebd00d51d164edf7dade3255b",
+      "stageSerializationSha256": "95bbf7013f1e72743ed004d594a8ea5d97cab1a2e46083cc5e49b79a58a16064",
+      "stagedDiff": "",
+      "unstagedTrackedDiff": ""
+    },
+    "pendingGitState": {
+      "MERGE_HEAD": false,
+      "CHERRY_PICK_HEAD": false,
+      "REBASE_HEAD": false,
+      "rebase-merge": false,
+      "rebase-apply": false,
+      "index.lock": false
+    }
+  },
+  "seals": {
+    "checkedEntries": 23,
+    "mismatches": [],
+    "entries": [
+      {
+        "lane": "implementation",
+        "path": "report.md",
+        "sha256": "5903665aa38c173554ea7a1f66602da3da0e656523ba4aeb6866067b54dd538c"
+      },
+      {
+        "lane": "implementation",
+        "path": "bindings.json",
+        "sha256": "9773941ec57f79711e2f01af0791d758b799739cca6745bee6c3fdda6ca81a2e"
+      },
+      {
+        "lane": "implementation",
+        "path": "checks.json",
+        "sha256": "50a465fb8584efc74360c379812d5c20c2502ca1f52207c33ba8e1f85af39aa6"
+      },
+      {
+        "lane": "implementation",
+        "path": "cleanup.json",
+        "sha256": "f1918d3e7135ecdd3c9ad82ffe189089545895ab66d39e6e359548e7d99eb106"
+      },
+      {
+        "lane": "implementation",
+        "path": "coverage.json",
+        "sha256": "148af35a11a42d648fdeea0f52e03208706b92470db24b2b416aa9efddfcc2c5"
+      },
+      {
+        "lane": "implementation",
+        "path": "source-snapshots-final.json",
+        "sha256": "91131bf40d4999a6cb596895d2d8d29758cbbce37fdcd47c4cb9b695ac952060"
+      },
+      {
+        "lane": "implementation",
+        "path": "input-snapshots.json",
+        "sha256": "a96f7dcf6578090233efb23a9965bb64a2030cb6504f1e3557abd2e859630bd8"
+      },
+      {
+        "lane": "implementation",
+        "path": "source-authentication.json",
+        "sha256": "750ffbb12fa39d498367849479f5330ce5a8c4d54ffa911491e77edab13f53f0"
+      },
+      {
+        "lane": "implementation",
+        "path": "artifact-input-bindings.json",
+        "sha256": "86756b849b75dfd30d999eea86f5c9f3f6f4da040e54d5733242d100d03e5713"
+      },
+      {
+        "lane": "implementation",
+        "path": "artifact-runtime-reconciliation.json",
+        "sha256": "dd4154f5ad3835be34cbe4f9f3f728be3c98ac7c89fd69eec3857f7d277d5633"
+      },
+      {
+        "lane": "implementation",
+        "path": "runtime-index.json",
+        "sha256": "5e8afe496662f416db3763cac0bc2177fb43fe7cbb4a704c1c2cc3bf9126c629"
+      },
+      {
+        "lane": "verification",
+        "path": "report.md",
+        "sha256": "77e67678c3180b4ef487fb40567131e9aea0e6c03f7f0f0f1f66003d1226669e"
+      },
+      {
+        "lane": "verification",
+        "path": "bindings.json",
+        "sha256": "fc5995e114177e54449ea40cf5bbe1ba5fc8cd4f784e3384d258fdfbc7508d0c"
+      },
+      {
+        "lane": "verification",
+        "path": "checks.json",
+        "sha256": "648839c2ed6821d2be990c9acfec4162e18f7af137b7a2ee0e51f2e7c739dc51"
+      },
+      {
+        "lane": "verification",
+        "path": "cleanup.json",
+        "sha256": "b3a226714dc108debc161674bad1854052521ddb22add67d0f295bb6597cb8ce"
+      },
+      {
+        "lane": "verification",
+        "path": "coverage.json",
+        "sha256": "77b0e8c6f281fb5761d4b3f5be1327c60b4b5a0df9cf1e4cb42f3571cf9abe17"
+      },
+      {
+        "lane": "verification",
+        "path": "admission.json",
+        "sha256": "32a48c4282451e39efeebebfdf4b8d2b8c31877b859ab6cd8a1b09970c85c076"
+      },
+      {
+        "lane": "verification",
+        "path": "source-authority.json",
+        "sha256": "496454d82b748d77ffc422b5897fde41be95d66228a55627499434ff092a6704"
+      },
+      {
+        "lane": "verification",
+        "path": "artifact-reconciliation.json",
+        "sha256": "b5a262a8df38b3ab82de70da670eebf21a9e8ad766fbe86067a95228bd6abd5b"
+      },
+      {
+        "lane": "verification",
+        "path": "runtime-index.json",
+        "sha256": "9178085df9e7b6212e91b30b12aea26e1e777260147dc43573f37bf09ed9a3f6"
+      },
+      {
+        "lane": "verification",
+        "path": "negative-receipts.json",
+        "sha256": "09b0ee980550f8960ea88b064e48b468dfbdbacec621ab9eee556695f476f3c3"
+      },
+      {
+        "lane": "verification",
+        "path": "legacy-source-extracts.md",
+        "sha256": "72b6a2382b3f58bc82785f390125167d90789f2b87b4bd0ec02c8f0dfb2918f4"
+      },
+      {
+        "lane": "verification",
+        "path": "tool-versions.txt",
+        "sha256": "fad03f42a9322b70d0af9c925edfeb3e38eabba5c6bae9a8ec5fdb5cfefd6024"
+      }
+    ]
+  },
+  "retainedEvidence": {
+    "producerEntries": 398,
+    "producerMismatches": [],
+    "verifierEntries": 385,
+    "verifierMismatches": [],
+    "allEntriesRehashed": true
+  },
+  "compiledSources": {
+    "entries": 706,
+    "mismatches": [],
+    "algorithm": "keccak256 and SHA-256 of each actual raw source equals verification/source-authority.json compiledSources expected and sha256."
+  },
+  "artifacts": {
+    "entries": 120,
+    "currentMatchesFinalAndAfterCli": true,
+    "mismatches": [],
+    "regenerated": [
+      {
+        "path": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+        "admitted": "a333899524467f478b78168fa79bb29600066910cb652eceec20f60bfe0d9e3c",
+        "actual": "99ce5bd22525c8acad1b84c632a7bc50e7bb958a3d8d5b212a421dce27a9a2e5",
+        "targets": {
+          "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol": "MigrationNftConfigurationTest"
+        },
+        "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+      }
+    ],
+    "rebuiltMetadata": {
+      "path": "out/MigrationNftConfiguration.t.sol/MigrationNftConfigurationTest.json",
+      "currentSha256": "99ce5bd22525c8acad1b84c632a7bc50e7bb958a3d8d5b212a421dce27a9a2e5",
+      "bytes": 997658,
+      "targets": {
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol": "MigrationNftConfigurationTest"
+      },
+      "compilerVersion": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "rawCompilerName": "solar",
+      "parsedSources": 550,
+      "rawSources": 550,
+      "sourceKeccakMismatches": [],
+      "rawAndParsedMetadataEqual": false,
+      "differences": "Raw compiler/name and userdoc notice retained only in rawMetadata, void ABI outputs [] omitted in parsed metadata, missing raw source license fields represented as null in parsed metadata. No old/new raw JSON equality inferred."
+    }
+  },
+  "secretScan": {
+    "completeSourceFiles": 34,
+    "findings": [
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "line": 89,
+        "text": "  process.env[envName] = `http://127.0.0.1:${listener.port}`;"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+        "line": 213,
+        "text": "  process.env[envName] = \"https://example.invalid\";"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "line": 16,
+        "text": "// Standard public Anvil mnemonic, derivation indices 100-103. The commonly"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearse.ts",
+        "line": 105,
+        "text": "    delete environment[\"PRIVATE_KEY\"];"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "line": 31,
+        "text": "  const wallet = HDNodeWallet.fromPhrase(\"test test test test test test test test test test test junk\","
+      },
+      {
+        "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol",
+        "line": 31,
+        "text": "        seHolder = vm.addr(0xD7FC0570D1);"
+      }
+    ],
+    "urls": [
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "line": 89,
+        "url": "http://127.0.0.1:${listener.port}"
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+        "line": 213,
+        "url": "https://example.invalid"
+      }
+    ],
+    "disposition": "Only local loopback/test fixtures and example.invalid; no resolved secret endpoint or production signing material observed."
+  },
+  "historicalLimits": [
+    "Runtime acceptance did not record modes; all 27 parent-tracked modes and all 34 current/commit modes independently equal 100644; seven additions are regular non-executable files.",
+    "Per-entry inventories establish current equality to retained precommit sets, not their original capture time or earlier history.",
+    "No retained precommit raw index serialization, inode/timestamp/link inventory, or complete old rebuilt-test JSON exists in this evidence set. No stronger historical equality is asserted.",
+    "Earlier phase14 unretained aggregate qualifications remain historical."
+  ],
+  "cleanup": {
+    "listener18565": {
+      "exitCode": 1,
+      "output": ""
+    },
+    "verifierPid2461": {
+      "exitCode": 1,
+      "output": ""
+    },
+    "checkpointAbsentExitCode": 0,
+    "ownedRuntimeStarted": false,
+    "ownedPendingOperation": false
+  },
+  "limits": {
+    "fullCategory": false,
+    "operationalAllocations": false,
+    "fullHermetic": false,
+    "fullPlan": false,
+    "targetGas": false,
+    "publicApproval": false,
+    "independentObservedDeploymentGas": 43770976,
+    "historicalTransactionLimit": 32000000
+  }
+}

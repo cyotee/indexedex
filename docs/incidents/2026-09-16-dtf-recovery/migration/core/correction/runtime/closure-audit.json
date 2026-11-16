@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-11-10T23:37:17.927Z",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/core/correction/report.md",
+  "F1": {
+    "failBeforeExit": 1,
+    "defectiveSourceSha256": "c3e7d28ef1532a8056dbf7261e73439bef506830f2d20c01ae2f59fd36b63da6",
+    "correctedSourceSha256": "4f56ac1d008cee074b9f6a2660b41c30f894d4645f890fe743e1c8f73e1b563e",
+    "regressions": 9,
+    "canonicalHelper": "D/UniswapV4DetfTarget.sol:854-859"
+  },
+  "V1": {
+    "tests": 15,
+    "positiveAllowance": true,
+    "positiveSignature": true,
+    "canonicalDomainVerified": true,
+    "negativeStateTraceExit": 0
+  },
+  "focused": {
+    "tests": 83,
+    "suites": 13,
+    "exit": 0
+  },
+  "combined": {
+    "tests": 10102,
+    "suites": 612,
+    "exit": 0,
+    "qaBuildExit": 0
+  },
+  "localQA": {
+    "stageAReceipts": 230,
+    "stageBReceipts": 16,
+    "instance": "0x86c73d741983bdf3fbff119692d28fb7951dd9b3b335e8105e9dd94a00fd477a",
+    "removedSelectors": [
+      "0xec55c474",
+      "0x161d9afc",
+      "0xccff9894",
+      "0x787642e8",
+      "0xe9dc9e6d"
+    ],
+    "runtimeMismatches": 0,
+    "conservation": {
+      "physicalEqualsTotal": true,
+      "escrowEqualsDeferredPlusE": true,
+      "tokenizedEqualsRTSupply": true,
+      "bondAttributedEqualsPhysical": true,
+      "syAttributedEqualsPhysical": true,
+      "heldBackingEqualsAccounted": true,
+      "backingEqualsLiabilityAndDust": true
+    }
+  },
+  "cleanup": "OWNED_TMP_REMOVED\nPORT_18548_LISTENERS\nLSOF_EXIT=1\nOWNED_ANVIL_PROCESSES\nOWNED_PROCESS_SEARCH_EXIT=1",
+  "independentVerificationPending": true,
+  "fullPlanGatesRemainOpen": true
+}

@@ -1,0 +1,241 @@
+{
+  "transformations": [
+    {
+      "name": "LOSS_AND_RECOVERY_LEDGER.md",
+      "removedBytes": 635,
+      "currentBytes": 15943,
+      "currentSha256": "52758ad2bbfa4efce31668ba1079aff608a8c72798280512e0247a0fb1747a71",
+      "historicalBytes": 15308,
+      "historicalSha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07",
+      "equal": true
+    },
+    {
+      "name": "CUSTODY_AND_HARVEST.md",
+      "removedBytes": 563,
+      "currentBytes": 7920,
+      "currentSha256": "ab837ca952449a6d9ac155f5cd641329134ed92c0b9a610007ad7cd9b33698d8",
+      "historicalBytes": 7357,
+      "historicalSha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd",
+      "equal": true
+    }
+  ],
+  "checks": [
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "bytes": 24558,
+      "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703",
+      "independentlyMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+      "bytes": 10515,
+      "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f",
+      "independentlyMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/snapshot.json",
+      "bytes": 3055,
+      "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295",
+      "independentlyMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "bytes": 1432,
+      "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce",
+      "independentlyMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "bytes": 41120,
+      "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2",
+      "independentlyMatched": true
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "bytes": 186222,
+      "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "bytes": 83558,
+      "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "bytes": 12283,
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "bytes": 3709,
+      "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "bytes": 2542,
+      "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "bytes": 4535122,
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "bytes": 18666,
+      "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "bytes": 111333,
+      "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "bytes": 141460,
+      "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "bytes": 3012,
+      "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719",
+      "independentlyMatched": true
+    },
+    {
+      "path": "account-ledger.csv",
+      "bytes": 285464,
+      "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510",
+      "independentlyMatched": true
+    },
+    {
+      "path": "positions.csv",
+      "bytes": 123221,
+      "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3",
+      "independentlyMatched": true
+    },
+    {
+      "path": "observed-recoveries.csv",
+      "bytes": 30839,
+      "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94",
+      "independentlyMatched": true
+    },
+    {
+      "path": "conversions.csv",
+      "bytes": 91676,
+      "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a",
+      "independentlyMatched": true
+    },
+    {
+      "path": "exceptions.csv",
+      "bytes": 3404,
+      "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f",
+      "independentlyMatched": true
+    },
+    {
+      "path": "rounding.csv",
+      "bytes": 327,
+      "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61",
+      "independentlyMatched": true
+    },
+    {
+      "path": "reconciliation.json",
+      "bytes": 1798,
+      "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "bytes": 4535122,
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "bytes": 18666,
+      "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "bytes": 111333,
+      "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "bytes": 83558,
+      "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "bytes": 12283,
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "bytes": 3709,
+      "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "bytes": 2542,
+      "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559",
+      "independentlyMatched": true
+    },
+    {
+      "path": "sources.json",
+      "bytes": 5502,
+      "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a",
+      "independentlyMatched": true
+    },
+    {
+      "path": "LOSS_AND_RECOVERY_LEDGER.md",
+      "bytes": 15308,
+      "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07",
+      "independentlyMatched": true
+    },
+    {
+      "path": "held-exclusions.csv",
+      "bytes": 188644,
+      "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc",
+      "independentlyMatched": true
+    },
+    {
+      "path": "custody-inventory.csv",
+      "bytes": 139535,
+      "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "bytes": 141460,
+      "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9",
+      "independentlyMatched": true
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "bytes": 3012,
+      "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719",
+      "independentlyMatched": true
+    },
+    {
+      "path": "CUSTODY_AND_HARVEST.md",
+      "bytes": 7357,
+      "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd",
+      "independentlyMatched": true
+    }
+  ],
+  "qualification": "Hash-authenticated recovered historical bodies, not located original captures; no P1 recovery."
+}

@@ -1,0 +1,9 @@
+# Full hermetic failure: V3 frozen-quote interface metadata
+
+Observed during the still-running initial full hermetic gate at8db3f5ee. Suite: test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol:UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test. Actual test_packageMetadata_matchesExpectedFacets failure: interface count:16 !=15. The other four tests in this suite passed in that initial run. Whole-run totals/exit are still pending.
+
+Root read the full test, the package declaration through facetInterfaces/facetCuts, the Frozen interface and actual Git history. Commit215c2bba6aa75e3e79bf68b7980b730927a85817, Add frozen Migration quote capture and evaluation, changed package facetInterfaces from15 to16 and appended type(IStandardExchangeFrozenQuoteInputs).interfaceId at index15. It did not update this test. Facet cuts remain15. This is a stale expectation caused by our earlier Migration work, not an unrelated pre-existing failure to waive.
+
+The correct scoped fix is to preserve the15facet expectations, assert16advertised interfaces and assert the actual added Frozen interface identity. No production rollback, test removal/skip or weaker assertion is appropriate. Apply only after the current gate exits so its observed source remains the committed initial subject. Preserve this initial failure log; rerun the affected check and required final gate after the material test correction.
+
+The first grep of tests.log was limited to4MiB and missed the later failure. A complete raw-text read located the exact suite in the7754273-byte then-current log. A malformed combined search pattern was treated literally; direct source inspection supplied the actual declaration. No absence claim was made from either lookup. No file, test or build was changed or rerun during this diagnosis.

@@ -1,0 +1,41 @@
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol
+ M docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+ M scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+ M scripts/recovery/dtf-migration/cli.ts
+ M scripts/recovery/dtf-migration/execution-plan.ts
+ M scripts/recovery/dtf-migration/execution-state.ts
+ M scripts/recovery/dtf-migration/payloads.ts
+ M scripts/recovery/dtf-migration/preparation.fixture.ts
+ M scripts/recovery/dtf-migration/preparation.test.ts
+ M scripts/recovery/dtf-migration/preparation.ts
+ M scripts/recovery/dtf-migration/provenance.ts
+ M scripts/recovery/dtf-migration/quotes.ts
+ M scripts/recovery/dtf-migration/rehearsal-data.ts
+ M scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-proof.ts
+ M scripts/recovery/dtf-migration/rehearse.ts
+ M scripts/recovery/dtf-migration/schema.ts
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol
+?? docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/
+?? scripts/recovery/dtf-migration/claim-vault.test.ts
+?? scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+?? scripts/recovery/dtf-migration/rehearsal-claim-vault.ts
+?? test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol
+?? test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol
+?? test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol
+?? test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol

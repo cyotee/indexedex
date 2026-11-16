@@ -1,0 +1,8 @@
+{"prefix":"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/full-a-command","exitCode":0,"signal":null}
+{"prefix":"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/full-b-command","exitCode":0,"signal":null}
+{"prefix":"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/full-relocated-command","exitCode":0,"signal":null}
+{"prefix":"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/primary-negative","exitCode":1,"signal":null}
+{"prefix":"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/prepare-negative","exitCode":1,"signal":null}
+{"prefix":"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/validate-negative","exitCode":1,"signal":null}
+{"prefix":"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/implementation-r2/proof02/execution-negative","exitCode":1,"signal":null}
+FULL_DATA_PROOF_COMPLETE

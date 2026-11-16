@@ -1,0 +1,200 @@
+{
+  "date": "2026-11-12",
+  "verdict": "needs-fix",
+  "reason": "Sealed producer stopped before implementation: required exact deposit source unauthenticated, no controlled acquisition or integration/runtime exists.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault",
+  "branch": "work/dtf-migration-phase-16-claim-vault",
+  "head": "4a53299b490343ed904d70c92ecbc7360fcb7659",
+  "producerSeal": [
+    {
+      "path": "archive-attempts.json",
+      "sha256": "4e8b5fdd4b0fe92b4c3708a914be322818223db937e31d99ab1515bb718301c6",
+      "match": true
+    },
+    {
+      "path": "source-admission.json",
+      "sha256": "e3c10c52ea2aaf1e22c520e371da147980dd2a902beca0b5528fd2f4069495b6",
+      "match": true
+    },
+    {
+      "path": "input-bindings.json",
+      "sha256": "a5a3635d31596c0f95be642752347dd3f35b5f83ee2599f953365c41473a0c93",
+      "match": true
+    },
+    {
+      "path": "cleanup.json",
+      "sha256": "8b42c54a7f42ca1d5aeb6c3cf18b7b6a639aac8d04d2c17a1fb88670918edfd4",
+      "match": true
+    },
+    {
+      "path": "report.md",
+      "sha256": "e9a77a596bd7842bb38a8f4a45c95fe95ec887eedec949206de78b0b97125efe",
+      "match": true
+    },
+    {
+      "path": "bindings.json",
+      "sha256": "d14ba63a367280a51a4b29f6d0edd41dafb8c0c67b35c3f5bbc1e50d10056754",
+      "match": true
+    }
+  ],
+  "authorityInputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+      "sha256": "4becd1e7004a89c1d2d0c9bd6e173b4ca869a01c4d5531ece7235440a7c20737",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/verification/report.md",
+      "sha256": "77e67678c3180b4ef487fb40567131e9aea0e6c03f7f0f0f1f66003d1226669e",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/commit/verification.md",
+      "sha256": "8e5f291d701451e1df225078905391feb47a6d37edee5ca31b1c521e5d412b9e",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/claims/contract.md",
+      "sha256": "a657b9e8a5a6925130a6a56f7334a26536162effac321254144063774fd98d41",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/report.md",
+      "sha256": "56eef5115b6f09477327fce4fbc1bac3ff74127b08214c0145d051099cd682cc",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/verification/matrix.md",
+      "sha256": "1709df411bc85054688c283cc8225234357d79b9fd1af305126c88834298ec9c",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.sources.json",
+      "sha256": "026c9ab02a2fde5738b2e290d875e55d0b2ff762cae975b7a8ca0bf3454231ab",
+      "match": true
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/verification/other-metered.json",
+      "sha256": "8752356e523adcd85af806ff044520cc76d89c12fc285a7de43a9610ccf7d702",
+      "match": true
+    }
+  ],
+  "inspectedSources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "b101647d9dd744e2cec2b854522ec8ebc9888db843dc1c6512e98befc421aa59"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "sha256": "af9a958e20b4a3c77f35f2185c740388def581998195f237106918b71810792f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "sha256": "1e9c06f33d3f3efbcad8eafc01a4810cb620285b6026ab14bee9d932c096a41a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationPolicy.sol",
+      "sha256": "6070d3eb46313b6ac7de40001197b300b88cfe47b0979c46be867278da2b342e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "680521a1f1b1eeb26b6d33cd65cf042f68c0d0118406c7dca0bbfde374795ebd"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "c34757404986ae7f74c13b69e10412134f90f22e87e5451a56b35ef9c3f80294"
+    }
+  ],
+  "retainedSourceRuntime": {
+    "provenance": "Producer retained pinned bytes independently rehashed; no fresh verifier RPC run",
+    "chainId": 4663,
+    "block": 108944663,
+    "blockHash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "vault": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+    "shareDecimals": 19,
+    "asset": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+    "assetDecimals": 9,
+    "facet": "0x517234F78A4BcAfc5F880024A3E45D49cF43b305",
+    "runtimeBytes": 6154,
+    "keccak256": "0x8c1ea71d607b09b21c4e78f850647a059dc7935b6772f7cd3aeaa700a995439f",
+    "sourceSemanticsAuthenticated": false
+  },
+  "retainedResponseBodies": [
+    {
+      "url": "https://sourcify.dev/server/v2/contract/4663/0x517234F78A4BcAfc5F880024A3E45D49cF43b305?fields=all",
+      "match": true
+    },
+    {
+      "url": "https://repo.sourcify.dev/contracts/full_match/4663/0x517234F78A4BcAfc5F880024A3E45D49cF43b305/metadata.json",
+      "match": true
+    },
+    {
+      "url": "https://repo.sourcify.dev/contracts/partial_match/4663/0x517234F78A4BcAfc5F880024A3E45D49cF43b305/metadata.json",
+      "match": true
+    },
+    {
+      "url": "https://sourcify.dev/server/v2/contract/all-chains/0x517234F78A4BcAfc5F880024A3E45D49cF43b305",
+      "match": true
+    },
+    {
+      "url": "https://ipfs.io/ipfs/QmUvEgKFCaE3MSSVJpQyDk1TsD9RJBWBjstrAEcPfNDDeM",
+      "match": true
+    }
+  ],
+  "unretainedProxyArchive": "Only recorded size/hash/target/source inventory checked; 1208585 raw bytes were not retained by producer, so original body hash was not independently reproduced.",
+  "sourceChanges": [],
+  "newAcquisitionReceipts": [],
+  "compiledArtifacts": [],
+  "newRuntimeReceipts": [],
+  "unrun": [
+    "artifact-first complete Migration specs",
+    "artifact-first complete pinned Migration forks",
+    "operator tests",
+    "strict TypeScript",
+    "affected operator-stage builds",
+    "fixed18566 CLI",
+    "three raw receipt/signature reconciled resumes",
+    "direct-share custody/credit/funding/callback/selected-recovery runtime cases"
+  ],
+  "cleanup": {
+    "compoundCheck": "bash_4",
+    "exitCode": 0,
+    "trackedDiff": "empty",
+    "stagedDiff": "empty",
+    "untrackedBeforeOwnedReport": "exactly seven producer implementation evidence files",
+    "port18566": "no listener; lsof status 1 accepted explicitly",
+    "fixedCheckpoint": "absent",
+    "nodesStarted": 0,
+    "impersonationsStarted": 0,
+    "subscriptionsStarted": 0,
+    "pendingOperations": 0
+  },
+  "notification": {
+    "thread": "01a1c343-d102-7e05-9b68-d96021c7fb4e",
+    "deliveryId": "00bb43f2-8652-4916-ae95-492169177cca",
+    "summary": "Root notified of source gate and absent implementation. Initial task_send(root) had no task match; actual thread_send succeeded."
+  },
+  "limits": [
+    "No full-category acceptance",
+    "No operational award dataset approved",
+    "No target-gas/public-deployment claim",
+    "No source absence or disabled-deposit conclusion from HTTP404/429",
+    "No independent live source/runtime replay",
+    "Historical source/receipt claims are not new executions"
+  ]
+}

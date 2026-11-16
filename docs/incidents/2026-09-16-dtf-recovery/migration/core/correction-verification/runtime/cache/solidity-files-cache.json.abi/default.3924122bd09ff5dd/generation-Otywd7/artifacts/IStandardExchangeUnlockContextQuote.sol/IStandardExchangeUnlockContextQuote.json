@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"quoteStateWithUnavailableUnlock","inputs":[{"name":"state","type":"bytes","internalType":"bytes"},{"name":"manager","type":"address","internalType":"address"}],"outputs":[{"name":"projectedState","type":"bytes","internalType":"bytes"}],"stateMutability":"view"}],"id":137}

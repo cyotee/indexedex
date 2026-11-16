@@ -1,0 +1,259 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {NativeStandardYieldMoneyTarget as NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase.sol";
+
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {
+    UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
+import {
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSwapCore
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+
+/**
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget
+ * @notice Standard Exchange swaps and native LP join/exit routes.
+ * @dev MultiAssetLiquidity selectors live on LiquidityFacet (same functions as product join/exit).
+ *      L-GAPS-11: pretransfer credits only in-window delta (ISecurePullErrors) — leftover not free-spent.
+ */
+abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
+    NativeStandardYieldExecutionTarget,
+    UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase,
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSwapCore,
+    IStandardExchangeOut
+{
+    using SafeERC20 for IERC20;
+
+    function isValidTokenIn(address token_) public view override returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < Repo.N_TOKENS; ++i) if (token_ == l.tokens[i]) return true;
+        if (token_ == address(0)) return false;
+        for (uint256 i; i < Repo.N_TOKENS; ++i) if (token_ == l.standardExchanges[i]) return true;
+        return false;
+    }
+    function isValidTokenOut(address token_) public view override returns (bool) { return isValidTokenIn(token_); }
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256)
+    {
+        return _nativeRedemption(receiver_, shares_, tokenOut_, minimum_);
+    }
+
+
+function exchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 amountOut, uint256 amountRefunded) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            _requireDeadline(deadline);
+            uint256 beforeInput = tokenIn.balanceOf(msg.sender);
+            amountOut = _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+            if (address(tokenOut) == address(this)) {
+                uint256 afterInput = tokenIn.balanceOf(msg.sender);
+                amountRefunded = amountIn - (beforeInput - afterInput);
+            }
+            return (amountOut, amountRefunded);
+        }
+        return (_swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
+    }
+
+    function _swapExchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountOut) {
+        _requireDeadline(deadline);
+        if (amountIn == 0) revert ZeroAmount();
+        if (recipient == address(0)) revert ZeroAddress();
+        address tin = address(tokenIn);
+        address tout = address(tokenOut);
+        if (tin == tout) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        _tokenIndex(tin);
+        _tokenIndex(tout);
+
+        // Quote on pre-intake book, then fund (L-GAPS-11 delta gate — no free leftover credit).
+        ExactInOutput memory output = _previewSwapExactInPlan(tin, tout, amountIn);
+        amountOut = output.amountOut;
+        if (amountOut < minAmountOut) revert Slippage();
+
+        _securePull(IERC20(tin), amountIn, pretransferred);
+
+        uint8 i = _tokenIndex(tin);
+        Repo.Layout storage l = Repo._layout();
+        amountOut = _payExactInOutput(_tokenIndex(tout), output, recipient);
+        if (amountOut < minAmountOut) revert Slippage();
+        if (l.standardExchanges[i] != address(0)) {
+            _bufferToken(i, amountIn);
+        } else {
+            // Credit intentional raw book after funded in.
+            _creditRawIntentional(i, amountIn);
+        }
+        _syncVaultReserves();
+    }
+
+    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            if (_liquiditySePair(tokenIn, tokenOut) != address(0)) revert ExchangeOutNotAvailable();
+            return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut);
+        }
+        return _previewSwapExactOut(address(tokenIn), address(tokenOut), amountOut);
+    }
+
+    function exchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 amountIn) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            if (_liquiditySePair(tokenIn, tokenOut) != address(0)) revert ExchangeOutNotAvailable();
+            if (address(tokenOut) == address(this) && address(tokenIn) != address(this) && !pretransferred) {
+                _requireDeadline(deadline);
+                uint256 quoted = _entryPreviewJoinSingleAssetExactOut(address(tokenIn), amountOut);
+                if (quoted > maxAmountIn
+                    && _entryPreviewJoinSingleAssetExactIn(address(tokenIn), maxAmountIn) < amountOut) {
+                    revert LiquidityRoute.LiquidityMaximumExceeded(maxAmountIn, quoted);
+                }
+                return _entryJoinSingleAssetExactOut(address(tokenIn), amountOut, recipient, maxAmountIn, deadline);
+            }
+            return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+        }
+        return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountIn) {
+        _requireDeadline(deadline);
+        if (amountOut == 0) revert ZeroAmount();
+        if (recipient == address(0)) revert ZeroAddress();
+        address tin = address(tokenIn);
+        address tout = address(tokenOut);
+        if (tin == tout) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        amountIn = _previewSwapExactOut(tin, tout, amountOut);
+        if (amountIn > maxAmountIn) revert Slippage();
+
+        _pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);
+
+        uint8 j = _tokenIndex(tout);
+        uint8 ii = _tokenIndex(tin);
+        Repo.Layout storage l = Repo._layout();
+        if (l.standardExchanges[j] != address(0)) {
+            _unwrapExactTokenOut(j, amountOut, recipient);
+        } else {
+            if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
+            _debitRawIntentional(j, amountOut);
+            IERC20(tout).safeTransfer(recipient, amountOut);
+        }
+        if (l.standardExchanges[ii] != address(0)) {
+            _bufferToken(ii, amountIn);
+        } else {
+            _creditRawIntentional(ii, amountIn);
+        }
+        _syncVaultReserves();
+    }
+
+    /// @notice D89: owner exact-in; internal book settlement (no nested PoolManager.unlock).
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        if (amountIn == 0) revert ZeroAmount();
+        if (tokenIn == tokenOut) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        _tokenIndex(tokenIn);
+        _tokenIndex(tokenOut);
+        ExactInOutput memory output = _previewSwapExactInPlan(tokenIn, tokenOut, amountIn);
+        amountOut = output.amountOut;
+        if (amountOut < minAmountOut) revert Slippage();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        amountOut = _payExactInOutput(_tokenIndex(tokenOut), output, msg.sender);
+        if (amountOut < minAmountOut) revert Slippage();
+        _bufferOwnerSwapInput(tokenIn, amountIn);
+    }
+
+    /// @notice D89: owner exact-out; internal book settlement (no nested PoolManager.unlock).
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        if (amountOut == 0) revert ZeroAmount();
+        if (tokenIn == tokenOut) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        amountIn = _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+        if (amountIn > maxAmountIn) revert Slippage();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _payOwnerSwap(tokenIn, tokenOut, amountIn, amountOut);
+    }
+
+    function _onlyHookOwner() private view {
+        if (msg.sender != MultiStepOwnableRepo._owner()) {
+            revert IMultiStepOwnable.NotOwner(msg.sender);
+        }
+    }
+
+    function _payOwnerSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut) private {
+        uint8 j = _tokenIndex(tokenOut);
+        Repo.Layout storage l = Repo._layout();
+        if (l.standardExchanges[j] != address(0)) {
+            _unwrapExactTokenOut(j, amountOut, msg.sender);
+        } else {
+            if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
+            _debitRawIntentional(j, amountOut);
+            IERC20(tokenOut).safeTransfer(msg.sender, amountOut);
+        }
+        _bufferOwnerSwapInput(tokenIn, amountIn);
+    }
+
+    function _bufferOwnerSwapInput(address tokenIn, uint256 amountIn) private {
+        uint8 i = _tokenIndex(tokenIn);
+        Repo.Layout storage l = Repo._layout();
+        if (l.standardExchanges[i] != address(0)) {
+            _bufferToken(i, amountIn);
+        } else {
+            _creditRawIntentional(i, amountIn);
+        }
+        _syncVaultReserves();
+    }
+}

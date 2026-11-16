@@ -1,0 +1,206 @@
+
+scripts/recovery/dtf-migration/bundle.test.ts:
+(pass) relocated real bundle bytes rebuild identical payloads and quotes but a fresh journal domain [131.27ms]
+(pass) saved prepared envelopes preserve raw originals and reauthenticate rather than trusting payloads [86.48ms]
+(pass) replacement proofs bind their new document after normalized bundle preparation [80.57ms]
+(pass) saved bundles reject a noncanonical prepared envelope just as native validation does [89.40ms]
+(pass) bundle rejects missing despite intact original inputs [6.59ms]
+(pass) bundle rejects tamper despite intact original inputs [6.12ms]
+(pass) bundle rejects symlink despite intact original inputs [5.91ms]
+(pass) bundle rejects length at its contained-file boundary [6.08ms]
+(pass) bundle rejects traversal at its contained-file boundary [5.94ms]
+(pass) bundle rejects duplicate at its contained-file boundary [6.28ms]
+(pass) bundle rejects missing-reference at its contained-file boundary [6.14ms]
+(pass) bundle rejects extra at its contained-file boundary [6.54ms]
+(pass) bundle rejects data-link at its contained-file boundary [6.72ms]
+(pass) materialized inputs reject template changes and bundle-manifest tampering [9.34ms]
+(pass) export rejects duplicate source roles instead of choosing a binding [8.38ms]
+(pass) bundle CLI rejects ambiguous authority: bundle-export --input a --input b --output c [0.17ms]
+(pass) bundle CLI rejects ambiguous authority: bundle-materialize --input a --output b --execute-local [0.08ms]
+(pass) bundle CLI rejects ambiguous authority: rehearse --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575 --checkpoint .omo-runtime/dtf-migration-portable/checkpoints --evidence unused [0.10ms]
+
+scripts/recovery/dtf-migration/candidate-inventory.test.ts:
+(pass) inventory links each account, exclusion, source, holding and observed recovery without granting basis [1.07ms]
+(pass) inventory rejects broken account-ledger.csv position_ids relation [1.04ms]
+(pass) inventory rejects broken account-ledger.csv current_holding_ids relation [0.21ms]
+(pass) inventory rejects broken held-exclusions.csv unresolved_snapshot_remainder_detf_raw relation [0.17ms]
+(pass) inventory rejects broken positions.csv source_id relation [0.14ms]
+(pass) inventory rejects broken evidence/all-index-events.csv gons_per_unit relation [0.22ms]
+(pass) inventory rejects broken observed-recoveries.csv observed_amount_raw relation [0.21ms]
+(pass) blank recovery count remains unknown rather than an inferred zero [0.20ms]
+(pass) historical proofs check event-time divisor and signed claim conservation [0.34ms]
+
+scripts/recovery/dtf-migration/candidates.test.ts:
+(pass) joins exact multiple asset inputs to one collection ID and preserves observations [0.41ms]
+(pass) shared purchase transactions never attribute their entire input to each NFT [0.16ms]
+(pass) payer conflicts remain unresolved instead of being assigned to the recipient [0.15ms]
+(pass) earlier LP accounting shares keep direct WETH distinct from routed DTF and missing receipts [0.25ms]
+(pass) unknown integer is distinct from observed zero and rejects decimal or malformed encodings [0.06ms]
+(pass) CSV parser preserves quoted delimiters and rejects truncation, bad widths and duplicate keys [0.12ms]
+(pass) source units distinguish native19 vault shares, native28 SE, raw weights, gons and accounting LP [0.03ms]
+(pass) candidate documents are unsupported by every live input schema and preparation CLI [0.87ms]
+(pass) all declared bytes authenticate before malformed raw CSV parsing and fail closed on missing files [3.81ms]
+(pass) offline candidate command rejects signing, broadcast and duplicate input flags [0.10ms]
+
+scripts/recovery/dtf-migration/claim-vault.test.ts:
+(pass) direct claim-vault requires known original wallet, quantity, components and origin, not current holdings [6.39ms]
+(pass) direct claim-vault fixed source, original units and economic partition are required by the real payload builder [4.96ms]
+(pass) direct claim-vault complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [7.94ms]
+
+scripts/recovery/dtf-migration/dtf-custody-se.test.ts:
+(pass) W-SD requires known original wallet, quantity, components and origin, not current holdings [5.27ms]
+(pass) W-SD fixed source, original units and economic partition are required by the real payload builder [5.55ms]
+(pass) W-SD complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [5.56ms]
+
+scripts/recovery/dtf-migration/earlier-liquid.test.ts:
+(pass) ED preparation requires complete known original native18 units without pricing or unit alternatives [5.28ms]
+(pass) ED source and original partition cannot be substituted duplicated or silently omitted [3.88ms]
+(pass) ED grouped frozen quote and raw proof binding never scale credit by receipt ownership [28.91ms]
+(pass) ED operator stage and Solidity share exact tuple ABI and retain separate custody queries [7.20ms]
+
+scripts/recovery/dtf-migration/earlier-receipt.test.ts:
+(pass) ER preparation requires complete known original internal units without pricing or unit alternatives [5.18ms]
+(pass) ER source and original partition cannot be substituted duplicated or silently omitted [3.93ms]
+(pass) ER grouped frozen quote and raw proof binding never scale credit by receipt ownership [28.32ms]
+(pass) ER operator stage and Solidity share exact tuple ABI and retain separate custody queries [6.27ms]
+
+scripts/recovery/dtf-migration/execution.test.ts:
+(pass) journal refuses live concurrent writers and changed domains [4.11ms]
+(pass) durable signed intent survives reopening without acquiring another nonce [8.62ms]
+(pass) journal rejects a foreign intent rather than accepting its receipt [1.48ms]
+(pass) partial unpublished records cannot become completed operations [1.42ms]
+(pass) funding rejects arbitrary calldata and unknown native values [0.07ms]
+(pass) paid owner purchase requires explicit positive payment and ordinary duration [1.82ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["fund","--manifest","unused","--checkpoint","unused","--execute-local","--broadcast"] [0.12ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["resume","--manifest","unused","--checkpoint","unused","--instance-id","old"] [0.03ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["activate","--manifest","unused","--checkpoint","unused","--broadcast"] [0.02ms]
+(pass) CLI rejects ambiguous authority before file or network access: ["fund","--manifest","unused","--checkpoint","unused","--target","0x1111111111111111111111111111111111111111"] [0.03ms]
+
+scripts/recovery/dtf-migration/held-se-lp.test.ts:
+(pass) held 0x999dae02d22e5fee1c4508430d5196d31d631009 preparation requires complete known original native18 units without pricing or unit alternatives [5.62ms]
+(pass) held 0x999dae02d22e5fee1c4508430d5196d31d631009 source and original partition cannot be substituted duplicated or silently omitted [6.05ms]
+(pass) held 0x999dae02d22e5fee1c4508430d5196d31d631009 grouped frozen quote and raw proof binding never scale credit by receipt ownership [28.77ms]
+(pass) held 0x999dae02d22e5fee1c4508430d5196d31d631009 operator stage and Solidity share exact tuple ABI and retain separate custody queries [6.53ms]
+(pass) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 preparation requires complete known original native18 units without pricing or unit alternatives [5.41ms]
+(pass) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 source and original partition cannot be substituted duplicated or silently omitted [4.58ms]
+(pass) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 grouped frozen quote and raw proof binding never scale credit by receipt ownership [30.51ms]
+(pass) held 0x923877336b14662cfb5b3a60b14e7d716d54a888 operator stage and Solidity share exact tuple ABI and retain separate custody queries [6.42ms]
+(pass) held 0x46e068c2393e189fbc86632f67210af253a42aa8 preparation requires complete known original native18 units without pricing or unit alternatives [4.77ms]
+(pass) held 0x46e068c2393e189fbc86632f67210af253a42aa8 source and original partition cannot be substituted duplicated or silently omitted [4.24ms]
+(pass) held 0x46e068c2393e189fbc86632f67210af253a42aa8 grouped frozen quote and raw proof binding never scale credit by receipt ownership [28.49ms]
+(pass) held 0x46e068c2393e189fbc86632f67210af253a42aa8 operator stage and Solidity share exact tuple ABI and retain separate custody queries [6.36ms]
+
+scripts/recovery/dtf-migration/preparation.test.ts:
+(pass) normalizes native integer strings without floating point [0.04ms]
+(pass) rejects unknown or non-native amount  [0.02ms]
+(pass) rejects unknown or non-native amount -1
+(pass) rejects unknown or non-native amount 1.5
+(pass) rejects unknown or non-native amount 1e18
+(pass) rejects unknown or non-native amount 0 [0.01ms]
+(pass) rejects unknown or non-native amount null
+(pass) rejects unknown or non-native amount 115792089237316195423570985008687907853269984665640564039457584007913129639936 [0.01ms]
+(pass) emits full separate replacements and independently quoted native credits [27.61ms]
+(pass) normalization is stable under reordered records and source bindings [3.85ms]
+(pass) full replacements change identities instead of generating credit deltas [4.13ms]
+(pass) rejects wrong chain domain before accepting payloads [5.51ms]
+(pass) rejects wrong block domain before accepting payloads [7.38ms]
+(pass) rejects wrong snapshot domain before accepting payloads [15.89ms]
+(pass) rejects wrong proxy domain before accepting payloads [6.95ms]
+(pass) rejects wrong package domain before accepting payloads [9.80ms]
+(pass) rejects source tampering rather than trusting quoted originals [3.88ms]
+(pass) rejects originals that do not match their raw proof [3.54ms]
+(pass) rejects missing or zero NFT original wallets at preparation boundary [3.47ms]
+(pass) rejects a wallet differing from the full recorded NFT original [3.70ms]
+(pass) wallet correction changes full configuration but not economic origin [3.73ms]
+(pass) NFT payload and configuration identity agree with final Solidity and typed stage ABIs [4.76ms]
+(pass) rejects unknown contributions and arbitrary credit fields at the schema boundary [3.08ms]
+(pass) rejects overlapping originals and missing origin partitions [3.18ms]
+(pass) blocks earlier-liquid without forging executable config [3.34ms]
+(pass) blocks weighted-receipt without forging executable config [3.38ms]
+(pass) blocks earlier-receipt without forging executable config [3.46ms]
+(pass) blocks token-staking without forging executable config [3.44ms]
+(pass) blocks underlying-se without forging executable config [3.57ms]
+(pass) blocks fungible-lp without forging executable config [3.47ms]
+(pass) blocks earlier-liquidation without forging executable config [3.33ms]
+(pass) rejects a nonconserving origin partition [3.94ms]
+(pass) rejects combined quotes that differ from independent frozen component quotes [21.59ms]
+(pass) revalidates persisted manifest payloads and refuses overwrite [103.97ms]
+(pass) actual CLI prepares and validates through read-only transport [194.08ms]
+(pass) rejects missing RPC and synthetic nonlocal endpoints [5.35ms]
+(pass) rejects ambiguous or executing preparation arguments prepare --input a --input b --output c [0.07ms]
+(pass) rejects ambiguous or executing preparation arguments validate --manifest x --broadcast [0.02ms]
+(pass) rejects ambiguous or executing preparation arguments validate --manifest x --execute-local [0.01ms]
+(pass) rejects ambiguous or executing preparation arguments prepare --input a
+(pass) rejects invalid recovery fields and unproved multi-conversion batches [4.02ms]
+(pass) preserves all category dispositions but emits no manifest for blocked exposure [4.95ms]
+
+scripts/recovery/dtf-migration/receipt-reconciliation.test.ts:
+(pass) source purchase basis is independently required in addition to the mint [4.37ms]
+(pass) routed input stays separate and cannot be attributed as a direct contribution [3.75ms]
+(pass) a shared transaction never assigns its entire direct inputs to each original [3.63ms]
+(pass) canonical association conflicts prohibit otherwise matching input attribution [3.42ms]
+(pass) wrong mint recipient is a conflict even with matching direct payment [6.22ms]
+(pass) indirect calls retain calldata and never receive direct claim decoding [3.92ms]
+(pass) receipt archive format cannot enter preparation, validation or execution loaders [0.10ms]
+(pass) conversion reconciliation preserves exact native output and blank historical principal [3.71ms]
+(pass) conversion ambiguity retains individual matches and never assigns aggregate output [3.92ms]
+(pass) unknown output remains null and missing rather than matching a zero transfer [3.40ms]
+(pass) recovery matching requires the exact declared asset [6.05ms]
+(pass) recovery matching requires the exact declared recipient [6.13ms]
+(pass) recovery matching requires the exact declared amount [5.19ms]
+(pass) recovery matching requires the exact declared index [5.42ms]
+(pass) recovery matching requires the exact declared block [5.90ms]
+(pass) conversion canonical contradiction remains a conflict with a matching output [4.75ms]
+(pass) selection parses native integers and rejects declared blocks beyond the anchor [4.36ms]
+
+scripts/recovery/dtf-migration/receipt.test.ts:
+(pass) complete wire collection authenticates and associates each known reference [13.14ms]
+(pass) collection stops before named requests on wrong-chain [7.10ms]
+(pass) collection stops before named requests on malformed-chain [7.61ms]
+(pass) wrong canonical anchor blocks every named collection [7.89ms]
+(pass) partial null failure stays explicit while unaffected transaction completes [13.24ms]
+(pass) partial missing failure stays explicit while unaffected transaction completes [13.49ms]
+(pass) partial rpc error failure stays explicit while unaffected transaction completes [11.51ms]
+(pass) partial wrong id failure stays explicit while unaffected transaction completes [10.73ms]
+(pass) partial wrong version failure stays explicit while unaffected transaction completes [11.46ms]
+(pass) partial malformed quantity failure stays explicit while unaffected transaction completes [10.66ms]
+(pass) contradictory association identifies transaction-hash [0.03ms]
+(pass) contradictory association identifies block-hash
+(pass) contradictory association identifies block-number [0.02ms]
+(pass) contradictory association identifies transaction-index
+(pass) contradictory association identifies receipt-endpoints
+(pass) contradictory association identifies block-membership
+(pass) contradictory association identifies canonical-header
+(pass) contradictory association identifies after-anchor
+(pass) contradictory association identifies transaction-reverted
+(pass) every log identity and strict ordering are verified [0.02ms]
+(pass) distinct references to one transaction deduplicate requests without losing rows [3.13ms]
+(pass) credential-bearing wire errors retain sanitized bytes and never claim raw capture [2.07ms]
+(pass) fresh exclusive publication refuses an existing directory before network requests [3.13ms]
+(pass) CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs [0.09ms]
+(pass) explicit conversion selection collects complete tables without purchasing references [10.09ms]
+(pass) conversion selection retains every row unavailable on anchor failure [6.17ms]
+(pass) selection rejects unknown values and cannot leak into execution commands [0.15ms]
+
+scripts/recovery/dtf-migration/weighted-liquid.test.ts:
+(pass) W-L requires known original wallet, quantity, components and origin, not current holdings [5.26ms]
+(pass) W-L fixed source, original units and economic partition are required by the real payload builder [3.91ms]
+(pass) W-L complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [6.42ms]
+
+scripts/recovery/dtf-migration/weighted-receipt.test.ts:
+(pass) WS preparation requires complete known original gons and wallet, never floating-point or live-derived credit [6.06ms]
+(pass) WS builder enforces fixed source and gon partition and rejects origin reuse [4.29ms]
+(pass) WS evidence binding and frozen grouped quote survive exact preparation without scaling by gons [27.75ms]
+(pass) WS Solidity configuration and stage ABI preserve eligible gons separately from native surrender [6.54ms]
+
+scripts/recovery/dtf-migration/weighted-sy.test.ts:
+(pass) claimed SY uses every complete original component and exact measured split sums [4.54ms]
+(pass) claimed SY rejects unknown delivery and missing original review rather than inferring zero [3.53ms]
+(pass) missing claimed-origin certificate cannot use its reviewed evidence as ordinary SY [20.11ms]
+(pass) W-Y requires known original wallet, quantity, components and origin, not current holdings [4.68ms]
+(pass) W-Y fixed source, original units and economic partition are required by the real payload builder [3.67ms]
+(pass) W-Y complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0 [5.01ms]
+
+ 172 pass
+ 0 fail
+Ran 172 tests across 15 files. [1.60s]

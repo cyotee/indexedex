@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":98,\"method\":\"debug_traceTransaction\",\"params\":[\"0x07729211c10e153a23337ab0227648a7d5221cae3f089a802791bcb8d6b52405\",{\"tracer\":\"callTracer\"}]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":98,\"result\":{\"from\":\"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266\",\"gas\":\"0x4bf938\",\"gasUsed\":\"0x5208\",\"to\":\"0x00dd7939597bc43820ffb2b4e834f26924012b3d\",\"input\":\"0x\",\"value\":\"0xde0b6b3a7640000\",\"type\":\"CALL\"}}",
+  "httpStatus": 200,
+  "raw": true
+}

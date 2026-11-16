@@ -59,7 +59,7 @@ contract MigrationWeightedLiquidTest is MigrationRecoveryDonationForkBase {
     function _configureLiquid(address wallet_, uint256 q_) private returns (uint256) {
         Migration.WeightedLiquidEntitlementInput[] memory a_ = _liquidInput(wallet_, q_, 0.01 ether);
         vm.prank(migrationOwner);
-        allocation.configureWeightedLiquidEntitlements(a_);
+        allocation.configureWeightedLiquidEntitlements(a_, pricingId);
         return migration.weightedLiquidEntitlement(ORIGIN).credit;
     }
 
@@ -94,12 +94,12 @@ contract MigrationWeightedLiquidTest is MigrationRecoveryDonationForkBase {
         assertEq(s_.remainingCredit, c0_ - c1_);
         Migration.WeightedLiquidEntitlementInput[] memory a_ = _liquidInput(HOLDER, 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureWeightedLiquidEntitlements, (a_)));
+        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureWeightedLiquidEntitlements, (a_, pricingId)));
         assertFalse(replayed_);
         a_[0].originalUnits = 8;
         a_[0].originalEth = 0.02 ether;
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedLiquidEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedLiquidEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(abi.encode(migration.weightedLiquidSurrender(ORIGIN)), abi.encode(s_));
         vm.warp(firstTime_ + 30 days);
@@ -139,7 +139,7 @@ contract MigrationWeightedLiquidTest is MigrationRecoveryDonationForkBase {
         Migration.WeightedLiquidEntitlementInput[] memory large_ = _liquidInput(HOLDER, balance_ + 1, 0.01 ether);
         large_[0].originalId = bytes32("balance");
         vm.prank(migrationOwner);
-        allocation.configureWeightedLiquidEntitlements(large_);
+        allocation.configureWeightedLiquidEntitlements(large_, pricingId);
         _activate();
         vm.prank(HOLDER);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedLiquidEntitlement.selector, bytes32("absent")));
@@ -189,7 +189,7 @@ contract MigrationWeightedLiquidTest is MigrationRecoveryDonationForkBase {
         _surrenderLiquid(1);
         Migration.WeightedLiquidEntitlementInput[] memory a_ = _liquidInput(address(this), 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedLiquidEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedLiquidEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(migration.weightedLiquidEntitlement(ORIGIN).original.originalWallet, HOLDER);
         assertEq(migration.weightedLiquidSurrender(ORIGIN).consumedUnits, 1);

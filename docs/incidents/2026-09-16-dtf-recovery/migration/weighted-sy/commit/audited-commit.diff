@@ -1,0 +1,2242 @@
+commit 2baab6e58dafcc3fe5f9a94570d99987d58bf42b
+Author:     Cyotee Doge <not_cyotee@proton.me>
+AuthorDate: Wed Nov 11 15:17:43 2026 -0800
+Commit:     Cyotee Doge <not_cyotee@proton.me>
+CommitDate: Wed Nov 11 15:17:43 2026 -0800
+
+    Add verified bounded weighted SY surrender and recovery
+    
+    Co-authored-by: sisyphus-dev-ai <sisyphus-dev-ai@users.noreply.github.com>
+
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
+index aebb5998..b660eb70 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol
+@@ -77,6 +77,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+                     || m_.configuredOriginal[original_.entitlementId] != address(0)
+                     || m_.nftOriginal[original_.entitlementId]
+                     || m_.weightedLiquidEntitlements[original_.entitlementId].configured
++                    || m_.weightedSyEntitlements[original_.entitlementId].configured
+                     || (issuedTo_ != address(0) && issuedTo_ != input_.recipient)) {
+                     revert Migration.DuplicateOriginalEntitlement(original_.entitlementId);
+                 }
+@@ -117,7 +118,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+             for (uint256 j_; j_ < config_.entitlements.length; ++j_) {
+                 bytes32 originalId_ = config_.entitlements[j_].original.entitlementId;
+                 if (m_.issuedOriginal[originalId_] != address(0) || m_.nftOriginal[originalId_]
+-                    || m_.weightedLiquidEntitlements[originalId_].configured) {
++                    || m_.weightedLiquidEntitlements[originalId_].configured
++                    || m_.weightedSyEntitlements[originalId_].configured) {
+                     revert Migration.DuplicateOriginalEntitlement(originalId_);
+                 }
+                 m_.issuedOriginal[originalId_] = recipient_;
+@@ -143,7 +145,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+                 revert Migration.InvalidNftEntitlement(input_.collection, input_.tokenId);
+             }
+             if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
+-                || m_.weightedLiquidEntitlements[original_].configured) {
++                || m_.weightedLiquidEntitlements[original_].configured
++                || m_.weightedSyEntitlements[original_].configured) {
+                 revert Migration.DuplicateOriginalEntitlement(original_);
+             }
+             if (m_.nftSurrenders[input_.collection][input_.tokenId].consumed) {
+@@ -176,7 +179,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+                 revert Migration.InvalidWeightedLiquidEntitlement(original_);
+             }
+             if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
+-                || m_.nftOriginal[original_]) {
++                || m_.nftOriginal[original_] || m_.weightedSyEntitlements[original_].configured) {
+                 revert Migration.DuplicateOriginalEntitlement(original_);
+             }
+             Migration.WeightedLiquidSurrender storage surrender_ = m_.weightedLiquidSurrenders[original_];
+@@ -196,6 +199,41 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+         }
+     }
+ 
++    function configureWeightedSyEntitlements(Migration.WeightedSyEntitlementInput[] calldata inputs_)
++        external administration nonReentrant
++    {
++        Snapshot.Snapshot memory book_ = Repo._snapshot();
++        Repo.Storage storage m_ = Repo._layoutStruct();
++        for (uint256 i_; i_ < inputs_.length; ++i_) {
++            Migration.WeightedSyEntitlementInput calldata input_ = inputs_[i_];
++            if (block.chainid != 4663 || input_.source != Legacy.WEIGHTED_SY) {
++                revert Migration.UnsupportedWeightedSySource(block.chainid, input_.source);
++            }
++            bytes32 original_ = input_.originalId;
++            if (original_ == bytes32(0) || input_.originalWallet == address(0)
++                || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
++                revert Migration.InvalidWeightedSyEntitlement(original_);
++            }
++            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
++                || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured) {
++                revert Migration.DuplicateOriginalEntitlement(original_);
++            }
++            Migration.WeightedSySurrender storage surrender_ = m_.weightedSySurrenders[original_];
++            if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
++                revert Migration.WeightedSyIdentityConsumed(original_);
++            }
++            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
++            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
++            m_.weightedSyEntitlements[original_] =
++                Migration.WeightedSyEntitlement(true, input_, config_, credit_);
++            surrender_.remainingUnits = input_.originalUnits;
++            surrender_.remainingCredit = credit_;
++            emit Migration.WeightedSyEntitlementConfigured(
++                original_, config_, input_.originalWallet, input_.originalUnits, credit_
++            );
++        }
++    }
++
+     function activateMigration() external administration nonReentrant {
+         if (Repo._layoutStruct().ownerFirstBondTokenId == 0) revert Migration.MigrationOwnerFirstBondRequired();
+         bytes4[] memory selectors_ = _administrationSelectors();
+@@ -215,7 +253,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+     }
+ 
+     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
+-        selectors_ = new bytes4[](7);
++        selectors_ = new bytes4[](8);
+         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
+         selectors_[1] = Allocation.captureMigrationSnapshot.selector;
+         selectors_[2] = Allocation.configureIndependentAllocations.selector;
+@@ -223,6 +261,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
+         selectors_[4] = Allocation.activateMigration.selector;
+         selectors_[5] = Allocation.configureNftEntitlements.selector;
+         selectors_[6] = Allocation.configureWeightedLiquidEntitlements.selector;
++        selectors_[7] = Allocation.configureWeightedSyEntitlements.selector;
+     }
+ 
+     function bootstrapMigrationReserve(
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol
+index 70c9a33e..ea845611 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol
+@@ -7,7 +7,7 @@ import {UniswapV4DetfMigrationTarget} from "./UniswapV4DetfMigrationTarget.sol";
+ contract UniswapV4DetfMigrationFacet is UniswapV4DetfMigrationTarget, IFacet {
+ function facetName() public pure returns(string memory) { return "UniswapV4DetfMigrationFacet"; }
+ function facetInterfaces() public pure returns(bytes4[] memory ids_) { ids_ = new bytes4[](2); ids_[0] = type(Migration).interfaceId; ids_[1] = type(IERC721Receiver).interfaceId; }
+-function facetFuncs() public pure returns(bytes4[] memory funcs_) { funcs_ = new bytes4[](22);
++function facetFuncs() public pure returns(bytes4[] memory funcs_) { funcs_ = new bytes4[](26);
+ funcs_[0] = Migration.migrationActivated.selector;
+ funcs_[1] = Migration.migrationSyRewardToken.selector;
+ funcs_[2] = Migration.migrationSnapshotSource.selector;
+@@ -29,6 +29,10 @@ funcs_[17] = Migration.weightedLiquidEntitlement.selector;
+ funcs_[18] = Migration.weightedLiquidSurrender.selector;
+ funcs_[19] = Migration.previewWeightedLiquidSurrender.selector;
+ funcs_[20] = Migration.surrenderMigrationWeightedLiquid.selector;
+-funcs_[21] = Migration.migrationOwnerFirstBondTokenId.selector; }
++funcs_[21] = Migration.migrationOwnerFirstBondTokenId.selector;
++funcs_[22] = Migration.weightedSyEntitlement.selector;
++funcs_[23] = Migration.weightedSySurrender.selector;
++funcs_[24] = Migration.previewWeightedSySurrender.selector;
++funcs_[25] = Migration.surrenderMigrationWeightedSy.selector; }
+ function facetMetadata() external pure returns(string memory,bytes4[] memory,bytes4[] memory) { return (facetName(),facetInterfaces(),facetFuncs()); }
+ }
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol
+index e4e163ac..209e3a95 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol
+@@ -53,6 +53,8 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
+                     Legacy.unstakeWeighted(step_.amount, deadline_);
+                 } else if (step_.stage == Stage.WeightedConvert) {
+                     Legacy.convertWeighted(step_.amount, step_.minimum, deadline_);
++                } else if (step_.stage == Stage.WeightedSyRedeem) {
++                    Legacy.redeemWeightedSy(step_.amount, step_.minimum);
+                 } else _donateRecovery(step_.amount, step_.minimum);
+             }
+         }
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol
+index 9f02b319..6d73efdc 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol
+@@ -39,6 +39,8 @@ library UniswapV4DetfMigrationRepo {
+         mapping(bytes32 => Migration.WeightedLiquidEntitlement) weightedLiquidEntitlements;
+         mapping(bytes32 => Migration.WeightedLiquidSurrender) weightedLiquidSurrenders;
+         uint256 ownerFirstBondTokenId;
++        mapping(bytes32 => Migration.WeightedSyEntitlement) weightedSyEntitlements;
++        mapping(bytes32 => Migration.WeightedSySurrender) weightedSySurrenders;
+     }
+ 
+     struct NftReceipt {
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol
+index d0d7e4fb..0af9fb9f 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol
+@@ -116,6 +116,71 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
+         );
+     }
+ 
++    function weightedSyEntitlement(bytes32 originalId_)
++        external view returns (Migration.WeightedSyEntitlement memory)
++    { return Repo._layoutStruct().weightedSyEntitlements[originalId_]; }
++
++    function weightedSySurrender(bytes32 originalId_)
++        external view returns (Migration.WeightedSySurrender memory)
++    { return Repo._layoutStruct().weightedSySurrenders[originalId_]; }
++
++    function previewWeightedSySurrender(bytes32 originalId_, uint256 amount_)
++        public view returns (uint256 credit_)
++    {
++        Repo.Storage storage m_ = Repo._layoutStruct();
++        Migration.WeightedSyEntitlement storage config_ = m_.weightedSyEntitlements[originalId_];
++        if (!config_.configured) revert Migration.InvalidWeightedSyEntitlement(originalId_);
++        if (block.chainid != 4663 || config_.original.source != Legacy.WEIGHTED_SY) {
++            revert Migration.UnsupportedWeightedSySource(block.chainid, config_.original.source);
++        }
++        Migration.WeightedSySurrender storage s_ = m_.weightedSySurrenders[originalId_];
++        if (amount_ == 0 || amount_ > s_.remainingUnits) {
++            revert Migration.InvalidWeightedSyQuantity(amount_, s_.remainingUnits);
++        }
++        credit_ = amount_ == s_.remainingUnits
++            ? s_.remainingCredit : Math.mulDiv(s_.remainingCredit, amount_, s_.remainingUnits);
++        if (credit_ == 0) revert Migration.InvalidWeightedSyEntitlement(originalId_);
++    }
++
++    function surrenderMigrationWeightedSy(bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
++        external nonReentrant returns (uint256 bondTokenId_, uint256 credit_)
++    {
++        if (!Repo._layoutStruct().activated) revert Migration.MigrationSurrenderClosed();
++        _requireIdleChildren();
++        _requireNotDisabled();
++        _requireReserveLive();
++        if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
++        credit_ = previewWeightedSySurrender(originalId_, amount_);
++        Repo.Storage storage m_ = Repo._layoutStruct();
++        Migration.WeightedSyEntitlement storage config_ = m_.weightedSyEntitlements[originalId_];
++        if (msg.sender != config_.original.originalWallet) {
++            revert Migration.NotOriginalWeightedSyWallet(msg.sender, config_.original.originalWallet);
++        }
++        if (credit_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, credit_);
++        IERC20 token_ = IERC20(Legacy.WEIGHTED_SY);
++        uint256 walletBefore_ = token_.balanceOf(msg.sender);
++        uint256 custodyBefore_ = token_.balanceOf(address(this));
++        token_.safeTransferFrom(msg.sender, address(this), amount_);
++        uint256 walletAfter_ = token_.balanceOf(msg.sender);
++        uint256 custodyAfter_ = token_.balanceOf(address(this));
++        if (walletAfter_ > walletBefore_ || walletBefore_ - walletAfter_ != amount_
++            || custodyAfter_ < custodyBefore_ || custodyAfter_ - custodyBefore_ != amount_) {
++            revert Migration.WeightedSyCustodyFailed();
++        }
++        Migration.WeightedSySurrender storage s_ = m_.weightedSySurrenders[originalId_];
++        s_.consumedUnits += amount_;
++        s_.deliveredCredit += credit_;
++        s_.remainingUnits -= amount_;
++        s_.remainingCredit -= credit_;
++        RecoveryRepo._layoutStruct().inventory[Legacy.WEIGHTED_SY] += amount_;
++        _realizeExpansionIfNeeded();
++        bondTokenId_ = Repo._fundBond(credit_, msg.sender);
++        _syncAllExpectedHoldReserves();
++        emit Migration.MigrationWeightedSySurrendered(
++            originalId_, config_.configurationId, msg.sender, amount_, credit_, bondTokenId_
++        );
++    }
++
+     function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32) {
+         return NftLib.originalId(collection_, tokenId_);
+     }
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
+index a7fdae9b..9e05a12b 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol
+@@ -160,6 +160,34 @@ interface IUniswapV4DetfMigration is
+         uint256 remainingCredit;
+     }
+ 
++    /// @notice Original weighted SY exposure in native nine-decimal static shares, not receipt units.
++    /// @dev originalId is the same wallet-independent economic origin used across representations.
++    /// Holdings establish custody only; originalUnits and BOTH known contribution components are inputs.
++    struct WeightedSyEntitlementInput {
++        bytes32 originalId;
++        address originalWallet;
++        address source;
++        uint256 originalUnits;
++        uint256 originalEth;
++        uint256 originalDtf;
++        bytes32 evidenceId;
++        bool contributionsKnown;
++    }
++
++    struct WeightedSyEntitlement {
++        bool configured;
++        WeightedSyEntitlementInput original;
++        bytes32 configurationId;
++        uint256 credit;
++    }
++
++    struct WeightedSySurrender {
++        uint256 consumedUnits;
++        uint256 deliveredCredit;
++        uint256 remainingUnits;
++        uint256 remainingCredit;
++    }
++
+     /// @notice One selected representation of an external reserve leg, funded from booked donations.
+     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
+     /// The self leg is generated internally and must not be supplied in this array.
+@@ -192,6 +220,12 @@ interface IUniswapV4DetfMigration is
+     error InvalidWeightedLiquidQuantity(uint256 requested, uint256 remaining);
+     error WeightedLiquidCustodyFailed();
+     error WeightedLiquidIdentityConsumed(bytes32 originalId);
++    error UnsupportedWeightedSySource(uint256 chainId, address source);
++    error InvalidWeightedSyEntitlement(bytes32 originalId);
++    error NotOriginalWeightedSyWallet(address caller, address originalWallet);
++    error InvalidWeightedSyQuantity(uint256 requested, uint256 remaining);
++    error WeightedSyCustodyFailed();
++    error WeightedSyIdentityConsumed(bytes32 originalId);
+ 
+     event MigrationCapitalReceived(address indexed donor, address indexed token, uint256 amount);
+     event MigrationCapitalConsumed(address indexed token, uint256 amount);
+@@ -224,6 +258,21 @@ interface IUniswapV4DetfMigration is
+         bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+         uint256 units, uint256 credit, uint256 bondTokenId
+     );
++    event WeightedSyEntitlementConfigured(
++        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
++        uint256 originalUnits, uint256 credit
++    );
++    event MigrationWeightedSySurrendered(
++        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
++        uint256 units, uint256 credit, uint256 bondTokenId
++    );
++
++    function weightedSyEntitlement(bytes32 originalId_) external view returns (WeightedSyEntitlement memory);
++    function weightedSySurrender(bytes32 originalId_) external view returns (WeightedSySurrender memory);
++    function previewWeightedSySurrender(bytes32 originalId_, uint256 amount_) external view returns (uint256 credit_);
++    /// @notice Stage2 only: pull configured original-wallet WY shares for one fresh exactly funded cliff bond.
++    function surrenderMigrationWeightedSy(bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
++        external returns (uint256 bondTokenId_, uint256 credit_);
+ 
+     function weightedLiquidEntitlement(bytes32 originalId_)
+         external view returns (WeightedLiquidEntitlement memory);
+@@ -295,9 +344,13 @@ interface IUniswapV4DetfMigration is
+ }
+ 
+ /// @notice Entire current-core administration surface; current-owner-only and removed at activation.
+-/// @dev Only the two admitted NFT sources and weighted liquid source; no attribution shortcut or price setter.
++/// @dev Only the two admitted NFT sources, weighted liquid and weighted SY; no attribution shortcut or price setter.
+ /// Do not place permanent reads on the implementing allocation facet.
+ interface IUniswapV4DetfMigrationAllocation {
++    /// @notice Stage1 full replacement on the frozen book; static WY shares, no issuance or live valuation.
++    function configureWeightedSyEntitlements(
++        IUniswapV4DetfMigration.WeightedSyEntitlementInput[] calldata inputs_
++    ) external;
+     /// @notice Stage 1 full replacement initializes Q/C from original units and the frozen quote without issuance.
+     /// @dev Surrender is closed while this selector exists; execution facts are never cleared.
+     function configureWeightedLiquidEntitlements(
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol
+index 16ed1770..0c0b5d74 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-/// @notice Retained, current-owner recovery of the two admitted chain-4663 NFT sources.
++/// @notice Retained current-owner recovery of admitted chain-4663 NFTs, weighted liquid and SY.
+ interface IUniswapV4DetfMigrationRecovery {
+     enum Stage {
+         WeightedClaim,
+@@ -11,11 +11,12 @@ interface IUniswapV4DetfMigrationRecovery {
+         WeightedConvert,
+         EarlierClaim,
+         EarlierSale,
+-        Donate
++        Donate,
++        WeightedSyRedeem
+     }
+ 
+     /// @dev NFT stages use tokenId; conversions/donation use amount. minimum is native DTF
+-    /// output, external earlier receipt shares, or reserve LP respectively. Unused fields must
++    /// output, external earlier receipt shares, reserve LP, or native WS output for SY redemption. Unused fields must
+     /// be zero. No target, selector, recipient, pretransfer flag or route can be supplied.
+     struct Step {
+         Stage stage;
+@@ -44,6 +45,11 @@ interface IUniswapV4DetfMigrationRecovery {
+     );
+     event MigrationRecoverySold(uint256 indexed tokenId, uint256 originalShares, uint256 receiptShares, uint256 rewards);
+     event MigrationRecoveryConverted(address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut);
++    /// @notice Actual WS gons received from selected WY; conversion dust stays at the legacy wrapper.
++    /// @dev The synchronized divisor values recovery only, never configured compensation.
++    event MigrationWeightedSyRedeemed(
++        uint256 shares, uint256 receiptUnits, uint256 receivedGons, uint256 divisor, uint256 conversionDustGons
++    );
+     /// @notice Native representation of existing attributed gons at a synchronized divisor.
+     /// @dev Not a claim, receipt transfer, principal issuance or compensation.
+     event MigrationRecoveryRevalued(
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol
+index 1e9e2fb7..a38cb257 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol
+@@ -29,6 +29,12 @@ interface IMigrationWeightedReceipt is IMigrationLegacyExchange {
+     function stakingState() external view returns (StakingState memory);
+ }
+ 
++/// @notice Authenticated historical staking SY route; shares and returned receipt units are native nine decimals.
++interface IMigrationWeightedSy {
++    function redeem(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_, bool internalBalance_)
++        external returns (uint256 amountOut_);
++}
++
+ interface IMigrationEarlierClaims {
+     function claimRewards(uint256 tokenId_, address recipient_) external returns (uint256);
+ }
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol
+index e4b7d4e9..a8b1aa64 100644
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol
+@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
+ import {IUniswapV4DetfMigration as Migration} from "../interfaces/IUniswapV4DetfMigration.sol";
+ import {IUniswapV4DetfMigrationRecovery as Recovery} from "../interfaces/IUniswapV4DetfMigrationRecovery.sol";
+ import {UniswapV4DetfMigrationRepo as MigrationRepo} from "../UniswapV4DetfMigrationRepo.sol";
+@@ -10,7 +11,7 @@ import {UniswapV4DetfMigrationRecoveryRepo as Repo} from "../UniswapV4DetfMigrat
+ import {IMigrationLegacyNft, IMigrationWeightedNft, IMigrationEarlierNft} from "./IMigrationLegacyNft.sol";
+ import {MigrationLegacyNftLib as NftLib} from "./MigrationLegacyNftLib.sol";
+ import {
+-    IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationLegacyExchange,
++    IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationWeightedSy, IMigrationLegacyExchange,
+     IMigrationEarlierClaims, IMigrationEarlierSale, IMigrationEarlierReceipt
+ } from "./IMigrationLegacyRecovery.sol";
+ 
+@@ -20,6 +21,7 @@ library MigrationLegacyRecoveryLib {
+ 
+     address internal constant WEIGHTED_RECEIPT = 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c;
+     address internal constant WEIGHTED_DETF = 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7;
++    address internal constant WEIGHTED_SY = 0xB55604CF4dcdABB362078e106D20F98512391EdF;
+     address internal constant EARLIER_DETF = 0xaf0E1967c8F755c747615c5427108Bc549CA1122;
+     address internal constant EARLIER_RECEIPT = 0x4AC89aD061A531FA62ddceED53520C2750113b01;
+     address internal constant DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
+@@ -70,6 +72,40 @@ library MigrationLegacyRecoveryLib {
+         emit Recovery.MigrationRecoveryClaimed(NftLib.WEIGHTED, id_, principal_, rewards_);
+     }
+ 
++    function redeemWeightedSy(uint256 shares_, uint256 minimum_) internal {
++        Repo.Storage storage r_ = Repo._layoutStruct();
++        Repo._debit(r_, WEIGHTED_SY, shares_);
++        IERC20 sy_ = IERC20(WEIGHTED_SY);
++        IMigrationWeightedReceipt receipt_ = IMigrationWeightedReceipt(WEIGHTED_RECEIPT);
++        uint256 sharesBefore_ = sy_.balanceOf(address(this));
++        uint256 gonsBefore_ = receipt_.gonsOf(address(this));
++        uint256 wrapperBefore_ = receipt_.gonsOf(WEIGHTED_SY);
++        uint256 out_ = IMigrationWeightedSy(WEIGHTED_SY).redeem(
++            address(this), shares_, WEIGHTED_RECEIPT, minimum_, false
++        );
++        uint256 sharesAfter_ = sy_.balanceOf(address(this));
++        uint256 gonsAfter_ = receipt_.gonsOf(address(this));
++        uint256 wrapperAfter_ = receipt_.gonsOf(WEIGHTED_SY);
++        uint256 k_ = receipt_.stakingState().gonsPerUnit;
++        if (k_ == 0 || sharesAfter_ > sharesBefore_ || sharesBefore_ - sharesAfter_ != shares_
++            || gonsAfter_ < gonsBefore_ || wrapperAfter_ > wrapperBefore_ || out_ == 0 || out_ < minimum_) {
++            revert Recovery.RecoveryDeltaMismatch(WEIGHTED_SY);
++        }
++        uint256 received_ = gonsAfter_ - gonsBefore_;
++        // Reproduce the archived source's two floors at its synchronized divisor, not a live
++        // pre-call balance/rate or a simplified shares*1e36/k quote.
++        uint256 expected_ = Math.mulDiv(shares_, Math.mulDiv(1e36, 1e18, k_), 1e18);
++        if (out_ != expected_ || received_ != out_ * k_ || wrapperBefore_ - wrapperAfter_ != received_
++            || gonsAfter_ / k_ - gonsBefore_ / k_ != out_) {
++            revert Recovery.RecoveryDeltaMismatch(WEIGHTED_RECEIPT);
++        }
++        Repo._reconcileWeighted(r_, WEIGHTED_RECEIPT, k_);
++        r_.weightedGons += received_;
++        r_.inventory[WEIGHTED_RECEIPT] += out_;
++        emit Recovery.MigrationRecoveryConverted(WEIGHTED_SY, WEIGHTED_RECEIPT, shares_, out_);
++        emit Recovery.MigrationWeightedSyRedeemed(shares_, out_, received_, k_, shares_ * 1e36 - received_);
++    }
++
+     function unstakeWeighted(uint256 amount_, uint256 deadline_) internal {
+         Repo.Storage storage r_ = Repo._layoutStruct();
+         if (amount_ == 0 || r_.weightedGons == 0) {
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+index 280780b3..9d3655da 100644
+--- a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -20,7 +20,7 @@ Preparation requires an actual funded and captured snapshot. It verifies raw
+ source SHA-256 and byte lengths, full original proof objects, origin
+ partitions, code/domain identities, the complete immutable snapshot and
+ separate ETH/DTF frozen quotes. It writes full `independent.json` and
+-`nfts.json` and `weighted-liquid.json` review mirrors plus the accepted `manifest.json`. These contain
++`nfts.json`, `weighted-liquid.json` and `weighted-sy.json` review mirrors plus the accepted `manifest.json`. These contain
+ configuration, not issued bonds. Every write is exclusive; retain a failed
+ directory as failed evidence and select a fresh output directory.
+ 
+@@ -110,14 +110,15 @@ same checkpoint after interruption: a mined purchase is reconciled from its
+ original transaction and receipt, not purchased again. Ownership or NFT
+ transfer does not erase the instance's completed purchase. No second Stage1
+ purchase or other acquisition route is opened; Stage1 rewards stay retained.
+-The fixed18563 rehearsal uses a clearly synthetic 1 ETH-unit payment and
++The fixed18564 rehearsal uses a clearly synthetic 1 ETH-unit payment and
+ 90-day ordinary linear bond, tests a mined-before-checkpoint purchase and
+ fresh-process resumes, then activates and performs an actual nonowner
+ ordinary deposit. This is not a compensation cliff or a public execution
+ recommendation.
+ 
+-Current owner-bond evidence is written under
+-`weighted-liquid/owner-bond-correction/`; previous Stage2 producer/verifier
++Historical owner-bond evidence is retained under
++`weighted-liquid/owner-bond-correction/`; new bounded WY evidence is under
++`weighted-sy/implementation/`; previous Stage2 producer/verifier
+ reports and receipts remain immutable history. Runtime manifests bind the
+ current main plan r5, PRD r22 and owner-first-bond directive, not stale
+ worktree requirement copies.
+@@ -176,15 +177,15 @@ The fixed rehearsal invocation is:
+ bun scripts/recovery/dtf-migration/cli.ts rehearse \
+   --rpc-alias robinhood_mainnet_alchemy \
+   --fork-block 108944663 \
+-  --port 18563 \
+-  --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints \
+-  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid
++  --port 18564 \
++  --checkpoint .omo-runtime/dtf-migration-weighted-sy/checkpoints \
++  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/implementation
+ ```
+ 
+ The source pin is chain4663, L2 block108944663, hash
+ `0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733`,
+ not the post-funding snapshot. Rehearsal retains actual registry
+-deployment and mined receipts, both mined-before-checkpoint interruptions,
++deployment and mined receipts, all three mined-before-checkpoint interruptions,
+ fresh-process resume, no duplicate funding/issuance, unchanged unclaimed
+ supply, reordered remaining work, domain rejections, accrued attributed-gon
+ recovery and owned runtime cleanup. Current original-wallet implementation
+@@ -205,16 +206,16 @@ Every local command and receipt is retained under an exclusive rehearsal
+ evidence directory. Journals are copied there before the owned node exits
+ and its temporary checkpoint root is removed.
+ 
+-Run from the weighted-liquid worktree on
+-`work/dtf-migration-phase-13-weighted-liquid`, based on
+-`2c2b3370ded30cae1662329025d4fb58f7197330`. The existing archive alias is
++Run from the weighted-sy worktree on
++`work/dtf-migration-phase-14-weighted-sy`, based on audited
++`75d513cb8b36e53f14c8aa3a352f21703ad91ba1`. The existing archive alias is
+ resolved through `forge config --json`. On this workstation its credential
+ is in the existing interactive login environment; `/bin/zsh -lic` can wrap
+ the exact command above. Do not print the resolved endpoint. The wrapper
+ uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
+ and the existing warm `out/`, `cache_forge/` and dependency links.
+ 
+-Port 18563 must be unused and the chosen checkpoint directory absent before
++Port 18564 must be unused and the chosen checkpoint directory absent before
+ starting. The command creates its own node and checkpoint directory; it
+ does not adopt an existing node or overwrite an old checkpoint. EIP-170
+ remains enabled. The local 100-million block gas cap, one-billion Forge
+@@ -297,7 +298,7 @@ Default resumes are separately checked to leave the nonce unchanged.
+ 
+ ### Reading receipts and cleanup
+ 
+-Each `weighted-liquid/stage2-correction/rehearsal-<run>/` retains the redacted Anvil argv, Solar
++Each `weighted-sy/implementation/rehearsal-<run>/` retains the redacted Anvil argv, Solar
+ environment command, numbered CLI command/exit records and logs, actual
+ infrastructure/fixture receipts, deterministic data and `journal-*`
+ directories. `.intent.json` contains signed local-development transaction
+@@ -329,7 +330,7 @@ artifacts and dependency links.
+ | Earlier liquid DETF | H3/H6 original native-unit configuration/surrender absent; ED liquidation unproved |
+ | Weighted receipt | H3/H4 original gon/credit mapping and synchronized fungible surrender absent |
+ | Earlier receipt | H3/H6 original share denominator/fractional attribution unproved; earlier SE exits disabled |
+-| Weighted SY | H3/H5 original share mapping and proxy surrender/recovery composition absent |
++| Weighted SY | Fixed WY integration is bounded to synthetic original-wallet/static-share/component inputs; approved operational allocations remain absent |
+ | TokenStaking raw weight | `reassign` debits caller, with no approved pull or recipient callback; ordinary Migration atomic surrender unsupported |
+ | Claim-vault rights | Direct-user 19-decimal share records/integration absent; infrastructure ownership does not prove user authority |
+ | Underlying SE shares | Direct-user records/integration absent; earlier and weighted WETH SE disabled; working 28-decimal DTF SE needs its own composition |
+@@ -341,3 +342,41 @@ rows. None obtains invented credit, an executable substitute or a no-op
+ success. Synthetic originals, external liquidity and local funding are
+ operational test data, not approved allocations. Full original task 9 and
+ release remain open.
++
++## Weighted SY increment
++
++The required `weightedSy` input array uses the same original fields as
++`weightedLiquid`, but only WY `0xB55604CF4dcdABB362078e106D20F98512391EdF`
++on chain4663 is accepted. Q0/Q/q are native nine-decimal **static shares**.
++The canonical origin must be shared across WY, WD, either NFT and independent
++compensation for the same exposure. No wrapper/backing second award is allowed.
++Both ETH and DTF components must be explicitly known. C0 uses the frozen quote;
++partial credit floors C*q/Q and final surrender receives all remaining credit.
++
++Stage1 loading is full-value replacement without issuance. Stage1 surrender
++rejects. The owner-paid first ordinary bond still precedes activation, whose
++atomic cut now removes all eight administration selectors. Only the configured
++original wallet with actual WY allowance and shares can surrender in Stage2;
++each successful pull creates one fresh exactly funded 90-day cliff bond.
++
++Append-only recovery enum `WeightedSyRedeem` is ordinal8. Select `tokenId=0`,
++`amount` in WY shares and `minimum` in native WS units. The fixed legacy
++`redeem(MIG,shares,WS,minimum,false)` call burns only booked WY. Actual WS gons,
++source synchronization and conversion dust are reconciled before existing
++`WeightedUnstake`, `WeightedConvert` and fixed-destination `Donate` stages.
++Unsolicited WY/WS and preexisting attributed NFT gons never create compensation.
++A failed selected batch rolls back its burn and all downstream changes.
++
++The fixed18564 rehearsal preserves the prior NFT/W-L sequence and donation,
++independent-issuance and owner-purchase interruption resumes. It adds synthetic
++WY Q0=8094, then replaces Q0 with8087 and ETH with6000000000000000 wei in
++Stage1, leaving seven shares for an unsolicited-custody witness. Actual
++partial/final surrenders and selected redemption/unstake/conversion/donation
++receipts are recorded in `weighted-sy-{stage1,partial,final}.json`; final
++bond IDs and outputs come from receipts, not the historical8094-to9245 quote.
++The final surrender occurs one simulated day later. Source bindings and failed
++whole-batch rollback receipts are retained beside those observations.
++
++Other categories remain required with their recorded source/input limitations.
++This increment supplies neither an operational allocation dataset nor a
++full-category, target-gas or public-execution acceptance.
+diff --git a/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+index 06ecabbb..b4d01269 100644
+--- a/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
++++ b/scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol
+@@ -92,6 +92,20 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
+         vm.stopBroadcast();
+     }
+ 
++    function configureWeightedSy(Allocation proxy_, Migration.WeightedSyEntitlementInput[] calldata inputs_) external {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        proxy_.configureWeightedSyEntitlements(inputs_);
++        vm.stopBroadcast();
++    }
++
++    function surrenderWeightedSy(Migration proxy_, bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
++        external returns (uint256 bondTokenId_, uint256 credit_)
++    {
++        vm.startBroadcast(vm.envAddress("SENDER"));
++        (bondTokenId_, credit_) = proxy_.surrenderMigrationWeightedSy(originalId_, amount_, minimum_, deadline_);
++        vm.stopBroadcast();
++    }
++
+     /// @notice Genuine paid ordinary purchase, with explicit operator amounts and duration.
+     function ownerFirstBond(Migration proxy_, IERC20 token_, uint256 amount_, uint256 duration_, uint256 deadline_)
+         external returns (uint256 bondId_, uint256 lpOut_)
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+index 19b4bf66..deaf2f95 100644
+--- a/scripts/recovery/dtf-migration/cli.ts
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -29,9 +29,9 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
+ --reverse reorders only independent unsettled configuration/issuance rows.
+ --fault-after-mined is restricted to synthetic-local interruption rehearsal.
+   bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+-    --fork-block 108944663 --port 18563
+-    --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints
+-    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid
++    --fork-block 108944663 --port 18564
++    --checkpoint .omo-runtime/dtf-migration-weighted-sy/checkpoints
++    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/implementation
+ `;
+ 
+ export async function main(args: readonly string[]): Promise<void> {
+diff --git a/scripts/recovery/dtf-migration/execution-plan.ts b/scripts/recovery/dtf-migration/execution-plan.ts
+index 2b5348c2..90c572d6 100644
+--- a/scripts/recovery/dtf-migration/execution-plan.ts
++++ b/scripts/recovery/dtf-migration/execution-plan.ts
+@@ -58,6 +58,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
+       for (const row of p.payloads.configure.independent) add("configureIndependentAllocations", [[row.input]]);
+       for (const row of p.payloads.configure.nfts) add("configureNftEntitlements", [[row.input]]);
+       for (const row of p.payloads.configure.weightedLiquid) add("configureWeightedLiquidEntitlements", [[row.input]]);
++      for (const row of p.payloads.configure.weightedSy) add("configureWeightedSyEntitlements", [[row.input]]);
+       if (!operations.length) throw new ExecutionError("DOMAIN", "no supported configuration selected");
+       break;
+     }
+@@ -78,7 +79,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
+       const h = requirePrepared(domain).payloads.harvest;
+       if (!h.steps.length) throw new ExecutionError("DOMAIN", "no admitted recovery step selected");
+       const names = ["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
+-        "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate"] as const;
++        "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem"] as const;
+       add("recoverMigrationNfts", [h.steps.map((s) => ({ ...s, stage: names.indexOf(s.stage) })), h.deadline], abis.recovery);
+       break;
+     }
+diff --git a/scripts/recovery/dtf-migration/execution-state.ts b/scripts/recovery/dtf-migration/execution-state.ts
+index 788b2936..66eeefff 100644
+--- a/scripts/recovery/dtf-migration/execution-state.ts
++++ b/scripts/recovery/dtf-migration/execution-state.ts
+@@ -150,6 +150,33 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
+       }
+       break;
+     }
++    case "configureWeightedSyEntitlements": {
++      requireEvent("WeightedSyEntitlementConfigured");
++      const rows: unknown = abis.allocation.decodeFunctionData(item.method, item.transaction.data)[0];
++      if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid weighted SY configuration array");
++      for (const row of rows) {
++        const originalId = String(tuple(row).getValue("originalId"));
++        const expected = requirePrepared(domain).payloads.configure.weightedSy.find((r) => r.input.originalId === originalId);
++        if (!expected) throw new ExecutionError("STATE", "unbound weighted SY configuration");
++        const actual = tuple((await query("weightedSyEntitlement", [originalId]))[0]);
++        if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== expected.configurationId
++          || String(actual.getValue("credit")) !== expected.quotedCredit
++          || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== expected.input.originalWallet
++          || !events.some((e) => e.name === "WeightedSyEntitlementConfigured"
++            && e.values[0] === originalId && e.values[1] === expected.configurationId
++            && e.values[2]?.toLowerCase() === expected.input.originalWallet
++            && e.values[3] === expected.input.originalUnits && e.values[4] === expected.quotedCredit)) {
++          throw new ExecutionError("STATE", "weighted SY payload, storage or event differs");
++        }
++        const unspent = tuple((await query("weightedSySurrender", [originalId]))[0]);
++        if (unspent.getValue("consumedUnits") !== 0n || unspent.getValue("deliveredCredit") !== 0n
++          || String(unspent.getValue("remainingUnits")) !== expected.input.originalUnits
++          || String(unspent.getValue("remainingCredit")) !== expected.quotedCredit) {
++          throw new ExecutionError("STATE", "Stage1 weighted SY loading did not initialize the full Q/C baseline");
++        }
++      }
++      break;
++    }
+     case "issueIndependentAllocations": {
+       requireEvent("IndependentAllocationIssued");
+       for (const event of events.filter((e) => e.name === "IndependentAllocationIssued")) {
+@@ -200,7 +227,7 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
+         "MigrationRecoveryDonated"].includes(e.name))) throw new ExecutionError("STATE", "recovery has no economic event");
+       const gons = await rpc.call(m.proxy, abis.recovery, "migrationRecoveryGons", [], at);
+       state["attributedGons"] = valueString(gons[0]);
+-      for (const token of ["0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
++      for (const token of ["0xb55604cf4dcdabb362078e106d20f98512391edf", "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+         "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7", "0xee5576fa1bcaa380e591d01245f406f3f384eb01"]) {
+         state[`inventory:${token}`] = valueString((await rpc.call(m.proxy, abis.recovery, "migrationRecoveryInventory", [token], at))[0]);
+       }
+@@ -255,5 +282,14 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
+       throw new ExecutionError("STATE", "weighted liquid configuration mismatch");
+     }
+   }
++  for (const row of prepared.payloads.configure.weightedSy) {
++    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "weightedSyEntitlement",
++      [row.input.originalId]))[0]);
++    if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== row.configurationId
++      || String(actual.getValue("credit")) !== row.quotedCredit
++      || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
++      throw new ExecutionError("STATE", "weighted SY configuration mismatch");
++    }
++  }
+   return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };
+ }
+diff --git a/scripts/recovery/dtf-migration/payloads.ts b/scripts/recovery/dtf-migration/payloads.ts
+index a90eb969..6808db99 100644
+--- a/scripts/recovery/dtf-migration/payloads.ts
++++ b/scripts/recovery/dtf-migration/payloads.ts
+@@ -6,6 +6,7 @@ const coder = AbiCoder.defaultAbiCoder();
+ const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
+ const nftTuple = "tuple(address collection,uint256 tokenId,address originalWallet,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
+ const weightedLiquidTuple = "tuple(bytes32 originalId,address originalWallet,address source,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
++export const weightedSySource = "0xb55604cf4dcdabb362078e106d20f98512391edf";
+ export const weightedLiquidSource = "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7";
+ export const weightedCollection = "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e";
+ export const earlierCollection = "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
+@@ -18,6 +19,7 @@ export type ConfigurationPayload = {
+   readonly independent: readonly IndependentPayload[];
+   readonly nfts: readonly NftOriginal[];
+   readonly weightedLiquid: readonly WeightedLiquidOriginal[];
++  readonly weightedSy: readonly WeightedLiquidOriginal[];
+ };
+ 
+ export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal | WeightedLiquidOriginal): string {
+@@ -35,7 +37,6 @@ const blockedGate = {
+   "earlier-liquid": "H3/H6: original native-unit configuration and surrender not implemented; ED liquidation unproved",
+   "weighted-receipt": "H3/H4: original gon/credit mapping and synchronized fungible surrender not implemented",
+   "earlier-receipt": "H3/H6: original share denominator and fractional attribution unproved; earlier SE exits disabled",
+-  "weighted-sy": "H3/H5: original share/credit mapping and SY surrender/recovery composition not implemented",
+   "token-staking": "H3/H5: reassign debits caller without recipient callback or approved pull; atomic raw-weight surrender unsupported",
+   "claim-vault": "H3/H5: original direct-user 19-decimal share records and surrender integration absent; infrastructure ownership is not user authority",
+   "underlying-se": "H3/H5/H6: direct-user records and surrender absent; earlier and weighted WETH SE disabled; 28-decimal DTF SE composition not implemented",
+@@ -49,6 +50,7 @@ export function dispositions(input: PreparationInput) {
+       case "independent": return { category, disposition: "bounded", gate: "verified disjoint originals only" };
+       case "weighted-nft":
+       case "earlier-nft": return { category, disposition: "bounded", gate: "explicit original-wallet configuration and actual same-wallet NFT surrender required" };
++      case "weighted-sy": return { category, disposition: "bounded", gate: "fixed WY original-wallet static-share/component inputs and measured custody; operational allocations remain unapproved" };
+       case "weighted-liquid": return { category, disposition: "bounded", gate: "explicit original-wallet WD quantity/component allocation and measured surrender; operational allocations remain unapproved" };
+       default: return { category, disposition: "blocked", gate: blockedGate[category] };
+     }
+@@ -99,6 +101,16 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
+     }
+     return original;
+   }).sort((a, b) => a.originalId.localeCompare(b.originalId));
++  const weightedSy = input.weightedSy.map(({ original }) => {
++    if (input.domain.chainId !== "4663" || original.source !== weightedSySource) {
++      throw new PreparationError("DOMAIN", "weighted SY source requires fixed WY on chain 4663");
++    }
++    claimOrigin(original.originalId, "weighted-sy");
++    if (origins.get(original.originalId)?.originalUnits !== original.originalUnits) {
++      throw new PreparationError("PROVENANCE", "weighted SY original units differ from reconciled origin");
++    }
++    return original;
++  }).sort((a, b) => a.originalId.localeCompare(b.originalId));
+   if (used.size !== origins.size) throw new PreparationError("PROVENANCE", "unassigned origin; no silent omission");
+   if (new Set(input.issueRecipients).size !== input.issueRecipients.length) {
+     throw new PreparationError("INPUT", "duplicate issuance recipient");
+@@ -123,6 +135,7 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
+         }
+         break;
+       case "WeightedUnstake":
++      case "WeightedSyRedeem":
+       case "WeightedConvert":
+       case "Donate":
+         if (step.tokenId !== "0" || step.amount === "0"
+@@ -136,5 +149,5 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
+   if (input.harvest.steps.length > 0 && (input.domain.chainId !== "4663" || input.harvest.deadline === "0")) {
+     throw new PreparationError("DOMAIN", "recovery requires chain 4663 and deadline");
+   }
+-  return { independent, nfts, weightedLiquid };
++  return { independent, nfts, weightedLiquid, weightedSy };
+ }
+diff --git a/scripts/recovery/dtf-migration/preparation.fixture.ts b/scripts/recovery/dtf-migration/preparation.fixture.ts
+index a30d29e2..e378cc48 100644
+--- a/scripts/recovery/dtf-migration/preparation.fixture.ts
++++ b/scripts/recovery/dtf-migration/preparation.fixture.ts
+@@ -9,7 +9,7 @@ import { once } from "node:events";
+ import { text } from "node:stream/consumers";
+ import { z } from "zod";
+ import { canonical, fingerprint } from "./provenance.js";
+-import { earlierCollection, nftOrigin, weightedCollection, weightedLiquidSource } from "./payloads.js";
++import { earlierCollection, nftOrigin, weightedCollection, weightedLiquidSource, weightedSySource } from "./payloads.js";
+ import { domain as domainSchema, nftOriginal, preparationInput } from "./schema.js";
+ 
+ export const h = (n: number): string => `0x${n.toString(16).padStart(64, "0")}`;
+@@ -104,6 +104,7 @@ export async function fixture() {
+   const earlier = { ...nft, collection: earlierCollection, originalUnits: "2281854312954086546", evidenceId: h(204) };
+   const liquid = { originalId: h(205), originalWallet: a(22), source: weightedLiquidSource,
+     originalUnits: "3", originalEth: "100", originalDtf: "22", evidenceId: h(206), contributionsKnown: true };
++  const sy = { ...liquid, originalId: h(207), source: weightedSySource, evidenceId: h(208) };
+   const nftId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(nft));
+   const earlierId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(earlier));
+   const exposures = [
+@@ -116,7 +117,9 @@ export async function fixture() {
+     { originId: liquid.originalId, category: "weighted-liquid", originalUnits: liquid.originalUnits,
+       descendants: [{ id: h(213), units: liquid.originalUnits }], recoveredUnits: "0", excludedUnits: "0" },
+   ];
+-  const evidence = { originals: [original, nft, earlier, liquid], exposures };
++  exposures.push({ originId: sy.originalId, category: "weighted-sy", originalUnits: sy.originalUnits,
++    descendants: [{ id: h(214), units: sy.originalUnits }], recoveredUnits: "0", excludedUnits: "0" });
++  const evidence = { originals: [original, nft, earlier, liquid, sy], exposures };
+   const evidencePath = join(root, "evidence.json");
+   const raw = canonical(evidence);
+   await writeFile(evidencePath, raw);
+@@ -136,6 +139,7 @@ export async function fixture() {
+       { original: earlier, proof: { sourceId: "proof", pointer: "/originals/2" } },
+     ],
+     weightedLiquid: [{ original: liquid, proof: { sourceId: "proof", pointer: "/originals/3" } }],
++    weightedSy: [{ original: sy, proof: { sourceId: "proof", pointer: "/originals/4" } }],
+     issueRecipients: [a(20)], harvest: { steps: [], deadline: "0" },
+   });
+   return { root, input, changes, methods, evidencePath, async close() {
+diff --git a/scripts/recovery/dtf-migration/preparation.test.ts b/scripts/recovery/dtf-migration/preparation.test.ts
+index 7217fbee..104d6e84 100644
+--- a/scripts/recovery/dtf-migration/preparation.test.ts
++++ b/scripts/recovery/dtf-migration/preparation.test.ts
+@@ -46,7 +46,7 @@ test("emits full separate replacements and independently quoted native credits",
+   assert.deepEqual(result.payloads.independentIssue.requests, [{
+     recipient: a(20), configurationId: result.payloads.configure.independent[0]?.configurationId,
+   }]);
+-  assert.equal(result.dispositions.filter((d) => d.disposition === "blocked").length, 9);
++  assert.equal(result.dispositions.filter((d) => d.disposition === "blocked").length, 8);
+   assert.deepEqual(result.payloads.configure.weightedLiquid[0]?.input, f.input.weightedLiquid[0]?.original);
+   assert.equal(f.methods.every((m) => ["eth_chainId", "eth_getBlockByNumber", "eth_getCode", "eth_call"].includes(m)), true);
+ });
+@@ -68,7 +68,7 @@ for (const kind of ["chain", "block", "snapshot", "proxy", "package"] as const)
+   test(`rejects wrong ${kind} domain before accepting payloads`, async () => {
+     const f = await setup();
+     const input = {
+-      ...f.input, nfts: [], weightedLiquid: [], exposures: f.input.exposures.filter((e) => e.category === "independent"), domain: {
++      ...f.input, nfts: [], weightedLiquid: [], weightedSy: [], exposures: f.input.exposures.filter((e) => e.category === "independent"), domain: {
+         ...f.input.domain,
+         chainId: kind === "chain" ? "1" : f.input.domain.chainId,
+         blockHash: kind === "block" ? h(3) : f.input.domain.blockHash,
+@@ -154,7 +154,7 @@ test("rejects overlapping originals and missing origin partitions", async () =>
+   assert.throws(() => buildPayloads({ ...f.input, nfts: [] }), /unassigned origin/);
+ });
+ for (const category of ["earlier-liquid", "weighted-receipt", "earlier-receipt",
+-  "weighted-sy", "token-staking", "claim-vault", "underlying-se", "fungible-lp", "earlier-liquidation"] as const) {
++  "token-staking", "claim-vault", "underlying-se", "fungible-lp", "earlier-liquidation"] as const) {
+   test(`blocks ${category} without forging executable config`, async () => {
+     const f = await setup();
+     const row = f.input.exposures[0];
+@@ -166,7 +166,7 @@ test("rejects a nonconserving origin partition", async () => {
+   const f = await setup();
+   const exposures = f.input.exposures.map(({ proof, ...e }, i) => i === 0 ? { ...e, recoveredUnits: "11" } : e);
+   const body = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
+-    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original)], exposures });
++    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original), ...f.input.weightedSy.map((n) => n.original)], exposures });
+   await writeFile(f.evidencePath, body);
+   const input = preparationInput.parse({ ...f.input,
+     sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(body), bytes: Buffer.byteLength(body).toString() } : s),
+@@ -239,7 +239,7 @@ test("preserves all category dispositions but emits no manifest for blocked expo
+   const f = await setup();
+   const exposures = f.input.exposures.map(({ proof, ...e }) => ({ ...e, category: "token-staking" }));
+   const raw = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
+-    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original)], exposures });
++    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original), ...f.input.weightedSy.map((n) => n.original)], exposures });
+   await writeFile(f.evidencePath, raw);
+   const input = preparationInput.parse({ ...f.input,
+     sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(raw), bytes: Buffer.byteLength(raw).toString() } : s),
+diff --git a/scripts/recovery/dtf-migration/preparation.ts b/scripts/recovery/dtf-migration/preparation.ts
+index 15c37806..9cb91dd9 100644
+--- a/scripts/recovery/dtf-migration/preparation.ts
++++ b/scripts/recovery/dtf-migration/preparation.ts
+@@ -20,6 +20,7 @@ export function normalize(input: PreparationInput): PreparationInput {
+       || (BigInt(a.original.tokenId) < BigInt(b.original.tokenId) ? -1 : BigInt(a.original.tokenId) > BigInt(b.original.tokenId) ? 1 : 0)),
+     issueRecipients: [...input.issueRecipients].sort(),
+     weightedLiquid: [...input.weightedLiquid].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
++    weightedSy: [...input.weightedSy].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
+     domain: { ...input.domain, bindings: [...input.domain.bindings]
+       .sort((a, b) => a.role.localeCompare(b.role) || a.address.localeCompare(b.address)) },
+   });
+@@ -47,6 +48,9 @@ export async function prepareDomain(input: PreparationInput) {
+   const weightedLiquid = payloads.weightedLiquid.map((r) => ({
+     input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
+   }));
++  const weightedSy = payloads.weightedSy.map((r) => ({
++    input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
++  }));
+   const requests = normalized.issueRecipients.map((recipient) => {
+     const config = independent.find((r) => r.input.recipient === recipient);
+     if (!config) throw new PreparationError("INPUT", "missing selected recipient");
+@@ -58,11 +62,11 @@ export async function prepareDomain(input: PreparationInput) {
+     input: normalized,
+     normalizedHash: fingerprint(canonical(normalized)),
+     payloads: {
+-      configure: { independent, nfts, weightedLiquid },
++      configure: { independent, nfts, weightedLiquid, weightedSy },
+       independentIssue: { requests },
+       harvest: normalized.harvest,
+     },
+-    payloadHash: fingerprint(canonical({ independent, nfts, weightedLiquid, requests, harvest: normalized.harvest })),
++    payloadHash: fingerprint(canonical({ independent, nfts, weightedLiquid, weightedSy, requests, harvest: normalized.harvest })),
+     quoteEvidence: quotes,
+     dispositions: dispositions(normalized),
+     fullTask9: "open" as const,
+@@ -103,6 +107,8 @@ export async function prepareFile(inputPath: string, outputDirectory: string): P
+     `${canonical(prepared.payloads.configure.nfts.map((r) => r.input))}\n`, { flag: "wx" });
+   await writeFile(resolve(outputDirectory, "weighted-liquid.json"),
+     `${canonical(prepared.payloads.configure.weightedLiquid.map((r) => r.input))}\n`, { flag: "wx" });
++  await writeFile(resolve(outputDirectory, "weighted-sy.json"),
++    `${canonical(prepared.payloads.configure.weightedSy.map((r) => r.input))}\n`, { flag: "wx" });
+   // Exclusive creation protects a prior accepted dataset from accidental overwrite.
+   // Manifest is the acceptance marker, written only after all review mirrors.
+   await writeFile(resolve(outputDirectory, "manifest.json"), `${canonical(prepared)}\n`, { flag: "wx" });
+diff --git a/scripts/recovery/dtf-migration/provenance.ts b/scripts/recovery/dtf-migration/provenance.ts
+index 02216979..2488bbda 100644
+--- a/scripts/recovery/dtf-migration/provenance.ts
++++ b/scripts/recovery/dtf-migration/provenance.ts
+@@ -62,6 +62,7 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
+   for (const row of input.independent) for (const item of row.entitlements) check(item.proof, item.original);
+   for (const row of input.nfts) check(row.proof, row.original);
+   for (const row of input.weightedLiquid) check(row.proof, row.original);
++  for (const row of input.weightedSy) check(row.proof, row.original);
+   const descendants = new Set<string>();
+   for (const row of input.exposures) {
+     const { proof, ...record } = row;
+diff --git a/scripts/recovery/dtf-migration/quotes.ts b/scripts/recovery/dtf-migration/quotes.ts
+index 8be8d724..88d75439 100644
+--- a/scripts/recovery/dtf-migration/quotes.ts
++++ b/scripts/recovery/dtf-migration/quotes.ts
+@@ -83,7 +83,7 @@ export async function quoteOriginals(input: PreparationInput, payloads: Configur
+       || BigInt(snapshot.getValue("version")) !== 1n) {
+       throw new PreparationError("DOMAIN", "snapshot identity/source mismatch");
+     }
+-    const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts, ...payloads.weightedLiquid];
++    const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts, ...payloads.weightedLiquid, ...payloads.weightedSy];
+     const pairs = new Map(originals.map((r) => [`${r.originalEth}:${r.originalDtf}`, r]));
+     const quotes: Quote[] = [];
+     for (const [, original] of [...pairs].sort(([a], [b]) => a.localeCompare(b))) {
+diff --git a/scripts/recovery/dtf-migration/rehearsal-chain.ts b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+index 5c63afbc..1cf182d0 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-chain.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-chain.ts
+@@ -10,6 +10,7 @@ export const LEGACY = {
+   earlier: "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+   receipt: "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+   detf: "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
++  sy: "0xb55604cf4dcdabb362078e106d20f98512391edf",
+   dtf: "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+ } as const;
+ export const legacyAbi = new Interface([
+@@ -20,6 +21,7 @@ export const legacyAbi = new Interface([
+   "function setApprovalForAll(address,bool)",
+   "function transfer(address,uint256) returns(bool)",
+   "function balanceOf(address) view returns(uint256)",
++  "function gonsOf(address) view returns(uint256)",
+   "function claimBond(uint256,address) returns(uint256,uint256)",
+   "function stakingState() view returns((uint256 totalGons,uint256 gonsPerUnit,uint256 accountedBacking,uint256 allocationDust,uint256 stakingDust,uint256 feeWeight,uint256 creatorWeight))",
+   "function exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns(uint256)",
+diff --git a/scripts/recovery/dtf-migration/rehearsal-data.ts b/scripts/recovery/dtf-migration/rehearsal-data.ts
+index 4b93e92f..faacabdb 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-data.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-data.ts
+@@ -57,6 +57,7 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath:
+     sourceFile("recovery-abi", "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"),
+     sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
+     sourceFile("environment", environmentPath),
++    sourceFile("weighted-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md"),
+     sourceFile("owner-first-bond-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md"),
+     sourceFile("current-main-plan", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"),
+     sourceFile("current-main-prd", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md"),
+@@ -140,13 +141,21 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
+     originalDtf: "0", evidenceId: `0x${fingerprint("synthetic W-L Q0 and components; not an approved user allocation")}`,
+     contributionsKnown: true as const,
+   }];
++  const weightedSy = [{
++    originalId: `0x${fingerprint("synthetic W-Y original allocation")}`,
++    originalWallet: "0x11c17f25e958e4637dd26ca362adeae12e24ed5b",
++    source: LEGACY.sy, originalUnits: "8094", originalEth: "10000000000000000",
++    originalDtf: "0", evidenceId: `0x${fingerprint("synthetic WY Q0 and components; not an approved allocation")}`,
++    contributionsKnown: true as const,
++  }];
+   const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
+     ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" })),
+-    ...weightedLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-liquid" }))];
++    ...weightedLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-liquid" })),
++    ...weightedSy.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-sy" }))];
+   const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
+     descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
+   const evidencePath = join(directory, "synthetic-originals.json");
+-  await save(evidencePath, { originals, nfts, weightedLiquid, exposures });
++  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, exposures });
+   const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
+   const input = preparationInput.parse({
+     version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
+@@ -156,6 +165,7 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
+       entitlements: [{ original: originals[i], proof: proof(`/originals/${i}`) }] })),
+     nfts: nfts.map((original, i) => ({ original, proof: proof(`/nfts/${i}`) })),
+     weightedLiquid: weightedLiquid.map((original, i) => ({ original, proof: proof(`/weightedLiquid/${i}`) })),
++    weightedSy: weightedSy.map((original, i) => ({ original, proof: proof(`/weightedSy/${i}`) })),
+     issueRecipients: recipients.slice(0, 3),
+     harvest: { steps: [{ stage: "WeightedClaim", tokenId: "4", amount: "0", minimum: "0" }],
+       deadline: (await chain.timestamp() + 365n * 86400n).toString() },
+@@ -176,8 +186,11 @@ export async function replacementFixture(input: PreparationInput, directory: str
+       originalUnits: (BigInt(row.original.originalUnits) - 1n).toString(),
+     },
+   }));
++  const weightedSy = input.weightedSy.map((row) => ({
++    ...row, original: { ...row.original, originalEth: "6000000000000000", originalUnits: "8087" },
++  }));
+   const exposures = input.exposures.map((row) => {
+-    const liquid = weightedLiquid.find((entry) => entry.original.originalId === row.originId);
++    const liquid = [...weightedLiquid, ...weightedSy].find((entry) => entry.original.originalId === row.originId);
+     return liquid ? { ...row, originalUnits: liquid.original.originalUnits,
+       descendants: row.descendants.map((entry) => ({ ...entry, units: liquid.original.originalUnits })) } : row;
+   });
+@@ -186,9 +199,10 @@ export async function replacementFixture(input: PreparationInput, directory: str
+     originals: independent.flatMap((row) => row.entitlements.map((e) => e.original)),
+     nfts: input.nfts.map((row) => row.original),
+     weightedLiquid: weightedLiquid.map((row) => row.original),
++    weightedSy: weightedSy.map((row) => row.original),
+     exposures: exposures.map(({ proof: _proof, ...exposure }) => exposure),
+   });
+-  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, exposures,
++  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, exposures,
+     sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
+   await save(join(directory, "replacement-input.json"), replacement);
+   return replacement;
+diff --git a/scripts/recovery/dtf-migration/rehearsal-proof.ts b/scripts/recovery/dtf-migration/rehearsal-proof.ts
+index fe0c4aef..7f1317c0 100644
+--- a/scripts/recovery/dtf-migration/rehearsal-proof.ts
++++ b/scripts/recovery/dtf-migration/rehearsal-proof.ts
+@@ -67,11 +67,12 @@ export async function checkPreparation(context: {
+   await save(path, { ...input, sources: [...input.sources].reverse(), exposures: [...input.exposures].reverse(),
+     independent: [...input.independent].reverse(), nfts: [...input.nfts].reverse(),
+     weightedLiquid: [...input.weightedLiquid].reverse(),
++    weightedSy: [...input.weightedSy].reverse(),
+     issueRecipients: [...input.issueRecipients].reverse(),
+     domain: { ...input.domain, bindings: [...input.domain.bindings].reverse() } });
+   await cli(["prepare", "--input", path, "--output", join(evidence, "prepared-reordered")]);
+   const outputs = [];
+-  for (const name of ["manifest.json", "independent.json", "nfts.json", "weighted-liquid.json"]) {
++  for (const name of ["manifest.json", "independent.json", "nfts.json", "weighted-liquid.json", "weighted-sy.json"]) {
+     const original = await readFile(join(evidence, "prepared", name));
+     const reordered = await readFile(join(evidence, "prepared-reordered", name));
+     if (!original.equals(reordered)) throw new ExecutionError("STATE", "preparation depends on input order");
+diff --git a/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts b/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+new file mode 100644
+index 00000000..8c0b6a64
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+@@ -0,0 +1,313 @@
++import { Interface, Result, keccak256 } from "ethers";
++import { join } from "node:path";
++import { z } from "zod";
++import type { PreparationInput } from "./schema.js";
++import { address, hex } from "./schema.js";
++import type { ExecutionManifest } from "./execution-schema.js";
++import { ExecutionError, quantity } from "./execution-schema.js";
++import { LEGACY, legacyAbi } from "./rehearsal-chain.js";
++import type { RehearsalChain } from "./rehearsal-chain.js";
++import { interfaceFile, RECIPIENTS, save } from "./rehearsal-data.js";
++import { DEV } from "./execution-rpc.js";
++
++const token = new Interface([
++  "function balanceOf(address) view returns(uint256)",
++  "function totalSupply() view returns(uint256)",
++  "function allowance(address,address) view returns(uint256)",
++]);
++const bondAbi = new Interface([
++  "function ownerOf(uint256) view returns(address)",
++  "function balanceOf(address) view returns(uint256)",
++  "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
++  "function isMigrationPosition(uint256) view returns(bool)",
++]);
++
++/** Actual configured WY transferFrom and recovery; original allocation is explicitly synthetic. */
++export async function exerciseWeightedSy(context: {
++  readonly chain: RehearsalChain; readonly manifest: ExecutionManifest; readonly input: PreparationInput;
++  readonly evidence: string; readonly phase: "stage1" | "partial" | "final";
++}) {
++  const { chain, manifest, input, evidence, phase } = context;
++  const activated = phase !== "stage1";
++  const final = phase === "final";
++  const row = input.weightedSy[0]?.original;
++  if (!row) throw new ExecutionError("STATE", "missing synthetic W-Y original inputs");
++  const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
++  const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
++  const parent = manifest.proxy;
++  const wallet = row.originalWallet;
++  const bond = address.parse((await chain.call(parent, migration, "bondNftVault"))[0]);
++  const receipt = address.parse((await chain.call(parent, migration, "rebasingClaimToken"))[0]);
++  const tuple = (value: unknown) => {
++    if (!(value instanceof Result)) throw new ExecutionError("STATE", "invalid W-Y tuple");
++    return value;
++  };
++  const state = async () => tuple((await chain.call(parent, migration, "weightedSySurrender", [row.originalId]))[0]);
++  const config = tuple((await chain.call(parent, migration, "weightedSyEntitlement", [row.originalId]))[0]);
++  const c0 = z.bigint().parse(config.getValue("credit"));
++  if (config.getValue("configured") !== true
++    || address.parse(tuple(config.getValue("original")).getValue("originalWallet")) !== wallet
++    || (await chain.call(parent, migration, "migrationActivated"))[0] !== activated) {
++    throw new ExecutionError("STATE", "W-Y configured wallet or lifecycle differs");
++  }
++  if (!activated) {
++    const identityAbi = new Interface([
++      "function facetAddress(bytes4) view returns(address)",
++      "function decimals() view returns(uint8)",
++    ]);
++    const proxyHash = keccak256(hex.parse(await chain.send("eth_getCode", [LEGACY.sy, "latest"])));
++    const custodyFacet = address.parse((await chain.call(LEGACY.sy, identityAbi, "facetAddress", ["0x23b872dd"]))[0]);
++    const exchangeFacet = address.parse((await chain.call(LEGACY.sy, identityAbi, "facetAddress", ["0x769f8e5d"]))[0]);
++    const custodyHash = keccak256(hex.parse(await chain.send("eth_getCode", [custodyFacet, "latest"])));
++    const exchangeHash = keccak256(hex.parse(await chain.send("eth_getCode", [exchangeFacet, "latest"])));
++    if (proxyHash !== "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601"
++      || custodyFacet !== "0x4b6e65cfc9a16aae0dfa4257a680f4697275e5fc"
++      || custodyHash !== "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
++      || exchangeFacet !== "0x4b6e65cfc9a16aae0dfa4257a680f4697275e5fc"
++      || exchangeHash !== "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
++      || (await chain.call(LEGACY.sy, identityAbi, "decimals"))[0] !== 9n) {
++      throw new ExecutionError("DOMAIN", "W-Y legacy source identity differs from admitted phase11 evidence");
++    }
++    await save(join(evidence, "weighted-sy-source-bindings.json"), {
++      chainId: "4663", forkBlock: "108944663", source: LEGACY.sy, proxyHash,
++      custodyFacet, custodyHash, exchangeFacet, exchangeHash, decimals: "9",
++      snapshotId: manifest.snapshotId, configurationId: config.getValue("configurationId"),
++      originalInput: row, purpose: "synthetic-local; not approved historical allocation",
++    });
++  }
++  const impersonate = async (who: string, action: () => Promise<void>) => {
++    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
++    await chain.send("anvil_impersonateAccount", [who]);
++    try { await action(); }
++    finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }
++  };
++  const balance = async (asset: string, who: string) => z.bigint().parse((await chain.call(asset, token, "balanceOf", [who]))[0]);
++  const inventory = async (asset: string) => z.bigint().parse((await chain.call(parent, recovery, "migrationRecoveryInventory", [asset]))[0]);
++  const supply = async () => z.bigint().parse((await chain.call(parent, token, "totalSupply"))[0]);
++  const unchanged = async () => [
++    (await state()).toString(), (await balance(LEGACY.sy, wallet)).toString(),
++    (await balance(LEGACY.sy, parent)).toString(), (await inventory(LEGACY.sy)).toString(),
++    (await supply()).toString(), (await balance(parent, receipt)).toString(),
++    (await chain.call(LEGACY.sy, token, "allowance", [wallet, parent])).toString(),
++    (await chain.call(parent, migration, "weightedSyEntitlement", [row.originalId])).toString(),
++    (await chain.call(bond, bondAbi, "balanceOf", [wallet])).toString(),
++    (await chain.call(receipt, legacyAbi, "stakingState")).toString(),
++  ].join("|");
++  const observations: unknown[] = [];
++  const reject = async (caller: string, origin: string, error: string, args: readonly unknown[], units = 1n) => {
++    const data = migration.encodeFunctionData("surrenderMigrationWeightedSy",
++      [origin, units, "0", (await chain.timestamp() + 3600n).toString()]);
++    const expected = migration.encodeErrorResult(error, [...args]).toLowerCase();
++    const before = await unchanged();
++    let reverted = false;
++    try { await chain.send("eth_call", [{ from: caller, to: parent, data }, "latest"]); }
++    catch (failure) {
++      const actual = z.object({ data: hex }).passthrough().parse(failure).data;
++      if (actual !== expected) {
++        throw new ExecutionError("STATE", `W-Y rejection has wrong revert data: expected ${expected}, actual ${actual}`);
++      }
++      reverted = true;
++    }
++    if (!reverted) throw new ExecutionError("STATE", "W-Y negative unexpectedly succeeded");
++    await impersonate(caller, async () => {
++      const mined = await chain.transact(parent, { from: caller, data }, 0n);
++      observations.push({ kind: "rejection", error, caller, originalId: origin,
++        transactionHash: mined.transactionHash, status: mined.status, revertData: expected });
++    });
++    if (await unchanged() !== before) throw new ExecutionError("STATE", "W-Y rejection changed custody or credit");
++  };
++  if (!activated) {
++    await impersonate(wallet, async () => {
++      await chain.transact(LEGACY.sy, { from: wallet,
++        data: legacyAbi.encodeFunctionData("approve", [parent, row.originalUnits]) });
++    });
++    await reject(wallet, row.originalId, "MigrationSurrenderClosed", []);
++    await reject(wallet, `0x${"a".repeat(64)}`, "MigrationSurrenderClosed", []);
++    const unspent = await state();
++    if (unspent.getValue("consumedUnits") !== 0n || unspent.getValue("deliveredCredit") !== 0n
++      || unspent.getValue("remainingUnits") !== BigInt(row.originalUnits)
++      || unspent.getValue("remainingCredit") !== c0) {
++      throw new ExecutionError("STATE", "Stage1 full replacement did not initialize the final Q/C baseline");
++    }
++    await save(join(evidence, "weighted-sy-stage1.json"), {
++      syntheticOriginalAllocation: row, originalCredit: c0.toString(), activated, observations,
++      remainingUnits: String(unspent.getValue("remainingUnits")), remainingCredit: String(unspent.getValue("remainingCredit")),
++    });
++    return;
++  }
++  await reject(wallet, `0x${"a".repeat(64)}`, "InvalidWeightedSyEntitlement", [`0x${"a".repeat(64)}`]);
++  const other = RECIPIENTS[3];
++  const probeState = await state();
++  const probeCredit = z.bigint().parse(probeState.getValue("remainingCredit"));
++  const probeUnits = (z.bigint().parse(probeState.getValue("remainingUnits")) + probeCredit - 1n) / probeCredit;
++  await impersonate(wallet, async () => {
++    await chain.transact(LEGACY.sy, { from: wallet, data: legacyAbi.encodeFunctionData("transfer", [other, probeUnits]) });
++  });
++  await impersonate(other, async () => {
++    await chain.transact(LEGACY.sy, { from: other, data: legacyAbi.encodeFunctionData("approve", [parent, probeUnits]) });
++  });
++  await reject(other, row.originalId, "NotOriginalWeightedSyWallet", [other, wallet], probeUnits);
++  await impersonate(other, async () => {
++    await chain.transact(LEGACY.sy, { from: other, data: legacyAbi.encodeFunctionData("transfer", [wallet, probeUnits]) });
++  });
++  if (!final) {
++    await impersonate(wallet, async () => {
++      await chain.transact(LEGACY.sy, { from: wallet, data: legacyAbi.encodeFunctionData("transfer", [parent, 7]) });
++    });
++    const dtfBefore = await balance(LEGACY.dtf, parent);
++    await chain.transact(LEGACY.dtf, { from: DEV,
++      data: legacyAbi.encodeFunctionData("transfer", [parent, 10n ** 18n]) });
++    if (await balance(LEGACY.dtf, parent) !== dtfBefore + 10n ** 18n) {
++      throw new ExecutionError("STATE", "unbooked DTF fixture was not actually received");
++    }
++  }
++  await chain.transact(parent, { from: DEV, data: migration.encodeFunctionData("synchronizeRewards") });
++  const before = await state();
++  const remainingUnits = z.bigint().parse(before.getValue("remainingUnits"));
++  const remainingCredit = z.bigint().parse(before.getValue("remainingCredit"));
++  const q = final ? remainingUnits : BigInt(row.originalUnits) / 3n;
++  const expected = q === remainingUnits ? remainingCredit : remainingCredit * q / remainingUnits;
++  if (q === 0n || expected === 0n) throw new ExecutionError("STATE", "W-Y fixture has no eligible credit");
++  const w0 = await balance(LEGACY.sy, wallet);
++  const p0 = await balance(LEGACY.sy, parent);
++  const i0 = await inventory(LEGACY.sy);
++  const s0 = await supply();
++  const b0 = await balance(parent, receipt);
++  let bondId = 0n;
++  await impersonate(wallet, async () => {
++    await chain.transact(LEGACY.sy, { from: wallet, data: legacyAbi.encodeFunctionData("approve", [parent, q]) });
++    const mined = await chain.transact(parent, { from: wallet,
++      data: migration.encodeFunctionData("surrenderMigrationWeightedSy",
++        [row.originalId, q, expected, (await chain.timestamp() + 3600n).toString()]) });
++    const event = mined.logs.filter((log) => log.address === parent).map((log) =>
++      migration.parseLog({ topics: [...log.topics], data: log.data }))
++      .find((log) => log?.name === "MigrationWeightedSySurrendered");
++    if (!event) throw new ExecutionError("STATE", "missing W-Y surrender event");
++    bondId = z.bigint().parse(event.args[5]);
++    const position = tuple((await chain.call(bond, bondAbi, "positionOf", [bondId]))[0]);
++    const owner = address.parse((await chain.call(bond, bondAbi, "ownerOf", [bondId]))[0]);
++    const divisor = z.bigint().parse(tuple((await chain.call(receipt, legacyAbi, "stakingState"))[0]).getValue("gonsPerUnit"));
++    const block = z.object({ timestamp: quantity }).passthrough().parse(
++      await chain.send("eth_getBlockByNumber", [mined.blockNumber, false]));
++    const after = await state();
++    if (event.args[0] !== row.originalId || event.args[1] !== config.getValue("configurationId")
++      || address.parse(event.args[2]) !== wallet || event.args[3] !== q || event.args[4] !== expected
++      || position.getValue("principal") !== expected || position.getValue("claimedPrincipal") !== 0n
++      || position.getValue("stakingGons") !== expected * divisor || owner !== wallet
++      || position.getValue("startTimestamp") !== BigInt(block.timestamp)
++      || position.getValue("vestingDuration") !== 7776000n
++      || (await chain.call(bond, bondAbi, "isMigrationPosition", [bondId]))[0] !== true
++      || w0 - await balance(LEGACY.sy, wallet) !== q || await balance(LEGACY.sy, parent) - p0 !== q
++      || await inventory(LEGACY.sy) - i0 !== q || await supply() - s0 !== expected
++      || await balance(parent, receipt) - b0 !== expected
++      || after.getValue("remainingUnits") !== remainingUnits - q
++      || after.getValue("remainingCredit") !== remainingCredit - expected
++      || after.getValue("consumedUnits") !== z.bigint().parse(before.getValue("consumedUnits")) + q
++      || after.getValue("deliveredCredit") !== z.bigint().parse(before.getValue("deliveredCredit")) + expected) {
++      throw new ExecutionError("STATE", "W-Y exact transfer, credit, inventory or funded fresh bond differs");
++    }
++    observations.push({ kind: "surrender", transactionHash: mined.transactionHash, originalId: row.originalId,
++      configurationId: config.getValue("configurationId"), wallet, quantity: q.toString(), credit: expected.toString(),
++      bondTokenId: bondId.toString(), startTimestamp: String(position.getValue("startTimestamp")),
++      duration: String(position.getValue("vestingDuration")), gons: String(position.getValue("stakingGons")),
++      consumedUnits: String(after.getValue("consumedUnits")), deliveredCredit: String(after.getValue("deliveredCredit")),
++      remainingUnits: String(after.getValue("remainingUnits")), remainingCredit: String(after.getValue("remainingCredit")) });
++  });
++  const allocation = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json");
++  const removed = new Interface(["error NoTargetFor(bytes4)"]);
++  for (const replacement of [row, { ...row, originalUnits: (BigInt(row.originalUnits) + 7n).toString(),
++    originalEth: (BigInt(row.originalEth) + 1n).toString() }]) {
++    const data = allocation.encodeFunctionData("configureWeightedSyEntitlements", [[replacement]]);
++    const expected = removed.encodeErrorResult("NoTargetFor", [data.slice(0, 10)]).toLowerCase();
++    const frozen = await unchanged();
++    let rejected = false;
++    try { await chain.send("eth_call", [{ from: DEV, to: parent, data }, "latest"]); }
++    catch (failure) {
++      if (z.object({ data: hex }).passthrough().parse(failure).data !== expected) {
++        throw new ExecutionError("STATE", "postactivation W-Y loader returned the wrong error");
++      }
++      rejected = true;
++    }
++    if (!rejected) throw new ExecutionError("STATE", "postactivation W-Y loader remained callable");
++    const mined = await chain.transact(parent, { from: DEV, data }, 0n);
++    if (await unchanged() !== frozen) throw new ExecutionError("STATE", "removed loader changed the remaining Q/C");
++    observations.push({ kind: "removed-loader", transactionHash: mined.transactionHash, status: mined.status,
++      revertData: expected, remainingUnits: String((await state()).getValue("remainingUnits")),
++      remainingCredit: String((await state()).getValue("remainingCredit")) });
++  }
++  const protectedState = [(await state()).toString(), String(await supply()), String(await balance(parent, receipt)),
++    (await chain.call(bond, bondAbi, "positionOf", [bondId])).toString()].join("|");
++  const dtf0 = await balance(LEGACY.dtf, parent);
++  const recovered0 = await inventory(LEGACY.dtf);
++  const donationBudget = z.bigint().parse((await chain.call(parent, migration, "migrationDonationInventory", [LEGACY.dtf]))[0]);
++  const oldGons = async () => z.bigint().parse((await chain.call(LEGACY.receipt, legacyAbi, "gonsOf", [parent]))[0]);
++  const bookedGons = async () => z.bigint().parse((await chain.call(parent, recovery, "migrationRecoveryGons"))[0]);
++  const g0 = await oldGons();
++  const booked0 = await bookedGons();
++  const wrapper0 = z.bigint().parse((await chain.call(LEGACY.receipt, legacyAbi, "gonsOf", [LEGACY.sy]))[0]);
++  const wd0 = await balance(LEGACY.detf, parent);
++  const wdInventory0 = await inventory(LEGACY.detf);
++  const rollbackState = async () => [(await unchanged()), String(await oldGons()), String(await bookedGons()),
++    String(await inventory(LEGACY.receipt)), String(await balance(LEGACY.detf, parent)), String(await inventory(LEGACY.detf)),
++    String(await balance(LEGACY.dtf, parent)), String(await inventory(LEGACY.dtf)),
++    (await chain.call(LEGACY.receipt, legacyAbi, "gonsOf", [LEGACY.sy])).toString()].join("|");
++  const saved = await rollbackState();
++  const failed = await chain.transact(parent, { from: DEV, data: recovery.encodeFunctionData("recoverMigrationNfts",
++    [[{ stage: 8, tokenId: 0, amount: q, minimum: 1 }, { stage: 3, tokenId: 0, amount: 1, minimum: 0 },
++      { stage: 4, tokenId: 0, amount: 1, minimum: 2n ** 256n - 1n }], (await chain.timestamp() + 3600n).toString()]) }, 0n);
++  if (await rollbackState() !== saved) throw new ExecutionError("STATE", "WY downstream failure did not roll back burn and proceeds");
++  const redeemed = await chain.transact(parent, { from: DEV, data: recovery.encodeFunctionData("recoverMigrationNfts",
++    [[{ stage: 8, tokenId: 0, amount: q, minimum: 1 }], (await chain.timestamp() + 3600n).toString()]) });
++  const k = z.bigint().parse(tuple((await chain.call(LEGACY.receipt, legacyAbi, "stakingState"))[0]).getValue("gonsPerUnit"));
++  const receiptUnits = q * (10n ** 54n / k) / 10n ** 18n;
++  const receivedGons = await oldGons() - g0;
++  const wrapper1 = z.bigint().parse((await chain.call(LEGACY.receipt, legacyAbi, "gonsOf", [LEGACY.sy]))[0]);
++  if (receiptUnits === 0n || receivedGons !== receiptUnits * k || wrapper0 - wrapper1 !== receivedGons
++    || await bookedGons() !== booked0 + receivedGons || await inventory(LEGACY.receipt) !== booked0 / k + receiptUnits
++    || await balance(LEGACY.sy, parent) !== p0 || await inventory(LEGACY.sy) !== i0) {
++    throw new ExecutionError("STATE", "WY burn, synchronized output, dust or actual gon attribution differs");
++  }
++  const unstaked = await chain.transact(parent, { from: DEV, data: recovery.encodeFunctionData("recoverMigrationNfts",
++    [[{ stage: 3, tokenId: 0, amount: receiptUnits, minimum: 0 }], (await chain.timestamp() + 3600n).toString()]) });
++  if (await balance(LEGACY.detf, parent) !== wd0 + receiptUnits || await inventory(LEGACY.detf) !== wdInventory0 + receiptUnits
++    || await oldGons() - await bookedGons() !== g0 - booked0) {
++    throw new ExecutionError("STATE", "WY unstake spent unrelated gons or failed exact WD custody");
++  }
++  const converted = await chain.transact(parent, { from: DEV, data: recovery.encodeFunctionData("recoverMigrationNfts",
++    [[{ stage: 4, tokenId: 0, amount: receiptUnits, minimum: 1 }], (await chain.timestamp() + 3600n).toString()]) });
++  const output = await inventory(LEGACY.dtf) - recovered0;
++  if (output <= 0n || await balance(LEGACY.dtf, parent) - dtf0 !== output
++    || await balance(LEGACY.detf, parent) !== wd0 || await inventory(LEGACY.detf) !== wdInventory0
++    || (await chain.call(LEGACY.detf, token, "allowance", [parent, LEGACY.detf]))[0] !== 0n) {
++    throw new ExecutionError("STATE", "WY downstream conversion delta or self-approval differs");
++  }
++  observations.push({ kind: "sy-redemption", failedBatchTransaction: failed.transactionHash,
++    redeemTransaction: redeemed.transactionHash, unstakeTransaction: unstaked.transactionHash,
++    shares: q.toString(), receiptUnits: receiptUnits.toString(), receivedGons: receivedGons.toString(),
++    synchronizedDivisor: k.toString(), conversionDustGons: (q * 10n ** 36n - receivedGons).toString(),
++    preexistingGons: g0.toString(), preexistingBookedGons: booked0.toString(),
++    unbookedGons: (g0 - booked0).toString(), unbookedWy: p0.toString() });
++  const amount = output / 2n;
++  const donated = await chain.transact(parent, { from: DEV, data: recovery.encodeFunctionData("recoverMigrationNfts",
++    [[{ stage: 7, tokenId: 0, amount, minimum: 1 }], (await chain.timestamp() + 3600n).toString()]) });
++  if (await inventory(LEGACY.dtf) !== recovered0 + output - amount
++    // Existing reserve residuals are deliberately swept; recovery, donation budgets and
++    // the independently transferred unbooked DTF must remain protected.
++    || await balance(LEGACY.dtf, parent) < recovered0 + output - amount + donationBudget + 10n ** 18n
++    || (await chain.call(parent, migration, "migrationDonationInventory", [LEGACY.dtf]))[0] !== donationBudget
++    || [(await state()).toString(), String(await supply()), String(await balance(parent, receipt)),
++      (await chain.call(bond, bondAbi, "positionOf", [bondId])).toString()].join("|") !== protectedState) {
++    throw new ExecutionError("STATE", "W-Y recovery altered compensation or spent protected inventory");
++  }
++  observations.push({ kind: "recovery", convertTransaction: converted.transactionHash, donationTransaction: donated.transactionHash,
++    quantity: q.toString(), dtfReceived: output.toString(), dtfDonated: amount.toString(),
++    weightedUnbookedFloor: p0.toString(), dtfUnbookedFloor: (10n ** 18n).toString(),
++    donationBudget: donationBudget.toString(), selfAllowance: "0", compensationUnchanged: true });
++  if (final) {
++    if ((await state()).getValue("deliveredCredit") !== c0) throw new ExecutionError("STATE", "W-Y final credit does not conserve C0");
++    await reject(wallet, row.originalId, "InvalidWeightedSyQuantity", [1, 0]);
++  }
++  await save(join(evidence, `weighted-sy-${phase}.json`), {
++    syntheticOriginalAllocation: row, originalCredit: c0.toString(), activated, observations,
++  });
++}
+diff --git a/scripts/recovery/dtf-migration/rehearse.ts b/scripts/recovery/dtf-migration/rehearse.ts
+index 722e6b76..25a76bf5 100644
+--- a/scripts/recovery/dtf-migration/rehearse.ts
++++ b/scripts/recovery/dtf-migration/rehearse.ts
+@@ -12,6 +12,7 @@ import { ExecutionError, rpcLog } from "./execution-schema.js";
+ import { hash } from "./schema.js";
+ import { exerciseRecovery } from "./rehearsal-recovery.js";
+ import { exerciseAdmission } from "./rehearsal-admission.js";
++import { exerciseWeightedSy } from "./rehearsal-weighted-sy.js";
+ import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
+ import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
+ import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt } from "./rehearsal-proof.js";
+@@ -35,10 +36,11 @@ export async function rehearse(options: {
+   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
+   readonly checkpoint: string; readonly evidence: string;
+ }) {
+-  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18563") {
++  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18564"
++    || options.checkpoint !== ".omo-runtime/dtf-migration-weighted-sy/checkpoints") {
+     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
+   }
+-  const evidence = resolve(options.evidence, "owner-bond-correction", `rehearsal-${Date.now()}`);
++  const evidence = resolve(options.evidence, `rehearsal-${Date.now()}`);
+   const runtime = resolve(options.checkpoint);
+   await mkdir(evidence, { recursive: true });
+   const upstream = await resolveAlias();
+@@ -199,6 +201,7 @@ export async function rehearse(options: {
+       issuedAfterReplacement: (await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString() });
+     await exerciseAdmission({ chain, manifest: post, input, evidence, activated: false });
+     await exerciseWeightedLiquid({ chain, manifest: post, input, evidence, phase: "stage1" });
++    await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "stage1" });
+     await exerciseOwnerBond({ chain, manifest: post, manifestPath: postPath, evidence, runtime, local, cli });
+     await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
+     await exerciseOrdinaryDeposit(chain, post, evidence);
+@@ -206,6 +209,10 @@ export async function rehearse(options: {
+     await exerciseRecovery({ chain, manifest: post, input, evidence, runtime, cli, local });
+     await exerciseAdmission({ chain, manifest: post, input, evidence, activated: true, late: true });
+     await exerciseWeightedLiquid({ chain, manifest: post, input, evidence, phase: "final" });
++    await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "partial" });
++    await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
++    await chain.send("evm_mine", []);
++    await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "final" });
+     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
+     return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
+   } catch (error) {
+diff --git a/scripts/recovery/dtf-migration/schema.ts b/scripts/recovery/dtf-migration/schema.ts
+index 4b358795..88452c37 100644
+--- a/scripts/recovery/dtf-migration/schema.ts
++++ b/scripts/recovery/dtf-migration/schema.ts
+@@ -51,6 +51,8 @@ export const weightedLiquidOriginal = z.object({
+   contributionsKnown: z.literal(true),
+ }).strict().readonly();
+ export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
++export const weightedSyOriginal = weightedLiquidOriginal;
++export const weightedSy = z.object({ original: weightedSyOriginal, proof }).strict().readonly();
+ export const binding = z.object({
+   role: z.enum(["proxy", "registry", "package", "facet"]),
+   address,
+@@ -93,7 +95,7 @@ export const exposure = z.object({
+ }).strict().readonly();
+ export const recoveryStep = z.object({
+   stage: z.enum(["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
+-    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate"]),
++    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem"]),
+   tokenId: uint,
+   amount: uint,
+   minimum: uint,
+@@ -107,6 +109,7 @@ export const preparationInput = z.object({
+   independent: z.array(independent).readonly(),
+   nfts: z.array(nft).readonly(),
+   weightedLiquid: z.array(weightedLiquid).readonly(),
++  weightedSy: z.array(weightedSy).readonly(),
+   issueRecipients: z.array(address).readonly(),
+   harvest: z.object({
+     steps: z.array(recoveryStep).max(8).readonly(),
+@@ -120,6 +123,7 @@ export type Proof = z.infer<typeof proof>;
+ export type Original = z.infer<typeof original>;
+ export type NftOriginal = z.infer<typeof nftOriginal>;
+ export type WeightedLiquidOriginal = z.infer<typeof weightedLiquidOriginal>;
++export type WeightedSyOriginal = z.infer<typeof weightedSyOriginal>;
+ export type RecoveryStep = z.infer<typeof recoveryStep>;
+ 
+ export class PreparationError extends Error {
+diff --git a/scripts/recovery/dtf-migration/weighted-sy.test.ts b/scripts/recovery/dtf-migration/weighted-sy.test.ts
+new file mode 100644
+index 00000000..006db747
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/weighted-sy.test.ts
+@@ -0,0 +1,82 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { AbiCoder, keccak256 } from "ethers";
++import { fixture, a, h } from "./preparation.fixture.js";
++import { preparationInput } from "./schema.js";
++import { buildPayloads, configurationId, weightedSySource } from "./payloads.js";
++import { prepareDomain } from "./preparation.js";
++import { interfaceFile } from "./rehearsal-data.js";
++
++test("W-Y requires known original wallet, quantity, components and origin, not current holdings", async () => {
++  const f = await fixture();
++  try {
++    const original = f.input.weightedSy[0]?.original;
++    assert.ok(original);
++    for (const field of ["originalId", "originalWallet", "originalUnits", "originalEth", "originalDtf", "source", "evidenceId"] as const) {
++      const { [field]: _missing, ...omitted } = original;
++      assert.equal(preparationInput.safeParse({ ...f.input, weightedSy: [{
++        original: omitted, proof: f.input.weightedSy[0]?.proof,
++      }] }).success, false);
++    }
++    for (const changed of [{ originalUnits: "0" }, { originalWallet: a(0) }, { contributionsKnown: false }, { credit: "1001" }]) {
++      assert.equal(preparationInput.safeParse({ ...f.input, weightedSy: [{
++        ...f.input.weightedSy[0], original: { ...original, ...changed },
++      }] }).success, false);
++    }
++    const row = f.input.weightedSy[0];
++    assert.ok(row);
++    await assert.rejects(prepareDomain({ ...f.input, weightedSy: [{
++      ...row, original: { ...original, originalWallet: a(99) },
++    }] }), { name: "PreparationError", code: "PROVENANCE" });
++  } finally { await f.close(); }
++});
++
++test("W-Y fixed source, original units and economic partition are required by the real payload builder", async () => {
++  const f = await fixture();
++  try {
++    const row = f.input.weightedSy[0];
++    assert.ok(row);
++    assert.throws(() => buildPayloads({ ...f.input, weightedSy: [{
++      ...row, original: { ...row.original, source: a(99) },
++    }] }), /fixed WY/);
++    assert.throws(() => buildPayloads({ ...f.input, weightedSy: [{
++      ...row, original: { ...row.original, originalUnits: "4" },
++    }] }), /original units/);
++    assert.throws(() => buildPayloads({ ...f.input, weightedSy: [row, row] }), /overlapping original/);
++    assert.throws(() => buildPayloads({ ...f.input, weightedSy: [] }), /unassigned origin/);
++    const independent = f.input.independent[0];
++    assert.ok(independent);
++    const overlap = { ...independent, entitlements: [{
++      original: { entitlementId: row.original.originalId, originalEth: "100", originalDtf: "22", evidenceId: h(900) },
++      proof: row.proof,
++    }] };
++    assert.throws(() => buildPayloads({ ...f.input, independent: [overlap] }), /missing matching origin/);
++    assert.equal(buildPayloads(f.input).weightedSy[0]?.source, weightedSySource);
++  } finally { await f.close(); }
++});
++
++test("W-Y complete configuration hash agrees with Solidity and typed stage ABI including wallet and Q0", async () => {
++  const f = await fixture();
++  try {
++    const original = f.input.weightedSy[0]?.original;
++    assert.ok(original);
++    const allocation = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json");
++    const stage = await interfaceFile("out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json");
++    const parameter = allocation.getFunction("configureWeightedSyEntitlements")?.inputs[0];
++    const stageParameter = stage.getFunction("configureWeightedSy")?.inputs[1];
++    assert.ok(parameter?.arrayChildren);
++    assert.ok(stageParameter);
++    assert.equal(parameter.format("full"), stageParameter.format("full"));
++    const encoded = allocation.encodeFunctionData("configureWeightedSyEntitlements", [[original]]);
++    const decoded = allocation.decodeFunctionData("configureWeightedSyEntitlements", encoded)[0][0];
++    assert.equal(decoded.originalWallet.toLowerCase(), original.originalWallet);
++    assert.equal(decoded.originalUnits, 3n);
++    assert.equal(decoded.originalId, original.originalId);
++    assert.equal(configurationId(f.input.domain, original), keccak256(AbiCoder.defaultAbiCoder().encode(
++      ["uint256", "address", "bytes32", parameter.arrayChildren],
++      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.snapshotId, original])));
++    for (const correction of [{ originalWallet: a(99) }, { originalUnits: "4" }, { originalEth: "101" }, { evidenceId: h(900) }]) {
++      assert.notEqual(configurationId(f.input.domain, { ...original, ...correction }), configurationId(f.input.domain, original));
++    }
++  } finally { await f.close(); }
++});
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol
+new file mode 100644
+index 00000000..7ebe9ccb
+--- /dev/null
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
++import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
++import {IUniswapV4DetfMigration as Migration} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigrationRecovery as Recovery} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol";
++import {IMigrationWeightedReceipt, IMigrationWeightedSy} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol";
++import {MigrationLegacyRecoveryLib as Legacy} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
++
++/// @notice Real pinned WY custody; original contribution/share allocation is explicitly synthetic.
++contract MigrationRecoveryWeightedSyTest is MigrationRecoveryDonationForkBase {
++    address constant HOLDER = address(bytes20(hex"11c17f25e958e4637dd26ca362adeae12e24ed5b"));
++    bytes32 constant ORIGIN = keccak256("synthetic WY recovery");
++    uint256 constant SHARES = 8087; // Leave seven real holder shares for unsolicited-custody protection.
++
++    function _takeSy() private returns (uint256 bond_) {
++        address facet_ = 0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc;
++        assertEq(facet_.codehash, 0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d);
++        assertEq(IDiamondLoupe(Legacy.WEIGHTED_SY).facetAddress(IMigrationWeightedSy.redeem.selector), facet_);
++        assertEq(IDiamondLoupe(Legacy.WEIGHTED_SY).facetAddress(IERC20.transferFrom.selector), facet_);
++        Migration.WeightedSyEntitlementInput[] memory inputs_ = new Migration.WeightedSyEntitlementInput[](1);
++        inputs_[0] = Migration.WeightedSyEntitlementInput(
++            ORIGIN, HOLDER, Legacy.WEIGHTED_SY, SHARES, 0.01 ether, 0, bytes32("synthetic WY inputs"), true
++        );
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(inputs_);
++        _activate();
++        vm.startPrank(HOLDER);
++        IERC20(Legacy.WEIGHTED_SY).approve(detf, SHARES);
++        (bond_,) = migration.surrenderMigrationWeightedSy(ORIGIN, SHARES, 1, block.timestamp);
++        IERC20(Legacy.WEIGHTED_SY).transfer(detf, 7);
++        vm.stopPrank();
++    }
++
++    function _redeem(uint256 shares_) private returns (uint256 out_) {
++        IMigrationWeightedReceipt old_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT);
++        uint256 before_ = old_.gonsOf(detf);
++        uint256 wrapper_ = old_.gonsOf(Legacy.WEIGHTED_SY);
++        uint256 booked_ = recovery.migrationRecoveryGons();
++        uint256 sy_ = IERC20(Legacy.WEIGHTED_SY).balanceOf(detf);
++        _run(Recovery.Stage.WeightedSyRedeem, 0, shares_, 1);
++        uint256 k_ = old_.stakingState().gonsPerUnit;
++        out_ = Math.mulDiv(shares_, Math.mulDiv(1e36, 1e18, k_), 1e18);
++        assertEq(old_.gonsOf(detf) - before_, out_ * k_);
++        assertEq(wrapper_ - old_.gonsOf(Legacy.WEIGHTED_SY), out_ * k_);
++        assertEq(recovery.migrationRecoveryGons(), booked_ + out_ * k_);
++        assertEq(_weightedAmount(), booked_ / k_ + out_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), sy_ - shares_);
++        assertLt(out_ * k_, shares_ * 1e36);
++    }
++
++    function test_selectedRedemptionReconcilesGrowthDustMixedNftAndUnsolicitedGons() public {
++        _configureNft(WEIGHTED, 4);
++        uint256 bond_ = _takeSy();
++        _surrender(WEIGHTED, 4);
++        _run(Recovery.Stage.WeightedClaim, 4, 0, 0);
++        bytes memory nft_ = abi.encode(recovery.migrationNftRecovery(WEIGHTED, 4));
++        address donor_ = address(bytes20(hex"01b0b538d0201efacdde7bb0397abb2133723009"));
++        vm.prank(donor_);
++        IERC20(Legacy.WEIGHTED_RECEIPT).transfer(detf, 17);
++        IMigrationWeightedReceipt old_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT);
++        uint256 unbooked_ = old_.gonsOf(detf) - recovery.migrationRecoveryGons();
++        uint256 k0_ = old_.stakingState().gonsPerUnit;
++        vm.warp(vm.getBlockTimestamp() + 8 hours);
++        _redeem(SHARES / 2);
++        assertLt(old_.stakingState().gonsPerUnit, k0_);
++        _redeem(SHARES - SHARES / 2);
++        uint256 amount_ = _weightedAmount();
++        _run(Recovery.Stage.WeightedUnstake, 0, amount_ / 2, 0);
++        _run(Recovery.Stage.WeightedUnstake, 0, amount_ - amount_ / 2, 0);
++        assertEq(old_.gonsOf(detf) - recovery.migrationRecoveryGons(), unbooked_);
++        assertLt(recovery.migrationRecoveryGons(), old_.stakingState().gonsPerUnit);
++        assertEq(_weightedAmount(), 0);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 7);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);
++        assertEq(abi.encode(recovery.migrationNftRecovery(WEIGHTED, 4)), nft_);
++        assertEq(migration.weightedSySurrender(ORIGIN).deliveredCredit, bonds.positionOf(bond_).principal);
++        assertEq(migration.weightedSySurrender(ORIGIN).remainingCredit, 0);
++        vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector, Legacy.WEIGHTED_SY, 1, 0));
++        _run(Recovery.Stage.WeightedSyRedeem, 0, 1, 0);
++    }
++
++    function test_actualWyToWsToWdToDtfAndFixedDonationProtectBacking() public {
++        uint256 bond_ = _takeSy();
++        bytes32 protected_ = _protected(bond_);
++        uint256 out_ = _redeem(SHARES);
++        _run(Recovery.Stage.WeightedUnstake, 0, out_, 0);
++        assertEq(recovery.migrationRecoveryGons(), 0);
++        assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(detf), out_);
++        uint256 before_ = IERC20(Legacy.DTF).balanceOf(detf);
++        _run(Recovery.Stage.WeightedConvert, 0, out_, 1);
++        uint256 dtf_ = recovery.migrationRecoveryInventory(Legacy.DTF);
++        assertGt(dtf_, 0);
++        assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_ + dtf_);
++        assertEq(IERC20(Legacy.WEIGHTED_DETF).allowance(detf, Legacy.WEIGHTED_DETF), 0);
++        _run(Recovery.Stage.Donate, 0, dtf_ / 2, 1);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), dtf_ - dtf_ / 2);
++        assertGe(IERC20(Legacy.DTF).balanceOf(detf), before_ + dtf_ - dtf_ / 2);
++        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
++        assertEq(_protected(bond_), protected_);
++    }
++
++    function test_minimumAuthorityAndLateConversionFailureRollBackSelectedBurn() public {
++        uint256 bond_ = _takeSy();
++        bytes32 protected_ = _protected(bond_);
++        IMigrationWeightedReceipt old_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT);
++        uint256 wrapper_ = old_.gonsOf(Legacy.WEIGHTED_SY);
++        Recovery.Step[] memory steps_ = _step(Recovery.Stage.WeightedSyRedeem, 0, SHARES, 1);
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
++        recovery.recoverMigrationNfts(steps_, block.timestamp);
++        vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector,
++            Legacy.WEIGHTED_SY, SHARES + 1, SHARES));
++        _run(Recovery.Stage.WeightedSyRedeem, 0, SHARES + 1, 1);
++        steps_[0].minimum = type(uint256).max;
++        vm.prank(migrationOwner);
++        (bool minimum_,) = detf.call(abi.encodeCall(Recovery.recoverMigrationNfts, (steps_, block.timestamp)));
++        assertFalse(minimum_);
++        uint256 snapshot_ = vm.snapshotState();
++        uint256 out_ = _redeem(SHARES);
++        assertTrue(vm.revertToStateAndDelete(snapshot_));
++        steps_ = new Recovery.Step[](3);
++        steps_[0] = Recovery.Step(Recovery.Stage.WeightedSyRedeem, 0, SHARES, 1);
++        steps_[1] = Recovery.Step(Recovery.Stage.WeightedUnstake, 0, out_, 0);
++        steps_[2] = Recovery.Step(Recovery.Stage.WeightedConvert, 0, out_, type(uint256).max);
++        vm.prank(migrationOwner);
++        (bool ok_,) = detf.call(abi.encodeCall(Recovery.recoverMigrationNfts, (steps_, block.timestamp)));
++        assertFalse(ok_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), SHARES + 7);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), SHARES);
++        assertEq(old_.gonsOf(Legacy.WEIGHTED_SY), wrapper_);
++        assertEq(old_.gonsOf(detf), 0);
++        assertEq(recovery.migrationRecoveryGons(), 0);
++        assertEq(_weightedAmount(), 0);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 0);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
++        assertEq(_protected(bond_), protected_);
++        steps_[2].minimum = 1;
++        vm.prank(migrationOwner);
++        recovery.recoverMigrationNfts(steps_, block.timestamp);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 7);
++        assertGt(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
++        assertEq(_protected(bond_), protected_);
++    }
++}
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol
+new file mode 100644
+index 00000000..96aa8c84
+--- /dev/null
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol
+@@ -0,0 +1,266 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
++import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
++import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
++import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
++import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
++import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigrationRecovery as Recovery} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol";
++import {MigrationLegacyRecoveryLib as Legacy} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
++
++/// @notice Synthetic acquiring contract wallet; the source and funding system remain real.
++contract WeightedSyReceiver is IERC721Receiver {
++    Migration immutable parent;
++    IERC20 immutable source;
++    bytes32 immutable origin;
++    bool public rejectBond;
++    bool public surrenderReentered;
++    bool public activationReentered;
++    constructor(Migration parent_, IERC20 source_, bytes32 origin_) {
++        parent = parent_; source = source_; origin = origin_;
++    }
++    function reject(bool value_) external { rejectBond = value_; }
++    function acceptOwnership() external { parent.acceptOwnershipTransfer(); }
++    function surrender(uint256 q_) external returns (uint256, uint256) {
++        source.approve(address(parent), q_);
++        return parent.surrenderMigrationWeightedSy(origin, q_, 1, block.timestamp);
++    }
++    function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4) {
++        (surrenderReentered,) = address(parent).call(abi.encodeCall(
++            Migration.surrenderMigrationWeightedSy, (origin, 1, 0, block.timestamp)
++        ));
++        (activationReentered,) = address(parent).call(abi.encodeCall(Allocation.activateMigration, ()));
++        return rejectBond ? bytes4(0) : IERC721Receiver.onERC721Received.selector;
++    }
++}
++
++/// @notice W-Y original quantities/components are synthetic, never derived from the holder's balance.
++contract MigrationWeightedSyTest is MigrationRecoveryDonationForkBase {
++    address constant HOLDER = address(bytes20(hex"11c17f25e958e4637dd26ca362adeae12e24ed5b"));
++    bytes32 constant ORIGIN = keccak256("synthetic weighted SY original");
++    uint256 constant QUANTITY = 8094;
++
++    function _syInput(address wallet_, uint256 q_, uint256 eth_)
++        private pure returns (Migration.WeightedSyEntitlementInput[] memory a_)
++    {
++        a_ = new Migration.WeightedSyEntitlementInput[](1);
++        a_[0] = Migration.WeightedSyEntitlementInput(
++            ORIGIN, wallet_, Legacy.WEIGHTED_SY, q_, eth_, 0, keccak256("synthetic W-Y input evidence"), true
++        );
++    }
++
++    function _configureSy(address wallet_, uint256 q_) private returns (uint256) {
++        Migration.WeightedSyEntitlementInput[] memory a_ = _syInput(wallet_, q_, 0.01 ether);
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(a_);
++        return migration.weightedSyEntitlement(ORIGIN).credit;
++    }
++
++    function _surrenderSy(uint256 q_) private returns (uint256 id_, uint256 credit_) {
++        uint256 now_ = vm.getBlockTimestamp();
++        vm.startPrank(HOLDER);
++        IERC20(Legacy.WEIGHTED_SY).approve(detf, q_);
++        (id_, credit_) = migration.surrenderMigrationWeightedSy(ORIGIN, q_, 1, now_);
++        vm.stopPrank();
++        assertEq(IERC721(address(bonds)).ownerOf(id_), HOLDER);
++        assertEq(bonds.positionOf(id_).principal, credit_);
++        assertEq(bonds.positionOf(id_).claimedPrincipal, 0);
++        assertEq(bonds.positionOf(id_).vestingDuration, 90 days);
++        assertEq(bonds.positionOf(id_).startTimestamp, now_);
++        assertEq(bonds.positionOf(id_).stakingGons, credit_ * receipt.stakingState().gonsPerUnit);
++        assertEq(IERC20(detf).allowance(detf, address(bonds)), 0);
++        assertEq(IERC20(detf).allowance(address(bonds), address(receipt)), 0);
++    }
++
++    function test_realPartialAndFinalSurrenderConservesFrozenCreditAndFreshBonds() public {
++        uint256 c0_ = _configureSy(HOLDER, 3);
++        _activate();
++        uint256 sourceBefore_ = IERC20(Legacy.WEIGHTED_SY).balanceOf(HOLDER);
++        uint256 supplyBefore_ = IERC20(detf).totalSupply();
++        uint256 firstTime_ = vm.getBlockTimestamp();
++        (uint256 first_, uint256 c1_) = _surrenderSy(1);
++        assertEq(c1_, c0_ / 3);
++        Migration.WeightedSySurrender memory s_ = migration.weightedSySurrender(ORIGIN);
++        assertEq(s_.consumedUnits, 1);
++        assertEq(s_.deliveredCredit, c1_);
++        assertEq(s_.remainingUnits, 2);
++        assertEq(s_.remainingCredit, c0_ - c1_);
++        Migration.WeightedSyEntitlementInput[] memory a_ = _syInput(HOLDER, 3, 0.01 ether);
++        vm.prank(migrationOwner);
++        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_)));
++        assertFalse(replayed_);
++        a_[0].originalUnits = 8;
++        a_[0].originalEth = 0.02 ether;
++        vm.prank(migrationOwner);
++        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_)));
++        assertFalse(corrected_);
++        assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), abi.encode(s_));
++        vm.warp(firstTime_ + 30 days);
++        uint256 expansion_ = migration.pendingExpansionDetf();
++        assertEq(migration.synchronizeRewards(), expansion_);
++        assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c1_ + expansion_);
++        assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedSyEntitlements.selector), address(0));
++        (uint256 second_, uint256 c2_) = _surrenderSy(1);
++        assertEq(c2_, (c0_ - c1_) / 2);
++        (uint256 third_, uint256 c3_) = _surrenderSy(1);
++        assertEq(c1_ + c2_ + c3_, c0_);
++        assertNotEq(first_, second_);
++        assertNotEq(second_, third_);
++        assertEq(bonds.positionOf(first_).startTimestamp, firstTime_);
++        assertEq(bonds.positionOf(third_).startTimestamp, firstTime_ + 30 days);
++        assertEq(migration.weightedSyEntitlement(ORIGIN).credit, c0_);
++        s_ = migration.weightedSySurrender(ORIGIN);
++        assertEq(s_.remainingUnits, 0);
++        assertEq(s_.remainingCredit, 0);
++        assertEq(s_.consumedUnits, 3);
++        assertEq(s_.deliveredCredit, c0_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(HOLDER), sourceBefore_ - 3);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 3);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 3);
++        // Account for actual elapsed expansion separately from surrender's exact delivered credit.
++        assertEq(IERC20(detf).totalSupply(), supplyBefore_ + c0_ + expansion_);
++        assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + c0_ + expansion_);
++        vm.prank(HOLDER);
++        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyQuantity.selector, 1, 0));
++        migration.surrenderMigrationWeightedSy(ORIGIN, 1, 0, block.timestamp);
++    }
++
++    function test_absentWrongWalletApprovalBalanceAndLimitsLeaveEverythingUnspent() public {
++        uint256 balance_ = IERC20(Legacy.WEIGHTED_SY).balanceOf(HOLDER);
++        uint256 supply_ = IERC20(detf).totalSupply();
++        _configureSy(HOLDER, 3);
++        Migration.WeightedSyEntitlementInput[] memory large_ = _syInput(HOLDER, balance_ + 1, 0.01 ether);
++        large_[0].originalId = bytes32("balance");
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(large_);
++        _activate();
++        vm.prank(HOLDER);
++        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, bytes32("absent")));
++        migration.surrenderMigrationWeightedSy(bytes32("absent"), 1, 0, block.timestamp);
++        vm.prank(HOLDER);
++        IERC20(Legacy.WEIGHTED_SY).approve(detf, 0);
++        vm.expectCall(Legacy.WEIGHTED_SY, abi.encodeCall(IERC20.transferFrom, (HOLDER, detf, 1)));
++        vm.prank(HOLDER);
++        (bool approvalOk_,) = detf.call(abi.encodeCall(Migration.surrenderMigrationWeightedSy, (ORIGIN, 1, 0, block.timestamp)));
++        assertFalse(approvalOk_);
++        vm.prank(HOLDER);
++        IERC20(Legacy.WEIGHTED_SY).approve(detf, type(uint256).max);
++        vm.expectCall(Legacy.WEIGHTED_SY, abi.encodeCall(IERC20.transferFrom, (HOLDER, detf, balance_ + 1)));
++        vm.prank(HOLDER);
++        (bool balanceOk_,) = detf.call(abi.encodeCall(Migration.surrenderMigrationWeightedSy, (bytes32("balance"), balance_ + 1, 0, block.timestamp)));
++        assertFalse(balanceOk_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalWeightedSyWallet.selector, address(this), HOLDER));
++        migration.surrenderMigrationWeightedSy(ORIGIN, 1, 0, block.timestamp);
++        vm.prank(HOLDER);
++        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyQuantity.selector, 0, 3));
++        migration.surrenderMigrationWeightedSy(ORIGIN, 0, 0, block.timestamp);
++        vm.prank(HOLDER);
++        vm.expectRevert(abi.encodeWithSignature("DeadlineExpired(uint256)", block.timestamp - 1));
++        migration.surrenderMigrationWeightedSy(ORIGIN, 1, 0, block.timestamp - 1);
++        uint256 quoted_ = migration.previewWeightedSySurrender(ORIGIN, 1);
++        vm.prank(HOLDER);
++        vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", quoted_ + 1, quoted_));
++        migration.surrenderMigrationWeightedSy(ORIGIN, 1, quoted_ + 1, block.timestamp);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(HOLDER), balance_);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 0);
++        assertEq(migration.weightedSySurrender(ORIGIN).consumedUnits, 0);
++        assertEq(migration.weightedSySurrender(bytes32("balance")).consumedUnits, 0);
++        assertEq(IERC20(detf).totalSupply(), supply_);
++        assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);
++        assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));
++    }
++
++    function test_transfersDoNotMoveCreditAndReturnNeedsNoHistory() public {
++        _configureSy(HOLDER, 3);
++        _activate();
++        vm.prank(HOLDER);
++        IERC20(Legacy.WEIGHTED_SY).transfer(address(this), 3);
++        IERC20(Legacy.WEIGHTED_SY).approve(detf, 3);
++        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalWeightedSyWallet.selector, address(this), HOLDER));
++        migration.surrenderMigrationWeightedSy(ORIGIN, 3, 0, block.timestamp);
++        IERC20(Legacy.WEIGHTED_SY).transfer(HOLDER, 3);
++        _surrenderSy(1);
++        Migration.WeightedSyEntitlementInput[] memory a_ = _syInput(address(this), 3, 0.01 ether);
++        vm.prank(migrationOwner);
++        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_)));
++        assertFalse(corrected_);
++        assertEq(migration.weightedSyEntitlement(ORIGIN).original.originalWallet, HOLDER);
++        assertEq(migration.weightedSySurrender(ORIGIN).consumedUnits, 1);
++        _surrenderSy(2);
++    }
++
++    function test_zeroCreditDustRejectsWithoutConfiscation() public {
++        _configureSy(HOLDER, type(uint256).max);
++        _activate();
++        vm.prank(HOLDER);
++        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, ORIGIN));
++        migration.surrenderMigrationWeightedSy(ORIGIN, 1, 0, block.timestamp);
++        assertEq(migration.weightedSySurrender(ORIGIN).consumedUnits, 0);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 0);
++    }
++
++    function test_bondReceiverRejectionRollsBackActualPullFundingAndInventory() public {
++        WeightedSyReceiver wallet_ = new WeightedSyReceiver(migration, IERC20(Legacy.WEIGHTED_SY), ORIGIN);
++        uint256 credit_ = _configureSy(address(wallet_), 3);
++        _activate();
++        vm.prank(HOLDER);
++        IERC20(Legacy.WEIGHTED_SY).transfer(address(wallet_), 3);
++        wallet_.reject(true);
++        uint256 supply_ = IERC20(detf).totalSupply();
++        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(wallet_)));
++        wallet_.surrender(3);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(address(wallet_)), 3);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 0);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).allowance(address(wallet_), detf), 0);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);
++        assertEq(migration.weightedSySurrender(ORIGIN).deliveredCredit, 0);
++        assertEq(IERC20(detf).totalSupply(), supply_);
++        assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);
++        assertEq(receipt.gonsOf(address(bonds)), initialBondGons);
++        assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));
++        wallet_.reject(false);
++        vm.prank(migrationOwner);
++        migration.initiateOwnershipTransfer(address(wallet_));
++        wallet_.acceptOwnership();
++        (uint256 id_, uint256 delivered_) = wallet_.surrender(3);
++        assertEq(delivered_, credit_);
++        assertEq(IERC721(address(bonds)).ownerOf(id_), address(wallet_));
++        assertFalse(wallet_.surrenderReentered());
++        assertFalse(wallet_.activationReentered());
++        assertTrue(migration.migrationActivated());
++    }
++
++    function test_stageOneRejectsBeforeAllowanceCustodyConsumptionOrFunding() public {
++        uint256 supply_ = IERC20(detf).totalSupply();
++        uint256 held_ = IERC20(Legacy.WEIGHTED_SY).balanceOf(HOLDER);
++        vm.prank(HOLDER);
++        IERC20(Legacy.WEIGHTED_SY).approve(detf, 3);
++        for (uint256 stage_; stage_ < 2; ++stage_) {
++            if (stage_ == 1) _configureSy(HOLDER, 3);
++            bytes memory config_ = abi.encode(migration.weightedSyEntitlement(ORIGIN));
++            bytes memory state_ = abi.encode(migration.weightedSySurrender(ORIGIN));
++            vm.prank(HOLDER);
++            vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
++            migration.surrenderMigrationWeightedSy(ORIGIN, 1, 0, block.timestamp);
++            assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(HOLDER), held_);
++            assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 0);
++            assertEq(IERC20(Legacy.WEIGHTED_SY).allowance(HOLDER, detf), 3);
++            assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), config_);
++            assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), state_);
++            assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);
++            assertEq(IERC20(detf).totalSupply(), supply_);
++            assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);
++            assertEq(receipt.gonsOf(address(bonds)), initialBondGons);
++            assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));
++        }
++        _activate();
++        _surrenderSy(3);
++    }
++}
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol
+index 45afb7aa..5b6e186c 100644
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol
+@@ -184,11 +184,11 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
+ 
+     function test_activationRemovesEntireAdministrationAndKeepsQueries() public {
+         _fundAndCapture();
+-        bytes4[7] memory selectors_ = [
++        bytes4[8] memory selectors_ = [
+             Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
+             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
+             Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
+-            Allocation.configureWeightedLiquidEntitlements.selector
++            Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureWeightedSyEntitlements.selector
+         ];
+         address[] memory facets_ = new address[](selectors_.length);
+         for (uint256 i_; i_ < selectors_.length; ++i_) {
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol
+index 04a6bb89..d794359a 100644
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol
+@@ -164,7 +164,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
+     }
+ 
+     function test_retainedDeclarationIncludesEveryProductSelector() public {
+-        bytes4[] memory expected_ = new bytes4[](22);
++        bytes4[] memory expected_ = new bytes4[](26);
+         expected_[0] = Migration.migrationActivated.selector;
+         expected_[1] = Migration.migrationSyRewardToken.selector;
+         expected_[2] = Migration.migrationSnapshotSource.selector;
+@@ -187,6 +187,10 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
+         expected_[19] = Migration.previewWeightedLiquidSurrender.selector;
+         expected_[20] = Migration.surrenderMigrationWeightedLiquid.selector;
+         expected_[21] = Migration.migrationOwnerFirstBondTokenId.selector;
++        expected_[22] = Migration.weightedSyEntitlement.selector;
++        expected_[23] = Migration.weightedSySurrender.selector;
++        expected_[24] = Migration.previewWeightedSySurrender.selector;
++        expected_[25] = Migration.surrenderMigrationWeightedSy.selector;
+         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
+         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
+         _buyOwnerFirstBond();
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol
+index 2fc393dd..77f9a62f 100644
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol
+@@ -40,7 +40,7 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
+     }
+ 
+     function test_adminDeclarationMatchesInterfaceAndCannotBeRestored() public {
+-        bytes4[] memory expected_ = new bytes4[](7);
++        bytes4[] memory expected_ = new bytes4[](8);
+         expected_[0] = Allocation.bootstrapMigrationReserve.selector;
+         expected_[1] = Allocation.captureMigrationSnapshot.selector;
+         expected_[2] = Allocation.configureIndependentAllocations.selector;
+@@ -48,6 +48,7 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
+         expected_[4] = Allocation.activateMigration.selector;
+         expected_[5] = Allocation.configureNftEntitlements.selector;
+         expected_[6] = Allocation.configureWeightedLiquidEntitlements.selector;
++        expected_[7] = Allocation.configureWeightedSyEntitlements.selector;
+         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
+         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
+         _fundAndCapture();
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol
+new file mode 100644
+index 00000000..7f404bda
+--- /dev/null
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol
+@@ -0,0 +1,208 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
++import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
++import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
++import {TestBase_UniswapV4DetfMigration} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
++
++/// @notice Synthetic original allocations; actual WY custody is tested against pinned legacy bytecode.
++contract MigrationWeightedSyConfigurationTest is TestBase_UniswapV4DetfMigration {
++    address constant WY = 0xB55604CF4dcdABB362078e106D20F98512391EdF;
++    address constant NFT = 0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E;
++    bytes32 constant ORIGIN = bytes32("synthetic W-Y original");
++
++    function setUp() public override {
++        vm.chainId(4663);
++        super.setUp();
++        _fundAndCapture();
++    }
++
++    function _inputs() private view returns (Migration.WeightedSyEntitlementInput[] memory a_) {
++        a_ = new Migration.WeightedSyEntitlementInput[](1);
++        a_[0] = Migration.WeightedSyEntitlementInput(
++            ORIGIN, address(this), WY, 3, 1 ether, 0, bytes32("synthetic original inputs"), true
++        );
++    }
++
++    function test_unconsumedReplacementFreezesQuoteAndMintsNothing() public {
++        uint256 supply_ = IERC20(detf).totalSupply();
++        Migration.WeightedSyEntitlementInput[] memory a_ = _inputs();
++        a_[0].originalUnits = 5;
++        vm.startPrank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(a_);
++        a_[0].originalEth = 0.6 ether;
++        a_[0].originalUnits = 3;
++        a_[0].originalWallet = address(0xBEEF);
++        allocation.configureWeightedSyEntitlements(a_);
++        allocation.configureWeightedSyEntitlements(a_);
++        vm.stopPrank();
++        Migration.WeightedSyEntitlement memory c_ = migration.weightedSyEntitlement(ORIGIN);
++        uint256 credit_ = migration.previewOriginalCredit(0.6 ether, 0);
++        assertTrue(c_.configured);
++        assertEq(c_.original.originalWallet, address(0xBEEF));
++        assertEq(c_.credit, credit_);
++        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, a_[0])));
++        assertEq(migration.previewWeightedSySurrender(ORIGIN, 1), credit_ / 3);
++        assertEq(migration.previewWeightedSySurrender(ORIGIN, 3), credit_);
++        Migration.WeightedSySurrender memory s_ = migration.weightedSySurrender(ORIGIN);
++        assertEq(s_.remainingUnits, 3);
++        assertEq(s_.remainingCredit, credit_);
++        assertEq(s_.consumedUnits, 0);
++        assertEq(s_.deliveredCredit, 0);
++        assertEq(IERC20(detf).totalSupply(), supply_);
++        assertEq(receipt.stakingState().totalGons, 0);
++        vm.warp(block.timestamp + 1 days);
++        assertEq(migration.previewWeightedSySurrender(ORIGIN, 3), credit_);
++    }
++
++    function test_missingOriginalInputsAndWrongAuthorityRejectAtomically() public {
++        Migration.WeightedSyEntitlementInput[] memory a_ = _inputs();
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
++        allocation.configureWeightedSyEntitlements(a_);
++        for (uint256 i_; i_ < 5; ++i_) {
++            a_ = _inputs();
++            if (i_ == 0) a_[0].originalWallet = address(0);
++            else if (i_ == 1) a_[0].originalUnits = 0;
++            else if (i_ == 2) a_[0].contributionsKnown = false;
++            else if (i_ == 3) a_[0].evidenceId = bytes32(0);
++            else a_[0].originalId = bytes32(0);
++            vm.prank(migrationOwner);
++            vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, a_[0].originalId));
++            allocation.configureWeightedSyEntitlements(a_);
++        }
++        assertFalse(migration.weightedSyEntitlement(ORIGIN).configured);
++        a_ = _inputs();
++        a_[0].source = address(0xBAD);
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedWeightedSySource.selector, 4663, address(0xBAD)));
++        allocation.configureWeightedSyEntitlements(a_);
++        a_[0].source = WY;
++        vm.chainId(1);
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedWeightedSySource.selector, 1, WY));
++        allocation.configureWeightedSyEntitlements(a_);
++    }
++
++    function test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration() public {
++        Migration.WeightedSyEntitlementInput[] memory a_ = _inputs();
++        address next_ = makeAddr("next weighted owner");
++        vm.prank(migrationOwner);
++        migration.initiateOwnershipTransfer(next_);
++        vm.prank(next_);
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, next_));
++        allocation.configureWeightedSyEntitlements(a_);
++        vm.prank(next_);
++        migration.acceptOwnershipTransfer();
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, migrationOwner));
++        allocation.configureWeightedSyEntitlements(a_);
++        vm.prank(next_);
++        allocation.configureWeightedSyEntitlements(a_);
++        bytes memory before_ = abi.encode(migration.weightedSyEntitlement(ORIGIN));
++        bytes memory remaining_ = abi.encode(migration.weightedSySurrender(ORIGIN));
++        Migration.WeightedSyEntitlementInput[] memory batch_ = new Migration.WeightedSyEntitlementInput[](2);
++        batch_[0] = a_[0];
++        batch_[0].originalUnits = 8;
++        batch_[0].originalEth = 2 ether;
++        batch_[1] = a_[0];
++        batch_[1].originalId = bytes32("bad second");
++        batch_[1].contributionsKnown = false;
++        vm.prank(next_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, batch_[1].originalId));
++        allocation.configureWeightedSyEntitlements(batch_);
++        assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), before_);
++        assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), remaining_);
++        assertFalse(migration.weightedSyEntitlement(batch_[1].originalId).configured);
++    }
++
++    function test_sameCanonicalOriginCannotBeNftOrIndependentInEitherDirection() public {
++        Migration.WeightedSyEntitlementInput[] memory a_ = _inputs();
++        a_[0].originalId = migration.migrationNftOriginalId(NFT, 3);
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(a_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, a_[0].originalId));
++        _configure(address(this), 1 ether, a_[0].originalId);
++        Migration.NftEntitlementInput[] memory n_ = new Migration.NftEntitlementInput[](1);
++        n_[0] = Migration.NftEntitlementInput(NFT, 3, address(this), 1, 1 ether, 0, bytes32("fixture"), true);
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, a_[0].originalId));
++        allocation.configureNftEntitlements(n_);
++        n_[0].tokenId = 4;
++        vm.prank(migrationOwner);
++        allocation.configureNftEntitlements(n_);
++        a_[0].originalId = migration.migrationNftOriginalId(NFT, 4);
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, a_[0].originalId));
++        allocation.configureWeightedSyEntitlements(a_);
++        _configure(address(this), 1 ether, ORIGIN);
++        _issue(address(this));
++        _configure(address(this), 2 ether, bytes32("replacement"));
++        a_[0].originalId = ORIGIN;
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
++        allocation.configureWeightedSyEntitlements(a_);
++    }
++
++    function test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection() public {
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(_inputs());
++        _buyOwnerFirstBond();
++        vm.prank(migrationOwner);
++        allocation.activateMigration();
++        assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedSyEntitlements.selector), address(0));
++        assertFalse(IERC165(detf).supportsInterface(type(Allocation).interfaceId));
++        assertNotEq(IDiamondLoupe(detf).facetAddress(Migration.surrenderMigrationWeightedSy.selector), address(0));
++        assertNotEq(IDiamondLoupe(detf).facetAddress(Migration.weightedSyEntitlement.selector), address(0));
++        (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (_inputs())));
++        assertFalse(ok_);
++        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, bytes32("absent")));
++        migration.surrenderMigrationWeightedSy(bytes32("absent"), 1, 0, block.timestamp);
++        assertTrue(migration.weightedSyEntitlement(ORIGIN).configured);
++        assertEq(migration.weightedSySurrender(ORIGIN).consumedUnits, 0);
++    }
++
++    function test_canonicalCollisionWithWdAndEarlierNftSurvivesWalletCorrection() public {
++        Migration.WeightedSyEntitlementInput[] memory y_ = _inputs();
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(y_);
++        y_[0].originalWallet = address(0xBEEF);
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(y_);
++        Migration.WeightedLiquidEntitlementInput[] memory d_ = new Migration.WeightedLiquidEntitlementInput[](1);
++        d_[0] = Migration.WeightedLiquidEntitlementInput(
++            ORIGIN, address(this), 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7, 3, 1 ether, 0, bytes32("WD"), true
++        );
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
++        allocation.configureWeightedLiquidEntitlements(d_);
++        d_[0].originalId = bytes32("other origin");
++        vm.prank(migrationOwner);
++        allocation.configureWeightedLiquidEntitlements(d_);
++        y_[0].originalId = d_[0].originalId;
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, d_[0].originalId));
++        allocation.configureWeightedSyEntitlements(y_);
++
++        address earlier_ = 0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391;
++        Migration.NftEntitlementInput[] memory n_ = new Migration.NftEntitlementInput[](1);
++        n_[0] = Migration.NftEntitlementInput(earlier_, 3, address(this), 3, 1 ether, 0, bytes32("earlier"), true);
++        vm.prank(migrationOwner);
++        allocation.configureNftEntitlements(n_);
++        y_[0].originalId = migration.migrationNftOriginalId(earlier_, 3);
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, y_[0].originalId));
++        allocation.configureWeightedSyEntitlements(y_);
++        y_[0].originalId = migration.migrationNftOriginalId(earlier_, 4);
++        vm.prank(migrationOwner);
++        allocation.configureWeightedSyEntitlements(y_);
++        n_[0].tokenId = 4;
++        vm.prank(migrationOwner);
++        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, y_[0].originalId));
++        allocation.configureNftEntitlements(n_);
++    }
++}

@@ -43,8 +43,8 @@ contract MigrationSourceUnitsRecoveryHandler is MigrationSourceUnitsHandler {
         a_[0].entitlements = new Migration.OriginalEntitlement[](1);
         bytes32 original_ = keccak256("stateful independently issued origin");
         a_[0].entitlements[0] = Migration.OriginalEntitlement(original_, 0.01 ether, 0, bytes32("fixture"));
-        bytes32 config_ = keccak256(abi.encode(block.chainid, address(parent), parent.migrationSnapshot().id, a_[0]));
-        vm.prank(currentOwner); Allocation(address(parent)).configureIndependentAllocations(a_);
+        bytes32 config_ = keccak256(abi.encode(block.chainid, address(parent), parent.migrationWeightedPricing().id, a_[0]));
+        vm.prank(currentOwner); Allocation(address(parent)).configureIndependentAllocations(a_, pricingId);
         Migration.IndependentIssuanceRequest[] memory requests_ = new Migration.IndependentIssuanceRequest[](1);
         requests_[0] = Migration.IndependentIssuanceRequest(OTHER, config_);
         vm.prank(currentOwner);
@@ -58,19 +58,19 @@ contract MigrationSourceUnitsRecoveryHandler is MigrationSourceUnitsHandler {
         bytes32 replacement_ = keccak256("stateful replacement canonical origin");
         a_[0].entitlements[0].entitlementId = replacement_;
         a_[0].entitlements[0].originalEth = 0.02 ether;
-        vm.prank(currentOwner); Allocation(address(parent)).configureIndependentAllocations(a_);
+        vm.prank(currentOwner); Allocation(address(parent)).configureIndependentAllocations(a_, pricingId);
         independentConfiguration = keccak256(abi.encode(
-            block.chainid, address(parent), parent.migrationSnapshot().id, a_[0]));
+            block.chainid, address(parent), parent.migrationWeightedPricing().id, a_[0]));
         for (uint256 i_; i_ < 10; ++i_) {
             Migration.WeightedLiquidEntitlementInput[] memory inputs_ = new Migration.WeightedLiquidEntitlementInput[](1);
             inputs_[0] = _input(i_, 0);
             inputs_[0].originalId = original_;
             vm.prank(currentOwner);
-            _reject(abi.encodeWithSelector(configSelector(i_), inputs_),
+            _reject(abi.encodeWithSelector(configSelector(i_), inputs_, pricingId),
                 abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, original_));
             inputs_[0].originalId = replacement_;
             vm.prank(currentOwner);
-            _reject(abi.encodeWithSelector(configSelector(i_), inputs_),
+            _reject(abi.encodeWithSelector(configSelector(i_), inputs_, pricingId),
                 abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, replacement_));
             enrollmentRejections += 2;
         }

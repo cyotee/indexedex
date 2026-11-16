@@ -1,0 +1,105 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {TestBase_EtherFiWeETHStandardExchange} from "contracts/test/bases/TestBase_EtherFiWeETHStandardExchange.sol";
+import {HostileWETH} from "contracts/protocols/staking/etherfi/test/hermetic/HostileWETH.sol";
+import {StakingStandardExchangeAccountingHandler, IStakingAccountingHost} from "test/foundry/spec/vaults/standard/exchange/invariant/StakingStandardExchangeAccountingHandler.sol";
+import {IEtherFiWeETHStandardVault} from "contracts/protocols/staking/etherfi/interfaces/IEtherFiWeETHStandardVault.sol";
+
+/// forge-config: default.invariant.runs = 256
+/// forge-config: default.invariant.depth = 64
+/// forge-config: default.invariant.fail-on-revert = true
+contract EtherFiWeETHStandardExchange_Invariant_Test is TestBase_EtherFiWeETHStandardExchange, IStakingAccountingHost {
+    EtherFiWeETHAccountingHandler internal handler;
+    uint256 internal settledThrough;
+
+    function setUp() public override {
+        super.setUp();
+        // Replace only the external WETH dependency, then deploy a fresh production vault
+        // through its registry package. The proxy/facets/guard are the real SUT.
+        hermeticWeth = new HostileWETH();
+        seVault = _deployEtherFiSe();
+        etherFiSe = IEtherFiWeETHStandardVault(seVault);
+        vm.startPrank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setDefaultUsageFee(0);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(seVault, 0);
+        vm.stopPrank();
+        handler = new EtherFiWeETHAccountingHandler(seVault, IERC20(address(hermeticWeEth)), address(hermeticWeth), IStakingAccountingHost(address(this)));
+        bytes4[] memory selectors = new bytes4[](1);
+        selectors[0] = handler.cycle.selector;
+        targetContract(address(handler));
+        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
+    }
+
+    function fundReceipt(address to_, uint256 amount_) external { _mintWeViaE(to_, amount_); }
+    function settleRequests() external {
+        uint256 last = hermeticQueue.lastRequestId();
+        for (uint256 id = settledThrough + 1; id <= last; ++id) {
+            (, uint256 amount,,) = hermeticQueue.requests(id);
+            vm.deal(address(this), amount);
+            hermeticQueue.finalizeForTest{value: amount}(id);
+        }
+        settledThrough = last;
+    }
+
+    function accountingState() external view returns (bytes32) {
+        uint256[9] memory values;
+        values[0] = IBasicVault(seVault).reserveOfToken(address(hermeticWeth));
+        values[1] = IBasicVault(seVault).reserveOfToken(address(hermeticWeEth));
+        values[2] = etherFiSe.totalReserveEth();
+        values[3] = etherFiSe.lockedReserveEth();
+        values[4] = hermeticWeEth.balanceOf(seVault);
+        values[5] = hermeticWeth.allowance(seVault, address(handler));
+        values[6] = hermeticEEth.balanceOf(seVault); values[7] = hermeticEEth.allowance(seVault, address(hermeticWeEth)); values[8] = hermeticQueue.lastRequestId();
+        return keccak256(abi.encode(values));
+    }
+
+    function invariant_APEX_accounting() public view {
+        handler.assertAccounting();
+        handler.assertStakingAccounting();
+        assertEq(etherFiSe.liquidReserveEth(), hermeticWeth.balanceOf(seVault), "native liquid custody");
+        assertEq(etherFiSe.totalReserveEth(), etherFiSe.liquidReserveEth() + etherFiSe.lockedReserveEth(), "receipt plus liquid plus pending backing");
+        if (IERC20(seVault).totalSupply() > 0) assertGt(etherFiSe.totalReserveEth(), 0, "issued shares have backing");
+    }
+    function afterInvariant() public view {
+        assertGe(handler.cycles(), 4, "randomized money actions required");
+        for (uint256 i; i < 3; ++i) assertGt(handler.actorCycles(handler.actors(i)), 0, "three funded actors");
+        invariant_APEX_accounting();
+    }
+    function test_APEX_deterministicLifecycle() public {
+        for (uint256 i; i < 4; ++i) handler.cycle(1 ether + i, i);
+        afterInvariant();
+    }
+    function test_APEX_receiptSameStatePullPretransferExactIn() public {
+        handler.seedParity();
+        handler.assertPretransferParity(false, false, false);
+    }
+    function test_APEX_receiptSameStatePullPretransferExactOut() public {
+        handler.seedParity();
+        handler.assertPretransferParity(false, true, false);
+    }
+    function test_APEX_receiptSameStatePullPretransferExactOutRefund() public {
+        handler.seedParity();
+        handler.assertPretransferParity(false, true, true);
+    }
+    function test_APEX_wethSameStatePullPretransferExactIn() public {
+        handler.seedParity();
+        handler.assertPretransferParity(true, false, false);
+    }
+    function test_APEX_wethSameStatePullPretransferExactOut() public {
+        handler.seedParity();
+        handler.assertPretransferParity(true, true, false);
+    }
+    function test_APEX_wethSameStatePullPretransferExactOutRefund() public {
+        handler.seedParity();
+        handler.assertPretransferParity(true, true, true);
+    }
+}
+
+contract EtherFiWeETHAccountingHandler is StakingStandardExchangeAccountingHandler {
+    constructor(address se_, IERC20 receipt_, address weth_, IStakingAccountingHost host_)
+        StakingStandardExchangeAccountingHandler(se_, receipt_, weth_, host_) {}
+}

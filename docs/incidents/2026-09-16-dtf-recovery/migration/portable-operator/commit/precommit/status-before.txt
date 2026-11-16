@@ -1,0 +1,25 @@
+ M docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+ M scripts/recovery/dtf-migration/cli.ts
+ M scripts/recovery/dtf-migration/execution-domain.ts
+ M scripts/recovery/dtf-migration/execution-schema.ts
+ M scripts/recovery/dtf-migration/preparation.ts
+ M scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-data.ts
+ M scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts
+ M scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts
+ M scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts
+ M scripts/recovery/dtf-migration/rehearsal-process.ts
+ M scripts/recovery/dtf-migration/rehearsal-recovery.ts
+ M scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts
+ M scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts
+ M scripts/recovery/dtf-migration/rehearse.ts
+ M scripts/recovery/dtf-migration/schema.ts
+?? docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/
+?? scripts/recovery/dtf-migration/bundle-files.ts
+?? scripts/recovery/dtf-migration/bundle-materialize.ts
+?? scripts/recovery/dtf-migration/bundle.test.ts
+?? scripts/recovery/dtf-migration/bundle.ts
+?? scripts/recovery/dtf-migration/rehearsal-portable.ts

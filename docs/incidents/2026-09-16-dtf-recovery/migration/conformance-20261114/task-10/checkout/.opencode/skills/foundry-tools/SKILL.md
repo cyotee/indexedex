@@ -1,0 +1,35 @@
+---
+name: foundry-tools
+description: "Foundry Forge tests, fuzzing, signing, deployment and source verification; Cast, Anvil and SuperSim tooling. Compiling forge commands use --use solar. Crane test/deploy rules take priority."
+---
+
+# foundry-tools
+
+## Compiler
+
+Every compiling `forge` command in this repo includes `--use solar` (`build`, `test`, `script`, `coverage`, `snapshot`, `inspect`, `bind`, `geiger`, `create`). Do not pass `--use solc:` or enable `via_ir`. `forge fmt`, `forge config`, `cast`, and `anvil` do not take the flag. Full rule: [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../../../docs/agent/INDEXEDEX_AGENT_LAW.md) § Compiler. Topic examples below that omit the flag are wrong for this repo; add it.
+
+Use this router when the task needs this domain. Read only the relevant topic below; each linked file retains its own references and procedures.
+
+Resolve a topic's relative references from that topic's directory. Repository rules and approved task scope take priority over general examples. Listing a protocol here does not add it to release scope.
+
+| Topic | Guidance |
+| --- | --- |
+| anvil-node | [anvil-node](../../../lib/crane/.claude/skills/anvil-node/SKILL.md) |
+| cast-commands | [cast-commands](../../../lib/crane/.claude/skills/cast-commands/SKILL.md) |
+| forge-deployment / Blockscout / Sourcify verification | [forge-deployment](../../../lib/crane/.claude/skills/forge-deployment/SKILL.md) |
+| forge-fuzz-testing | [forge-fuzz-testing](../../../lib/crane/.claude/skills/forge-fuzz-testing/SKILL.md) |
+| forge-signing | [forge-signing](../../../lib/crane/.claude/skills/forge-signing/SKILL.md) |
+| forge-testing | [forge-testing](../../../lib/crane/.claude/skills/forge-testing/SKILL.md) |
+| foundry-project | [foundry-project](../../../lib/crane/.claude/skills/foundry-project/SKILL.md) |
+| supersim | [supersim](../../../lib/crane/.claude/skills/supersim/SKILL.md) |
+
+## Additional reviewed topics
+
+Read these topics from their canonical source. Resolve discovery symlinks before
+following relative links. Current IndexedEx product/testing rules take precedence.
+
+| Topic | Guidance |
+| --- | --- |
+| foundry-agent-safety | [foundry-agent-safety](../foundry-agent-safety/SKILL.md) |
+| foundry-script-ops | [foundry-script-ops](../foundry-script-ops/SKILL.md) |

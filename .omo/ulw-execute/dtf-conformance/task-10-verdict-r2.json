@@ -1,0 +1,108 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 10,
+  "round": 2,
+  "verdict": "confirmed-with-follow-up",
+  "failure_class": "none",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-10-done.json",
+  "claim_binding": {
+    "bytes": 11168,
+    "sha256": "35d5bc731fefe52d3d9573a046555d1ad690ff8f09113fb89fa4f087a515b4e1",
+    "size_changed_from_prior": true,
+    "prior_bytes": 10558,
+    "complete_reread": true,
+    "subsequent_complete_read_unchanged": true
+  },
+  "summary": "H1 is resolved by an actual export rerun with exact argv and captured exit 0 in a new log. The original log is unchanged. The donor provenance block remains; no rehearsal, repair product edit, or NFT 3 consumption was found in local execution provenance. This is not a full lifecycle pass.",
+  "blocked_condition_confirmed": true,
+  "task_10_lifecycle_complete": false,
+  "findings": [],
+  "resolved_findings": [
+    "H1"
+  ],
+  "checks": {
+    "command_evidence": {
+      "result": "pass",
+      "exact_export_argv_logged": true,
+      "actual_exit_zero_in_new_log": true,
+      "watcher_exit_code": 0,
+      "new_log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/bundle-export-r2.log",
+      "new_log_bytes": 730,
+      "new_log_sha256": "332ec6ac8864ed1f17a00adaa4da285701e4f3971876f3e091e5dadaec2699e5",
+      "original_log_unchanged": true,
+      "original_log_bytes": 703,
+      "original_log_sha256": "10c171d534be637b2522e26f9a9fe9195f59b40159d2071b4abbf0d420ec24db"
+    },
+    "authority_bundle": {
+      "result": "pass",
+      "roles": 22,
+      "verified_content_files": 23,
+      "claim_artifact_hashes_verified": 18,
+      "original_and_r2_manifest_identical": true,
+      "manifest_sha256": "4ab93713b6aafd43d674a7b605252f938c4e70cf638a1ed89bf33b4fc5f1dac0"
+    },
+    "donor_search": {
+      "result": "block-confirmed",
+      "budget_raw_18": "10000000000000000000000",
+      "pin_block": "108944663",
+      "pin_hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "probe_rows": 337,
+      "authority_candidates": 60,
+      "eligible_covering_authority_candidates": 0,
+      "scope": "Preserved evidence and saved responses only; no fresh RPC."
+    },
+    "custody_and_mutations": {
+      "result": "pass-with-local-provenance-limit",
+      "product_files_edited_by_repair": false,
+      "nft_three_principal_consumed": false,
+      "rehearsal_command_run": false,
+      "repair_tool_calls_audited": 5,
+      "original_execution_transcript_prefix_unchanged": true
+    }
+  },
+  "adversarial": {
+    "misleading_success_output": "pass: argv, immediate process exit capture, and watcher exit 0 agree; offline export is not lifecycle success",
+    "stale_state": "pass: complete claim reread and all 18 artifact bindings match; identical original and r2 bundle content",
+    "dirty_worktree": "pass with local provenance limit: existing shared dirt preserved; all repair commands and patch inspected; no product write found",
+    "hung_flaky_cancel_interruptions": "not-applicable: rehearsal was not run; no lifecycle timeout, cancellation or interruption handling is certified"
+  },
+  "producer_provenance": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1dde5/sessions/st_01a1dde5/2026-11-15T06-29-13.694Z_17f3b054-fb85-421b-9cc6-eff6ab4860c8.jsonl",
+    "bytes": 1814336,
+    "sha256": "1bfd48898f558d17996f023ba6ddddb30c63013d02ba7bd7147dceebcc1cdc7f",
+    "records": 263,
+    "original_prefix_records": 233,
+    "original_prefix_sha256": "d0b4a0f02e7cb8c0beaca939b5b06e4f557bc14cde45c92930b445f89ace3dc9",
+    "repair_command_line": 241,
+    "exit_receipt_lines": [
+      250,
+      253
+    ],
+    "repair_claim_patch_line": 257
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/verification/report-r2.md",
+  "report_binding": {
+    "bytes": 8466,
+    "sha256": "33d1f7ceb82f0c8f1fdee61478c16cdb6d2081bbfeab201551abd89c19fb57af"
+  },
+  "follow_up": [
+    "Resolve donor-evidence binding and transport without replacing exact authorities or weakening bundle completeness.",
+    "Execute task 10 lifecycle under separate instructions after fixture acquisition is resolved."
+  ],
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/verification/report-r2.md",
+    ".omo/ulw-execute/dtf-conformance/task-10-verdict-r2.json"
+  ],
+  "limits": [
+    "No Forge, RPC, rehearsal, installs, commits or transactions were run by the verifier.",
+    "Custody and repair authorship conclusions are based on local execution provenance, not a fresh chain attestation.",
+    "No mixed-pricing, activation, donation-resume, NFT-three two-bond, rollback or full lifecycle pass is certified."
+  ]
+}

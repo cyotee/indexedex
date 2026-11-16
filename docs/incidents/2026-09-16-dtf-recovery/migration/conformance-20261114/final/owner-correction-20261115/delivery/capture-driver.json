@@ -1,0 +1,21 @@
+{
+  "scope": "Exact executed offline bookkeeping capture driver, retained for provenance; not a product CLI or new runtime QA harness.",
+  "argv": [
+    "bun",
+    "--eval",
+    "import {spawn} from \"node:child_process\";import {mkdir,writeFile,readFile} from \"node:fs/promises\";import {join} from \"node:path\";import {createHash} from \"node:crypto\";\nconst argv=[\"bun\",\"docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts\",\"delivery\",\"docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json\",\"docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery\"];const out=\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery\"; const started=new Date().toISOString(); const child=spawn(argv[0],argv.slice(1),{cwd:process.cwd(),env:process.env,stdio:[\"ignore\",\"pipe\",\"pipe\"]});\nconst o=[],e=[];child.stdout.on(\"data\",c=>o.push(c));child.stderr.on(\"data\",c=>e.push(c));const r=await new Promise((resolve,reject)=>{child.once(\"error\",reject);child.once(\"close\",(exit,signal)=>resolve({exit,signal}));});const stdout=Buffer.concat(o),stderr=Buffer.concat(e);await mkdir(join(out,\"command\"),{recursive:true});\nconst baseline=await readFile(\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json\");const recorder=await readFile(\"/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts\");const hash=b=>createHash(\"sha256\").update(b).digest(\"hex\");\nawait writeFile(join(out,\"command/argv.nul\"),Buffer.from(argv.join(String.fromCharCode(0))+String.fromCharCode(0)),{flag:\"wx\"});await writeFile(join(out,\"command/stdout.log\"),stdout,{flag:\"wx\"});await writeFile(join(out,\"command/stderr.log\"),stderr,{flag:\"wx\"});\nawait writeFile(join(out,\"command/result.json\"),JSON.stringify({argv,cwd:process.cwd(),started,finished:new Date().toISOString(),...r,stdoutBytes:stdout.length,stderrBytes:stderr.length,versions:process.versions,baselineSha256:hash(baseline),recorderSha256:hash(recorder)}),{flag:\"wx\"});console.log(\"FINAL_ADDITIVE_RECORDER exit=\"+r.exit);console.log(stdout.toString().trim());process.exitCode=r.exit??1;"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "sourceSha256": "b94ab64dfa1d13df3dfcc97626b5063ab0065f6e8ee03af1f5be6725e5dec533",
+  "childArgv": [
+    "bun",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+    "delivery",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/boundary/inventory.json",
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/final/owner-correction-20261115/delivery"
+  ],
+  "captureMonitor": "mon_SRRQRX458VRW40RJ",
+  "actualCaptureExit": 1,
+  "actualRawSummary": "FINAL_ADDITIVE_RECORDER exit=1\nDELIVERY_FAILED entries=123373 failures=340",
+  "behavior": "The new output root was not precreated. Raw child streams were buffered and published only after the unchanged recorder completed."
+}

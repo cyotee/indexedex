@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase29-delegated-source",
+  "name": "Migration DETF phase 29: delegated claim source admission",
+  "nodes": [
+    {
+      "id": "probe-delegated-source",
+      "label": "Prove delegated source caller and custody",
+      "category": "deep-high",
+      "task_summary": "Establish actual delegated claim caller/effects and a controlled signed source-custody witness",
+      "prompt": "TASK: Complete the source-only delegated/indirect TokenStaking proof defined in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-delegated-source-brief.md. Read it completely plus all named actual requirements/source/receipt evidence before acting. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source at07d54b9a3d20d98aee24e75235bbf16b650a8028; write only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/ and owned probe/runtime. No tracked production/operator/TestBase/test/runbook change or commit. DELIVERABLE: Complete source admission contract/report, historical evidence versus inference, actual controlled signed delegated-account witness, exact source/vault/SY units/effects, approved custody/late rollback, negatives, raw artifacts/receipts/failures and stopped cleanup/final seal. VERIFY: Actual source caller is original wallet, not outer bundler; canonical unique successful source invocation, completeW0 and measuredQ0 inclzerooutput, code/routing/state/conservation. Real EIP7702 authorization on owned local test account only, no setCode/storage injection/infrastructure impersonation. Use existing admitted donor fixture for its own rawrights only. Historical known-hash callTracer is a bounded new source observation, not shipped collector expansion; retain refusal without alternate provider/method/prefix reconstruction. No eligibility/previousdelivery/credit fabrication or merely deleting EOA checks. Preserve directEOA facts, source units, staged rollback boundaries and actual authorization/nonce semantics. Only owned18579fork; no public signing, keys, sourcegovernance, held09 or gaswork. Relevant probe types/Solarbuild/actualsource execution only, no unchangedlargegates. STOP WHEN: Actual complete admitted-proposal or precise not-ready report/contract/seal after all operations stop; never status-only final or running-command handoff."
+    },
+    {
+      "id": "verify-delegated-source",
+      "label": "Independently verify delegated source contract",
+      "category": "deep-high",
+      "dependsOn": [
+        "probe-delegated-source"
+      ],
+      "task_summary": "Audit and independently execute the delegated-source authenticity, conservation and custody gate",
+      "prompt": "TASK: Independently verify actual stopped delegated source handoff against /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase29-delegated-source-brief.md. Read the whole brief and actual source/report/contract/seal/cleanup; do not substitute oldreceipt flags for a successful source proof. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source; write only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/verification/ and owned isolated verification runtime. No source fixes, trackedchanges, commits, provider switch, held09/public/signing-real-user actions or sharedstate mutation. DELIVERABLE: Complete admitted-proposal/needs-fix/not-ready source verdict, exact proof/seal and stoppedcleanup. VERIFY: Source-specific authenticity/conservation argument from actual inspected code/routing and canonical historical observations; separate outer signer from actual source caller, successful inner source action from outer-success caught failures, canonical logs from reverted trace logs, sourceunits and completeW0/measuredQ0/exclusions. Independently run real controlled local18579delegation/claim/custody/late-rollback witness with actualsigned authorizations/transactions, no code/storage/balance/nonce injection or infrastructure impersonation. Authenticate recorded historical trace/refusal; do not replay a documented refusal merely for counts or invent an alternative historicalprefix. Retain exactaccount authorization/nonce rollback qualifications and lackofhistoricaleligibility/real-user-key proof. No production admission, partial/prior credit model, repricing or unchanged159/fulloperator/Forge-gate replay. STOP WHEN: Complete source-specific bounded result and all owned operations stopped, finalseal last; no running-result promise."
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+„
+  "source": "happy-final.log",
+  "test": "MigrationWeightedPricingTest.test_ActivationCut_UnsetPricingAndEmptyEntitlements",
+  "status": "PASS",
+  "writers": [
+    {
+      "selector": "0xec55c474",
+      "signature": "bootstrapMigrationReserve((address,uint256,uint256)[],uint256,uint256,uint256)",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x43d1e0cc",
+      "signature": "setMigrationWeightedPricing((uint256,uint256,uint256,uint256,uint256,(address,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256,(uint8,address,(address,address,address,uint8),address,address,uint256,uint256,uint256,uint256))[]))",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x703e5943",
+      "signature": "configureIndependentAllocations((address,bytes32,(bytes32,uint256,uint256,bytes32)[])[],bytes32)",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x1f9aab7f",
+      "signature": "configureNftEntitlements((address,uint256,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x9fbc6598",
+      "signature": "configureNftContributionEntitlements((address,uint256,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x69f61e45",
+      "signature": "configureWeightedLiquidEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x3bbb46c3",
+      "signature": "configureWeightedSyEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x653470af",
+      "signature": "configureClaimedSyEntitlements(((bytes32,address,address,uint256,uint256,uint256,bytes32,bool),uint256,uint256)[],bytes32)",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x559e5d0b",
+      "signature": "configureDtfCustodySeEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x37444d48",
+      "signature": "configureClaimVaultEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0xc11ab8d4",
+      "signature": "configureWeightedReceiptEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0xcbaead69",
+      "signature": "configureEarlierReceiptEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x12f4be5f",
+      "signature": "configureEarlierLiquidEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x15af3f80",
+      "signature": "configureHeldSeLpEntitlements((bytes32,address,address,uint256,uint256,uint256,bytes32,bool)[],bytes32)",
+      "before": "0x59bf980935b2ffd7af72b526b5d0cf3a642a9c7b",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x787642e8",
+      "signature": "issueIndependentAllocations((address,bytes32)[])",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0xe9dc9e6d",
+      "signature": "activateMigration()",
+      "before": "0x5a74935bdf9f5e2804c2992e282ef5f3e9605059",
+      "after": "0x0000000000000000000000000000000000000000"
+    }
+  ],
+  "oldAliases": [
+    {
+      "selector": "0x161d9afc",
+      "before": "0x0000000000000000000000000000000000000000",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0xa5ef9788",
+      "before": "0x0000000000000000000000000000000000000000",
+      "after": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x7fda99ae",
+      "before": "0x0000000000000000000000000000000000000000",
+      "after": "0x0000000000000000000000000000000000000000"
+    }
+  ],
+  "retained": [
+    {
+      "selector": "0xcc337380",
+      "owner": "0xd8da8fb6c3dae05ef52117ff8c167cccf7abbc6b",
+      "signature": "migrationWeightedPricing()"
+    },
+    {
+      "selector": "0xdc6bf0d3",
+      "owner": "0xd8da8fb6c3dae05ef52117ff8c167cccf7abbc6b",
+      "signature": "previewOriginalCredit(uint256,uint256)"
+    }
+  ]
+}

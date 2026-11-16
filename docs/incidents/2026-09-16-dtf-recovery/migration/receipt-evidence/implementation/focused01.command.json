@@ -1,0 +1,23 @@
+{
+  "command": [
+    "bun",
+    "test",
+    "--timeout",
+    "15000",
+    "./scripts/recovery/dtf-migration/receipt.test.ts",
+    "./scripts/recovery/dtf-migration/receipt-reconciliation.test.ts"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence",
+  "started": "2026-11-13T05:02:19.679Z",
+  "stopped": "2026-11-13T05:02:20.128Z",
+  "code": 0,
+  "signal": null,
+  "stdout": {
+    "bytes": 28,
+    "sha256": "fecdac66a81d21d9e06fe4ee12417b6f74eaeee54804ccb739f4eedac6a8a13f"
+  },
+  "stderr": {
+    "bytes": 2629,
+    "sha256": "99a15ae9fa49daa6e1bea2cb3985c5e4b589390f97c6d3118cba6cf4438464d8"
+  }
+}

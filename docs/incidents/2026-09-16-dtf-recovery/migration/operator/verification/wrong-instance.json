@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "scripts/recovery/dtf-migration/cli.ts",
+    "deploy",
+    "--manifest",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/execution/rehearsal-1794377054937/pre-capture.json",
+    "--checkpoint",
+    "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/forbidden-instance-journal",
+    "--execute-local",
+    "--instance-id",
+    "0x1111111111111111111111111111111111111111111111111111111111111111"
+  ],
+  "pid": 68178,
+  "code": 1,
+  "signal": null,
+  "stdout": "",
+  "stderr": "{\"error\":\"DOMAIN\",\"message\":\"explicit exact local identity required\"}\n"
+}

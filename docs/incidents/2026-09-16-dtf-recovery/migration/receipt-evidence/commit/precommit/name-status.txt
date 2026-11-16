@@ -1,0 +1,10 @@
+M	docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+M	scripts/recovery/dtf-migration/cli.ts
+A	scripts/recovery/dtf-migration/receipt-association.ts
+A	scripts/recovery/dtf-migration/receipt-evidence.ts
+A	scripts/recovery/dtf-migration/receipt-input.ts
+A	scripts/recovery/dtf-migration/receipt-reconciliation.test.ts
+A	scripts/recovery/dtf-migration/receipt-reconciliation.ts
+A	scripts/recovery/dtf-migration/receipt-rpc.ts
+A	scripts/recovery/dtf-migration/receipt.fixture.ts
+A	scripts/recovery/dtf-migration/receipt.test.ts

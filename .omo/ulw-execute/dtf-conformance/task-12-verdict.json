@@ -1,0 +1,173 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 12,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confirmed": false,
+  "complete": false,
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-12-done.json",
+  "claim_binding": {
+    "bytes": 8489,
+    "sha256": "1fe73c59140cd288a6b08241a4622765515fa597e329b99dceb0772e78616216",
+    "complete_reread": true,
+    "size_changed": false,
+    "status": "partial",
+    "complete": false
+  },
+  "summary": "Relocation, exact historical provenance and 23 rejection cases are supported by raw command evidence. Task 12 cannot be confirmed because task 10 real portable current-chain and owner-purchase/donation lifecycle proofs are missing.",
+  "checks": {
+    "happy_qa": {
+      "result": "pass",
+      "command": "bun test --timeout 15000 ./scripts/recovery/dtf-migration/bundle.test.ts ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts",
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/final.log",
+      "exact_argv_before_helper_output": true,
+      "exit_code": 0,
+      "passed": 91,
+      "failed": 0,
+      "raw_summary_lines": [
+        108,
+        109,
+        110
+      ],
+      "producer_monitor_exit_code": 0,
+      "rerun": false
+    },
+    "tamper_rejections": {
+      "result": "pass",
+      "cases": 23,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/tamper-rejections.log",
+      "independent_one_byte_mutations": [
+        "A book",
+        "B input",
+        "A issuance intent",
+        "completion receipt"
+      ],
+      "historical_domain_with_rehashed_references_rejects": true,
+      "omitted_execution_and_journal_reject": true,
+      "omitted_old_sy_rejects": true,
+      "cycle_rejects": true,
+      "copied_and_moved_active_checkpoint_reject": true,
+      "accepted_files_preserved": true,
+      "no_nonce_or_submission_in_rejected_actions": true,
+      "qualification": "Synthetic wire fixture and isolated offline rejection paths; no real task 10 lifecycle is certified."
+    },
+    "portable_integrity": {
+      "result": "pass-with-synthetic-scope",
+      "raw_files": 27,
+      "fresh_directories": 2,
+      "comparison_rows_per_location": 27,
+      "historical_contexts_per_location": 4,
+      "all_claim_hashes_match": true,
+      "all_archived_hashes_and_sizes_match": true,
+      "independent_transitive_reference_visits": 1081,
+      "missing_or_invalid_references": 0,
+      "historical_domains_independently_reconstructed": true,
+      "byte_identical_books_and_inputs": true,
+      "fresh_domains_differ": true,
+      "temporary_directories_retained": false,
+      "qualification": "Original bytes survive in lossless base64. Directory separation is supported by raw CLI output, production helper code and test assertions; no temporary directory was recreated."
+    },
+    "source_consistency": {
+      "result": "pass",
+      "current_source_hashes_matching_final_argv": 10,
+      "current_artifact_hashes_matching_archive": 6
+    },
+    "allowed_writes": {
+      "result": "pass-with-local-provenance-limit",
+      "task12_source_writes": [
+        "scripts/recovery/dtf-migration/bundle.test.ts",
+        "scripts/recovery/dtf-migration/rehearsal-portable.ts"
+      ],
+      "preparation_test_written_by_task12": false,
+      "execution_test_written_by_task12": false,
+      "rehearsal_proof_written_by_task12": false,
+      "witness_pin_retuned": false,
+      "public_transaction_found": false,
+      "invented_task10_lifecycle_receipt_found": false,
+      "relocation_work_supported_by_existing_evidence_skipped": false,
+      "qualification": "Task authorship checked against producer raw tool calls; shared pre-existing HEAD differences are preserved."
+    },
+    "real_portable_current_chain": {
+      "result": "unmet",
+      "owner_task": 10
+    },
+    "real_owner_purchase_and_donation_resume": {
+      "result": "unmet",
+      "owner_task": 10
+    }
+  },
+  "findings": [
+    {
+      "id": "H1",
+      "failure_class": "harness",
+      "location": "Plan task 12 Happy QA; task-12-done.json acceptance.unmet[0]",
+      "missing_artifacts": [
+        "Successful task-10 portable rehearsal runtime",
+        "Task-10 rehearsal-location.json naming successful runtime",
+        "Real portable current-chain mixed A/B and B-configuration/A-issuance proof"
+      ],
+      "reason": "Task 10 rehearsal was not run because admissible setup donor evidence is unavailable through the fixed authority bundle."
+    },
+    {
+      "id": "H2",
+      "failure_class": "harness",
+      "location": "Plan task 12 owner-purchase/donation preservation; task-12-done.json acceptance.unmet[1]",
+      "missing_artifacts": [
+        "Task-10 donation-identity-resume.json",
+        "Real canonical owner-purchase/donation intent, mined completion and resume evidence"
+      ],
+      "reason": "The unrun task 10 lifecycle has no actual purchase/donation reconciliation receipts. Durable-intent unit tests and synthetic wire completions cannot substitute."
+    }
+  ],
+  "repair_feasibility": {
+    "another_repair_can_produce_proof_under_current_constraints": false,
+    "donor_must_not_be_invented": true,
+    "existing_genuine_candidate_evidence": "Task-10 funding-blocker.json identifies retained task-2 transfer CSV outside the fixed 22-role bundle; it does not prove no funded holder exists.",
+    "permitted_future_direction": "Bind and transport authenticated retained transfer/holdings evidence through the owning bundle contract, then execute the separately permitted real task 10 rehearsal.",
+    "why_not_now": "Evidence transport repair alone cannot create actual current-chain receipts, and this assignment forbids the rehearsal.",
+    "implementation_authorized": false
+  },
+  "adversarial": {
+    "misleading_success_output": "Checked raw argv, actual captured exit, recorder source, monitor exit 0 and 91/0 test summary; partial status is not confirmation.",
+    "stale_state": "Complete claim reread, all three claimed evidence hashes, ten final source hashes and archived reference closure agree.",
+    "dirty_worktree": "Observed shared dirt; producer action provenance limits task attribution. No unrelated work changed by verifier.",
+    "generated_or_cached_artifacts": "Archived/current ABI bytes match; cached ABI and synthetic receipts do not establish current-chain lifecycle success.",
+    "hung_flaky_cancel_interruptions": "not-applicable: verifier did not rerun commands; no fresh timeout, cancellation or recovery claim."
+  },
+  "evidence_hashes": {
+    "portable-integrity.json": "4d00449771af2ba9d6c05b898aa6b0ed641877145158eecb6f439368cfc632bc",
+    "final.log": "e919860e3d55a7eccc4fb993d8ea450e7e7ec2d8c1e56b0514ca83b1ab7958dd",
+    "tamper-rejections.log": "e60db2c53dd950e41197a70bf931d8775ef1481a9004bc93ca277036a9362228"
+  },
+  "producer_provenance": {
+    "path": "/Users/cyotee/.omo/agent/projects/indexedex-5248cf3d3615/senpi-task/children/st_01a1de29/sessions/st_01a1de29/2026-11-15T07-43-44.702Z_6d5c3bd8-b031-4b61-935d-88cca1a2fd6a.jsonl",
+    "bytes": 2068547,
+    "sha256": "6d4bf6d80d7b8a8a5a2e65667501a7a4ec86e56b681f5bd740e639c7e43db4fe",
+    "records": 342,
+    "final_qa_start_line": 217,
+    "final_monitor_exit_line": 248
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/verification/report.md",
+  "report_binding": {
+    "bytes": 12381,
+    "sha256": "27437545eba3f0fea499a9534b19162419a7dd377443d10dd388b70c291587b2"
+  },
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "limits": [
+    "No Bun CLI, Forge, RPC, rehearsal, install, commit or public transaction was run by verifier.",
+    "No product file or task-12-done.json was edited.",
+    "Local execution provenance and archived bytes support synthetic transport integrity only.",
+    "Task 7 B2 remains an existing unresolved dependency follow-up; its witness pin was preserved."
+  ],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12/verification/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-12-verdict.json"
+  ]
+}

@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"DEBT_CEILING_DECIMALS","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"MAX_RESERVES_COUNT","inputs":[],"outputs":[{"name":"","type":"uint16","internalType":"uint16"}],"stateMutability":"view"}],"id":1336}

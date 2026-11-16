@@ -1,0 +1,1233 @@
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol
+new file mode 100644
+--- /dev/null
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol
+@@ -0,0 +1,246 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {Test} from "forge-std/Test.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
++import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
++import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation}
++    from "../interfaces/IUniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigrationRecovery as Recovery} from "../interfaces/IUniswapV4DetfMigrationRecovery.sol";
++import {IUniswapV4DetfMigrationStakedDETF as MigrationReceipt} from "../claimToken/IUniswapV4DetfMigrationStakedDETF.sol";
++import {IUniswapV4DetfMigrationBondNFTVault as Bonds} from "../bondNft/IUniswapV4DetfMigrationBondNFTVault.sol";
++import {IMigrationWeightedReceipt, IMigrationWeightedSynchronization} from "../legacy/IMigrationLegacyRecovery.sol";
++import {IMigrationWeightedNft} from "../legacy/IMigrationLegacyNft.sol";
++import {MigrationLegacyRecoveryLib as Legacy} from "../legacy/MigrationLegacyRecoveryLib.sol";
++
++/// @notice Real ordinary-SY original wallet and its native9 Q/C ghost ledger.
++/// @dev Not a claimed-origin source wallet. No raw TokenStaking admission is implied.
++abstract contract MigrationLegacyHandler is Test, IERC721Receiver {
++    struct OriginalNft {
++        address collection;
++        uint256 id;
++        address wallet;
++        uint256 original;
++        uint256 remaining;
++        uint256 credit;
++    }
++    struct Funded {
++        uint256 id;
++        address wallet;
++        uint256 principal;
++        uint256 gons;
++        uint256 start;
++    }
++    Migration public parent;
++    Recovery public recovery;
++    Bonds public bonds;
++    MigrationReceipt public receipt;
++    bytes32 public constant ORIGIN = keccak256("phase24 ordinary SY canonical original");
++    address public constant OTHER = address(0x2466);
++    uint256 public constant Q0 = 8000;
++    uint256 public remainingQ = Q0;
++    uint256 public remainingC;
++    uint256 public immutable C0;
++    uint256 public delivered;
++    uint256 public syInventory;
++    uint256 public recoveryGons;
++    uint256 public liquidInventory;
++    uint256 public dtfInventory;
++    uint256 public earlierInventory;
++    uint256 public donatedDtf;
++    uint256 public retainedDonation;
++    uint256 public sourceClaims;
++    uint256 public successes;
++    uint256 public rejections;
++    uint256 public callbacks;
++    uint256 public rollbackWitnesses;
++    uint256 internal baseSupply;
++    uint256 internal baseBacking;
++    uint256 internal baseBondGons;
++    uint256 internal newGons;
++    uint256 internal issued;
++    uint256 internal unbookedDtf;
++    uint256 internal k;
++    bool internal rejectBond;
++    bytes32 internal frozen;
++    OriginalNft[2] internal nft;
++    bool[2] internal consumed;
++    Funded[] internal funded;
++    event LegacyAction(bytes4 indexed action, uint256 successes, uint256 rejections);
++
++    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) {
++        parent = m_; recovery = Recovery(address(m_));
++        bonds = Bonds(m_.bondNftVault());
++        receipt = MigrationReceipt(m_.rebasingClaimToken());
++        nft = n_; C0 = c_; remainingC = c_;
++        baseSupply = IERC20(address(m_)).totalSupply();
++        baseBacking = IERC20(address(m_)).balanceOf(address(receipt));
++        baseBondGons = receipt.gonsOf(address(bonds));
++        k = receipt.stakingState().gonsPerUnit;
++        frozen = keccak256(abi.encode(m_.migrationSnapshot()));
++        // The base donates exactly 1 DTF before genesis, without selecting it for
++        // bootstrap. All other initial DTF is the paid reserve's spendable residual,
++        // not recovery inventory or an unsolicited/protected donation.
++        unbookedDtf = 1 ether;
++        assertEq(m_.migrationDonationInventory(IERC20(Legacy.DTF)), unbookedDtf);
++        retainedDonation = IERC20(Legacy.DTF).balanceOf(address(m_)) - unbookedDtf;
++        emit log_named_uint("initial protected DTF donation", unbookedDtf);
++        emit log_named_uint("initial spendable protocol DTF residual", retainedDonation);
++        IERC20(Legacy.WEIGHTED_SY).approve(address(m_), type(uint256).max);
++    }
++
++    function surrender(uint256 seed_) public {
++        if (remainingQ == 0) {
++            vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyQuantity.selector, 1, 0));
++            parent.surrenderMigrationWeightedSy(ORIGIN, 1, 0, block.timestamp);
++            ++rejections;
++        } else {
++            uint256 q_ = seed_ % remainingQ + 1;
++            uint256 credit_ = q_ == remainingQ ? remainingC : Math.mulDiv(remainingC, q_, remainingQ);
++            uint256 before_ = IERC20(Legacy.WEIGHTED_SY).balanceOf(address(parent));
++            (uint256 id_, uint256 paid_) = parent.surrenderMigrationWeightedSy(ORIGIN, q_, credit_, block.timestamp);
++            assertEq(paid_, credit_);
++            assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(address(parent)) - before_, q_);
++            remainingQ -= q_; remainingC -= credit_; delivered += credit_; syInventory += q_;
++            _funded(id_, address(this), credit_);
++            ++successes;
++        }
++        assertAll();
++        emit LegacyAction(this.surrender.selector, successes, rejections);
++    }
++
++    function failedIssuance() public {
++        if (remainingQ == 0) { surrender(0); return; }
++        bytes32 before_ = economicState();
++        rejectBond = true;
++        vm.expectCall(address(receipt), abi.encodeWithSignature(
++            "exchangeIn(address,uint256,address,uint256,address,bool,uint256)", address(parent), remainingC,
++            address(receipt), remainingC, address(bonds), false, block.timestamp
++        ));
++        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(this)));
++        parent.surrenderMigrationWeightedSy(ORIGIN, remainingQ, remainingC, block.timestamp);
++        rejectBond = false;
++        assertEq(economicState(), before_, "late receiver failure restores custody credit backing and NFT");
++        ++rejections; ++rollbackWitnesses;
++        assertAll();
++    }
++
++    function transferAndReject() public {
++        bytes32 before_ = economicState();
++        if (remainingQ != 0) {
++            assertTrue(IERC20(Legacy.WEIGHTED_SY).transfer(OTHER, 1));
++            vm.prank(OTHER);
++            vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalWeightedSyWallet.selector, OTHER, address(this)));
++            parent.surrenderMigrationWeightedSy(ORIGIN, 1, 0, block.timestamp);
++            vm.prank(OTHER);
++            assertTrue(IERC20(Legacy.WEIGHTED_SY).transfer(address(this), 1));
++            successes += 2;
++        } else {
++            vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, bytes32("absent")));
++            parent.surrenderMigrationWeightedSy(bytes32("absent"), 1, 0, block.timestamp);
++        }
++        ++rejections;
++        assertEq(economicState(), before_);
++        assertAll();
++    }
++
++    function takeNft(uint256 which_) public {
++        uint256 i_ = which_ % 2;
++        OriginalNft memory n_ = nft[i_];
++        if (consumed[i_]) {
++            vm.prank(n_.wallet);
++            vm.expectRevert(abi.encodeWithSelector(Migration.NftAlreadyConsumed.selector, n_.collection, n_.id));
++            parent.surrenderMigrationNft(n_.collection, n_.id, 0, block.timestamp);
++            ++rejections;
++        } else {
++            uint256 expected_ = Math.mulDiv(n_.credit, n_.remaining, n_.original);
++            vm.startPrank(n_.wallet);
++            IERC721(n_.collection).approve(address(parent), n_.id);
++            (uint256 id_, uint256 paid_) = parent.surrenderMigrationNft(n_.collection, n_.id, expected_, block.timestamp);
++            vm.stopPrank();
++            assertEq(paid_, expected_);
++            consumed[i_] = true;
++            _funded(id_, n_.wallet, paid_);
++            ++successes;
++        }
++        assertAll();
++    }
++
++    function _funded(uint256 id_, address wallet_, uint256 principal_) internal {
++        uint256 gons_ = principal_ * k;
++        funded.push(Funded(id_, wallet_, principal_, gons_, block.timestamp));
++        issued += principal_;
++        newGons += gons_;
++    }
++
++    /// @notice Callback mutations are exercised only by the ordinary-SY contract original.
++    function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4) {
++        require(msg.sender == address(bonds), "actual bond child only");
++        (bool ok_, bytes memory reason_) = address(parent).call(abi.encodeCall(
++            Migration.surrenderMigrationWeightedSy, (ORIGIN, 1, 0, block.timestamp)));
++        assertFalse(ok_);
++        assertEq(reason_, abi.encodeWithSignature("IsLocked()"));
++        (ok_, reason_) = address(parent).call(abi.encodeCall(Allocation.activateMigration, ()));
++        assertFalse(ok_);
++        assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.activateMigration.selector));
++        ++callbacks;
++        return rejectBond ? bytes4(0) : IERC721Receiver.onERC721Received.selector;
++    }
++
++    function economicState() public view returns (bytes32) {
++        return keccak256(abi.encode(parent.weightedSySurrender(ORIGIN),
++            IERC20(Legacy.WEIGHTED_SY).balanceOf(address(this)),
++            IERC20(Legacy.WEIGHTED_SY).balanceOf(address(parent)),
++            IERC20(Legacy.WEIGHTED_SY).allowance(address(this), address(parent)),
++            receipt.stakingState(), receipt.gonsOf(address(bonds)), IERC20(address(parent)).totalSupply(),
++            IERC20(address(parent)).balanceOf(address(receipt)), IERC721(address(bonds)).balanceOf(address(this)),
++            recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY)));
++    }
++
++    function assertAll() public view {
++        Migration.WeightedSySurrender memory s_ = parent.weightedSySurrender(ORIGIN);
++        assertEq(s_.remainingUnits, remainingQ); assertEq(s_.consumedUnits, Q0 - remainingQ);
++        assertEq(s_.remainingCredit, remainingC); assertEq(s_.deliveredCredit, delivered);
++        assertEq(delivered + remainingC, C0);
++        assertEq(parent.weightedSyEntitlement(ORIGIN).original.originalWallet, address(this));
++        assertEq(parent.weightedSyEntitlement(ORIGIN).credit, C0);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(address(this)), remainingQ);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(OTHER), 0);
++        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(address(parent)), syInventory);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), syInventory);
++        assertEq(recovery.migrationRecoveryGons(), recoveryGons);
++        assertEq(IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).gonsOf(address(parent)), recoveryGons);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), liquidInventory);
++        assertEq(IERC20(Legacy.WEIGHTED_DETF).balanceOf(address(parent)), liquidInventory);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), dtfInventory);
++        assertEq(IERC20(Legacy.DTF).balanceOf(address(parent)), unbookedDtf + dtfInventory + retainedDonation);
++        assertEq(recovery.migrationRecoveryInventory(Legacy.EARLIER_DETF), earlierInventory);
++        assertEq(IERC20(address(parent)).totalSupply(), baseSupply + issued);
++        assertEq(IERC20(address(parent)).balanceOf(address(receipt)), baseBacking + issued);
++        assertEq(receipt.stakingState().gonsPerUnit, k);
++        assertEq(receipt.gonsOf(address(bonds)), baseBondGons + newGons);
++        assertEq(keccak256(abi.encode(parent.migrationSnapshot())), frozen);
++        for (uint256 i_; i_ < funded.length; ++i_) {
++            Funded memory f_ = funded[i_];
++            assertEq(bonds.positionOf(f_.id).principal, f_.principal);
++            assertEq(bonds.positionOf(f_.id).claimedPrincipal, 0);
++            assertEq(bonds.positionOf(f_.id).stakingGons, f_.gons);
++            assertEq(bonds.positionOf(f_.id).startTimestamp, f_.start);
++            assertEq(bonds.positionOf(f_.id).vestingDuration, 90 days);
++            assertEq(IERC721(address(bonds)).ownerOf(f_.id), f_.wallet);
++            assertGe(f_.gons / k, f_.principal);
++        }
++        for (uint256 i_; i_ < 2; ++i_) {
++            Migration.NftSurrender memory n_ = parent.nftSurrender(nft[i_].collection, nft[i_].id);
++            assertEq(n_.consumed, consumed[i_]);
++            if (consumed[i_]) {
++                assertEq(n_.remainingUnits, nft[i_].remaining);
++                assertEq(n_.credit, Math.mulDiv(nft[i_].credit, nft[i_].remaining, nft[i_].original));
++                assertEq(parent.nftCustody(nft[i_].collection, nft[i_].id).collection, nft[i_].collection);
++            }
++        }
++    }
++}
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol
+new file mode 100644
+--- /dev/null
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {MigrationLegacyHandler} from "./MigrationLegacyHandler.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
++import {IUniswapV4DetfMigration as Migration} from "../interfaces/IUniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigrationRecovery as Recovery} from "../interfaces/IUniswapV4DetfMigrationRecovery.sol";
++import {IMigrationWeightedReceipt} from "../legacy/IMigrationLegacyRecovery.sol";
++import {IMigrationWeightedNft} from "../legacy/IMigrationLegacyNft.sol";
++import {MigrationLegacyRecoveryLib as Legacy} from "../legacy/MigrationLegacyRecoveryLib.sol";
++
++/// @notice Exact staged custody ledger. Source outputs are measured external receipts, not SUT inventory reads.
++/// @dev No time warp: pinned legacy rate stays fixed; separate existing accrual suites cover rate growth.
++contract MigrationLegacyRecoveryHandler is MigrationLegacyHandler {
++    uint256 public recoveries;
++    uint256 public batchRollbacks;
++    uint256 public oldPrincipal;
++    uint256 public oldRewards;
++
++    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) MigrationLegacyHandler(m_, n_, c_) {}
++
++    function redeemSy(uint256 seed_) public {
++        if (syInventory == 0) { surrender(seed_); return; }
++        uint256 q_ = seed_ % syInventory + 1;
++        uint256 divisor_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).stakingState().gonsPerUnit;
++        uint256 expected_ = Math.mulDiv(q_, Math.mulDiv(1e36, 1e18, divisor_), 1e18);
++        uint256 before_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).gonsOf(address(parent));
++        _run(Recovery.Stage.WeightedSyRedeem, 0, q_);
++        assertEq(IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).gonsOf(address(parent)) - before_, expected_ * divisor_);
++        syInventory -= q_;
++        recoveryGons += expected_ * divisor_;
++        ++recoveries; ++successes;
++        assertAll();
++    }
++
++    function claimWeighted() public {
++        if (!consumed[0]) { takeNft(0); return; }
++        if (IERC721(nft[0].collection).ownerOf(nft[0].id) == address(0)) {
++            address owner_ = parent.owner();
++            Recovery.Step[] memory steps_ = _steps(Recovery.Stage.WeightedClaim, nft[0].id, 0);
++            vm.prank(owner_);
++            vm.expectRevert(abi.encodeWithSelector(Recovery.InvalidRecoveryCustody.selector, nft[0].collection, nft[0].id));
++            recovery.recoverMigrationNfts(steps_, block.timestamp);
++            ++rejections;
++        } else {
++            IMigrationWeightedNft.Position memory p_ = IMigrationWeightedNft(nft[0].collection).positionOf(nft[0].id);
++            uint256 divisor_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).stakingState().gonsPerUnit;
++            uint256 elapsed_ = block.timestamp - p_.startTimestamp;
++            uint256 vested_ = elapsed_ >= p_.vestingDuration ? p_.principal : p_.principal * elapsed_ / p_.vestingDuration;
++            uint256 principal_ = vested_ - p_.claimedPrincipal;
++            uint256 rewards_ = p_.stakingGons / divisor_ - (p_.principal - p_.claimedPrincipal);
++            _run(Recovery.Stage.WeightedClaim, nft[0].id, 0);
++            recoveryGons += (principal_ + rewards_) * divisor_;
++            oldPrincipal += principal_; oldRewards += rewards_;
++            assertEq(recovery.migrationNftRecovery(nft[0].collection, nft[0].id).principalClaimed, oldPrincipal);
++            assertEq(recovery.migrationNftRecovery(nft[0].collection, nft[0].id).rewardsClaimed, oldRewards);
++            ++recoveries;
++            if (principal_ + rewards_ != 0) ++successes;
++        }
++        assertAll();
++    }
++
++    function unstake(uint256 seed_) public {
++        uint256 divisor_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).stakingState().gonsPerUnit;
++        uint256 available_ = recoveryGons / divisor_;
++        if (available_ == 0) { redeemSy(seed_); return; }
++        uint256 amount_ = seed_ % available_ + 1;
++        uint256 debit_ = amount_ == available_ ? recoveryGons : amount_ * divisor_;
++        _run(Recovery.Stage.WeightedUnstake, 0, amount_);
++        recoveryGons -= debit_; liquidInventory += amount_;
++        ++recoveries; ++successes;
++        assertAll();
++    }
++
++    function convert(uint256 seed_) public {
++        if (liquidInventory == 0) { unstake(seed_); return; }
++        uint256 amount_ = seed_ % liquidInventory + 1;
++        uint256 before_ = IERC20(Legacy.DTF).balanceOf(address(parent));
++        _run(Recovery.Stage.WeightedConvert, 0, amount_);
++        uint256 received_ = IERC20(Legacy.DTF).balanceOf(address(parent)) - before_;
++        assertGt(received_, 0, "actual source conversion output");
++        dtfInventory += received_; liquidInventory -= amount_;
++        assertEq(IERC20(Legacy.WEIGHTED_DETF).allowance(address(parent), Legacy.WEIGHTED_DETF), 0);
++        ++recoveries; ++successes;
++        assertAll();
++    }
++
++    function donate(uint256 seed_) public {
++        if (dtfInventory == 0) { convert(seed_); return; }
++        uint256 amount_ = seed_ % dtfInventory + 1;
++        // Keep the real SE donation above its one-native-share rounding boundary.
++        if (amount_ < 1e10) amount_ = dtfInventory;
++        uint256 before_ = IERC20(Legacy.DTF).balanceOf(address(parent));
++        uint256 lp_ = IERC20(parent.hook()).balanceOf(address(bonds));
++        _run(Recovery.Stage.Donate, 0, amount_);
++        uint256 spent_ = before_ - IERC20(Legacy.DTF).balanceOf(address(parent));
++        assertLe(spent_, amount_ + retainedDonation, "selected recovery plus existing protocol residual only");
++        retainedDonation = retainedDonation + amount_ - spent_;
++        dtfInventory -= amount_; donatedDtf += amount_;
++        assertGt(IERC20(parent.hook()).balanceOf(address(bonds)), lp_, "fixed donation beneficiary");
++        assertEq(IERC20(Legacy.DTF).allowance(address(parent), parent.hook()), 0);
++        ++recoveries; ++successes;
++        assertAll();
++    }
++
++    /// @notice A valid first custody conversion followed by an invalid second item must fully roll back.
++    function failedRecoveryBatch() public {
++        if (syInventory == 0) { surrender(31); return; }
++        Recovery.Step[] memory steps_ = new Recovery.Step[](2);
++        steps_[0] = Recovery.Step(Recovery.Stage.WeightedSyRedeem, 0, syInventory, 0);
++        steps_[1] = Recovery.Step(Recovery.Stage.WeightedConvert, 0, type(uint256).max, 0);
++        bytes32 before_ = recoveryState();
++        address owner_ = parent.owner();
++        vm.prank(owner_);
++        vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector,
++            Legacy.WEIGHTED_DETF, type(uint256).max, liquidInventory));
++        recovery.recoverMigrationNfts(steps_, block.timestamp);
++        assertEq(recoveryState(), before_);
++        ++batchRollbacks; ++rejections;
++        assertAll();
++    }
++
++    function changeOwner() public {
++        address previous_ = parent.owner();
++        address next_ = previous_ == OTHER ? address(0x2477) : OTHER;
++        vm.prank(previous_); parent.initiateOwnershipTransfer(next_);
++        vm.prank(next_); parent.acceptOwnershipTransfer();
++        bytes32 before_ = recoveryState();
++        Recovery.Step[] memory steps_ = _steps(Recovery.Stage.WeightedSyRedeem, 0, 1);
++        vm.prank(previous_);
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, previous_));
++        recovery.recoverMigrationNfts(steps_, block.timestamp);
++        assertEq(recoveryState(), before_);
++        ++rejections; ++successes;
++        assertAll();
++    }
++
++    function _steps(Recovery.Stage stage_, uint256 id_, uint256 q_) private pure returns (Recovery.Step[] memory s_) {
++        s_ = new Recovery.Step[](1);
++        s_[0] = Recovery.Step(stage_, id_, q_, 0);
++    }
++
++    function _run(Recovery.Stage stage_, uint256 id_, uint256 q_) private {
++        bytes32 beneficiaries_ = beneficiaryBalances();
++        address owner_ = parent.owner();
++        Recovery.Step[] memory steps_ = _steps(stage_, id_, q_);
++        vm.prank(owner_);
++        recovery.recoverMigrationNfts(steps_, block.timestamp);
++        assertEq(beneficiaryBalances(), beneficiaries_, "no alternative recovery recipient");
++    }
++
++    function beneficiaryBalances() public view returns (bytes32) {
++        address[4] memory wallets_ = [parent.owner(), nft[0].wallet, nft[1].wallet, address(this)];
++        bytes memory balances_;
++        for (uint256 i_; i_ < wallets_.length; ++i_) {
++            balances_ = abi.encode(balances_, IERC20(Legacy.DTF).balanceOf(wallets_[i_]),
++                IERC20(Legacy.WEIGHTED_DETF).balanceOf(wallets_[i_]),
++                IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).gonsOf(wallets_[i_]),
++                IERC20(Legacy.WEIGHTED_SY).balanceOf(wallets_[i_]));
++        }
++        return keccak256(balances_);
++    }
++
++    function recoveryState() public view returns (bytes32) {
++        return keccak256(abi.encode(economicState(), recovery.migrationRecoveryGons(),
++            IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).gonsOf(address(parent)),
++            IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).gonsOf(Legacy.WEIGHTED_SY),
++            IERC20(Legacy.WEIGHTED_DETF).balanceOf(address(parent)),
++            IERC20(Legacy.DTF).balanceOf(address(parent)), beneficiaryBalances()));
++    }
++}
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol
+new file mode 100644
+--- /dev/null
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol
+@@ -0,0 +1,284 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {MigrationNativeLedger} from "./MigrationNativeLedger.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
++import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
++import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
++import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
++import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
++import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
++import {IUniswapV4StandardExchangeWeightedBufferHook as Hook} from
++    "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
++import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation,
++    IUniswapV4DetfMigrationAccounting as Accounting} from "../interfaces/IUniswapV4DetfMigration.sol";
++
++/// @notice Bounded native lifecycle actions over real proxies with an independent ledger.
++/// @dev Market inputs are bounded and the fixture's mint threshold is 100 WAD.
++/// This is not an arbitrary-expansion model. Claims have real per-position clocks.
++// allow: SIZE_OK - One bounded twelve-action state machine; its accounting is already a separate ledger.
++contract MigrationNativeHandler is MigrationNativeLedger {
++    uint256[6] internal configured;
++    uint256[6] internal delivered;
++    bytes32[6] internal issuedConfiguration;
++    uint256[6] internal issuedId;
++    uint256[6] internal issuedTime;
++    uint256 public marketActions;
++    uint256 public ownershipActions;
++
++    constructor(Seed memory s_) MigrationNativeLedger(s_) {
++        for (uint256 i_; i_ < 6; ++i_) configured[i_] = i_ % 3;
++        delivered[0] = s_.firstCredit;
++        delivered[1] = s_.secondCredit;
++        issuedId[0] = 3; issuedId[1] = 4;
++        issuedTime[0] = block.timestamp; issuedTime[1] = block.timestamp;
++        issuedConfiguration[0] = _configuration(0);
++        issuedConfiguration[1] = _configuration(1);
++        IERC20(s_.pair).approve(address(parent), type(uint256).max);
++        IERC20(s_.pair).approve(parent.hook(), type(uint256).max);
++    }
++
++    function _input(uint256 i_) internal view returns (Migration.IndependentAllocationInput memory a_) {
++        a_.recipient = actors[i_];
++        a_.evidenceId = keccak256("external fixture; not historical provenance");
++        a_.entitlements = new Migration.OriginalEntitlement[](1);
++        uint256 amount_ = (configured[i_] + 1) * 1e15;
++        a_.entitlements[0] = Migration.OriginalEntitlement(
++            keccak256(abi.encode("stateful-original", i_)), amount_, amount_, bytes32("fixture")
++        );
++    }
++
++    function _configuration(uint256 i_) internal view returns (bytes32) {
++        return keccak256(abi.encode(block.chainid, address(parent), snapshotId, _input(i_)));
++    }
++
++    function configure(uint256 actor_, uint256 amount_) public {
++        uint256 i_ = actor_ % 6;
++        uint256 previous_ = configured[i_];
++        configured[i_] = amount_ % 3;
++        Migration.IndependentAllocationInput[] memory a_ = new Migration.IndependentAllocationInput[](1);
++        a_[0] = _input(i_);
++        vm.prank(currentOwner);
++        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.configureIndependentAllocations.selector));
++        Allocation(address(parent)).configureIndependentAllocations(a_);
++        if (active) { configured[i_] = previous_; ++rejections; }
++        else ++successes;
++        _count(this.configure.selector);
++        assertAll();
++    }
++
++    function issue(uint256 actor_) public {
++        uint256 i_ = actor_ % 6;
++        Migration.IndependentIssuanceRequest[] memory r_ = new Migration.IndependentIssuanceRequest[](1);
++        r_[0] = Migration.IndependentIssuanceRequest(actors[i_], _configuration(i_));
++        vm.prank(currentOwner);
++        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.issueIndependentAllocations.selector));
++        else if (delivered[i_] != 0) vm.expectRevert(abi.encodeWithSelector(
++            Migration.IndependentAllocationAlreadyIssued.selector, actors[i_]
++        ));
++        uint256[] memory ids_ = Allocation(address(parent)).issueIndependentAllocations(r_);
++        if (active || delivered[i_] != 0) ++rejections;
++        else {
++            uint256 credit_ = frozenQuotes[configured[i_]];
++            delivered[i_] = credit_;
++            issuedConfiguration[i_] = _configuration(i_);
++            issuedId[i_] = ids_[0];
++            issuedTime[i_] = block.timestamp;
++            _recordPosition(ids_[0], actors[i_], credit_, true);
++            expectedSupply += credit_;
++            ++successes;
++        }
++        _count(this.issue.selector);
++        assertAll();
++    }
++
++    /// @notice Exact failing second entry must undo the first funded issuance.
++    function failedBatch() public {
++        Migration.IndependentIssuanceRequest[] memory r_ = new Migration.IndependentIssuanceRequest[](2);
++        r_[0] = Migration.IndependentIssuanceRequest(actors[4], _configuration(4));
++        r_[1] = Migration.IndependentIssuanceRequest(actors[5], bytes32("stale"));
++        bytes32 before_ = keccak256(abi.encode(parent.independentIssuance(actors[4]), staking.stakingState(),
++            IERC20(address(parent)).totalSupply(), IERC20(address(parent)).balanceOf(address(staking))));
++        vm.prank(currentOwner);
++        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.issueIndependentAllocations.selector));
++        else if (delivered[4] != 0) vm.expectRevert(abi.encodeWithSelector(
++            Migration.IndependentAllocationAlreadyIssued.selector, actors[4]));
++        else if (delivered[5] != 0) vm.expectRevert(abi.encodeWithSelector(
++            Migration.IndependentAllocationAlreadyIssued.selector, actors[5]));
++        else vm.expectRevert(abi.encodeWithSelector(Migration.IndependentConfigurationMismatch.selector,
++            actors[5], bytes32("stale"), _configuration(5)));
++        Allocation(address(parent)).issueIndependentAllocations(r_);
++        assertEq(keccak256(abi.encode(parent.independentIssuance(actors[4]), staking.stakingState(),
++            IERC20(address(parent)).totalSupply(), IERC20(address(parent)).balanceOf(address(staking)))), before_);
++        ++rejections;
++        _count(this.failedBatch.selector);
++        assertAll();
++    }
++
++    function activate() public {
++        vm.prank(currentOwner);
++        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.activateMigration.selector));
++        Allocation(address(parent)).activateMigration();
++        if (active) ++rejections;
++        else { active = true; ++successes; }
++        _count(this.activate.selector);
++        assertAll();
++    }
++
++    function transferOwner() public {
++        address next_ = currentOwner == seed.owner ? address(0x24A0) : seed.owner;
++        vm.prank(currentOwner);
++        parent.initiateOwnershipTransfer(next_);
++        if (!active) {
++            vm.prank(next_);
++            vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, next_));
++            Allocation(address(parent)).activateMigration();
++            ++rejections;
++        }
++        vm.prank(next_);
++        parent.acceptOwnershipTransfer();
++        currentOwner = next_;
++        ++successes; ++ownershipActions;
++        _count(this.transferOwner.selector);
++        assertAll();
++    }
++
++    function transferBond(uint256 index_) public {
++        Position storage p_ = positions[index_ % 2];
++        if (p_.retired) {
++            transferOwner();
++            return;
++        }
++        address next_ = p_.holder == actors[6] ? actors[7] : actors[6];
++        vm.prank(p_.holder);
++        IERC721(address(child)).transferFrom(p_.holder, next_, p_.id);
++        p_.holder = next_;
++        ++successes;
++        _count(this.transferBond.selector);
++        assertAll();
++    }
++
++    function claimPrincipal(uint256 index_) public {
++        _positionClaim(index_ % 2, false);
++        _count(this.claimPrincipal.selector);
++        assertAll();
++    }
++
++    function claimRewards(uint256 index_) public {
++        uint256 i_ = index_ % 2;
++        if (!active) {
++            vm.prank(positions[i_].holder);
++            vm.expectRevert(Accounting.MigrationRewardsClosed.selector);
++            child.claimRewards(positions[i_].id, positions[i_].holder);
++            ++rejections;
++        } else _positionClaim(i_, true);
++        _count(this.claimRewards.selector);
++        assertAll();
++    }
++
++    function advanceTime(uint256 days_) public {
++        vm.warp(vm.getBlockTimestamp() + (days_ % 45 + 1) * 1 days);
++        assertEq(parent.pendingExpansionDetf(), 0, "bounded no-expansion domain");
++        _count(this.advanceTime.selector);
++        assertAll();
++    }
++
++    /// @notice Both ordinary and role rewards are genuinely funded before this negative.
++    function rejectRoleRewards() public {
++        address fee_ = IERC721(address(child)).ownerOf(1);
++        uint256 available_ = feeGons;
++        if (fee_ == IERC721(address(child)).ownerOf(2)) available_ += creatorGons;
++        if (!active) {
++            vm.expectRevert(Accounting.MigrationRewardsClosed.selector);
++            staking.claimDeferredRoleRewards(fee_);
++            ++rejections;
++        } else {
++            uint256 amount_ = available_ / book.gonsPerUnit;
++            assertEq(staking.claimDeferredRoleRewards(fee_), amount_);
++            uint256 debit_ = amount_ * book.gonsPerUnit;
++            roleGons -= debit_;
++            if (fee_ == IERC721(address(child)).ownerOf(2)) { feeGons = available_ - debit_; creatorGons = 0; }
++            else feeGons -= debit_;
++            walletGons[fee_] += debit_;
++            if (amount_ != 0) ++successes; else ++zeroClaims;
++        }
++        _count(this.rejectRoleRewards.selector);
++        assertAll();
++    }
++
++    function market(uint256 amount_) public {
++        uint256 q_ = (amount_ % 100 + 1) * 1e12;
++        address hook_ = parent.hook();
++        uint256 outBefore_ = IERC20(seed.otherPair).balanceOf(address(this));
++        (uint256 out_,) = IStandardExchangeIn(parent.hook()).exchangeIn(
++            IERC20(seed.pair), q_, IERC20(seed.otherPair), 1, address(this), false, block.timestamp
++        );
++        assertEq(IERC20(seed.otherPair).balanceOf(address(this)) - outBefore_, out_);
++        assertGt(out_, 0, "real successful pool trade");
++        vm.prank(seed.registryOwner);
++        IVaultFeeOracleManager(seed.registry).setVaultDexSwapFee(hook_, (amount_ % 10 + 1) * 1e14);
++        assertEq(IVaultFeeOracleQuery(seed.registry).dexSwapFeeOfVault(parent.hook()), (amount_ % 10 + 1) * 1e14);
++        IERC20[] memory ts_ = new IERC20[](1); ts_[0] = IERC20(seed.pair);
++        uint256[] memory qs_ = new uint256[](1); qs_[0] = q_;
++        parent.donateMigrationCapital(ts_, qs_, 0, 1, block.timestamp);
++        ++marketActions; successes += 3;
++        _count(this.market.selector);
++        assertAll();
++    }
++
++    /// @notice A real SE backing donation changes its actual provider, never a mock rate setter.
++    function providerRateChange(uint256 amount_) public {
++        Hook hook_ = Hook(parent.hook());
++        address provider_;
++        for (uint256 i_; i_ < hook_.numTokens(); ++i_) {
++            if (hook_.token(i_) == seed.pair) provider_ = hook_.rateProvider(i_);
++        }
++        assertNotEq(provider_, address(0));
++        uint256 before_ = IRateProvider(provider_).getRate();
++        assertTrue(IERC20(seed.pair).transfer(seed.se, (amount_ % 10 + 1) * 1e15));
++        assertNotEq(IRateProvider(provider_).getRate(), before_, "actual provider change");
++        ++successes;
++        _count(this.providerRateChange.selector);
++        assertAll();
++    }
++
++    /// @notice Interface-derived administration set, not copied facet output.
++    function administrationSelectors() public pure returns (bytes4[14] memory) {
++        return [Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
++            Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
++            Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
++            Allocation.configureWeightedSyEntitlements.selector, Allocation.configureDtfCustodySeEntitlements.selector,
++            Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureClaimVaultEntitlements.selector,
++            Allocation.configureWeightedReceiptEntitlements.selector, Allocation.configureEarlierReceiptEntitlements.selector,
++            Allocation.configureEarlierLiquidEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector];
++    }
++
++    function assertAll() public view {
++        assertAccounting();
++        assertEq(parent.owner(), currentOwner);
++        assertEq(IMultiStepOwnable(seed.registry).owner(), seed.registryOwner);
++        assertEq(parent.migrationActivated(), active);
++        assertEq(keccak256(abi.encode(parent.migrationSnapshot())), snapshotHash);
++        assertEq(isolatedBook(seed.isolated), seed.isolatedBook, "separate proxy book");
++        for (uint256 i_; i_ < 3; ++i_) assertEq(parent.previewOriginalCredit((i_ + 1) * 1e15, (i_ + 1) * 1e15), frozenQuotes[i_]);
++        for (uint256 i_; i_ < 6; ++i_) {
++            Migration.IndependentAllocation memory a_ = parent.independentAllocation(actors[i_]);
++            assertEq(a_.configurationId, _configuration(i_));
++            assertEq(a_.totalCredit, frozenQuotes[configured[i_]]);
++            Migration.IndependentIssuance memory x_ = parent.independentIssuance(actors[i_]);
++            assertEq(x_.credit, delivered[i_]);
++            assertEq(x_.bondTokenId, issuedId[i_]);
++            assertEq(x_.configurationId, issuedConfiguration[i_]);
++            assertEq(x_.issuedAt, issuedTime[i_]);
++        }
++        bytes4[14] memory ss_ = administrationSelectors();
++        for (uint256 i_; i_ < ss_.length; ++i_) {
++            if (active) assertEq(IDiamondLoupe(address(parent)).facetAddress(ss_[i_]), address(0));
++            else assertNotEq(IDiamondLoupe(address(parent)).facetAddress(ss_[i_]), address(0));
++        }
++        assertEq(staking.deferredRewardGons(1, IERC721(address(child)).ownerOf(1)),
++            feeGons + (IERC721(address(child)).ownerOf(1) == IERC721(address(child)).ownerOf(2) ? creatorGons : 0));
++    }
++}
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol
+new file mode 100644
+--- /dev/null
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol
+@@ -0,0 +1,206 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {Test} from "forge-std/Test.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
++import {IUniswapV4DetfMigration as Migration} from "../interfaces/IUniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigrationStakedDETF as MigrationReceipt} from "../claimToken/IUniswapV4DetfMigrationStakedDETF.sol";
++import {IUniswapV4DetfMigrationBondNFTVault as Bonds} from "../bondNft/IUniswapV4DetfMigrationBondNFTVault.sol";
++import {DETFFundedStakingMath as BondTypes} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
++
++/// @notice Independent integer ledger for the bounded native state machine.
++/// @dev No SUT math library is used. BondTypes supplies ABI structs only.
++abstract contract MigrationNativeLedger is Test {
++    struct Seed {
++        Migration parent;
++        address registry;
++        address registryOwner;
++        address owner;
++        address pair;
++        address otherPair;
++        address se;
++        address isolated;
++        bytes32 isolatedBook;
++        uint256 bootstrapSupply;
++        uint256 paidPrincipal;
++        uint256 paidReward;
++        uint256 paidSelf;
++        uint256 feeFraction;
++        uint256 creatorFraction;
++        uint256 firstCredit;
++        uint256 secondCredit;
++        uint256[3] quotes;
++    }
++    struct Position {
++        uint256 id;
++        address holder;
++        uint256 principal;
++        uint256 claimed;
++        uint256 gons;
++        uint256 start;
++        bool cliff;
++        bool retired;
++    }
++    Migration public parent;
++    MigrationReceipt public staking;
++    Bonds public child;
++    Seed internal seed;
++    Position[] internal positions;
++    IStakedDETF.StakingState internal book;
++    mapping(address => uint256) internal walletGons;
++    address[8] internal actors;
++    uint256 internal expectedSupply;
++    uint256 internal roleGons;
++    uint256 internal feeGons;
++    uint256 internal creatorGons;
++    uint256 internal feeFraction;
++    uint256 internal creatorFraction;
++    bytes32 internal snapshotHash;
++    bytes32 internal snapshotId;
++    address public currentOwner;
++    bool public active;
++    uint256[3] internal frozenQuotes;
++    uint256 public successes;
++    uint256 public rejections;
++    uint256 public zeroClaims;
++    mapping(bytes4 => uint256) public calls;
++    event Action(bytes4 indexed selector, uint256 successes, uint256 rejections);
++
++    constructor(Seed memory s_) {
++        seed = s_;
++        parent = s_.parent;
++        staking = MigrationReceipt(parent.rebasingClaimToken());
++        child = Bonds(parent.bondNftVault());
++        currentOwner = s_.owner;
++        feeFraction = s_.feeFraction;
++        creatorFraction = s_.creatorFraction;
++        frozenQuotes = s_.quotes;
++        snapshotHash = keccak256(abi.encode(parent.migrationSnapshot()));
++        snapshotId = parent.migrationSnapshot().id;
++        for (uint256 i_; i_ < 8; ++i_) actors[i_] = address(uint160(0x2400 + i_));
++        book.gonsPerUnit = 1e36;
++        _recordPosition(3, actors[0], s_.firstCredit, true);
++        _recordPosition(4, actors[1], s_.secondCredit, true);
++        _recordPosition(5, s_.owner, s_.paidPrincipal, false);
++        expectedSupply = s_.bootstrapSupply + s_.firstCredit + s_.secondCredit
++            + s_.paidPrincipal + s_.paidSelf + s_.paidReward;
++        _fundReward(s_.paidReward);
++    }
++
++    function _recordPosition(uint256 id_, address holder_, uint256 principal_, bool cliff_) internal {
++        uint256 gons_ = principal_ * book.gonsPerUnit;
++        positions.push(Position(id_, holder_, principal_, 0, gons_, block.timestamp, cliff_, false));
++        book.totalGons += gons_;
++        book.accountedBacking += principal_;
++        _topUp();
++    }
++
++    function _topUp() internal {
++        uint256 total_ = Math.mulDiv(book.totalGons, 1e18, 1e18 - feeFraction - creatorFraction);
++        uint256 f_ = Math.mulDiv(total_, feeFraction, 1e18);
++        uint256 c_ = Math.mulDiv(total_, creatorFraction, 1e18);
++        if (f_ > book.feeWeight) book.feeWeight = f_;
++        if (c_ > book.creatorWeight) book.creatorWeight = c_;
++    }
++
++    function _fundReward(uint256 reward_) internal {
++        uint256 rps_ = Math.mulDiv(
++            reward_ + book.allocationDust, 1e54, book.totalGons + book.feeWeight + book.creatorWeight
++        );
++        uint256 ordinary_ = Math.mulDiv(book.totalGons, rps_, 1e54);
++        uint256 fee_ = Math.mulDiv(book.feeWeight, rps_, 1e54);
++        uint256 creator_ = Math.mulDiv(book.creatorWeight, rps_, 1e54);
++        book.allocationDust += reward_ - ordinary_ - fee_ - creator_;
++        uint256 before_ = book.totalGons / book.gonsPerUnit;
++        uint256 target_ = before_ + ordinary_ + book.stakingDust;
++        book.gonsPerUnit = (book.totalGons + target_ - 1) / target_;
++        book.stakingDust += ordinary_ - (book.totalGons / book.gonsPerUnit - before_);
++        feeGons = fee_ * book.gonsPerUnit;
++        creatorGons = creator_ * book.gonsPerUnit;
++        roleGons = feeGons + creatorGons;
++        book.totalGons += roleGons;
++        book.accountedBacking += reward_;
++        _topUp();
++    }
++
++    function _positionClaim(uint256 index_, bool reward_) internal {
++        Position storage p_ = positions[index_];
++        if (p_.retired) {
++            vm.expectRevert(abi.encodeWithSignature("ERC721NonexistentToken(uint256)", p_.id));
++            child.positionOf(p_.id);
++            ++rejections;
++            return;
++        }
++        uint256 due_;
++        if (reward_) due_ = p_.gons / book.gonsPerUnit - (p_.principal - p_.claimed);
++        else if (block.timestamp >= p_.start + 90 days) due_ = p_.principal - p_.claimed;
++        uint256 before_ = staking.balanceOf(p_.holder);
++        vm.prank(p_.holder);
++        uint256 paid_ = reward_ ? child.claimRewards(p_.id, p_.holder) : child.claimPrincipal(p_.id, p_.holder);
++        assertEq(paid_, due_, "independent claim amount");
++        assertEq(staking.balanceOf(p_.holder) - before_, due_, "exact receipt delivery");
++        p_.gons -= due_ * book.gonsPerUnit;
++        if (!reward_) p_.claimed += due_;
++        walletGons[p_.holder] += due_ * book.gonsPerUnit;
++        if (p_.claimed == p_.principal && p_.gons < book.gonsPerUnit) {
++            uint256 old_ = book.totalGons / book.gonsPerUnit;
++            book.totalGons -= p_.gons;
++            book.stakingDust += old_ - book.totalGons / book.gonsPerUnit;
++            p_.gons = 0;
++            p_.retired = true;
++            _topUp();
++        }
++        if (paid_ == 0) ++zeroClaims;
++        else ++successes;
++    }
++
++    /// @notice Every live bond, exact backing partition and independent expected index.
++    function assertAccounting() public view {
++        assertEq(abi.encode(staking.stakingState()), abi.encode(book), "complete independent staking ledger");
++        assertEq(IERC20(address(parent)).totalSupply(), expectedSupply, "authorized supply only");
++        assertEq(IERC20(address(parent)).balanceOf(address(staking)), book.accountedBacking, "actual funding");
++        uint256 attributed_;
++        for (uint256 i_; i_ < positions.length; ++i_) {
++            Position memory p_ = positions[i_];
++            if (p_.retired) {
++                assertEq(IERC721(address(child)).ownerOf(p_.id), address(0), "retirement");
++                continue;
++            }
++            BondTypes.BondPosition memory actual_ = child.positionOf(p_.id);
++            assertEq(actual_.principal, p_.principal);
++            assertEq(actual_.claimedPrincipal, p_.claimed);
++            assertEq(actual_.stakingGons, p_.gons);
++            assertEq(actual_.startTimestamp, p_.start);
++            assertEq(actual_.vestingDuration, 90 days);
++            assertEq(IERC721(address(child)).ownerOf(p_.id), p_.holder);
++            assertGe(p_.gons / book.gonsPerUnit, p_.principal - p_.claimed, "principal solvency");
++            if (p_.cliff && block.timestamp < p_.start + 90 days) {
++                assertEq(p_.claimed, 0, "no principal before own cliff");
++                assertEq(child.previewClaim(p_.id).principalDue, 0);
++            }
++            attributed_ += p_.gons;
++        }
++        assertEq(child.attributedBondGons(), attributed_);
++        assertEq(staking.gonsOf(address(child)), attributed_);
++        assertEq(staking.gonsOf(address(staking)), roleGons);
++        for (uint256 i_; i_ < actors.length; ++i_) assertEq(staking.gonsOf(actors[i_]), walletGons[actors[i_]]);
++        assertEq(book.totalGons / book.gonsPerUnit + book.allocationDust + book.stakingDust, book.accountedBacking);
++    }
++
++    /// @notice Same actual second proxy/children are checked, never the mutable fixture hook member.
++    function isolatedBook(address address_) public view returns (bytes32) {
++        Migration m_ = Migration(address_);
++        return keccak256(abi.encode(m_.owner(), m_.hook(), m_.rebasingClaimToken(), m_.bondNftVault(),
++            m_.migrationSnapshot(), m_.independentAllocation(address(0x2499)),
++            m_.independentIssuance(address(0x2499)), IERC20(address_).totalSupply(),
++            MigrationReceipt(m_.rebasingClaimToken()).stakingState(), Bonds(m_.bondNftVault()).positionOf(3)));
++    }
++
++    function _count(bytes4 selector_) internal {
++        ++calls[selector_];
++        emit Action(selector_, successes, rejections);
++    }
++}
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol
+new file mode 100644
+--- /dev/null
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {console2} from "forge-std/console2.sol";
++import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
++import {IUniswapV4DetfMigration as Migration} from "../interfaces/IUniswapV4DetfMigration.sol";
++
++/// @notice Raw actual deployed bytes, including populated immutables and linked library addresses.
++/// @dev Evidence only: no artifact mask, reconstructed deployment, storage write or replacement code.
++library MigrationStatefulBindings {
++    function capture(Migration m_, address package_, address registry_) internal view {
++        console2.log("STATEFUL_SUBJECT");
++        console2.logBytes(abi.encode(address(m_), m_.hook(), m_.bondNftVault(), m_.rebasingClaimToken(),
++            m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), package_, registry_, m_.migrationSnapshot().id));
++        address[8] memory roots_ = [address(m_), m_.hook(), m_.bondNftVault(), m_.rebasingClaimToken(),
++            m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), registry_];
++        for (uint256 i_; i_ < roots_.length; ++i_) {
++            _runtime(roots_[i_]);
++            address[] memory facets_ = IDiamondLoupe(roots_[i_]).facetAddresses();
++            for (uint256 j_; j_ < facets_.length; ++j_) _runtime(facets_[j_]);
++        }
++        _runtime(package_);
++    }
++
++    function _runtime(address subject_) private view {
++        console2.log("STATEFUL_RUNTIME");
++        console2.logBytes(abi.encode(subject_, subject_.code));
++    }
++}
+diff --git a/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol
+new file mode 100644
+--- /dev/null
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {TestBase_UniswapV4DetfMigration} from "../TestBase_UniswapV4DetfMigration.sol";
++import {MigrationNativeHandler} from "./MigrationNativeHandler.sol";
++import {MigrationNativeLedger} from "./MigrationNativeLedger.sol";
++import {MigrationStatefulBindings} from "./MigrationStatefulBindings.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
++import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
++import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation}
++    from "../interfaces/IUniswapV4DetfMigration.sol";
++import {IUniswapV4DetfMigrationDFPkg as Package} from "../interfaces/IUniswapV4DetfMigrationDFPkg.sol";
++import {IUniswapV4DetfMigrationStakedDETF as MigrationReceipt} from "../claimToken/IUniswapV4DetfMigrationStakedDETF.sol";
++import {IUniswapV4DetfMigrationBondNFTVault as Bonds} from "../bondNft/IUniswapV4DetfMigrationBondNFTVault.sol";
++
++/// @notice Two independently funded real registry proxies, not two aliases of one fixture member.
++abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration {
++    MigrationNativeHandler public handler;
++    event StatefulDeployment(address parent, address hook, address receipt, address bonds, bytes32 snapshot, bytes32 parentCode);
++
++    function setUp() public virtual override {
++        super.setUp();
++        _fundAndCapture();
++        _configure(address(0x2499), 4e15, bytes32("isolated-original"));
++        _issue(address(0x2499));
++        MigrationStatefulBindings.capture(migration, address(migrationPkg), address(indexedexManager));
++        MigrationNativeLedger.Seed memory s_;
++        s_.isolated = detf;
++        s_.isolatedBook = keccak256(abi.encode(migration.owner(), migration.hook(), migration.rebasingClaimToken(),
++            migration.bondNftVault(), migration.migrationSnapshot(), migration.independentAllocation(address(0x2499)),
++            migration.independentIssuance(address(0x2499)), IERC20(detf).totalSupply(), receipt.stakingState(),
++            bonds.positionOf(3)));
++        emit StatefulDeployment(detf, migration.hook(), address(receipt), address(bonds),
++            migration.migrationSnapshot().id, detf.codehash);
++
++        Package.PkgArgs memory args_ = _migrationArgs(migrationOwner);
++        args_.baseArgs.mintThreshold = 100e18;
++        detf = _deployMigration(args_);
++        migration = Migration(detf); allocation = Allocation(detf);
++        receipt = MigrationReceipt(migration.rebasingClaimToken());
++        bonds = Bonds(migration.bondNftVault());
++        IERC20(pairA).approve(detf, type(uint256).max);
++        IERC20(pairB).approve(detf, type(uint256).max);
++        _fundAndCapture();
++        s_.bootstrapSupply = migration.migrationBootstrapSelfMinted();
++        assertEq(IERC20(detf).totalSupply(), s_.bootstrapSupply);
++        for (uint256 i_; i_ < 3; ++i_) s_.quotes[i_] = migration.previewOriginalCredit((i_ + 1) * 1e15, (i_ + 1) * 1e15);
++        for (uint256 i_; i_ < 6; ++i_) {
++            _configure(address(uint160(0x2400 + i_)), (i_ % 3 + 1) * 1e15,
++                keccak256(abi.encode("stateful-original", i_)));
++        }
++        assertEq(_issue(address(0x2400)), 3);
++        assertEq(_issue(address(0x2401)), 4);
++        s_.firstCredit = s_.quotes[0];
++        s_.secondCredit = s_.quotes[1];
++        (, s_.paidPrincipal, s_.paidReward, s_.paidSelf) = migration.previewBond(IERC20(pairA), 1 ether, 90 days);
++        assertEq(_buyOwnerFirstBond(), 5);
++        emit log_named_bytes("native submitted package arguments", abi.encode(args_));
++        MigrationStatefulBindings.capture(migration, address(migrationPkg), address(indexedexManager));
++        s_.parent = migration; s_.owner = migrationOwner;
++        s_.registry = address(indexedexManager); s_.registryOwner = owner;
++        s_.pair = pairA; s_.otherPair = pairB; s_.se = se0;
++        (, s_.feeFraction, s_.creatorFraction) =
++            IVaultFeeOracleQuery(address(indexedexManager)).seigniorageSplitOfVault(detf);
++        handler = new MigrationNativeHandler(s_);
++        IERC20(pairA).transfer(address(handler), 20 ether);
++        handler.assertAll();
++        emit StatefulDeployment(detf, migration.hook(), address(receipt), address(bonds),
++            migration.migrationSnapshot().id, detf.codehash);
++        address[] memory facets_ = IDiamondLoupe(detf).facetAddresses();
++        for (uint256 i_; i_ < facets_.length; ++i_) {
++            emit log_named_address("deployed parent facet", facets_[i_]);
++            emit log_named_bytes32("deployed parent facet codehash", facets_[i_].codehash);
++        }
++        // Mandatory successful witnesses do not depend on selecting random actions.
++        handler.configure(0, 2);
++        handler.failedBatch();
++        handler.issue(2);
++        handler.transferBond(0);
++        handler.transferOwner();
++        handler.claimRewards(0);
++        handler.rejectRoleRewards();
++        handler.market(7);
++        handler.providerRateChange(1);
++        bytes4[] memory selectors_ = new bytes4[](12);
++        selectors_[0] = handler.configure.selector; selectors_[1] = handler.issue.selector;
++        selectors_[2] = handler.failedBatch.selector; selectors_[3] = handler.activate.selector;
++        selectors_[4] = handler.transferOwner.selector; selectors_[5] = handler.transferBond.selector;
++        selectors_[6] = handler.claimPrincipal.selector; selectors_[7] = handler.claimRewards.selector;
++        selectors_[8] = handler.advanceTime.selector; selectors_[9] = handler.rejectRoleRewards.selector;
++        selectors_[10] = handler.market.selector;
++        selectors_[11] = handler.providerRateChange.selector;
++        targetContract(address(handler));
++        string[] memory artifacts_ = new string[](1);
++        artifacts_[0] = "MigrationNativeHandler.sol:MigrationNativeHandler";
++        targetInterface(FuzzInterface(address(handler), artifacts_));
++        targetSelector(FuzzSelector(address(handler), selectors_));
++    }
++}
+diff --git a/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol
+new file mode 100644
+--- /dev/null
++++ b/test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol
+@@ -0,0 +1,112 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {MigrationRecoveryDonationForkBase} from "../MigrationRecoveryDonation.t.sol";
++import {MigrationLegacyHandler} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol";
++import {MigrationLegacyRecoveryHandler} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol";
++import {MigrationStatefulBindings} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {IUniswapV4DetfMigration as Migration} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
++import {IMigrationWeightedNft} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol";
++import {MigrationLegacyRecoveryLib as Legacy} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
++
++/// @notice Pinned real native9 SY and both whole-NFT models with staged weighted recovery.
++/// @dev Ordinary-SY contract callback only, not claimed-origin EOA preparation.
++/// Standalone WS-gon/ER-internal/CV-native19/SD-native28/held-LP stateful domains
++/// remain separate gaps; the complete existing forks are supplemental, not this invariant.
++contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
++    MigrationLegacyRecoveryHandler public handler;
++
++    function setUp() public override {
++        super.setUp();
++        MigrationStatefulBindings.capture(migration, address(migrationPkg), address(indexedexManager));
++        MigrationLegacyHandler.OriginalNft[2] memory originals_;
++        for (uint256 i_; i_ < 2; ++i_) {
++            address collection_ = i_ == 0 ? WEIGHTED : EARLIER;
++            uint256 id_ = i_ == 0 ? 4 : 3;
++            Migration.NftEntitlementInput memory input_ = _original(collection_, id_);
++            uint256 credit_ = migration.previewOriginalCredit(input_.originalEth, input_.originalDtf);
++            _configureNft(collection_, id_);
++            _returnToOriginal(collection_, id_);
++            uint256 remaining_ = input_.originalUnits;
++            if (i_ == 0) remaining_ -= IMigrationWeightedNft(collection_).positionOf(id_).claimedPrincipal;
++            originals_[i_] = MigrationLegacyHandler.OriginalNft(
++                collection_, id_, input_.originalWallet, input_.originalUnits, remaining_, credit_);
++        }
++        handler = new MigrationLegacyRecoveryHandler(migration, originals_, migration.previewOriginalCredit(0.01 ether, 0));
++        address donor_ = address(bytes20(hex"11c17f25e958e4637dd26ca362adeae12e24ed5b"));
++        uint256 quantity_ = handler.Q0();
++        vm.prank(donor_); assertTrue(IERC20(Legacy.WEIGHTED_SY).transfer(address(handler), quantity_));
++        Migration.WeightedSyEntitlementInput[] memory a_ = new Migration.WeightedSyEntitlementInput[](1);
++        a_[0] = Migration.WeightedSyEntitlementInput(handler.ORIGIN(), address(handler), Legacy.WEIGHTED_SY,
++            handler.Q0(), 0.01 ether, 0, keccak256("synthetic ordinary SY original; actual donor transfer"), true);
++        vm.prank(migrationOwner); allocation.configureWeightedSyEntitlements(a_);
++        vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
++        handler.surrender(1);
++        _activate();
++        handler.assertAll();
++        handler.failedIssuance();
++        handler.transferAndReject();
++        handler.surrender(999);
++        handler.failedRecoveryBatch();
++        handler.takeNft(0);
++        handler.takeNft(1);
++        handler.redeemSy(9);
++        handler.unstake(9);
++        handler.convert(9);
++        handler.donate(type(uint256).max);
++        handler.changeOwner();
++        bytes4[] memory selectors_ = new bytes4[](11);
++        selectors_[0] = handler.surrender.selector;
++        selectors_[1] = handler.failedIssuance.selector;
++        selectors_[2] = handler.transferAndReject.selector;
++        selectors_[3] = handler.takeNft.selector;
++        selectors_[4] = handler.redeemSy.selector;
++        selectors_[5] = handler.claimWeighted.selector;
++        selectors_[6] = handler.unstake.selector;
++        selectors_[7] = handler.convert.selector;
++        selectors_[8] = handler.donate.selector;
++        selectors_[9] = handler.failedRecoveryBatch.selector;
++        selectors_[10] = handler.changeOwner.selector;
++        targetContract(address(handler));
++        string[] memory artifacts_ = new string[](1);
++        artifacts_[0] = "MigrationLegacyRecoveryHandler.sol:MigrationLegacyRecoveryHandler";
++        targetInterface(FuzzInterface(address(handler), artifacts_));
++        targetSelector(FuzzSelector(address(handler), selectors_));
++    }
++
++    function invariant_originalCreditCustodyFundingAndStagedRecovery() public view {
++        handler.assertAll();
++    }
++
++    function afterInvariant() public {
++        handler.assertAll();
++        emit log_named_uint("successful legacy actions", handler.successes());
++        emit log_named_uint("exact legacy rejections", handler.rejections());
++        emit log_named_uint("real funded bond callbacks", handler.callbacks());
++        emit log_named_uint("late funding rollback witnesses", handler.rollbackWitnesses());
++        emit log_named_uint("whole batch recovery rollbacks", handler.batchRollbacks());
++        emit log_named_uint("successful recovery stages", handler.recoveries());
++    }
++
++    function test_terminalCreditAndCompleteRecoveryWitness() public {
++        handler.claimWeighted();
++        handler.surrender(handler.remainingQ() - 1);
++        handler.redeemSy(type(uint256).max);
++        handler.unstake(type(uint256).max);
++        handler.convert(type(uint256).max);
++        handler.donate(type(uint256).max);
++        assertEq(handler.remainingQ(), 0);
++        assertEq(handler.remainingC(), 0);
++        assertEq(handler.delivered(), handler.C0());
++        handler.assertAll();
++        afterInvariant();
++    }
++}
+diff --git a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol
+new file mode 100644
+--- /dev/null
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {TestBase_MigrationStateful} from
++    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol";
++
++/// @notice Stateful native properties 3/4/6/7/8/9/10/12, including separate real instances.
++/// @dev Legacy custody properties 1/2/5/11 require pinned source targets, not this native ledger.
++contract MigrationNativeInvariantTest is TestBase_MigrationStateful {
++    function invariant_nativeLedgerAndPermanentLifecycle() public view {
++        handler.assertAll();
++    }
++
++    function afterInvariant() public {
++        handler.assertAll();
++        emit log_named_uint("successful SUT actions", handler.successes());
++        emit log_named_uint("exact rejected SUT actions", handler.rejections());
++        emit log_named_uint("zero-valued valid claims (not positive witnesses)", handler.zeroClaims());
++        emit log_named_uint("market action groups", handler.marketActions());
++        emit log_named_uint("successful owner transitions", handler.ownershipActions());
++    }
++
++    /// @notice Deterministic cliff boundaries and reward release do not rely on the random stream.
++    function test_successfulWitnessCliffAndActivationSequence() public {
++        uint256 start_ = block.timestamp;
++        handler.claimPrincipal(0);
++        vm.warp(start_ + 90 days - 1);
++        handler.claimPrincipal(0);
++        vm.warp(start_ + 90 days);
++        handler.claimPrincipal(0);
++        handler.claimRewards(0);
++        handler.activate();
++        handler.claimRewards(0);
++        handler.rejectRoleRewards();
++        handler.configure(0, 1);
++        handler.issue(3);
++        handler.activate();
++        handler.transferOwner();
++        handler.assertAll();
++        afterInvariant();
++    }
++}

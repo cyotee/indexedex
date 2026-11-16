@@ -1,0 +1,40 @@
+{
+  "type": "Task10OperatorBlocker",
+  "status": "outside-task10-scope",
+  "attempt": "47-unset-pricing-cli",
+  "runtime": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000",
+  "manifest": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/unset-owner-execution.json",
+  "deploymentReceipt": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/runtime-unset-attempt-01/rehearsal-1794760384000/deployment-receipt.json",
+  "error": "nonempty configuration/issuance census requires exact preparation evidence",
+  "rootCause": "verifyEmptyCensus selects every event ending Configured. ThresholdsConfigured is emitted by the real package during mandatory initial deployment, so a genuinely empty compensation census is rejected before the paid owner bond.",
+  "exactPath": "scripts/recovery/dtf-migration/execution-domain.ts:147-156",
+  "repairOwnerPaths": [
+    "scripts/recovery/dtf-migration/execution-domain.ts",
+    "scripts/recovery/dtf-migration/execution-domain.test.ts"
+  ],
+  "mandatoryDeploymentLogs": [
+    {
+      "address": "0xa10fb7436b216df934cfafaca5fddcc7bb9c2902",
+      "blockHash": "0x1c9527ca7946ab25b4f5204a486dc5fff948f953d854cc537877dc864240f1af",
+      "blockNumber": "0x67e5e5d",
+      "blockTimestamp": "0x6aeff6fb",
+      "data": "0x0000000000000000000000000000000000000000000000000e92596fd62900000000000000000000000000000000000000000000000000000d2f13f7789f0000",
+      "logIndex": "0x1",
+      "removed": false,
+      "topics": [
+        "0x9c579265a1eecacb6388cab6eb461dd228c0e87d0e69dfcb16afb0244dbe1622"
+      ],
+      "transactionHash": "0x4098d83a9911e1173fa3a091c227701fd2ff1488f35aa403b902fc3626e9c258",
+      "transactionIndex": "0x0"
+    }
+  ],
+  "operatorEdited": false,
+  "claimWritten": false,
+  "cleanup": {
+    "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1/docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/qa-checkout-01/.omo-runtime/dtf-migration-portable/checkpoints",
+    "evidence": "retained",
+    "node": "exited",
+    "pid": 11371,
+    "runtime": "removed"
+  }
+}

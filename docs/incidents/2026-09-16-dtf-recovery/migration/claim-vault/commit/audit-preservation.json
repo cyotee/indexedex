@@ -1,0 +1,345 @@
+{
+  "schema": "claim-vault-independent-preservation-audit-v1",
+  "date": "2026-11-12",
+  "method": "Parse each retained JSONL row. lstat every path, hash raw file bytes or raw UTF-8 symlink targets, reproduce kind/git-mode or exact octal permissions, size and target fields. Compare every field; do not treat aggregate hashes as replacement evidence. Walk current roots without following symlinks to find additions/deletions. SHA-256 names raw bytes.",
+  "baselineRecipe": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/recipe.txt",
+    "sha256": "45c2c071e55e759d45dae306ef15133cbf314a22af6a0ce80b9d28dc62924804"
+  },
+  "inventories": {
+    "docs-incidents.jsonl": {
+      "entries": 996,
+      "baselineSha256": "53690222c0e48e6391a983defa96e7173760469a66c7a2fce77fb271030540ab",
+      "exceptions": []
+    },
+    "docs-incidents-perms.jsonl": {
+      "entries": 1149,
+      "baselineSha256": "63c69e9609eccc19f61690d00f267f230ab8cf34e09a3dd095ef4072ba119845",
+      "exceptions": [
+        {
+          "baseline": {
+            "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault",
+            "kind": "dir",
+            "perm": "0o755",
+            "size": 192,
+            "sha256": null
+          },
+          "current": {
+            "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault",
+            "kind": "dir",
+            "perm": "0o755",
+            "size": 224,
+            "sha256": null
+          }
+        }
+      ]
+    },
+    "out.jsonl": {
+      "entries": 7330,
+      "baselineSha256": "bfe01d54b8c2e90c6386905ac881b860553f552571d01c64cdaa41531e2a939f",
+      "exceptions": []
+    },
+    "cache_forge.jsonl": {
+      "entries": 595,
+      "baselineSha256": "59f14a7400dfddad607032730144de3c280e5b44e483561ac280b0d0d8bab0b7",
+      "exceptions": []
+    }
+  },
+  "currentRootMembership": [
+    {
+      "root": "docs/incidents",
+      "count": 1005,
+      "newPaths": [
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/cache_forge.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/docs-incidents-perms.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/docs-incidents.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/out.jsonl",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/recipe.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/show-ref.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/precommit/status-before.txt",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/receipt.md",
+        "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/commit/source-manifest.json"
+      ],
+      "missing": []
+    },
+    {
+      "root": "out",
+      "count": 7330,
+      "newPaths": [],
+      "missing": []
+    },
+    {
+      "root": "cache_forge",
+      "count": 595,
+      "newPaths": [],
+      "missing": []
+    }
+  ],
+  "explainedException": "Only claim-vault directory size changed 192 to 224 after delivery created commit/. Permission remains 0o755; no sealed child changed.",
+  "sealedPermissionClasses": [
+    {
+      "name": "implementation",
+      "entries": 8,
+      "filePerms": [
+        "0o644"
+      ],
+      "directoryPerms": [
+        "0o755"
+      ]
+    },
+    {
+      "name": "verification",
+      "entries": 3,
+      "filePerms": [
+        "0o644"
+      ],
+      "directoryPerms": [
+        "0o755"
+      ]
+    },
+    {
+      "name": "implementation-e1",
+      "entries": 655,
+      "filePerms": [
+        "0o444",
+        "0o400"
+      ],
+      "directoryPerms": [
+        "0o555"
+      ]
+    },
+    {
+      "name": "verification-e1",
+      "entries": 464,
+      "filePerms": [
+        "0o644",
+        "0o600"
+      ],
+      "directoryPerms": [
+        "0o755"
+      ]
+    }
+  ],
+  "acceptanceBindings": {
+    "report": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/report.md",
+      "expected": "eeeb506d011189454c005adeb703b1ce7646d69ca79951116ea81cec833d9e81",
+      "actual": "eeeb506d011189454c005adeb703b1ce7646d69ca79951116ea81cec833d9e81"
+    },
+    "producerReport": {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/report.md",
+      "expected": "ee81d2c9d15f35befe95bbfe6af48152537af3d2363c4601a1bfd9a248240125",
+      "actual": "ee81d2c9d15f35befe95bbfe6af48152537af3d2363c4601a1bfd9a248240125"
+    },
+    "documents": [
+      {
+        "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+        "expected": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+        "actual": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+        "expected": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+        "actual": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed"
+      },
+      {
+        "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+        "expected": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+        "actual": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1"
+      }
+    ],
+    "producerBindings": {
+      "final-source-bindings.json": {
+        "sha256": "f33ba8e4b43f142a958076fa543d6a92ecdd523ecd0a1ec93065625e70e91288",
+        "keys": [
+          "head",
+          "branch",
+          "sources",
+          "outside"
+        ]
+      },
+      "final-input-bindings.json": {
+        "sha256": "e4759be64146c6b75479b73f53337002508c79f5fc88466ed0cd85609ed519be",
+        "keys": [
+          "inputs"
+        ]
+      },
+      "final-artifact-bindings.json": {
+        "sha256": "f40ac76040d9192837a36a900cb09a8d17bed92e6a68977a5d1dfe0a051cd90f",
+        "keys": [
+          "artifacts"
+        ]
+      },
+      "final-runtime-bindings.json": {
+        "sha256": "1eac79f70d245abeb6a6d85d226c639373110424e7851fdf01106d5722a45442",
+        "keys": [
+          "completedRun",
+          "fullTask9",
+          "runtime"
+        ]
+      },
+      "final-sealed-preservation.json": {
+        "sha256": "0df33e7c4f2277d0cd5ad934a484be6fb8070cfb132d87f677db28bc0edd3285",
+        "keys": [
+          "note",
+          "files"
+        ]
+      }
+    },
+    "producerSeal": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/implementation-e1/final-tree.json",
+      "sha256": "6d7c93cf9052a2fbe29c5596ccb43b81944d148cf4dc4bc7d5b289b5c3d37af1",
+      "name": "producer",
+      "entries": 541,
+      "mismatches": []
+    },
+    "verifierSeal": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/seal.json",
+      "sha256": "b087de7765331d8e9ae13942ceb7e0d79ca9b8d3badaf719b5b2c3b7f0d70e66",
+      "name": "verifier",
+      "entries": 430,
+      "mismatches": []
+    },
+    "runtimeLogs": [
+      {
+        "name": "specs.log",
+        "sha256": "7a61177ad6262d880b5d33fb517fa7c358b1f3436d4b0b2a25c2d0f03975abb7",
+        "passLines": 130,
+        "conclusions": [
+          "Ran 2 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol:MigrationGenesisCapitalDecimalsTest",
+          "Ran 2 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol:MigrationHostileContributionTest",
+          "Ran 1 test for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol:MigrationOwnerBondCallbacksTest",
+          "Ran 7 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeConfiguration.t.sol:MigrationDtfCustodySeConfigurationTest",
+          "Ran 4 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol:MigrationRecoveryTest",
+          "Ran 9 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol:MigrationNftConfigurationTest",
+          "Ran 1 test for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol:MigrationRecoveryCallbackTest",
+          "Ran 5 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol:MigrationWeightedLiquidConfigurationTest",
+          "Ran 6 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol:MigrationWeightedSyConfigurationTest",
+          "Ran 4 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermitAndRetirement.t.sol:MigrationPermitAndRetirementTest",
+          "Ran 7 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol:MigrationAdministrationTest",
+          "Ran 4 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol:MigrationSurfaceTest",
+          "Ran 5 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol:MigrationOwnerFirstBondTest",
+          "Ran 1 test for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol:UniswapV4DetfMigrationSnapshotDecimalsTest",
+          "Ran 7 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationGenesisCapital.t.sol:MigrationGenesisCapitalTest",
+          "Ran 15 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationPermit2.t.sol:MigrationPermit2Test",
+          "Ran 14 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol:UniswapV4DetfMigrationSnapshotTest",
+          "Ran 10 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol:MigrationCoreTest",
+          "Ran 14 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEgress.t.sol:MigrationEgressTest",
+          "Ran 3 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRetainedAccounting.t.sol:MigrationRetainedAccountingTest",
+          "Ran 1 test for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol:UniswapV4DetfMigrationSnapshotReceiptExclusionTest",
+          "Ran 8 tests for test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol:MigrationClaimVaultConfigurationTest",
+          "Ran 22 test suites in 1.31s (15.29s CPU time): 130 tests passed, 0 failed, 0 skipped (130 total tests)"
+        ]
+      },
+      {
+        "name": "forks.log",
+        "sha256": "42e570d11cd4e6b1028367fad6665a1604776d8c398c1d975ff3fb18653fb652",
+        "passLines": 81,
+        "conclusions": [
+          "Ran 4 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol:MigrationOriginalWalletTest",
+          "Ran 11 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol:MigrationLegacySourcesTest",
+          "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol:MigrationClaimVaultTest",
+          "Ran 1 test for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol:MigrationRecoveryGasTest",
+          "Ran 3 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrual.t.sol:MigrationRecoveryAccrualTest",
+          "Ran 7 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeighted.t.sol:MigrationRecoveryWeightedTest",
+          "Ran 4 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol:MigrationRecoveryClaimVaultTest",
+          "Ran 5 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryEarlier.t.sol:MigrationRecoveryEarlierTest",
+          "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol:MigrationWeightedSyTest",
+          "Ran 7 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol:MigrationWeightedLiquidTest",
+          "Ran 4 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol:MigrationRecoveryDtfCustodySeTest",
+          "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol:MigrationRecoveryDonationTest",
+          "Ran 1 test for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryAccrualRollback.t.sol:MigrationRecoveryAccrualRollbackTest",
+          "Ran 3 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol:MigrationRecoveryWeightedSyTest",
+          "Ran 6 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol:MigrationDtfCustodySeTest",
+          "Ran 7 tests for test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol:MigrationNftLifecycleTest",
+          "Ran 16 test suites in 1.56s (17.70s CPU time): 81 tests passed, 0 failed, 0 skipped (81 total tests)"
+        ]
+      },
+      {
+        "name": "operator-tests.log",
+        "sha256": "020c0c131fbbf23cf8a8cbdec41f79712eec7a17783fb9041eb21b5ea402a527",
+        "passLines": 0,
+        "conclusions": [
+          "Ran 64 tests across 6 files. [614.00ms]"
+        ]
+      },
+      {
+        "name": "types.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "passLines": 0,
+        "conclusions": []
+      },
+      {
+        "name": "artifacts.log",
+        "sha256": "964afca1254ab6c020fbd2e3af8f78b312193b1061135579bc7e8e77010bf22d",
+        "passLines": 0,
+        "conclusions": []
+      },
+      {
+        "name": "stages.log",
+        "sha256": "f9b72828ae9ca762b131a04007ed8ae3e2c3493b148fa71c1b68c46704f7c6e5",
+        "passLines": 0,
+        "conclusions": []
+      },
+      {
+        "name": "cli.log",
+        "sha256": "d24574247eaa9364e2945d641dd16530555b510bb1fd127cc87836a5af357457",
+        "passLines": 0,
+        "conclusions": [
+          "{\"evidence\":\"/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/verification-e1/cli-run/rehearsal-1794449113009\",\"fullTask9\":\"open\",\"status\":\"bounded-rehearsal-complete\"}"
+        ]
+      }
+    ]
+  },
+  "phase15Archive": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+    "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+    "size": 1047506
+  },
+  "dependencyLinks": [
+    {
+      "path": "lib/crane",
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "inode": 18755930,
+      "perm": "0o755",
+      "isSymlink": true
+    },
+    {
+      "path": "node_modules",
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "inode": 18755931,
+      "perm": "0o755",
+      "isSymlink": true
+    }
+  ],
+  "cleanup": {
+    "observations": [
+      {
+        "command": "lsof -nP -iTCP:18566 -sTCP:LISTEN",
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": "ps -p 57230,57324,48079,49746 -o pid=,command=",
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    ],
+    "checkpointAbsent": true,
+    "ownedRuntimeStartedByAuditor": false,
+    "sourceFixes": false,
+    "newCommit": false,
+    "publicOperations": false,
+    "pendingOperation": false
+  },
+  "limits": [
+    "No exact archived/deployed legacy-source equivalence established.",
+    "No portable/full-F3, full-category/full-plan or target-gas acceptance.",
+    "No corrected-source acceptance; audit is frozen to immutable 9c227900.",
+    "No unchanged runtime suites replayed.",
+    "Historical modes are asserted only where retained permission inventories exist. Earlier sealed history directories and verifier-e1 are not universally read-only; their actual recorded modes were preserved.",
+    "Current symlink inode and target match the receipt; no unavailable precommit inode inventory is invented."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "chainId": 4663,
+  "constructorFingerprint": "0x748358cf3766a3f3e5c1ee61db746bbecb6a90344930020a29bd88510249f24f",
+  "create3Factory": "0xD7786b10BC8Bc97dc7651CAb7B97086c8b227882",
+  "diamondPackageFactory": "0x976949aB55830fA4794bF40C88ea7D7567931003",
+  "implFingerprint": "0x25e91ac8bcfbfbeb2fb152f71a95d282b11a8adaebc483a8f2c0a3d846247b8c",
+  "rebasingAwareErc4626Facet": "0xDbcEEFf98F2388b0eFA0C0fDA2e08cdd263Ce8f5",
+  "rebasingAwareErc4626Pkg": "0x464fd9Ac3DEb254eF65C8d31aBa488219c083CCB",
+  "rebasingAwareMetadataFacet": "0xbC76Aecd12516C777C73e4F18FFAfe092676cC75",
+  "rebasingAwareQuoteFacet": "0x02f009D5C4252A686C9f8C6df340985a81c114A1",
+  "rebasingAwareSeFacet": "0xdd1AaD6d8C312774509B7779fde018bAa014826F",
+  "rebasingAwareSyFacet": "0xd1F06fdB8e21a4566bB1B21118f66a12Fc66c0C3",
+  "releaseIdentifier": "indexedex.rebasing-aware-erc4626.sy-se.v1",
+  "vaultRegistry": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc"
+}

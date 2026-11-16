@@ -1,0 +1,5545 @@
+{
+  "acceptedChecks": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "match": true
+    }
+  ],
+  "committedModes": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "tree": "100644 blob 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n",
+      "index": "100644 1737b863327ac1a9a7e48bbc0be6dbdac0d4954b 0\tdocs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "tree": "100644 blob a747e8e821487792ef99c4ff2c7d04631d0cb6d2\tscripts/recovery/dtf-migration/cli.ts\n",
+      "index": "100644 a747e8e821487792ef99c4ff2c7d04631d0cb6d2 0\tscripts/recovery/dtf-migration/cli.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "tree": "100644 blob 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e\tscripts/recovery/dtf-migration/receipt-input.ts\n",
+      "index": "100644 0d155bb83e31d1f90d0057d4ab7bba2193d8cf6e 0\tscripts/recovery/dtf-migration/receipt-input.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "tree": "100644 blob 05cbdb06d1691e079538a8ed8d91107f23eb7240\tscripts/recovery/dtf-migration/receipt-evidence.ts\n",
+      "index": "100644 05cbdb06d1691e079538a8ed8d91107f23eb7240 0\tscripts/recovery/dtf-migration/receipt-evidence.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "tree": "100644 blob 7ab4e13f921746162b7a55f3a1ba04f65db65660\tscripts/recovery/dtf-migration/receipt-rpc.ts\n",
+      "index": "100644 7ab4e13f921746162b7a55f3a1ba04f65db65660 0\tscripts/recovery/dtf-migration/receipt-rpc.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "tree": "100644 blob adf0801a0cefe4f459b94b0e4dfe5a0976378254\tscripts/recovery/dtf-migration/receipt-association.ts\n",
+      "index": "100644 adf0801a0cefe4f459b94b0e4dfe5a0976378254 0\tscripts/recovery/dtf-migration/receipt-association.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "tree": "100644 blob defd60ad74e0bab892edaa4796ee454e63996fa0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n",
+      "index": "100644 defd60ad74e0bab892edaa4796ee454e63996fa0 0\tscripts/recovery/dtf-migration/receipt-reconciliation.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "tree": "100644 blob 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd\tscripts/recovery/dtf-migration/receipt.test.ts\n",
+      "index": "100644 1a7aac03d616bd79b6971e1a53ff55456a5bc6fd 0\tscripts/recovery/dtf-migration/receipt.test.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "tree": "100644 blob 3ba48a4b42cda20db7ec30c48bdf94469222e941\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n",
+      "index": "100644 3ba48a4b42cda20db7ec30c48bdf94469222e941 0\tscripts/recovery/dtf-migration/receipt-reconciliation.test.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "tree": "100644 blob 2032aba6449fd1c9e59e25e8d571addadf1d4622\tscripts/recovery/dtf-migration/receipt.fixture.ts\n",
+      "index": "100644 2032aba6449fd1c9e59e25e8d571addadf1d4622 0\tscripts/recovery/dtf-migration/receipt.fixture.ts\n",
+      "filesystemMode": 33188,
+      "match": true
+    }
+  ],
+  "all70": [
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/schema.ts",
+        "bytes": 9484,
+        "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63"
+      },
+      "current": {
+        "bytes": 9484,
+        "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 9484,
+        "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 9484,
+        "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+        "bytes": 11872,
+        "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d"
+      },
+      "current": {
+        "bytes": 11872,
+        "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 11872,
+        "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 11872,
+        "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+        "bytes": 6048,
+        "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc"
+      },
+      "current": {
+        "bytes": 6048,
+        "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6048,
+        "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6048,
+        "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+        "bytes": 1727,
+        "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11"
+      },
+      "current": {
+        "bytes": 1727,
+        "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 1727,
+        "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 1727,
+        "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/preparation.ts",
+        "bytes": 10087,
+        "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1"
+      },
+      "current": {
+        "bytes": 10087,
+        "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 10087,
+        "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 10087,
+        "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+        "bytes": 6094,
+        "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597"
+      },
+      "current": {
+        "bytes": 6094,
+        "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6094,
+        "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6094,
+        "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+        "bytes": 16331,
+        "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f"
+      },
+      "current": {
+        "bytes": 16331,
+        "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 16331,
+        "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 16331,
+        "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+        "bytes": 7869,
+        "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f"
+      },
+      "current": {
+        "bytes": 7869,
+        "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 7869,
+        "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 7869,
+        "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+        "bytes": 5027,
+        "sha256": "ac292360c69e8fabae5e9d537499a058460a115312cda1f8e314ec1e7ed24397"
+      },
+      "current": {
+        "bytes": 5027,
+        "sha256": "ac292360c69e8fabae5e9d537499a058460a115312cda1f8e314ec1e7ed24397",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 5027,
+        "sha256": "ac292360c69e8fabae5e9d537499a058460a115312cda1f8e314ec1e7ed24397",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 5027,
+        "sha256": "ac292360c69e8fabae5e9d537499a058460a115312cda1f8e314ec1e7ed24397",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+        "bytes": 8602,
+        "sha256": "11fa849afaa8ebeaca2b20f9b157242364b991b448c8b2d70b09b46f691cb1f0"
+      },
+      "current": {
+        "bytes": 8602,
+        "sha256": "11fa849afaa8ebeaca2b20f9b157242364b991b448c8b2d70b09b46f691cb1f0",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 8602,
+        "sha256": "11fa849afaa8ebeaca2b20f9b157242364b991b448c8b2d70b09b46f691cb1f0",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 8602,
+        "sha256": "11fa849afaa8ebeaca2b20f9b157242364b991b448c8b2d70b09b46f691cb1f0",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+        "bytes": 15737,
+        "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554"
+      },
+      "current": {
+        "bytes": 15737,
+        "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 15737,
+        "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 15737,
+        "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+        "bytes": 3498,
+        "sha256": "24bd61407af078275decdfa4fd7d4cf948aae486866aa87a2548360e09fe4838"
+      },
+      "current": {
+        "bytes": 3498,
+        "sha256": "24bd61407af078275decdfa4fd7d4cf948aae486866aa87a2548360e09fe4838",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 3498,
+        "sha256": "24bd61407af078275decdfa4fd7d4cf948aae486866aa87a2548360e09fe4838",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 3498,
+        "sha256": "24bd61407af078275decdfa4fd7d4cf948aae486866aa87a2548360e09fe4838",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidates.ts",
+        "bytes": 3399,
+        "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026"
+      },
+      "current": {
+        "bytes": 3399,
+        "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 3399,
+        "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 3399,
+        "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+        "bytes": 6461,
+        "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2"
+      },
+      "current": {
+        "bytes": 6461,
+        "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6461,
+        "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6461,
+        "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+        "bytes": 4667,
+        "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492"
+      },
+      "current": {
+        "bytes": 4667,
+        "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 4667,
+        "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 4667,
+        "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/provenance.ts",
+        "bytes": 6200,
+        "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf"
+      },
+      "current": {
+        "bytes": 6200,
+        "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6200,
+        "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6200,
+        "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+        "bytes": 7950,
+        "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81"
+      },
+      "current": {
+        "bytes": 7950,
+        "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 7950,
+        "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 7950,
+        "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+        "bytes": 6464,
+        "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593"
+      },
+      "current": {
+        "bytes": 6464,
+        "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6464,
+        "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6464,
+        "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/quotes.ts",
+        "bytes": 7095,
+        "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33"
+      },
+      "current": {
+        "bytes": 7095,
+        "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 7095,
+        "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 7095,
+        "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+        "bytes": 8030,
+        "sha256": "19ff713d8268fa606e564adced389212a806f42a605c49c8add25850bf98af4c"
+      },
+      "current": {
+        "bytes": 8030,
+        "sha256": "19ff713d8268fa606e564adced389212a806f42a605c49c8add25850bf98af4c",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 8030,
+        "sha256": "19ff713d8268fa606e564adced389212a806f42a605c49c8add25850bf98af4c",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 8030,
+        "sha256": "19ff713d8268fa606e564adced389212a806f42a605c49c8add25850bf98af4c",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "bytes": 6781,
+        "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581"
+      },
+      "current": {
+        "bytes": 6781,
+        "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6781,
+        "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6781,
+        "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+        "bytes": 6178,
+        "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155"
+      },
+      "current": {
+        "bytes": 6178,
+        "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6178,
+        "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6178,
+        "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+        "bytes": 4907,
+        "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda"
+      },
+      "current": {
+        "bytes": 4907,
+        "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 4907,
+        "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 4907,
+        "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+        "bytes": 8096,
+        "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0"
+      },
+      "current": {
+        "bytes": 8096,
+        "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 8096,
+        "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 8096,
+        "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+        "bytes": 6468,
+        "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889"
+      },
+      "current": {
+        "bytes": 6468,
+        "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6468,
+        "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6468,
+        "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/payloads.ts",
+        "bytes": 15613,
+        "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c"
+      },
+      "current": {
+        "bytes": 15613,
+        "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 15613,
+        "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 15613,
+        "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+        "bytes": 6023,
+        "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c"
+      },
+      "current": {
+        "bytes": 6023,
+        "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6023,
+        "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6023,
+        "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+        "bytes": 8535,
+        "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018"
+      },
+      "current": {
+        "bytes": 8535,
+        "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 8535,
+        "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 8535,
+        "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/cli.ts",
+        "bytes": 13040,
+        "sha256": "655227085f6dad1fceab01cd152366c5a8bb53fa6e629be0449a9f7b532db6c4"
+      },
+      "current": {
+        "bytes": 13040,
+        "sha256": "655227085f6dad1fceab01cd152366c5a8bb53fa6e629be0449a9f7b532db6c4",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 13040,
+        "sha256": "655227085f6dad1fceab01cd152366c5a8bb53fa6e629be0449a9f7b532db6c4",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 13040,
+        "sha256": "655227085f6dad1fceab01cd152366c5a8bb53fa6e629be0449a9f7b532db6c4",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+        "bytes": 16228,
+        "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d"
+      },
+      "current": {
+        "bytes": 16228,
+        "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 16228,
+        "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 16228,
+        "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+        "bytes": 9883,
+        "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f"
+      },
+      "current": {
+        "bytes": 9883,
+        "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 9883,
+        "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 9883,
+        "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+        "bytes": 9082,
+        "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce"
+      },
+      "current": {
+        "bytes": 9082,
+        "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 9082,
+        "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 9082,
+        "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+        "bytes": 10884,
+        "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3"
+      },
+      "current": {
+        "bytes": 10884,
+        "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 10884,
+        "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 10884,
+        "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+        "bytes": 9521,
+        "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761"
+      },
+      "current": {
+        "bytes": 9521,
+        "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 9521,
+        "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 9521,
+        "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+        "bytes": 6421,
+        "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74"
+      },
+      "current": {
+        "bytes": 6421,
+        "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6421,
+        "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6421,
+        "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+        "bytes": 5012,
+        "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e"
+      },
+      "current": {
+        "bytes": 5012,
+        "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 5012,
+        "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 5012,
+        "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+        "bytes": 19046,
+        "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35"
+      },
+      "current": {
+        "bytes": 19046,
+        "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 19046,
+        "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 19046,
+        "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+        "bytes": 8426,
+        "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c"
+      },
+      "current": {
+        "bytes": 8426,
+        "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 8426,
+        "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 8426,
+        "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+        "bytes": 22048,
+        "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8"
+      },
+      "current": {
+        "bytes": 22048,
+        "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 22048,
+        "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 22048,
+        "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution.test.ts",
+        "bytes": 6162,
+        "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189"
+      },
+      "current": {
+        "bytes": 6162,
+        "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6162,
+        "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6162,
+        "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+        "bytes": 2869,
+        "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2"
+      },
+      "current": {
+        "bytes": 2869,
+        "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 2869,
+        "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 2869,
+        "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+        "bytes": 18490,
+        "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f"
+      },
+      "current": {
+        "bytes": 18490,
+        "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 18490,
+        "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 18490,
+        "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+        "bytes": 12737,
+        "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741"
+      },
+      "current": {
+        "bytes": 12737,
+        "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 12737,
+        "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 12737,
+        "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+        "bytes": 6560,
+        "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c"
+      },
+      "current": {
+        "bytes": 6560,
+        "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6560,
+        "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6560,
+        "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+        "bytes": 5443,
+        "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8"
+      },
+      "current": {
+        "bytes": 5443,
+        "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 5443,
+        "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 5443,
+        "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+        "bytes": 12218,
+        "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb"
+      },
+      "current": {
+        "bytes": 12218,
+        "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 12218,
+        "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 12218,
+        "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+        "bytes": 3491,
+        "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333"
+      },
+      "current": {
+        "bytes": 3491,
+        "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 3491,
+        "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 3491,
+        "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+        "bytes": 13769,
+        "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315"
+      },
+      "current": {
+        "bytes": 13769,
+        "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 13769,
+        "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 13769,
+        "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+        "bytes": 6757,
+        "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8"
+      },
+      "current": {
+        "bytes": 6757,
+        "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6757,
+        "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6757,
+        "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+        "bytes": 14484,
+        "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814"
+      },
+      "current": {
+        "bytes": 14484,
+        "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 14484,
+        "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 14484,
+        "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+        "bytes": 4679,
+        "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae"
+      },
+      "current": {
+        "bytes": 4679,
+        "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 4679,
+        "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 4679,
+        "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+        "bytes": 9086,
+        "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5"
+      },
+      "current": {
+        "bytes": 9086,
+        "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 9086,
+        "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 9086,
+        "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+        "bytes": 11812,
+        "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2"
+      },
+      "current": {
+        "bytes": 11812,
+        "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 11812,
+        "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 11812,
+        "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+        "bytes": 4694,
+        "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219"
+      },
+      "current": {
+        "bytes": 4694,
+        "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 4694,
+        "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 4694,
+        "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearse.ts",
+        "bytes": 27586,
+        "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b"
+      },
+      "current": {
+        "bytes": 27586,
+        "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 27586,
+        "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 27586,
+        "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution.ts",
+        "bytes": 11187,
+        "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f"
+      },
+      "current": {
+        "bytes": 11187,
+        "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 11187,
+        "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 11187,
+        "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+        "bytes": 8133,
+        "sha256": "8dc3101301ce8369d20a3e66e8f09ece53dc94325ee9bb6be972132c34664536"
+      },
+      "current": {
+        "bytes": 8133,
+        "sha256": "8dc3101301ce8369d20a3e66e8f09ece53dc94325ee9bb6be972132c34664536",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 8133,
+        "sha256": "8dc3101301ce8369d20a3e66e8f09ece53dc94325ee9bb6be972132c34664536",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 8133,
+        "sha256": "8dc3101301ce8369d20a3e66e8f09ece53dc94325ee9bb6be972132c34664536",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+        "bytes": 6581,
+        "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80"
+      },
+      "current": {
+        "bytes": 6581,
+        "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6581,
+        "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6581,
+        "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/journal.ts",
+        "bytes": 4792,
+        "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77"
+      },
+      "current": {
+        "bytes": 4792,
+        "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 4792,
+        "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 4792,
+        "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+        "bytes": 20029,
+        "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f"
+      },
+      "current": {
+        "bytes": 20029,
+        "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 20029,
+        "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 20029,
+        "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+        "bytes": 6745,
+        "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7"
+      },
+      "current": {
+        "bytes": 6745,
+        "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 6745,
+        "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 6745,
+        "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "bytes": 25106,
+        "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914"
+      },
+      "current": {
+        "bytes": 25106,
+        "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 25106,
+        "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 25106,
+        "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+        "bytes": 7985,
+        "sha256": "edae27a4bf0600f1a09e94ed6756fe6b6fdbabe3570f5307d5976fec47bece80"
+      },
+      "current": {
+        "bytes": 7985,
+        "sha256": "edae27a4bf0600f1a09e94ed6756fe6b6fdbabe3570f5307d5976fec47bece80",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 7985,
+        "sha256": "edae27a4bf0600f1a09e94ed6756fe6b6fdbabe3570f5307d5976fec47bece80",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 7985,
+        "sha256": "edae27a4bf0600f1a09e94ed6756fe6b6fdbabe3570f5307d5976fec47bece80",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+        "bytes": 4636,
+        "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31"
+      },
+      "current": {
+        "bytes": 4636,
+        "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 4636,
+        "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 4636,
+        "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "bytes": 31760,
+        "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e"
+      },
+      "current": {
+        "bytes": 31760,
+        "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 31760,
+        "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 31760,
+        "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+        "bytes": 8959,
+        "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956"
+      },
+      "current": {
+        "bytes": 8959,
+        "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 8959,
+        "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 8959,
+        "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/bundle.ts",
+        "bytes": 7823,
+        "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef"
+      },
+      "current": {
+        "bytes": 7823,
+        "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 7823,
+        "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 7823,
+        "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+        "bytes": 4913,
+        "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794"
+      },
+      "current": {
+        "bytes": 4913,
+        "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 4913,
+        "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 4913,
+        "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "expected": {
+        "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+        "bytes": 7120,
+        "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e"
+      },
+      "current": {
+        "bytes": 7120,
+        "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 7120,
+        "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 7120,
+        "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+        "exit": 0
+      },
+      "match": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "expected": {
+        "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+        "bytes": 63759,
+        "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c"
+      },
+      "current": {
+        "bytes": 63759,
+        "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c",
+        "st_mode": 33188,
+        "perm": "0o644"
+      },
+      "committed": {
+        "bytes": 63759,
+        "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c",
+        "exit": 0
+      },
+      "index": {
+        "bytes": 63759,
+        "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c",
+        "exit": 0
+      },
+      "match": true
+    }
+  ],
+  "frozenModeChecks": [
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "sha256": "c970630980afaa4a63e67d830c083a8aeb86f3408af78468bb691611221cfa63",
+      "bytes": 9484,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "sha256": "d2946bbc4d8bd5637d46dce39ce9a754f4762f7bc66b7d4c9f23f0a70fc2ae8d",
+      "bytes": 11872,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "sha256": "5c42721109f6b87804b1b1a272e7064ed4e0b70e065299efcc1eaefaa7d1b2bc",
+      "bytes": 6048,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "sha256": "7a7ce5c33e4ec1a79407800db84d9fd56f491a1d7f458addf1fba7424a074e11",
+      "bytes": 1727,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "sha256": "34a554dbeb6c0c44ba0d3f6d8c2331cd2f271f150d8ffdc8eb9e8dfeef53a4a1",
+      "bytes": 10087,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "sha256": "b5f93656d7c01d7f44e07e36af36b667e63705e75c5def21c048e45575dea597",
+      "bytes": 6094,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "sha256": "91e478a24f705560498b78ee6bc75c9f778596577b23a69275981df0df98799f",
+      "bytes": 16331,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f",
+      "bytes": 7869,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "sha256": "ac292360c69e8fabae5e9d537499a058460a115312cda1f8e314ec1e7ed24397",
+      "bytes": 5027,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "sha256": "11fa849afaa8ebeaca2b20f9b157242364b991b448c8b2d70b09b46f691cb1f0",
+      "bytes": 8602,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "sha256": "ffcd358589be18864296e7ae844d1450b0034bfdf0c486cde951a4ae103c8554",
+      "bytes": 15737,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "sha256": "24bd61407af078275decdfa4fd7d4cf948aae486866aa87a2548360e09fe4838",
+      "bytes": 3498,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "sha256": "5e8f7a7b6cbc43abc88ef5d6356eec133189b273c4713603aa7d72c8d5587026",
+      "bytes": 3399,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "sha256": "e7bc7f42df0d7787a46fb259ae8fbde7cecf2b2a1f61c398de636b6f320da5b2",
+      "bytes": 6461,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "sha256": "9c9010b064ee236980043f0c35aa3f61f2769dbe35532a1a71bd1a327b01e492",
+      "bytes": 4667,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "sha256": "c5f107bae61f1166cb66ba07a9a6dd68dc1b761b923746c88083f4dd7a7cd3cf",
+      "bytes": 6200,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "sha256": "170725818fb1eae7bf9193bb0e1c5820beb50265f4c4063f7f9dc3d33ca86b81",
+      "bytes": 7950,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "sha256": "05ff558e6cda8c308b37b3cf275b61ac5ccc5758286c85ca4a9403a26f3c6593",
+      "bytes": 6464,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "sha256": "fe672c4aaec1179e035370e9a0b0d5bb9627748aec1ce82103e356791af7da33",
+      "bytes": 7095,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "sha256": "19ff713d8268fa606e564adced389212a806f42a605c49c8add25850bf98af4c",
+      "bytes": 8030,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "c5b512f24d23f728e9a95d1368229b6ff87e4178d7b9114c7e12227914efe581",
+      "bytes": 6781,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155",
+      "bytes": 6178,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "sha256": "f6b6bf992296dad49bfeac848b4768c12bd0edd66a1105b29d410bfc56b53eda",
+      "bytes": 4907,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "sha256": "90c1f6f2fd852af4257e925b223fae91e5e65b7c8db1dc28736659906b6b11a0",
+      "bytes": 8096,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "sha256": "1da6616601e3a14d1bd2660aa1bae6863aa54552adcd29e23d705e62bbf59889",
+      "bytes": 6468,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "sha256": "1980890995a6aed75595ce43fa1ce6e1caa9f57d5b536ace425145608c85ff4c",
+      "bytes": 15613,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "sha256": "ad6a10c9d71d018f8edb5fc2e59f1ca78ee0ced729957577e6d484a4872c688c",
+      "bytes": 6023,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "sha256": "b922eddd040a71489b3a4b3b2a83edd8bb053c8b802d95ce367759da210d7018",
+      "bytes": 8535,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "sha256": "655227085f6dad1fceab01cd152366c5a8bb53fa6e629be0449a9f7b532db6c4",
+      "bytes": 13040,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "sha256": "15ee7c5e44d8f275c6aa48a5c911b0610e494cf51d0c6c543801ca31114e9a1d",
+      "bytes": 16228,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "sha256": "b51e5ff67befd7b364d22b104f0d450b6aa18ee101be517fb1b1d9a5a01dd45f",
+      "bytes": 9883,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "sha256": "74eafb0476040630652e8e9a215e604a807a957e31309ba74a52963f64e5ccce",
+      "bytes": 9082,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "sha256": "a77d75ec7e6f5b3e318de9e76553d3093a8986ac1f4cd12d050a14fd304ecea3",
+      "bytes": 10884,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "sha256": "558895c0cf7841a07d45834b9dc2e35d325f33470ffbc97c85e2995f5bffc761",
+      "bytes": 9521,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "sha256": "8fdd4761206fc3a32d006c1c217bc441690fedef38100f35ca02e49fa32d9f74",
+      "bytes": 6421,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "sha256": "56f1be3bde35df5d97da7d88b66626c73c11566a4555bd7bb0319a783f58c26e",
+      "bytes": 5012,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "sha256": "3016401a2c0fc7c38375ef23f33c466ebd9e0acdf3f0c7127c45357528db7b35",
+      "bytes": 19046,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "sha256": "972c9d963e98adee9086dd2d4305fb3628d5fa3880789e2d7c1e2bbb0921932c",
+      "bytes": 8426,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "sha256": "9f49da4dba90c141cbc5c4bc80c0dadf962b919fcdbf98b818bdd3a5bc592ac8",
+      "bytes": 22048,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "6a88f62fb4437ef01fc8eace90b9686534475b7fe25d427eb8d1899d318ac189",
+      "bytes": 6162,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "sha256": "5f320aa8ce2d1077f8862a6c8ef25fc2c1c27c9fd68f56a28cad6aa645f8a3b2",
+      "bytes": 2869,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "sha256": "9355bb085b3e157cf8b86c07b0fcd69a6bfe3b1332098f9e42a4384d63b0548f",
+      "bytes": 18490,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "sha256": "2b3e6a579838b77e0fa58bf4cd1d42231a03705021edec5b4d29dbb58da39741",
+      "bytes": 12737,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "sha256": "fd647314a21d744645914a21e21209ccc944078b2b3f9429016f2355fb72c00c",
+      "bytes": 6560,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "sha256": "8bbdc80e124a185d21a51557ac3237910496e23339a918fd3b1d27a50bae64d8",
+      "bytes": 5443,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "sha256": "83ea1c385a8ba43062cc815b351d61b531bad13321f1502410d33f5ab93188eb",
+      "bytes": 12218,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333",
+      "bytes": 3491,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "sha256": "b939f1ac8d9911e435bf7530c23ccb6383371aa6f33b390f40df755bdfe80315",
+      "bytes": 13769,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "sha256": "2602f19276967c81f776665a1393936387078d7113512f24f1a85f08ec07fee8",
+      "bytes": 6757,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "771692d131d86cdcfaced5ffce624e4ea15ab3222c3e9c7afc050a1423131814",
+      "bytes": 14484,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "sha256": "08983f862f6f5ebd0b679f87e43d6a62f4b475bfbd34fce38be4450998c8d3ae",
+      "bytes": 4679,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "sha256": "3f5466255a68c34fafead08a148930bd4ea36d3369910f92caedbd12e1295ab5",
+      "bytes": 9086,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "sha256": "322846f691e314a929c565783b4d852b6b8a576b509d1fc32cb456ccc745ead2",
+      "bytes": 11812,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "sha256": "e64b8c144b03c102ce327931733fdbd3fea775c21fb306db5fccebe81ff8c219",
+      "bytes": 4694,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "sha256": "40d7c407bd5fb8d41fbe47aa6ca0aa8ac58acba75b2bfeef1f50880ddf2ffc2b",
+      "bytes": 27586,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "sha256": "d50992977073424a92da509267b54bdb6cb209699a5faceb0f61a3e1e8f8290f",
+      "bytes": 11187,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "sha256": "8dc3101301ce8369d20a3e66e8f09ece53dc94325ee9bb6be972132c34664536",
+      "bytes": 8133,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "sha256": "660ce0f2da24b4355b28a5a521a7a8b53bd488361f2c3183cf96db9ab289da80",
+      "bytes": 6581,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "60f811711c8394ffbc203ea184e3cedbdb5a949ab912b1d6cc38713b0f9fcd77",
+      "bytes": 4792,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "sha256": "fd46091e54fee48af6b6997e28f086184b5985f9216f0faf1bd378869032691f",
+      "bytes": 20029,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "sha256": "0ca1d93d89e5ea4524564b3177bb613be81867fe2a4af1e1d52d3f06ec431cc7",
+      "bytes": 6745,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "sha256": "8dfa8ac0cd2e51e4995e055ffdc32ca228d03f4443da392b0150b02a78174914",
+      "bytes": 25106,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "sha256": "edae27a4bf0600f1a09e94ed6756fe6b6fdbabe3570f5307d5976fec47bece80",
+      "bytes": 7985,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "sha256": "42a4edca7f4b16c587d0e7610182b1c76388c85ee6276960fa11aee532830f31",
+      "bytes": 4636,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "sha256": "8dd28db3d7c84e3123d826c5e81244cffbf2fc431bee15c6d6f8fdeda7f9e81e",
+      "bytes": 31760,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "sha256": "bd296d6681d3a7672e998c846a694fdbf42473960c96cb9a0e46c9a9357d4956",
+      "bytes": 8959,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "sha256": "c0f261b26e0b88274a685b5a744412a391259632f4fa70dbb8a534a441fafeef",
+      "bytes": 7823,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "sha256": "865bf378d199cbec79a00bb01022cf5b01c9dd486a40b4a67848fdf5dacca794",
+      "bytes": 4913,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "sha256": "0ce1b2535082a69702d72f52fc8c3206f0de8a3c5dd86fcd1ab6caf49ddcc63e",
+      "bytes": 7120,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c",
+      "bytes": 63759,
+      "st_mode": 33188,
+      "perm": "0o644",
+      "match": true
+    }
+  ],
+  "commandSourceCaptures": [
+    {
+      "lane": "implementation",
+      "name": "operator-tests-final.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "implementation",
+      "name": "collect.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "implementation",
+      "name": "types-final.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "implementation",
+      "name": "mutation01.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": false
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": false
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": false
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": false
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": false
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "implementation",
+      "name": "independent.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "verification",
+      "name": "types.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "verification",
+      "name": "scan.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "verification",
+      "name": "collect.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "verification",
+      "name": "tests.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "verification",
+      "name": "oracle.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        }
+      ]
+    },
+    {
+      "lane": "verification",
+      "name": "boundary.command.json",
+      "checks": [
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/bundle.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/candidates.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/cli.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution-state.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/execution.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/journal.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/payloads.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/preparation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/provenance.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/quotes.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/rehearse.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/schema.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+          "match": true
+        },
+        {
+          "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+          "match": true
+        }
+      ]
+    }
+  ],
+  "historicalTestedModesAvailable": false,
+  "modeQualification": "Producer implementation/source-manifest.json records bytes and SHA-256 only. The accepted verifier report and seal bind those identities and do not record filesystem modes, Git modes, or permission bits. Modes here are current filesystem and Git observations, not historical tested mode evidence.",
+  "immutableDiff": {
+    "bytes": 60758,
+    "sha256": "0dc99cf2d51910fd855e20b20505dc518c14e9de6668feacdaf8fb2e15d41f54",
+    "equalsOriginalStaged": true
+  },
+  "rawCommit": {
+    "bytes": 1202,
+    "sha256": "2647508e86a5a742aece5b7aff0e5dc23731122ad6cae1149e9d52a254acb686"
+  }
+}

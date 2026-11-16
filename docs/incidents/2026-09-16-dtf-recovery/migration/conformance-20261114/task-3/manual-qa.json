@@ -1,0 +1,404 @@
+{
+  "version": 1,
+  "sourceCaseResult": {
+    "log": "source-state-assertions.log",
+    "exitCode": 0,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "assertionSource": {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "bytes": 14150,
+      "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+    },
+    "sharedAssertions": {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "bytes": 13521,
+      "sha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1"
+    },
+    "lpAssertions": {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "bytes": 6911,
+      "sha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4"
+    }
+  },
+  "identityResult": {
+    "file": "runtime-hash-checks.json",
+    "checks": 34,
+    "matched": 34,
+    "rows": 14,
+    "delegatedRouteRows": 118
+  },
+  "reservedResult": {
+    "ids": [
+      {
+        "tokenId": "0",
+        "classification": "reserved",
+        "role": "protocol",
+        "existsAtPin": true,
+        "ownerAtPin": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+        "position": {
+          "originalShares": "30553440974423605336759687659017983",
+          "effectiveShares": "30553440974423605336759687659017983",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147991718391587"
+        },
+        "qualifyingUserBondPosition": false,
+        "acquisitionMechanism": "Deployed initializeReservedBondNfts mints fixed protocol/feeTo/creator roles before ordinary createPosition. Live reservedBondNftsWired=true and exact pinned positions authenticate that reserved initialization occurred.",
+        "sourceReference": "evidence/earlier-cp/probe-alchemy-retry.source.json#/contracts/0x3ab85813785b43b864f9c171f7ac97d6b76c459b/sources/DETFNFTVaultFacet.sol/content:1353-1355,16262-16321,16473-16483",
+        "currentReadEvidence": "conformance-20261114/task-3/source-reserved-complete.log",
+        "originalAcquisitionComparison": {
+          "firstOrdinaryTokenId": "3",
+          "transactionHash": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+          "blockNumber": "0x2b8996e",
+          "canonicalBlockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+          "directWeth": "2000000000000000000",
+          "directDtf": "0",
+          "newLockShares": "562524912595035608166",
+          "receiptRef": "evidence/earlier-cp/probe-alchemy-retry.json#/purchases/0"
+        },
+        "mintReceiptRecovered": false,
+        "qualification": "Role classification is derived from this exact deployed initialization and live wired/position facts, not tokenId<3 in Migration, new-child conventions, absence from a ledger, or an invented no-exposure dataset."
+      },
+      {
+        "tokenId": "1",
+        "classification": "reserved",
+        "role": "current-at-initialization fee recipient standing rewards",
+        "existsAtPin": true,
+        "ownerAtPin": "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "21514144891010951919251332737340123",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "134481857074021"
+        },
+        "qualifyingUserBondPosition": false,
+        "acquisitionMechanism": "Deployed initializeReservedBondNfts mints fixed protocol/feeTo/creator roles before ordinary createPosition. Live reservedBondNftsWired=true and exact pinned positions authenticate that reserved initialization occurred.",
+        "sourceReference": "evidence/earlier-cp/probe-alchemy-retry.source.json#/contracts/0x3ab85813785b43b864f9c171f7ac97d6b76c459b/sources/DETFNFTVaultFacet.sol/content:1353-1355,16262-16321,16473-16483",
+        "currentReadEvidence": "conformance-20261114/task-3/source-reserved-complete.log",
+        "originalAcquisitionComparison": {
+          "firstOrdinaryTokenId": "3",
+          "transactionHash": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+          "blockNumber": "0x2b8996e",
+          "canonicalBlockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+          "directWeth": "2000000000000000000",
+          "directDtf": "0",
+          "newLockShares": "562524912595035608166",
+          "receiptRef": "evidence/earlier-cp/probe-alchemy-retry.json#/purchases/0"
+        },
+        "mintReceiptRecovered": false,
+        "qualification": "Role classification is derived from this exact deployed initialization and live wired/position facts, not tokenId<3 in Migration, new-child conventions, absence from a ledger, or an invented no-exposure dataset."
+      },
+      {
+        "tokenId": "2",
+        "classification": "reserved",
+        "role": "creator standing rewards",
+        "existsAtPin": true,
+        "ownerAtPin": "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+        "position": {
+          "originalShares": "0",
+          "effectiveShares": "50199671412358887811586443053793621",
+          "bonusMultiplier": "0",
+          "unlockTime": "0",
+          "rewardDebt": "147947160112360"
+        },
+        "qualifyingUserBondPosition": false,
+        "acquisitionMechanism": "Deployed initializeReservedBondNfts mints fixed protocol/feeTo/creator roles before ordinary createPosition. Live reservedBondNftsWired=true and exact pinned positions authenticate that reserved initialization occurred.",
+        "sourceReference": "evidence/earlier-cp/probe-alchemy-retry.source.json#/contracts/0x3ab85813785b43b864f9c171f7ac97d6b76c459b/sources/DETFNFTVaultFacet.sol/content:1353-1355,16262-16321,16473-16483",
+        "currentReadEvidence": "conformance-20261114/task-3/source-reserved-complete.log",
+        "originalAcquisitionComparison": {
+          "firstOrdinaryTokenId": "3",
+          "transactionHash": "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75",
+          "blockNumber": "0x2b8996e",
+          "canonicalBlockHash": "0x65a15c810d06ad9ddae29959c2b5917e5c4ba3f8ef3180b01d85566000f75b3a",
+          "directWeth": "2000000000000000000",
+          "directDtf": "0",
+          "newLockShares": "562524912595035608166",
+          "receiptRef": "evidence/earlier-cp/probe-alchemy-retry.json#/purchases/0"
+        },
+        "mintReceiptRecovered": false,
+        "qualification": "Role classification is derived from this exact deployed initialization and live wired/position facts, not tokenId<3 in Migration, new-child conventions, absence from a ledger, or an invented no-exposure dataset."
+      }
+    ],
+    "wired": true,
+    "raw": "source-reserved-complete.log",
+    "supplementalMintLookup": {
+      "exitCode": 1,
+      "raw": "source-reserved-mints.log",
+      "conclusion": "No exact mint receipt recovered; role classification uses the successfully authenticated source facts, not this failed request."
+    }
+  },
+  "custodyResult": {
+    "raw": "source-custody-live.log",
+    "source": "recovery-authority.json",
+    "weightedFeeRecipientExceptionOnly": true,
+    "earlierNativeExitRejectedWithoutHoldingsOrSupplyChange": true
+  },
+  "integrityResult": {
+    "positiveExitCode": 0,
+    "negativeExitCode": 1,
+    "negativeExpected": true,
+    "negativeReceipt": "integrity-negative/delivery.json",
+    "inputs": "integrity-inputs-and-results.json",
+    "computedActual": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+    "deliberatelyWrongExpected": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "evmIdentityWouldMatchWrongExpected": false,
+    "archiveUnchanged": true
+  },
+  "sourceInputFingerprint": "5c9111e657d552eb95054c24912dad33af16cf5ae59946a3f075162fdcfdded8",
+  "sourceBindings": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+      "bytes": 23860,
+      "sha256": "54d24706f72ebe4374db0fed0b11216a78f47433acdd4c8eaa688ceb2211894b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationFacet.sol",
+      "bytes": 1262,
+      "sha256": "be911127e8a68b332f052bee93534f655b3ff9e2f096d0252e32d8f7f1bbc9f2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+      "bytes": 24929,
+      "sha256": "d7a016b37e52e73f37e10ba115ee16da0f649ecadea5b72712373ef976da9e94"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationFacet.sol",
+      "bytes": 1653,
+      "sha256": "963978913db66104d0d70b65527385e6de38e758879467811ccc4c10c0c55d67"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+      "bytes": 19457,
+      "sha256": "1258b99b11920bf349bbbdbb3d1a25a93937c8515bc2e731e6bc30a35c7b2660"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 22464,
+      "sha256": "69ea9feb701ef20eaaea00e57531069bcade94a96668439286a30e1bc316964b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+      "bytes": 2676,
+      "sha256": "5db13ac0c4ac08b1c9c1ffee3d122052a107bf52abf84d9179dae2fac57f7a6c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationQueryFacet.sol",
+      "bytes": 6813,
+      "sha256": "d4800ed15f561211849d7321c4915e3eff3e2559964a4dd50f3c41b3691d827f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryFacet.sol",
+      "bytes": 2913,
+      "sha256": "1cf41ba711cece5aa2d394ac835111b1e424018221c8bb51e913a693fc86a45c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryRepo.sol",
+      "bytes": 2023,
+      "sha256": "65f98059e29d4c0294f876626866df2051752c007419f00406a9a164516af0db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRecoveryTarget.sol",
+      "bytes": 27213,
+      "sha256": "a7db3e687205d4e38e668e889286c0e847a13b9669fccd6a01a2ae83a138914d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+      "bytes": 5104,
+      "sha256": "03cca5f49fd5d553c713bb306406e267b6579fd5e23577a37e96f2089c704b70"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+      "bytes": 22933,
+      "sha256": "9525e5376ebb1e39d8c552065f8827adc3eaafea174e808eccbdfbdc1a6d3a4a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+      "bytes": 2996,
+      "sha256": "122b964aeb3912a80a58ab5d0cb036e009d5fe1282b5a120f31b23f4b4ef77bd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "bytes": 40365,
+      "sha256": "658cba46918938f0bd645433b2d25acc01b9ccbeaaa4f0034d671c6a9cfcfcf5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+      "bytes": 4172,
+      "sha256": "408f3fd01e93ee621a0f6fcfde65d4a3b9138d2ab4c046b2d7028fdbde144688"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol",
+      "bytes": 5069,
+      "sha256": "1c67201a2b66520ec830b51c347022d1e0c86b51bbda469173b641e8254a5347"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "bytes": 16192,
+      "sha256": "b405d60ee9e444995cd9299c17c81ef7f7abc7036759adf6ff1660f23c53a6b0"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+      "bytes": 12710,
+      "sha256": "c60778f5e33316557449de7c0779059808bfc8e44abfd0e8a67156ed9367b682"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+      "bytes": 14391,
+      "sha256": "daf2b16eaffff4004c61409bf0f6a3f0535e12c9369c5dae09f80b970476d428"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+      "bytes": 14172,
+      "sha256": "8b82ad755af9a0753651657d23f5023691377647c43afc7c44d75ad287c3e3f6"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationSourceUnits.sol",
+      "bytes": 12678,
+      "sha256": "b5f3599d7eadb558a11bb5351453bdbfda81a5b95079f1fe63d7ce2196a1eb22"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol",
+      "bytes": 3602,
+      "sha256": "eab28ea9b5316bbe71ee85daa9dd0e312473a916803da12bf2c361dd8f859800"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+      "bytes": 4336,
+      "sha256": "78b68e8a56e45d704627d974e935d85094be0c171e2138eecb19e474d9fd4223"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol",
+      "bytes": 28343,
+      "sha256": "1427a481f8cb3cf68a57ed0ff7f7d870d6b8fdf77d6d3832114eae601ac28b45"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+      "bytes": 23157,
+      "sha256": "65beab1eb18a9d7737f0a956f658c1107bb3ff8b8a03be8a9d5942d5382b8ea9"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+      "bytes": 21807,
+      "sha256": "f5ec75011814b2e75281cba3d37d5ad0fe5ba859e3b8c37ed82bb1835df6000c"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+      "bytes": 39843,
+      "sha256": "4ca0269836825ce074ece493bbee636289d8151958adc771f4c6ebff65438e7c"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+      "bytes": 22542,
+      "sha256": "a63202a1c1e4bd77384a722e1a529c55f4b76d739183fdbff1245e9b1d4e9311"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDonation.t.sol",
+      "bytes": 19455,
+      "sha256": "a9d5ebea917ef8a775150fd26cb9fa1ad1f24d14728c285f8c3f426af44cf433"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+      "bytes": 26839,
+      "sha256": "2ef6b7e1cb8897ab326f264bf5c2cb57e6d07c03c5d5d311f064957033126d3d"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsInvariant.t.sol",
+      "bytes": 3536,
+      "sha256": "5b8cb4ccc8898fc0092c2f58afdc4bba5f0f75cffcb4433fc43558edc7bd2ea6"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLpConfiguration.t.sol",
+      "bytes": 14756,
+      "sha256": "1033f8bab7662c21a30563a6407e6c47fce29159d69f6b8fbbf8153d7519023a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+      "bytes": 17003,
+      "sha256": "fcebd726c8574fa88fd870a06fdb3bdfd801950fdb8d318f75e48027517e2c79"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecovery.t.sol",
+      "bytes": 12219,
+      "sha256": "eb13a7019ec5a35493ff08e0e0581d2ca3a364f3109ee97d9c00a4372fe81e9a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+      "bytes": 8639,
+      "sha256": "e62f7f81ca3dfb3941efa6bb830240e7ce9759a3820122d5f4e405ddd96d4a57"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 2059,
+      "sha256": "cd79c3bfd3631bb1fcfd439022e7fae3834e9e99de47ab154ab799847d00809a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/UniswapV4DetfMigrationSYDFPkg.sol",
+      "bytes": 28400,
+      "sha256": "b3031ff8872da08cec524c73a18725236e2ee92db95f854e8335ed929f52781e"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 3688,
+      "sha256": "1b962fce80970387187bf71c3cc8317c5b28cf85223c251c9fcf78edc8e4c2bc"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "bytes": 6911,
+      "sha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySeExit.t.sol",
+      "bytes": 9749,
+      "sha256": "4eb16ebb093d091e92b772494ff4877cf6860fca7b445c28e1a3e90611721e14"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimedSyConfiguration.t.sol",
+      "bytes": 11329,
+      "sha256": "c065c6742c47809dfc1f63d36212575ef6d44b52892f42dc2d8793cb2869aadb"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+      "bytes": 34723,
+      "sha256": "41d250612bdc64271bc6e9e296573d366214eda810e439958b4987e1fc9586d9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts",
+      "bytes": 6762,
+      "sha256": "56c8b9ad58e78f5293548c40d66c30ba426dbc2a47572762599d7836d0ced8ed"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "bytes": 20293,
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "bytes": 14150,
+      "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+      "bytes": 13521,
+      "sha256": "9ef98f0c07361a632ba76fbbcd7eebb31f8b6ad0b600d56a5431b9efe5c49fd1"
+    },
+    {
+      "path": "scripts/forge-artifacts.py",
+      "bytes": 22572,
+      "sha256": "c49a16d16c8d2aec80ea8874babbda8955d7f6ca90104255147a10fefe984de8"
+    },
+    {
+      "path": "foundry.toml",
+      "bytes": 3814,
+      "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839"
+    },
+    {
+      "path": "remappings.txt",
+      "bytes": 520,
+      "sha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e"
+    }
+  ],
+  "qualification": "Manual QA records actual runtime/source/schema/receipt and unchanged-state outputs. Historical integration witnesses are reused with their original source hashes; no operational eligibility or financial award is produced."
+}

@@ -73,7 +73,7 @@ contract MigrationEarlierLiquidTest is MigrationRecoveryDonationForkBase {
     function _configureLiquid(address wallet_, uint256 q_) private returns (uint256) {
         Migration.EarlierLiquidEntitlementInput[] memory a_ = _liquidInput(wallet_, q_, 0.01 ether);
         vm.prank(migrationOwner);
-        allocation.configureEarlierLiquidEntitlements(a_);
+        allocation.configureEarlierLiquidEntitlements(a_, pricingId);
         return migration.earlierLiquidEntitlement(ORIGIN).credit;
     }
 
@@ -108,12 +108,12 @@ contract MigrationEarlierLiquidTest is MigrationRecoveryDonationForkBase {
         assertEq(s_.remainingCredit, c0_ - c1_);
         Migration.EarlierLiquidEntitlementInput[] memory a_ = _liquidInput(HOLDER, 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureEarlierLiquidEntitlements, (a_)));
+        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureEarlierLiquidEntitlements, (a_, pricingId)));
         assertFalse(replayed_);
         a_[0].originalUnits = 8;
         a_[0].originalEth = 0.02 ether;
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureEarlierLiquidEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureEarlierLiquidEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(abi.encode(migration.earlierLiquidSurrender(ORIGIN)), abi.encode(s_));
         vm.warp(firstTime_ + 30 days);
@@ -153,7 +153,7 @@ contract MigrationEarlierLiquidTest is MigrationRecoveryDonationForkBase {
         Migration.EarlierLiquidEntitlementInput[] memory large_ = _liquidInput(HOLDER, balance_ + 1, 0.01 ether);
         large_[0].originalId = bytes32("balance");
         vm.prank(migrationOwner);
-        allocation.configureEarlierLiquidEntitlements(large_);
+        allocation.configureEarlierLiquidEntitlements(large_, pricingId);
         _activate();
         vm.prank(HOLDER);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidEarlierLiquidEntitlement.selector, bytes32("absent")));
@@ -203,7 +203,7 @@ contract MigrationEarlierLiquidTest is MigrationRecoveryDonationForkBase {
         _surrenderLiquid(1);
         Migration.EarlierLiquidEntitlementInput[] memory a_ = _liquidInput(address(this), 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureEarlierLiquidEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureEarlierLiquidEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(migration.earlierLiquidEntitlement(ORIGIN).original.originalWallet, HOLDER);
         assertEq(migration.earlierLiquidSurrender(ORIGIN).consumedUnits, 1);
@@ -290,7 +290,7 @@ contract MigrationEarlierLiquidTest is MigrationRecoveryDonationForkBase {
             bytes32("distinct ER original"), HOLDER, Legacy.EARLIER_RECEIPT,
             uint256(10000) * 1e27 / 2197, 0.01 ether, 0, bytes32("synthetic ER components"), true
         );
-        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(er_);
+        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(er_, pricingId);
         _activate();
         _surrender(EARLIER, 3);
         _run(Recovery.Stage.EarlierClaim, 3, 0, 0);

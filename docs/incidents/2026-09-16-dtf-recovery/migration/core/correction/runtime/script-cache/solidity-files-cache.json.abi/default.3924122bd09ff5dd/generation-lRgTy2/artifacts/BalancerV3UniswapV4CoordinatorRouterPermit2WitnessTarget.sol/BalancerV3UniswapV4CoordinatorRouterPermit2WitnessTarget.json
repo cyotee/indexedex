@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"WITNESS_TYPEHASH","inputs":[],"outputs":[{"name":"","type":"bytes32","internalType":"bytes32"}],"stateMutability":"pure"},{"type":"function","name":"WITNESS_TYPE_STRING","inputs":[],"outputs":[{"name":"","type":"string","internalType":"string"}],"stateMutability":"pure"}],"id":1544}

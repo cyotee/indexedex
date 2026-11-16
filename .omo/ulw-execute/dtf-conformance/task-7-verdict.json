@@ -1,0 +1,131 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 7,
+  "verdict": "needs-fix",
+  "failure_class": "harness",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-7-done.json",
+  "claim_binding": {
+    "bytes": 19992,
+    "sha256": "c22e5299c0d94abae089db8d18e564f7c14b7a7bd1645473f22978c5b76592bf",
+    "size_changed": false,
+    "subsequent_complete_read_unchanged": true
+  },
+  "summary": "Task acceptance remains unmet. B1 is an unsupported out-of-scope helper action; B2 is an unchanged-source generated witness artifact mismatch. Raw-log exit placement and combined NFT 3 rejection placement also fail the requested evidence checks.",
+  "findings": [
+    {
+      "id": "B1",
+      "failure_class": "harness",
+      "acceptance": "unmet",
+      "location": "scripts/forge-artifacts.py:406; required-forge.log:1-7",
+      "finding": "Exact required argv is recorded, script is unsupported, and recorded exit 2 agrees with the parser. Helper is unchanged and outside task 7 allowed writes. Alternate Solar success does not satisfy this command."
+    },
+    {
+      "id": "B2",
+      "failure_class": "harness",
+      "acceptance": "unmet",
+      "location": "scripts/recovery/dtf-migration/claimed-sy-witness.test.ts:89-93; scripts/recovery/dtf-migration/claimed-sy-witness.ts:11; attempt-4/dependent.log:64-86",
+      "finding": "Original assertion executed and failed; assertion and pin are unchanged from HEAD. Standalone router source and foundry.toml are unchanged. Current artifact hashes to the raw log actual value. No task 7 source dependency reaches the router; compiler/cache output was not retuned.",
+      "expected": "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899",
+      "actual": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+      "compiler": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev",
+      "historical_origin_of_old_pin": "not established"
+    },
+    {
+      "id": "H3",
+      "failure_class": "harness",
+      "acceptance": "unmet",
+      "location": "attempt-4/happy.log; attempt-4/happy.command.json; record-qa.ts:43-65",
+      "finding": "Exact argv precedes Bun output and raw log has 56 passes and 0 failures. Exit 0 is authenticated by the matching command receipt, but is absent from the raw log, contrary to the literal log requirement."
+    },
+    {
+      "id": "H4",
+      "failure_class": "harness",
+      "acceptance": "unmet",
+      "location": "attempt-4/rejection.log; rejection.log; attempt-4/dependent.log:150; record-qa.ts:60-62",
+      "finding": "Combined NFT 3 rejection passed in dependent.log but appears in neither rejection.log. The v1 assertion is embedded in the logged saved-v2 test rather than explicitly labeled in raw output. Claimed rejection coverage is not fully present in the required log."
+    }
+  ],
+  "checks": [
+    {
+      "id": "required_helper",
+      "result": "fail",
+      "recorded_exit": 2
+    },
+    {
+      "id": "witness_assertion_and_pin_preservation",
+      "result": "pass",
+      "dependent_acceptance": "fail",
+      "recorded_exit": 1,
+      "recorded_passes": 162,
+      "recorded_failures": 1
+    },
+    {
+      "id": "required_bun_log",
+      "result": "fail",
+      "argv_in_raw_log": true,
+      "argv_precedes_output": true,
+      "recorded_passes": 56,
+      "recorded_failures": 0,
+      "receipt_exit": 0,
+      "exit_in_raw_log": false
+    },
+    {
+      "id": "rejection_log_coverage",
+      "result": "fail",
+      "missing_case": "combined NFT 3 mode"
+    },
+    {
+      "id": "source_freshness",
+      "result": "pass",
+      "files_checked": 149,
+      "mismatches": 0,
+      "source_fingerprint": "5dfb2a5436f7a5ecee47c35d0b98a45ca23d03d1e96bda4746bfd8ac1b180be5",
+      "command_log_hashes_matched": [
+        "happy",
+        "dependent",
+        "types"
+      ]
+    },
+    {
+      "id": "scope_preservation",
+      "result": "supported",
+      "task7_inventory_changes": 44,
+      "task7_inventory_pricing_solidity_changes": 0,
+      "source_index_hashes_matched": 3,
+      "task9_document_hashes_matched": 3,
+      "qualification": "Pre-existing pricing changes appear in task-entry status; task 7 inventory excludes production pricing Solidity. Status and saved inventories cannot prove every intermediate writer action."
+    }
+  ],
+  "adversarial": {
+    "misleading_success_output": "Alternate script success and focused passes do not override required failures.",
+    "stale_state": "Attempt 4 source/log hashes and complete final claim bytes checked.",
+    "dirty_worktree": "Pre-existing pricing changes, task 7 operator files and concurrent task 9 documents preserved.",
+    "generated_or_cached_artifacts": "Current bytecode and sole metadata source independently hashed; no cache, compiler or pin changes.",
+    "untrusted_external_text": "Claim summaries treated as untrusted; no embedded evidence instruction executed.",
+    "hung_flaky_cancel_interruptions": "Not applicable: no Forge or bun rerun, no induced hang, flake, cancellation or interruption."
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/verification/report.md",
+  "report_binding": {
+    "bytes": 13447,
+    "sha256": "9606f1258503c09cb183ef1fb78da2619c94c261507c6a04c25e2aa4c31a9567"
+  },
+  "verification_commands_rerun": [],
+  "fixes_implemented": false,
+  "delegated": false,
+  "product_files_edited": false,
+  "claim_edited": false,
+  "limits": [
+    "Static and saved-evidence verification only; no fresh test execution or full product audit.",
+    "No product defect established; broader acceptance remains unconfirmed.",
+    "Old pin compiler/cache provenance is not proven."
+  ],
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/verification/report.md",
+    ".omo/ulw-execute/dtf-conformance/task-7-verdict.json"
+  ]
+}

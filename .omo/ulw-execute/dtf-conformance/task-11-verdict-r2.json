@@ -1,0 +1,186 @@
+{
+  "kind": "AdversarialVerify",
+  "task": 11,
+  "round": 2,
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "date": "2026-11-15",
+  "independent": true,
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "claim": ".omo/ulw-execute/dtf-conformance/task-11-done.json",
+  "claim_binding": {
+    "bytes": 16970,
+    "sha256": "5b6981a70a64ab2c2ff104727d575a3ff32b85b392077f93c8642df687ed6300",
+    "size_changed_from_expected": false,
+    "subsequent_complete_read_unchanged": true,
+    "complete_status_used_as_confirmation": false
+  },
+  "summary": "H1 and H2 are closed by exact command and exit bindings. The complete preserved negative witness is bound through an explicit supplement without invented stdout, and a command-bearing read-only capture establishes the same historical target policy. Previously supported counts remain bound to the same raw logs. Task 10 is not certified.",
+  "findings": [],
+  "resolved_findings": [
+    {
+      "id": "H1",
+      "disposition": "closed",
+      "evidence": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/harness-repair/negative-supplement.json",
+      "sha256": "6e28766f586ba48037e815a70bb817491fefc83e0b6b0c20d6f18bc82af59460",
+      "exact_bun_argv_matches_raw_and_commands_json": true,
+      "raw_argv_line": 1,
+      "raw_command_line": 2,
+      "raw_negative_summary_line": 57,
+      "raw_exit_line": 65,
+      "exit_code": 0,
+      "complete_negative_witness_equals_preserved_json": true,
+      "failed_hash_saved_nonce_and_boundary_join": true,
+      "producer_source_hash_matches_accepting_source_map": true,
+      "original_stdout_omission_explicit": true,
+      "missing_stdout_invented": false,
+      "underfunded": {
+        "chain_id_decoded": "4663",
+        "signed_limit_decoded": "1000000",
+        "signed_nonce_decoded": "2184",
+        "nonce_before": "0x888",
+        "nonce_before_basis": "Decoded signed envelope and authenticated producer source ordering; the separate pre-read RPC response was not independently saved.",
+        "nonce_after": "0x889",
+        "nonce_after_basis": "Preserved saved-intent pre-validation read and raw log line 57.",
+        "transaction_hash": "0x05c7ecca9273a352ce920a57eea5805ca620ccac6a30c89f2cb8161c4ec387de",
+        "receipt_status": "0x0",
+        "receipt_gas_used": "987108",
+        "receipt_logs_empty": true,
+        "rollback_before_hash": "251b5acb73ab38ce907a18c3051d096d8f546d3742b4d0993d6788a376ff952f",
+        "rollback_after_hash": "251b5acb73ab38ce907a18c3051d096d8f546d3742b4d0993d6788a376ff952f",
+        "qualification_judgment": "Sufficient for the required failure and rollback witness. A decoded signed nonce is not an independently saved nonce read. The failed mined transaction consumes its nonce; rejected validation does not."
+      },
+      "oversized_saved_intent": {
+        "signed_limit_decoded": "32000001",
+        "signed_nonce_decoded": "2185",
+        "nonce_before": "0x889",
+        "nonce_after": "0x889",
+        "signing_during_validation": 0,
+        "sends": 0,
+        "rejected": true
+      },
+      "boundary": {
+        "selected": 64,
+        "simulation_gas": "32000000",
+        "nonce_before": "0x87e",
+        "nonce_after": "0x87e",
+        "signing_calls": 0,
+        "sending_calls": 0,
+        "rejected": true
+      }
+    },
+    {
+      "id": "H2",
+      "disposition": "closed",
+      "binding": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/harness-repair/policy-binding.json",
+      "binding_sha256": "19f715df645b96ff57c4421654b32794b27ac5d7aa4bfa3cc52572c51ab7a3cc",
+      "raw_log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/harness-repair/policy-capture.log",
+      "raw_log_bytes": 3646,
+      "raw_log_sha256": "e808c5e6eec229b92f73671c87f8feb06f65186e45919cbb70c8fe33e867c7c0",
+      "commands": [
+        ["/Users/cyotee/.foundry/bin/cast", "chain-id", "--rpc-url", "robinhood_mainnet_alchemy"],
+        ["/Users/cyotee/.foundry/bin/cast", "block", "108944663", "--json", "--rpc-url", "robinhood_mainnet_alchemy"],
+        ["/Users/cyotee/.foundry/bin/cast", "call", "0x000000000000000000000000000000000000006c", "getMaxTxGasLimit()(uint256)", "--rpc-url", "robinhood_mainnet_alchemy", "--block", "108944663"]
+      ],
+      "exact_argv_before_each_output": true,
+      "command_exit_codes": [0, 0, 0],
+      "capture_exit_code": 0,
+      "chain_id": "4663",
+      "block_number": "108944663",
+      "block_tag": "0x67e5d17",
+      "block_hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+      "called_address": "0x000000000000000000000000000000000000006c",
+      "getter": "getMaxTxGasLimit()(uint256)",
+      "transaction_limit": "32000000",
+      "header_limit": "0x4000000000000",
+      "applicable_minimum": "32000000",
+      "header_json_equals_binding": true,
+      "archive_alias_definition_hash_matches": true,
+      "original_signed_run_policy_binding_matches": true,
+      "local_100m_setting_distinct_from_target_policy": true,
+      "read_only_capture_is_public_transaction": false,
+      "qualification": "Authorized new capture at the unchanged historical pin, not reconstructed original stdout. This verifier performed no RPC."
+    }
+  ],
+  "immutable_pins": {
+    "accepting_signed_raw_log": {
+      "sha256": "8564769f3fe4ee7641327b0274c706a3d7e06528818a391d84323b5eeb9df641",
+      "matches": true
+    },
+    "gas_negatives": {
+      "sha256": "37568eb59592305665dbe4bee56f65d11d28ee850b743a70192dcb6d9baa82a8",
+      "matches": true
+    },
+    "prior_claim_copy": {
+      "path": ".omo/ulw-execute/dtf-conformance/task-11-done-attempt-1.json",
+      "bytes": 11316,
+      "sha256": "1145910001463fce554ed877b6fd42f1e1b4986b74336eed14c8850b613c3d49",
+      "matches": true
+    }
+  },
+  "preserved_results": {
+    "same_happy_qa_commands_and_raw_log_paths_as_prior_claim": true,
+    "forge_passes": 14,
+    "forge_raw_log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-forge-2/raw.log",
+    "forge_exit_code": 0,
+    "operation_raw_rows": 46,
+    "recovery_raw_rows": 5,
+    "total_samples": 51,
+    "signed_records": 299,
+    "distinct_transaction_hashes": 298,
+    "signed_raw_log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/attempt-signed-final/raw.log",
+    "signed_exit_code": 0,
+    "construction_receipts": 4,
+    "distinct_parents": 2,
+    "construction_gas_used": ["19746754", "29860062", "19595874", "29298754"],
+    "qualification": "Previously supported results inspected locally without rerun. Snapshot-branch receipts are canonical-at-capture experiments, not 299 distinct surviving final-chain transactions."
+  },
+  "scope_checks": {
+    "accepting_source_map_entries": 221,
+    "current_source_hash_mismatches": [],
+    "baseline_source_map_entries": 217,
+    "baseline_unchanged": 214,
+    "baseline_changed_existing_files": [
+      "scripts/recovery/dtf-migration/execution.test.ts",
+      "scripts/foundry/recovery/dtf-migration/MigrationDeploymentGasResumedQA.s.sol",
+      "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/verify-bounded-deployments.ts"
+    ],
+    "product_behavior_change_found": false,
+    "witness_pin_retune_found": false,
+    "public_transaction_found_in_inspected_path": false,
+    "invented_task_10_lifecycle_found": false,
+    "task_10_certified": false,
+    "qualification": "Bound local source-map and evidence inspection; no exhaustive unlisted-file inventory, Git status, network audit, fresh build, or runtime-byte certification."
+  },
+  "adversarial": {
+    "misleading_success_output": "Exact command and exit evidence controls the verdict. Retained synthetic PASS output with exit 7 was rejected; complete status does not establish confirmation.",
+    "stale_state": "Required immutable pins, complete claim reread, and all 221 accepting source hashes match. Retained stale-reference probe was inspected without rerun.",
+    "dirty_worktree": "Preserved existing work. Baseline has exactly the three previously allowed source changes; accepting source map has no current mismatches. No Git command was run.",
+    "generated_or_cached_artifacts": "Retained changed-ABI rejection inspected; source fingerprints and previously supported build evidence retained. No new rebuild or complete runtime-byte proof claimed.",
+    "hung_flaky_cancel_interruptions": "Not applicable because this verifier reran no execution. Historical synthetic timeout evidence is not a new verifier run."
+  },
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/verification/report-r2.md",
+  "report_binding": {
+    "bytes": 10319,
+    "sha256": "9c0b141dafceeffaf06ecda9ef73d870c2b75f557cb7727bc7a29548075e7c87"
+  },
+  "first_verdict_preserved": true,
+  "first_verdict_sha256_observed": "2c5a2a9a0a275f04deb41954ec7aa4d62ec89b766ea9f87d4cec0358b27bb34c",
+  "fixes_implemented": false,
+  "delegated": false,
+  "forbidden_operations_performed": [],
+  "files_written": [
+    "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-11/verification/report-r2.md",
+    ".omo/ulw-execute/dtf-conformance/task-11-verdict-r2.json"
+  ],
+  "limits": [
+    "No Forge, bun CLI, Cast, RPC, installs, commits, tests, public transactions, or delegation were performed by this verifier.",
+    "Product files, task-11-done.json, prior claim copy, first report, and first verdict were not edited.",
+    "Underfunded pre-nonce is decoded and source-supported; its independent pre-read response was not saved.",
+    "Task 10 lifecycle, mixed-book flow, missing donor, and NFT 3 two-bond rehearsal are not certified.",
+    "Task 12 and final verification remain separate. This verdict authorizes no implementation or public action.",
+    "This verdict is the final written artifact."
+  ]
+}

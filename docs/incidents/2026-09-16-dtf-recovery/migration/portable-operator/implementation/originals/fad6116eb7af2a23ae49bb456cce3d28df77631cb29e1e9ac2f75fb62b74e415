@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"NotBalancerV3Vault","inputs":[{"name":"caller","type":"address","internalType":"address"}]}],"id":1144}

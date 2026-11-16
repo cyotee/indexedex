@@ -1,0 +1,104 @@
+[
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants-brief.md",
+    "bytes": 10099,
+    "sha256": "3eda88fd29b50b75301fb3a713c2faa5f0758c35c8f992692b38127181a4c887",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/stateful-invariant-intake.md",
+    "bytes": 7791,
+    "sha256": "30583b375708b0ff219bc7491baf533568714760287cc83630caab6fb02108c3",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-source-coverage-snapshot.md",
+    "bytes": 7064,
+    "sha256": "7ce2ab4274051348a09da278049d0e9f22aa0f368aeb6a3fba2b70c0af3c9667",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "bytes": 79305,
+    "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+    "bytes": 108022,
+    "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/report.md",
+    "bytes": 13958,
+    "sha256": "49fab644f20998227e1c30013c07e2895a8feeda1e0714ae481a860b4d11e0dd",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/verification-r2/report.md",
+    "bytes": 24548,
+    "sha256": "14750c64ed29a92ddf36b8c68fd6ec8b9fcdd39b7bc61e612662b1ff617a3f41",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/verification.md",
+    "bytes": 20461,
+    "sha256": "653350b3af3d011ad068a0885461c6828d5cb1aff481ba15900a7ff2563f773b",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/claims/contract.md",
+    "bytes": 48499,
+    "sha256": "a657b9e8a5a6925130a6a56f7334a26536162effac321254144063774fd98d41",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/correction-verification/report.md",
+    "bytes": 20175,
+    "sha256": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/CLAUDE.md",
+    "bytes": 15086,
+    "sha256": "a0c6e9db00e4410cde7ccacc9aa7c793d6328544168d584fb6dea32d330fa388",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/foundry.toml",
+    "bytes": 3814,
+    "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/remappings.txt",
+    "bytes": 520,
+    "sha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_RULES.md",
+    "bytes": 1447,
+    "sha256": "897fea82d599e9b3b0dc28ff88b79a1adf090a591484769efc551290f0a67a04",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_CODING.md",
+    "bytes": 1112,
+    "sha256": "ad47cf28938e8a5a28b166f89624ea931eb0eba6cc5ee891bd3f8346f5dc7a27",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_DEPLOYMENT.md",
+    "bytes": 1578,
+    "sha256": "5533d906697335e5328c8ec1ee6cdcb971dfd19a71513cec91118920dd63eba2",
+    "mode": 33188
+  },
+  {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_TESTS.md",
+    "bytes": 1874,
+    "sha256": "80f5fa64e97c22e2373d323c6b2ea9b48ef06781ef0b6f42537a09d3742933a4",
+    "mode": 33188
+  }
+]

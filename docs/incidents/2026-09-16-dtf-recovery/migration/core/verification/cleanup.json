@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-10T22:38:16.901Z",
+  "ownedNodes": [
+    {
+      "bashId": "bash_5",
+      "stopped": true
+    },
+    {
+      "bashId": "bash_9",
+      "stopped": true,
+      "toolError": "EPERM removing terminal monitor state; process shutdown still completed"
+    }
+  ],
+  "port18548Listening": false,
+  "processProbeMatched": false,
+  "webSocketClosed": true,
+  "webViewClosed": true,
+  "tmpPath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/tmp",
+  "tmpAbsent": true,
+  "warmOutPreserved": true,
+  "warmCachePreserved": true,
+  "readOnlyDependencyLinksPreserved": true,
+  "preservedRuntimeJournals": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-04/docs/incidents/2026-09-16-dtf-recovery/migration/core/verification/runtime/cache/MigrationCoreLocalQA.s.sol",
+  "publicActions": false,
+  "delegation": false,
+  "commits": false
+}

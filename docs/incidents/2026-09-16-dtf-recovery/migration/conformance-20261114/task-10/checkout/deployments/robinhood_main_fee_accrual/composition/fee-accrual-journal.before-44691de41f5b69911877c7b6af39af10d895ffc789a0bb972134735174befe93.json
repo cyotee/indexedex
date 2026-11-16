@@ -1,0 +1,208 @@
+{
+  "identity": {
+    "scriptSourceSha256": "44691de41f5b69911877c7b6af39af10d895ffc789a0bb972134735174befe93",
+    "instanceId": "public-4663",
+    "configSha256": "b60db8f761239bd0a3368ae2bfa0e2bd4f90f288237002c300e7951d87a938cc",
+    "forkBlockNumber": 62009735,
+    "forkBlockHash": "0xbc4fc4df7e0eaa484c6060120503889ba1e01cc7fa83f7f57f388012aee77c47",
+    "coreCodeSha256": {
+      "create3Factory": "ac361e0392f597421e13020ea29e294d499a5cea46a60b99ea05a4e5494f995a",
+      "diamondPackageFactory": "9be66cbeb82bdb583a4bdee2919f17e8d7a4bd4dc30de088d04d556ae33ab87c",
+      "hookFactory": "0e2b7468a4e5e09a7bc344ef02050641ff3f37d84c0607e9ce541b97d6729e65",
+      "indexedexManager": "96292454f5c035559e92a771bd401579f80426cc95068a802a3fbebe12c0d960",
+      "feeCollector": "96292454f5c035559e92a771bd401579f80426cc95068a802a3fbebe12c0d960",
+      "tokenStaking": "96292454f5c035559e92a771bd401579f80426cc95068a802a3fbebe12c0d960",
+      "dtf": "b7ed9983dfff8dc07820689bb5ba686215efc4644c063377c2b869abcf54d644",
+      "weth": "eb5a5f69ebb602e71cdf5fdeb7d49ca9e4b37d105432c0cbd31a754fc4d360a7"
+    }
+  },
+  "stages": [
+    {
+      "stage": "07-01",
+      "receipts": [
+        {
+          "transactionHash": "0x74c830658b57e3c301f062b7655ec63d0780c3b43d0493b7ff4c8b35cc156245",
+          "blockHash": "0x01f3df73c08f223d8e219d8ba9963fa82c79f803c3535a10b688697e31569292",
+          "blockNumber": "0x3b3f162"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "07-02",
+      "receipts": [
+        {
+          "transactionHash": "0x69bf324f4c13b941a73411f06a7ec9994078cd1fbf444be976b74f31fcd8aa9c",
+          "blockHash": "0xa1ae84d1756559c94fbbecd6d596808542602ed82ca0f7b1b9834ca25fce9d43",
+          "blockNumber": "0x3b3f6e6"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "07-03",
+      "receipts": [
+        {
+          "transactionHash": "0x2a0c9ee1ddcd5e0e31630d8d0d6a84251f82415d97018d52149d7b646f36b0a4",
+          "blockHash": "0x4a19b65fcda75848b3d72c9fd573308276d38d690b0a1a1ce87997d19e1e1dfb",
+          "blockNumber": "0x3b3fec2"
+        },
+        {
+          "transactionHash": "0x3cda903f7f9d26cc980c83e50a39c8c4eb006a64283943d819ccd8c838767e84",
+          "blockHash": "0x0935eeb2ffd2a81926ee8bfd907ee9b9898d47282432182e090b3c5b68efc199",
+          "blockNumber": "0x3b3fed9"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "07-04",
+      "receipts": [
+        {
+          "transactionHash": "0xfb47dbdd5e9e3ac0b99754dbb62ed6c08d8461db5192146827a2e5c7e85f519b",
+          "blockHash": "0x938d5d57cb367a17e1d36945012586d7ff1d7bef404903c43d8850566bdb68c0",
+          "blockNumber": "0x3b43005"
+        },
+        {
+          "transactionHash": "0x305f50b077d55a05c88c828a0eadd335943a44769b222f521306084194392a1e",
+          "blockHash": "0x8205d8895f53915c179c98ee0f06f8eb2564695c2d554d7c4ff8fbca8276d944",
+          "blockNumber": "0x3b4301c"
+        },
+        {
+          "transactionHash": "0x6c28176d549268954d6271ffab213f92487b850d6be35921676b696aabaf6d00",
+          "blockHash": "0xbc55869d9c9ff1a00467af316ae28dd196e31c111eb1cbffbc403e410bde6c61",
+          "blockNumber": "0x3b43034"
+        },
+        {
+          "transactionHash": "0x7986648b7bf844c3b8eed126b152478ce7c355ca2a2ac95ac21c6b8c47491aad",
+          "blockHash": "0xee9de1ba143c176a13c97cb83c2ece36da6ab3afdb34a27abd3e3e1472b82942",
+          "blockNumber": "0x3b4304b"
+        },
+        {
+          "transactionHash": "0x4f6d79bdfcfaf0f801146af2523680980646ca925a215be2d15e09b2951c4c23",
+          "blockHash": "0xd02ed57a766158f8fdd95639817bd56c74ae1c8285b8c50782c5552981e551c9",
+          "blockNumber": "0x3b43062"
+        },
+        {
+          "transactionHash": "0xb6f3f17ae43dd7c4f3168057d32461e0dcfc681dcb5141d23b7c9b97f8ffb456",
+          "blockHash": "0x2379786f6ef1763fe4ed8000159cc7b6dd62e505f5a942d55eef3a789e3225bc",
+          "blockNumber": "0x3b43079"
+        },
+        {
+          "transactionHash": "0x57f4373fecdda5533a853452c66e62dfbe400f3709d53463f405721faba800ff",
+          "blockHash": "0xb116eaceefa9ea1a65c1eff3c7803e0a3601e067f74d16a4d020107878d22e0a",
+          "blockNumber": "0x3b43090"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "08-03",
+      "receipts": [
+        {
+          "transactionHash": "0x64f5423b92a433200ef5abdaad02655aabeb52a86c8bdbbd9b4a92f1f221a569",
+          "blockHash": "0x0255de6b3f3cc8f1b2fadfd592637b5b4834d3b9de1575a8c887c2103ef80458",
+          "blockNumber": "0x3b43d35"
+        },
+        {
+          "transactionHash": "0x836def5c2577b8708d22b7fc0094894745031065984472779d40359c6498f552",
+          "blockHash": "0x0fec3e5d91a45afdb517cdc1f3d8bb5bd202a4486545f686390b9b739433ed39",
+          "blockNumber": "0x3b43d4d"
+        },
+        {
+          "transactionHash": "0x79b3f095d991b774fc4436974e589fa7d314e1acadddb47e78c99bcc2b4590a8",
+          "blockHash": "0xfb4753a9f137e9ecc525b30635ac6930bd3b779705dd454d4d367b7df14aa228",
+          "blockNumber": "0x3b43d64"
+        },
+        {
+          "transactionHash": "0xf4297d553f4614ce9504d78f467b64f6c2624e7ef38edcf0b21ce9d8c0824b43",
+          "blockHash": "0x3f94d9ce1d364fde338a0a8692dea07c49e9353d487cbc39707dd6bb594de596",
+          "blockNumber": "0x3b43d7a"
+        },
+        {
+          "transactionHash": "0xf16bc60503811c1659c5e272294f72b84babb6e774d4d05c6a28c1f59ab543e5",
+          "blockHash": "0x03776cc4b0421478176c280f9da466a90ece537b5165500fb6b95d18aa80fb90",
+          "blockNumber": "0x3b43d91"
+        },
+        {
+          "transactionHash": "0x7274d0886309b9b81d589cc35c87b95702ef748a53c65f7228c313f06286274b",
+          "blockHash": "0xf5b9a9bc1083c9e753ea657b6c32f0e460b2a3648bcb3e917a757c7890c7a6ff",
+          "blockNumber": "0x3b43da8"
+        },
+        {
+          "transactionHash": "0x24a356137435a51dfe2ea7b773fe9babd0e027606ae1d7c62f72f4197cb82bf2",
+          "blockHash": "0x1a742a36e4a3cbc6e2c3dffa5f412c24306406f0477276747686a27037f92f6a",
+          "blockNumber": "0x3b43dbf"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "08-04",
+      "receipts": [
+        {
+          "transactionHash": "0x2ad82dfdbfed41098ce9c199c0bb8d957140dd58764ebc84fc4a5f5edc59629a",
+          "blockHash": "0xd8b7001a64249911f0810dc42dab289fea8368a77205837a86aab89543a3cd4a",
+          "blockNumber": "0x3b44770"
+        },
+        {
+          "transactionHash": "0x67c888b07535c5f46331b753621f3ce33fbb29df3ee60cd267224623a0728ead",
+          "blockHash": "0x18bcee0d0f856a0c63c7a4e736c00965d6cd0357ee2dd6f6678efb1ad183c1d7",
+          "blockNumber": "0x3b44789"
+        },
+        {
+          "transactionHash": "0x2c6b2a494052a78e028f328cc53f3753d395b661e0e9d421560c84825783bf2c",
+          "blockHash": "0x8ab61c9137dffb5b84dbc7e236a1a84bea82bd0ef68d7238c76e1d084629be7b",
+          "blockNumber": "0x3b447a1"
+        },
+        {
+          "transactionHash": "0xa23d500e1e717cfdc9a068fc67f6c7e51a6bf902aaebdf3edef60a2736ead7a1",
+          "blockHash": "0x9dd5820c4c614f3f422f4cc510f32fbead974c53de58e2e43577afcff1346c13",
+          "blockNumber": "0x3b447ba"
+        },
+        {
+          "transactionHash": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+          "blockHash": "0x290860f0f8368766b57b381e233eba3930acd735a67f76d476e9521c9103599f",
+          "blockNumber": "0x3b447d2"
+        },
+        {
+          "transactionHash": "0xc47de869ab5326543022ef95efe2fc257760a47dafc050d90e80cb93c86490bb",
+          "blockHash": "0xb4b1fdac72990af4144c34a97cc4b0f6794115fea1d53531f3895f6b75a2d5b3",
+          "blockNumber": "0x3b447ea"
+        },
+        {
+          "transactionHash": "0x88305728e659c03dabb18ea7c493beb5d520d7b9658bcc66d21ade8e22caa72d",
+          "blockHash": "0x7ba9e12b0691146f386f2ba5f01f56ab8bc8528473c4154dd967e6728e99407e",
+          "blockNumber": "0x3b44802"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    },
+    {
+      "stage": "08-05",
+      "receipts": [
+        {
+          "transactionHash": "0x2e857a1508532e971a1c047209481e5b26bc7396f77a5eee376cf27c620928bd",
+          "blockHash": "0x36cbb1e7372a7404c6827fa709df630c8ac28e7078c3e7830d36c076d547918b",
+          "blockNumber": "0x3b45539"
+        },
+        {
+          "transactionHash": "0xd42267de033fe9083be159a8048a7aae061b70ba08dee3043c70f9fdc93afee4",
+          "blockHash": "0x6d3fe47729e2636af721a4e3410748a399a3228b1191df3039c165afe47e0eea",
+          "blockNumber": "0x3b45552"
+        }
+      ],
+      "reserveRemaining": 164918773245602919993967737,
+      "phase": 0
+    }
+  ],
+  "initialReserve": 164918773245602919993967737,
+  "initialPrincipal": 163083427428934015177879773,
+  "migrationStarted": true
+}

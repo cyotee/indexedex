@@ -1,0 +1,42 @@
+{
+  "worksheet": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/observed-recipient-flow-review-20261113.json",
+    "bytes": 902872,
+    "sha256": "ed8474ac3454453697308ce82adffebb8bbfe9d346050973e0753a46cf6af39e"
+  },
+  "archive28": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/archive.json",
+    "bytes": 3848804,
+    "sha256": "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b"
+  },
+  "recon28": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/reconciliation.json",
+    "bytes": 251139,
+    "sha256": "c1717f1e35984ff03aeddd16c6a7571439e8066f4160fdeec2f7f844ced1577e"
+  },
+  "archive30": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+    "bytes": 5917231,
+    "sha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0"
+  },
+  "recon30": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/reconciliation.json",
+    "bytes": 841408,
+    "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2"
+  },
+  "report28": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/report.md",
+    "bytes": 20647,
+    "sha256": "77bb12de3b210f0091d4f7409fdb52eff81b1fec5d8cc11dce0db38897bfa5aa"
+  },
+  "report30": {
+    "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/report.md",
+    "bytes": 13625,
+    "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50"
+  },
+  "plan": {
+    "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "bytes": 79305,
+    "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+  }
+}

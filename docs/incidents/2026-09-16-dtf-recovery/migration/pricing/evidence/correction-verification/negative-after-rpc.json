@@ -1,0 +1,314 @@
+{
+  "checkedAt": "2026-11-10T15:58:40.354Z",
+  "calls": [
+    {
+      "time": "2026-11-10T15:58:40.353Z",
+      "port": 18546,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 11,
+        "method": "anvil_nodeInfo",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 11,
+        "result": {
+          "currentBlockNumber": "0x0",
+          "currentBlockTimestamp": 1794326261,
+          "currentBlockHash": "0xf958d002cdecfff7c1992162690ded52a4832b138c5bb19dfb180726bb97a4fe",
+          "hardFork": "Bpo1",
+          "transactionOrder": "fees",
+          "environment": {
+            "baseFee": "0x3b9aca00",
+            "chainId": 31337,
+            "gasLimit": "0x5f5e100",
+            "gasPrice": "0x77359400"
+          },
+          "forkConfig": {
+            "forkUrl": null,
+            "forkBlockNumber": null,
+            "forkRetryBackoff": null
+          },
+          "network": "ethereum",
+          "blobParams": {
+            "targetBlobCount": 10,
+            "maxBlobCount": 15,
+            "updateFraction": "0x7f5a51",
+            "minBlobFee": "0x1",
+            "maxBlobsPerTx": 6,
+            "blobBaseCost": 8192
+          }
+        }
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.353Z",
+      "port": 18546,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 12,
+        "method": "eth_getTransactionCount",
+        "params": [
+          "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "latest"
+        ]
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 12,
+        "result": "0x0"
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.353Z",
+      "port": 18546,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 13,
+        "method": "eth_getTransactionCount",
+        "params": [
+          "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "pending"
+        ]
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 13,
+        "result": "0x0"
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.353Z",
+      "port": 18546,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 14,
+        "method": "eth_getBlockByNumber",
+        "params": [
+          "latest",
+          false
+        ]
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 14,
+        "result": {
+          "hash": "0xf958d002cdecfff7c1992162690ded52a4832b138c5bb19dfb180726bb97a4fe",
+          "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+          "miner": "0x0000000000000000000000000000000000000000",
+          "stateRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "transactionsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "receiptsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "difficulty": "0x0",
+          "number": "0x0",
+          "gasLimit": "0x5f5e100",
+          "gasUsed": "0x0",
+          "timestamp": "0x6af33ef5",
+          "extraData": "0x",
+          "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "nonce": "0x0000000000000000",
+          "baseFeePerGas": "0x3b9aca00",
+          "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "blobGasUsed": "0x0",
+          "excessBlobGas": "0x0",
+          "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "totalDifficulty": "0x0",
+          "size": "0x268",
+          "uncles": [],
+          "transactions": [],
+          "withdrawals": []
+        }
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.353Z",
+      "port": 18546,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 15,
+        "method": "txpool_status",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 15,
+        "result": {
+          "pending": "0x0",
+          "queued": "0x0"
+        }
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.353Z",
+      "port": 18547,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 16,
+        "method": "anvil_nodeInfo",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 16,
+        "result": {
+          "currentBlockNumber": "0x0",
+          "currentBlockTimestamp": 1794326261,
+          "currentBlockHash": "0xf958d002cdecfff7c1992162690ded52a4832b138c5bb19dfb180726bb97a4fe",
+          "hardFork": "Bpo1",
+          "transactionOrder": "fees",
+          "environment": {
+            "baseFee": "0x3b9aca00",
+            "chainId": 31337,
+            "gasLimit": "0x5f5e100",
+            "gasPrice": "0x77359400"
+          },
+          "forkConfig": {
+            "forkUrl": null,
+            "forkBlockNumber": null,
+            "forkRetryBackoff": null
+          },
+          "network": "ethereum",
+          "blobParams": {
+            "targetBlobCount": 10,
+            "maxBlobCount": 15,
+            "updateFraction": "0x7f5a51",
+            "minBlobFee": "0x1",
+            "maxBlobsPerTx": 6,
+            "blobBaseCost": 8192
+          }
+        }
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.354Z",
+      "port": 18547,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 17,
+        "method": "eth_getTransactionCount",
+        "params": [
+          "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "latest"
+        ]
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 17,
+        "result": "0x0"
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.354Z",
+      "port": 18547,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 18,
+        "method": "eth_getTransactionCount",
+        "params": [
+          "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "pending"
+        ]
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 18,
+        "result": "0x0"
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.354Z",
+      "port": 18547,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 19,
+        "method": "eth_getBlockByNumber",
+        "params": [
+          "latest",
+          false
+        ]
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 19,
+        "result": {
+          "hash": "0xf958d002cdecfff7c1992162690ded52a4832b138c5bb19dfb180726bb97a4fe",
+          "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+          "miner": "0x0000000000000000000000000000000000000000",
+          "stateRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "transactionsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "receiptsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "difficulty": "0x0",
+          "number": "0x0",
+          "gasLimit": "0x5f5e100",
+          "gasUsed": "0x0",
+          "timestamp": "0x6af33ef5",
+          "extraData": "0x",
+          "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "nonce": "0x0000000000000000",
+          "baseFeePerGas": "0x3b9aca00",
+          "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "blobGasUsed": "0x0",
+          "excessBlobGas": "0x0",
+          "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "totalDifficulty": "0x0",
+          "size": "0x268",
+          "uncles": [],
+          "transactions": [],
+          "withdrawals": []
+        }
+      }
+    },
+    {
+      "time": "2026-11-10T15:58:40.354Z",
+      "port": 18547,
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "txpool_status",
+        "params": []
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+          "pending": "0x0",
+          "queued": "0x0"
+        }
+      }
+    }
+  ],
+  "summary": [
+    {
+      "port": 18546,
+      "nonce": "0x0",
+      "pending": "0x0",
+      "block": "0x0",
+      "blockHash": "0xf958d002cdecfff7c1992162690ded52a4832b138c5bb19dfb180726bb97a4fe",
+      "pool": {
+        "pending": "0x0",
+        "queued": "0x0"
+      },
+      "available": true
+    },
+    {
+      "port": 18547,
+      "nonce": "0x0",
+      "pending": "0x0",
+      "block": "0x0",
+      "blockHash": "0xf958d002cdecfff7c1992162690ded52a4832b138c5bb19dfb180726bb97a4fe",
+      "pool": {
+        "pending": "0x0",
+        "queued": "0x0"
+      },
+      "available": true
+    }
+  ],
+  "assertions": "Both nodes remain available at the unchanged genesis, latest/pending sender nonce 0 and empty mempools; no deployment or transaction mined."
+}

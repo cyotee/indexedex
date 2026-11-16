@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":108,\"method\":\"debug_traceTransaction\",\"params\":[\"0x90122f175e021a840db60ab8d0a3d7b157adfe20a7c39d8f0a72ec1f1160d57a\",{\"tracer\":\"callTracer\"}]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":108,\"result\":{\"from\":\"0x016900aa17a08a52f1cc10a9474b3bbfaeb380a3\",\"gas\":\"0x4bf6a8\",\"gasUsed\":\"0x2590e\",\"to\":\"0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00\",\"input\":\"0xcc447fba00000000000000000000000000dd7939597bc43820ffb2b4e834f26924012b3d00000000000000000000000000000000000000000000021f2f6f0fc3c6100011\",\"calls\":[{\"from\":\"0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00\",\"gas\":\"0x4ab1c5\",\"gasUsed\":\"0x1eef5\",\"to\":\"0x9c90d4a476f3473b9a0e32b530af3474271a80b1\",\"input\":\"0xcc447fba00000000000000000000000000dd7939597bc43820ffb2b4e834f26924012b3d00000000000000000000000000000000000000000000021f2f6f0fc3c6100011\",\"value\":\"0x0\",\"type\":\"DELEGATECALL\"}],\"value\":\"0x0\",\"type\":\"CALL\"}}",
+  "httpStatus": 200,
+  "raw": true
+}

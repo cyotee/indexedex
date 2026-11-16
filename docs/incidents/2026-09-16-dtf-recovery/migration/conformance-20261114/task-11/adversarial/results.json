@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "probe": "misleading_success_output",
+      "accepted": false,
+      "code": 7,
+      "signal": null,
+      "output": "ALL TESTS PASS\n"
+    },
+    {
+      "probe": "hung_commands",
+      "code": null,
+      "signal": "SIGTERM",
+      "output": "READY\n",
+      "qualification": "Synthetic child deadline only. No Forge process was killed for silence."
+    },
+    {
+      "probe": "stale_state",
+      "rejected": true,
+      "boundary": "readReference authenticated bytes"
+    },
+    {
+      "probe": "generated_or_cached_artifacts",
+      "rejected": true,
+      "originalArtifact": "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json",
+      "sha256": "3c3adb089f71b5ceb04e341242075bd35e22b5d30bc08cb707de342b5342adfe",
+      "boundary": "readReference authenticated bytes",
+      "qualification": "Fresh Solar runtime artifact rebuild and source hashes are recorded separately."
+    },
+    {
+      "probe": "dirty_worktree",
+      "observed": true,
+      "mutations": "Only task 11 owned paths; no Git mutations."
+    }
+  ],
+  "flaky": "not applicable; no retry-to-green policy",
+  "cancellation": "Applicable only to the deliberately hung synthetic child; SIGTERM observed.",
+  "interruptions": "not introduced in economic operations",
+  "untrustedText": "not applicable; no command was derived from untrusted text"
+}

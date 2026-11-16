@@ -1,0 +1,22 @@
+{
+  "version": "phase27-immutable-delivery-audit-seal-v1",
+  "verdict": "confirmed-bounded-immutable-delivery",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 4777,
+    "sha256": "155bc217e0e1a18ab459ab56e5ba5e15c92e882df4d3a24cd45bcfb3dc3701d5"
+  },
+  "report": {
+    "path": "../verification.md",
+    "bytes": 26444,
+    "sha256": "fa0920fb02dbad0fa4d71f6dc8c759eb98ada9f8061a0c89ba55b57395987299"
+  },
+  "cleanupComplete": true,
+  "pendingOwnedOperations": 0,
+  "writtenLast": true,
+  "runtimeReplayed": false,
+  "operationalAuthorization": false,
+  "fullTask9Accepted": false,
+  "fullPlanAccepted": false,
+  "p1Recovered": false
+}

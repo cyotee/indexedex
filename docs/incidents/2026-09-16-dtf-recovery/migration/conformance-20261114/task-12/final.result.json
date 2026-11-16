@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "bun",
+    "test",
+    "--timeout",
+    "15000",
+    "./scripts/recovery/dtf-migration/bundle.test.ts",
+    "./scripts/recovery/dtf-migration/preparation.test.ts",
+    "./scripts/recovery/dtf-migration/execution.test.ts"
+  ],
+  "exit": 0,
+  "signal": null,
+  "logSha256": "e919860e3d55a7eccc4fb993d8ea450e7e7ec2d8c1e56b0514ca83b1ab7958dd",
+  "recorderSha256": "cc8f59ad0803b7caf4df3373c0d8ea3d756494501f6d93cc57765c917ab22f48",
+  "sourcesUnchanged": true
+}

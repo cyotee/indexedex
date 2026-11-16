@@ -1,0 +1,142 @@
+{
+  "type": "TaskVerdict",
+  "task": 8,
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/verification/report.md",
+  "report_sha256": "23232509c156802ff8a142eba5edaac77064bba9c6b0b3221f06faa02798f80b",
+  "claim": {
+    "path": ".omo/ulw-execute/dtf-conformance/task-8-done.json",
+    "bytes": 10797,
+    "sha256": "860a56075800b59e82109c9765eeeb407881f4827eaf0ca2533092bec03f56f4",
+    "treated_as_untrusted": true,
+    "size_changed": false
+  },
+  "aliases": {
+    "M": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "T": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration",
+    "K": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration"
+  },
+  "checks": [
+    {
+      "id": 1,
+      "status": "pass",
+      "evidence": [
+        "happy-5.log:1-4",
+        "happy-5.log:6440-6441"
+      ],
+      "result": "Exact plan argv precedes helper output, all four plan T roots retained, 17 individual passes, terminal exit 0."
+    },
+    {
+      "id": 2,
+      "status": "pass",
+      "evidence": [
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration_Adversarial.sol:20-62",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol:44-156",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol:51-121"
+      ],
+      "result": "Two substantive suites use shared hostile setup and complete rollback observations over actual registry-deployed proxies; no test subclass or etch of SUT found."
+    },
+    {
+      "id": 3,
+      "status": "pass",
+      "evidence": [
+        "happy-5.log:5170-5183",
+        "happy-5.log:6426-6436",
+        "fork-4.log:4118-4179",
+        "fork-4.log:4669-4678",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol:48-89",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol:14-38"
+      ],
+      "result": "Actual A/B setters, configuration, independent issuance, paid owner purchase, activation, positive reward delivery, per-source surrender and recovery/harvest stages are witnessed and asserted."
+    },
+    {
+      "id": 4,
+      "status": "pass",
+      "evidence": [
+        "hostile-rollback.log:1-4",
+        "hostile-rollback.log:4214-4226",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHostileContribution.t.sol:89-140",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerBondCallbacks.t.sol:26-86"
+      ],
+      "result": "Exact logged command and individual executed tests bind to inspected exact callback/source/funding errors and unchanged custody, credit, supply, backing, gons, NFT and cut assertions."
+    },
+    {
+      "id": 5,
+      "status": "pass",
+      "evidence": [
+        "fork-4.log:5062",
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol:171-212",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol:70-89",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol:348-366",
+        "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol:35-57"
+      ],
+      "result": "Actual three-unit source surrender pays 333/334/334 on a distinct real proxy; setters preserve old loaded credit and immutable issuance until explicit reload."
+    }
+  ],
+  "raw_logs": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/happy-5.log",
+      "sha256": "5227d35f956f201eadc36a41116acbb08fa46524e0d2316ba8aef76bedb79911",
+      "passed": 17,
+      "exit_code": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/hostile-rollback.log",
+      "sha256": "de7fb54b41e548efb4ac31e321678cf9a45d90cf2ce1ced7020951f8f4f56864",
+      "passed": 13,
+      "exit_code": 0
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/fork-4.log",
+      "sha256": "b589a8006d944c52a3c048f564535200f67d944b18206a0fdf85ec22094cbb01",
+      "passed": 17,
+      "exit_code": 0
+    }
+  ],
+  "source_fingerprint": "fff34a8dc3f181b39cd28d4f1a5fd38afab657bbad40ce1bd4b9e71ee273042e",
+  "integrity": {
+    "final_source_hashes_matched": 10,
+    "protected_file_hashes_matched": 144,
+    "evidence_file_sizes_and_hashes_matched": 19,
+    "mismatches": []
+  },
+  "adversarial": {
+    "misleading_success_output": "Checked exact raw argv, case execution, successful action witnesses and terminal exit. In-memory missing-command and nonzero-exit controls rejected.",
+    "stale_state": "Final source and protected hashes match. Three older initial test bindings excluded.",
+    "dirty_worktree": "Inherited dirty/untracked state observed through read-only Git inspection; no clean-tree assumption, reset or cleanup.",
+    "generated_or_cached_artifacts": "Final helper build/test order and actual callback API execution support acceptance. Intermediate actor artifact hash is stale and excluded; see report.",
+    "untrusted_external_text": "Claim and evidence prose treated as untrusted assertions; no embedded instructions followed.",
+    "hung": "not-applicable: no Forge rerun",
+    "flaky": "not-applicable: no Forge rerun",
+    "cancel": "not-applicable: no Forge rerun",
+    "interruptions": "not-applicable: no Forge rerun"
+  },
+  "findings": [],
+  "observations": [
+    {
+      "severity": "informational",
+      "location": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-8/adversarial-probes.json",
+      "detail": "Intermediate actor artifact SHA-256 b504750fd5e6a6091f2be554a16c9ca1551960d1e4ff8f2f386fbaf74881de10 differs from current a22657542749fa934177315691bf47616b04388e634828d74fe022d7cb5888a6. Excluded from acceptance; final source and raw execution evidence independently satisfy the five checks."
+    }
+  ],
+  "limitations": [
+    "Existing -vv logs provide passing execution records; exact error bytes and unchanged-state oracles were verified in the bound source rather than fresh verbose traces.",
+    "Recorded invariant configuration: seed 0x8, 16 runs, depth 8. No fresh execution or mutation testing performed.",
+    "Task 7 witness-pin follow-up is outside this verdict; no task-8 pin change established.",
+    "This verdict does not close task 13 or full-repository verification."
+  ],
+  "restrictions_observed": {
+    "forge_rerun": false,
+    "delegation": false,
+    "implementation": false,
+    "product_files_edited": false,
+    "done_claim_edited": false,
+    "commits": false,
+    "rpc": false,
+    "installs": false
+  },
+  "remaining_task8_blockers": []
+}

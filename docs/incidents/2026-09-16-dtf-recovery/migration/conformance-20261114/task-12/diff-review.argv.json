@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "bash",
+    "-c",
+    "GIT_MASTER=1 git --no-pager diff -- scripts/recovery/dtf-migration/bundle.test.ts scripts/recovery/dtf-migration/rehearsal-portable.ts"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "sources": [
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "sha256": "3fa56907627a4a1bf737b699bdd999745ec806e17006dcd33021f9e7b75d9268"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "sha256": "76709f9780125bc5f9135f90435fc01107f5c01e91a7a198a9ea4ddcdd028bf9"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "sha256": "b96d81ec174e1cf0830d44e42c057ab397501e54f567762520817af3ff8d0f94"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "sha256": "9fd233c65378ffae9f5fc4ab451cc25d471b547ff76cc85bf745f03b58b9a52f"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "sha256": "21a65d05e07985abaed780f64ef42ba7e9f93f89790bc3bd3ef8278ab32bfbbc"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "sha256": "81166388c25d1283d73556c6e95c6599ee448cdc3e9f96d97bd14f7e9090d7c0"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "sha256": "4ccb78785ea6838aabc5944d7b544b524cfe99f1f83b263796dbe6c2f7c2cf37"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "sha256": "41c4bbdf82ad36547d1b59fa8d32fe29b89d603c24f487f3feaf4bf27d4c7ba3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "sha256": "5a6c3ea2393830d635258a00b3a951f147f2ebc192d98d9be85deef434b76ef3"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy-witness.ts",
+      "sha256": "d45bd8b41a5feef7dc7d86c68e8d085ed6babffadf5e13a6703c7d2a84feac5c"
+    }
+  ]
+}

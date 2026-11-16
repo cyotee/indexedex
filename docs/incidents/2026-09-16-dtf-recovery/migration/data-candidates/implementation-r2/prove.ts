@@ -1,0 +1,188 @@
+// Independent, offline producer evidence. Paths are explicit argv, not defaults.
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFile, writeFile, mkdir, copyFile } from "node:fs/promises";
+import { dirname, resolve, join } from "node:path";
+import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { z } from "zod";
+
+const [input, primary, recoveryRoot, evidence, project] = z.tuple([
+  z.string().min(1), z.string().min(1), z.string().min(1), z.string().min(1), z.string().min(1),
+]).parse(process.argv.slice(2));
+await mkdir(evidence);
+const sha = (b: string | Uint8Array): string => createHash("sha256").update(b).digest("hex");
+const json = async (p: string): Promise<unknown> => JSON.parse(await readFile(p, "utf8"));
+const save = async (name: string, value: unknown): Promise<void> => {
+  await writeFile(join(evidence, name), `${JSON.stringify(value, null, 2)}\n`, { flag: "wx" });
+};
+const binding = z.object({ path: z.string(), bytes: z.number(), sha256: z.string() });
+const recovery = z.object({ documents: z.array(z.object({
+  name: z.string(), removed: z.string(), removedBytes: z.number(),
+  bytes: z.number(), sha256: z.string(), currentBytes: z.number(), currentSha256: z.string(),
+})), declarations: z.array(binding) }).parse(await json(join(recoveryRoot, "recovery.json")));
+const validation = z.object({ declarations: z.number(), uniqueDeclaredPaths: z.number(),
+  checks: z.array(binding) }).parse(await json(join(recoveryRoot, "validation.json")));
+const transformations = [];
+for (const d of recovery.documents) {
+  const current: Buffer = await readFile(resolve(primary, d.name));
+  assert.equal(current.byteLength, d.currentBytes); assert.equal(sha(current), d.currentSha256);
+  const text = current.toString("utf8");
+  assert.equal(text.split(d.removed).length - 1, 1);
+  assert.equal(Buffer.byteLength(d.removed), d.removedBytes);
+  assert.ok(d.removed.startsWith("**Current conversion rule, 2026-11-10:**"));
+  const historical = Buffer.from(text.replace(d.removed, ""));
+  const actual: Buffer = await readFile(resolve(input, d.name));
+  assert.ok(historical.equals(actual)); assert.equal(actual.byteLength, d.bytes); assert.equal(sha(actual), d.sha256);
+  transformations.push({ name: d.name, removedBytes: d.removedBytes, currentBytes: current.byteLength,
+    currentSha256: sha(current), historicalBytes: actual.byteLength, historicalSha256: sha(actual), equal: true });
+}
+const checks = [];
+for (const b of validation.checks) {
+  const raw: Buffer = await readFile(resolve(input, b.path));
+  assert.equal(raw.byteLength, b.bytes); assert.equal(sha(raw), b.sha256);
+  checks.push({ ...b, independentlyMatched: true });
+}
+assert.equal(checks.length, 36);
+assert.equal(new Set(checks.map((c) => c.path)).size, 27);
+assert.deepEqual(validation.checks, recovery.declarations);
+await save("recovery-check.json", { transformations, checks,
+  qualification: "Hash-authenticated recovered historical bodies, not located original captures; no P1 recovery." });
+const archiveRoot = join(evidence, "raw-input-tree");
+const relocated = join(archiveRoot, "2026-09-16-dtf-recovery");
+await mkdir(relocated, { recursive: true });
+const archived = [];
+for (const path of [...new Set([...checks.map((c) => c.path), "manifest.json"])].sort()) {
+  const to = resolve(relocated, path);
+  assert.ok(to.startsWith(`${archiveRoot}/`));
+  await mkdir(dirname(to), { recursive: true });
+  await copyFile(resolve(input, path), to, 1);
+  const original: Buffer = await readFile(resolve(input, path));
+  const copy: Buffer = await readFile(to);
+  assert.ok(original.equals(copy));
+  archived.push({ path, bytes: copy.byteLength, sha256: sha(copy) });
+}
+await save("raw-input-identities.json", archived);
+const cli = resolve(project, "scripts/recovery/dtf-migration/cli.ts");
+const recorder = resolve(import.meta.dirname, "run.ts");
+const commandRecords: { readonly label: string; readonly args: readonly string[]; readonly expected: number;
+  readonly actual: unknown; readonly cwd: string }[] = [];
+async function run(label: string, args: readonly string[], expected: number, cwd: string): Promise<void> {
+  const prefix = resolve(evidence, label);
+  const proc = spawn(process.execPath, [recorder, prefix, process.execPath, cli, ...args], {
+    env: process.env, cwd, stdio: ["ignore", "inherit", "inherit"],
+  });
+  const [code, signal] = await once(proc, "exit", { signal: AbortSignal.timeout(120000) });
+  assert.equal(code, expected); assert.equal(signal, null);
+  commandRecords.push({ label, args, expected, actual: code, cwd });
+}
+const a = resolve(evidence, "full-a"), b = resolve(evidence, "full-b"), c = resolve(evidence, "full-relocated");
+await run("full-a-command", ["derive-candidates", "--input", input, "--output", a], 0, project);
+await run("full-b-command", ["derive-candidates", "--input", input, "--output", b], 0, project);
+const otherCwd = resolve(evidence, "other-cwd");
+await mkdir(otherCwd);
+await run("full-relocated-command", ["derive-candidates", "--input", relocated, "--output", c], 0, otherCwd);
+const outputBytes = await readFile(join(a, "candidates.json"));
+assert.ok(outputBytes.equals(await readFile(join(b, "candidates.json"))));
+assert.ok(outputBytes.equals(await readFile(join(c, "candidates.json"))));
+await run("primary-negative", ["derive-candidates", "--input", primary, "--output", resolve(evidence, "rejected-primary")], 1, project);
+for (const [label, args] of [
+  ["prepare-negative", ["prepare", "--input", join(a, "candidates.json"), "--output", resolve(evidence, "rejected-prepare")]],
+  ["validate-negative", ["validate", "--manifest", join(a, "candidates.json")]],
+  ["execution-negative", ["verify", "--manifest", join(a, "candidates.json"), "--checkpoint", resolve(evidence, "rejected-execution")]],
+] as const) await run(label, args, 1, project);
+// Independent CSV decoder: the real saved tables contain one logical record per
+// line. Assert rectangular input rather than silently accept another format.
+async function rows(path: string): Promise<readonly Readonly<Record<string, string>>[]> {
+  const lines = (await readFile(resolve(input, path), "utf8")).trimEnd().split(/\r?\n/);
+  const decode = (line: string): readonly string[] => {
+    const fields = [...line.matchAll(/("(?:[^"]|"")*"|[^,]*)(,|$)/g)].map((m) => m[1] ?? "");
+    if (fields.at(-1) === "" && !line.endsWith(",")) fields.pop();
+    return fields.map((v) => v.startsWith('"') ? v.slice(1, -1).replaceAll('""', '"') : v);
+  };
+  const header = decode(lines.shift() ?? "");
+  return lines.map((line) => {
+    const values = decode(line);
+    assert.equal(values.length, header.length);
+    return Object.fromEntries(header.map((k, i) => [k, values[i] ?? ""]));
+  });
+}
+const nftSchema = z.object({
+  key: z.string(), tokenId: z.string(), model: z.string(), purchaseTx: z.string(), periodObservation: z.string(),
+  recipientObservation: z.string(), purchaseLocator: z.string(), mintLocators: z.array(z.string()),
+  directInputs: z.array(z.object({ asset: z.string(), observedRaw: z.string().nullable(), attributedRaw: z.string().nullable() })),
+  routedDtfRaw: z.string().nullable(), basis: z.object({ value: z.string().nullable(), unit: z.string() }),
+});
+const candidates = z.object({
+  version: z.literal("dtf-historical-review-candidates-v1"), status: z.literal("NON-ISSUABLE-REVIEW-CANDIDATES"),
+  nfts: z.array(nftSchema),
+  inventory: z.array(z.object({ locator: z.string(), path: z.string(), row: z.number(),
+    historicalFields: z.record(z.string()), quantities: z.record(z.object({ raw: z.string().nullable(), unit: z.string() })), links: z.array(z.string()) })),
+  unresolved: z.array(z.object({ code: z.string(), detail: z.string(), records: z.array(z.string()) })),
+  rawRecordCensus: z.array(z.object({ path: z.string(), records: z.number() })),
+}).parse(JSON.parse(outputBytes.toString("utf8")));
+const observed = new Map(candidates.inventory.map((r) => [r.locator, r]));
+assert.equal(observed.size, candidates.inventory.length);
+const census = [];
+for (const t of candidates.rawRecordCensus) {
+  const original = await rows(t.path);
+  assert.equal(original.length, t.records);
+  for (let i = 0; i < original.length; i++) {
+    const record = observed.get(`${t.path}#row=${i + 2}`);
+    assert.ok(record); assert.deepEqual(record.historicalFields, original[i]);
+    for (const [key, value] of Object.entries(record.quantities)) {
+      const expected = original[i]?.[key];
+      assert.equal(value.raw, expected === "" ? null : expected);
+    }
+    for (const link of record.links) assert.ok(observed.has(link));
+  }
+  census.push({ path: t.path, parsed: original.length, output: t.records, everyRecordMatched: true });
+}
+const weighted = await rows("evidence/weighted-bonds.csv"), transfers = await rows("evidence/transfers.csv");
+const details = await rows("../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv");
+const nftChecks = [];
+for (const p of weighted) {
+  const n = candidates.nfts.find((r) => r.model === "fixed-principal" && r.tokenId === p["token_id"]);
+  assert.ok(n);
+  const events = transfers.filter((r) => r["tx"] === p["purchase_tx"]);
+  const mints = events.filter((r) => r["asset"] === "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e"
+    && r["from"] === `0x${"0".repeat(40)}` && r["token_id"] === p["token_id"]);
+  assert.equal(mints.length, 1); assert.equal(mints[0]?.["to"], p["purchase_recipient"]);
+  assert.equal(n.mintLocators.length, 1);
+  for (const component of n.directInputs) {
+    const inbound = events.filter((r) => r["asset"] === component.asset && r["to"] === "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7");
+    const total = inbound.reduce((s, r) => s + BigInt(r["amount_raw"] ?? ""), 0n).toString();
+    assert.equal(component.observedRaw, total); assert.equal(component.attributedRaw, total);
+    assert.ok(inbound.every((r) => r["from"] === p["purchase_recipient"]));
+    if (component.asset === "0xee5576fa1bcaa380e591d01245f406f3f384eb01" && p["pre_attack"] === "true" && total !== "0") {
+      const direct = details.filter((r) => r["tx"] === p["purchase_tx"] && r["category"] === "bond" && r["bond_token_id"] === p["token_id"]);
+      assert.equal(direct.reduce((s, r) => s + BigInt(r["dtf_wei"] ?? ""), 0n).toString(), total);
+    }
+  }
+  nftChecks.push({ tokenId: n.tokenId, tx: n.purchaseTx, mintMatched: true, directInputsMatched: true, period: n.periodObservation });
+}
+assert.equal(nftChecks.length, 43); assert.equal(new Set(nftChecks.map((n) => n.tx)).size, 43);
+assert.equal(nftChecks.filter((n) => n.period === "pre_incident").length, 41);
+assert.equal(nftChecks.filter((n) => n.period === "post_incident").length, 2);
+const earlier = await rows("evidence/earlier-cp-bonds.csv");
+for (const p of earlier) {
+  const n = candidates.nfts.find((r) => r.model === "lp-accounting-lock" && r.tokenId === p["token_id"]);
+  assert.ok(n);
+  assert.equal(n.basis.value, p["original_lp_shares_raw"]);
+  assert.equal(n.routedDtfRaw, p["routed_dtf_received_by_detf_raw"]);
+  assert.deepEqual(n.directInputs.map((i) => i.observedRaw), [p["direct_dtf_paid_raw"], p["direct_weth_paid_raw"]]);
+  assert.deepEqual(n.directInputs.map((i) => i.attributedRaw), [null, null]);
+}
+assert.equal(earlier.length, 16);
+for (const issue of candidates.unresolved) {
+  assert.ok(issue.detail.length);
+  for (const locator of issue.records) assert.ok(observed.has(locator));
+}
+await save("unresolved-review.json", candidates.unresolved);
+await save("full-data-proof.json", { canonicalSha256: sha(outputBytes), canonicalBytes: outputBytes.byteLength,
+  identicalRepeat: true, identicalRelocationAndCwd: true, weightedNfts: nftChecks, earlierNfts: earlier.length,
+  census, unresolvedCount: candidates.unresolved.length,
+  unresolvedClasses: Object.fromEntries([...new Set(candidates.unresolved.map((r) => r.code))]
+    .map((code) => [code, candidates.unresolved.filter((r) => r.code === code).length])),
+  commands: commandRecords });
+console.log("FULL_DATA_PROOF_COMPLETE");

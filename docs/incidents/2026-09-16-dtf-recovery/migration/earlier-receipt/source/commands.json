@@ -1,0 +1,62 @@
+[
+  {
+    "id": "bash_4",
+    "exit": 1,
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && /Users/cyotee/.foundry/bin/forge build --use solar docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/ReceiptCustodyProbe.sol --out docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build --cache-path docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/cache"
+  },
+  {
+    "id": "bash_6",
+    "exit": 0,
+    "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && export PATH=/Users/cyotee/.foundry/bin:$PATH && forge build --use solar docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/ReceiptCustodyProbe.sol --out docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build --cache-path docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/cache'"
+  },
+  {
+    "id": "bash_7",
+    "exit": 1,
+    "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && export PATH=/Users/cyotee/.foundry/bin:$PATH BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 NODE_DISABLE_COMPILE_CACHE=1 && /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe.ts run-01'"
+  },
+  {
+    "id": "bash_8",
+    "exit": 0,
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && /opt/homebrew/Cellar/bun/1.4.2/bin/bun node_modules/typescript/bin/tsc --noEmit --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --module nodenext --moduleResolution nodenext --target es2022 --skipLibCheck docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe.ts docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe-runtime.ts"
+  },
+  {
+    "id": "bash_9",
+    "exit": 1,
+    "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && export PATH=/Users/cyotee/.foundry/bin:$PATH BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 NODE_DISABLE_COMPILE_CACHE=1 && /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/rate-probe.ts run-02'"
+  },
+  {
+    "id": "bash_10",
+    "exit": 1,
+    "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && export PATH=/Users/cyotee/.foundry/bin:$PATH BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 NODE_DISABLE_COMPILE_CACHE=1 && forge build --use solar docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/ReceiptCustodyProbe.sol --out docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/build --cache-path docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/cache && /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe.ts run-03 && /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/rate-probe.ts run-04'",
+    "childExits": {
+      "compile": 0,
+      "source": 0,
+      "rate": 1
+    }
+  },
+  {
+    "id": "bash_11",
+    "exit": 0,
+    "command": "/bin/zsh -lc 'cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && export PATH=/Users/cyotee/.foundry/bin:$PATH BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 NODE_DISABLE_COMPILE_CACHE=1 && /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/rate-probe.ts run-05'"
+  },
+  {
+    "id": "bash_12",
+    "exit": 0,
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && /opt/homebrew/Cellar/bun/1.4.2/bin/bun node_modules/typescript/bin/tsc --noEmit --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --module nodenext --moduleResolution nodenext --target es2022 --skipLibCheck docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe.ts docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/probe-runtime.ts docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/rate-probe.ts"
+  },
+  {
+    "id": "bash_13",
+    "exit": 1,
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/audit.ts"
+  },
+  {
+    "id": "bash_14",
+    "exit": 0,
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && /opt/homebrew/Cellar/bun/1.4.2/bin/bun node_modules/typescript/bin/tsc --noEmit --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --module nodenext --moduleResolution nodenext --target es2022 --skipLibCheck docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/audit.ts"
+  },
+  {
+    "id": "bash_15",
+    "exit": 0,
+    "command": "cd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt && /opt/homebrew/Cellar/bun/1.4.2/bin/bun docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/audit.ts && /opt/homebrew/Cellar/bun/1.4.2/bin/bun node_modules/typescript/bin/tsc --noEmit --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --module nodenext --moduleResolution nodenext --target es2022 --skipLibCheck docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/audit.ts"
+  }
+]

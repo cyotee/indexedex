@@ -1,0 +1,30 @@
+{
+  "command": "bun",
+  "args": [
+    "/Users/cyotee/Projects/indexedex/node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--target",
+    "ES2022",
+    "--module",
+    "ESNext",
+    "--moduleResolution",
+    "Bundler",
+    "--strict",
+    "--noUncheckedIndexedAccess",
+    "--exactOptionalPropertyTypes",
+    "--verbatimModuleSyntax",
+    "--skipLibCheck",
+    "--types",
+    "node",
+    "./common.ts",
+    "./chain.ts",
+    "./admission.ts",
+    "./setup.ts",
+    "./run.ts"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/resumed/probe",
+  "started": "2026-11-13T18:50:25.094Z",
+  "finished": "2026-11-13T18:50:25.649Z",
+  "exitCode": 2,
+  "signal": null
+}

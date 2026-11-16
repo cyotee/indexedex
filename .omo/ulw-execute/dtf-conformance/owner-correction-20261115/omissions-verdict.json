@@ -1,0 +1,49 @@
+{
+  "kind": "AdversarialVerify",
+  "date": "2026-11-15",
+  "task": 7,
+  "lane": "F2-02-omissions",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "confidence": "high",
+  "scope": "Required-original-field omission-test repair only, in claim-vault.test.ts, dtf-custody-se.test.ts, weighted-liquid.test.ts and weighted-sy.test.ts. Does not certify census/F2-01 or complete task 7.",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "claim": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/omissions-done.json",
+  "evidence": {
+    "independent_report": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/independent/report.md",
+      "sha256": "cc61687fea2c6a17c24c3685f78ba91feebb7a8bf7253c92680a28eec9da69ac"
+    },
+    "verification": {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-7/owner-correction-20261115/omissions/independent/verification.json",
+      "sha256": "25daa6ee12da43b356cfdc246c2776d8c2b5b334b34600e692014dada26b8ce0"
+    },
+    "root_finding": "Old negative rows dropped required pricing; all 28 still failed only on pricing after the original field was restored.",
+    "repair": "Each negative preserves a complete valid priced row, removes exactly one intended original field, asserts the exact sole field issue, and parses successfully after restoration.",
+    "valid_controls": 4,
+    "isolated_omissions": 28,
+    "successful_restorations": 28,
+    "focused_recorded_result": "Exact argv and exit-0 sidecar match the retained 15-pass, 0-fail raw log and all four current test hashes.",
+    "manual_recorded_result": "Exact argv and exit-0 sidecar bind all seven current source hashes; both exit-0 receipt logs contain JSON exactly matching manual-omissions.json plus MANUAL_PASS.",
+    "assertion_preservation": "Replacing only each omission block in memory reproduces its pre-lane hash; all other source/provenance assertions and pre-existing book-ID changes are preserved.",
+    "adversarial_probes": "Seven in-memory source byte changes reject recorded digests; six misleading pass:true artifact mutations reject independent complete evidence checks; dirty status and actual leftover ownership inspected.",
+    "temp_leftovers": [
+      "dtf-prepare-test-6ABTvq",
+      "dtf-prepare-test-sSyY0e"
+    ],
+    "temp_disposition": "Actual OS temp directory inspected. Both contain execution-fixture A/B files and checkpoint-7/8; neither was deleted. Exact worker identity is not established.",
+    "independent_json_validation": "passed"
+  },
+  "limitations": [
+    "Settled focused and manual green commands were retained and inspected, not rerun.",
+    "Schema validation and synthetic transport evidence are not real contract execution.",
+    "No production schema mutation or compiled-runtime freshness certification was performed.",
+    "Census logic and shared integration are outside scope; parent runs full strict TypeScript and full operator suite after census finishes.",
+    "Biome LSP is not installed; no install was attempted. Independent verification JSON was parsed successfully.",
+    "Producer process exits are retained evidence; no fresh session-handle or exact leftover-worker identity claim is made."
+  ],
+  "fixes": [],
+  "forbidden_operations_performed": [],
+  "producer_files_preserved": true,
+  "closes_full_task_7": false
+}

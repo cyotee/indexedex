@@ -1,0 +1,39 @@
+{
+  "stopped": true,
+  "gates": [
+    {
+      "phase": "types-final",
+      "code": 0,
+      "started": "2026-11-13T08:20:24.701Z",
+      "stopped": "2026-11-13T08:20:25.855Z"
+    },
+    {
+      "phase": "operator-tests-complete",
+      "code": 0,
+      "started": "2026-11-13T08:21:40.013Z",
+      "stopped": "2026-11-13T08:21:41.618Z"
+    },
+    {
+      "phase": "collect",
+      "code": 0,
+      "started": "2026-11-13T08:22:40.022Z",
+      "stopped": "2026-11-13T08:24:38.736Z"
+    },
+    {
+      "phase": "reconcile",
+      "code": 0,
+      "started": "2026-11-13T08:25:30.306Z",
+      "stopped": "2026-11-13T08:25:30.621Z"
+    }
+  ],
+  "runtime": "all owned collectors, test servers and recorder children exited",
+  "temporaryDirectoriesRemoved": 84,
+  "retained": "all actual outputs, failed attempts and diagnostics",
+  "dependencies": {
+    "node_modules": "read-link to phase28/node_modules",
+    "out": "temporary read-link to phase28/out for existing ABI only; unlinked after checks",
+    "copiedOrBuilt": false,
+    "installed": false
+  },
+  "independentVerifier": "not run here; producer does not own verification/"
+}

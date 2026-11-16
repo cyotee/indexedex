@@ -1,0 +1,73 @@
+{
+  "key": "dtf-migration-phase09-deployment-gas-v1",
+  "name": "Migration DETF phase 9: target-bounded deployment",
+  "nodes": [
+    {
+      "id": "diagnose-deployment-gas",
+      "label": "Diagnose actual deployment gas excess",
+      "category": "deep-high",
+      "task_summary": "Trace 42.99m deployment gas and specify one behavior-preserving bounded correction",
+      "prompt": "TASK: Diagnose and reproduce target deployment gas failure; specify one minimal correction.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/diagnosis/report.md with actual trace/receipt evidence, limit provenance, exact call contributors and a concrete proposed construction/owned edit paths.\nSCOPE: Read and follow /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md completely, original plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas at base421072a7630a0d3d47a6f36e1062d9eae98c93e2. Root observed warm seed exit0 and DEPLOYMENT_GAS_WORKTREE_VERIFIED. Preserve every other worktree, ordinary/common/Crane source, historical evidence and all full-plan limits. No public operations, commits, merges, config/dependency changes or arbitrary authority. Read phase08 final rehearsal sources/evidence in place; write only owned diagnosis evidence and reproduction witness.\nVERIFY: Actual accepted production registry deployment; distinguish transaction and block limits and global/per-instance costs; prove the source of the excess rather than relying on aggregate script gas. Preserve initial state constraints and every behavior.\nSTOP WHEN: One fully specified correction and reproduction evidence exists, or the exact missing owner decision is identified; owned runtimes stopped."
+    },
+    {
+      "id": "verify-deployment-design",
+      "label": "Independently verify bounded deployment construction",
+      "category": "deep-high",
+      "dependsOn": [
+        "diagnose-deployment-gas"
+      ],
+      "task_summary": "Audit proposed gas correction for registry initialization, authority and per-instance invariants",
+      "prompt": "TASK: Independently admit or reject the proposed deployment correction.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/design-verification/report.md with admitted, needs-fix or needs-owner-decision and precise construction constraints.\nSCOPE: Read and follow /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md completely, original plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas at base421072a7630a0d3d47a6f36e1062d9eae98c93e2. Root observed warm seed exit0 and DEPLOYMENT_GAS_WORKTREE_VERIFIED. Preserve every other worktree, ordinary/common/Crane source, historical evidence and all full-plan limits. No public operations, commits, merges, config/dependency changes or arbitrary authority. Read diagnosis/report.md and underlying source/evidence; write only design-verification evidence. No production edits.\nVERIFY: Gas mechanism, exact paths, target-bound preparation/final calls, instance/owner/argument binding, registry publication, all children/facets, complete initialization, custody/funding, snapshots, Stage1 and irreversible activation; second-instance behavior and no hijackable intermediates. No unstated product-policy change.\nSTOP WHEN: Evidence-bound disposition is complete with no pending runtime."
+    },
+    {
+      "id": "correct-deployment-gas",
+      "label": "Implement and prove bounded deployment",
+      "category": "deep-high",
+      "dependsOn": [
+        "verify-deployment-design"
+      ],
+      "task_summary": "Implement admitted package correction and prove real target-limited deployments",
+      "prompt": "TASK: Correct deployment gas while preserving all accepted Migration behavior.\nDELIVERABLE: Brief-owned production/test/witness changes and /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/implementation/report.md with fail-before/pass-after, current artifacts, exact receipts/regressions and cleanup.\nSCOPE: Read and follow /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md completely, original plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas at base421072a7630a0d3d47a6f36e1062d9eae98c93e2. Root observed warm seed exit0 and DEPLOYMENT_GAS_WORKTREE_VERIFIED. Preserve every other worktree, ordinary/common/Crane source, historical evidence and all full-plan limits. No public operations, commits, merges, config/dependency changes or arbitrary authority. Read diagnosis and complete design-verification reports. Proceed only on admitted construction and its exact owned paths; otherwise report unmet gate without changing production.\nVERIFY: Actual target-limited preparation/final transactions for two distinct instances, genuine registry/CREATE3 and complete initialization. Run artifact-first Solar and relevant current Migration specs/forks; do not relax limits, remove features or weaken tests. Preserve failure evidence and exact source/artifact bindings.\nSTOP WHEN: Admitted correction works with clean relevant checks and owned cleanup, or an exact gate/source conflict is reported."
+    },
+    {
+      "id": "verify-deployment-gas",
+      "label": "Independently verify target-bounded deployment",
+      "category": "deep-high",
+      "dependsOn": [
+        "correct-deployment-gas"
+      ],
+      "task_summary": "Execute independent constrained deployments and verify preserved lifecycle and source bindings",
+      "prompt": "TASK: Independently verify the deployment correction on the real local target-limited surface.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/verification/report.md with AdversarialVerify confirmed or needs-fix, exact gas/receipts/source bindings and cleanup.\nSCOPE: Read and follow /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-deployment-gas-brief.md completely, original plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas at base421072a7630a0d3d47a6f36e1062d9eae98c93e2. Root observed warm seed exit0 and DEPLOYMENT_GAS_WORKTREE_VERIFIED. Preserve every other worktree, ordinary/common/Crane source, historical evidence and all full-plan limits. No public operations, commits, merges, config/dependency changes or arbitrary authority. Read all prior phase reports and actual changed code. Write only verification evidence/witnesses; no source fixes. If implementation is blocked, report gate rather than fake runtime success.\nVERIFY: Execute genuine bounded preparation and final deployment for two instances; prove required registry/facet/child/owner/argument state, no incomplete publication or takeover, retained Migration lifecycle/custody/funding/activation and related regression provenance. Confirm gas from actual receipts under historical evidenced transaction limit, not raised local allowance.\nSTOP WHEN: Complete independent bounded verdict and cleanup receipts exist, no pending owned runtime."
+    },
+    {
+      "id": "review-bond-preparation-design",
+      "label": "Independently reassess bond and SY preparation",
+      "category": "deep-high",
+      "dependsOn": [
+        "verify-deployment-gas"
+      ],
+      "task_summary": "Assess the bond-plus-SY split against intermediate authority and atomic publication invariants",
+      "prompt": "TASK: Independently assess the single proposed additional existing-bond preparation correction.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/bond-design-verification/report.md, admitted/needs-fix/needs-owner-decision with one precise construction and exact edit paths.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-bond-preparation-correction.md and original phase09 brief completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas on its existing branch/base421072a7 and preserved uncommitted two-SY candidate. Read complete initial diagnosis/design/implementation and independent verification/report.md, which is needs-fix. Prior verifier st_01a1c98f is now completed and cleanup confirmed; no replay remains active. Preserve all old adverse evidence. No public action, source commit, merge, config/dependency/ordinary/common/Crane edits or operator TypeScript changes. Read actual bond/registry/factory/recovery source and failed current traces. Write only this owned design evidence.\nVERIFY: Full-argument/hook/instance commitment; early bond donation/claim/money/ownership/reserved-ID/callback routes; no funded principal or reserved IDs before finalization; no prep veto, poisoning or new role; exact reuse validation and both transaction rollback/retry windows. Retain initial C1-C6/G1-G8 except reviewed bond relocation. Numbers are not successful gas proof.\nSTOP WHEN: Complete evidence-bound admission or precise conflict and no owned runtime. No production edits."
+    },
+    {
+      "id": "implement-bond-preparation",
+      "label": "Implement admitted combined preparation correction",
+      "category": "deep-high",
+      "dependsOn": [
+        "review-bond-preparation-design"
+      ],
+      "task_summary": "Implement admitted bond preparation and prove two real deployments within 32m transaction limits",
+      "prompt": "TASK: Implement the independently admitted combined bond-and-SY preparation correction.\nDELIVERABLE: Exact admitted source/test/witness delta and /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/bond-correction/report.md with fail-before/pass-after receipts, full required negative/lifecycle matrix, current specs/forks, bindings and cleanup.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-bond-preparation-correction.md and original phase09 brief completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas on its existing branch/base421072a7 and preserved uncommitted two-SY candidate. Read complete initial diagnosis/design/implementation and independent verification/report.md, which is needs-fix. Prior verifier st_01a1c98f is now completed and cleanup confirmed; no replay remains active. Preserve all old adverse evidence. No public action, source commit, merge, config/dependency/ordinary/common/Crane edits or operator TypeScript changes. Read bond-design-verification/report.md. Proceed only if admitted and only exact permitted paths; otherwise report unmet gate without production edits. Preserve prior candidate source/artifacts already bound in implementation/verification evidence.\nVERIFY: All actual infrastructure/preparation/final transactions <=32000000 gas for two distinct instances. Genuine CREATE3/manager registry, no incomplete parent publication, bound early bond/SYs with no premature rights; complete G3-G8 including callbacks/rollback/restoration. Existing failing gas regression must pass unweakened. Artifact-first Solar and affected current Migration specs/forks; preserve failures, no relaxed limits or skipped checks.\nSTOP WHEN: Admitted correction passes actual constrained construction and required checks with no owned runtime, or exact unmet gate and one unadmitted next proposal are reported."
+    },
+    {
+      "id": "verify-combined-preparation",
+      "label": "Independently verify combined bounded deployment",
+      "category": "deep-high",
+      "dependsOn": [
+        "implement-bond-preparation"
+      ],
+      "task_summary": "Execute independent two-instance constrained deployment and audit all new intermediate-state safety",
+      "prompt": "TASK: Independently verify the combined preparation correction against actual target-bounded deployment and lifecycle.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas/docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/bond-correction-verification/report.md with AdversarialVerify confirmed or needs-fix and exact receipts, complete G1-G8 coverage, final-source bindings and cleanup.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase09-bond-preparation-correction.md and original phase09 brief completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas on its existing branch/base421072a7 and preserved uncommitted two-SY candidate. Read complete initial diagnosis/design/implementation and independent verification/report.md, which is needs-fix. Prior verifier st_01a1c98f is now completed and cleanup confirmed; no replay remains active. Preserve all old adverse evidence. No public action, source commit, merge, config/dependency/ordinary/common/Crane edits or operator TypeScript changes. Read complete bond design and correction reports and actual final code. Write only owned verification evidence/witnesses. No fixes, commits or prior-evidence edits.\nVERIFY: Independently execute two distinct target-bounded constructions, all prep/final/infrastructure envelopes, early bond/SY authority and money-call negatives, reserved-ID timing, commitment/factory reuse, rollback/retry and final registry/facet/owner/child/lifecycle/restoration states. Reconcile producer regression exits against exact current sources. If gate fails reproduce it without raising limits and keep missing coverage explicit.\nSTOP WHEN: Complete bounded independent verdict with no pending owned runtime; never infer full-plan/category completion."
+    }
+  ]
+}

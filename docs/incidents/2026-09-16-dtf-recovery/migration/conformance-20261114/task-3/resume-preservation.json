@@ -1,0 +1,574 @@
+{
+  "type": "Task3ResumePreservation",
+  "date": "2026-11-15",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "status_command": "GIT_MASTER=1 git status --short --untracked-files=all",
+  "status_before": {
+    "exitCode": 0,
+    "sha256": "95b66f952fd6eeb838ec38b62f0b31be16459f425dbbf93a1f1d41b3969ad631",
+    "entries": 60360,
+    "tracked": [
+      " M docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      " M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol"
+    ]
+  },
+  "status_after": {
+    "exitCode": 0,
+    "sha256": "25a686efe259629e214e8b5fe26d82ce2e1eba49b6bf9da24467bcff48151a16",
+    "entries": 60368,
+    "tracked": [
+      " M docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      " M test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol"
+    ]
+  },
+  "removed_status_entries": [],
+  "added_status_entries": [
+    "?? .omo/ulw-execute/dtf-conformance/task-3-done.json",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/artifacts.json",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup-receipt.json",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/resume-byte-review.json",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/resume-inspection.md",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/resume-negative-bindings.json",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/specification-reference-followup.json",
+    "?? docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/task-3-done-before-spec-amendment.json"
+  ],
+  "task2_untracked_paths": {
+    "before": 4023,
+    "after": 4023,
+    "sha256_before": "d2df0afba86c35f112560ecc3240330ca70f60db486f45102285794c8ba69a50",
+    "sha256_after": "d2df0afba86c35f112560ecc3240330ca70f60db486f45102285794c8ba69a50",
+    "identical": true
+  },
+  "task1_P_diff": {
+    "command": "GIT_MASTER=1 git diff -- docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "before_sha256": "928269f94a952b9db2e882bed9e773343ebd6d5abd8e895522acdd65a0130536",
+    "after_sha256": "928269f94a952b9db2e882bed9e773343ebd6d5abd8e895522acdd65a0130536",
+    "exitCode": 0,
+    "identical": true
+  },
+  "protected_byte_bindings": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e",
+      "bytes": 98213,
+      "afterSha256": "93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-1-verdict.json",
+      "sha256": "573533d358485d8108055649e3baf9c90e01f0ed209618e7b392cbd720d73a71",
+      "bytes": 8792,
+      "afterSha256": "573533d358485d8108055649e3baf9c90e01f0ed209618e7b392cbd720d73a71"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-2-verdict.json",
+      "sha256": "7d6ad2c16462bab3ed03be1cdb79a69a9f5b35fd85de051380de4cfe3433e046",
+      "bytes": 16958,
+      "afterSha256": "7d6ad2c16462bab3ed03be1cdb79a69a9f5b35fd85de051380de4cfe3433e046"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-3-verdict.json",
+      "sha256": "f07f9bf8b3d2bef6eee6e2a14bf6d4752267a2c68699956f2e188bb6b7c8649e",
+      "bytes": 9058,
+      "afterSha256": "f07f9bf8b3d2bef6eee6e2a14bf6d4752267a2c68699956f2e188bb6b7c8649e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inputs-and-results.json",
+      "sha256": "1cf06a404e443b71688ff594d447ee0565f004ed02eea5e737b9f62c131ae0c5",
+      "bytes": 7305,
+      "afterSha256": "1cf06a404e443b71688ff594d447ee0565f004ed02eea5e737b9f62c131ae0c5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-custody-live.log",
+      "sha256": "d2deba4d0745898edddb0b5688a0a310c003bc6ae550e883f43b55656e2772cc",
+      "bytes": 1491,
+      "afterSha256": "d2deba4d0745898edddb0b5688a0a310c003bc6ae550e883f43b55656e2772cc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-MigrationLegacySources.t.sol.txt",
+      "sha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac",
+      "bytes": 13761,
+      "afterSha256": "68e150aad609dc51a93720418e1550015447f7b12197c30bc7753754f5ff5eac"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-final.log",
+      "sha256": "a2e3ca832345af74a5b86624ba5b102de07c1222065919a89cf50819c676a2b8",
+      "bytes": 395696,
+      "afterSha256": "a2e3ca832345af74a5b86624ba5b102de07c1222065919a89cf50819c676a2b8"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative.log",
+      "sha256": "dd95c70bfd593a9f05d1ab864cf8e8868dfc77bf7a97701a04abf53a61e87e92",
+      "bytes": 299,
+      "afterSha256": "dd95c70bfd593a9f05d1ab864cf8e8868dfc77bf7a97701a04abf53a61e87e92"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-complete.log",
+      "sha256": "56d2fb2a6d595277578471f07ac7fc75d013f90b17919473fb1d8cde9518e80f",
+      "bytes": 5036,
+      "afterSha256": "56d2fb2a6d595277578471f07ac7fc75d013f90b17919473fb1d8cde9518e80f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/worktree-state.log",
+      "sha256": "2da50eefd69d8033830c91745ff3e44da50e17fab0fa2557ad3b1b6b412e6bb2",
+      "bytes": 4804,
+      "afterSha256": "2da50eefd69d8033830c91745ff3e44da50e17fab0fa2557ad3b1b6b412e6bb2"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-hash-checks.json",
+      "sha256": "f3b1ed3e39dc335886ae3584323402e0578b0d2aeadcb377a2093a35d8b4e19d",
+      "bytes": 602292,
+      "afterSha256": "f3b1ed3e39dc335886ae3584323402e0578b0d2aeadcb377a2093a35d8b4e19d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory.log",
+      "sha256": "d00f960526c1713a4a683601e8cf8c3b31b84b0597ca28cfdf3315d98910afd1",
+      "bytes": 54,
+      "afterSha256": "d00f960526c1713a4a683601e8cf8c3b31b84b0597ca28cfdf3315d98910afd1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-mints.log",
+      "sha256": "06fd9d4eec088396ae2a59a68e0e786bbd06df0920cf6f549f58b54be07ecb01",
+      "bytes": 415,
+      "afterSha256": "06fd9d4eec088396ae2a59a68e0e786bbd06df0920cf6f549f58b54be07ecb01"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-versions-login.log",
+      "sha256": "0830efe32dfdfeefe649787270ed9e2a55d50558afbcbf443ba6f5e964af6922",
+      "bytes": 995,
+      "afterSha256": "0830efe32dfdfeefe649787270ed9e2a55d50558afbcbf443ba6f5e964af6922"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/initial-blocked-claim.json",
+      "sha256": "6f2380d5ba28ea6fe7175fb1ee2ef371a44f3ea9d19f0807303596bdfab9c380",
+      "bytes": 6688,
+      "afterSha256": "6f2380d5ba28ea6fe7175fb1ee2ef371a44f3ea9d19f0807303596bdfab9c380"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/report.md",
+      "sha256": "2de0b12e4f6e6729d1b50eac0ee8481ebc74ba614b8e806bf1a063cdad9d818c",
+      "bytes": 7311,
+      "afterSha256": "f99c2fd4bcb65b921448910245a9bbdff709f5eb99b99d82073bb8cb76367108"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-isolated.log",
+      "sha256": "945fe4da9971f747ad712cf72be6dbb4bb3bc5c27883d08b982ec679abdea57e",
+      "bytes": 395692,
+      "afterSha256": "945fe4da9971f747ad712cf72be6dbb4bb3bc5c27883d08b982ec679abdea57e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/artifact-validation.json",
+      "sha256": "3f26f4aebe7f8ece5957bbd33b7b26c937998ece3c15977bde218380e29292d1",
+      "bytes": 27342,
+      "afterSha256": "3f26f4aebe7f8ece5957bbd33b7b26c937998ece3c15977bde218380e29292d1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-negative.log",
+      "sha256": "492dad36113261a5409624ac3168e7074244953119d52e0bdda626e0870d67e4",
+      "bytes": 1990,
+      "afterSha256": "492dad36113261a5409624ac3168e7074244953119d52e0bdda626e0870d67e4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive.log",
+      "sha256": "c436863130dca58e21a8a7204cd7cfb0fa2ac3a323130bc06c273960a9775485",
+      "bytes": 39,
+      "afterSha256": "c436863130dca58e21a8a7204cd7cfb0fa2ac3a323130bc06c273960a9775485"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/manual-qa.json",
+      "sha256": "a8a41c5f9e4373355767bce4ef0749726f56c042938063b2849d98a2f9bea07e",
+      "bytes": 19572,
+      "afterSha256": "a8a41c5f9e4373355767bce4ef0749726f56c042938063b2849d98a2f9bea07e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-observations.json",
+      "sha256": "fa00006504a75b16a411c966d5de0fcb3bb926dfcf572a5d4e04c94cd4241605",
+      "bytes": 209517,
+      "afterSha256": "82233f20f3eb4ba21ee927a4f421b75615e57f9ee0f426ad4a6a1cb93b5a465a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/commands.json",
+      "sha256": "0c2f94fe4205ab6cf4643c9c321c174f113742e863721ed9742764808021b0fe",
+      "bytes": 66130,
+      "afterSha256": "0c2f94fe4205ab6cf4643c9c321c174f113742e863721ed9742764808021b0fe"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-final.log",
+      "sha256": "cf29c6b7f9b4606e2caf7f01c4c2471a9b813327332d93896f0ac8927fd0d394",
+      "bytes": 2335,
+      "afterSha256": "cf29c6b7f9b4606e2caf7f01c4c2471a9b813327332d93896f0ac8927fd0d394"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-suites.log",
+      "sha256": "8ddddc1f49e4e8d269069f44a110a973058ba96036a84e824b4b16bc58ded591",
+      "bytes": 398707,
+      "afterSha256": "8ddddc1f49e4e8d269069f44a110a973058ba96036a84e824b4b16bc58ded591"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-missing-runtime.log",
+      "sha256": "0079d69b43ab53bbac5de57f9a37a6c35596464e312a2ba21dabe94cfa076bc4",
+      "bytes": 135918,
+      "afterSha256": "0079d69b43ab53bbac5de57f9a37a6c35596464e312a2ba21dabe94cfa076bc4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-reserved-live.log",
+      "sha256": "cf29c6b7f9b4606e2caf7f01c4c2471a9b813327332d93896f0ac8927fd0d394",
+      "bytes": 2335,
+      "afterSha256": "cf29c6b7f9b4606e2caf7f01c4c2471a9b813327332d93896f0ac8927fd0d394"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-recovery-route-disposition.md",
+      "sha256": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4",
+      "bytes": 7211,
+      "afterSha256": "9279cc9cf3d5adcdbdfef56ef7ce376f0d080179a30a6c468128b86b5b3b2ae4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/worktree-final.log",
+      "sha256": "d75c9493816211a3d8e1451bac273911cf07d3bf78833668b80292d74f79a039",
+      "bytes": 2046,
+      "afterSha256": "d75c9493816211a3d8e1451bac273911cf07d3bf78833668b80292d74f79a039"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/cleanup.log",
+      "sha256": "38dff24c8f24d46f90a4a0d5a95db3651b0007983008cfe60ae86bffaac369be",
+      "bytes": 368,
+      "afterSha256": "38dff24c8f24d46f90a4a0d5a95db3651b0007983008cfe60ae86bffaac369be"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-preservation.json",
+      "sha256": "381b66fef6b66017dcab03212002005ef97913e1bb4a7b843b5057cdb6a8e5c2",
+      "bytes": 15977,
+      "afterSha256": "381b66fef6b66017dcab03212002005ef97913e1bb4a7b843b5057cdb6a8e5c2"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-suites-login.log",
+      "sha256": "50b8cf3eb09b8547d6ecb8adaa23e71953b20cb868916518f23b886247cbffc5",
+      "bytes": 395749,
+      "afterSha256": "50b8cf3eb09b8547d6ecb8adaa23e71953b20cb868916518f23b886247cbffc5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/adversarial-results.json",
+      "sha256": "7dcf07ad77580bb5c8b4f5ba152ec037f52f39bb1b09b9d13b97c20ad1362771",
+      "bytes": 5043,
+      "afterSha256": "7dcf07ad77580bb5c8b4f5ba152ec037f52f39bb1b09b9d13b97c20ad1362771"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-source-route-matrix.md",
+      "sha256": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4",
+      "bytes": 4043,
+      "afterSha256": "a81ac2729daa2103d8ca3ecd35ceb0badba19ab376dbfee82b371722ff4efff4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/baseline-source-manifest.json",
+      "sha256": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc",
+      "bytes": 7894,
+      "afterSha256": "55117479ecb52b3e334a988a53a62ec73c11de4b808bd2ccf5d2d07d783126bc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/source-state-assertions.log",
+      "sha256": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063",
+      "bytes": 395748,
+      "afterSha256": "db83a11664e756927aa1530a881ccb65efc265054c12029e162776f9676ce063"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/recovery-authority.json",
+      "sha256": "e85aca1b371a33efcbe65a76e51676f2942bb0a940ecbdb4f9645a10bfc3e43b",
+      "bytes": 12594,
+      "afterSha256": "e85aca1b371a33efcbe65a76e51676f2942bb0a940ecbdb4f9645a10bfc3e43b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/runtime-versions.log",
+      "sha256": "5ef2d6788dce020bfd481323f496daa24501c1428f4953371754b442ba29dcf0",
+      "bytes": 864,
+      "afterSha256": "5ef2d6788dce020bfd481323f496daa24501c1428f4953371754b442ba29dcf0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/inventory.json",
+      "sha256": "1f26f2d67af8fc27c22ccec773ebc51a56db78b10fff6ca1095c177e83a0e4a5",
+      "bytes": 1259,
+      "afterSha256": "1f26f2d67af8fc27c22ccec773ebc51a56db78b10fff6ca1095c177e83a0e4a5"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-inventory/differences.txt",
+      "sha256": "45d6fc24ad6b3d3ff57eb8f4959229015330a712ce0e52c01473dfe9c827313f",
+      "bytes": 564,
+      "afterSha256": "45d6fc24ad6b3d3ff57eb8f4959229015330a712ce0e52c01473dfe9c827313f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/verification/report.md",
+      "sha256": "ec983470977f49bf9a2762c50c6ee2171a9aad0cb6b09c9deea1440b6e338053",
+      "bytes": 11765,
+      "afterSha256": "ec983470977f49bf9a2762c50c6ee2171a9aad0cb6b09c9deea1440b6e338053"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive/delivery.json",
+      "sha256": "417cb3d828148d85e01e9fdd14e62235c1724831d9bb99bda9c7bc1ebcba015f",
+      "bytes": 994,
+      "afterSha256": "417cb3d828148d85e01e9fdd14e62235c1724831d9bb99bda9c7bc1ebcba015f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-positive/inventory.json",
+      "sha256": "90f7a7095d6476b8bbc810da3ebc1487a950eb5493af91a0b8b4389b1ca2887e",
+      "bytes": 1723,
+      "afterSha256": "90f7a7095d6476b8bbc810da3ebc1487a950eb5493af91a0b8b4389b1ca2887e"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative/delivery.json",
+      "sha256": "2aa9780a32d33a5b283f0c8ab7a2f56dcbd5373df2d86e7699a02631591644e1",
+      "bytes": 1241,
+      "afterSha256": "2aa9780a32d33a5b283f0c8ab7a2f56dcbd5373df2d86e7699a02631591644e1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-3/integrity-negative/inventory.json",
+      "sha256": "8088ccea007321135dfe85d01c2c768cda6bf12b58b47f64e1a4fe2b9b47876d",
+      "bytes": 1723,
+      "afterSha256": "8088ccea007321135dfe85d01c2c768cda6bf12b58b47f64e1a4fe2b9b47876d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-manifest.json",
+      "sha256": "86687ab4bf579b2ba8635ee5efe4eb935df27bcf7d17a34314018353ded9dc97",
+      "bytes": 99488,
+      "afterSha256": "49985f6733f59c161ac5aee959e71fd3c1521fdb4e9537a930fdc94763d57677"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/source-route-matrix.md",
+      "sha256": "d4efc66c1acabf3d66b98d3e890f1532e919ede6daf558e5091ed8b3ef5208a9",
+      "bytes": 19104,
+      "afterSha256": "eba694b05dfc8f8580946a4aa0b3178c5d8bcf5ef020189a91e529f1a0c25298"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/recovery-route-disposition.md",
+      "sha256": "f33e6ce5eb4dfe88fe2f594b19ba4a6708333579230db1f8d8564d8dbf13ce94",
+      "bytes": 13232,
+      "afterSha256": "39789b25eb842c432cfa4bcf5fa1a2bcb4b4eec2f8b0294e98970fc2c43cda64"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+      "sha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d",
+      "bytes": 14150,
+      "afterSha256": "0aa999ba4def89d842b9fe6b544d3e4c3861949249b6409bb1d78ba981ef8d2d"
+    },
+    {
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacyLpExit.t.sol",
+      "sha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4",
+      "bytes": 6911,
+      "afterSha256": "aceb6d00010b66661cd2fefef5b9f8ee012ce654244ddc7f2ba4ea0bb388aae4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/resumed-integration/record-verification.ts",
+      "sha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6",
+      "bytes": 20293,
+      "afterSha256": "c9e602dc42b9ff224f6e48c412747c7d1a1f777f4faa483263973f56cdeb34d6"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-diff.stat",
+      "sha256": "aca5c215099d26806f8972b85fdf723cdd88640f025525fa62fadea0ff72e7ce",
+      "bytes": 132,
+      "afterSha256": "aca5c215099d26806f8972b85fdf723cdd88640f025525fa62fadea0ff72e7ce"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-tracked-files.txt",
+      "sha256": "b054fc7378cc2e82c1d18dc2a37679491d12a8d6ef7cde07c7c5f6c65e7f1a6b",
+      "bytes": 86,
+      "afterSha256": "b054fc7378cc2e82c1d18dc2a37679491d12a8d6ef7cde07c7c5f6c65e7f1a6b"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p.diff",
+      "sha256": "928269f94a952b9db2e882bed9e773343ebd6d5abd8e895522acdd65a0130536",
+      "bytes": 82640,
+      "afterSha256": "928269f94a952b9db2e882bed9e773343ebd6d5abd8e895522acdd65a0130536"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/commands.json",
+      "sha256": "10e7187543d6b57c171526bcba3258a0a8f5e76892821af6275adb9a93e62a57",
+      "bytes": 13612,
+      "afterSha256": "10e7187543d6b57c171526bcba3258a0a8f5e76892821af6275adb9a93e62a57"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/source-hashes.txt",
+      "sha256": "fe83ac8d8dbf103a139e72d46e4e8f9fdecc99363b0795b2ae659c6ef4e37b7f",
+      "bytes": 279,
+      "afterSha256": "fe83ac8d8dbf103a139e72d46e4e8f9fdecc99363b0795b2ae659c6ef4e37b7f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/p-diff.stat",
+      "sha256": "aca5c215099d26806f8972b85fdf723cdd88640f025525fa62fadea0ff72e7ce",
+      "bytes": 132,
+      "afterSha256": "aca5c215099d26806f8972b85fdf723cdd88640f025525fa62fadea0ff72e7ce"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-tracked-diff.stat",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "afterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/final-git-status.txt",
+      "sha256": "a03a7d5e6faa574e61b5a534d3b18904b774a5deb4aaab4a0ec9b85e385f39a3",
+      "bytes": 9945291,
+      "afterSha256": "a03a7d5e6faa574e61b5a534d3b18904b774a5deb4aaab4a0ec9b85e385f39a3"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-p.diff",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "afterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/preservation-check.json",
+      "sha256": "cf43b037d3d76d07500488aa712e7f69484dd1f0c10fea9f949c120d94d0a0b1",
+      "bytes": 2844,
+      "afterSha256": "cf43b037d3d76d07500488aa712e7f69484dd1f0c10fea9f949c120d94d0a0b1"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/requirements-reconciliation.md",
+      "sha256": "2aa26af69401ef4abcf781215cb66f9b42b76850d472c5872ab21d9494f29f66",
+      "bytes": 11262,
+      "afterSha256": "2aa26af69401ef4abcf781215cb66f9b42b76850d472c5872ab21d9494f29f66"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/environment.txt",
+      "sha256": "e3e5f6a11fb978ee98ea0845ab067f0666051995b1a9d29540a4634a159e72ca",
+      "bytes": 161,
+      "afterSha256": "e3e5f6a11fb978ee98ea0845ab067f0666051995b1a9d29540a4634a159e72ca"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/baseline-git-status.txt",
+      "sha256": "23dc9cf3be365c2389106b1330398dc532773c9dcdd355f0f0419ad07aed0039",
+      "bytes": 9938712,
+      "afterSha256": "23dc9cf3be365c2389106b1330398dc532773c9dcdd355f0f0419ad07aed0039"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/external-status-delta.json",
+      "sha256": "d9a4ebf2777473e41d468970e1db7daa4e611572b1b26ab8e6ffa726e189b894",
+      "bytes": 27717,
+      "afterSha256": "d9a4ebf2777473e41d468970e1db7daa4e611572b1b26ab8e6ffa726e189b894"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/git-diff-check.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "afterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/obsolete-clause-check.md",
+      "sha256": "a5c86bb6e2fedbc8b9273126bbd666e67d5f8c74101f969e73e8517264aa8531",
+      "bytes": 2019,
+      "afterSha256": "a5c86bb6e2fedbc8b9273126bbd666e67d5f8c74101f969e73e8517264aa8531"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-1/qa-summary.json",
+      "sha256": "5b27dc3e25dcefaaef00b31cbb4df1f1c7744f5a17f2b554fe85c7385adc0bbb",
+      "bytes": 1327,
+      "afterSha256": "5b27dc3e25dcefaaef00b31cbb4df1f1c7744f5a17f2b554fe85c7385adc0bbb"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recover.ts",
+      "sha256": "8ce91903f49ceaaf61dcfc52db9f24b80db5e2e481415abc632c77a6147d7289",
+      "bytes": 9293,
+      "afterSha256": "8ce91903f49ceaaf61dcfc52db9f24b80db5e2e481415abc632c77a6147d7289"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/report.md",
+      "sha256": "f2fd00868cfdb60bd1ea6067d7b1dc5d3a31ee18b66f0e5018d6cc8ae1ad9afc",
+      "bytes": 9360,
+      "afterSha256": "f2fd00868cfdb60bd1ea6067d7b1dc5d3a31ee18b66f0e5018d6cc8ae1ad9afc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/supersessions.json",
+      "sha256": "312c49b898c54a0b324a3c015aeebd362331c960692c53ec85b630351cf0820d",
+      "bytes": 1124,
+      "afterSha256": "312c49b898c54a0b324a3c015aeebd362331c960692c53ec85b630351cf0820d"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/manual-qa.json",
+      "sha256": "11efb072c814b593448c706b90ba4170b261276cbcbd7862117745417447cc2a",
+      "bytes": 58621,
+      "afterSha256": "11efb072c814b593448c706b90ba4170b261276cbcbd7862117745417447cc2a"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/diagnostics.json",
+      "sha256": "069706127aed2aebe2507669391020c15abad705a6b2d4175a271297287d2c42",
+      "bytes": 5173,
+      "afterSha256": "069706127aed2aebe2507669391020c15abad705a6b2d4175a271297287d2c42"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/commands.json",
+      "sha256": "bb72d3fac0ca76669b30d05bfca5813ca956ee4843cae82d1b23299abb719904",
+      "bytes": 658483,
+      "afterSha256": "bb72d3fac0ca76669b30d05bfca5813ca956ee4843cae82d1b23299abb719904"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/cleanup.json",
+      "sha256": "836c40d28d2121eeec20a8dfec078ea256a02bebef54f7cc163d8d5653709afc",
+      "bytes": 17492,
+      "afterSha256": "836c40d28d2121eeec20a8dfec078ea256a02bebef54f7cc163d8d5653709afc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/fixture-qa.ts",
+      "sha256": "dd6f55947d87b6441a6a554ccfa144a9d28d0d92d5653687bc08ef0f8533bbc0",
+      "bytes": 7570,
+      "afterSha256": "dd6f55947d87b6441a6a554ccfa144a9d28d0d92d5653687bc08ef0f8533bbc0"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recovery-differences.json",
+      "sha256": "3a12f89399eceef83e5136f5923f2e7edfb44ff96e52ac404ee2f6c884286bcc",
+      "bytes": 22752,
+      "afterSha256": "3a12f89399eceef83e5136f5923f2e7edfb44ff96e52ac404ee2f6c884286bcc"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recovery-inputs.json",
+      "sha256": "457e663d1750b236ae45ee1974245bfb303e2493fb31ae397ccda5b717e05de9",
+      "bytes": 32163,
+      "afterSha256": "457e663d1750b236ae45ee1974245bfb303e2493fb31ae397ccda5b717e05de9"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/adversarial-results.json",
+      "sha256": "a11dd2ac96fb2ee7ff8c036d311b3a093e71d55ff7060c8874fe5cff85b94561",
+      "bytes": 3368,
+      "afterSha256": "a11dd2ac96fb2ee7ff8c036d311b3a093e71d55ff7060c8874fe5cff85b94561"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/run-command.ts",
+      "sha256": "873fca9d82988ff072c52fb0240214eee67c3510428ccc187d80fcce20a73237",
+      "bytes": 3138,
+      "afterSha256": "873fca9d82988ff072c52fb0240214eee67c3510428ccc187d80fcce20a73237"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-2/recovery.json",
+      "sha256": "95536e259a87e21c9d3c02be208e64c766c4a48deb02054a7a797a36037a49f7",
+      "bytes": 158073593,
+      "afterSha256": "95536e259a87e21c9d3c02be208e64c766c4a48deb02054a7a797a36037a49f7"
+    }
+  ],
+  "protected_before_after_match": false,
+  "scope_qualification": "82 selected protected files bind all 42 pre-resume producer records, the three indexes, source suites, P, gate receipts, delivered helper, and task-1/task-2 top-level evidence. Git status comparison covers all 60,360 initial path/status entries; this is not an exhaustive byte audit of all unrelated nested files. None were written by resume.",
+  "scoped_diff_check": {
+    "command": "GIT_MASTER=1 git diff --check -- D/source-manifest.json D/source-route-matrix.md D/recovery-route-disposition.md K/MigrationLegacySources.t.sol K/MigrationLegacyLpExit.t.sol",
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "cleanup": {
+    "resources_created": [],
+    "processes_started": [],
+    "files_removed": [],
+    "producer_records_replaced": [],
+    "temporary_fixtures_created": [],
+    "caches_changed_by_resume": false,
+    "evidence_retained": "resume-byte-review.json, resume-negative-bindings.json, resume-inspection.md, this preservation receipt and final DoneClaim are intentional additive task artifacts."
+  },
+  "adversarial": {
+    "stale_state": "Compared all three current index bytes with baselines; old task-3 verdict is preserved and excluded as acceptance.",
+    "dirty_worktree": "All original status entries remain; protected bytes and task-1 diff unchanged; task-2 untracked path set unchanged.",
+    "misleading_success_output": "Bound actual exit, named cases, raw log hash and 50 source bindings; ignored excerpt headers as result oracles.",
+    "generated_or_cached_artifacts": "No compile during resume. Historical artifact paths and Solar-before-test output explicitly retained.",
+    "hung_or_long_commands": "Not applicable during resume; no Forge rerun.",
+    "cancel_resume": "Final explicit DoneClaim emitted after additive evidence.",
+    "malformed_input": "Reused actual wrong-runtime-hash descriptor helper rejection, exit 1 and incomplete delivery receipt.",
+    "untrusted_external_text": "Archive and Markdown content treated only as evidence.",
+    "flaky_tests": "Not applicable; no rerun or nondeterministic result observed.",
+    "repeated_interruptions": "Not applicable; no command killed to simulate interruption."
+  },
+  "unavailable_diagnostics": "Biome LSP not installed; no install attempted under explicit constraints."
+}
+

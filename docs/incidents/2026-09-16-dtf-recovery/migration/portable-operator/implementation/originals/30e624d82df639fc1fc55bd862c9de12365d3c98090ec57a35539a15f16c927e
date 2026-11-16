@@ -1,0 +1,160 @@
+{
+  "base": "8db3f5ee6310e8a700dad2d6a33e21d0955e63ca",
+  "scope": "Actual full default hermetic gate after one stale metadata test correction;not cold/portable/operational/target acceptance",
+  "source": {
+    "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol",
+    "bytes": 17776,
+    "sha256": "e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1",
+    "mode": 33188
+  },
+  "results": {
+    "build": 0,
+    "runtimeArtifacts": 0,
+    "focused": {
+      "exit": 0,
+      "passed": 1
+    },
+    "full": {
+      "exit": 0,
+      "passed": 28576,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 2687
+    }
+  },
+  "initialFailurePreserved": true,
+  "pagerIncidentPreserved": true,
+  "members": [
+    {
+      "path": "build-r2.log",
+      "bytes": 4196845,
+      "sha256": "aaebb435602ec04a18219d8e6e7442b2f92a2c912f78a55b7e8e536ac40d0bce",
+      "mode": 33188
+    },
+    {
+      "path": "build.log",
+      "bytes": 4288091,
+      "sha256": "27622889892823759778b371ea411079503dd6181fda31d9bff954541fe21cfa",
+      "mode": 33188
+    },
+    {
+      "path": "final-source-diff.txt",
+      "bytes": 2456,
+      "sha256": "1be5ebc4dab1c4dd01fe183228144bdf224189e7afc7560aaba6ca7a6b169689",
+      "mode": 33188
+    },
+    {
+      "path": "focused-r2.log",
+      "bytes": 761,
+      "sha256": "54b85cae4a92f5b7d224543e33ae28d8e867618c207c7a7c4bc653c179e9312d",
+      "mode": 33188
+    },
+    {
+      "path": "forge-version.log",
+      "bytes": 163,
+      "sha256": "902c666dcff2a91289f380165da945a2d302bead46af93ed4f40599ba8e373cc",
+      "mode": 33188
+    },
+    {
+      "path": "initial-failure-and-fix.json",
+      "bytes": 1235,
+      "sha256": "331df6176da706a881636d26b0f25e11572d81fdefbaadf39b6131878fd4a144",
+      "mode": 33188
+    },
+    {
+      "path": "initial-run-seal.json",
+      "bytes": 2106,
+      "sha256": "1d2805092b67cefbf264c0dea7b074dd7fa0f037e640b46c298e4a587e71f97f",
+      "mode": 33188
+    },
+    {
+      "path": "launch-command-r2.txt",
+      "bytes": 445,
+      "sha256": "aaae612da058533b056465b1cd6e53bc267d54208b93cb2fe92b4df6e67f5d43",
+      "mode": 33188
+    },
+    {
+      "path": "launch-command.txt",
+      "bytes": 442,
+      "sha256": "a035e2c2db0244329a43369cb4c056be69394042e134611a4395545dab807ed6",
+      "mode": 33188
+    },
+    {
+      "path": "metadata-change-history.txt",
+      "bytes": 396,
+      "sha256": "a5c07f44dc0151d31bcb3b6fcc65707e82b29e1cc787afd6158c9ef2a7f1bf46",
+      "mode": 33188
+    },
+    {
+      "path": "metadata-failure-diagnosis.md",
+      "bytes": 1877,
+      "sha256": "3bf5043b136d7aa89e5d36b3188b2bedfd7b0a65aefdb4697721206fcedea2ce",
+      "mode": 33188
+    },
+    {
+      "path": "raw-log-identities.json",
+      "bytes": 263244,
+      "sha256": "f131d5a332a7803da6e0d7807eada7e2ac13cd623e02a9d19c772d9fd04f267f",
+      "mode": 33188
+    },
+    {
+      "path": "report.md",
+      "bytes": 5346,
+      "sha256": "b770077ac6cd17595926686236eb1e9d288def95e7fd3fe736128eb54dfb07c4",
+      "mode": 33188
+    },
+    {
+      "path": "run-gate-r2.sh",
+      "bytes": 2142,
+      "sha256": "3490474552e69018bcfa31e762af678b284b092fed0ebe1eb580e547589c1781",
+      "mode": 33188
+    },
+    {
+      "path": "run-gate.sh",
+      "bytes": 1719,
+      "sha256": "79a01f23e8ae79d95dcb27941d162e7de66212e29c4b974b86055dd736735c54",
+      "mode": 33188
+    },
+    {
+      "path": "RUN.md",
+      "bytes": 1258,
+      "sha256": "388e528a3157e03016f1b86e8fe2e50ac1d474298c52c212c28a0ecc49c426be",
+      "mode": 33188
+    },
+    {
+      "path": "runtime-artifacts-r2.log",
+      "bytes": 680540,
+      "sha256": "0ca291074c6ad4c6b64e17fdfd6a13f3439b93aa7079bca1983d578416a9b11d",
+      "mode": 33188
+    },
+    {
+      "path": "runtime-artifacts.log",
+      "bytes": 680598,
+      "sha256": "d2c171486b0548a98dc798aaba97e021582efb8a15617adc1ff93d25b4be1caf",
+      "mode": 33188
+    },
+    {
+      "path": "terminal-prompt-incident.json",
+      "bytes": 939,
+      "sha256": "a417748517625563b921eb3ec2f4a7b2daa65ee60873e28f383550ca7433573b",
+      "mode": 33188
+    },
+    {
+      "path": "tests-r2.log",
+      "bytes": 9115917,
+      "sha256": "64a7a9471b133c02bd1d81d18d14843d101ad0c19dca258544faa01edf34490a",
+      "mode": 33188
+    },
+    {
+      "path": "tests.log",
+      "bytes": 9213506,
+      "sha256": "90e37cc56b7441e156c38ac8460af96e984ede7b960752bf82f3fb43afe5944b",
+      "mode": 33188
+    }
+  ],
+  "exclusions": [
+    "seal.json self",
+    "future commit/ evidence"
+  ],
+  "historicalLimit": "P1 two earlier raw artifact versions remain unrecovered"
+}

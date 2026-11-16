@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"getPool","inputs":[{"name":"tokenA","type":"address","internalType":"address"},{"name":"tokenB","type":"address","internalType":"address"},{"name":"fee","type":"uint24","internalType":"uint24"}],"outputs":[{"name":"pool","type":"address","internalType":"address"}],"stateMutability":"view"}],"id":2339}

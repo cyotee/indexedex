@@ -1,0 +1,10 @@
+[work/dtf-migration-phase-28-receipt-evidence 07d54b9a] Add verified bounded finite receipt evidence collector
+ 10 files changed, 860 insertions(+)
+ create mode 100644 scripts/recovery/dtf-migration/receipt-association.ts
+ create mode 100644 scripts/recovery/dtf-migration/receipt-evidence.ts
+ create mode 100644 scripts/recovery/dtf-migration/receipt-input.ts
+ create mode 100644 scripts/recovery/dtf-migration/receipt-reconciliation.test.ts
+ create mode 100644 scripts/recovery/dtf-migration/receipt-reconciliation.ts
+ create mode 100644 scripts/recovery/dtf-migration/receipt-rpc.ts
+ create mode 100644 scripts/recovery/dtf-migration/receipt.fixture.ts
+ create mode 100644 scripts/recovery/dtf-migration/receipt.test.ts

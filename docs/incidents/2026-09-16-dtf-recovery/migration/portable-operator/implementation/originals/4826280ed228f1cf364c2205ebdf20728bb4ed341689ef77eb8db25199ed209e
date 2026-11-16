@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"tokenURI","inputs":[{"name":"positionManager","type":"address","internalType":"contract INonfungiblePositionManager"},{"name":"tokenId","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"string","internalType":"string"}],"stateMutability":"view"}],"id":2302}

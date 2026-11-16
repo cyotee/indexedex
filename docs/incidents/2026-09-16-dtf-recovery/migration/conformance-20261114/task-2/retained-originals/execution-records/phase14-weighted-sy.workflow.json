@@ -1,0 +1,49 @@
+{
+  "key": "dtf-migration-phase14-weighted-sy-v1",
+  "name": "Migration DETF phase 14: configured weighted SY surrender",
+  "nodes": [
+    {
+      "id": "implement-weighted-sy",
+      "label": "Implement weighted SY custody and staged recovery",
+      "category": "deep-high",
+      "task_summary": "Add configured original-wallet SY surrender and measured SY-to-receipt recovery",
+      "prompt": "TASK: Implement exactly the fixed weighted SY configuration, original-wallet surrender and owner-selected staged recovery in the brief.\nDELIVERABLE: Scoped Migration/test/operator delta and /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/implementation/report.md with final-source checks, actual receipts, bindings/snapshots and cleanup.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md completely and obey current main plan r5/PRD r22. Use only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy, branch work/dtf-migration-phase-14-weighted-sy, exact independently audited base75d513cb8b36e53f14c8aa3a352f21703ad91ba1. Root creates and warm-seeds it before dispatch. Read complete phase11 weighted contract and independent handoff at the absolute paths in the brief, plus actual archived WY source/receipts. Source contract r3 stage/amendment language is superseded by Stage2-only surrender and owner-first-bond enforced activation. No held09 code, provider bypass, ordinary/common/Crane production, dependency/configuration edit, public operation, commit or merge. Allowed edit paths and fixed WY/WS/WD identities are in the brief. One new source only; preserve all existing W-L/NFT/owner-bond behavior and historical evidence.\nVERIFY: Complete Stage1 original wallet/origin/native-static-share/Q0/components loader, frozen C0, canonical overlap both directions, no config issuance; Stage1 surrender rejection, actual Stage2 exact share pull, proportional partial/final credit and fresh funded90-day bonds, failure rollback; booked-only WY burn to actual WS gons with synchronization/dust/protected mixed inventory, then existing WD/DTF recovery/fixed donation; new loaders irreversibly removed. Owner first paid bond remains required for activation. Run artifact-first Solar all current Migration specs/forks, operator tests/types and actual pinned fixed18564 CLI with new SY receipts plus all three preserved mined interruption resumes, all exit0.\nSTOP WHEN: Complete immutable report/source-artifact-receipt bindings and owned cleanup exist with all bounded checks passing, or exact remaining blocker reported. Explicitly confirm stopped source modifications and no runtime. No full-category/target-gas claim."
+    },
+    {
+      "id": "verify-weighted-sy",
+      "label": "Independently verify SY credit and recovery conservation",
+      "category": "deep-low",
+      "dependsOn": [
+        "implement-weighted-sy"
+      ],
+      "task_summary": "Verify actual weighted SY surrender, exact credit, protected recovery and operator parity",
+      "prompt": "TASK: Independently verify the weighted SY integration against the admitted source and real runtime.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/verification/report.md with confirmed/needs-fix, executed coverage, exact source/runtime/operator bindings and cleanup.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md completely and obey current main plan r5/PRD r22. Use only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy, branch work/dtf-migration-phase-14-weighted-sy, exact independently audited base75d513cb8b36e53f14c8aa3a352f21703ad91ba1. Root creates and warm-seeds it before dispatch. Read complete phase11 weighted contract and independent handoff at the absolute paths in the brief, plus actual archived WY source/receipts. Source contract r3 stage/amendment language is superseded by Stage2-only surrender and owner-first-bond enforced activation. No held09 code, provider bypass, ordinary/common/Crane production, dependency/configuration edit, public operation, commit or merge. Read complete new producer report and actual changed code. Write only owned verification evidence/witnesses; no production fixes. If actual report/bindings/cleanup or stopped-modifications handoff absent, notify root and subscribe rather than execute against changing source.\nVERIFY: Independently execute owner-only Stage1 loader/overlap negatives, no-effect preactivation rejection, actual original-wallet controlled SY exact custody, frozen partial/final share credit, fresh funded clocks and failures; fixed-source booked SY redemption and actual WS gon admission with mixed NFT inventory and unbooked protection, later conversion/donation and selected-batch rollback. Prove all new config authority removed and paid owner-first-bond activation prerequisite retained. Execute artifact-first full current Migration specs/forks, operator tests/types and fixed18564 real CLI into verifier-owned evidence, retaining all three mined-before-checkpoint resumes. Check raw source/metadata/runtime identity and explicitly reconcile regenerated artifacts.\nSTOP WHEN: Complete independent bounded verdict and final report/bindings/cleanup with no owned runtime; no full-category/operational-allocation/target-gas acceptance."
+    },
+    {
+      "id": "commit-weighted-sy",
+      "label": "Commit independently verified weighted SY source",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "verify-weighted-sy"
+      ],
+      "task_summary": "Commit only the exact independently verified weighted SY source paths",
+      "prompt": "TASK: Create one scoped verified local commit of the weighted SY increment.\nDELIVERABLE: Accepted source commit and /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/commit/source-manifest.json plus receipt.md with exact parent/path/hash/mode/trailer/preservation proof.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-commit-brief.md completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy, branch work/dtf-migration-phase-14-weighted-sy, expected parent75d513cb8b36e53f14c8aa3a352f21703ad91ba1. Root read entire independent report SHA256a8239596a190ea6f3b236fe8fa55998e06a0bcd1ac34d5040dad5c6d17773f80: confirmed115spec61fork59operator/types/stagebuild/realCLI and three mined resumes; source unchanged and cleanup complete. No source edits, held09 inspection/import/replay, provider change, dependencies/config, public actions, push/PR or merge. Every git invocation GIT_MASTER=1; status/diff ignore submodules. Independently derive expected33 exact Migration/test/operator/runbook paths from accepted source identities and actual diff. Evidence/generated/unrelated paths excluded; preserve foreign index and files.\nVERIFY: Read full candidate and staged diff, verify current/staged/accepted byte and mode equality, secret exclusion, whitespace, log convention and one coauthor trailer; commit then compare actual committed/current/accepted set and preserved refs/index/evidence. No unchanged runtime reruns. Mismatch or missing actual independent acceptance means no commit.\nSTOP WHEN: One coherent verified commit and complete receipt exist with no pending operation, or exact blocker recorded."
+    },
+    {
+      "id": "verify-weighted-sy-commit",
+      "label": "Independently audit weighted SY commit provenance",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-weighted-sy"
+      ],
+      "task_summary": "Independently check SY committed bytes and preserved evidence against runtime acceptance",
+      "prompt": "TASK: Independently audit the weighted SY local source commit against accepted final bytes.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/commit/verification.md and supporting evidence with confirmed/needs-fix.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-commit-brief.md completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-14-weighted-sy, branch work/dtf-migration-phase-14-weighted-sy, expected parent75d513cb8b36e53f14c8aa3a352f21703ad91ba1. Root read entire independent report SHA256a8239596a190ea6f3b236fe8fa55998e06a0bcd1ac34d5040dad5c6d17773f80: confirmed115spec61fork59operator/types/stagebuild/realCLI and three mined resumes; source unchanged and cleanup complete. No source edits, held09 inspection/import/replay, provider change, dependencies/config, public actions, push/PR or merge. Every git invocation GIT_MASTER=1; status/diff ignore submodules. Read actual complete commit receipt and independent runtime acceptance/bindings. Write only commit verification evidence; no fixes or new commit. Missing actual commit is not a completed handoff.\nVERIFY: Derive accepted exact path/mode/hash set independently; compare actual committed/current blobs, parent, full diff, required trailer, exclusions, unrelated index/files/protected refs and sealed evidence. Verify admitted artifact/source identities without inventing aggregate metadata claims. Do not copy producer pass flags or rerun unchanged tests.\nSTOP WHEN: Independent bounded delivery verdict and cleanup complete, no owned pending operation; no full-category or gas acceptance."
+    }
+  ]
+}

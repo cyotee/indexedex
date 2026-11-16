@@ -1,0 +1,22 @@
+{
+  "version": "portable-operator-independent-intake-seal-v1",
+  "verdict": "needs-fix",
+  "base": "137fa0c8749165087c7d1d0156788f58a1dbf1b8",
+  "membership": "All verifier-owned evidence files except this seal; exact raw bytes and SHA-256.",
+  "exclusions": ["seal.json"],
+  "files": [
+    {
+      "path": "proof.json",
+      "bytes": 1619,
+      "sha256": "594b5248c6b4d4b5351c2386cd924b57f7464196d93563b2cdf86e16c58b5f7a"
+    },
+    {
+      "path": "report.md",
+      "bytes": 4480,
+      "sha256": "92e9c0d8a111d0b15bf77599cc74d54cc49d2c8df1e73890384a571bce326a84"
+    }
+  ],
+  "runtimeLaunched": false,
+  "pendingVerifierOperations": [],
+  "producerCleanupVerified": false
+}

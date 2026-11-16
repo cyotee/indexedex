@@ -1,0 +1,655 @@
+{
+  "schema": "phase01-canonical-report-binding/1",
+  "created_at": "2026-11-10T13:44:41.552Z",
+  "status": "current_canonical_binding",
+  "authority": "Root explicitly adopted the current needs-fix/product report in this session. This repair changes metadata only and selects no new policy.",
+  "path_base": "Paths in this binding are relative to verification/canonical-report-binding.json.",
+  "report": {
+    "path": "../phase01-verification.md",
+    "bytes": 21559,
+    "sha256": "dd03fd16878424ca0f2073e6ac44dc8fef075dbf340867a974d3f491c80a9232"
+  },
+  "AdversarialVerify": {
+    "verdict": "needs-fix",
+    "failure_class": "product",
+    "confidence": "high",
+    "task1_source_and_attribution_closure": false,
+    "E1": "Usable source primitives demonstrated; specific caller and harvest routes remain unproved or restricted",
+    "E2": "Balance-only attribution fails; a compliant authenticated-history construction is not established",
+    "later_Migration_integration_is_task1_blocker": false
+  },
+  "supersedes": {
+    "report": {
+      "bytes": 17746,
+      "sha256": "3cccb5cd27df0b5bfc910e812c161d94c8bfb0f59161fbf5f5b684fc0bf09291",
+      "verdict": "needs-human-review"
+    },
+    "historical_receipt": {
+      "path": "final-checks.json",
+      "bytes": 52122,
+      "sha256": "5f22afb32254904676c5117066120acc35ec5da7524d960e215b0b71a8bb564c"
+    },
+    "historical_receipt_before_notice": {
+      "bytes": 51389,
+      "sha256": "a17e061e595f1bfc9862e395bf74ddfba864a534fd1ba51a95e2dcef0cf45ab7"
+    },
+    "scope": "Supersedes the old report identity and verdict as canonical. Original final-checks.json fields and completed execution/cleanup observations are retained as historical evidence; only a pointer notice was added."
+  },
+  "completed_evidence": [
+    {
+      "path": "weighted-replay.results.json",
+      "bytes": 3520268,
+      "sha256": "b1bb1cf5059f5a70b872fac2aaa262cdc8ba91f453a8a817f8570b96ec67ac9f"
+    },
+    {
+      "path": "cp-replay.json",
+      "bytes": 2684148,
+      "sha256": "e15477dd5ac967ee568cc580429e55e75d5bc906dccd5f6209eb96d2f227d9fe"
+    },
+    {
+      "path": "other-metered.json",
+      "bytes": 699993,
+      "sha256": "8752356e523adcd85af806ff044520cc76d89c12fc285a7de43a9610ccf7d702"
+    },
+    {
+      "path": "native-replay.json",
+      "bytes": 443904,
+      "sha256": "1753ff90de52408910cdcfb6d11be41200fb0c1cecf02fa03bea5b63ad11a36d"
+    },
+    {
+      "path": "tokenstaking-caller.json",
+      "bytes": 94994,
+      "sha256": "1a06f2439e9531bb42ec0adebdbf212fbdc73046ecc498fca7655dedcc1b2230"
+    },
+    {
+      "path": "witness-r4.results.json",
+      "bytes": 78362,
+      "sha256": "17f6b47fc34771b56f624c6c1b589bafc78e5f6a9c3eb3eea3156ad0d155f728"
+    },
+    {
+      "path": "receipt-audit-r2.json",
+      "bytes": 488957,
+      "sha256": "a1f5dbd745bbdf8d1f1a679d8c3e387512a6b08f84dcce51357c827f7a6bf5f0"
+    },
+    {
+      "path": "independent-reconciliation.json",
+      "bytes": 2238366,
+      "sha256": "26c7e1a3af86274f73614d17214faeb0a8374fa2cc7d56db17f5f48efc882e7b"
+    },
+    {
+      "path": "workspace-before.json",
+      "bytes": 3616341,
+      "sha256": "f1ae63cb01f5abe91bb5e24e40845ae55f72472649b085f25f478ec7dc64debe"
+    },
+    {
+      "path": "workspace-after.json",
+      "bytes": 3632030,
+      "sha256": "c0488e7716c6ca1e5e49deb78f9ace908460694cbdd519f7bdce901ba129eefa"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 9681,
+      "sha256": "251744fd10e63a5f01755c4499ca2bd106222e43433932acc9fbf91766ad90e3"
+    },
+    {
+      "path": "recovery-cleanup.json",
+      "bytes": 1688,
+      "sha256": "216ff46190d25c21a91b82b81cdb012688411866a54a435f20c6323369ced7b3"
+    },
+    {
+      "path": "cleanup-independent-readback.json",
+      "bytes": 10995,
+      "sha256": "1090a5d004a833eaa9285538e0ede93b4747e652299b5d3477b1ea34aa21373c"
+    },
+    {
+      "path": "cleanup-readback.command.json",
+      "bytes": 1370,
+      "sha256": "c8b58051b5cacb4dafc1f4db7447c3668608655f98fca4e322d06f96a8a325fe"
+    },
+    {
+      "path": "recovery-observations.json",
+      "bytes": 17263,
+      "sha256": "ea0a2d288c6c1fdd55d0860a8bbe3a9d542a038cce89b62c0ce6b12fe289927c"
+    },
+    {
+      "path": "recovery-receipt-audit.json",
+      "bytes": 18951,
+      "sha256": "3f660c611494085db44169b1e718d2565ea3e66bb0c4193b899aae59fb872847"
+    },
+    {
+      "path": "portability-audit.json",
+      "bytes": 9812,
+      "sha256": "ce21c28d0fc6a7a0e4a4a46b62bfec567a16c55155c85bb2ebdefb7ed03d704f"
+    },
+    {
+      "path": "runner-findings.md",
+      "bytes": 6559,
+      "sha256": "966a801fd4bef1d58431b5b259c6bfe08d14eb098c4b8129997440891e07150f"
+    }
+  ],
+  "completed_results": {
+    "receipt_source_checks": {
+      "passed": 370,
+      "failed": 0
+    },
+    "integer_comparisons": {
+      "passed": 19082,
+      "failed": 0
+    },
+    "workspace_baseline": {
+      "entries": 13017,
+      "changed": 0,
+      "added_outside_boundary": 0
+    },
+    "cleanup": {
+      "pass": true,
+      "pids_absent": 45,
+      "ports_refused": 6,
+      "directories_absent": 42
+    },
+    "qualification": "These link and bind existing completed receipts. No source probe, cleanup probe, workspace baseline, or live state check was rerun during this repair."
+  },
+  "artifact_index": {
+    "path": "artifact-index.json",
+    "bytes": 41715,
+    "sha256": "2f2a001272acba4d7c2d22967ae8575bcf3e25753d7cbfacb1687215e48b8895",
+    "payload_entries": 254
+  },
+  "report_reference_check": {
+    "markdown_hyperlink_count": 0,
+    "inline_file_or_pattern_references": 46,
+    "unresolved": [],
+    "created_missing_reference": "artifact-index.json",
+    "qualification": "The report uses inline-code paths, including contextual shorthand. Resolutions below make these explicit; this is not a claim that every shorthand is a literal report-relative filesystem path.",
+    "resolutions": [
+      {
+        "reference": "verification/*.command.json",
+        "basis": "report-relative",
+        "paths": [
+          "cleanup-readback.command.json",
+          "control-blank-zero-clean.command.json",
+          "control-negative-clean.command.json",
+          "cp-replay.command.json",
+          "earlier-cp-original.command.json",
+          "independent-reconciliation.command.json",
+          "malformed-blank-zero.command.json",
+          "malformed-duplicate-header.command.json",
+          "malformed-exponent.command.json",
+          "malformed-float.command.json",
+          "malformed-leading-zero.command.json",
+          "malformed-negative.command.json",
+          "malformed-unlisted-float.command.json",
+          "malformed-unterminated.command.json",
+          "native-replay.command.json",
+          "other-metered.command.json",
+          "other-replay.command.json",
+          "other-sources-original.command.json",
+          "receipt-audit-r2.command.json",
+          "receipt-audit.command.json",
+          "reconciliation-repeat.command.json",
+          "reconciliation.command.json",
+          "stale-reject.command.json",
+          "stale-seed.command.json",
+          "syntax-1.command.json",
+          "syntax-2.command.json",
+          "syntax-3.command.json",
+          "syntax-4.command.json",
+          "syntax-5.command.json",
+          "tokenstaking-caller.command.json",
+          "tokenstaking-source.command.json",
+          "weighted-original.command.json",
+          "weighted-replay.command.json",
+          "witness-metered.command.json",
+          "witness-original.command.json",
+          "witness-replay.command.json",
+          "workspace-after.command.json",
+          "workspace-before-r2.command.json",
+          "workspace-before.command.json"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "*.exit.json",
+        "basis": "verification-directory shorthand",
+        "paths": [
+          "control-blank-zero-clean.exit.json",
+          "control-negative-clean.exit.json",
+          "cp-replay.exit.json",
+          "earlier-cp-original.exit.json",
+          "independent-reconciliation.exit.json",
+          "malformed-blank-zero.exit.json",
+          "malformed-duplicate-header.exit.json",
+          "malformed-exponent.exit.json",
+          "malformed-float.exit.json",
+          "malformed-leading-zero.exit.json",
+          "malformed-negative.exit.json",
+          "malformed-unlisted-float.exit.json",
+          "malformed-unterminated.exit.json",
+          "native-replay.exit.json",
+          "other-metered.exit.json",
+          "other-replay.exit.json",
+          "other-sources-original.exit.json",
+          "receipt-audit-r2.exit.json",
+          "receipt-audit.exit.json",
+          "reconciliation-repeat.exit.json",
+          "reconciliation.exit.json",
+          "stale-reject.exit.json",
+          "stale-seed.exit.json",
+          "syntax-1.exit.json",
+          "syntax-2.exit.json",
+          "syntax-3.exit.json",
+          "syntax-4.exit.json",
+          "syntax-5.exit.json",
+          "tokenstaking-caller.exit.json",
+          "tokenstaking-source.exit.json",
+          "weighted-original.exit.json",
+          "weighted-replay.exit.json",
+          "witness-metered.exit.json",
+          "witness-original.exit.json",
+          "witness-replay.exit.json",
+          "workspace-after.exit.json",
+          "workspace-before-r2.exit.json",
+          "workspace-before.exit.json"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/weighted-original.*",
+        "basis": "report-relative",
+        "paths": [
+          "weighted-original.command.json",
+          "weighted-original.exit.json",
+          "weighted-original.stderr.log",
+          "weighted-original.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/earlier-cp-original.*",
+        "basis": "report-relative",
+        "paths": [
+          "earlier-cp-original.command.json",
+          "earlier-cp-original.exit.json",
+          "earlier-cp-original.stderr.log",
+          "earlier-cp-original.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/other-sources-original.*",
+        "basis": "report-relative",
+        "paths": [
+          "other-sources-original.command.json",
+          "other-sources-original.exit.json",
+          "other-sources-original.json",
+          "other-sources-original.sources.json",
+          "other-sources-original.stderr.log",
+          "other-sources-original.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/witness-original.*",
+        "basis": "report-relative",
+        "paths": [
+          "witness-original.command.json",
+          "witness-original.exit.json",
+          "witness-original.stderr.log",
+          "witness-original.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/weighted-replay.*",
+        "basis": "report-relative",
+        "paths": [
+          "weighted-replay.anvil.log",
+          "weighted-replay.command.json",
+          "weighted-replay.exit.json",
+          "weighted-replay.historical-receipts.json",
+          "weighted-replay.results.json",
+          "weighted-replay.sources.json",
+          "weighted-replay.stderr.log",
+          "weighted-replay.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/cp-replay.*",
+        "basis": "report-relative",
+        "paths": [
+          "cp-replay.command.json",
+          "cp-replay.exit.json",
+          "cp-replay.json",
+          "cp-replay.source.json",
+          "cp-replay.stderr.log",
+          "cp-replay.stdout.log",
+          "cp-replay.summary.json"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/other-replay.*",
+        "basis": "report-relative",
+        "paths": [
+          "other-replay.command.json",
+          "other-replay.exit.json",
+          "other-replay.json",
+          "other-replay.sources.json",
+          "other-replay.stderr.log",
+          "other-replay.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "witness-replay.*",
+        "basis": "verification-directory shorthand",
+        "paths": [
+          "witness-replay.command.json",
+          "witness-replay.exit.json",
+          "witness-replay.stderr.log",
+          "witness-replay.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/other-metered.*",
+        "basis": "report-relative",
+        "paths": [
+          "other-metered.anvil.log",
+          "other-metered.command.json",
+          "other-metered.exit.json",
+          "other-metered.json",
+          "other-metered.sources.json",
+          "other-metered.stderr.log",
+          "other-metered.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/witness-r4.results.json",
+        "basis": "report-relative",
+        "path": "witness-r4.results.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "witness-metered.*",
+        "basis": "verification-directory shorthand",
+        "paths": [
+          "witness-metered.command.json",
+          "witness-metered.exit.json",
+          "witness-metered.stderr.log",
+          "witness-metered.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/native-replay.*",
+        "basis": "report-relative",
+        "paths": [
+          "native-replay.anvil.log",
+          "native-replay.command.json",
+          "native-replay.exit.json",
+          "native-replay.json",
+          "native-replay.sources.json",
+          "native-replay.stderr.log",
+          "native-replay.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/tokenstaking-caller.*",
+        "basis": "report-relative",
+        "paths": [
+          "tokenstaking-caller.anvil.log",
+          "tokenstaking-caller.command.json",
+          "tokenstaking-caller.exit.json",
+          "tokenstaking-caller.json",
+          "tokenstaking-caller.mjs",
+          "tokenstaking-caller.stderr.log",
+          "tokenstaking-caller.stdout.log"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/reconciliation*.json",
+        "basis": "report-relative",
+        "paths": [
+          "reconciliation-repeat.command.json",
+          "reconciliation-repeat.exit.json",
+          "reconciliation-repeat.json",
+          "reconciliation.command.json",
+          "reconciliation.exit.json",
+          "reconciliation.json"
+        ],
+        "resolved": true
+      },
+      {
+        "reference": "verification/independent-reconciliation.json",
+        "basis": "report-relative",
+        "path": "independent-reconciliation.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verification/receipt-audit-r2.json",
+        "basis": "report-relative",
+        "path": "receipt-audit-r2.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verification/path-only-copy-audit.json",
+        "basis": "report-relative",
+        "path": "path-only-copy-audit.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "receipt-audit-r2.json.copies",
+        "basis": "verification-directory shorthand",
+        "path": "receipt-audit-r2.json",
+        "kind": "file",
+        "json_property": "copies",
+        "property_exists": true,
+        "resolved": true
+      },
+      {
+        "reference": "transport-retry-audit.json",
+        "basis": "verification-directory shorthand",
+        "path": "transport-retry-audit.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verification/tokenstaking-caller.json",
+        "basis": "report-relative",
+        "path": "tokenstaking-caller.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "tokenstaking-source.raw.json",
+        "basis": "verification-directory shorthand",
+        "path": "tokenstaking-source.raw.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "TokenStakingTarget.sol:184-209",
+        "basis": "named source location",
+        "path": "../../../../../../contracts/protocols/staking/token/TokenStakingTarget.sol",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verification/native-replay.json",
+        "basis": "report-relative",
+        "path": "native-replay.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verification/runner-findings.md",
+        "basis": "report-relative",
+        "path": "runner-findings.md",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "evidence/attribution/witness.mjs:8-16",
+        "basis": "migration-directory shorthand",
+        "path": "../attribution/witness.mjs",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verify-cleanup.mjs:6-10",
+        "basis": "named source location",
+        "path": "../attribution/verify-cleanup.mjs",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verification/portability-audit.json",
+        "basis": "report-relative",
+        "path": "portability-audit.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "workspace-before.json",
+        "basis": "verification-directory shorthand",
+        "path": "workspace-before.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "workspace-after.json",
+        "basis": "verification-directory shorthand",
+        "path": "workspace-after.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "cleanup.json",
+        "basis": "verification-directory shorthand",
+        "path": "cleanup.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "recovery-cleanup.json",
+        "basis": "verification-directory shorthand",
+        "path": "recovery-cleanup.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "cleanup-independent-readback.json",
+        "basis": "verification-directory shorthand",
+        "path": "cleanup-independent-readback.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "migration/evidence/verification/",
+        "basis": "incident-directory shorthand",
+        "path": "",
+        "kind": "directory",
+        "resolved": true
+      },
+      {
+        "reference": "verification/artifact-index.json",
+        "basis": "report-relative",
+        "path": "artifact-index.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "weighted-replay.results.json",
+        "basis": "verification-directory shorthand",
+        "path": "weighted-replay.results.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "cp-replay.json",
+        "basis": "verification-directory shorthand",
+        "path": "cp-replay.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "other-metered.json",
+        "basis": "verification-directory shorthand",
+        "path": "other-metered.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "native-replay.json",
+        "basis": "verification-directory shorthand",
+        "path": "native-replay.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "tokenstaking-caller.json",
+        "basis": "verification-directory shorthand",
+        "path": "tokenstaking-caller.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "witness-r4.results.json",
+        "basis": "verification-directory shorthand",
+        "path": "witness-r4.results.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "independent-reconciliation.json",
+        "basis": "verification-directory shorthand",
+        "path": "independent-reconciliation.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "receipt-audit-r2.json",
+        "basis": "verification-directory shorthand",
+        "path": "receipt-audit-r2.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "portability-audit.json",
+        "basis": "verification-directory shorthand",
+        "path": "portability-audit.json",
+        "kind": "file",
+        "resolved": true
+      },
+      {
+        "reference": "verification/",
+        "basis": "report-relative",
+        "path": "",
+        "kind": "directory",
+        "resolved": true
+      }
+    ]
+  },
+  "preservation": {
+    "report_findings_edited": false,
+    "report_bytes_unchanged_from_root_adoption": true,
+    "source_evidence_edited": false,
+    "existing_final_checks_original_fields_retained": true,
+    "source_probes_rerun": false,
+    "policy_changes": false
+  },
+  "changed_files": [
+    "canonical-report-binding.json",
+    "artifact-index.json",
+    "final-checks.json"
+  ]
+}

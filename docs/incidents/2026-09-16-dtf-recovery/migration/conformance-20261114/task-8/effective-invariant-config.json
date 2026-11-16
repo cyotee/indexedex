@@ -1,0 +1,13 @@
+{
+  "fuzz": {
+    "runs": 16,
+    "seed": "0x8"
+  },
+  "invariant": {
+    "runs": 16,
+    "depth": 8,
+    "fail_on_revert": false,
+    "call_override": false,
+    "shrink_run_limit": 5000
+  }
+}

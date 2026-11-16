@@ -1,0 +1,1295 @@
+{
+  "rehearsal": "rehearsal-1794374935675",
+  "journalReceipts": [
+    {
+      "stage": "journal-replacement",
+      "method": "configureNftEntitlements",
+      "hash": "0xdb156a33e597734870b26eeb9ba1d67f47067466fd593bfafa05b59a9ad5eaf3",
+      "nonce": "2133",
+      "block": "0x67e5e0b",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "0x14149f99aabdf818d40b73b482b004fef84671916cdd8e0bf4bef872ba7692a9",
+            "0x58ce35d507122a1f5738caa32cd89bbeca63ce17eb665bb00ab89b5325d43caf",
+            "13872781"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-replacement",
+      "method": "configureIndependentAllocations",
+      "hash": "0x49b41fa6d9085ceca1bdff8c26b1fd7f92e81f582baacced2a345a959579af2d",
+      "nonce": "2130",
+      "block": "0x67e5e08",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x82439755d844151d72c18d8ce5871382839db46958b6233f9906e984fc63c20f",
+            "0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426",
+            "924"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-replacement",
+      "method": "configureIndependentAllocations",
+      "hash": "0x6af88ddbd20175599f94b40ee26ef21430df8d2c222c00f5e4e4a744d92326ce",
+      "nonce": "2131",
+      "block": "0x67e5e09",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xe5c60c960cd348cd7af2763e48669a9f069507f29eb761c1a93fa92511334332",
+            "0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-replacement",
+      "method": "configureNftEntitlements",
+      "hash": "0xc5f7c17ef1335c97f302bae402aa47752e3115e627155eee7082725837db8b95",
+      "nonce": "2134",
+      "block": "0x67e5e0c",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0xde0f8f9882e7042a6578ce2fd02602a120454d5eaf306297549fc5c803e17d27",
+            "0xb0cbcefaa81f5fc7200be751b88dff6098a9fbb243933ea149a878bf4015a42a",
+            "22233172691"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-replacement",
+      "method": "configureIndependentAllocations",
+      "hash": "0xcad908bea6f5ecb5d44520acea8836dfd432a653a6f541be3d682dd09bd9cdcf",
+      "nonce": "2129",
+      "block": "0x67e5e07",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0x331c50aa8a0515172768e5f77633f7394c45d826b1629dd811f9ba60bb65b3e9",
+            "0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-replacement",
+      "method": "configureNftEntitlements",
+      "hash": "0x8ed49608d1f655035ba6606c1ba2e7e2eb85da1880ad87a097ebef257a799f34",
+      "nonce": "2132",
+      "block": "0x67e5e0a",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0x1bc9c1a287057b7c86f1637f3fda858bfae18ebcaab755c66d35990fd56ae42f",
+            "0xf89cc24c9e06b2e25b422b7117fd21686bd20ba4761917f04eb60bd7612aa568",
+            "923391925"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-deploy",
+      "method": "deployVault",
+      "hash": "0xbc2ffc265391562244269342481d3d072e17e8fcec09e9f8d4938f69b10ee5ed",
+      "nonce": "2115",
+      "block": "0x67e5df9",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "ThresholdsConfigured",
+          "values": [
+            "1050000000000000000",
+            "950000000000000000"
+          ]
+        },
+        {
+          "name": "ReserveBondNftWired",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0x76D3b85BE8cc91dF1e66cfd3c81681795555E58C",
+            "0",
+            "1"
+          ]
+        },
+        {
+          "name": "ReserveClaimWired",
+          "values": [
+            "0x4d48367dfa6300587c45fB2C841C18Bc1abfaAa8",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+          ]
+        },
+        {
+          "name": "MigrationSyRewardTokenWired",
+          "values": [
+            "0xe44e17379970147fa85E3491ec2860F06F454F27",
+            "0xE4F9A217B8eeF5413FE8d5b2524AA975e26554f1"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-capture",
+      "method": "captureMigrationSnapshot",
+      "hash": "0xb74b5a980afdd8e338275623dd959eb84ee032106c7eeec1a4ad5b25bde332ad",
+      "nonce": "2120",
+      "block": "0x67e5dfe",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationSnapshotCaptured",
+          "values": [
+            "0x6de828545af1081b985c33e99d7d8676bf563a3e9de52e9bf4fa954c0dea60e5",
+            "26367890"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-issue",
+      "method": "issueIndependentAllocations",
+      "hash": "0xe578da06bdf67bc9ab34f236ae9292f1befe74f1ca64024b0e899d0a44378a6b",
+      "nonce": "2127",
+      "block": "0x67e5e05",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x55b2e5110670d5f22160449e2582aba1b6ebbc89a6db4539d5419ab2744da459",
+            "3",
+            "461",
+            "1794111153"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-issue",
+      "method": "issueIndependentAllocations",
+      "hash": "0xf08523af3db5c1314e553c626a9e2a2e97c3305a791916bcdabad7be2163046a",
+      "nonce": "2128",
+      "block": "0x67e5e06",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationIssued",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xe5c60c960cd348cd7af2763e48669a9f069507f29eb761c1a93fa92511334332",
+            "4",
+            "461",
+            "1794111154"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-02-WeightedPrincipal",
+      "method": "recoverMigrationNfts",
+      "hash": "0xa7e45efbfbe1c97af41f4d4386857256ef6cca543989081e471c8d6314edcf2e",
+      "nonce": "2136",
+      "block": "0x67e5e14",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "16977",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-09-EarlierSale",
+      "method": "recoverMigrationNfts",
+      "hash": "0x7345bc8710ec166a70758509513a664bac79eff2291297a14507749d82bbee32",
+      "nonce": "2143",
+      "block": "0x67e5e1d",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoverySold",
+          "values": [
+            "3",
+            "562524912595035608166",
+            "485044501927175493321",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-08-EarlierClaim",
+      "method": "recoverMigrationNfts",
+      "hash": "0xdd3026a0e481d051b95bc01763f98f750d5f54e4d0e17a67148c2561be9c9f3c",
+      "nonce": "2142",
+      "block": "0x67e5e1b",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0",
+            "124873542679524901"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-configure",
+      "method": "configureNftEntitlements",
+      "hash": "0x3f63782faf0270573ca32e0e29039dbb009650ff175cf34bc40188def13c7bd6",
+      "nonce": "2122",
+      "block": "0x67e5e00",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "0x14149f99aabdf818d40b73b482b004fef84671916cdd8e0bf4bef872ba7692a9",
+            "0x58ce35d507122a1f5738caa32cd89bbeca63ce17eb665bb00ab89b5325d43caf",
+            "13872781"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-configure",
+      "method": "configureIndependentAllocations",
+      "hash": "0x449ed34e97ec8bf908024b06cbcfa73b65da16298d3d2219a0be16165f00a3ba",
+      "nonce": "2124",
+      "block": "0x67e5e02",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x9586A4833970847aef259aD5BFB7aa8901DDf746",
+            "0xe5c60c960cd348cd7af2763e48669a9f069507f29eb761c1a93fa92511334332",
+            "0xa928c38a6a808a62518293b2cff86fc503a76b28c74397ba4e627c3d43f335b4",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-configure",
+      "method": "configureNftEntitlements",
+      "hash": "0xec9b843a1fa53d807843fdd61ea4b6bbecacd83228e637d2e4a8c0565f36c3af",
+      "nonce": "2121",
+      "block": "0x67e5dff",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0xde0f8f9882e7042a6578ce2fd02602a120454d5eaf306297549fc5c803e17d27",
+            "0xb0cbcefaa81f5fc7200be751b88dff6098a9fbb243933ea149a878bf4015a42a",
+            "22233172691"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-configure",
+      "method": "configureIndependentAllocations",
+      "hash": "0x5910f2d681675c035888c2cffa496b789e09e5138aa89a4e6cb99cf3fd441f34",
+      "nonce": "2126",
+      "block": "0x67e5e04",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x0e9971c0005D91336c1441b8F03c1C4fe5FB4584",
+            "0x331c50aa8a0515172768e5f77633f7394c45d826b1629dd811f9ba60bb65b3e9",
+            "0x0a3a79c28ee14763df15eff7ca69b0e3d272c2ebf95506ee5d2e159f1c34856d",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-configure",
+      "method": "configureIndependentAllocations",
+      "hash": "0xc20cbbcaf0e09d86b9da76b98c0d7010da276011f030b3db7dfc26ed32515ae1",
+      "nonce": "2125",
+      "block": "0x67e5e03",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "IndependentAllocationConfigured",
+          "values": [
+            "0x8C3229EC621644789d7F61FAa82c6d0E5F97d43D",
+            "0x55b2e5110670d5f22160449e2582aba1b6ebbc89a6db4539d5419ab2744da459",
+            "0xcfb9ad1466d5d1083bfa385bd1e3a0a0eb79d601ff34b7532c1193d5b44ff426",
+            "461"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-configure",
+      "method": "configureNftEntitlements",
+      "hash": "0x626fc351f42e5228b861549083f3dca13614ee4fb760919ddbb314e93319c80e",
+      "nonce": "2123",
+      "block": "0x67e5e01",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "NftEntitlementConfigured",
+          "values": [
+            "0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391",
+            "3",
+            "0x1bc9c1a287057b7c86f1637f3fda858bfae18ebcaab755c66d35990fd56ae42f",
+            "0xf89cc24c9e06b2e25b422b7117fd21686bd20ba4761917f04eb60bd7612aa568",
+            "923391925"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-04-WeightedUnstake",
+      "method": "recoverMigrationNfts",
+      "hash": "0x0310d9ab2784ee396678bdd74068528cac0265f0d736ae25326169d2363dc42f",
+      "nonce": "2138",
+      "block": "0x67e5e17",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryRevalued",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "103956810",
+            "103968701",
+            "91012300850505489355713372623132073955388490",
+            "875381719530275893679866214021516565"
+          ]
+        },
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "103956810",
+            "103956810"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-06-WeightedConvert",
+      "method": "recoverMigrationNfts",
+      "hash": "0xe9179262767d185fd4ec4ac84eaa9d004d6520109e456a5ef573828ed728cf0b",
+      "nonce": "2140",
+      "block": "0x67e5e19",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "103968701",
+            "557312616037878874629"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-01-WeightedClaim",
+      "method": "recoverMigrationNfts",
+      "hash": "0x25f82b3d882afcba3972df73c58876578147e458430c4182dd4640565ebc9ae4",
+      "nonce": "2135",
+      "block": "0x67e5e13",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "4",
+            "86297369",
+            "17638842"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-05-WeightedUnstake",
+      "method": "recoverMigrationNfts",
+      "hash": "0x0dd206ea80576f322de6c1b8d7e7e3a2a963626b41a86071fb25c58ed3789b0c",
+      "nonce": "2139",
+      "block": "0x67e5e18",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryConverted",
+          "values": [
+            "0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c",
+            "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+            "11891",
+            "11891"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-harvest-07-Donate",
+      "method": "recoverMigrationNfts",
+      "hash": "0x929a4175f75c9d4068c13263e5cb29376677b5712e161be326efece3283044fe",
+      "nonce": "2141",
+      "block": "0x67e5e1a",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryDonated",
+          "values": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000",
+            "119458440568358912"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-activate",
+      "method": "activateMigration",
+      "hash": "0x191097fca3ffdc2914c57e34d1a8e567dbe95ab65b19e75bb47769fa801c1c21",
+      "nonce": "2144",
+      "block": "0x67e5e1e",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationActivated",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-fund",
+      "method": "bootstrapMigrationReserve",
+      "hash": "0xdbd41c604740a8141feab832a222a7db5b90293dc66441518a8b866cb29f83ab",
+      "nonce": "2119",
+      "block": "0x67e5dfd",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x2fC94eE2EB73135933252cBb56EDC19fbC9eEd5d",
+            "231662479035539984912"
+          ]
+        },
+        {
+          "name": "MigrationCapitalConsumed",
+          "values": [
+            "0x89DfDe35aF831dE29Ca2D1629DEd21fC9C729440",
+            "231662479035539984912"
+          ]
+        },
+        {
+          "name": "MigrationReserveBootstrapped",
+          "values": [
+            "1000000000000",
+            "402821897672817483805",
+            "1794111145"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-fund",
+      "method": "approve",
+      "hash": "0x3cbd3c87fd42b9da61ddee3d03040d34d193ede4f5c1bd075cbfc5d4dae18ac7",
+      "nonce": "2116",
+      "block": "0x67e5dfa",
+      "status": "0x1",
+      "events": []
+    },
+    {
+      "stage": "journal-fund",
+      "method": "donateMigrationCapital",
+      "hash": "0xa3d23d9646f0f34cc434c2f918af554dc1c505a6121bdcb011e67f45a0eed788",
+      "nonce": "2118",
+      "block": "0x67e5dfc",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "900000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01",
+            "1000000000000000000000"
+          ]
+        },
+        {
+          "name": "MigrationCapitalReceived",
+          "values": [
+            "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "0x8096E26a26059c5240Ab23d69157e121b28d326a",
+            "100000000000000000000"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "journal-fund",
+      "method": "approve",
+      "hash": "0x84b631cc1ff1b5a37cc7694b145722f0c6025431fa1efa4f17c8c7a1c338d880",
+      "nonce": "2117",
+      "block": "0x67e5dfb",
+      "status": "0x1",
+      "events": []
+    },
+    {
+      "stage": "journal-harvest-03-WeightedRewards",
+      "method": "recoverMigrationNfts",
+      "hash": "0x51966dfcbd0566e056b4a32d8e29711b720f6b768479cdbfffee9eb331f5b792",
+      "nonce": "2137",
+      "block": "0x67e5e15",
+      "status": "0x1",
+      "events": [
+        {
+          "name": "MigrationRecoveryClaimed",
+          "values": [
+            "0xFe4Cc6D5FaaFdF210AF4E728F4108FCaad9bb65E",
+            "26",
+            "0",
+            "3622"
+          ]
+        }
+      ]
+    }
+  ],
+  "infrastructureTransactions": 220,
+  "infrastructureReceipts": 220,
+  "fixtureReceipts": 11,
+  "commands": [
+    {
+      "name": "022-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-01-WeightedClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-01-WeightedClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "environment-stage.log.command.json",
+      "command": [
+        "/Users/cyotee/.foundry/bin/forge",
+        "script",
+        "--use",
+        "solar",
+        "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
+        "--sig",
+        "prepareEnvironment()",
+        "--rpc-url",
+        "http://127.0.0.1:18560/",
+        "--sender",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--unlocked",
+        "--broadcast",
+        "--slow",
+        "--legacy",
+        "--gas-price",
+        "2000000000",
+        "--gas-limit",
+        "1000000000",
+        "--gas-estimate-multiplier",
+        "200"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "026-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-03-WeightedRewards-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-03-WeightedRewards",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "038-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-09-EarlierSale-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-09-EarlierSale",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "040-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/verify-after"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "010-independent-issue.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "independent-issue",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "name": "013-verify.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "verify",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/verify"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "014-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/reject-chainId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "name": "030-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-05-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-05-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "034-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-07-Donate-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-07-Donate",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "025-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-03-WeightedRewards-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-03-WeightedRewards"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "017-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/reject-snapshotId.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "name": "018-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/reject-payload.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "name": "021-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-01-WeightedClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-01-WeightedClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "006-capture.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "capture",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/capture",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "004-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/fund"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "029-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-05-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-05-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "037-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-09-EarlierSale-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-09-EarlierSale"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "033-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-07-Donate-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-07-Donate"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "003-fund.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "fund",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a",
+        "--fault-after-mined"
+      ],
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "name": "020-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/replacement",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "015-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/reject-proxy.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 1,
+      "signal": null
+    },
+    {
+      "name": "001-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/deploy"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "023-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-02-WeightedPrincipal-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-02-WeightedPrincipal"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "027-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-04-WeightedUnstake-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-04-WeightedUnstake"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "011-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "031-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-06-WeightedConvert-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-06-WeightedConvert"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "039-activate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "activate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/replacement-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/activate",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "035-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-08-EarlierClaim-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-08-EarlierClaim"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "024-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-02-WeightedPrincipal-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-02-WeightedPrincipal",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "008-validate.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "validate",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/prepared/manifest.json"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "012-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "009-configure.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "configure",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/post-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/configure",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a",
+        "--reverse"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "007-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/prepared"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "028-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-04-WeightedUnstake-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-04-WeightedUnstake",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "036-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-08-EarlierClaim-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-08-EarlierClaim",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "019-prepare.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "prepare",
+        "--input",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/replacement-input.json",
+        "--output",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/replacement"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "005-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/fund",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "032-harvest.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "harvest",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/harvest-06-WeightedConvert-execution.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/harvest-06-WeightedConvert",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "002-deploy.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "deploy",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/pre-capture.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/deploy",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "016-resume.log.command.json",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+        "scripts/recovery/dtf-migration/cli.ts",
+        "resume",
+        "--manifest",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/rehearsal-1794374935675/reject-package.json",
+        "--checkpoint",
+        "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/.omo-runtime/dtf-migration-operator/checkpoints/issue",
+        "--execute-local",
+        "--instance-id",
+        "0x67fdd8908873222d63616abae2bfd84fa34be5c608c5bfe71c01247d0f6bee7a"
+      ],
+      "code": 1,
+      "signal": null
+    }
+  ],
+  "fullTask9": "open"
+}

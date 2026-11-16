@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-11-15T09:11:23.409Z",
+  "priorEvidenceIndex": {
+    "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/evidence-index.json",
+    "sha256": "9a4a0a81fb8050bcb2b707c8280b18daece3620f040cef08c248bd961babe265",
+    "indexedFiles": 63
+  },
+  "files": [
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-13-done-attempt-1.json",
+      "bytes": 8737,
+      "sha256": "d73967ecccfc8a498c9322464bd37e2ddc9ee4c56630aaa5efb07885ac644cbd"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/verification/report.md",
+      "bytes": 12723,
+      "sha256": "7557626a3066d680ce8348c9c21ba26597f692a9f5e792cef7133d5d8c69c78e"
+    },
+    {
+      "path": ".omo/ulw-execute/dtf-conformance/task-13-verdict.json",
+      "bytes": 8393,
+      "sha256": "3cbd144b91439f9f0e2b4c7e7360ffd87e4a97b35195bcea37b4ffef195b1b71"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/command-provenance.json",
+      "bytes": 10490,
+      "sha256": "827773c965af68787a63adf6b9ca0271163577fffd74d65544f14d309651ea76"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/approved-bytecode-investigation.json",
+      "bytes": 7574,
+      "sha256": "7aef767fdd61fe177b7b62e4b6bee6573d8886eee86429d65dc73562a91b952f"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/report.md",
+      "bytes": 5151,
+      "sha256": "5febb4b647b7cd2a2160beaae0c00a2fdffff260d89c68dbb0459f4f47a7dfe7"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/repair-attempt-1/validation.json",
+      "bytes": 1451,
+      "sha256": "845a6dc6d71bfbe5b13ac3bae92bae49f06aee5ac3c2d52e329e2b66100bec77"
+    }
+  ],
+  "qualification": "Additive repair inventory; the historical index and logs remain unchanged. This inventory excludes itself and the final replacement claim to avoid recursive hashes."
+}

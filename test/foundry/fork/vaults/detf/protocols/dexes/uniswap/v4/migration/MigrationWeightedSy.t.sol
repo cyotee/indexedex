@@ -111,16 +111,16 @@ contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
             Migration.ClaimedSyEntitlementInput[] memory claimed_ = new Migration.ClaimedSyEntitlementInput[](1);
             claimed_[0] = Migration.ClaimedSyEntitlementInput(inputs_[0], ORIGINAL_WEIGHT, W0);
             vm.prank(migrationOwner);
-            allocation.configureClaimedSyEntitlements(claimed_);
+            allocation.configureClaimedSyEntitlements(claimed_, pricingId);
             credit_ = Math.mulDiv(credit_, W0, ORIGINAL_WEIGHT);
             assertEq(migration.weightedSyEntitlement(CLAIMED_ORIGIN).configurationId,
-                keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, claimed_[0])));
+                keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, claimed_[0])));
             (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(CLAIMED_ORIGIN);
             assertEq(original_, ORIGINAL_WEIGHT);
             assertEq(eligible_, W0);
         } else {
             vm.prank(migrationOwner);
-            allocation.configureWeightedSyEntitlements(inputs_);
+            allocation.configureWeightedSyEntitlements(inputs_, pricingId);
         }
         assertEq(migration.weightedSyEntitlement(CLAIMED_ORIGIN).credit, credit_);
         assertEq(migration.weightedSySurrender(CLAIMED_ORIGIN).remainingUnits, q0_);
@@ -261,7 +261,7 @@ contract MigrationWeightedSyTest is MigrationRecoveryDonationForkBase {
     function _configureSy(address wallet_, uint256 q_) private returns (uint256) {
         Migration.WeightedSyEntitlementInput[] memory a_ = _syInput(wallet_, q_, 0.01 ether);
         vm.prank(migrationOwner);
-        allocation.configureWeightedSyEntitlements(a_);
+        allocation.configureWeightedSyEntitlements(a_, pricingId);
         return migration.weightedSyEntitlement(ORIGIN).credit;
     }
 
@@ -296,12 +296,12 @@ contract MigrationWeightedSyTest is MigrationRecoveryDonationForkBase {
         assertEq(s_.remainingCredit, c0_ - c1_);
         Migration.WeightedSyEntitlementInput[] memory a_ = _syInput(HOLDER, 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_)));
+        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_, pricingId)));
         assertFalse(replayed_);
         a_[0].originalUnits = 8;
         a_[0].originalEth = 0.02 ether;
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), abi.encode(s_));
         vm.warp(firstTime_ + 30 days);
@@ -341,7 +341,7 @@ contract MigrationWeightedSyTest is MigrationRecoveryDonationForkBase {
         Migration.WeightedSyEntitlementInput[] memory large_ = _syInput(HOLDER, balance_ + 1, 0.01 ether);
         large_[0].originalId = bytes32("balance");
         vm.prank(migrationOwner);
-        allocation.configureWeightedSyEntitlements(large_);
+        allocation.configureWeightedSyEntitlements(large_, pricingId);
         _activate();
         vm.prank(HOLDER);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidWeightedSyEntitlement.selector, bytes32("absent")));
@@ -391,7 +391,7 @@ contract MigrationWeightedSyTest is MigrationRecoveryDonationForkBase {
         _surrenderSy(1);
         Migration.WeightedSyEntitlementInput[] memory a_ = _syInput(address(this), 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureWeightedSyEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(migration.weightedSyEntitlement(ORIGIN).original.originalWallet, HOLDER);
         assertEq(migration.weightedSySurrender(ORIGIN).consumedUnits, 1);

@@ -1,0 +1,125 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { keccak256 } from "ethers";
+import { z } from "zod";
+import { address, hash, hex } from "../../../../../../scripts/recovery/dtf-migration/schema.js";
+import { quantity } from "../../../../../../scripts/recovery/dtf-migration/execution-schema.js";
+import {
+  ER, UNIT, SCALE, abi, base, original, second, node, chain, number, check,
+  persist, signed, deploy, fund, fundGas, snapshot, diagnosticInternal,
+} from "./probe-runtime.js";
+
+const approve = async (helper: string, label: string) => signed(label, {
+  to: ER, data: abi.encodeFunctionData("approve", [helper, 1000000n]),
+});
+const pull = async (helper: string, input: bigint, label: string) => {
+  const result = await signed(label, { to: helper, data: abi.encodeFunctionData("pull", [input, false]) });
+  const rate = BigInt(result.before.rate);
+  const q = input * UNIT / rate;
+  const beforeWallet = result.before.accounts.find(a => a.who === original);
+  const afterWallet = result.after.accounts.find(a => a.who === original);
+  const beforeCustody = result.before.accounts.find(a => a.who === helper);
+  const afterCustody = result.after.accounts.find(a => a.who === helper);
+  check(!!beforeWallet && !!afterWallet && !!beforeCustody && !!afterCustody, "missing endpoint snapshot");
+  if (!beforeWallet || !afterWallet || !beforeCustody || !afterCustody) return;
+  check(BigInt(beforeWallet.diagnosticInternal) - BigInt(afterWallet.diagnosticInternal) === q
+    && BigInt(afterCustody.diagnosticInternal) - BigInt(beforeCustody.diagnosticInternal) === q,
+  "actual source internal movement differs from transfer-derived q");
+  const carry = {
+    input: String(input), rate: String(rate), q: String(q), qExternalFloor: String(q / SCALE),
+    senderExtra: String(BigInt(beforeWallet.external) - BigInt(afterWallet.external) - q / SCALE),
+    recipientExtra: String(BigInt(afterCustody.external) - BigInt(beforeCustody.external) - q / SCALE),
+    senderFractionBefore: String(BigInt(beforeWallet.diagnosticInternal) % SCALE),
+    recipientFractionBefore: String(BigInt(beforeCustody.diagnosticInternal) % SCALE),
+    unbookedAfter: String(BigInt(afterCustody.diagnosticInternal) - await number(helper, "bookedInternal")),
+    receipt: result.receipt.transactionHash,
+  };
+  await persist(`${label}-arithmetic`, carry);
+  return carry;
+};
+try {
+  const header = z.object({ hash }).passthrough().parse(await chain.send("eth_getBlockByNumber", ["0x67e5d17", false]));
+  check(header.hash === "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733", "wrong pin");
+  check(BigInt(quantity.parse(await chain.send("eth_chainId", []))) === 4663n, "wrong chain");
+  const code = hex.parse(await chain.send("eth_getCode", [ER, "latest"]));
+  check(keccak256(code) === "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601", "wrong proxy");
+  const bindings = [];
+  for (const method of ["transfer", "transferFrom", "approve", "allowance", "balanceOf", "sharesOf",
+    "redemptionRate", "totalShares", "convertToShares", "convertToClaim", "decimals", "detf", "rateAsset"]) {
+    const selector = abi.getFunction(method)?.selector;
+    if (!selector) throw new TypeError("missing method selector");
+    const facet = address.parse((await chain.call(ER, abi, "facetAddress", [selector]))[0]);
+    const facetCode = hex.parse(await chain.send("eth_getCode", [facet, "latest"]));
+    check(facet === "0x25e611fb63eb904776678286ef5cbe2a931b4f9a"
+      && keccak256(facetCode) === "0x31151be4bf8ff8e79f448872f9a0a5c37ee413ce7d2b15206f2debcc59d86ccc",
+    "receipt selector differs from archived source");
+    bindings.push({ method, selector, facet, code: facetCode, codeHash: keccak256(facetCode) });
+  }
+  await persist("identity", { header, metadata: await chain.send("anvil_metadata", []), code, bindings,
+    facets: (await chain.call(ER, abi, "facets")).toArray(true),
+    detf: (await chain.call(ER, abi, "detf"))[0], rateAsset: (await chain.call(ER, abi, "rateAsset"))[0],
+    decimals: String(await number(ER, "decimals")), original, second: second.address,
+    initial: await snapshot(), diagnosticStorageIsNotProductionApi: true });
+  await fundGas();
+  check(await diagnosticInternal(original) === 0n, "original fixture not empty");
+  const rate0 = await number(ER, "redemptionRate");
+  await fund(original, 10000n);
+  const Q0 = 10000n * UNIT / rate0;
+  check(await diagnosticInternal(original) === Q0, "acquisition differs from computed source transition");
+  const mixed = await deploy("deploy-mixed", Q0, 1000001n);
+  await fund(mixed, 1n);
+  const unrelated = await diagnosticInternal(mixed);
+  await approve(mixed, "approve-mixed");
+  const carryUp = await pull(mixed, 4n, "recipient-carry");
+  const carryDown = await pull(mixed, 1n, "sender-carry");
+  check(carryUp?.senderExtra === "0" && carryUp.recipientExtra === "1", "recipient carry not witnessed");
+  check(carryDown?.senderExtra === "1" && carryDown.recipientExtra === "0", "sender carry not witnessed");
+  check(await diagnosticInternal(mixed) - await number(mixed, "bookedInternal") === unrelated,
+    "old fractional inventory became booked");
+  await signed("late-rollback", { to: mixed, data: abi.encodeFunctionData("pull", [1n, true]), expected: 0n });
+  await signed("zero-input", { to: mixed, data: abi.encodeFunctionData("pull", [0n, false]), expected: 0n });
+  await signed("wrong-wallet", { to: mixed, data: abi.encodeFunctionData("pull", [1n, false]), expected: 0n, signer: second });
+  const zeroCredit = await deploy("deploy-zero-credit", Q0, 1n);
+  await approve(zeroCredit, "approve-zero-credit");
+  await signed("zero-credit", { to: zeroCredit, data: abi.encodeFunctionData("pull", [1n, false]), expected: 0n });
+  const noApproval = await deploy("deploy-no-approval", Q0, 1000001n);
+  await signed("missing-approval", { to: noApproval, data: abi.encodeFunctionData("pull", [1n, false]), expected: 0n });
+
+  await fund(original, 2n * rate0);
+  const terminal = await deploy("deploy-terminal", 2n * UNIT, 1001n);
+  await fund(terminal, 1n);
+  const terminalUnrelated = await diagnosticInternal(terminal);
+  await approve(terminal, "approve-terminal");
+  await pull(terminal, rate0, "terminal-partial");
+  await pull(terminal, rate0, "terminal-final");
+  check(await number(terminal, "remainingUnits") === 0n && await number(terminal, "remainingCredit") === 0n
+    && await number(terminal, "delivered") === 1001n, "terminal arithmetic failed");
+  check(await diagnosticInternal(terminal) - await number(terminal, "bookedInternal") === terminalUnrelated,
+    "terminal spending used unrelated receipt fractions");
+
+  await fund(original, rate0);
+  const residue = await deploy("deploy-residue", UNIT, 1000000000n);
+  await approve(residue, "approve-residue");
+  await pull(residue, 1n, "residue-partial");
+  await pull(residue, rate0 - 1n, "residue-last-representable");
+  check(await number(residue, "remainingUnits") === 1n && await number(residue, "remainingCredit") === 1n,
+    "expected retained nontransferable unit and credit");
+  await signed("residue-cap-reject", { to: residue, data: abi.encodeFunctionData("pull", [1n, false]), expected: 0n });
+  await fund(second.address, rate0);
+  await signed("isolated-partial", { to: ER, data: abi.encodeFunctionData("transfer", [original, 1n]), signer: second });
+  await signed("isolated-last", { to: ER, data: abi.encodeFunctionData("transfer", [original, rate0 - 1n]), signer: second });
+  check(await diagnosticInternal(second.address) === 1n && await number(ER, "balanceOf", [second.address]) === 0n,
+    "isolated source fraction not retained");
+  await signed("isolated-source-reject", { to: ER, data: abi.encodeFunctionData("transfer", [original, 1n]),
+    expected: 0n, signer: second });
+
+  await persist("result", { disposition: "SOURCE_PROOF_COMPLETE", source: ER, chain: 4663, pin: 108944663,
+    productionImplementation: false, operationalAllocations: false, syntheticOriginalCredit: true,
+    helperSource: await readFile(join(base, "ReceiptCustodyProbe.sol"), "utf8"), final: await snapshot() });
+  console.log("SOURCE_PROOF_COMPLETE");
+} finally {
+  chain.close();
+  await node.close();
+  await persist("cleanup", { pid: node.pid, stopped: true, port: 18568,
+    subscriptionsClosed: true, allImpersonationsStopped: true, checkpointCreated: false });
+}

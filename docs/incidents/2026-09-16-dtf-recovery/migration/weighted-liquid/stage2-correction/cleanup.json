@@ -1,0 +1,59 @@
+{
+  "version": "stage2-correction-cleanup-v1",
+  "observedAt": "2026-11-11T20:12:00.231Z",
+  "ownedRuns": [
+    {
+      "run": "rehearsal-1794426697254",
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 22169,
+      "runtime": "removed"
+    },
+    {
+      "run": "rehearsal-1794426969363",
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 22780,
+      "runtime": "removed"
+    },
+    {
+      "run": "rehearsal-1794427106781",
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 23133,
+      "runtime": "removed"
+    },
+    {
+      "run": "rehearsal-1794427310218",
+      "checkpoint": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/.omo-runtime/dtf-migration-weighted-liquid/checkpoints",
+      "evidence": "retained",
+      "node": "exited",
+      "pid": 24046,
+      "runtime": "removed"
+    }
+  ],
+  "port18563": {
+    "listenerFound": false,
+    "lsofExit": 1
+  },
+  "ownedPids": {
+    "running": false,
+    "psExit": 1
+  },
+  "checkpointAbsent": true,
+  "emptyOwnedRuntimeParentRemoved": true,
+  "impersonations": "all scenario holder finally paths completed; all owned nodes exited",
+  "pendingRuntime": false,
+  "warmArtifacts": "out/ and cache_forge/ retained in assigned worktree; no copy to main",
+  "craneSymlink": "/Users/cyotee/Projects/indexedex/lib/crane",
+  "gitDiffCheckExit": 0,
+  "base": "2c2b3370ded30cae1662329025d4fb58f7197330",
+  "commits": 0,
+  "merges": 0,
+  "pushes": 0,
+  "publicTransactions": 0,
+  "forbiddenScopeEdits": 0
+}

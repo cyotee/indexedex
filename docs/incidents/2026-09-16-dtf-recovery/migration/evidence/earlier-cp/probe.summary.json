@@ -1,0 +1,21 @@
+{
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/earlier-cp/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 38942,
+    "anvil": "anvil Version: 1.9.0-Homebrew\nCommit SHA: 6056c5845d34205a83cf7108042adb137325c9df\nBuild Timestamp: 2026-11-02T18:15:17.000000000Z (1793643317)\nBuild Profile: release\n"
+  },
+  "historical": {
+    "verdict": "UNPROVEN"
+  },
+  "checks": [],
+  "cleanup": {
+    "runRootRemoved": true
+  },
+  "resources": [],
+  "fatal": "eth_getCode: HTTP 429",
+  "overall": "UNPROVEN"
+}

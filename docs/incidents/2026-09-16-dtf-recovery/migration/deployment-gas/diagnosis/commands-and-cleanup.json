@@ -1,0 +1,166 @@
+{
+  "date": "2026-11-11",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-09-deployment-gas",
+  "base": "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+  "branch": "work/dtf-migration-phase-09-deployment-gas",
+  "runtime": {
+    "binary": "/Users/cyotee/.foundry/bin/anvil",
+    "version": "1.9.1-nightly",
+    "commit": "430523103f3e2f9ba432ffdd2031a9f966153d0d",
+    "kernelBun": "1.4.4",
+    "argv": [
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "18561",
+      "--chain-id",
+      "4663",
+      "--fork-url",
+      "<resolved robinhood_mainnet_alchemy alias>",
+      "--fork-block-number",
+      "108944663",
+      "--gas-limit",
+      "100000000",
+      "--disable-min-priority-fee",
+      "--balance",
+      "1000000",
+      "--silent"
+    ],
+    "sessions": [
+      {
+        "id": "bash_2",
+        "outcome": "startup failed with 401 before node creation",
+        "exit": 1
+      },
+      {
+        "id": "bash_4",
+        "outcome": "owned exploratory node killed after complete evidence capture",
+        "exit": 1
+      },
+      {
+        "id": "bash_7",
+        "outcome": "owned delivered-witness node killed after successful replay",
+        "exit": 1
+      }
+    ]
+  },
+  "checks": [
+    {
+      "kind": "historical limit calls",
+      "session": "bash_5",
+      "monitor": "mon_TVMDGXT8EKR033Q6",
+      "exit": 0,
+      "command": "/bin/zsh -lic: cast call ArbGasInfo getGasAccountingParams/getMaxTxGasLimit and ArbSys arbOSVersion, --rpc-url robinhood_mainnet_alchemy --block 108944663",
+      "output": [
+        "7000000",
+        "32000000",
+        "32000000",
+        "32000000",
+        "116"
+      ]
+    },
+    {
+      "kind": "strict witness typecheck",
+      "session": "bash_6",
+      "monitor": "mon_DYGTQ5B9CJRE24YN",
+      "exit": 0,
+      "command": "./node_modules/.bin/tsc --noEmit --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --verbatimModuleSyntax --module NodeNext --moduleResolution NodeNext --target ES2022 --types node docs/incidents/2026-09-16-dtf-recovery/migration/deployment-gas/diagnosis/reproduce.ts"
+    },
+    {
+      "kind": "witness execution",
+      "method": "persistent Bun eval import reproduce.ts and await reproduce()",
+      "completed": true,
+      "infrastructureReceipts": 225,
+      "failureHash": "0x38fa30f5d5e746a7e19a780e35862cc0767835d2db0b89b11882e179c6200451",
+      "successHash": "0x1766cd703d2b21c6e3534769bc513989f7d24cc29cac2a18c930a1b8eba77805",
+      "successGasUsed": "42985843"
+    },
+    {
+      "kind": "native TypeScript LSP",
+      "errors": []
+    },
+    {
+      "kind": "scope whitespace HEAD and listener inspection",
+      "session": "bash_10",
+      "exit": 0,
+      "command": "lsof -nP -iTCP:18561 -sTCP:LISTEN; git diff --check --ignore-submodules=all; assert tracked/staged names empty; git status --short --untracked-files=all --ignore-submodules=all; git branch --show-current; git rev-parse HEAD",
+      "output": [
+        "OWNED_PORT_CLOSED",
+        "Only diagnosis/ files are untracked",
+        "Tracked and staged differences empty",
+        "work/dtf-migration-phase-09-deployment-gas",
+        "421072a7630a0d3d47a6f36e1062d9eae98c93e2",
+        "DIAGNOSIS_SCOPE_AND_CLEANUP_VERIFIED"
+      ]
+    }
+  ],
+  "cleanup": {
+    "holderImpersonations": "ended in finally",
+    "listeners18561": "absent",
+    "subscriptions": "none",
+    "ownedRuntimeDirectories": "none created",
+    "otherPort18560": "untouched",
+    "warmCaches": "preserved",
+    "compilation": "none; accepted source-bound transaction bytes replayed",
+    "publicTransactions": 0,
+    "commits": 0
+  },
+  "files": [
+    {
+      "path": "accepted-parent-failure.json",
+      "bytes": 318667,
+      "sha256": "9ced5a4c0f8b700c7426ec0919cbdd18c60d01887e59e5e9fd61bae1faddfb4a"
+    },
+    {
+      "path": "accepted-parent-success.json",
+      "bytes": 573958,
+      "sha256": "47329cb3b71865ebc53f1e42dd865f695c7d6c6978d17efa21b911fbd676b055"
+    },
+    {
+      "path": "call-contributors.json",
+      "bytes": 1189357,
+      "sha256": "3a57de951ec32f1f53a79684b28550e24164daca39de9b9081ce9d8d12366cb4"
+    },
+    {
+      "path": "infrastructure-replay.json",
+      "bytes": 3083128,
+      "sha256": "957606817e7a35a3de474cc4713569f34ceb70d67804c4dec4f05c360e867347"
+    },
+    {
+      "path": "limits-and-transactions.json",
+      "bytes": 403353,
+      "sha256": "4b31c4a85d992dabdba1c97389bde803064520566c5222bf39840490590afacf"
+    },
+    {
+      "path": "rejected-naive-preparation.json",
+      "bytes": 425204,
+      "sha256": "ec4065cb97d1eb5a71ec4fb191cba1cc1dc7bc9d965043c0a56bfdacf1ea6493"
+    },
+    {
+      "path": "report.md",
+      "bytes": 27502,
+      "sha256": "1f685c1b0f74ac5c300c42df1963afb45bfe33544967765153bd37a29ed2a6dd"
+    },
+    {
+      "path": "reproduce.ts",
+      "bytes": 5824,
+      "sha256": "3708ce326fec36746871a2169781246a62d806513513dfd79660c84802964791"
+    },
+    {
+      "path": "second-instance.json",
+      "bytes": 976626,
+      "sha256": "18b018d07aa7ad5f5e9e2f1a5d749c41a963b4c3b5af5b9793c084f750e89a75"
+    },
+    {
+      "path": "source-bindings.json",
+      "bytes": 72076,
+      "sha256": "bd8da3f99fdb97a994df795e9055be3ba054e08b8ad5960322d0a4cf06128e00"
+    },
+    {
+      "path": "witness-execution.json",
+      "bytes": 3984309,
+      "sha256": "c4f817ae85961dd79a85bf351c0b9d3a9da43d80dccbed2f552fb60dd0305c98"
+    }
+  ],
+  "limitations": "Proposal is not implemented or independently admitted. Corrected target-bound first/second construction receipts remain the following implementation/verification gate. All full-plan source, E2, operational provenance and release limits remain open."
+}

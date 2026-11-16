@@ -1,0 +1,1 @@
+{"abi":[{"type":"error","name":"InvalidSenderNonce","inputs":[{"name":"sender","type":"address","internalType":"address"},{"name":"targetChainId","type":"uint256","internalType":"uint256"},{"name":"currentNonce","type":"uint256","internalType":"uint256"},{"name":"providedNonce","type":"uint256","internalType":"uint256"}]}],"id":2759}

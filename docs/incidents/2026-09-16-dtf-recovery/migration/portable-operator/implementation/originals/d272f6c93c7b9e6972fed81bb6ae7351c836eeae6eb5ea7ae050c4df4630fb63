@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"getPoolVersion","inputs":[],"outputs":[{"name":"poolVersion","type":"string","internalType":"string"}],"stateMutability":"view"}],"id":2102}

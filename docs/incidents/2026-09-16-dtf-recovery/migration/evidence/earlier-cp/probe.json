@@ -1,0 +1,78 @@
+{
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/earlier-cp/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe",
+  "cwd": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01",
+  "passObservable": "All behavior checks PASS, authenticated source runtime, mined custody/claim receipts, rollback and cleanup read-backs",
+  "startedAt": "2026-11-10T11:51:32.546Z",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 38942,
+    "anvil": "anvil Version: 1.9.0-Homebrew\nCommit SHA: 6056c5845d34205a83cf7108042adb137325c9df\nBuild Timestamp: 2026-11-02T18:15:17.000000000Z (1793643317)\nBuild Profile: release\n"
+  },
+  "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/earlier-cp.drVdgm",
+  "alias": "robinhood_mainnet_alchemy",
+  "attempts": [
+    {
+      "name": "requested-alias-resolution",
+      "ok": true,
+      "value": "https://robinhood-mainnet.g.alchemy.com/v2/[REDACTED]"
+    },
+    {
+      "name": "requested-historical-header",
+      "ok": false,
+      "error": "eth_getBlockByNumber: HTTP 429"
+    },
+    {
+      "name": "requested-historical-state",
+      "ok": false,
+      "error": "eth_call: HTTP 429"
+    }
+  ],
+  "checks": [],
+  "resources": [],
+  "cleanup": {
+    "runRootRemoved": true
+  },
+  "chainId": "0x1237",
+  "historical": {
+    "stateAvailable": false,
+    "verdict": "UNPROVEN"
+  },
+  "sourceDiscoveryBlock": {
+    "baseFeePerGas": "0x1319a60",
+    "difficulty": "0x1",
+    "extraData": "0x7861df9e9383123158a248f1158cb73b204664c0fec13b70161e57514b12d757",
+    "gasLimit": "0x4000000000000",
+    "gasUsed": "0xcda43",
+    "hash": "0x141fdc11c7ffcace98395c591d429881ba9f48a1a98c5c2a309729493c699a25",
+    "l1BlockNumber": "0x19297c6",
+    "logsBloom": "0x0000000000000004080010000208100000000000140000000008000004002000000000010001000000000000000004040004000000000000260200000020040010000000000000100040000800000000000000000000000080000100600000000000000002001800000a0000012008080000000028440000000000100000000000000000080000000000000040000001010080000080000002010000000000000208000002000000000000000040000020000000000000080122002000004080000000020020000100000a00000000c0001000000020000004000000006020020014080002040002222000000000002000001004000001000000002000000800",
+    "miner": "0xa4b000000000000000000073657175656e636572",
+    "mixHash": "0x0000000000000eca00000000019297c6000000000000003d0000000000000000",
+    "nonce": "0x000000000006b001",
+    "number": "0x69b9347",
+    "parentHash": "0x83be12cdabd24f1be6e669333244497b0a5e0b760323efd46ab475f342713d17",
+    "receiptsRoot": "0x3357fa46b40ffbf0d5b497d4e426571aa89abec6000626b22defa8e7ae0d16be",
+    "sendCount": "0xeca",
+    "sendRoot": "0x7861df9e9383123158a248f1158cb73b204664c0fec13b70161e57514b12d757",
+    "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+    "size": "0x7ca",
+    "stateRoot": "0x225cb53a998438cc1e646fe79139be51f0256fc6b3025f3db0cc5b68e6f6e60a",
+    "timestamp": "0x6af30544",
+    "transactions": [
+      "0x9d1e0f3c84a6f3cac465ce50812dd7f190d73211ba9d53c83c0be3aec952c470",
+      "0x77cd6338c5e0249cee2b07c2c9fcf1cd973dda2e400b3047e0340b83e4825764",
+      "0xa45d9794327f0f5bb74bb18a8cf274ab58a72be6e9ebd2e7c048bacd18ac1c24",
+      "0x319a3062c9c9ddb33f7fc9ff5946a0a79f96bc7b4d53b31a3bcd8c26cff50aa3",
+      "0x457af7aa1f3c5cdb892cd1deaf67cc13e879e2df9f011588b753ff54af9a9211",
+      "0xbb4487cbefdda523827659a2d1d92d3d41ea9ea9386ef024ba7063a6a167cee8"
+    ],
+    "transactionsRoot": "0x60cb66d389b8ec1ebd4ca85d0b7cbdcc7f221c20086f76fe901b11bb487ee66b",
+    "uncles": []
+  },
+  "fatal": "eth_getCode: HTTP 429",
+  "finishedAt": "2026-11-10T11:51:32.887Z",
+  "overall": "UNPROVEN"
+}

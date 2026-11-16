@@ -1,0 +1,59 @@
+{
+  "checkedAt": "2026-11-10T19:48:17.538Z",
+  "files": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/source-manifest.json",
+      "sha256": "8747ab56a87c183c7505d8ee6f0f5cd285b4a400f2873efe55e1c082292af93d"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/verification/report.md",
+      "sha256": "aef29e4c5c6e233846c54ccaae33194acbacd4ce5be16744371900ed75861928"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/correction-verification/report.md",
+      "sha256": "ab13bd6fa282bb500694fba7dbd7d8e74d31123b51100f307209d573eb1be602"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/correction-verification/source-artifact-binding.json",
+      "sha256": "fb283c0fd402cff058466451d32f232007c743008c5374982c6d6ab17c4cae1e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/commit/receipt.md",
+      "sha256": "7d17f82f0f0040dcd68fa7ae01824577d28b884c1f38d4628e35ce4d2071f723"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02/docs/incidents/2026-09-16-dtf-recovery/migration/pricing/evidence/implementation/regression-final-command.txt",
+      "sha256": "06400d7da3f2bc804330fa9e69e35d3677156850c3b1dffadb769c79798a4b66"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/source-manifest.json",
+      "sha256": "c7d0e6f46625ee6a06e12398b9eb668ce09110d6377ed2a5b4333697b37b8b21"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation-verification/report.md",
+      "sha256": "3ef2ddf289333f8cfdc07620c43a96d7c882a2d388745963e47bfa60ecd0451e"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/commit-receipt.md",
+      "sha256": "eadf9270d546acf007c927e21a6f81f318e5c685792c7d1d7474bd60dd7c7c62"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/run.sh",
+      "sha256": "3b95c87ae97721215a2788e28573294df04261b00b32c86f8e3adf2481b88fb5"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-03/docs/incidents/2026-09-16-dtf-recovery/migration/package/evidence/preparation/broad.log",
+      "sha256": "312e69ba69a60d6db1534b90a13d4b6946e8797e410248a7e6056817da3d86b2"
+    }
+  ],
+  "seedCounts": {
+    "out": {
+      "files": 7184,
+      "bytes": 4755983279
+    },
+    "cache_forge": {
+      "files": 3850,
+      "bytes": 107814813
+    }
+  }
+}

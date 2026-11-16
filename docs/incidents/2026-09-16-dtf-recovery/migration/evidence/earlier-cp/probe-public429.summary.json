@@ -1,0 +1,349 @@
+{
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/earlier-cp/probe.mjs --chain-id 4663 --block 108944663 --rpc-alias robinhood_mainnet_alchemy --local-fork --output docs/incidents/2026-09-16-dtf-recovery/migration/evidence/earlier-cp/probe",
+  "runtime": {
+    "bun": "1.4.2",
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 37840,
+    "anvil": "anvil Version: 1.9.0-Homebrew\nCommit SHA: 6056c5845d34205a83cf7108042adb137325c9df\nBuild Timestamp: 2026-11-02T18:15:17.000000000Z (1793643317)\nBuild Profile: release\n"
+  },
+  "historical": {
+    "block": "0x67e5d17",
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "verdict": "UNPROVEN"
+  },
+  "execution": {
+    "label": "separate-fresh-observed-block",
+    "block": {
+      "baseFeePerGas": "0x1312d00",
+      "difficulty": "0x1",
+      "extraData": "0x7861df9e9383123158a248f1158cb73b204664c0fec13b70161e57514b12d757",
+      "gasLimit": "0x4000000000000",
+      "gasUsed": "0x526d",
+      "hash": "0xb7c30427e7d9e0296157dd97138885dc93727b521f60c5e9cecfe777307a5c5f",
+      "l1BlockNumber": "0x19297be",
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "miner": "0xa4b000000000000000000073657175656e636572",
+      "mixHash": "0x0000000000000eca00000000019297be000000000000003d0000000000000000",
+      "nonce": "0x000000000006b001",
+      "number": "0x69b8f9c",
+      "parentHash": "0x54babdcef78834c02c72eadf022b74f75c27c8bce742f16d5254f6f3735c7cee",
+      "receiptsRoot": "0xb4090ce74bea622a8fbc91395bff0096276f6bfbfc080e9dc2ba4b3d1cd19233",
+      "sendCount": "0xeca",
+      "sendRoot": "0x7861df9e9383123158a248f1158cb73b204664c0fec13b70161e57514b12d757",
+      "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+      "size": "0x32a",
+      "stateRoot": "0x817f4e5171127978b30a21c01a79585a5adbafbe10da193a5a3fbdf55aa457ac",
+      "timestamp": "0x6af304e0",
+      "transactions": [
+        "0xbf019477e5875fdce89f654ba38fa4a6749a3f685496fe3ec90e2289e86a404e",
+        "0x6e27840734389585867cb6355092b07b70e656e2fd0f7a813cf284a188b7231d"
+      ],
+      "transactionsRoot": "0x373653e037e744bf93ed82fc59ee5464c09b77f27978e7626d3e1d7de212e9cc",
+      "uncles": []
+    },
+    "freshFallback": true
+  },
+  "checks": [
+    {
+      "name": "requested-alias",
+      "verdict": "UNPROVEN"
+    },
+    {
+      "name": "source-runtime-authentication",
+      "verdict": "UNPROVEN"
+    },
+    {
+      "name": "original-contributions-and-NewLock",
+      "verdict": "PASS"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "3",
+      "matches": true,
+      "lock": {
+        "tokenId": "3",
+        "recipient": "0x495d9D8bC7B1d00CFb3dfE8aa3666C64771910ED",
+        "shares": "562524912595035608166",
+        "bonusMultiplier": "1500000000000000000",
+        "unlockTime": "1803205295"
+      },
+      "directDtf": "0",
+      "directWeth": "2000000000000000000",
+      "routedDtf": "1778859964387451305574664",
+      "reserveSettlementDtf": "0"
+    },
+    {
+      "id": "4",
+      "matches": true,
+      "lock": {
+        "tokenId": "4",
+        "recipient": "0x230f95db9644C5b3608bA676D18426d03e435B1D",
+        "shares": "2281854312954086546",
+        "bonusMultiplier": "1000561780219094285",
+        "unlockTime": "1788261679"
+      },
+      "directDtf": "7215852540309913726431",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "3703818"
+    },
+    {
+      "id": "5",
+      "matches": true,
+      "lock": {
+        "tokenId": "5",
+        "recipient": "0xfAD14E74911353728b9Bbfd9f0566827790c16C2",
+        "shares": "4733571557235944381",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790249586"
+      },
+      "directDtf": "14939945008882434692090",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "5679593238886465"
+    },
+    {
+      "id": "6",
+      "matches": true,
+      "lock": {
+        "tokenId": "6",
+        "recipient": "0xD3d58fDD70B33143052DE127bE8700fa37825E96",
+        "shares": "17499787460727814908",
+        "bonusMultiplier": "1001264005492962142",
+        "unlockTime": "1788535559"
+      },
+      "directDtf": "55026060195080703684401",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "62816193844203301"
+    },
+    {
+      "id": "7",
+      "matches": true,
+      "lock": {
+        "tokenId": "7",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "101771406718761253180",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787759729"
+      },
+      "directDtf": "320000000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "327306939002799687"
+    },
+    {
+      "id": "8",
+      "matches": true,
+      "lock": {
+        "tokenId": "8",
+        "recipient": "0x73c121D572E065c8B6FA6aCeC6B40DefFB62E1dF",
+        "shares": "3177276484339682675",
+        "bonusMultiplier": "1500000000000000000",
+        "unlockTime": "1803230928"
+      },
+      "directDtf": "10000000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "10210351169511441"
+    },
+    {
+      "id": "9",
+      "matches": true,
+      "lock": {
+        "tokenId": "9",
+        "recipient": "0x76b60dCf71dA2294f8aA034432D925D1eED8cf68",
+        "shares": "26355776123062198039",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787797897"
+      },
+      "directDtf": "0",
+      "directWeth": "100000000000000",
+      "routedDtf": "41454674363068691516",
+      "reserveSettlementDtf": "41220182501921"
+    },
+    {
+      "id": "10",
+      "matches": true,
+      "lock": {
+        "tokenId": "10",
+        "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "shares": "635830119561554894104",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787824066"
+      },
+      "directDtf": "1000000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "2848"
+    },
+    {
+      "id": "11",
+      "matches": true,
+      "lock": {
+        "tokenId": "11",
+        "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "shares": "63710177980044045505074",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790330314"
+      },
+      "directDtf": "100000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "3"
+    },
+    {
+      "id": "12",
+      "matches": true,
+      "lock": {
+        "tokenId": "12",
+        "recipient": "0x52F5e84F5eF47a9A0ee998856ec2ee5c27Ea8497",
+        "shares": "47848240999749918187208884",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787825624"
+      },
+      "directDtf": "75081277576132719227716",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "2"
+    },
+    {
+      "id": "13",
+      "matches": true,
+      "lock": {
+        "tokenId": "13",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "14076427465745415752889694594",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790332861"
+      },
+      "directDtf": "22000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "5212466"
+    },
+    {
+      "id": "14",
+      "matches": true,
+      "lock": {
+        "tokenId": "14",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "63994795678617495504331915305",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790332934"
+      },
+      "directDtf": "100000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1390591"
+    },
+    {
+      "id": "15",
+      "matches": true,
+      "lock": {
+        "tokenId": "15",
+        "recipient": "0x5f0A91BeF93b0f947CD82EA39ec2939D6AEc663a",
+        "shares": "384036613756141320755161221429",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790333485"
+      },
+      "directDtf": "600000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1444477"
+    },
+    {
+      "id": "16",
+      "matches": true,
+      "lock": {
+        "tokenId": "16",
+        "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+        "shares": "682214153247983854950221048859993",
+        "bonusMultiplier": "1013123810118285945",
+        "unlockTime": "1790345310"
+      },
+      "directDtf": "1063674247110000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1"
+    },
+    {
+      "id": "17",
+      "matches": true,
+      "lock": {
+        "tokenId": "17",
+        "recipient": "0xBEdf78eB17A054D972c85cE222E2175F19899CD6",
+        "shares": "75379755917867944374016634265685128",
+        "bonusMultiplier": "1000000000000000000",
+        "unlockTime": "1787840867"
+      },
+      "directDtf": "117496434189960639589934",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "1"
+    },
+    {
+      "id": "18",
+      "matches": true,
+      "lock": {
+        "tokenId": "18",
+        "recipient": "0x24E447B7407A304b024a5A57D7638f4cb6D5d0Fb",
+        "shares": "900849466801106375326463227667169",
+        "bonusMultiplier": "1050000000000000000",
+        "unlockTime": "1790443692"
+      },
+      "directDtf": "1000000000000000000",
+      "directWeth": "0",
+      "routedDtf": "0",
+      "reserveSettlementDtf": "16837633828346"
+    }
+  ],
+  "cleanup": {
+    "snapshotReverted": true,
+    "exit": [
+      0,
+      null
+    ],
+    "endpointClosed": true,
+    "endpointReadback": "Unable to connect. Is the computer able to access the url?",
+    "runRootRemoved": true
+  },
+  "resources": [
+    {
+      "pid": 37909,
+      "port": 56079,
+      "endpoint": "http://127.0.0.1:56079",
+      "binary": "/opt/homebrew/bin/anvil",
+      "args": [
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "56079",
+        "--chain-id",
+        "4663",
+        "--fork-url",
+        "https://rpc.mainnet.chain.robinhood.com",
+        "--fork-block-number",
+        "110858140",
+        "--no-storage-caching",
+        "--cache-path",
+        "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/earlier-cp.0mj4Li/anvil",
+        "--no-fork-node-info",
+        "--fork-state-by-number",
+        "--retries",
+        "0",
+        "--timeout",
+        "45000",
+        "--accounts",
+        "0",
+        "--hardfork",
+        "cancun"
+      ]
+    }
+  ],
+  "fatal": "eth_call: {\n  \"code\": -32603,\n  \"message\": \"failed to get storage for 0xaf0E1967c8F755c747615c5427108Bc549CA1122 at 36753460589827863971641182242972585546245821461512788533512751561181329875000: Max retries exceeded HTTP error 429 with body: {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"error\\\":{\\\"code\\\":429,\\\"message\\\":\\\"Too Many Requests\\\"}}\\n\\n\\nHTTP diagnostics:\\ncf-ray: a584d63e99acdfd2-PDX\\nserver: cloudflare\"\n}",
+  "overall": "UNPROVEN"
+}

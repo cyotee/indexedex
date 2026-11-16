@@ -1,0 +1,12 @@
+{
+  "completed": true,
+  "entries": 145319,
+  "files": 126460,
+  "links": 4,
+  "failures": [],
+  "comparedTo": [
+    "byte-audit.json",
+    "initial-bindings.json"
+  ],
+  "qualification": "Every protected file was rehashed, including retained and delivered bytes, the producer claim, historical report/verdict and 87 compiler source bindings."
+}

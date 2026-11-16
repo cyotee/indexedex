@@ -1,0 +1,10 @@
+[
+  {
+    "file": "GenesisWitness.s.sol",
+    "result": "No diagnostics found"
+  },
+  {
+    "file": "CallbackRollbackWitness.s.sol",
+    "result": "No diagnostics found"
+  }
+]

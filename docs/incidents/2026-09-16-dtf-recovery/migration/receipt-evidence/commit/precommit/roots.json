@@ -1,0 +1,22 @@
+{
+  "docs-incidents": {
+    "absolute": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents",
+    "relRoot": "docs/incidents"
+  },
+  "out": {
+    "absolute": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/out",
+    "relRoot": "out"
+  },
+  "cache_forge": {
+    "absolute": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/cache_forge",
+    "relRoot": "cache_forge"
+  },
+  "recovered-input": {
+    "absolute": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-frozen-input-recovery",
+    "relRoot": "phase27-frozen-input-recovery"
+  },
+  "original-incident": {
+    "absolute": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery",
+    "relRoot": "2026-09-16-dtf-recovery"
+  }
+}

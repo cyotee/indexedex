@@ -10,6 +10,8 @@ import {TestBase_UniswapV4DetfMigration} from
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
 
+import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+
 /// @notice Synthetic original allocations; actual SE custody is tested against pinned legacy bytecode.
 contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigration {
     address constant SE = 0x2E9C1F705aB967c5Af59249203d7495bDabb223b;
@@ -34,19 +36,19 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         Migration.DtfCustodySeEntitlementInput[] memory a_ = _inputs();
         a_[0].originalUnits = 5e28;
         vm.startPrank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         a_[0].originalEth = 0.6 ether;
         a_[0].originalUnits = 3e28;
         a_[0].originalWallet = address(0xBEEF);
-        allocation.configureDtfCustodySeEntitlements(a_);
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         vm.stopPrank();
         Migration.DtfCustodySeEntitlement memory c_ = migration.dtfCustodySeEntitlement(ORIGIN);
         uint256 credit_ = migration.previewOriginalCredit(0.6 ether, 0);
         assertTrue(c_.configured);
         assertEq(c_.original.originalWallet, address(0xBEEF));
         assertEq(c_.credit, credit_);
-        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, a_[0])));
+        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, a_[0])));
         assertEq(migration.previewDtfCustodySeSurrender(ORIGIN, 1e28), credit_ / 3);
         assertEq(migration.previewDtfCustodySeSurrender(ORIGIN, 3e28), credit_);
         Migration.DtfCustodySeSurrender memory s_ = migration.dtfCustodySeSurrender(ORIGIN);
@@ -63,7 +65,7 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
     function test_missingOriginalInputsAndWrongAuthorityRejectAtomically() public {
         Migration.DtfCustodySeEntitlementInput[] memory a_ = _inputs();
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         for (uint256 i_; i_ < 5; ++i_) {
             a_ = _inputs();
             if (i_ == 0) a_[0].originalWallet = address(0);
@@ -73,19 +75,19 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
             else a_[0].originalId = bytes32(0);
             vm.prank(migrationOwner);
             vm.expectRevert(abi.encodeWithSelector(Migration.InvalidDtfCustodySeEntitlement.selector, a_[0].originalId));
-            allocation.configureDtfCustodySeEntitlements(a_);
+            allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         }
         assertFalse(migration.dtfCustodySeEntitlement(ORIGIN).configured);
         a_ = _inputs();
         a_[0].source = address(0xBAD);
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedDtfCustodySeSource.selector, 4663, address(0xBAD)));
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         a_[0].source = SE;
         vm.chainId(1);
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedDtfCustodySeSource.selector, 1, SE));
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
     }
 
     function test_currentOwnerAndBadSecondRowPreserveCompleteConfiguration() public {
@@ -95,14 +97,14 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         migration.initiateOwnershipTransfer(next_);
         vm.prank(next_);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, next_));
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         vm.prank(next_);
         migration.acceptOwnershipTransfer();
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, migrationOwner));
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         vm.prank(next_);
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         bytes memory before_ = abi.encode(migration.dtfCustodySeEntitlement(ORIGIN));
         bytes memory remaining_ = abi.encode(migration.dtfCustodySeSurrender(ORIGIN));
         Migration.DtfCustodySeEntitlementInput[] memory batch_ = new Migration.DtfCustodySeEntitlementInput[](2);
@@ -114,7 +116,7 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         batch_[1].contributionsKnown = false;
         vm.prank(next_);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidDtfCustodySeEntitlement.selector, batch_[1].originalId));
-        allocation.configureDtfCustodySeEntitlements(batch_);
+        allocation.configureDtfCustodySeEntitlements(batch_, pricingId);
         assertEq(abi.encode(migration.dtfCustodySeEntitlement(ORIGIN)), before_);
         assertEq(abi.encode(migration.dtfCustodySeSurrender(ORIGIN)), remaining_);
         assertFalse(migration.dtfCustodySeEntitlement(batch_[1].originalId).configured);
@@ -124,33 +126,33 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         Migration.DtfCustodySeEntitlementInput[] memory a_ = _inputs();
         a_[0].originalId = migration.migrationNftOriginalId(NFT, 3);
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, a_[0].originalId));
         _configure(address(this), 1 ether, a_[0].originalId);
         Migration.NftEntitlementInput[] memory n_ = new Migration.NftEntitlementInput[](1);
         n_[0] = Migration.NftEntitlementInput(NFT, 3, address(this), 1, 1 ether, 0, bytes32("fixture"), true);
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, a_[0].originalId));
-        allocation.configureNftEntitlements(n_);
+        allocation.configureNftEntitlements(n_, pricingId);
         n_[0].tokenId = 4;
         vm.prank(migrationOwner);
-        allocation.configureNftEntitlements(n_);
+        allocation.configureNftEntitlements(n_, pricingId);
         a_[0].originalId = migration.migrationNftOriginalId(NFT, 4);
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, a_[0].originalId));
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
         _configure(address(this), 1 ether, ORIGIN);
         _issue(address(this));
         _configure(address(this), 2 ether, bytes32("replacement"));
         a_[0].originalId = ORIGIN;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
-        allocation.configureDtfCustodySeEntitlements(a_);
+        allocation.configureDtfCustodySeEntitlements(a_, pricingId);
     }
 
     function test_activationRemovesNewLoadingAndRetainsExplicitMissingRecordRejection() public {
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(_inputs());
+        allocation.configureDtfCustodySeEntitlements(_inputs(), pricingId);
         _buyOwnerFirstBond();
         vm.prank(migrationOwner);
         allocation.activateMigration();
@@ -158,7 +160,7 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         assertFalse(IERC165(detf).supportsInterface(type(Allocation).interfaceId));
         assertNotEq(IDiamondLoupe(detf).facetAddress(Migration.surrenderMigrationDtfCustodySe.selector), address(0));
         assertNotEq(IDiamondLoupe(detf).facetAddress(Migration.dtfCustodySeEntitlement.selector), address(0));
-        (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureDtfCustodySeEntitlements, (_inputs())));
+        (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureDtfCustodySeEntitlements, (_inputs(), pricingId)));
         assertFalse(ok_);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidDtfCustodySeEntitlement.selector, bytes32("absent")));
         migration.surrenderMigrationDtfCustodySe(bytes32("absent"), 1, 0, block.timestamp);
@@ -169,46 +171,46 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
     function test_canonicalCollisionWithWdAndEarlierNftSurvivesWalletCorrection() public {
         Migration.DtfCustodySeEntitlementInput[] memory y_ = _inputs();
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(y_);
+        allocation.configureDtfCustodySeEntitlements(y_, pricingId);
         y_[0].originalWallet = address(0xBEEF);
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(y_);
+        allocation.configureDtfCustodySeEntitlements(y_, pricingId);
         Migration.WeightedLiquidEntitlementInput[] memory d_ = new Migration.WeightedLiquidEntitlementInput[](1);
         d_[0] = Migration.WeightedLiquidEntitlementInput(
             ORIGIN, address(this), 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7, 3, 1 ether, 0, bytes32("WD"), true
         );
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
-        allocation.configureWeightedLiquidEntitlements(d_);
+        allocation.configureWeightedLiquidEntitlements(d_, pricingId);
         d_[0].originalId = bytes32("other origin");
         vm.prank(migrationOwner);
-        allocation.configureWeightedLiquidEntitlements(d_);
+        allocation.configureWeightedLiquidEntitlements(d_, pricingId);
         y_[0].originalId = d_[0].originalId;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, d_[0].originalId));
-        allocation.configureDtfCustodySeEntitlements(y_);
+        allocation.configureDtfCustodySeEntitlements(y_, pricingId);
 
         address earlier_ = 0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391;
         Migration.NftEntitlementInput[] memory n_ = new Migration.NftEntitlementInput[](1);
         n_[0] = Migration.NftEntitlementInput(earlier_, 3, address(this), 3, 1 ether, 0, bytes32("earlier"), true);
         vm.prank(migrationOwner);
-        allocation.configureNftEntitlements(n_);
+        allocation.configureNftEntitlements(n_, pricingId);
         y_[0].originalId = migration.migrationNftOriginalId(earlier_, 3);
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, y_[0].originalId));
-        allocation.configureDtfCustodySeEntitlements(y_);
+        allocation.configureDtfCustodySeEntitlements(y_, pricingId);
         y_[0].originalId = migration.migrationNftOriginalId(earlier_, 4);
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(y_);
+        allocation.configureDtfCustodySeEntitlements(y_, pricingId);
         n_[0].tokenId = 4;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, y_[0].originalId));
-        allocation.configureNftEntitlements(n_);
+        allocation.configureNftEntitlements(n_, pricingId);
     }
     function test_canonicalOriginCannotBeSyOrBackingAliasInEitherDirection() public {
         Migration.DtfCustodySeEntitlementInput[] memory s_ = _inputs();
         vm.prank(migrationOwner);
-        allocation.configureDtfCustodySeEntitlements(s_);
+        allocation.configureDtfCustodySeEntitlements(s_, pricingId);
         Migration.WeightedSyEntitlementInput[] memory y_ = new Migration.WeightedSyEntitlementInput[](1);
         y_[0] = Migration.WeightedSyEntitlementInput(
             ORIGIN, address(0xBEEF), 0xB55604CF4dcdABB362078e106D20F98512391EdF,
@@ -216,15 +218,40 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         );
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, ORIGIN));
-        allocation.configureWeightedSyEntitlements(y_);
+        allocation.configureWeightedSyEntitlements(y_, pricingId);
         y_[0].originalId = bytes32("other SY origin");
         vm.prank(migrationOwner);
-        allocation.configureWeightedSyEntitlements(y_);
+        allocation.configureWeightedSyEntitlements(y_, pricingId);
         s_[0].originalId = y_[0].originalId;
         s_[0].originalWallet = address(0xCAFE);
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, y_[0].originalId));
-        allocation.configureDtfCustodySeEntitlements(s_);
+        allocation.configureDtfCustodySeEntitlements(s_, pricingId);
     }
 
+
+    /// @notice A-prepared rows cannot clear or reprice storage after installing B; explicit B reload replaces only configuration.
+    function test_StaleBook_DtfCustodySeReplacementPreservesRecords() public {
+        Migration.DtfCustodySeEntitlementInput[] memory a_ = _inputs();
+        bytes32 old_ = pricingId;
+        vm.prank(migrationOwner); allocation.configureDtfCustodySeEntitlements(a_, old_);
+        bytes memory record_ = abi.encode(migration.dtfCustodySeEntitlement(ORIGIN));
+        bytes memory remaining_ = abi.encode(migration.dtfCustodySeSurrender(ORIGIN));
+        uint256 supply_ = IERC20(detf).totalSupply();
+        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        next_.swapFeeWad = 1e17;
+        vm.prank(migrationOwner); pricingId = allocation.setMigrationWeightedPricing(next_);
+        assertEq(abi.encode(migration.dtfCustodySeEntitlement(ORIGIN)), record_);
+        assertEq(abi.encode(migration.dtfCustodySeSurrender(ORIGIN)), remaining_);
+        vm.prank(migrationOwner);
+        vm.expectRevert(abi.encodeWithSelector(Pricing.MigrationWeightedPricingBookMismatch.selector, old_, pricingId));
+        allocation.configureDtfCustodySeEntitlements(a_, old_);
+        assertEq(abi.encode(migration.dtfCustodySeEntitlement(ORIGIN)), record_);
+        assertEq(abi.encode(migration.dtfCustodySeSurrender(ORIGIN)), remaining_);
+        vm.prank(migrationOwner); allocation.configureDtfCustodySeEntitlements(a_, pricingId);
+        assertEq(migration.dtfCustodySeEntitlement(ORIGIN).configurationId, keccak256(abi.encode(block.chainid, detf, pricingId, a_[0])));
+        assertNotEq(abi.encode(migration.dtfCustodySeEntitlement(ORIGIN)), record_);
+        assertEq(IERC20(detf).totalSupply(), supply_);
+        assertEq(receipt.stakingState().totalGons, 0);
+    }
 }

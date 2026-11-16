@@ -1,0 +1,477 @@
+{
+  "checks": [
+    {
+      "kind": "implementation",
+      "path": "artifact-deployment-bindings.json",
+      "sha256": "0d20b9fa9e43a4768b11916c97510f3d9251738de187243c34135235fc9c6b60",
+      "bytes": 797350,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "authority-bindings.json",
+      "sha256": "f5dca61a6e909f911aad3ba40f3df66f43162e423405e8f8c1816e74bc7875a9",
+      "bytes": 4528,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "binding-method.md",
+      "sha256": "63c277e04e1b060f9fb20f6ce9edf3d0920ede10fb92b311f1b2f141bdbd3881",
+      "bytes": 6216,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "candidate-01.json",
+      "sha256": "84bbedeef002ee142c2cd134c4180ba6c1c6795cc483183cce401a4cc9972ef3",
+      "bytes": 65657,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "candidate-01.patch",
+      "sha256": "5ab0b43cedb2e9ededee532b0f0ee450621b35a6bc6c6023caafded68c17e953",
+      "bytes": 66149,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "cleanup-final.log",
+      "sha256": "a86123b7784072495a7488f6dada85f6a4606878d594867cc5b3a92513713cea",
+      "bytes": 1643,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "cleanup.log",
+      "sha256": "c29a564707a9a3dca0348ab8cfba30c4f956e86f35e2bf9b69a2f175bfa09fcb",
+      "bytes": 397,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "design.md",
+      "sha256": "025f7d5c148723734489d9830180bff5c8f68b4d50c0c58de1dc2426fb9141a9",
+      "bytes": 3161,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "execution-evidence.json",
+      "sha256": "7758cd586faaacbdad8d51fa2e072af833a923e77e289c7229dbb4184320a989",
+      "bytes": 71944,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "failed-attempts.md",
+      "sha256": "8ce352c9f3fa5030d325d78a01c4204c4c1d032807bcf17872f3d388a7f813ac",
+      "bytes": 4359,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "forks-final-01.log",
+      "sha256": "68bac3f8fd389b86ec63fec8ac6de64108c05f0f31e91b4c320cb3595ae6a16d",
+      "bytes": 1635279,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "legacy-01.log",
+      "sha256": "2c35ce1a04d93db611ebfbfd3bfebf5ca5d52535a1f20574869e573018607bd7",
+      "bytes": 219292,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "legacy-02.log",
+      "sha256": "4757e2edb0f4fe974140b19bf458c3de31c5fd081777e40e940d8d5f928abd6c",
+      "bytes": 218494,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "legacy-donation-counterexample-01.log",
+      "sha256": "816856b70ea76eced6ea7692583b0e8557d1a5b616aeb335dff3d2c6b042f370",
+      "bytes": 137122475,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "native-01.log",
+      "sha256": "2daa0a2f071e679f10fe65f3a697a3efbd93bbdeb736bd8d424cd9d3d60c7564",
+      "bytes": 215960,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "native-02.log",
+      "sha256": "5a881a06914e630265b43653ad536b1a439b09bce65a08f914d3cb71af4e7a4e",
+      "bytes": 75031822,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "native-03.log",
+      "sha256": "bc8f0cf4b7b8969b2867accb6cd6de702e24086379e9584f2f24ec8ba0e41284",
+      "bytes": 238788,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "ordinary-final-01.log",
+      "sha256": "57d678f8fd449f0f80123042aa49c7c904eb44ac28f045406369afd355429fd4",
+      "bytes": 325272,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "report.md",
+      "sha256": "01f68baad98a430d0694ec0b0d9a8b8af83c766765d50ab2c01ea0796e3b3d55",
+      "bytes": 17641,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "resolved-settings.json",
+      "sha256": "5d7f30c925666bc68a9cedcaa4ac0740475288d041180233103fd91fee42a823",
+      "bytes": 6170,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "implementation",
+      "path": "specs-final-01.log",
+      "sha256": "0ef39999b0f3e6fe6ddcdff208021b28b8d90aa8113b4099d61a21bd2d4b1f2a",
+      "bytes": 3111215,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+      "sha256": "036326dac3b032ea5041058a925c1c1e473ec11ecdfa5c92117ac895315ea991",
+      "bytes": 12828,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyRecoveryHandler.sol",
+      "sha256": "cf46ddab94407cf8d4666882da4547e96ad8390d342848b4fc868e01891a58e5",
+      "bytes": 9495,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+      "sha256": "98b29c7a27484df9bfbf2c5193fac5c4b60a977a28c3552b21daff4e13169b75",
+      "bytes": 14647,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+      "sha256": "de7a91ccf5ccd4ad5ff2d577a6da91e5057bc2ac51bda7e80619501d6b8fe7d9",
+      "bytes": 9439,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+      "sha256": "4a4d82bbcf31cdf10bf9d21f08b29ecc9de708ac674c61e938b4241f1300c7ca",
+      "bytes": 1525,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+      "sha256": "8860da03ba242e188a077fe5193138c25536e54c033dc0aa24cadbfc91ce0b3e",
+      "bytes": 6089,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "sha256": "f4f78a0d2a05215cdcee3ea1e87afe2d144af945ed00812a0ecf2bdcbfbe1b48",
+      "bytes": 6133,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "source",
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeInvariant.t.sol",
+      "sha256": "e23bf73a7b786dea75f9efb90025bc12c578cf28ed899143f1ba54014feea1b8",
+      "bytes": 1792,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase24-stateful-invariants-brief.md",
+      "sha256": "3eda88fd29b50b75301fb3a713c2faa5f0758c35c8f992692b38127181a4c887",
+      "bytes": 10099,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/stateful-invariant-intake.md",
+      "sha256": "30583b375708b0ff219bc7491baf533568714760287cc83630caab6fb02108c3",
+      "bytes": 7791,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-source-coverage-snapshot.md",
+      "sha256": "7ce2ab4274051348a09da278049d0e9f22aa0f368aeb6a3fba2b70c0af3c9667",
+      "bytes": 7064,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "bytes": 79305,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "bytes": 108022,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/report.md",
+      "sha256": "49fab644f20998227e1c30013c07e2895a8feeda1e0714ae481a860b4d11e0dd",
+      "bytes": 13958,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/verification-r2/report.md",
+      "sha256": "14750c64ed29a92ddf36b8c68fd6ec8b9fcdd39b7bc61e612662b1ff617a3f41",
+      "bytes": 24548,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-23-claimed-sy-integration/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/commit/verification.md",
+      "sha256": "653350b3af3d011ad068a0885461c6828d5cb1aff481ba15900a7ff2563f773b",
+      "bytes": 20461,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-11-same-wallet-sources/docs/incidents/2026-09-16-dtf-recovery/migration/same-wallet-sources/claims/contract.md",
+      "sha256": "a657b9e8a5a6925130a6a56f7334a26536162effac321254144063774fd98d41",
+      "bytes": 48499,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/correction-verification/report.md",
+      "sha256": "6e8277a67bea6851ea6eac0e218577c5a07d1f833c14f339263f65ea1bad452b",
+      "bytes": 20175,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/CLAUDE.md",
+      "sha256": "a0c6e9db00e4410cde7ccacc9aa7c793d6328544168d584fb6dea32d330fa388",
+      "bytes": 15086,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/foundry.toml",
+      "sha256": "ea3fc441d979223b919c91a2c9e46fa966b681fafd921da6e309c5c9b511c839",
+      "bytes": 3814,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/remappings.txt",
+      "sha256": "e0f1297fe560939ae1d13fcbda783d32765f0d5c0836f7e8a4a22faed3653b6e",
+      "bytes": 520,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_RULES.md",
+      "sha256": "897fea82d599e9b3b0dc28ff88b79a1adf090a591484769efc551290f0a67a04",
+      "bytes": 1447,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_CODING.md",
+      "sha256": "ad47cf28938e8a5a28b166f89624ea931eb0eba6cc5ee891bd3f8346f5dc7a27",
+      "bytes": 1112,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_DEPLOYMENT.md",
+      "sha256": "5533d906697335e5328c8ec1ee6cdcb971dfd19a71513cec91118920dd63eba2",
+      "bytes": 1578,
+      "mode": 33188,
+      "match": true
+    },
+    {
+      "kind": "authority",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-24-stateful-invariants/.github/ASSISTANT_TESTS.md",
+      "sha256": "80f5fa64e97c22e2373d323c6b2ea9b48ef06781ef0b6f42537a09d3742933a4",
+      "bytes": 1874,
+      "mode": 33188,
+      "match": true
+    }
+  ],
+  "producerSeal": {
+    "expected": "97d7df1bb3b21d7c17f272e48c73fe0e44e5a4377d7ce9318aa125e0a450c303",
+    "actual": "97d7df1bb3b21d7c17f272e48c73fe0e44e5a4377d7ce9318aa125e0a450c303"
+  },
+  "implementationMembership": {
+    "expected": [
+      "artifact-deployment-bindings.json",
+      "authority-bindings.json",
+      "binding-method.md",
+      "candidate-01.json",
+      "candidate-01.patch",
+      "cleanup-final.log",
+      "cleanup.log",
+      "design.md",
+      "execution-evidence.json",
+      "failed-attempts.md",
+      "forks-final-01.log",
+      "legacy-01.log",
+      "legacy-02.log",
+      "legacy-donation-counterexample-01.log",
+      "native-01.log",
+      "native-02.log",
+      "native-03.log",
+      "ordinary-final-01.log",
+      "report.md",
+      "resolved-settings.json",
+      "seal.json",
+      "specs-final-01.log"
+    ],
+    "actual": [
+      "artifact-deployment-bindings.json",
+      "authority-bindings.json",
+      "binding-method.md",
+      "candidate-01.json",
+      "candidate-01.patch",
+      "cleanup-final.log",
+      "cleanup.log",
+      "design.md",
+      "execution-evidence.json",
+      "failed-attempts.md",
+      "forks-final-01.log",
+      "legacy-01.log",
+      "legacy-02.log",
+      "legacy-donation-counterexample-01.log",
+      "native-01.log",
+      "native-02.log",
+      "native-03.log",
+      "ordinary-final-01.log",
+      "report.md",
+      "resolved-settings.json",
+      "seal.json",
+      "specs-final-01.log"
+    ]
+  },
+  "originalRecords": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-24-stateful-invariants/index",
+      "sha256": "724f6108a59c41ca777c22d14d486b48298fcab1a1ff74e2f9ea3f44a272ed1d",
+      "bytes": 2615679,
+      "mode": 33188,
+      "actualSha256": "724f6108a59c41ca777c22d14d486b48298fcab1a1ff74e2f9ea3f44a272ed1d",
+      "actualBytes": 2615679,
+      "actualMode": 33188,
+      "decodedTextUnchanged": true,
+      "note": "Initial index digest was computed over read-helper decoded text, NOT raw binary index bytes; this is not raw index-byte preservation proof. Git cached/unstaged comparisons are clean."
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.git/worktrees/dtf-migration-phase-24-stateful-invariants/HEAD",
+      "sha256": "55eb467bf493d97b2f10565b49be43816ab9dbabf035325d891b0b22a0dd23fe",
+      "bytes": 64,
+      "mode": 33188,
+      "actualSha256": "55eb467bf493d97b2f10565b49be43816ab9dbabf035325d891b0b22a0dd23fe",
+      "actualBytes": 64,
+      "actualMode": 33188,
+      "decodedTextUnchanged": true,
+      "note": "UTF-8 text identity"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.git/refs/heads/work/dtf-migration-phase-24-stateful-invariants",
+      "sha256": "1fc8fc83c08ffea454b82ae5312aa8a5ba769c5cd6ee1ab2520b9f3d423526fc",
+      "bytes": 41,
+      "mode": 33188,
+      "actualSha256": "1fc8fc83c08ffea454b82ae5312aa8a5ba769c5cd6ee1ab2520b9f3d423526fc",
+      "actualBytes": 41,
+      "actualMode": 33188,
+      "decodedTextUnchanged": true,
+      "note": "UTF-8 text identity"
+    }
+  ],
+  "links": [
+    {
+      "path": "lib/crane",
+      "target": "/Users/cyotee/Projects/indexedex/lib/crane",
+      "mode": 41453,
+      "inode": 19989693,
+      "match": true
+    },
+    {
+      "path": "node_modules",
+      "target": "/Users/cyotee/Projects/indexedex/node_modules",
+      "mode": 41453,
+      "inode": 19989694,
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "clientVersion": "anvil/v1.9.1",
+  "clientSemver": "1.9.1-nightly+430523103f.1793686322.dist",
+  "clientCommitSha": "430523103f3e2f9ba432ffdd2031a9f966153d0d",
+  "chainId": 31337,
+  "instanceId": "0x2a2d138946f2fd42bd18d2dfd2390aa2171483aacd43be311453e70928afd4dc",
+  "latestBlockNumber": 0,
+  "latestBlockHash": "0x979d4cb0ed72aa4775474fce9a40171cb70bb860622bf1cb3a8739a143045772",
+  "forkedNetwork": null,
+  "snapshots": {}
+}

@@ -1,0 +1,117 @@
+{
+  "type": "AdversarialVerify",
+  "verdict": "confirmed",
+  "failure_class": "none",
+  "scope": "Combined setter receipt binding and configure interruption unit/CLI gate only; excludes fresh Anvil and task-10 lifecycle acceptance",
+  "confidence": "high",
+  "sources": {
+    "integrationClaim": {
+      "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/operator-repairs-integration-done.json",
+      "sha256": "34b549b9fc82cbf70dacab65ec3d125dcc4219f3991fb18613c3bb9b68be5fda"
+    },
+    "admittedVerdicts": [
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/setter-repair-verdict.json",
+        "sha256": "1ea2a81393fe150fe167d183b22f6d0319a835e8eb4b6f93ebcfc397b56660dd",
+        "verdict": "confirmed",
+        "scope": "Generated source-bound pricing ABI and setter receipt repair only; excludes task 10, configure interruption, integration and readiness",
+        "sourceHashesMatch": true
+      },
+      {
+        "path": ".omo/ulw-execute/dtf-conformance/owner-correction-20261115/configure-fault-verdict.json",
+        "sha256": "94b162f56eac019a8fb83eccd138a07d0614e4b42370cea2b54afdd02416c62d",
+        "verdict": "confirmed",
+        "scope": "Configure fault-after-mined CLI interruption repair in execution.ts and execution.test.ts only; excludes task 10, shared gate and fresh real lifecycle",
+        "sourceHashesMatch": true
+      }
+    ],
+    "productSourceFingerprints": [
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+        "sha256": "fc57cc1f4eb75a5df8f53a36a83d7314922d5acd177c48c5ce563f1b2047ca40",
+        "bytes": 14667,
+        "pureLines": 219
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.ts",
+        "sha256": "58881534f693274494b8cdb4e87027208fe409024fbc9d228dd0d0f54f80ae67",
+        "bytes": 29608,
+        "pureLines": 416
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-domain.test.ts",
+        "sha256": "130932ca3a517b4753b3f3e34bdc2df11eca8f11c64429b629abc8eb66881acd",
+        "bytes": 14055,
+        "pureLines": 222
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution-state.test.ts",
+        "sha256": "d8834a16ed91152100a700b529bc0a52f9a04e7ef3a06017171031b6bc8ac6fe",
+        "bytes": 19308,
+        "pureLines": 290
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+        "sha256": "c5b203a7ab63b56a9c510a9574e907463bb2ca3175e4cf7f9ac70df264d84ac1",
+        "bytes": 31166,
+        "pureLines": 424
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution.ts",
+        "sha256": "5d5bc0501c155576c4ab8dace1ee1bd6b593faadd9bc4a4053c6a2c1edd0563f",
+        "bytes": 19008
+      },
+      {
+        "path": "scripts/recovery/dtf-migration/execution.test.ts",
+        "sha256": "d3617d5b61e03441f229f172ac6371f8a89c2aece8deb49889aa269cca13fc9e",
+        "bytes": 20619
+      }
+    ]
+  },
+  "evidence": {
+    "report": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/independent/report.md",
+    "verification": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-10/owner-correction-20261115/operator-repairs/integration/independent/verification.json",
+    "operatorTests": {
+      "passed": 280,
+      "failed": 0,
+      "files": 21,
+      "exit": 0
+    },
+    "strictOperatorTypes": {
+      "selectedFiles": 87,
+      "exit": 0
+    },
+    "strictHelperTypes": {
+      "selectedFiles": 2,
+      "exit": 0
+    },
+    "exactArgvRawOutputExitBindingsVerified": true,
+    "all107SourcesUnchanged": true,
+    "all252ProtectedEvidenceFilesUnchanged": true,
+    "all35HistoricalBoundSourcesMatch": true,
+    "all152DeliveredEvidenceFilesMatch": true,
+    "originalUnboundHistoricalSetterStillRejected": true,
+    "newSetterPositiveSeparateContext": true,
+    "configureRecoveryRetainsOneSendAndCompletion": true,
+    "removedWitnessPinPolicyPreserved": true,
+    "settledReviewsRepeated": false,
+    "testsOrReplaysRerunByVerifier": false,
+    "pendingQaProcesses": []
+  },
+  "limitations": [
+    "No fresh Anvil transaction, real proxy/custody or task-10 lifecycle acceptance.",
+    "No task-10 completion, whole-plan completion, or parent readiness marker.",
+    "Five dormant rehearsal imports lack complete lane-era digest identity; 57 of 62 CLI imports match available baselines. Current full types/tests cover current tree only.",
+    "Historical recursive third-party module bytes not exhaustively fingerprinted; current manifests/lockfile/compiler captured.",
+    "One integrated run, no flake-rate claim. Earlier custom audit/LSP limitations are historical and not recast as passing."
+  ],
+  "fixes": [],
+  "unitCliGateAccepted": true,
+  "freshAnvilAccepted": false,
+  "task10LifecycleAccepted": false,
+  "task10Complete": false,
+  "wholePlanComplete": false,
+  "parentReadinessMarkerWritten": false,
+  "parentOwnsWake": true,
+  "writtenLast": true
+}

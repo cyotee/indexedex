@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "pin": {
+    "chainId": "0x1237",
+    "block": "110896337",
+    "hash": "0x25c1fadad6186127fddefb98655fdfd884f217b375f7e1804c1d06e406aa940f",
+    "stateRoot": "0xdf8f644d2065a07c4f7ba9d00fdfbcf710eda0573649f2586713e0f9978f41cc",
+    "timestamp": "0x6af31466",
+    "rpcAlias": "robinhood_mainnet_alchemy",
+    "label": "fresh-not-historical"
+  },
+  "identities": [],
+  "registry": {
+    "signature": "vaultsOfToken(address) view returns (address[])",
+    "selector": "0x2b9fc930",
+    "args": [
+      "0xee5576fa1bcaa380e591d01245f406f3f384eb01"
+    ],
+    "value": [
+      "0xb7D4Bb379D361AD442CddEE53eA71a33957826A7",
+      "0x923877336b14662cFb5B3A60b14e7d716d54A888",
+      "0xaf0E1967c8F755c747615c5427108Bc549CA1122",
+      "0x999DaE02D22E5FEe1c4508430D5196d31d631009",
+      "0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+      "0x46E068c2393e189Fbc86632f67210aF253a42Aa8",
+      "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7"
+    ]
+  },
+  "graph": [],
+  "inputs": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/sources.json",
+      "bytes": 5502,
+      "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/manifest.json",
+      "bytes": 3209,
+      "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/custody-inventory.csv",
+      "bytes": 139535,
+      "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/ENTITLEMENT_LEDGER_PROVENANCE.md",
+      "bytes": 41316,
+      "sha256": "f3bd789b64a49a245f8f4a6a961199d22c7f7ae84503e61f38bab5c8cec83349"
+    }
+  ]
+}

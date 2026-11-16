@@ -1,0 +1,1033 @@
+diff --git a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+index 9202bed8..0e2ab13e 100644
+--- a/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
++++ b/docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md
+@@ -1,5 +1,84 @@
+ # Bounded Migration operator runbook
+ 
++## Offline historical review candidates
++
++```sh
++bun scripts/recovery/dtf-migration/cli.ts derive-candidates \
++  --input "$COMPLETE_HISTORICAL_TREE" --output "$NEW_CANDIDATE_DIRECTORY"
++```
++
++The input directory contains the original `manifest.json`, `sources.json` and
++every declared file. Preserve relative paths, including the pre-exploit sibling.
++Supply paths explicitly; there is no default workstation path, network lookup,
++RPC, signer or acquisition fallback. Every declared byte length and SHA-256,
++including Markdown, must match before any raw CSV is parsed. The manifest is
++the explicit trust root; its binding authenticates `sources.json` before that
++index is parsed. Missing, altered or symlinked inputs reject. A supplied
++hash-authenticated recovered historical body is not an original capture:
++retain its recovery provenance separately, never change a binding to accept
++later annotations. The annotated primary tree remains a negative case.
++
++`candidates.json` has version `dtf-historical-review-candidates-v1` and status
++`NON-ISSUABLE-REVIEW-CANDIDATES`. It is rejected by preparation, prepared-manifest
++validation and execution schemas. It supplies no configuration IDs, C0,
++approved flags, invented economic origins, Q0 or known-zero prior credit.
++Existing `prepare`/`validate`/execution and journal semantics are unchanged.
++Only the new offline command accepts this historical tree.
++
++The weighted NFT join uses S008 purchases, S011 mint/input transfers and S006
++pre-incident DTF details, retaining chain/collection/ID, recipient/payer,
++purchase/mint/input locators and separate observed DTF/WETH. Transaction sharing,
++mint and payer conflicts prohibit unique input attribution. An observed zero
++means zero in the saved inbound subset, not zero native cost, refund or net
++contribution. The 41 pre-incident and two later purchases are observations, not
++eligibility decisions. S009 retains all earlier LP-accounting-lock observations,
++direct DTF/WETH and routed intermediate DTF separately. Its unavailable original
++raw receipts remain a qualification; routed DTF is not another contribution.
++
++The complete CSV census retains original fields as `historicalFields` alongside
++parsed integer/unknown quantities and review links. Blank quantities become
++null; only the original signed `gons_delta` column accepts negative integers.
++LP-accounting shares, physical LP, gons, raw weights and native9/18/19/28 remain
++distinct. No sums across those units are produced. Position/exclusion,
++account/position/holding/recovery/exception, index-subset, NFT funding/claim
++and observed-output relations are checked. Machine-readable unresolved records
++identify missing basis, aliases, previous delivery, incomplete receipts/native/
++WETH/recoveries, stale control and unobserved accepted categories. Historical
++look-through/held totals are diagnostics, never Q0, contribution inputs or awards.
++Unrecomputed reported fields are listed explicitly, not accepted as proven.
++
++All historical policy fields are retained only as history. Current plan r5 and
++PRD r22 govern, especially MIG-R42 configured original-wallet/control and
++Stage2-only surrender. Old bearer, loss-formula, no-credit-after-custody and
++upfront-zero wording supplies no authority. Do not require intermediate-holder
++ancestry as a surrender prerequisite. Independent recipient observations remain
++separate from asset-surrender candidates; both need disjoint-original review.
++Standalone native/WETH observations are contribution/recovery provenance, not
++new compensated surrender routes.
++
++Writes are exclusive to a new output directory. Retain every failed output and
++command. Repeated runs and a complete byte-preserving relocation from another
++CWD produce identical canonical bytes. No wall clock or absolute input paths
++enter candidates. To verify the new source boundary locally:
++
++```sh
++bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext \
++  --moduleResolution Bundler --strict --noUncheckedIndexedAccess \
++  --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck \
++  --types node scripts/recovery/dtf-migration/*.ts
++bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts
++```
++
++Before any live preparation, separately acquire missing original data/receipts,
++refresh pinned current control and recoveries, reconcile exact original units
++and contribution components, remaining rights, aliases and previous delivery,
++independently review disjoint values, then arrange actual funding and capture
++the supported immutable mint-preview snapshot. Only separately reviewed
++originals may enter the existing loader preparation. This command does not
++close E-S, broader TokenStaking conservation, disabled conversions, operational
++dataset approval, selected reserve composition, deployment gas or missing P1
++historical artifacts, and does not authorize acquisition or public execution.
++
+ ## Saved-evidence bundles and fresh relocation
+ 
+ Every rehearsal requires `--bundle "$AUTHORITY_BUNDLE"`, naming a supplied
+diff --git a/scripts/recovery/dtf-migration/candidate-input.ts b/scripts/recovery/dtf-migration/candidate-input.ts
+new file mode 100644
+index 00000000..9a5ea3a8
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidate-input.ts
+@@ -0,0 +1,144 @@
++import { lstat, readFile } from "node:fs/promises";
++import { dirname, relative, resolve } from "node:path";
++import { z } from "zod";
++import { fingerprint } from "./provenance.js";
++import { PreparationError } from "./schema.js";
++
++const binding = z.object({
++  sha256: z.string().regex(/^[0-9a-f]{64}$/),
++  bytes: z.number().int().nonnegative().safe(),
++});
++const sourceIndex = z.object({
++  chainId: z.literal(4663),
++  incident: z.object({
++    lastFullBlock: z.number().int().safe(), attackBlock: z.number().int().safe(),
++    attackTransactionIndex: z.number().int().safe(), attackTransaction: z.string(),
++  }).readonly(),
++  evidenceCutoff: z.object({ block: z.number().int().safe(), hash: z.string(), utc: z.string() }).readonly(),
++  sourceNotes: z.array(z.string()).readonly(),
++  sources: z.array(binding.extend({ id: z.string().regex(/^S[0-9]{3}$/), path: z.string(), description: z.string() }).readonly()).readonly(),
++}).readonly();
++export type CandidateBinding = z.infer<typeof binding> & {
++  readonly path: string; readonly declaration: string;
++};
++export type CandidateInput = {
++  readonly sources: z.infer<typeof sourceIndex>;
++  readonly bindings: readonly CandidateBinding[];
++  readonly bytes: ReadonlyMap<string, Uint8Array>;
++};
++export function candidateError(message: string): never {
++  throw new PreparationError("PROVENANCE", `candidates: ${message}`);
++}
++
++// The two explicit indexes are the trust roots. Authenticate sources.json from
++// manifest.json before parsing it, then authenticate EVERY declaration before CSV.
++export async function loadCandidateInput(root: string): Promise<CandidateInput> {
++  const base = resolve(root);
++  const read = async (path: string): Promise<Uint8Array> => {
++    const target = resolve(base, path);
++    const rel = relative(dirname(base), target);
++    if (rel.startsWith("..") || rel === "") candidateError(`path outside input tree: ${path}`);
++    let cursor = target;
++    for (;;) {
++      const stat = await lstat(cursor);
++      if (stat.isSymbolicLink()) candidateError(`symlink input: ${path}`);
++      if (cursor === target && !stat.isFile()) candidateError(`not a regular file: ${path}`);
++      const parent = dirname(cursor);
++      if (parent === cursor) break;
++      cursor = parent;
++    }
++    return readFile(target);
++  };
++  const manifestBytes = await read("manifest.json");
++  const manifest = z.object({ files: z.record(binding) }).parse(JSON.parse(new TextDecoder().decode(manifestBytes)));
++  const sourceBinding = manifest.files["sources.json"];
++  if (!sourceBinding) candidateError("manifest must bind sources.json");
++  const sourceBytes = await read("sources.json");
++  const check = (bytes: Uint8Array, expected: z.infer<typeof binding>, path: string): void => {
++    if (bytes.byteLength !== expected.bytes || fingerprint(bytes) !== expected.sha256) candidateError(`raw binding differs: ${path}`);
++  };
++  check(sourceBytes, sourceBinding, "sources.json");
++  const sources = sourceIndex.parse(JSON.parse(new TextDecoder().decode(sourceBytes)));
++  if (new Set(sources.sources.map((s) => s.id)).size !== sources.sources.length) candidateError("duplicate source ID");
++  const declarations: CandidateBinding[] = [
++    ...sources.sources.map((s) => ({ ...s, declaration: s.id })),
++    ...Object.entries(manifest.files).map(([path, b]) => ({ ...b, path, declaration: "manifest" })),
++  ];
++  const bytes = new Map<string, Uint8Array>([["manifest.json", manifestBytes]]);
++  for (const d of declarations) {
++    if (relative(base, resolve(base, d.path)) !== d.path) candidateError(`noncanonical path: ${d.path}`);
++    const raw = bytes.get(d.path) ?? await read(d.path);
++    check(raw, d, d.path);
++    bytes.set(d.path, raw);
++  }
++  return { sources, bindings: declarations, bytes };
++}
++
++export type RawRow = Readonly<Record<string, string>>;
++export type TableRow = {
++  readonly locator: string; readonly row: number; readonly path: string;
++  readonly fields: RawRow;
++};
++// RFC4180 subset with strict rectangular rows, doubled quotes and embedded
++// newlines. Row numbers are logical CSV records (header is record 1).
++export function parseCandidateCsv(text: string, path: string): readonly TableRow[] {
++  const records: string[][] = [];
++  let row: string[] = [], field = "", quoted = false, closed = false;
++  for (let i = 0; i < text.length; i++) {
++    const c = text[i];
++    if (quoted) {
++      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
++      else if (c === '"') { quoted = false; closed = true; }
++      else field += c;
++    } else if (c === '"' && field === "" && !closed) quoted = true;
++    else if (c === "," || c === "\n" || c === "\r") {
++      row.push(field); field = ""; closed = false;
++      if (c !== ",") {
++        if (c === "\r" && text[i + 1] === "\n") i++;
++        records.push(row); row = [];
++      }
++    } else {
++      if (closed || c === '"') candidateError(`malformed CSV: ${path}`);
++      field += c;
++    }
++  }
++  if (quoted) candidateError(`unclosed CSV quote: ${path}`);
++  if (row.length || field || closed) { row.push(field); records.push(row); }
++  const header = records.shift();
++  if (!header?.length || header.some((h) => !h) || new Set(header).size !== header.length) candidateError(`invalid CSV header: ${path}`);
++  return records.map((values, i) => {
++    if (values.length !== header.length) candidateError(`CSV width: ${path}:${i + 2}`);
++    const fields = Object.fromEntries(header.map((key, j) => [key, values[j] ?? ""]));
++    return { locator: `${path}#row=${i + 2}`, row: i + 2, path, fields };
++  });
++}
++export function field(row: TableRow, key: string): string {
++  const value = row.fields[key];
++  if (value === undefined) candidateError(`missing column ${key}: ${row.locator}`);
++  return value;
++}
++export function integer(value: string): string {
++  if (!/^(0|[1-9][0-9]*)$/.test(value)) candidateError(`malformed unsigned integer: ${value}`);
++  return value;
++}
++export function optionalInteger(value: string): string | null {
++  return value === "" ? null : integer(value);
++}
++export function signedInteger(value: string): string {
++  if (!/^(0|-?[1-9][0-9]*)$/.test(value)) candidateError(`malformed signed integer: ${value}`);
++  return value;
++}
++export function table(input: CandidateInput, path: string): readonly TableRow[] {
++  const bytes = input.bytes.get(path);
++  if (!bytes) candidateError(`missing bound table: ${path}`);
++  return parseCandidateCsv(new TextDecoder("utf-8", { fatal: true }).decode(bytes), path);
++}
++export function unique(rows: readonly TableRow[], key: string): ReadonlyMap<string, TableRow> {
++  const result = new Map<string, TableRow>();
++  for (const r of rows) {
++    const id = field(r, key).toLowerCase();
++    if (!id || result.has(id)) candidateError(`duplicate/empty ${key}: ${r.locator}`);
++    result.set(id, r);
++  }
++  return result;
++}
+diff --git a/scripts/recovery/dtf-migration/candidate-inventory.test.ts b/scripts/recovery/dtf-migration/candidate-inventory.test.ts
+new file mode 100644
+index 00000000..cc7754c6
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidate-inventory.test.ts
+@@ -0,0 +1,88 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { deriveInventory } from "./candidate-inventory.js";
++import type { CandidateInput, RawRow } from "./candidate-input.js";
++import { reconcileHistoricalProofs } from "./candidate-proofs.js";
++
++const wallet = `0x${"1".repeat(40)}`, asset = `0x${"2".repeat(40)}`, tx = `0x${"a".repeat(64)}`;
++const position = `weighted:liquid:${wallet}`, holding = `held:${wallet}`, recovery = `${tx}:11`;
++const rowCsv = (rows: readonly RawRow[], emptyHeader: string): string => {
++  const keys = Object.keys(rows[0] ?? { [emptyHeader]: "" });
++  return [keys.join(","), ...rows.map((r) => keys.map((k) => `"${r[k] ?? ""}"`).join(","))].join("\n") + "\n";
++};
++function inventoryInput(change?: { readonly path: string; readonly column: string; readonly value: string }): CandidateInput {
++  const data = new Map<string, readonly RawRow[]>([
++    ["positions.csv", [{ position_id: position, product: "weighted", account: wallet, kind: "liquid", asset,
++      quantity_raw: "5", decimals: "9", detf_equivalent_raw: "5", source_id: "S001", source_key: wallet }]],
++    ["held-exclusions.csv", [{ position_id: position, snapshot_account: wallet, asset,
++      held_exclusion_detf_raw: "3", unresolved_snapshot_remainder_detf_raw: "2", source_ids: "S001" }]],
++    ["account-ledger.csv", [{ ledger_id: `weighted:${wallet}`, product: "weighted", account: wallet,
++      position_ids: position, current_holding_ids: holding, observed_recovery_ids: recovery,
++      observed_recovery_count: "1", exception_ids: "E", nominal_detf_exposure_raw: "5" }]],
++    ["custody-inventory.csv", [{ holding_id: holding, product: "weighted", observed_holder: wallet, asset,
++      observed_quantity_raw: "3", decimals: "9" }]],
++    ["observed-recoveries.csv", [{ recovery_id: recovery, product: "weighted", recipient: wallet,
++      asset, observed_amount_raw: "4", tx, log_index: "11" }]],
++    ["evidence/transfers.csv", [{ event_id: `${asset}:${tx}:11`, to: wallet, amount_raw: "4" }]],
++    ["exceptions.csv", [{ exception_id: "E" }]],
++    ["conversions.csv", []], ["rounding.csv", []],
++    ["evidence/index-events.csv", [{ source: `${tx}:5`, gons_per_unit: "10" }]],
++    ["evidence/all-index-events.csv", [{ source: `${tx}:5`, gons_per_unit: "10" }]],
++    ["holders.csv", [{ address: wallet }]],
++    ["evidence/bond-accounting.csv", [{ gons_delta: "-30" }]],
++  ]);
++  if (change) data.set(change.path, (data.get(change.path) ?? []).map((r) => ({ ...r, [change.column]: change.value })));
++  return { sources: {
++    chainId: 4663, incident: { lastFullBlock: 19, attackBlock: 20, attackTransactionIndex: 1, attackTransaction: tx },
++    evidenceCutoff: { block: 30, hash: tx, utc: "historical" }, sourceNotes: [],
++    sources: [{ id: "S001", path: "holders.csv", description: "holders", sha256: "0".repeat(64), bytes: 0 }],
++  }, bindings: [], bytes: new Map([...data].map(([p, rows]) => [p, Buffer.from(rowCsv(rows, p === "conversions.csv" ? "conversion_id" : "layer"))])) };
++}
++test("inventory links each account, exclusion, source, holding and observed recovery without granting basis", () => {
++  const inventory = deriveInventory(inventoryInput());
++  const p = inventory.records.find((r) => r.path === "positions.csv");
++  assert.ok(p);
++  assert.deepEqual(p.links, ["account-ledger.csv#row=2", "held-exclusions.csv#row=2", "holders.csv#row=2"]);
++  assert.ok(inventory.records.find((r) => r.path === "account-ledger.csv")?.links.includes("holders.csv#row=2"));
++  assert.equal(inventory.records.find((r) => r.path === "evidence/bond-accounting.csv")?.quantities["gons_delta"]?.raw, "-30");
++  assert.equal(inventory.issues.filter((r) => r.code === "independent-basis-unresolved").length, 1);
++});
++for (const [path, column, value, message] of [
++  ["account-ledger.csv", "position_ids", `${position}|${position}`, /duplicate or mismatched/],
++  ["account-ledger.csv", "current_holding_ids", "missing", /missing link/],
++  ["held-exclusions.csv", "unresolved_snapshot_remainder_detf_raw", "3", /partition differs/],
++  ["positions.csv", "source_id", "S999", /unknown source/],
++  ["evidence/all-index-events.csv", "gons_per_unit", "11", /index subset differs/],
++  ["observed-recoveries.csv", "observed_amount_raw", "5", /recovery event differs/],
++] as const) {
++  test(`inventory rejects broken ${path} ${column} relation`, () => {
++    assert.throws(() => deriveInventory(inventoryInput({ path, column, value })), message);
++  });
++}
++test("blank recovery count remains unknown rather than an inferred zero", () => {
++  const inventory = deriveInventory(inventoryInput({ path: "account-ledger.csv", column: "observed_recovery_count", value: "" }));
++  assert.equal(inventory.issues.filter((r) => r.code === "unknown-recovery-count").length, 1);
++});
++test("historical proofs check event-time divisor and signed claim conservation", () => {
++  const source = `0x${"b".repeat(64)}:5`;
++  const data = new Map<string, readonly RawRow[]>([
++    ["evidence/all-index-events.csv", [{ source, block: "2", transaction_index: "0", log_index: "5", gons_per_unit: "10" }]],
++    ["evidence/bond-accounting.csv", [
++      { token_id: "3", event: "funding", staking_source: "fund", staking_block: "1", staking_transaction_index: "0",
++        staking_log_index: "1", amount_raw: "1", gons_per_unit: (10n ** 36n).toString(), gons_delta: (10n ** 36n).toString() },
++      { token_id: "3", event: "claim_conversion", staking_source: "claim", staking_block: "3", staking_transaction_index: "0",
++        staking_log_index: "1", amount_raw: "3", gons_per_unit: "10", gons_delta: "-30" },
++    ]],
++    ["positions.csv", [{ kind: "funded_bond", source_key: "3", staking_gons: (10n ** 36n - 30n).toString() }]],
++    ["evidence/transfers.csv", []], ["evidence/post-incident-bond-claims.csv", []],
++    ["account-ledger.csv", []], ["conversions.csv", []],
++  ]);
++  const tables = new Map([...data].map(([p, rows]) => [p, rows.map((fields, i) => ({ path: p, row: i + 2, locator: `${p}#row=${i + 2}`, fields }))]));
++  assert.equal(reconcileHistoricalProofs(tables).links.length, 3);
++  const proofs = tables.get("evidence/bond-accounting.csv");
++  assert.ok(proofs);
++  const corrupt = new Map(tables);
++  corrupt.set("evidence/bond-accounting.csv", proofs.map((r) =>
++    r.fields["event"] === "claim_conversion" ? { ...r, fields: { ...r.fields, gons_delta: "30" } } : r));
++  assert.throws(() => reconcileHistoricalProofs(corrupt), /gons proof differs/);
++});
+diff --git a/scripts/recovery/dtf-migration/candidate-inventory.ts b/scripts/recovery/dtf-migration/candidate-inventory.ts
+new file mode 100644
+index 00000000..4ee78fc3
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidate-inventory.ts
+@@ -0,0 +1,166 @@
++import { candidateError, field, integer, optionalInteger, signedInteger, table, unique } from "./candidate-input.js";
++import type { CandidateInput, TableRow } from "./candidate-input.js";
++
++export type ReviewIssue = {
++  readonly code: string; readonly records: readonly string[]; readonly detail: string;
++};
++export type InventoryRecord = {
++  readonly locator: string; readonly path: string; readonly row: number;
++  readonly historicalFields: Readonly<Record<string, string>>;
++  readonly quantities: Readonly<Record<string, { readonly raw: string | null; readonly unit: string }>>;
++  readonly links: readonly string[];
++};
++export const split = (v: string): readonly string[] => v === "" ? [] : v.split("|");
++export const order = (a: string, b: string): number => a < b ? -1 : a > b ? 1 : 0;
++export function quantityUnit(row: TableRow, key: string): string {
++  const f = row.fields;
++  if (/gons/.test(key) && !/per_unit/.test(key)) return "gons";
++  if (/gons_per_unit/.test(key)) return "gons-per-native9";
++  if (/lp_shares/.test(key)) return "LP-accounting-shares-not-physical-LP";
++  if (key === "stake_wei" || /legacy_stake.*raw/.test(key)) return "raw-weight-native18";
++  if (/weth/.test(key)) return "WETH-native18";
++  if (/dtf_wei/.test(key) || /^wallet_dtf_wei$/.test(key) || /dtf_paid|dtf_received|dtf_input|dtf_output|dtf_burn|raw_dtf|dtf_(sold|redeemed|donated|returned|in)_raw/.test(key)) return "DTF-native18";
++  if (key === "observed_amount_raw") return `${f["asset"]?.toLowerCase()}:native${f["decimals"]}`;
++  if (key === "output_raw") return `${f["output_asset"]?.toLowerCase()}:native${f["output_decimals"]}`;
++  if (key === "principal_raw" && f["kind"] === "legacy_weight_to_sy") return "raw-weight-native18";
++  if (key === "outgoing_source_units_raw" || key === "retained_source_units_lower_bound_raw") return f["source_unit"] ?? "unknown-source-unit";
++  if (key === "current_observed_quantity_raw") return f["current_observed_quantity_unit"] ?? "unknown-source-unit";
++  if (key === "quantity_raw" || key === "observed_quantity_raw" || key === "custody_quantity_raw")
++    return `${f["asset"]?.toLowerCase()}:native${f["decimals"] ?? "unknown"}`;
++  if (key === "amount_raw") return `${f["asset"]?.toLowerCase() ?? "weighted-sDETF"}:native${f["asset"] ? "source-defined" : "9"}`;
++  if (key === "balance_raw") return row.path.includes("sy-sdtf") ? "SY-native9" : "sDETF-native9";
++  if (key === "unallocated_raw") return f["unit"] ?? "unknown-source-unit";
++  if (/equivalent|exposure|exclusion|remainder|nominal/.test(key)) return "historical-DETF-equivalent-native9-not-award";
++  if (/sy_raw/.test(key)) return "SY-native9";
++  if (/sdetf|principal_detf|principal_claimed|rewards_claimed|principal_raw|rewards_raw/.test(key)) return "weighted-native9";
++  // No value is converted using this label. Unclassified fields retain the exact
++  // original column name rather than asserting an economic equivalence.
++  return `historical-column:${key}`;
++}
++
++export function deriveInventory(input: CandidateInput) {
++  const tables = new Map<string, readonly TableRow[]>();
++  for (const path of [...input.bytes.keys()].filter((p) => p.endsWith(".csv")).sort(order)) tables.set(path, table(input, path));
++  const get = (p: string): readonly TableRow[] => {
++    const rows = tables.get(p);
++    if (!rows) candidateError(`missing inventory table: ${p}`);
++    return rows;
++  };
++  const keys = [
++    ["positions.csv", "position_id"], ["account-ledger.csv", "ledger_id"],
++    ["held-exclusions.csv", "position_id"], ["custody-inventory.csv", "holding_id"],
++    ["observed-recoveries.csv", "recovery_id"], ["conversions.csv", "conversion_id"],
++    ["exceptions.csv", "exception_id"], ["rounding.csv", "layer"],
++    ["evidence/transfers.csv", "event_id"], ["evidence/index-events.csv", "source"],
++    ["evidence/all-index-events.csv", "source"],
++  ] as const;
++  const indexes = new Map<string, ReadonlyMap<string, TableRow>>(keys.map(([p, k]) => [p, unique(get(p), k)]));
++  const index = (p: string): ReadonlyMap<string, TableRow> => {
++    const m = indexes.get(p); if (!m) return candidateError(`missing index ${p}`); return m;
++  };
++  const linked = new Map<string, Set<string>>();
++  const link = (a: TableRow, b: TableRow): void => {
++    linked.set(a.locator, new Set([...(linked.get(a.locator) ?? []), b.locator]));
++    linked.set(b.locator, new Set([...(linked.get(b.locator) ?? []), a.locator]));
++  };
++  const requireLink = (a: TableRow, p: string, key: string): TableRow => {
++    const b = index(p).get(key.toLowerCase());
++    if (!b) return candidateError(`missing link ${key}: ${a.locator}`);
++    link(a, b); return b;
++  };
++  const issues: ReviewIssue[] = [];
++  const sourcePaths = new Map(input.sources.sources.map((s) => [s.id, s.path]));
++  for (const rows of tables.values()) for (const r of rows) {
++    for (const key of ["source_id", "source_ids"]) if (r.fields[key]) {
++      for (const id of new Set(split(field(r, key)))) if (!sourcePaths.has(id)) candidateError(`unknown source ${id}: ${r.locator}`);
++    }
++  }
++  const positionOwners = new Set<string>(), holdingOwners = new Set<string>(), recoveryOwners = new Set<string>();
++  for (const a of get("account-ledger.csv")) {
++    if (field(a, "ledger_id") !== `${field(a, "product")}:${field(a, "account")}`) candidateError(`account key differs: ${a.locator}`);
++    // Associate payer/recipient/source observations, not an economic-origin
++    // assignment. Keep earlier-product evidence separate from weighted rows.
++    for (const [id, path] of sourcePaths) {
++      const earlier = id === "S009" || id === "S010";
++      if (earlier !== (field(a, "product") === "earlier_cp")) continue;
++      for (const r of tables.get(path) ?? []) if (["address", "owner", "purchase_recipient", "payer", "bond_recipient", "recipient"]
++        .some((key) => r.fields[key]?.toLowerCase() === field(a, "account").toLowerCase())) link(a, r);
++    }
++    for (const [column, p, ownerKey, owners] of [
++      ["position_ids", "positions.csv", "account", positionOwners],
++      ["current_holding_ids", "custody-inventory.csv", "observed_holder", holdingOwners],
++      ["observed_recovery_ids", "observed-recoveries.csv", "recipient", recoveryOwners],
++    ] as const) {
++      for (const id of split(field(a, column))) {
++        const b = requireLink(a, p, id);
++        if (field(b, "product") !== field(a, "product") || field(b, ownerKey) !== field(a, "account") || owners.has(id))
++          candidateError(`duplicate or mismatched account attribution: ${id}`);
++        owners.add(id);
++      }
++    }
++    for (const id of split(field(a, "exception_ids"))) requireLink(a, "exceptions.csv", id);
++    const recoveryCount = optionalInteger(field(a, "observed_recovery_count"));
++    if (recoveryCount !== null && BigInt(recoveryCount) !== BigInt(split(field(a, "observed_recovery_ids")).length))
++      candidateError(`recovery count differs: ${a.locator}`);
++    if (recoveryCount === null) issues.push({ code: "unknown-recovery-count", records: [a.locator],
++      detail: "Blank recorded recovery count remains unknown; an empty linked subset does not prove zero recoveries." });
++    issues.push({ code: "independent-basis-unresolved", records: [a.locator],
++      detail: "Recipient grouping only. Original Q0/E0/D0, prior delivery and disjoint origin are unknown; nominal remainder and old loss fields are not compensation." });
++  }
++  for (const [p, owners] of [["positions.csv", positionOwners], ["custody-inventory.csv", holdingOwners], ["observed-recoveries.csv", recoveryOwners]] as const)
++    if (get(p).length !== owners.size) candidateError(`unlinked ${p} records`);
++  const exclusions = index("held-exclusions.csv");
++  if (exclusions.size !== get("positions.csv").length) candidateError("position/exclusion census differs");
++  for (const p of get("positions.csv")) {
++    const h = requireLink(p, "held-exclusions.csv", field(p, "position_id"));
++    if (field(h, "snapshot_account") !== field(p, "account") || field(h, "asset").toLowerCase() !== field(p, "asset").toLowerCase())
++      candidateError(`position/exclusion identity differs: ${p.locator}`);
++    const exposure = optionalInteger(field(p, "detf_equivalent_raw"));
++    const held = optionalInteger(field(h, "held_exclusion_detf_raw"));
++    const remainder = optionalInteger(field(h, "unresolved_snapshot_remainder_detf_raw"));
++    if (exposure !== null && (held === null || remainder === null || BigInt(held) + BigInt(remainder) !== BigInt(exposure)))
++      candidateError(`historical held partition differs: ${p.locator}`);
++    const ids = split(field(p, "source_id"));
++    const sourceKey = field(p, "source_key").toLowerCase();
++    for (const id of ids) {
++      const rows = tables.get(sourcePaths.get(id) ?? "") ?? [];
++      const matches = rows.filter((r) => ["address", "token_id"].some((k) => r.fields[k]?.toLowerCase() === sourceKey));
++      for (const m of matches) link(p, m);
++      if (!matches.length && id !== "S003") issues.push({ code: "aggregate-source-reference", records: [p.locator],
++        detail: `${id}:${sourceKey} is aggregate/event-replay evidence, not a unique acquisition or economic origin.` });
++    }
++    issues.push({ code: "original-contribution-unknown", records: [p.locator, h.locator],
++      detail: "Snapshot quantity and retained lower bound are historical observations, not original Q0 or a net contribution. Review surviving rights/aliases and prior delivery without requiring intermediate-holder ancestry." });
++  }
++  // Index subset duplication is intentional; inconsistent duplicate observations
++  // across the two indexes are not. Inside either file keys are already unique.
++  for (const r of get("evidence/index-events.csv")) {
++    const b = requireLink(r, "evidence/all-index-events.csv", field(r, "source"));
++    if (JSON.stringify(r.fields) !== JSON.stringify(b.fields)) candidateError(`index subset differs: ${r.locator}`);
++  }
++  const transferRows = get("evidence/transfers.csv");
++  for (const r of get("observed-recoveries.csv")) {
++    const event = requireLink(r, "evidence/transfers.csv", `${field(r, "asset").toLowerCase()}:${field(r, "tx")}:${field(r, "log_index")}`);
++    if (field(event, "amount_raw") !== field(r, "observed_amount_raw") || field(event, "to") !== field(r, "recipient"))
++      candidateError(`recovery event differs: ${r.locator}`);
++    issues.push({ code: "recovery-attribution-unresolved", records: [r.locator, event.locator],
++      detail: "Output is observed once; transaction input totals are context, not assigned to each output or deducted from compensation." });
++  }
++  for (const r of get("conversions.csv")) {
++    const matches = transferRows.filter((e) => field(e, "tx") === field(r, "tx") &&
++      field(e, "asset").toLowerCase() === field(r, "output_asset").toLowerCase() &&
++      field(e, "to") === field(r, "recipient") && field(e, "amount_raw") === field(r, "output_raw"));
++    for (const m of matches) link(r, m);
++    issues.push({ code: matches.length === 1 ? "conversion-origin-unresolved" : "conversion-event-unresolved",
++      records: [r.locator, ...matches.map((m) => m.locator)],
++      detail: "Representation change is not another contribution or external recovery; raw weight, receipt, SY and underlying rights require overlap/previous-delivery reconciliation." });
++  }
++  const records: InventoryRecord[] = [...tables.values()].flat().map((r) => {
++    const quantities = Object.fromEntries(Object.entries(r.fields).filter(([k]) =>
++      /(?:_raw$|_wei$|^dtf_wei_|^gons$|^staking_gons$|^gons_delta$|^gons_per_unit$|^gons_debited$|^[VRHE]_eth$)/.test(k))
++      .map(([k, v]) => [k, { raw: k === "gons_delta" ? signedInteger(v) : optionalInteger(v), unit: quantityUnit(r, k) }]));
++    return { locator: r.locator, path: r.path, row: r.row, historicalFields: r.fields, quantities,
++      links: [...(linked.get(r.locator) ?? [])].sort(order) };
++  });
++  return { records, issues, tables };
++}
+diff --git a/scripts/recovery/dtf-migration/candidate-nfts.ts b/scripts/recovery/dtf-migration/candidate-nfts.ts
+new file mode 100644
+index 00000000..5261db20
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidate-nfts.ts
+@@ -0,0 +1,99 @@
++import { candidateError, field, integer, optionalInteger, table, unique } from "./candidate-input.js";
++import type { CandidateInput, TableRow } from "./candidate-input.js";
++
++export const legacy = {
++  weightedNft: "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
++  earlierNft: "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
++  weighted: "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
++  dtf: "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
++  weth: "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
++  zero: `0x${"0".repeat(40)}`,
++} as const;
++export type NftObservation = {
++  readonly key: string; readonly model: "fixed-principal" | "lp-accounting-lock";
++  readonly collection: string; readonly tokenId: string; readonly purchaseTx: string;
++  readonly recipientObservation: string; readonly currentOwnerObservation: string | null;
++  readonly periodObservation: string; readonly basis: { readonly unit: string; readonly value: string | null };
++  readonly directInputs: readonly { readonly asset: string; readonly unit: "native18"; readonly observedRaw: string | null;
++    readonly attributedRaw: string | null; readonly payers: readonly string[]; readonly locators: readonly string[] }[];
++  readonly routedDtfRaw: string | null; readonly mintLocators: readonly string[];
++  readonly corroboratingLocators: readonly string[]; readonly purchaseLocator: string;
++  readonly flags: readonly string[];
++};
++const lower = (r: TableRow, k: string): string => field(r, k).toLowerCase();
++export function deriveNfts(input: CandidateInput): readonly NftObservation[] {
++  const purchases = table(input, "evidence/weighted-bonds.csv");
++  const cp = table(input, "evidence/earlier-cp-bonds.csv");
++  const transfers = table(input, "evidence/transfers.csv");
++  const details = table(input, "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv");
++  unique(purchases, "token_id"); unique(cp, "token_id"); unique(transfers, "event_id");
++  const byTx = new Map<string, TableRow[]>();
++  for (const r of transfers) {
++    const tx = lower(r, "tx");
++    byTx.set(tx, [...(byTx.get(tx) ?? []), r]);
++    const expected = `${lower(r, "asset")}:${tx}:${integer(field(r, "log_index"))}`;
++    if (lower(r, "event_id") !== expected) candidateError(`event ID differs: ${r.locator}`);
++    integer(field(r, "block")); integer(field(r, "transaction_index"));
++    optionalInteger(field(r, "amount_raw")); optionalInteger(field(r, "token_id"));
++  }
++  const rows: NftObservation[] = purchases.map((r) => {
++    const id = integer(field(r, "token_id")), tx = lower(r, "purchase_tx");
++    const recipient = lower(r, "purchase_recipient");
++    const events = byTx.get(tx) ?? [];
++    const mints = events.filter((e) => lower(e, "asset") === legacy.weightedNft && lower(e, "from") === legacy.zero);
++    const ownMints = mints.filter((e) => field(e, "token_id") === id && lower(e, "to") === recipient);
++    const shared = purchases.filter((p) => lower(p, "purchase_tx") === tx).length !== 1 || mints.length !== 1;
++    const flags = ["wallet-control-review-required", "current-state-stale", "native-refunds-net-contribution-unproved", "prior-delivery-unknown", "representation-overlap-review"];
++    if (shared) flags.push("ambiguous-transaction-sharing");
++    if (ownMints.length !== 1) flags.push("mint-match-conflict");
++    if (ownMints.some((m) => field(m, "block") !== field(r, "purchase_block"))) flags.push("purchase-block-conflict");
++    const pre = BigInt(integer(field(r, "purchase_block"))) < BigInt(input.sources.incident.attackBlock);
++    if (field(r, "pre_attack") !== String(pre)) flags.push("period-conflict");
++    const corroboration = details.filter((d) => lower(d, "tx") === tx && field(d, "category") === "bond" && field(d, "bond_token_id") === id);
++    const directInputs = [legacy.dtf, legacy.weth].map((asset) => {
++      const inbound = events.filter((e) => lower(e, "asset") === asset && lower(e, "to") === legacy.weighted);
++      const payers = [...new Set(inbound.map((e) => lower(e, "from")))].sort();
++      const conflict = payers.some((payer) => payer !== recipient);
++      if (conflict) flags.push(`payer-or-routing-conflict:${asset}`);
++      // Zero means zero in the saved inbound subset, never zero net cost.
++      const observedRaw = inbound.reduce((s, e) => s + BigInt(integer(field(e, "amount_raw"))), 0n).toString();
++      return { asset, unit: "native18" as const, observedRaw,
++        attributedRaw: shared || conflict || ownMints.length !== 1 ? null : observedRaw,
++        payers, locators: inbound.map((e) => e.locator).sort() };
++    });
++    const dtf = directInputs.find((i) => i.asset === legacy.dtf);
++    if (pre && dtf?.observedRaw !== "0") {
++      const sum = corroboration.reduce((s, d) => s + BigInt(integer(field(d, "dtf_wei"))), 0n).toString();
++      if (sum !== dtf?.observedRaw || corroboration.some((d) => lower(d, "payer") !== recipient
++        || lower(d, "bond_recipient") !== recipient)) flags.push("S006-input-conflict");
++    }
++    return { key: `${input.sources.chainId}:${legacy.weightedNft}:${id}`, collection: legacy.weightedNft, tokenId: id,
++      model: "fixed-principal", purchaseTx: tx, recipientObservation: recipient,
++      currentOwnerObservation: lower(r, "current_owner"), periodObservation: pre ? "pre_incident" : "post_incident",
++      basis: { unit: "weighted-principal-native9", value: optionalInteger(field(r, "original_principal_detf_raw")) },
++      directInputs: flags.some((flag) => /conflict/.test(flag))
++        ? directInputs.map((i) => ({ ...i, attributedRaw: null })) : directInputs,
++      routedDtfRaw: null, mintLocators: ownMints.map((e) => e.locator).sort(),
++      corroboratingLocators: corroboration.map((d) => d.locator).sort(), purchaseLocator: r.locator, flags };
++  });
++  for (const r of cp) {
++    const id = integer(field(r, "token_id"));
++    rows.push({
++      key: `${input.sources.chainId}:${legacy.earlierNft}:${id}`, model: "lp-accounting-lock",
++      collection: legacy.earlierNft, tokenId: id, purchaseTx: lower(r, "purchase_tx"),
++      recipientObservation: lower(r, "owner"), currentOwnerObservation: null, periodObservation: "historical-earlier-purchase",
++      basis: { unit: "original-LP-accounting-shares-not-physical-LP", value: optionalInteger(field(r, "original_lp_shares_raw")) },
++      directInputs: [["direct_dtf_paid_raw", legacy.dtf], ["direct_weth_paid_raw", legacy.weth]].map(([key, asset]) => {
++        if (!key || !asset) return candidateError("invalid CP input mapping");
++        const value = optionalInteger(field(r, key));
++        return { asset, unit: "native18", observedRaw: value, attributedRaw: null,
++          payers: [lower(r, "owner")], locators: [`${r.locator}/${key}`] };
++      }),
++      routedDtfRaw: optionalInteger(field(r, "routed_dtf_received_by_detf_raw")),
++      mintLocators: [], corroboratingLocators: [], purchaseLocator: r.locator,
++      flags: ["original-raw-receipts-missing", "wallet-control-review-required", "current-state-stale",
++        "prior-delivery-unknown", "representation-overlap-review", "routed-DTF-not-an-additional-contribution"],
++    });
++  }
++  return rows.sort((a, b) => a.key < b.key ? -1 : a.key > b.key ? 1 : 0);
++}
+diff --git a/scripts/recovery/dtf-migration/candidate-proofs.ts b/scripts/recovery/dtf-migration/candidate-proofs.ts
+new file mode 100644
+index 00000000..b2f74223
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidate-proofs.ts
+@@ -0,0 +1,79 @@
++import { candidateError, field, integer, signedInteger } from "./candidate-input.js";
++import type { TableRow } from "./candidate-input.js";
++import type { ReviewIssue } from "./candidate-inventory.js";
++import { order } from "./candidate-inventory.js";
++
++export function reconcileHistoricalProofs(tables: ReadonlyMap<string, readonly TableRow[]>) {
++  const get = (p: string): readonly TableRow[] => tables.get(p) ?? candidateError(`missing proof table ${p}`);
++  const claims = get("evidence/post-incident-bond-claims.csv");
++  const accounting = get("evidence/bond-accounting.csv");
++  const indices = get("evidence/all-index-events.csv");
++  const transfers = get("evidence/transfers.csv");
++  const point = (r: TableRow, prefix = ""): readonly bigint[] =>
++    [`${prefix}block`, `${prefix}transaction_index`, `${prefix}log_index`].map((k) => BigInt(integer(field(r, k))));
++  const compare = (a: readonly bigint[], b: readonly bigint[]): number => {
++    for (let i = 0; i < 3; i++) {
++      const x = a[i], y = b[i];
++      if (x === undefined || y === undefined) candidateError("missing event coordinate");
++      if (x !== y) return x < y ? -1 : 1;
++    }
++    return 0;
++  };
++  const sortedIndices = [...indices].sort((a, b) => compare(point(a), point(b)));
++  const indexAt = (p: readonly bigint[]): bigint => {
++    const prior = sortedIndices.filter((i) => compare(point(i), p) < 0).at(-1);
++    return prior ? BigInt(integer(field(prior, "gons_per_unit"))) : 10n ** 36n;
++  };
++  const used = new Set<string>();
++  const links: { readonly record: string; readonly evidence: readonly string[]; readonly check: string }[] = [];
++  const unresolved: ReviewIssue[] = [];
++  for (const r of accounting) {
++    const amount = BigInt(integer(field(r, "amount_raw")));
++    const divisor = BigInt(integer(field(r, "gons_per_unit")));
++    const sign = field(r, "event") === "funding" ? 1n : -1n;
++    if (sign * amount * divisor !== BigInt(signedInteger(field(r, "gons_delta"))) || divisor !== indexAt(point(r, "staking_")))
++      candidateError(`event-time gons proof differs: ${r.locator}`);
++    const id = field(r, "staking_source");
++    if (used.has(id)) candidateError(`duplicate staking proof ${id}`);
++    used.add(id);
++    links.push({ record: r.locator, evidence: sortedIndices.filter((i) =>
++      field(i, "gons_per_unit") === divisor.toString()).map((i) => i.locator), check: "amount-times-event-index" });
++  }
++  for (const p of get("positions.csv").filter((r) => field(r, "kind") === "funded_bond")) {
++    const id = field(p, "source_key");
++    const proofs = accounting.filter((r) => field(r, "token_id") === id);
++    const funding = proofs.filter((r) => field(r, "event") === "funding");
++    if (funding.length !== 1) candidateError(`missing/duplicate NFT funding ${p.locator}`);
++    const balance = proofs.reduce((s, r) => s + BigInt(signedInteger(field(r, "gons_delta"))), 0n);
++    if (balance !== BigInt(integer(field(p, "staking_gons")))) candidateError(`NFT snapshot gons differ: ${p.locator}`);
++    links.push({ record: p.locator, evidence: proofs.map((r) => r.locator), check: "funding-minus-claims-snapshot-gons" });
++  }
++  for (const r of claims) {
++    const amount = BigInt(integer(field(r, "sdetf_transferred_raw")));
++    const divisor = BigInt(integer(field(r, "gons_per_unit")));
++    if (amount !== BigInt(integer(field(r, "principal_claimed_raw"))) + BigInt(integer(field(r, "rewards_claimed_raw")))
++      || amount * divisor !== BigInt(integer(field(r, "gons_debited"))) || divisor !== indexAt(point(r)))
++      candidateError(`post-incident claim proof differs: ${r.locator}`);
++    const matches = transfers.filter((t) => field(t, "tx") === field(r, "tx") &&
++      field(t, "to") === field(r, "recipient") && field(t, "amount_raw") === amount.toString()
++      && field(t, "asset") === "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c");
++    if (matches.length !== 1) candidateError(`claim transfer ambiguous/missing: ${r.locator}`);
++    const match = matches[0];
++    if (!match || used.has(match.locator)) candidateError(`claim transfer reused: ${r.locator}`);
++    used.add(match.locator);
++    links.push({ record: r.locator, evidence: matches.map((m) => m.locator), check: "principal-plus-rewards-and-event-time-gons" });
++  }
++  for (const a of get("account-ledger.csv")) {
++    if (field(a, "product") !== "weighted") continue;
++    const positions = get("positions.csv").filter((p) => field(p, "account") === field(a, "account") && field(p, "product") === "weighted");
++    const exposure = positions.reduce((s, p) => s + BigInt(integer(field(p, "detf_equivalent_raw"))), 0n);
++    if (exposure !== BigInt(integer(field(a, "nominal_detf_exposure_raw")))) candidateError(`account nominal sum differs: ${a.locator}`);
++    links.push({ record: a.locator, evidence: positions.map((p) => p.locator), check: "same-unit-historical-account-sum" });
++  }
++  // Some conversion records decode non-Transfer events; their original logs are
++  // not independently archived. Keep that limit, rather than fabricate locators.
++  for (const r of get("conversions.csv")) if (field(r, "kind") === "legacy_weight_to_sy")
++    unresolved.push({ code: "raw-claim-event-archive-missing", records: [r.locator],
++      detail: "Normalized raw-weight consumption is historical evidence; original claim receipt/decoded event archival and remaining/prior-delivered partition are not supplied." });
++  return { links: links.sort((a, b) => order(a.record, b.record)), unresolved };
++}
+diff --git a/scripts/recovery/dtf-migration/candidate-reconciliation.ts b/scripts/recovery/dtf-migration/candidate-reconciliation.ts
+new file mode 100644
+index 00000000..d74309f1
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidate-reconciliation.ts
+@@ -0,0 +1,95 @@
++import { z } from "zod";
++import { candidateError, field, integer } from "./candidate-input.js";
++import type { CandidateInput, TableRow } from "./candidate-input.js";
++import type { NftObservation } from "./candidate-nfts.js";
++import type { ReviewIssue } from "./candidate-inventory.js";
++
++export function reconcileCandidateTotals(input: CandidateInput, tables: ReadonlyMap<string, readonly TableRow[]>) {
++  const get = (p: string): readonly TableRow[] => tables.get(p) ?? candidateError(`missing table ${p}`);
++  const sum = (rows: readonly TableRow[], k: string): string =>
++    rows.reduce((s, r) => s + BigInt(integer(field(r, k))), 0n).toString();
++  const weighted = get("positions.csv").filter((r) => field(r, "product") === "weighted");
++  const held = get("held-exclusions.csv").filter((r) => field(r, "product") === "weighted");
++  const raw = input.bytes.get("reconciliation.json");
++  if (!raw) candidateError("missing reconciliation");
++  const reported = z.record(z.union([z.string(), z.number().int().safe(), z.boolean()]))
++    .parse(JSON.parse(new TextDecoder().decode(raw)));
++  const computed: Readonly<Record<string, string | number>> = {
++    weighted_position_rows: weighted.length,
++    earlier_position_rows: get("positions.csv").length - weighted.length,
++    account_rows: get("account-ledger.csv").length,
++    weighted_snapshot_accounts: new Set(weighted.map((r) => field(r, "account"))).size,
++    weighted_nominal_detf_exposure_raw: sum(weighted, "detf_equivalent_raw"),
++    nft_pre_gons_reconstructed: sum(weighted.filter((r) => field(r, "kind") === "funded_bond"), "staking_gons"),
++    recovery_observations: get("observed-recoveries.csv").length,
++    recovery_raw_dtf_sum: sum(get("observed-recoveries.csv"), "observed_amount_raw"),
++    conversions: get("conversions.csv").length,
++    transfer_evidence_rows: get("evidence/transfers.csv").length,
++    issuable_accounts: get("account-ledger.csv").filter((r) => field(r, "issuable") !== "false").length,
++    weighted_confirmed_held_exclusion_lower_bound_raw: sum(held, "held_exclusion_detf_raw"),
++    weighted_unresolved_snapshot_remainder_raw: sum(held, "unresolved_snapshot_remainder_detf_raw"),
++    current_holding_inventory_rows: get("custody-inventory.csv").length,
++    held_exclusion_rows: held.length + get("positions.csv").length - weighted.length,
++    post_incident_bond_claim_proof_rows: get("evidence/post-incident-bond-claims.csv").length,
++    staking_index_events_through_cutoff: get("evidence/all-index-events.csv").length,
++  };
++  const checks = Object.entries(computed).map(([key, actual]) => {
++    const expected = reported[key];
++    if (actual !== expected) candidateError(`reported total differs: ${key}, ${actual} != ${expected}`);
++    return { key, computed: actual, reported: expected, status: "matched" as const };
++  });
++  return {
++    checks,
++    unverifiedReportedKeys: Object.keys(reported).filter((k) => !(k in computed)).sort(),
++    unit: "historical diagnostic totals only; no awards and no sum across source units",
++  };
++}
++
++// This census deliberately includes categories with no observed direct-user row.
++// Infrastructure backing and historical wallet observations do not prove absence.
++export function candidateCoverage(nfts: readonly NftObservation[], tables: ReadonlyMap<string, readonly TableRow[]>) {
++  const assets = [
++    ["W-L", "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7", "native9"],
++    ["E-L", "0xaf0e1967c8f755c747615c5427108bc549ca1122", "native18"],
++    ["W-N", "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e", "fixed-principal-native9"],
++    ["E-N", "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391", "LP-accounting-shares"],
++    ["W-R", "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c", "eligible-original-gons-not-display-native9"],
++    ["E-R", "0x4ac89ad061a531fa62ddceed53520c2750113b01", "internal-shares-unknown-not-display-native18"],
++    ["W-Y", "0xb55604cf4dcdabb362078e106d20f98512391edf", "native9-static-shares"],
++    ["T", "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00", "raw-weight-native18"],
++    ["C", "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0", "native19"],
++    ["E-S", "0xb7d4bb379d361ad442cddee53ea71a33957826a7", "native18"],
++    ["W-SW", "0x999dae02d22e5fee1c4508430d5196d31d631009", "native18"],
++    ["W-SD", "0x2e9c1f705ab967c5af59249203d7495bdabb223b", "native28"],
++    ["E-P", "0x923877336b14662cfb5b3a60b14e7d716d54a888", "native18-physical-LP"],
++    ["W-P", "0x46e068c2393e189fbc86632f67210af253a42aa8", "native18-physical-LP"],
++    ["ETH", "native", "wei-contribution-recovery-only"],
++    ["WETH", "0x0bd7d308f8e1639fab988df18a8011f41eacad73", "native18-contribution-recovery-only"],
++  ] as const;
++  return assets.map(([category, asset, unit]) => {
++    const positions = (tables.get("positions.csv") ?? []).filter((r) => field(r, "asset").toLowerCase() === asset);
++    const holdings = (tables.get("custody-inventory.csv") ?? []).filter((r) => field(r, "asset").toLowerCase() === asset);
++    const purchases = nfts.filter((n) => n.collection === asset);
++    const provenance = (tables.get("evidence/transfers.csv") ?? []).filter((r) => field(r, "asset").toLowerCase() === asset);
++    return { category, asset, unit, positionLocators: positions.map((r) => r.locator),
++      holdingLocators: holdings.map((r) => r.locator), purchaseKeys: purchases.map((n) => n.key),
++      provenanceLocators: provenance.map((r) => r.locator),
++      status: positions.length || holdings.length || purchases.length ? "observed-unreviewed" : "unobserved-not-proven-absent",
++      provenanceStatus: provenance.length ? "observed-subset-not-complete-category-coverage" : "unobserved-not-proven-absent",
++      use: category === "ETH" || category === "WETH" ? "contribution-recovery-provenance-not-surrender" : "source-review",
++      originalBasis: "unresolved", currentControl: "unverified", priorDelivery: "unknown",
++    };
++  });
++}
++export const coverageIssues: readonly ReviewIssue[] = [
++  { code: "missing-original-inputs-wallet-review", records: [], detail: "Historical observations do not establish original eligibility, configured original wallet or current control under MIG-R42." },
++  { code: "partial-claims-prior-delivery", records: [], detail: "Reconcile all surviving raw rights, claimed descendants, excluded rewards and previous delivery. Never infer zero prior credit or assign full credit per partial slice." },
++  { code: "representation-overlap-aliases", records: [], detail: "Independent compensation, NFTs, receipts, SY, raw weights, backing and LP representations can overlap; no unique economic origin is assigned here." },
++  { code: "incomplete-WETH-native-recovery", records: [], detail: "S011 has inbound WETH only through 69999999 and selected DTF flows; native/refunds/net contributions and broader recovery remain unproved." },
++  { code: "stale-current-state", records: [], detail: "Weighted observations end at 108944663. Earlier receipt reads are latest November 8, 2026 and unpinned. Neither is current control or the funded snapshot." },
++  { code: "earlier-receipt-discrepancy", records: [], detail: "Reported positive balances 57880198310224980583 versus supply 57898677945502333609; gap not allocated." },
++  { code: "missing-earlier-raw-receipts", records: [], detail: "S009 is a normalized observation, not original receipt archival; direct inputs and routed DTF remain separate." },
++  { code: "unobserved-accepted-categories", records: [], detail: "No direct-user row does not prove no E-S, C, W-SW, W-SD or physical LP exposure. Infrastructure cannot be assigned as a second personal claim." },
++  { code: "historical-policy-not-authority", records: [], detail: "Raw fields and exceptions retain obsolete loss/held/bearer policy as history only. Current plan/PRD govern; no old formula or zero upfront field becomes an award or prior credit." },
++  { code: "review-acquisition-funded-snapshot-open", records: [], detail: "Acquire missing data only under separate authorization; review original units/components, disjointness and prior delivery, then fund/capture/quote before separate loader preparation. No intermediate-holder ancestry prerequisite." },
++];
+diff --git a/scripts/recovery/dtf-migration/candidates.test.ts b/scripts/recovery/dtf-migration/candidates.test.ts
+new file mode 100644
+index 00000000..4853a4dc
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidates.test.ts
+@@ -0,0 +1,139 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { mkdtemp, mkdir, writeFile, rm, realpath } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { loadCandidateInput, optionalInteger, parseCandidateCsv, unique } from "./candidate-input.js";
++import type { CandidateInput } from "./candidate-input.js";
++import { deriveNfts, legacy } from "./candidate-nfts.js";
++import { quantityUnit } from "./candidate-inventory.js";
++import { canonical, fingerprint } from "./provenance.js";
++import { preparationInput } from "./schema.js";
++import { executionManifest } from "./execution-schema.js";
++import { preparedEnvelope } from "./bundle.js";
++import { main } from "./cli.js";
++
++const wallet = `0x${"1".repeat(40)}`;
++const other = `0x${"2".repeat(40)}`;
++const tx = `0x${"a".repeat(64)}`;
++const csv = (header: readonly string[], rows: readonly (readonly string[])[]): string =>
++  [header, ...rows].map((r) => r.map((v) => `"${v.replaceAll('"', '""')}"`).join(",")).join("\n") + "\n";
++const purchaseHeader = ["token_id", "purchase_tx", "purchase_recipient", "current_owner", "purchase_block", "pre_attack", "original_principal_detf_raw"];
++const transferHeader = ["event_id", "block", "transaction_index", "log_index", "tx", "asset", "from", "to", "amount_raw", "token_id"];
++const detailHeader = ["tx", "category", "bond_token_id", "dtf_wei", "payer", "bond_recipient"];
++const cpHeader = ["token_id", "owner", "original_lp_shares_raw", "direct_dtf_paid_raw", "direct_weth_paid_raw", "routed_dtf_received_by_detf_raw", "purchase_tx"];
++function nftInput(shared = false): CandidateInput {
++  const event = (asset: string, log: string, from: string, to: string, amount: string, id = ""): readonly string[] =>
++    [`${asset}:${tx}:${log}`, "10", "1", log, tx, asset, from, to, amount, id];
++  const inputs = new Map([
++    ["evidence/weighted-bonds.csv", csv(purchaseHeader, [
++      ["3", tx, wallet, other, "10", "true", "7"],
++      ...(shared ? [["4", tx, wallet, wallet, "10", "true", "8"]] : []),
++    ])],
++    ["evidence/earlier-cp-bonds.csv", csv(cpHeader, [["3", wallet, "234", "0", "80", "987654321", tx]])],
++    ["evidence/transfers.csv", csv(transferHeader, [
++      event(legacy.weightedNft, "2", legacy.zero, wallet, "", "3"),
++      event(legacy.dtf, "3", wallet, legacy.weighted, "90071992547409931234"),
++      event(legacy.dtf, "4", wallet, legacy.weighted, "6"),
++      event(legacy.weth, "5", wallet, legacy.weighted, "80"),
++      ...(shared ? [event(legacy.weightedNft, "6", legacy.zero, wallet, "", "4")] : []),
++    ])],
++    ["../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv", csv(detailHeader, [[tx, "bond", "3", "90071992547409931240", wallet, wallet]])],
++  ]);
++  return { sources: { chainId: 4663, incident: { lastFullBlock: 19, attackBlock: 20, attackTransactionIndex: 1, attackTransaction: tx },
++    evidenceCutoff: { block: 30, hash: tx, utc: "historical" }, sourceNotes: [], sources: [] },
++    bindings: [], bytes: new Map([...inputs].map(([p, t]) => [p, Buffer.from(t)])) };
++}
++test("joins exact multiple asset inputs to one collection ID and preserves observations", () => {
++  const nfts = deriveNfts(nftInput());
++  const weighted = nfts.find((n) => n.model === "fixed-principal");
++  assert.ok(weighted);
++  assert.deepEqual(weighted.directInputs.map((i) => i.attributedRaw), ["90071992547409931240", "80"]);
++  assert.equal(weighted.mintLocators.length, 1);
++  assert.equal(weighted.corroboratingLocators.length, 1);
++  assert.equal(weighted.recipientObservation, wallet);
++  assert.equal(weighted.currentOwnerObservation, other);
++  assert.notEqual(nfts[0]?.key, nfts[1]?.key);
++});
++test("shared purchase transactions never attribute their entire input to each NFT", () => {
++  const weighted = deriveNfts(nftInput(true)).filter((n) => n.model === "fixed-principal");
++  assert.equal(weighted.length, 2);
++  for (const n of weighted) {
++    assert.ok(n.flags.includes("ambiguous-transaction-sharing"));
++    assert.deepEqual(n.directInputs.map((i) => i.attributedRaw), [null, null]);
++  }
++});
++test("payer conflicts remain unresolved instead of being assigned to the recipient", () => {
++  const input = nftInput();
++  const raw = input.bytes.get("evidence/transfers.csv");
++  assert.ok(raw);
++  const changed = Buffer.from(new TextDecoder().decode(raw).replaceAll(`"${wallet}","${legacy.weighted}"`, `"${other}","${legacy.weighted}"`));
++  const nfts = deriveNfts({ ...input, bytes: new Map([...input.bytes, ["evidence/transfers.csv", changed]]) });
++  assert.deepEqual(nfts.find((n) => n.model === "fixed-principal")?.directInputs.map((i) => i.attributedRaw), [null, null]);
++});
++test("earlier LP accounting shares keep direct WETH distinct from routed DTF and missing receipts", () => {
++  const cp = deriveNfts(nftInput()).find((n) => n.model === "lp-accounting-lock");
++  assert.ok(cp);
++  assert.deepEqual(cp.directInputs.map((i) => i.observedRaw), ["0", "80"]);
++  assert.equal(cp.routedDtfRaw, "987654321");
++  assert.equal(cp.basis.value, "234");
++  assert.ok(cp.flags.includes("original-raw-receipts-missing"));
++  assert.deepEqual(cp.directInputs.map((i) => i.attributedRaw), [null, null]);
++});
++test("unknown integer is distinct from observed zero and rejects decimal or malformed encodings", () => {
++  assert.equal(optionalInteger(""), null);
++  assert.equal(optionalInteger("0"), "0");
++  for (const value of ["-1", "1.5", "1e18", " 0", "00", "NaN"]) assert.throws(() => optionalInteger(value), /malformed unsigned/);
++});
++test("CSV parser preserves quoted delimiters and rejects truncation, bad widths and duplicate keys", () => {
++  const rows = parseCandidateCsv('id,note\nx,"a,b\nc"\n', "observed.csv");
++  assert.equal(rows[0]?.fields["note"], "a,b\nc");
++  for (const raw of ['id,note\nx,"unclosed', "id,note\nx\n", "id,id\nx,y\n"]) assert.throws(() => parseCandidateCsv(raw, "bad.csv"));
++  assert.throws(() => unique(parseCandidateCsv("id\nx\nx\n", "dup.csv"), "id"), /duplicate/);
++});
++test("source units distinguish native19 vault shares, native28 SE, raw weights, gons and accounting LP", () => {
++  const row = parseCandidateCsv("asset,decimals,kind\nvault,19,legacy_weight_to_sy\n", "positions.csv")[0];
++  assert.ok(row);
++  assert.equal(quantityUnit(row, "quantity_raw"), "vault:native19");
++  assert.equal(quantityUnit({ ...row, fields: { ...row.fields, decimals: "28" } }, "quantity_raw"), "vault:native28");
++  assert.equal(quantityUnit(row, "principal_raw"), "raw-weight-native18");
++  assert.equal(quantityUnit(row, "staking_gons"), "gons");
++  assert.equal(quantityUnit(row, "original_lp_shares_raw"), "LP-accounting-shares-not-physical-LP");
++});
++test("candidate documents are unsupported by every live input schema and preparation CLI", async () => {
++  const candidate = { version: "dtf-historical-review-candidates-v1", status: "NON-ISSUABLE-REVIEW-CANDIDATES", nfts: deriveNfts(nftInput()) };
++  for (const schema of [preparationInput, executionManifest, preparedEnvelope]) assert.equal(schema.safeParse(candidate).success, false);
++  const dir = await mkdtemp(join(tmpdir(), "dtf-candidate-rejection-"));
++  try {
++    const path = join(dir, "candidates.json");
++    await writeFile(path, canonical(candidate));
++    await assert.rejects(main(["prepare", "--input", path, "--output", join(dir, "out")]), { name: "ZodError" });
++    await assert.rejects(main(["validate", "--manifest", path]), { name: "ZodError" });
++  } finally { await rm(dir, { recursive: true }); }
++});
++test("all declared bytes authenticate before malformed raw CSV parsing and fail closed on missing files", async () => {
++  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-candidate-bindings-"));
++  const dir = join(parent, "recovery"); await mkdir(dir);
++  const raw = '"unclosed';
++  const sources = { ...nftInput().sources, sources: [{ id: "S001", path: "raw.csv", description: "raw", bytes: Buffer.byteLength(raw), sha256: fingerprint(raw) }] };
++  const sourceText = canonical(sources);
++  await writeFile(join(dir, "sources.json"), sourceText);
++  await writeFile(join(dir, "manifest.json"), canonical({ files: {
++    "sources.json": { bytes: Buffer.byteLength(sourceText), sha256: fingerprint(sourceText) },
++    "prose.md": { bytes: 8, sha256: fingerprint("original") },
++  } }));
++  await writeFile(join(dir, "raw.csv"), raw);
++  await writeFile(join(dir, "prose.md"), "changed!");
++  try {
++    await assert.rejects(loadCandidateInput(dir), /raw binding differs: prose.md/);
++    await writeFile(join(dir, "prose.md"), "original");
++    const authenticated = await loadCandidateInput(dir);
++    assert.equal(authenticated.bindings.length, 3);
++    await rm(join(dir, "raw.csv"));
++    await assert.rejects(loadCandidateInput(dir), { code: "ENOENT" });
++  } finally { await rm(parent, { recursive: true }); }
++});
++test("offline candidate command rejects signing, broadcast and duplicate input flags", async () => {
++  for (const extra of [["--broadcast"], ["--execute-local"], ["--input", "other"]])
++    await assert.rejects(main(["derive-candidates", "--input", "raw", "--output", "new", ...extra]), /requires only|duplicate/);
++});
+diff --git a/scripts/recovery/dtf-migration/candidates.ts b/scripts/recovery/dtf-migration/candidates.ts
+new file mode 100644
+index 00000000..78b22a5a
+--- /dev/null
++++ b/scripts/recovery/dtf-migration/candidates.ts
+@@ -0,0 +1,56 @@
++import { mkdir, writeFile } from "node:fs/promises";
++import { resolve } from "node:path";
++import { loadCandidateInput } from "./candidate-input.js";
++import type { CandidateInput } from "./candidate-input.js";
++import { deriveNfts } from "./candidate-nfts.js";
++import { deriveInventory, order } from "./candidate-inventory.js";
++import { candidateCoverage, coverageIssues, reconcileCandidateTotals } from "./candidate-reconciliation.js";
++import { canonical, fingerprint } from "./provenance.js";
++import { reconcileHistoricalProofs } from "./candidate-proofs.js";
++
++export function deriveCandidates(input: CandidateInput) {
++  const nfts = deriveNfts(input);
++  const inventory = deriveInventory(input);
++  const totals = reconcileCandidateTotals(input, inventory.tables);
++  const proofs = reconcileHistoricalProofs(inventory.tables);
++  const sources = input.sources;
++  return {
++    version: "dtf-historical-review-candidates-v1" as const,
++    status: "NON-ISSUABLE-REVIEW-CANDIDATES" as const,
++    chainId: String(sources.chainId),
++    observationBoundaries: { incident: sources.incident, evidenceCutoff: sources.evidenceCutoff,
++      historicalNotes: sources.sourceNotes },
++    inputIdentities: [...input.bytes].map(([path, bytes]) => ({
++      path, bytes: bytes.byteLength, sha256: fingerprint(bytes),
++      sourceIds: sources.sources.filter((s) => s.path === path).map((s) => s.id).sort(order),
++    })).sort((a, b) => order(a.path, b.path)),
++    declarations: [...input.bindings].map(({ path, bytes, sha256, declaration }) => ({ path, bytes, sha256, declaration }))
++      .sort((a, b) => order(a.path, b.path) || order(a.declaration, b.declaration)),
++    nfts,
++    inventory: inventory.records,
++    independentRecipientObservations: (inventory.tables.get("account-ledger.csv") ?? []).map((a) => ({
++      ledgerLocator: a.locator, recipient: a.fields["account"], product: a.fields["product"],
++      linkedObservations: inventory.records.find((r) => r.locator === a.locator)?.links ?? [],
++      originalEconomicOrigin: null, originalQ0: null, originalEth: null, originalDtf: null, priorDeliveredCredit: null,
++      basis: "unresolved-independent-review-not-held-surrender" as const,
++    })),
++    coverage: candidateCoverage(nfts, inventory.tables),
++    unresolved: [...coverageIssues, ...inventory.issues, ...proofs.unresolved].sort((a, b) => order(a.code, b.code)
++      || order(a.records.join("|"), b.records.join("|"))),
++    historicalReconciliation: totals,
++    historicalProofLinks: proofs.links,
++    rawRecordCensus: [...inventory.tables].map(([path, rows]) => ({ path, records: rows.length })),
++    loaderBoundary: "unsupported document; requires separate reviewed originals and actual funded snapshot",
++  };
++}
++export type HistoricalCandidates = ReturnType<typeof deriveCandidates>;
++
++export async function deriveCandidateFile(inputRoot: string, output: string): Promise<{ readonly sha256: string; readonly bytes: number }> {
++  const result = deriveCandidates(await loadCandidateInput(inputRoot));
++  const raw = `${canonical(result)}\n`;
++  // No partial directory is published on a binding/derivation error. A fresh
++  // output directory is mandatory; never overwrite original or failed evidence.
++  await mkdir(resolve(output), { recursive: false });
++  await writeFile(resolve(output, "candidates.json"), raw, { flag: "wx" });
++  return { sha256: fingerprint(raw), bytes: Buffer.byteLength(raw) };
++}
+diff --git a/scripts/recovery/dtf-migration/cli.ts b/scripts/recovery/dtf-migration/cli.ts
+index 28784724..0e8a31cf 100644
+--- a/scripts/recovery/dtf-migration/cli.ts
++++ b/scripts/recovery/dtf-migration/cli.ts
+@@ -9,8 +9,10 @@ import type { Mode } from "./execution-schema.js";
+ import { rehearse } from "./rehearse.js";
+ import { exportBundle } from "./bundle.js";
+ import { materializeBundle } from "./bundle-materialize.js";
++import { deriveCandidateFile } from "./candidates.js";
+ 
+ export const help = `Bounded Migration operator
++  bun scripts/recovery/dtf-migration/cli.ts derive-candidates --input <complete-historical-tree> --output <new-directory>
+   bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
+   bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
+   bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
+@@ -94,6 +96,14 @@ export async function main(args: readonly string[]): Promise<void> {
+     throw new PreparationError("INPUT", "preparation commands accept no execution flags");
+   }
+   switch (positionals[0]) {
++    case "derive-candidates": {
++      if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
++        throw new PreparationError("INPUT", "derive-candidates requires only --input and --output");
++      }
++      console.log(JSON.stringify({ command: "derive-candidates", mode: "offline-non-issuable",
++        ...await deriveCandidateFile(values.input, values.output) }));
++      return;
++    }
+     case "bundle-export":
+     case "bundle-materialize": {
+       if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {

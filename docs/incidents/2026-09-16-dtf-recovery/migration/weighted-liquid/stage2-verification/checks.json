@@ -1,0 +1,88 @@
+{
+  "admission": {
+    "manifestEntries": 1096,
+    "mismatches": []
+  },
+  "compiled": {
+    "sourceCount": 636,
+    "mismatches": []
+  },
+  "producerRuntime": [
+    {
+      "artifact": "out/UniswapV4DetfMigrationAllocationFacet.sol/UniswapV4DetfMigrationAllocationFacet.json",
+      "address": "0x0a69db3b30b7cb13eaff786832e062d157630bb2",
+      "normalizedMatch": true,
+      "codeHashMatches": true,
+      "declaredSpans": 6
+    },
+    {
+      "artifact": "out/UniswapV4DetfMigrationFacet.sol/UniswapV4DetfMigrationFacet.json",
+      "address": "0xcd29f772d1c9dbdbafdb0e54504160a5a977c0e8",
+      "normalizedMatch": true,
+      "codeHashMatches": true,
+      "declaredSpans": 4
+    },
+    {
+      "artifact": "out/UniswapV4DetfMigrationDFPkg.sol/UniswapV4DetfMigrationDFPkg.json",
+      "address": "0x642fa76f2f7a6b97ec0822d67a785379a92df347",
+      "normalizedMatch": true,
+      "codeHashMatches": true,
+      "declaredSpans": 22
+    },
+    {
+      "artifact": "out/UniswapV4DetfMigrationRecoveryFacet.sol/UniswapV4DetfMigrationRecoveryFacet.json",
+      "address": "0x2f0c891b4e9a1c9833dd3f7814d1a76f684797e9",
+      "normalizedMatch": true,
+      "codeHashMatches": true,
+      "declaredSpans": 0
+    },
+    {
+      "artifact": "out/UniswapV4DetfMigrationExchangeFacet.sol/UniswapV4DetfMigrationExchangeFacet.json",
+      "address": "0xb084b225aa4395b47cc7affd375b8f56fc26083f",
+      "normalizedMatch": true,
+      "codeHashMatches": true,
+      "declaredSpans": 0
+    }
+  ],
+  "commands": [
+    {
+      "kind": "specs",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && export PATH=\"/Users/cyotee/.foundry/bin:$PATH\"; set -o pipefail; python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/ --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol --consumer scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol -- -vv 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/specs.log'; result=$?; printf '\nVERIFIER_SPECS_EXIT=%s\n' \"$result\"; exit \"$result\"",
+      "exit": 1,
+      "passed": 102,
+      "failed": 1,
+      "skipped": 0,
+      "defect": "D1 MissingRewardWeight"
+    },
+    {
+      "kind": "forks",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && export PATH=\"/Users/cyotee/.foundry/bin:$PATH\"; set -o pipefail; FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol --test-root test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/ -- -vv 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/forks.log'; result=$?; printf '\nVERIFIER_FORKS_EXIT=%s\n' \"$result\"; exit \"$result\"",
+      "exit": 0,
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "kind": "operator-tests-types",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid' && set -o pipefail; (bun test --timeout 15000 ./scripts/recovery/dtf-migration/preparation.test.ts ./scripts/recovery/dtf-migration/execution.test.ts ./scripts/recovery/dtf-migration/weighted-liquid.test.ts && bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --skipLibCheck --types node scripts/recovery/dtf-migration/*.ts) 2>&1 | tee '/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-13-weighted-liquid/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid/stage2-verification/operator-tests-types.log'; result=$?; printf '\nVERIFIER_OPERATOR_EXIT=%s\n' \"$result\"; exit \"$result\"",
+      "exit": 0,
+      "passed": 56,
+      "failed": 0
+    }
+  ],
+  "attempts": [
+    {
+      "kind": "spec-wrapper",
+      "startedTests": false,
+      "exit": 1,
+      "error": "zsh:export:1: not valid in this context: Support/Code/User/globalStorage/github.copilot-chat/debugCommand:/Applications/Visual",
+      "correction": "Single-quote the complete login-shell command; quote PATH assignment."
+    },
+    {
+      "kind": "fork-monitor-filter",
+      "startedTests": false,
+      "error": "Invalid monitor filter regex: (Suite result:|Ran [0-9]+ test|[FAIL|VERIFIER_FORKS_EXIT)",
+      "correction": "Use plain FAIL in monitor filter."
+    }
+  ]
+}

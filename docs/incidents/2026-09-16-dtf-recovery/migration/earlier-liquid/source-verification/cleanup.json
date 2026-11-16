@@ -1,0 +1,47 @@
+{
+  "schema": "ed-independent-source-cleanup/1",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source",
+  "base": "acdbe319f3a20c3af6bea594c62461b6c7988717",
+  "branch": "work/dtf-migration-phase-19-earlier-liquid-source",
+  "scope": "source-verification evidence and probes only",
+  "commands": [
+    {"command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git rev-parse HEAD", "exitCode": 0, "output": "acdbe319f3a20c3af6bea594c62461b6c7988717"},
+    {"command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git branch --show-current", "exitCode": 0, "output": "work/dtf-migration-phase-19-earlier-liquid-source"},
+    {"command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --check", "exitCode": 0, "output": ""},
+    {"command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --ignore-submodules=all --exit-code", "exitCode": 0, "output": ""},
+    {"command": "GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 git diff --cached --ignore-submodules=all --exit-code", "exitCode": 0, "output": ""},
+    {"command": "lsof -nP -iTCP:18569 -sTCP:LISTEN", "exitCode": 1, "output": ""},
+    {"command": "ps -p 54621 -o pid=,command=", "exitCode": 1, "output": ""},
+    {"command": "test ! -e .omo-runtime/dtf-migration-earlier-liquid/checkpoints", "exitCode": 0, "output": ""}
+  ],
+  "executionMonitors": [
+    {"id": "mon_SADBABJ4V42DHG4C", "session": "bash_2", "exitCode": 0, "operation": "strict types and fresh pinned signed custody"},
+    {"id": "mon_NZ27H0CXG733D7PD", "session": "bash_4", "exitCode": 0, "operation": "strict types and independent raw evidence audit"}
+  ],
+  "scopeAndCleanupSession": {"session": "bash_5", "exitCode": 0},
+  "nodePid": 54621,
+  "fixedPort": 18569,
+  "nodeExited": true,
+  "providers": "Closed in custody.ts finally; owning process exited0",
+  "receiptSubscriptions": "Closed in each signed/transact finally; owning process exited0",
+  "impersonation": "Only existing EOA donor locally for actual ED acquisition; stop acknowledged in finally",
+  "unusedApproval": "Signed clear to zero before shutdown",
+  "checkpointsCreated": false,
+  "checkpointAbsent": true,
+  "pendingOperations": 0,
+  "producerEvidenceModified": false,
+  "phase18OutputsConsumed": false,
+  "productionOrExistingTestsOrOperatorsChanged": false,
+  "publicWrite": false,
+  "commit": false,
+  "merge": false,
+  "compiler": "Existing sealed artifact-first Solar 0.8.38+commit.e7a91fc7.solar.0.3.0-dev; no new Solidity compilation",
+  "runtime": "Bun1.4.2; Anvil/Forge1.9.1-nightly commit430523103f3e2f9ba432ffdd2031a9f966153d0d",
+  "diagnostics": {
+    "strictTypechecks": "Both passed",
+    "typescriptLspErrors": "None for both new evidence runners",
+    "jsonLsp": "Unavailable: Biome not installed; no dependency/configuration change",
+    "jsonValidation": "Direct parse and raw SHA-256",
+    "initialPlainGitStatus": "Existing linked Crane submodule error128; successful scoped checks use --ignore-submodules=all"
+  }
+}

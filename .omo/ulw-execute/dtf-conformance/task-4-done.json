@@ -1,0 +1,224 @@
+{
+  "type": "DoneClaim",
+  "task": 4,
+  "title": "Replace capture with exact manual Weighted pricing",
+  "status": "complete",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1",
+  "plan": "/Users/cyotee/Projects/indexedex/.omo/plans/dtf-migration-conformance-remediation-20261114.md",
+  "completedAt": "2026-11-15T03:01:21.169Z",
+  "summary": "Implemented the single manual Weighted evaluator and exact ABI, owner replacement, deterministic book identity, twelve expected-book loaders, stable NFT origins, retained-facet rename and activation retirement. Fixed dynamic package artifact discovery after the existing ERC-165 rollback test exposed stale bytecode.",
+  "changedFiles": [
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationFacet.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationRepo.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshotLib.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigration_Pkg_FactoryService.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationSnapshot.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeHandler.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationNativeLedger.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsHandler.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsRecoveryHandler.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationStatefulBindings.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/TestBase_MigrationStateful.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyNftLib.sol",
+    "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+    "scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol",
+    "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptForkBase.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol",
+    "test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationAdministration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimedSyConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCore.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDeploymentGas.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquidConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceiptConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLpConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOwnerFirstBond.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationSurface.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquidConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedPricing.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSyConfiguration.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationSnapshot.t.sol"
+  ],
+  "evidenceDirectory": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4",
+  "evidenceFiles": [
+    "failures.log",
+    "status-after.txt",
+    "proxy-census.json",
+    "caller-build.log",
+    "changed-files.json",
+    "differential-vectors.json",
+    "implementation-notes.md",
+    "diagnostics.json",
+    "happy-r2.log",
+    "failure-families.json",
+    "status-before.txt",
+    "happy-r3.log",
+    "rebuild.log",
+    "activation-diagnosis.log",
+    "happy-final.log",
+    "happy.log"
+  ],
+  "tests": [
+    {
+      "kind": "happy",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_OFFLINE=true && set -o pipefail && { python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- -vv; result=$?; printf '\nHAPPY_EXIT=%s\n' \"$result\"; exit \"$result\"; } 2>&1 | tee 'docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log'",
+      "exitCode": 0,
+      "suites": 33,
+      "passed": 229,
+      "failed": 0,
+      "skipped": 0,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/happy-final.log"
+    },
+    {
+      "kind": "required failure families",
+      "command": "cd '/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1' && export PATH=/Users/cyotee/.foundry/bin:$PATH FOUNDRY_OFFLINE=true && set -o pipefail && { python3 scripts/forge-artifacts.py test contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedPricingLib.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationWeightedHookFacet.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationAllocationTarget.sol contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationClaimVaultAllocationTarget.sol --test-root test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration -- --match-test 'test.*(StaleBook|InvalidManual|UnsetPricing|UnauthorizedPricing|PricingRollback|OriginCollision|MaxIn|ZeroOutput|ActivationCut)' -vvvv; result=$?; printf '\nFAILURE_QA_EXIT=%s\n' \"$result\"; exit \"$result\"; } 2>&1 | tee 'docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log'",
+      "exitCode": 0,
+      "suites": 15,
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "families": {
+        "StaleBook": [
+          "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+          "test_StaleBook_WeightedReceiptReplacementPreservesRecords",
+          "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+          "test_StaleBook_EarlierReceiptReplacementPreservesRecords",
+          "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+          "test_StaleBook_WeightedLiquidReplacementPreservesRecords",
+          "test_StaleBook_ClaimVaultReplacementPreservesRecords",
+          "test_StaleBook_HeldSeLpReplacementPreservesRecords",
+          "test_StaleBook_ClaimedSyReplacementPreservesRecords",
+          "test_StaleBook_EarlierLiquidReplacementPreservesRecords",
+          "test_StaleBook_NftReplacementPreservesRecords",
+          "test_StaleBook_DtfCustodySeReplacementPreservesRecords",
+          "test_StaleBook_WeightedSyReplacementPreservesRecords",
+          "test_StaleBook_AllTwelveEmptyLoaders",
+          "test_StaleBook_IndependentOriginIndexRemainsAllocated",
+          "test_StaleBook_SeparateNftPreservesStableOriginAndBothCredits"
+        ],
+        "InvalidManual": [
+          "test_InvalidManual_ProviderOperandsAndInactiveFields",
+          "test_InvalidManual_UnsupportedRoleAtomic",
+          "test_InvalidManual_AuxiliaryDenominatorAndDisabledUnusedRate",
+          "test_InvalidManual_BufferModelsScalesAndOutput",
+          "test_InvalidManual_PricingRollback_AllStructuralFields"
+        ],
+        "UnsetPricing": [
+          "test_ActivationCut_UnsetPricingAndEmptyEntitlements",
+          "test_UnsetPricing_GetterPreviewAndAllLoaders"
+        ],
+        "UnauthorizedPricing": [
+          "test_UnauthorizedPricing_CurrentPendingFormerOwnerAndRollback"
+        ],
+        "PricingRollback": [
+          "test_InvalidManual_PricingRollback_AllStructuralFields",
+          "test_PricingRollback_CheckedOverflow"
+        ],
+        "OriginCollision": [
+          "test_OriginCollision_StableAcrossBooksAndIndependentIssuance"
+        ],
+        "MaxIn": [
+          "test_ManualDifferential_MappedNativeMaxInBoundary",
+          "test_MaxIn_RawBoundaryAndNativeOutputCap"
+        ],
+        "ZeroOutput": [
+          "test_ZeroOutput_NativeFloorAndEmptyV3"
+        ],
+        "ActivationCut": [
+          "test_ActivationCut_UnsetPricingAndEmptyEntitlements"
+        ]
+      },
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/failures.log"
+    },
+    {
+      "kind": "adapted Solidity fork and script compilation",
+      "command": "forge build --use solar scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol scripts/foundry/recovery/dtf-migration/MigrationSnapshotLocalQA.s.sol scripts/foundry/recovery/dtf-migration/Phase_08_Stage_01_MigrationExecution.s.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVault.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationClaimVaultForkBase.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySe.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDtfCustodySeForkBase.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierLiquid.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationEarlierReceipt.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationHeldSeLp.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationLegacySources.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftForkBase.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationNftLifecycle.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationOriginalWallet.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryClaimVault.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryDtfCustodySe.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryGas.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedReceipt.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRecoveryWeightedSy.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedLiquid.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceipt.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedReceiptForkBase.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationWeightedSy.t.sol test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyInvariant.t.sol",
+      "exitCode": 0,
+      "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/caller-build.log"
+    },
+    {
+      "kind": "owned diff whitespace",
+      "command": "GIT_MASTER=1 git diff --check -- <owned Solidity paths>",
+      "exitCode": 0
+    }
+  ],
+  "manualQA": {
+    "status": "PASS",
+    "channel": "actual executed proxy loupe census",
+    "census": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/proxy-census.json",
+    "administrationWritersBefore": 16,
+    "administrationWritersAfter": 0,
+    "oldAliasesBefore": 0,
+    "oldAliasesAfter": 0,
+    "retainedReads": [
+      "migrationWeightedPricing()",
+      "previewOriginalCredit(uint256,uint256)"
+    ],
+    "unsetBookActivation": "Passed after real funding and paid owner-first purchase with no configured entitlements."
+  },
+  "artifacts": {
+    "cacheSeed": "Existing cache_forge and out were already warm; no deletion or replacement.",
+    "rebuilt": true,
+    "compiler": "Forge 1.9.1-nightly via /Users/cyotee/.foundry/bin/forge, --use solar; no via_ir",
+    "packageDiscovery": "Literal artifact IDs in the existing package factory allow the required helper to rebuild the DFPkg and its current ERC-165 declarations."
+  },
+  "cleanup": {
+    "delegated": false,
+    "committed": false,
+    "merged": false,
+    "pushed": false,
+    "publicTransactions": false,
+    "sharedMathModified": false,
+    "forbiddenTask5FilesModified": false,
+    "unrelatedChangesPreserved": true,
+    "cachesDeleted": false,
+    "buildsKilled": false,
+    "temporaryCodeRemaining": false,
+    "statusBefore": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/status-before.txt",
+    "statusAfter": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-4/status-after.txt"
+  },
+  "risks": [
+    "Fork runtime suites and public transactions were not run; their adapted Solidity callers compile.",
+    "Later operator tasks still own TypeScript snapshot-query and fixture/ABI migration; task 4 changes the allowed Solidity scope only.",
+    "The test-file LSP request timed out and JSON LSP was unavailable because Biome is absent; production error diagnostics were clear and Solar compile/test acceptance passed.",
+    "Forge automatically attempted missing-submodule initialization despite offline mode; each attempt failed against the existing nonempty Crane directory. No dependency was installed or replaced.",
+    "Compilation retains existing repository warnings; logs preserve them."
+  ],
+  "unmetAcceptanceItems": []
+}

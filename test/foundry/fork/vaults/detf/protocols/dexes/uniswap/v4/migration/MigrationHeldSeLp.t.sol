@@ -132,7 +132,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
     function _configureLiquid(address wallet_, uint256 q_) internal returns (uint256) {
         Migration.HeldSeLpEntitlementInput[] memory a_ = _liquidInput(wallet_, q_, 0.01 ether);
         vm.prank(migrationOwner);
-        allocation.configureHeldSeLpEntitlements(a_);
+        allocation.configureHeldSeLpEntitlements(a_, pricingId);
         return migration.heldSeLpEntitlement(ORIGIN).credit;
     }
 
@@ -167,12 +167,12 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
         assertEq(s_.remainingCredit, c0_ - c1_);
         Migration.HeldSeLpEntitlementInput[] memory a_ = _liquidInput(HOLDER, 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (a_)));
+        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (a_, pricingId)));
         assertFalse(replayed_);
         a_[0].originalUnits = 8;
         a_[0].originalEth = 0.02 ether;
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(abi.encode(migration.heldSeLpSurrender(ORIGIN)), abi.encode(s_));
         vm.warp(firstTime_ + 30 days);
@@ -212,7 +212,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
         Migration.HeldSeLpEntitlementInput[] memory large_ = _liquidInput(HOLDER, balance_ + 1, 0.01 ether);
         large_[0].originalId = bytes32("balance");
         vm.prank(migrationOwner);
-        allocation.configureHeldSeLpEntitlements(large_);
+        allocation.configureHeldSeLpEntitlements(large_, pricingId);
         _activate();
         vm.prank(HOLDER);
         vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpEntitlement.selector, bytes32("absent")));
@@ -262,7 +262,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
         _surrenderLiquid(1);
         Migration.HeldSeLpEntitlementInput[] memory a_ = _liquidInput(address(this), 3, 0.01 ether);
         vm.prank(migrationOwner);
-        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (a_)));
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureHeldSeLpEntitlements, (a_, pricingId)));
         assertFalse(corrected_);
         assertEq(migration.heldSeLpEntitlement(ORIGIN).original.originalWallet, HOLDER);
         assertEq(migration.heldSeLpSurrender(ORIGIN).consumedUnits, 1);
@@ -409,7 +409,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
             a_[i_].originalId = bytes32(uint256(uint160(fixed_[i_])));
             a_[i_].source = fixed_[i_];
         }
-        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_);
+        vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_, pricingId);
         _configureNft(EARLIER, 3);
         _configureNft(WEIGHTED, 4);
         vm.prank(address(0xBEdf78eB17A054D972c85cE222E2175F19899CD6));
@@ -419,7 +419,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
             bytes32("distinct ER original"), HOLDER, Legacy.EARLIER_RECEIPT,
             uint256(10000) * 1e27 / 2197, 0.01 ether, 0, bytes32("synthetic ER components"), true
         );
-        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(er_);
+        vm.prank(migrationOwner); allocation.configureEarlierReceiptEntitlements(er_, pricingId);
         _activate();
         _surrender(EARLIER, 3);
         _surrender(WEIGHTED, 4);

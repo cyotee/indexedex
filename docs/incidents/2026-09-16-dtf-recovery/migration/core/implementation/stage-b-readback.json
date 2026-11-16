@@ -1,0 +1,242 @@
+{
+  "parent": "0x406cd20cb6f03f51cd303a3d14d6b1fbbcccab88",
+  "activated": true,
+  "removed": [
+    {
+      "selector": "0xe9dc9e6d",
+      "facet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0xec55c474",
+      "facet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x161d9afc",
+      "facet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0xccff9894",
+      "facet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "selector": "0x787642e8",
+      "facet": "0x0000000000000000000000000000000000000000"
+    }
+  ],
+  "staking": {
+    "totalGons": "1416176165680858659435357140800263187536702280",
+    "gonsPerUnit": "525096587753919033863740427634928695",
+    "accountedBacking": "2696982231",
+    "allocationDust": "2",
+    "stakingDust": "1",
+    "feeWeight": "315627661841934084968218929995607223678210590",
+    "creatorWeight": "736464544297846198259177503323083521915824710"
+  },
+  "actualBacking": "2696982231",
+  "snapshotId": "0x9b57243e3599d260ce251ab9915b8ea608f8e2040659f6c7bb1a60a5527515af",
+  "issuance": {
+    "issued": true,
+    "configurationId": "0x16d113f5ce1d6552d14da7b4c656c2a80f94b1b730f5dfe988a7d6e5c332c499",
+    "credit": "1201585232",
+    "bondTokenId": "3",
+    "issuedAt": "1794346835"
+  },
+  "devSy": "0",
+  "receiverSy": "600792616",
+  "receiverReceipt": "5529754",
+  "rtSupply": "0",
+  "devR0": "159280105445259717377780344334206455",
+  "devR2": "336228620813681080",
+  "ordinaryMarked": false,
+  "receipts": [
+    {
+      "hash": "0x8a11affeb1772bfff3f39d97c5c231f5fd36016535f7803cd915b7c0bcc9fe61",
+      "status": "0x1",
+      "block": "0xe9",
+      "gasUsed": "0xd276e"
+    },
+    {
+      "hash": "0x29b6765f0bd35ee095e85afa56ed941a235fe207c076b04dca21674ec4e95800",
+      "status": "0x1",
+      "block": "0xea",
+      "gasUsed": "0x4cd7c"
+    },
+    {
+      "hash": "0x9a54961193c7603294af1b8efd1938147e866dc54685c6913eb237186422103c",
+      "status": "0x1",
+      "block": "0xeb",
+      "gasUsed": "0xc6bb"
+    },
+    {
+      "hash": "0x4077f5ea1eb02b3ddb82b145819f2e49f04558a9b391ca1a1d9c68c5bfca265c",
+      "status": "0x1",
+      "block": "0xec",
+      "gasUsed": "0x5a664"
+    },
+    {
+      "hash": "0x8e428ef3ab07454820e125791d3c2e1781f76ef15fbfb75fe695dd121318dd31",
+      "status": "0x1",
+      "block": "0xed",
+      "gasUsed": "0x437f6"
+    },
+    {
+      "hash": "0x6cf4a7c6fa9b7eec1caf0c665454c7824e6d7c4aa9e887d0ee8b8f0238e95db1",
+      "status": "0x1",
+      "block": "0xee",
+      "gasUsed": "0x12e236"
+    },
+    {
+      "hash": "0x047b0e9af137f62d63b5d12aeff605d89d7fa5b97aa407f650ff0c102d5fb364",
+      "status": "0x1",
+      "block": "0xef",
+      "gasUsed": "0x5736c"
+    },
+    {
+      "hash": "0xef3cb32441d29815da1a434a0ec9e0eed66dc095cb6bae1522b67513d13701c4",
+      "status": "0x1",
+      "block": "0xf0",
+      "gasUsed": "0x700e"
+    },
+    {
+      "hash": "0xbc9c20722652a3a53a548326ba8b5960e8b9c2bcf63dad815f722189bf75129b",
+      "status": "0x1",
+      "block": "0xf1",
+      "gasUsed": "0x21e5fc1"
+    },
+    {
+      "hash": "0x30358322ca42bcba7a4e64b159baba4d205f7db896502e2e57761e7a42d82856",
+      "status": "0x1",
+      "block": "0xf2",
+      "gasUsed": "0x4893a"
+    },
+    {
+      "hash": "0xd054703dbc4f1063e28ce7fba354124986a320031bd6b51c012355364f68e4d0",
+      "status": "0x1",
+      "block": "0xf3",
+      "gasUsed": "0x5091a"
+    },
+    {
+      "hash": "0x350be1271d852894ee8bce3bc8c7ec8bbcd223623fe99850fe8d6df39a4c527c",
+      "status": "0x1",
+      "block": "0xf4",
+      "gasUsed": "0x4d9f2"
+    },
+    {
+      "hash": "0x7df4d6b1e7a19c5b795bacd9eddffe5dd60443fdf1bb874e048a22d16d1a9906",
+      "status": "0x1",
+      "block": "0xf5",
+      "gasUsed": "0x3a51d"
+    },
+    {
+      "hash": "0x013a5cc5bbf3a9e9161dfbcb5b78d9f30fc8920cda38d1b2dd681ac6be6d5f76",
+      "status": "0x1",
+      "block": "0xf6",
+      "gasUsed": "0x38dc0"
+    },
+    {
+      "hash": "0xd7cb6a4b07268c7b385b852555100d8c5927b6264a9314ba1aec1215f30652ec",
+      "status": "0x1",
+      "block": "0xf7",
+      "gasUsed": "0x33cb3"
+    },
+    {
+      "hash": "0x3c311d96034cd7088cff00a4fead82cb727a08a16dcb0fcf5f11d7bff2b1e320",
+      "status": "0x1",
+      "block": "0xf8",
+      "gasUsed": "0x40a06"
+    }
+  ],
+  "payoutEvents": [
+    {
+      "address": "0xfa53c3188bcbdae211fe037acd211c4031b8fe9d",
+      "hash": "0x29b6765f0bd35ee095e85afa56ed941a235fe207c076b04dca21674ec4e95800",
+      "eventName": "BondClaimed",
+      "args": {
+        "tokenId": "3",
+        "recipient": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "principal": "1201585232",
+        "rewards": "0"
+      }
+    },
+    {
+      "address": "0xfa53c3188bcbdae211fe037acd211c4031b8fe9d",
+      "hash": "0x047b0e9af137f62d63b5d12aeff605d89d7fa5b97aa407f650ff0c102d5fb364",
+      "eventName": "BondClaimed",
+      "args": {
+        "tokenId": "3",
+        "recipient": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "principal": "0",
+        "rewards": "1065857776"
+      }
+    },
+    {
+      "address": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+      "hash": "0xd054703dbc4f1063e28ce7fba354124986a320031bd6b51c012355364f68e4d0",
+      "eventName": "SyRewardsTokenized",
+      "args": {
+        "beneficiary": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nativeRT": "2903655350914193571309238",
+        "gons": "2903655350914193571309238000000000000000000",
+        "k": "525096587753919033863740427634928695"
+      }
+    },
+    {
+      "address": "0x186a8c0806facedc673789980f7483dccc633430",
+      "hash": "0x350be1271d852894ee8bce3bc8c7ec8bbcd223623fe99850fe8d6df39a4c527c",
+      "eventName": "SyRewardTokenRedeemed",
+      "args": {
+        "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "receiver": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "nativeRT": "2903655350914193571309238",
+        "nativeSDETF": "5529754",
+        "retainedGons": "394395608778125083915324042509108970"
+      }
+    },
+    {
+      "address": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+      "hash": "0x7df4d6b1e7a19c5b795bacd9eddffe5dd60443fdf1bb874e048a22d16d1a9906",
+      "eventName": "SyRewardRemainderPaid",
+      "args": {
+        "beneficiary": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nativeSDETF": "0",
+        "gons": "0",
+        "k": "525096587753919033863740427634928695"
+      }
+    },
+    {
+      "address": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+      "hash": "0x013a5cc5bbf3a9e9161dfbcb5b78d9f30fc8920cda38d1b2dd681ac6be6d5f76",
+      "eventName": "DeferredRewardsPaid",
+      "args": {
+        "beneficiary": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "domain": 0,
+        "nativeSDETF": "9810261",
+        "gons": "5151334576075349495071132031350263214339395",
+        "k": "525096587753919033863740427634928695"
+      }
+    },
+    {
+      "address": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+      "hash": "0xd7cb6a4b07268c7b385b852555100d8c5927b6264a9314ba1aec1215f30652ec",
+      "eventName": "DeferredRewardsPaid",
+      "args": {
+        "beneficiary": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "domain": 1,
+        "nativeSDETF": "0",
+        "gons": "0",
+        "k": "525096587753919033863740427634928695"
+      }
+    },
+    {
+      "address": "0xef2e550310745309fc07b1dde1853447e6a528bf",
+      "hash": "0x3c311d96034cd7088cff00a4fead82cb727a08a16dcb0fcf5f11d7bff2b1e320",
+      "eventName": "SyRewardsTokenized",
+      "args": {
+        "beneficiary": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "nativeRT": "0",
+        "gons": "0",
+        "k": "525096587753919033863740427634928695"
+      }
+    }
+  ]
+}

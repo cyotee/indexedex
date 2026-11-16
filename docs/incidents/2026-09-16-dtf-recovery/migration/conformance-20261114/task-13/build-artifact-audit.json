@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-11-15T08:19:23.073Z",
+  "build": {
+    "log": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log",
+    "bytes": 4343519,
+    "sha256": "69a0397fb59237bef3756c1d3ccadae93eaafc1a09b05fe36d5a2754a9e99145",
+    "exitReceipt": "docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-13/hermetic-r2/03.log.command.json",
+    "command": [
+      "forge",
+      "build",
+      "--use",
+      "solar"
+    ],
+    "code": 0
+  },
+  "witness": {
+    "artifact": "out/MigrationClaimWitness.sol/MigrationClaimWitness.json",
+    "artifactSha256": "09187d4b4adcfe56a63bc0fc53501fb5d4d43598c3a43b671ad43aa8cd1400ff",
+    "compiler": {
+      "version": "0.8.38+commit.e7a91fc7.solar.0.3.0-dev"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 1
+    },
+    "deployedCodeHash": "0x33a0fe038a5d441aa3d9fe48b841bcfc0d0f00f0b085e44b9c41b9b0a7aab2bc",
+    "sources": [
+      {
+        "path": "scripts/foundry/recovery/dtf-migration/MigrationClaimWitness.sol",
+        "expectedKeccak256": "0x48206e00c432f4fe647b220d35eee53201f01f13a136ba22b0018c5e79195156",
+        "actualKeccak256": "0x48206e00c432f4fe647b220d35eee53201f01f13a136ba22b0018c5e79195156"
+      }
+    ],
+    "matchesOperatorFailure": true
+  },
+  "continuation": {
+    "observedBuildExitReceipt": true,
+    "observedFullHermeticTestPid": 58027,
+    "observedRecorderPid": 55769,
+    "observedQueuedForkMonitor": "mon_WR2250RGDJNSCFPN",
+    "action": "No build or full-tree test restarted. Existing full hermetic test remains on its original monitor."
+  },
+  "qualification": "The lint-warning tail is not the exit receipt; the immutable command sidecar and recorder CHECK_END hermetic 3 0 supply it. Raw build output retains unsuccessful automatic submodule bootstrap messages and all compiler/lint warnings."
+}

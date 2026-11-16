@@ -1,0 +1,166 @@
+{
+  "implementation": [
+    {
+      "path": "manifest.json",
+      "bytes": 493162,
+      "sha256": "4332313443099271a63c52be668964c1eea41bbb5f27eead9b7de00d1e5ef39b",
+      "expectedBytes": 493162,
+      "expectedSha256": "4332313443099271a63c52be668964c1eea41bbb5f27eead9b7de00d1e5ef39b",
+      "match": true
+    },
+    {
+      "path": "report.md",
+      "bytes": 14587,
+      "sha256": "f8a6f15a4269d3fa7852a1aadd3192e2e7972ba5886cbcec46d5efceb15397a4",
+      "expectedBytes": 14587,
+      "expectedSha256": "f8a6f15a4269d3fa7852a1aadd3192e2e7972ba5886cbcec46d5efceb15397a4",
+      "match": true
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 14556,
+      "sha256": "4471544a145da46e207f66c744f5ca30be3d74dfb63f2f8a338b0f21caec110c",
+      "expectedBytes": 14556,
+      "expectedSha256": "4471544a145da46e207f66c744f5ca30be3d74dfb63f2f8a338b0f21caec110c",
+      "match": true
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 1132,
+      "sha256": "44d36e5d2d04b7428853cf729f0f68c7ea3f59bdac6373425742692377d882ee",
+      "expectedBytes": 1132,
+      "expectedSha256": "44d36e5d2d04b7428853cf729f0f68c7ea3f59bdac6373425742692377d882ee",
+      "match": true
+    },
+    {
+      "path": "actual/archive.json",
+      "bytes": 5917231,
+      "sha256": "6f3d656a88b325503f4cddd23cab96e582e171ce1f40e632eb065f4ad24fe9f2",
+      "expectedBytes": 5917231,
+      "expectedSha256": "6f3d656a88b325503f4cddd23cab96e582e171ce1f40e632eb065f4ad24fe9f2",
+      "match": true
+    },
+    {
+      "path": "actual/reconciliation.json",
+      "bytes": 841408,
+      "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2",
+      "expectedBytes": 841408,
+      "expectedSha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2",
+      "match": true
+    },
+    {
+      "path": "actual/http-manifest.json",
+      "bytes": 638076,
+      "sha256": "aafc37d15f223382c84679188a8b5a2f125d4d5c1b645dddfbb1941ab87e151f",
+      "expectedBytes": 638076,
+      "expectedSha256": "aafc37d15f223382c84679188a8b5a2f125d4d5c1b645dddfbb1941ab87e151f",
+      "match": true
+    },
+    {
+      "path": "independent-proof.json",
+      "bytes": 1324604,
+      "sha256": "7373fd927c2017fc87cd5c53143281c46f3108ec127cb8e3cc9260aef467fdc4",
+      "expectedBytes": 1324604,
+      "expectedSha256": "7373fd927c2017fc87cd5c53143281c46f3108ec127cb8e3cc9260aef467fdc4",
+      "match": true
+    }
+  ],
+  "verification": [
+    {
+      "path": "manifest.json",
+      "bytes": 492300,
+      "sha256": "7c824332802d8b688644c5e02418323185d3798ba6aa7d91471b17983bf4f2ca",
+      "expectedBytes": 492300,
+      "expectedSha256": "7c824332802d8b688644c5e02418323185d3798ba6aa7d91471b17983bf4f2ca",
+      "match": true
+    },
+    {
+      "path": "report.md",
+      "bytes": 13625,
+      "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50",
+      "expectedBytes": 13625,
+      "expectedSha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50",
+      "match": true
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 3230,
+      "sha256": "da6ade68fae6e36ab05ccfd4d7c1042353ac35104398bcee337096b7b7718c9d",
+      "expectedBytes": 3230,
+      "expectedSha256": "da6ade68fae6e36ab05ccfd4d7c1042353ac35104398bcee337096b7b7718c9d",
+      "match": true
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 237132,
+      "sha256": "ba8722456e632959c147e78266b1324962a5a80767af07030e2e5fc24544b99b",
+      "expectedBytes": 237132,
+      "expectedSha256": "ba8722456e632959c147e78266b1324962a5a80767af07030e2e5fc24544b99b",
+      "match": true
+    },
+    {
+      "path": "intake-and-preservation.json",
+      "bytes": 992426,
+      "sha256": "45c7e70f880ef7e22b30c230bd6fce5bf59d6bbd84105ef01b446e766ecdd96f",
+      "expectedBytes": 992426,
+      "expectedSha256": "45c7e70f880ef7e22b30c230bd6fce5bf59d6bbd84105ef01b446e766ecdd96f",
+      "match": true
+    },
+    {
+      "path": "proof.json",
+      "bytes": 4434725,
+      "sha256": "a49921f03a27653a651d97fedbe6deac16683b98458d58ea700feceb03024032",
+      "expectedBytes": 4434725,
+      "expectedSha256": "a49921f03a27653a651d97fedbe6deac16683b98458d58ea700feceb03024032",
+      "match": true
+    },
+    {
+      "path": "cross-checks.json",
+      "bytes": 995,
+      "sha256": "f4c8e5c9b22682814705b4e5a9d8c0617834206e75d0786edce9a9ea5e64af1b",
+      "expectedBytes": 995,
+      "expectedSha256": "f4c8e5c9b22682814705b4e5a9d8c0617834206e75d0786edce9a9ea5e64af1b",
+      "match": true
+    },
+    {
+      "path": "credential-scan.json",
+      "bytes": 161,
+      "sha256": "99220a294e437772d3b8f19cb5eed7dda38abd0f1809042d12ad6eae329b6748",
+      "expectedBytes": 161,
+      "expectedSha256": "99220a294e437772d3b8f19cb5eed7dda38abd0f1809042d12ad6eae329b6748",
+      "match": true
+    },
+    {
+      "path": "output-identities.json",
+      "bytes": 1178,
+      "sha256": "4038068f5a86114bcefded93cc6637dc14a21ec8a9e75404289ca1ee9ff3aad3",
+      "expectedBytes": 1178,
+      "expectedSha256": "4038068f5a86114bcefded93cc6637dc14a21ec8a9e75404289ca1ee9ff3aad3",
+      "match": true
+    },
+    {
+      "path": "actual/archive.json",
+      "bytes": 5917231,
+      "sha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0",
+      "expectedBytes": 5917231,
+      "expectedSha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0",
+      "match": true
+    },
+    {
+      "path": "actual/reconciliation.json",
+      "bytes": 841408,
+      "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2",
+      "expectedBytes": 841408,
+      "expectedSha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2",
+      "match": true
+    },
+    {
+      "path": "actual/http-manifest.json",
+      "bytes": 638076,
+      "sha256": "dc93956548bb279085571472b19cc87d9e62e257ea90c76559ce8d7be46e8290",
+      "expectedBytes": 638076,
+      "expectedSha256": "dc93956548bb279085571472b19cc87d9e62e257ea90c76559ce8d7be46e8290",
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "bash",
+    "-c",
+    "GIT_MASTER=1 git diff --check -- scripts/recovery/dtf-migration/bundle.test.ts scripts/recovery/dtf-migration/rehearsal-portable.ts docs/incidents/2026-09-16-dtf-recovery/migration/conformance-20261114/task-12"
+  ],
+  "exit": 0,
+  "signal": null,
+  "logSha256": "dc3af53a84c24536f28a947800956e0b28af868f955f1e77edbb2bb802a56fc1",
+  "recorderSha256": "cc8f59ad0803b7caf4df3373c0d8ea3d756494501f6d93cc57765c917ab22f48",
+  "sourcesUnchanged": true
+}

@@ -1,0 +1,3391 @@
+{
+  "invocation": "bun /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/scripts/recovery/dtf-migration/phase01/other-sources/probe.mjs --summarize docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.json",
+  "generated": "2026-11-10T12:01:50.052Z",
+  "input": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-01/docs/incidents/2026-09-16-dtf-recovery/migration/evidence/other-sources/probe-native.json",
+  "sha256": "e781005f6420c385ca9aad423efcd7f5bb706c9450362113845157da9e4526e1",
+  "pin": {
+    "chainId": "0x1237",
+    "block": "110860459",
+    "hash": "0xd5df213bed280397043210c7e927207971def5b71dcedf81e94a4240d4a736a1",
+    "stateRoot": "0xf7b30af1d962fb6a11d2ed19fdaf19963774f409dc5f11fdb0da3366aa05a582",
+    "timestamp": "0x6af305d3",
+    "rpcAlias": "robinhood_mainnet_public",
+    "label": "native-LP-replay-of-fresh-pin"
+  },
+  "runtime": {
+    "bun": "1.4.2",
+    "execPath": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "platform": "darwin",
+    "arch": "arm64",
+    "pid": 46979
+  },
+  "overall": "FAIL",
+  "cleanup": {
+    "childExit": 0,
+    "portClosed": true,
+    "portReadback": "TypeError: Unable to connect. Is the computer able to access the url?",
+    "pidAbsent": true,
+    "caches": [
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk/bun-cache",
+        "absent": true
+      },
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk/node-cache",
+        "absent": true
+      },
+      {
+        "path": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk/cache",
+        "absent": true
+      }
+    ]
+  },
+  "resources": {
+    "runRoot": "/var/folders/8f/582y7l_125s9pbmjpdydnk_r0000gn/T/tmp.enuGXu0sUI/other-sources.rkAOIk",
+    "port": 56959,
+    "local": "http://127.0.0.1:56959",
+    "childPid": 46983,
+    "args": [
+      "anvil",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "56959",
+      "--chain-id",
+      "4663",
+      "--fork-url",
+      "<rpc-alias:robinhood_mainnet_public>",
+      "--fork-block-number",
+      "110860459",
+      "--no-storage-caching",
+      "--steps-tracing"
+    ]
+  },
+  "disabled": [
+    {
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x39dbed3a2bd333467115de45665cc57f813c4571",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xf517e2cf2f6c68020b9a66f05c5a9895e6f89f68",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xe9708fa00425cff8f25eb2a0719a8ff4d56de888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xe3d8b10abe00596f67be1a498777b6cdea4dd82f",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x7c61faed6ca729663b5a96ca69339b100a7aa888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x85bd24d4aa7872dd46c5bf889cb324b72fe473f1",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x8d761531c98f9f566eb5df57d63678637b10a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xce74bc02cdf5c8faecb94a380d98ec47195a39d1",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x1ca1771d04366761a2aef7ea26f9e18bc8bb6888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xc2fbe67c474ce7ce273d31b9b3c1c57915642e28",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x25ef9b3036ac1faa5090bbfadc68b2eed0f56888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x0f585337c8c7075886c575afc14a11c8e44ba30e",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x55119a02d034d78593cf7b3359390dbbb00aa888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x40b613522bc5944330b7141e973280948124f844",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x46d949601bae5c7ae0d5792487758862fa6be888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x2094aa9a98d4255e61911d3bb250e92d3d50d26b",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x7a71c38f245cbaa5ac2776a86d1d02c0fcb0a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xbebd0e65414437a8f91e13c47e399a906d7c2935",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xb5f5040bf271def9d528dd977c7c97f13f26a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xd3b36c198c91fd0e02115782acdc3d905ac6bb76",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xbbc8d3c8cf1149c36769b4fb0d6d6f8d2d34a888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x72ef4be65e356e102bb31a97d2d7b309e8c97226",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x2e97f7183597a43735fb5b052923251693a2e888",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0xac77646bcff9d52e99800534192e0290933f4094",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "value": false
+    },
+    {
+      "address": "0x64e0f5a5cf0f579eff0981a4fedea77964b74531",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x201d31a56c58a3489bec218c7a899d59a07a35f0",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0x3e33871a8740b294a48347bffd8a5004e1578c0d",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    },
+    {
+      "address": "0xabc9c5b5c8118a15a440ac59a1c74a718e65681c",
+      "signature": "isDisabled(address) view returns (bool)",
+      "selector": "0x4f6c171d",
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "value": true
+    }
+  ],
+  "sources": [
+    {
+      "address": "0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        },
+        {
+          "signature": "reassign(address,uint256)",
+          "selector": "0xcc447fba",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xcc447fba"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        },
+        {
+          "signature": "withdrawClaim(uint256)",
+          "selector": "0xa224dcb7",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa224dcb7"
+            ],
+            "value": "0x9C90d4a476f3473b9a0e32B530aF3474271a80B1"
+          },
+          "facetCodeHash": "0x5628dcb4bb0a1a24e6bde3b985f92c2ef0894ddd6006a55ddaffccc877a52742"
+        }
+      ]
+    },
+    {
+      "address": "0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 19,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0x517234F78A4BcAfc5F880024A3E45D49cF43b305"
+          },
+          "facetCodeHash": "0x8c1ea71d607b09b21c4e78f850647a059dc7935b6772f7cd3aeaa700a995439f"
+        }
+      ]
+    },
+    {
+      "address": "0xb55604cf4dcdabb362078e106d20f98512391edf",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 9,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x4B6e65CfC9a16aae0DfA4257A680f4697275e5fc"
+          },
+          "facetCodeHash": "0x6da9227c829765d0464b5eeee02c55ea45883e3af2767aea546f5e906e8b143d"
+        }
+      ]
+    },
+    {
+      "address": "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+      "codeHash": "0xc95f518da431326e81a95ea4e7cba683ea02488e702604042fe57299345e2baa",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      "codeHash": "0x5706be52f64875fee65a2cec0d80e47a23d8793cbe85d214b48445e2d05f5353",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0x09682b00d873d913ada0bb69b4d4c9631810d0bc",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bindings": []
+    },
+    {
+      "address": "0xaf0e1967c8f755c747615c5427108bc549ca1122",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279"
+          },
+          "facetCodeHash": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x3AB85813785b43B864F9C171F7ac97d6B76c459b"
+          },
+          "facetCodeHash": "0xe44c05ff19808e8e7096c7e470cb1d40ddaf057f4e53818f1e749621d3632027"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0xde5a691CEFE1830e8Ff2b65F6657738b0d9B9279"
+          },
+          "facetCodeHash": "0xf709b5311471ef0b02cf7ddaa8f48b9da30647ab9958a3efde1813e5ac4337b8"
+        }
+      ]
+    },
+    {
+      "address": "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 9,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x4886F86CD0DFFf8b8A836F858925eD4de3a2b291"
+          },
+          "facetCodeHash": "0x1eadaa06571b1cca173491d149bab9b07d5d1b9dc83d268654e49d3179b1a460"
+        }
+      ]
+    },
+    {
+      "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    },
+    {
+      "address": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x999dae02d22e5fee1c4508430d5196d31d631009",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0x614f204B98Ff2E6ba7C4a365CAf7A39f167924A6"
+          },
+          "facetCodeHash": "0x7c02a5793a00529350c466cf37009b6e046109bedb49379087daef548f4faacf"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x4D9976E8Fd5C6f698DF0303C6056efAff47e6f48"
+          },
+          "facetCodeHash": "0x8992feb5af0dea8274c8ad51e34c4d912c8257c217205dc0b18aa85e72d49ce5"
+        }
+      ]
+    },
+    {
+      "address": "0x2e9c1f705ab967c5af59249203d7495bdabb223b",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 28,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(uint256,address,address)",
+          "selector": "0xba087652",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xba087652"
+            ],
+            "value": "0xDbcEEFf98F2388b0eFA0C0fDA2e08cdd263Ce8f5"
+          },
+          "facetCodeHash": "0x99b74f701969463d5147a782113b30bef06ef1c65f58902d410849d6d2cef616"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0xd1F06fdB8e21a4566bB1B21118f66a12Fc66c0C3"
+          },
+          "facetCodeHash": "0x575684348cb71035ed51b9cc9eb2ac5338b35b6053937927e5e91ea9e2b990b9"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0xdd1AaD6d8C312774509B7779fde018bAa014826F"
+          },
+          "facetCodeHash": "0xa68db41fe1fcac6daa4ea4f8a148d3f265d2190c34b1a3dba40eddbc14b1d5ab"
+        }
+      ]
+    },
+    {
+      "address": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x769f8e5d"
+            ],
+            "value": "0xe6275c805e712f609c5DeA5b07481A4229e966F7"
+          },
+          "facetCodeHash": "0xb022d06e679e0e3ea6c8e081dc69e255d3d1f3d5363584fb0029d6aac8858565"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x1B7a7BC9044642C4e42e64f805f6400D75AD2c16"
+          },
+          "facetCodeHash": "0xe5f44175a8c16c705c2c9e5e68b2c3efe842ce694c5e585d2211947802b10d84"
+        }
+      ]
+    },
+    {
+      "address": "0x39dbed3a2bd333467115de45665cc57f813c4571",
+      "codeHash": "0x16c3d3ede897688ddff79262606f13bead398332e65001f192460fbac4e1fb85",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0xf517e2cf2f6c68020b9a66f05c5a9895e6f89f68",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0xe9708fa00425cff8f25eb2a0719a8ff4d56de888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xe3d8b10abe00596f67be1a498777b6cdea4dd82f",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x7c61faed6ca729663b5a96ca69339b100a7aa888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x85bd24d4aa7872dd46c5bf889cb324b72fe473f1",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x8d761531c98f9f566eb5df57d63678637b10a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xce74bc02cdf5c8faecb94a380d98ec47195a39d1",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x1ca1771d04366761a2aef7ea26f9e18bc8bb6888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xc2fbe67c474ce7ce273d31b9b3c1c57915642e28",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x25ef9b3036ac1faa5090bbfadc68b2eed0f56888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x0f585337c8c7075886c575afc14a11c8e44ba30e",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x55119a02d034d78593cf7b3359390dbbb00aa888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x40b613522bc5944330b7141e973280948124f844",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x46d949601bae5c7ae0d5792487758862fa6be888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x2094aa9a98d4255e61911d3bb250e92d3d50d26b",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x7a71c38f245cbaa5ac2776a86d1d02c0fcb0a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xbebd0e65414437a8f91e13c47e399a906d7c2935",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0xb5f5040bf271def9d528dd977c7c97f13f26a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0xd3b36c198c91fd0e02115782acdc3d905ac6bb76",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0xbbc8d3c8cf1149c36769b4fb0d6d6f8d2d34a888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x72ef4be65e356e102bb31a97d2d7b309e8c97226",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x8333749Cc7b1f66b5be568257d362aA749497Cf0"
+          },
+          "facetCodeHash": "0x5b5f12902a0baeb235ec2dc91794c425a0c60a439a7d9070cb1abb17b094389d"
+        }
+      ]
+    },
+    {
+      "address": "0x2e97f7183597a43735fb5b052923251693a2e888",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x6B771DD3Fa9d577B5A7f3b52Eb95234DA5FB5E0f"
+          },
+          "facetCodeHash": "0x57ae69f784fdfe10d2d94f0625f6edc92f37510453500e697b257b8fb2b40a7f"
+        }
+      ]
+    },
+    {
+      "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+      "codeHash": "0x864cc9ad53b338b82da1f7cab85ab0b3d5c8861acb422b6fec63cf36234f36a6",
+      "decimals": 6,
+      "bindings": []
+    },
+    {
+      "address": "0xac77646bcff9d52e99800534192e0290933f4094",
+      "codeHash": "0xd5264e891e471fbc2c5794d3c08193a9c34bdb2ca17ea991ea487505484e1e24",
+      "decimals": 18,
+      "bindings": []
+    },
+    {
+      "address": "0x64e0f5a5cf0f579eff0981a4fedea77964b74531",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x1EF4478F7824e4858980bC5119aaC252db6080a9"
+          },
+          "facetCodeHash": "0x854fc95ef4af8cce978a1812f8cc5a6238612d19ba5726410725f6dfcd3b9c61"
+        }
+      ]
+    },
+    {
+      "address": "0x201d31a56c58a3489bec218c7a899d59a07a35f0",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    },
+    {
+      "address": "0x3e33871a8740b294a48347bffd8a5004e1578c0d",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    },
+    {
+      "address": "0xabc9c5b5c8118a15a440ac59a1c74a718e65681c",
+      "codeHash": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "decimals": 18,
+      "bindings": [
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x70a08231"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xa9059cbb"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x23b872dd"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0x095ea7b3"
+            ],
+            "value": "0x1d17acA0e0717d90cea916372070a1BE4652223F"
+          },
+          "facetCodeHash": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063",
+          "observation": {
+            "signature": "facetAddress(bytes4) view returns (address)",
+            "selector": "0xcdffacc6",
+            "args": [
+              "0xd02d3063"
+            ],
+            "value": "0x461D94f18AfeF2C82bBffBDb63270e37c322da07"
+          },
+          "facetCodeHash": "0xd0deae3d6c52c409c2f4a57c57b81e27167dffacbca6056e81c5a18f0e879a53"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "name": "earlier fungible LP: native staged harvest",
+      "verdict": "FAIL",
+      "evidence": {
+        "token": "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+        "owner": "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
+        "q": "1075167226680908457977200216751522",
+        "restrictions": [
+          {
+            "signature": "owner() view returns (address)",
+            "selector": "0x8da5cb5b",
+            "args": [],
+            "value": "0xaf0E1967c8F755c747615c5427108Bc549CA1122"
+          },
+          {
+            "signature": "ownerOnlyLiquidity() view returns (bool)",
+            "args": [],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: fe884e2800000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4bfe884e2800000000000000000000000000000000000000000000000000000000\"}"
+          },
+          {
+            "signature": "standardExchange() view returns (address)",
+            "selector": "0xafe78a3b",
+            "args": [],
+            "value": "0xb7D4Bb379D361AD442CddEE53eA71a33957826A7"
+          }
+        ],
+        "remaining": "1075167226680908457977200216751522"
+      },
+      "transactions": [
+        {
+          "kind": "custody",
+          "hash": "0xff57eb692397b7444d9213eb770d9b8b352ab60d6016bab27baf048965e770d5",
+          "status": "0x1"
+        }
+      ],
+      "attempts": [
+        {
+          "signature": "withdrawSeShares(uint256,address,uint256,uint256,uint256)",
+          "hash": "0x1fc18e1c68581f11d2eab00d4e6ee1020bd699dd6d4b124f1bd5e92726ab9b36",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "received": {
+            "0xee5576fa1bcaa380e591d01245f406f3f384eb01": "0",
+            "0x0bd7d308f8e1639fab988df18a8011f41eacad73": "0",
+            "0xaf0e1967c8f755c747615c5427108bc549ca1122": "0",
+            "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+            "0xb7d4bb379d361ad442cddee53ea71a33957826a7": "0",
+            "0x923877336b14662cfb5b3a60b14e7d716d54a888": "0",
+            "0x999dae02d22e5fee1c4508430d5196d31d631009": "0",
+            "0x2e9c1f705ab967c5af59249203d7495bdabb223b": "0",
+            "0x46e068c2393e189fbc86632f67210af253a42aa8": "0"
+          },
+          "remaining": "1075167226680908457977200216751522",
+          "selector": "0x84eb9bce"
+        },
+        {
+          "signature": "exitProportional(uint256,address,uint256[],uint256)",
+          "selector": "0x8b72d9e5",
+          "reason": "Selector absent"
+        },
+        {
+          "signature": "exitProportionalFlexible(uint256,address,bool[],uint256[],uint256)",
+          "selector": "0x94b74d12",
+          "reason": "Selector absent"
+        }
+      ]
+    },
+    {
+      "name": "weighted fungible LP: native staged harvest",
+      "verdict": "FAIL",
+      "evidence": {
+        "token": "0x46e068c2393e189fbc86632f67210af253a42aa8",
+        "owner": "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e",
+        "q": "15166467477246491",
+        "restrictions": [
+          {
+            "signature": "owner() view returns (address)",
+            "selector": "0x8da5cb5b",
+            "args": [],
+            "value": "0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7"
+          },
+          {
+            "signature": "ownerOnlyLiquidity() view returns (bool)",
+            "selector": "0xfe884e28",
+            "args": [],
+            "value": true
+          },
+          {
+            "signature": "standardExchange() view returns (address)",
+            "args": [],
+            "error": "ProbeError: eth_call: {\"code\":3,\"message\":\"execution reverted: custom error 0x23dbef4b: afe78a3b00000000000000000000000000000000000000000000000000000000\",\"data\":\"0x23dbef4bafe78a3b00000000000000000000000000000000000000000000000000000000\"}"
+          }
+        ],
+        "remaining": "15166467477246491"
+      },
+      "transactions": [
+        {
+          "kind": "custody",
+          "hash": "0x56ccadcda00b90b4bbae9247fe1d4c8ceb343e74aabfc428c0352b2d5426f788",
+          "status": "0x1"
+        }
+      ],
+      "attempts": [
+        {
+          "signature": "withdrawSeShares(uint256,address,uint256,uint256,uint256)",
+          "selector": "0x84eb9bce",
+          "reason": "Selector absent"
+        },
+        {
+          "signature": "exitProportional(uint256,address,uint256[],uint256)",
+          "hash": "0x907c88a4a1c017b13b12a35dabd5e06ec1d5caefcf940499b6f8273ea2576e06",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "received": {
+            "0xee5576fa1bcaa380e591d01245f406f3f384eb01": "0",
+            "0x0bd7d308f8e1639fab988df18a8011f41eacad73": "0",
+            "0xaf0e1967c8f755c747615c5427108bc549ca1122": "0",
+            "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+            "0xb7d4bb379d361ad442cddee53ea71a33957826a7": "0",
+            "0x923877336b14662cfb5b3a60b14e7d716d54a888": "0",
+            "0x999dae02d22e5fee1c4508430d5196d31d631009": "0",
+            "0x2e9c1f705ab967c5af59249203d7495bdabb223b": "0",
+            "0x46e068c2393e189fbc86632f67210af253a42aa8": "0"
+          },
+          "remaining": "15166467477246491",
+          "selector": "0x8b72d9e5"
+        },
+        {
+          "signature": "exitProportionalFlexible(uint256,address,bool[],uint256[],uint256)",
+          "hash": "0x4ab538ea64295736b32a289811d1f875f967dbae0b0602f9bf6baea54003d24d",
+          "status": "0x0",
+          "error": "execution reverted",
+          "output": "0x245aecd3000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+          "received": {
+            "0xee5576fa1bcaa380e591d01245f406f3f384eb01": "0",
+            "0x0bd7d308f8e1639fab988df18a8011f41eacad73": "0",
+            "0xaf0e1967c8f755c747615c5427108bc549ca1122": "0",
+            "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7": "0",
+            "0xb7d4bb379d361ad442cddee53ea71a33957826a7": "0",
+            "0x923877336b14662cfb5b3a60b14e7d716d54a888": "0",
+            "0x999dae02d22e5fee1c4508430d5196d31d631009": "0",
+            "0x2e9c1f705ab967c5af59249203d7495bdabb223b": "0",
+            "0x46e068c2393e189fbc86632f67210af253a42aa8": "0"
+          },
+          "remaining": "15166467477246491",
+          "selector": "0x94b74d12"
+        }
+      ]
+    }
+  ]
+}

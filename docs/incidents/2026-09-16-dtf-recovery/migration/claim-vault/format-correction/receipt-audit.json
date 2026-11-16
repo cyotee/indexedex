@@ -1,0 +1,42 @@
+{
+  "run": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-16-claim-vault/docs/incidents/2026-09-16-dtf-recovery/migration/claim-vault/format-correction/runtime/rehearsal-1794451995939",
+  "resumes": [
+    {
+      "kind": "donation",
+      "hash": "0x5b17d1e14671ab202b71ae48b6ec5402f36588bcf1f107b37cea602beca44b02",
+      "nonce": 2123,
+      "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "chainId": "4663",
+      "completionAbsentBeforeResume": true,
+      "canonicalReceiptFields": 15,
+      "allReceiptFieldsAndLogsMatch": true,
+      "journalPath": "journal-fund/1c7563c49a4f8e27c85fd6ee3654b52de99e0ce2787a4849c57fa7d422e708f4.receipt.json"
+    },
+    {
+      "kind": "issuance",
+      "hash": "0x0a2f1e4bdd6d7a62ebec64feae5621e40e669f6d338fd86bd665ea92179ee7f6",
+      "nonce": 2139,
+      "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "chainId": "4663",
+      "completionAbsentBeforeResume": true,
+      "canonicalReceiptFields": 15,
+      "allReceiptFieldsAndLogsMatch": true,
+      "journalPath": "journal-issue/e01eccc24de3341aad50c1feaf69402461fb504c09b943a42c61877134466dc0.receipt.json"
+    },
+    {
+      "kind": "owner-bond",
+      "hash": "0xf5259aa029db69dc5ad451d7650994eef9fcdc3fa7694516d6572e5278871497",
+      "nonce": 2157,
+      "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "chainId": "4663",
+      "completionAbsentBeforeResume": true,
+      "canonicalReceiptFields": 15,
+      "allReceiptFieldsAndLogsMatch": true,
+      "journalPath": "journal-owner-bond/584d3a94550a0e2eea6ba5adafc7492217afc62c95ea148b984f2acab36191bc.receipt.json"
+    }
+  ],
+  "deployment": {
+    "hash": "0x164e3d434eb60cadf95d1e33baeb9b681fe482964e4fb05d29f8a2e8f448d533",
+    "gasUsed": "44099850"
+  }
+}

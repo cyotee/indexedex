@@ -1,0 +1,1 @@
+env GIT_MASTER=1 git status --short --untracked-files=all 

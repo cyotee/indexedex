@@ -1,0 +1,1 @@
+{"abi":[{"type":"function","name":"getMaximumInvariantRatio","inputs":[],"outputs":[{"name":"maximumInvariantRatio","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"getMinimumInvariantRatio","inputs":[],"outputs":[{"name":"minimumInvariantRatio","type":"uint256","internalType":"uint256"}],"stateMutability":"view"}],"id":975}

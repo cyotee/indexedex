@@ -156,8 +156,8 @@ contract MigrationRecoveryClaimVaultTest is MigrationClaimVaultForkBase {
         y_[0] = Migration.WeightedSyEntitlementInput(bytes32("mixed WY"), syHolder_, Legacy.WEIGHTED_SY,
             30, 0.001 ether, 0, bytes32("synthetic WY"), true);
         vm.startPrank(migrationOwner);
-        allocation.configureWeightedLiquidEntitlements(d_);
-        allocation.configureWeightedSyEntitlements(y_);
+        allocation.configureWeightedLiquidEntitlements(d_, pricingId);
+        allocation.configureWeightedSyEntitlements(y_, pricingId);
         vm.stopPrank();
         uint256 bond_ = _takeSe();
         _surrender(WEIGHTED, 4);

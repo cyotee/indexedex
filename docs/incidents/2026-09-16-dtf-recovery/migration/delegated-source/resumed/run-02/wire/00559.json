@@ -1,0 +1,6 @@
+{
+  "request": "{\"jsonrpc\":\"2.0\",\"id\":559,\"method\":\"eth_chainId\",\"params\":[]}",
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":559,\"result\":\"0x1237\"}",
+  "httpStatus": 200,
+  "raw": true
+}
